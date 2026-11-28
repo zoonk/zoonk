@@ -5,7 +5,11 @@ import { checkConversationObjectives } from "./conversation-objectives";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./conversation-objectives.prompt.md", () => ({ default: "Check the objectives." }));
+
+vi.mock("./conversation-objectives.prompt.md", () => ({
+  default: "Check the objectives in {{TARGET_LANGUAGE}}.",
+}));
+
 vi.mock("./conversation-objectives-test.prompt.md", () => ({ default: "How a test part ends." }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -32,7 +36,7 @@ describe(checkConversationObjectives, () => {
     const rolePlay = await checkConversationObjectives({ ...CALL, exam: null });
     const mock = await checkConversationObjectives({ ...CALL, exam: "ielts" });
 
-    expect(rolePlay.systemPrompt).toBe("Check the objectives.");
-    expect(mock.systemPrompt).toBe("Check the objectives.\nHow a test part ends.");
+    expect(rolePlay.systemPrompt).toBe("Check the objectives in US English.");
+    expect(mock.systemPrompt).toBe("Check the objectives in US English.\nHow a test part ends.");
   });
 });

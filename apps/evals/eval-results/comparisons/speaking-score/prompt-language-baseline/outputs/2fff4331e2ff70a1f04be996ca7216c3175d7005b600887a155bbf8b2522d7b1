@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You organize your ideas clearly, as in “She showed me step by step, and then I watched videos in the evening,” and you stay on topic while explaining your opinions. Some answers are brief and rely on straightforward links such as “On the other hand” and “so.”",
+      "tip": "In discussion answers, add a specific example and its result after your opinion, for example: “Practical skills belong in the curriculum because they prepare students for everyday decisions, such as planning a budget.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some effective topic language and expressions, including “overwhelming,” “more confident,” and “a steep learning curve.” Some descriptions remain general, such as “more choice” and “a lot of subjects.”",
+      "tip": "Replace general phrases with more precise collocations: instead of “more choice,” try “a wider range of tutorials” or “more immediate feedback.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a mix of sentence types, including “I wanted to learn it because I think sharing food is a way to understand another culture,” but several recurring form errors appear, such as “I am doing this job since two years” and “I am agree with that.”",
+      "tip": "For something that began in the past and continues now, use the present perfect with “for”: change “I am doing this job since two years” to “I’ve been doing this job for two years.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can’t show how you sounded, so this is a wider estimate; it provides no clear sign of words being misunderstood or requests to repeat, and the estimate follows the overall level suggested by your other performance.",
+      "tip": "Work on making the key words in your answers easy to distinguish, especially “overwhelming,” “confident,” and “spices”; stress the main syllables clearly so listeners can follow your meaning.",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,9 @@
+{
+  "model": "openai/gpt-6.1-terra",
+  "pipeline": [
+    "openai/gpt-6.1-terra"
+  ],
+  "reasoning": "provider-default",
+  "settingsHash": "4407fbf0782b238b2bd91c6ca109ccd9365134cdfc3eaec252f5bc008203c18c",
+  "systemPromptHash": "12c506e0aecaec8e52aa95ef29ca6fb4018cb3c9a620600288b96af6e3cfeb0f"
+}

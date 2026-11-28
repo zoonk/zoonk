@@ -1,0 +1,13 @@
+{
+  "caseId": "es-en-b1-candidate",
+  "challenger": {
+    "costUsd": 0.00110157,
+    "durationMs": 23368.049707999977,
+    "hash": "82a5fba10615be34d67b683c250f421e86146dc0d7020a3ec4c1e640596f41cd",
+    "systemPromptHash": "194ab63f43ea5034438e0e75c4b5e9f736a98dd01dad48cf7f4eac14e3dae543",
+    "userPromptHash": "f3208fda5c5da05fef927ac2052f34b1b204b07786ef34a1485457db978a2a00"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

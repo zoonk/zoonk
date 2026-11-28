@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Mantienes el hilo y desarrollas respuestas con detalles, por ejemplo, “We visited the old part of the city, Alfama”. Sin embargo, los enlaces entre ideas son limitados y algunas respuestas avanzan con frases sencillas, como “I think so” seguido de una lista de problemas.",
+      "tip": "Después de dar una razón, agrega una consecuencia o un ejemplo para desarrollar la idea: “I especially enjoyed Alfama because its narrow streets made the city feel full of history.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario suficiente para hablar de viajes y turismo, como “the famous tram” y “the prices of the flats”. Para expresar algunas ideas recurres a palabras generales, como “very beautiful”, y a combinaciones poco precisas, como “like very much the nature”.",
+      "tip": "Cambia adjetivos generales por expresiones más específicas: en vez de “the city is very beautiful”, prueba “the city has striking architecture and a lively atmosphere.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Combinas oraciones sencillas con algunas estructuras más largas, pero hay errores frecuentes de concordancia y forma verbal, como “my parents was working a lot” y “the people was very kind”.",
+      "tip": "Con un sujeto plural, usa “were” en pasado, no “was”: “my parents was working a lot” → “my parents were working a lot.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonó tu inglés, así que esta estimación es más amplia y se guía por los otros aspectos de tus respuestas; el texto por sí solo no demuestra qué tan fácil fue entenderte.",
+      "tip": "Al decir en voz alta “Alfama”, “tourists” y “cultures”, marca con claridad la sílaba tónica para que quien escucha identifique esos datos clave.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

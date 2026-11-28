@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa estruturas corretas para comparar e explicar motivos, como “because it's more personal and relaxed” e “I want to do something with my hands”. As frases são claras, mas o vocabulário e as estruturas permanecem bastante simples, sem muita elaboração.",
+      "tip": "Amplie o vocabulário descrevendo o benefício específico de cada atividade: em vez de apenas “more personal and relaxed”, tente “more personal and relaxed, so she can learn at her own pace”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza a resposta com contrastes claros, como “while the people in the class” e “At home”, e acrescenta outra justificativa com “Also”. Porém, as ideias são desenvolvidas em poucas frases, sem exemplos ou explicações mais longas.",
+      "tip": "Depois de cada motivo, acrescente uma consequência ou exemplo para desenvolver a comparação: “At home you can make mistakes without feeling embarrassed, which might help you build confidence more quickly.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você responde à pergunta principal, compara as formas de aprender e também explica sua preferência: “I'd prefer pottery, because I spend all day in front of a computer”. A comunicação é clara e adequada, embora as respostas ofereçam pouco desenvolvimento além das razões principais.",
+      "tip": "Na resposta sobre sua preferência, acrescente um benefício concreto da atividade: “I'd prefer pottery because I spend all day in front of a computer, and working with clay would help me relax and be more creative.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

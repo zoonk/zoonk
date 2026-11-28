@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You keep your answers on topic and link ideas with words like “because” and “But”; your cue-card answer also explains how the change affected you. The ideas are mostly presented in short, straightforward sentences, with limited development beyond the main points.",
+      "tip": "Develop each point with a reason or result, for example, after “Now I can sleep longer,” add “which means I start the day feeling more rested.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant everyday vocabulary, including “more relaxed” and “time for my family,” to describe your work and the change. Most of your wording is basic, and “make home office two days in the week” is not a precise way to express working from home.",
+      "tip": "Use a more precise work phrase: instead of “make home office two days in the week,” try “the company allows us to work remotely two days a week.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use some connected and comparative structures, such as “It makes me more relaxed than before,” but there are tense and modal-choice problems. For example, “I am working here since three years” does not correctly describe a situation that began three years ago and continues now.",
+      "tip": "For an ongoing situation, use the present perfect with “for” plus a length of time: “I am working here since three years” → “I have been working here for three years.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, and it contains no clear sign of words being misunderstood or of a listener needing you to repeat. This is a wider estimate, centered on the other criteria, rather than a judgment of your actual pronunciation.",
+      "tip": "To make key details easier to catch, give clear stress to the main words in “one hour every day” and “two days in the week.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

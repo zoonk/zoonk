@@ -1,0 +1,35 @@
+{
+  "instructions": [
+    "Compare the two photographs and answer the question.",
+    "Speak on your own for about one minute."
+  ],
+  "prompts": [
+    "How might the people feel about travelling in these different ways?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph inside a British passenger train in daylight. Two friends in their twenties, wearing casual jackets, sit together by a large window. One looks at the green countryside passing outside while the other smiles and points towards it. Small travel bags are on the seats beside them. Soft natural light, no visible text, signs or logos.",
+      "alt": "Duas amigas viajam de trem e observam a paisagem pela janela."
+    },
+    {
+      "scene": "A realistic photograph of two friends in their twenties cycling along a quiet coastal path on a sunny day. They wear helmets, light jackets and small rucksacks. One is smiling towards the other as they ride, with the sea and grassy hills behind them. Natural sunlight, no visible text, signs or logos.",
+      "alt": "Dois amigos pedalam por um caminho perto do mar."
+    }
+  ],
+  "summary": "Compare as duas fotos e responda à pergunta, falando sozinho por cerca de um minuto. Depois, a examinadora fará uma pergunta curta.",
+  "character": {
+    "name": "Hannah",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the B2 First Speaking examiner. Give the opening instruction exactly as written in openingLine. Listen without interrupting while the candidate speaks for about one minute. If necessary, end the long turn politely with: 'Thank you.' Then ask: 'Which of these ways of travelling would you prefer, and why?' Allow a short response. If the answer is very brief, ask: 'What would you enjoy about it?' or 'Is there another reason?' Finish with: 'Thank you.' Do not correct, praise or grade the candidate.",
+  "openingLine": "I’d like you to compare the two photographs and say how the people might feel about travelling in these different ways. You have about a minute. Please begin.",
+  "hints": [
+    "Both photographs show people doing something together.",
+    "One difference is that the people in the first photograph seem to be more relaxed.",
+    "They might be feeling this way because of the situation.",
+    "Personally, I would prefer this option because it suits me better."
+  ]
+}

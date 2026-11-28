@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu as cinco partes: apresentou o tema e a estrutura, falou de sua experiência e da situação no Brasil, mencionou vantagens e desvantagens, deu sua opinião e encerrou agradecendo: “Vielen Dank für Ihre Aufmerksamkeit.”",
+      "tip": "Para enriquecer ainda mais a parte sobre sua opinião, acrescente uma justificativa concreta, por exemplo: “Eine tägliche Begrenzung ist sinnvoll, weil Jugendliche dann mehr Zeit für andere Aktivitäten haben.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação tem uma sequência fácil de acompanhar, anunciada por “Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland”. As ideias estão organizadas, embora a ligação entre algumas partes seja simples.",
+      "tip": "Use uma frase de transição para ligar a experiência pessoal à situação geral, por exemplo: “Ähnliche Erfahrungen machen auch viele Jugendliche in Brasilien.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “in Kontakt bleiben”, “Informationen finden” e “mit anderen vergleichen”. As expressões são claras, mas a variedade de palavras e formulações é relativamente simples.",
+      "tip": "Substitua uma expressão geral por uma formulação mais precisa, por exemplo, em vez de apenas “Das ist ein Problem”, diga: “Das kann die Konzentration im Unterricht beeinträchtigen.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você constrói frases claras e usa estruturas como “dass man so in Kontakt bleiben kann”. Há um erro na posição do verbo após “weil” em “weil ich habe viele Freunde in anderen Städten”.",
+      "tip": "Depois de “weil”, coloque o verbo conjugado no fim da oração. Corrija “weil ich habe viele Freunde in anderen Städten” para “weil ich viele Freunde in anderen Städten habe”.",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite saber como você soou; sem sinais indiretos de dificuldade de compreensão no trecho disponível, esta é uma estimativa mais ampla, orientada pelas outras competências.",
+      "tip": "Ao apresentar, articule com clareza palavras importantes do tema, como “Jugendliche”, “Vorteile” e “Aufmerksamkeit”, para que suas ideias sejam fáceis de entender.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

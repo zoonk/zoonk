@@ -1,0 +1,126 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-lived-live",
+        "claimId": "a2baa8b3a87421cc",
+        "criterion": "helpfulness",
+        "observationId": "28c590834baf2e4ebfd5d29c8a6eee946424b88a2fc8cd1a5a36eaecf8d0a561.first.f8f57426-bde5-4551-9a4a-7c6f1d106809.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0003873,
+    "id": "3559095b9e8b07a1c5bca6f415b846ce6d39e10690ea2f6c7ba411a85067e14d",
+    "packet": [
+      {
+        "A": {
+          "blob": "927bb633d64e15a775cf86f74d48b8cc0dd5e2bf348291a19dabc1572cea0235",
+          "format": "text"
+        },
+        "B": {
+          "blob": "282c4aae1af763691be0bc098965c8b2d08b778e52259a66f46a4e56105aa4b0",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The explanation for a Brazilian Portuguese reader is written entirely in English instead of Portuguese.",
+            "claimId": "7842dc19cff89c7a",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean explanation is written in English instead of Portuguese.",
+            "claimId": "905437e9be284f65",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "ba4110f86b6b2a19d8798e3d43f3ca52590702433b929349b0b77cdb4c466cab",
+          "format": "text"
+        },
+        "B": {
+          "blob": "c307c4502cf6fc35d3cfdeeca8c64c8ece0bdb64d6a9f0167005ea2c02c568f0",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The explanation never says the learner may have used the simple present instead of the present perfect, and never shows \"I've lived\" as the full target form. It only says the verb form may differ.",
+            "claimId": "a2baa8b3a87421cc",
+            "criterion": "helpfulness",
+            "location": {
+              "detail": "Whole explanation, which only says \"pode ter sido a forma verbal, não só a pronúncia\".",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "56edcf253e568b92c2cd9187f091a886f2825f1b3f7484041b5da19869d7ff28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a321ac48b033cbdeae1ae014336fd022a0d6934d1f3decc3c815fa6cd4b75221",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "It does not explain that Portuguese speakers may transfer “moro aqui desde” into “I live here since.”",
+            "output": "B"
+          },
+          {
+            "claim": "It does not explain that Portuguese speakers may transfer “moro aqui desde” into “I live here since.”",
+            "output": "A"
+          }
+        ]
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "7842dc19cff89c7a",
+          "finding": "holds",
+          "reason": "A’s explanation is entirely in English, while B’s is in Portuguese."
+        },
+        {
+          "claimId": "905437e9be284f65",
+          "finding": "doesn't hold",
+          "reason": "B’s explanation is in Portuguese, not English."
+        },
+        {
+          "claimId": "a2baa8b3a87421cc",
+          "finding": "holds for both",
+          "reason": "A only says the verb form may differ and neither gives “I've lived” as the full target form. B mentions using the present instead of the past, but also does not identify the present perfect or show “I've lived.”"
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

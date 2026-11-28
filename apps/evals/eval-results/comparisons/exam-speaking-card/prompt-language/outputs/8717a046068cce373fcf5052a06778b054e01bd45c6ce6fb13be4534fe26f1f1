@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos.",
+    "Después, converse con el examinador sobre el tema de la fotografía."
+  ],
+  "prompts": [
+    "¿Dónde están las personas?",
+    "¿Cómo son y qué están haciendo?",
+    "¿Qué objetos ve en la fotografía?",
+    "¿Qué relación cree que tienen las personas?",
+    "¿De qué cree que están hablando?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of two adults in their thirties sitting together at a wooden table in a bright living room. One wears a blue sweater and holds a tablet angled away from the camera; the other wears a green shirt and points toward it. They are smiling as if discussing something. A mug and a pair of headphones sit on the table. Soft daylight enters through a window. No visible text, signs, logos or words on screens.",
+      "alt": "Two adults look at a tablet together at a table in a living room."
+    }
+  ],
+  "summary": "Describe a photo, then talk with the examiner about how technology fits into your own life.",
+  "character": {
+    "name": "Fernando",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Run this unprepared task in about three minutes. Start with the opening line and listen without interrupting while the candidate describes the photo for one to two minutes. Then ask these questions in order, allowing time for each answer: «¿Qué aparatos utiliza usted habitualmente en su vida diaria?», «¿Para qué suele utilizarlos?» and «¿Prefiere aprender a usar una aplicación por su cuenta o con ayuda de otras personas? ¿Por qué?». If an answer is short, use one or two of these follow-ups as appropriate: «¿Puede contarme un poco más?» and «¿Puede darme un ejemplo?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Ahora va a describir esta fotografía. Tiene entre uno y dos minutos. Después hablaremos sobre el tema. Puede empezar cuando quiera.",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "Creo que puede ser así porque...",
+    "En mi opinión, depende de la situación.",
+    "Por un lado, estoy de acuerdo, pero por otro...",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobre bem os cinco pontos pedidos: apresenta o tema e a estrutura, fala da própria experiência e do Brasil, inclui vantagens, desvantagens e opinião, e encerra agradecendo: “Zuerst erzähle ich von meinen Erfahrungen”, “In Brasilien benutzen fast alle Jugendlichen soziale Medien” e “Vielen Dank für Ihre Aufmerksamkeit.”",
+      "tip": "Para aprofundar ainda mais a parte sobre o Brasil, acrescente um exemplo concreto, como “Viele Jugendliche benutzen soziale Medien auch, um sich über aktuelle Themen zu informieren.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação segue uma sequência fácil de acompanhar, marcada por “Zuerst”, “dann” e “am Ende”, e as ideias se conectam com clareza, por exemplo em “Das ist ein Problem, weil sie im Unterricht nicht aufpassen.”",
+      "tip": "Para tornar a passagem entre as partes ainda mais explícita, use uma frase de transição como “Nachdem ich über die Situation in Brasilien gesprochen habe, komme ich jetzt zu den Vor- und Nachteilen.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “in Kontakt bleiben”, “Informationen finden” e “vergleicht sich mit anderen”. A escolha é clara, mas o repertório permanece simples e algumas ideias poderiam ser desenvolvidas com palavras mais variadas.",
+      "tip": "Amplie o vocabulário dos prós e contras com expressões mais específicas, por exemplo: “Soziale Medien erleichtern den Austausch, können aber auch zu Stress führen.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina frases simples com estruturas subordinadas, como “Ich finde es gut, dass man so in Kontakt bleiben kann.” Em “weil ich habe viele Freunde”, porém, o verbo da oração com “weil” não fica no final, e predominam estruturas simples.",
+      "tip": "Depois de “weil”, coloque o verbo conjugado no fim da oração: “weil ich habe viele Freunde” → “weil ich viele Freunde habe”.",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, orientada pelos demais aspectos da apresentação. Não há no texto sinais indiretos claros de dificuldade de compreensão.",
+      "tip": "Dê atenção à articulação clara de “Jugendliche” e “Informationen”, para que essas palavras sejam fáceis de reconhecer.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Converse con el examinador sobre el tema de su presentación.",
+    "Exprese sus opiniones y hable de su experiencia personal. La conversación durará unos 4 minutos."
+  ],
+  "prompts": [
+    "¿Qué ventajas tiene trabajar o estudiar desde casa?",
+    "¿Qué dificultades puede haber?",
+    "¿Cómo se puede mantener el contacto con los compañeros?",
+    "¿Qué forma de trabajar o estudiar prefiere usted? ¿Por qué?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com o examinador sobre o tema da sua apresentação. Conte sua experiência e dê sua opinião.",
+  "character": {
+    "name": "Arturo",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE B1 examiner. Have a conversation of about four minutes about the candidate's Task 1 presentation on working from home. Start with the opening line. Ask the following questions in order, adapting them to what the candidate has already said and allowing time for answers: «¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?», «¿Qué ventajas cree que tiene trabajar o estudiar desde casa?», «¿Qué dificultades pueden aparecer y cómo se pueden solucionar?», «¿Cómo se puede mantener el contacto con los compañeros cuando se trabaja desde casa?», «En su caso, ¿prefiere trabajar o estudiar en casa o en otro lugar? ¿Por qué?». If an answer is short, use one or two follow-ups: «¿Puede poner un ejemplo?» and «¿Por qué piensa eso?». Do not correct, praise or grade the candidate. Finish with «Muchas gracias. Hemos terminado esta tarea».",
+  "openingLine": "Ahora vamos a conversar sobre el tema de su presentación. ¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, depende de la situación.",
+    "Creo que es importante porque puede ayudar a las personas.",
+    "Estoy de acuerdo hasta cierto punto, pero también hay que tener en cuenta otras cosas.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

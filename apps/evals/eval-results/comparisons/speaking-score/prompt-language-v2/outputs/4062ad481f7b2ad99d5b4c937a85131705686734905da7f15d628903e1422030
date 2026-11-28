@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobre as cinco partes: apresenta o tema e a estrutura com «Zuerst erzähle ich von meinen Erfahrungen», aborda a experiência pessoal, o Brasil, vantagens e desvantagens, sua opinião e o encerramento. A opinião também traz uma recomendação concreta: «nicht mehr als zwei Stunden pro Tag».",
+      "tip": "Para fortalecer ainda mais a parte sobre o Brasil, acrescente um exemplo ou detalhe que explique a situação, como «Viele Jugendliche nutzen soziale Medien, um mit Freunden in Kontakt zu bleiben».",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação tem uma sequência fácil de acompanhar, marcada por «Zuerst», «dann» e «am Ende», e você conecta uma desvantagem a uma consequência em «Das ist ein Problem, weil sie im Unterricht nicht aufpassen». As ideias são claras, mas alguns pontos são apresentados sem muito desenvolvimento.",
+      "tip": "Depois de apresentar uma ideia, acrescente uma frase que mostre sua consequência ou explique sua opinião, por exemplo: «Das kann dazu führen, dass Jugendliche sich im Unterricht schlechter konzentrieren».",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como «in Kontakt bleiben» e «neue Leute kennenlernen». As palavras são claras, mas a apresentação recorre a expressões gerais, como «Die Vorteile sind» e «Die Nachteile sind», sem muita variedade.",
+      "tip": "Varie a forma de introduzir os argumentos: em vez de «Die Vorteile sind», experimente «Ein weiterer Vorteil besteht darin, dass man schnell Informationen finden kann».",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas adequadas para organizar opiniões e argumentos, como «Ich finde es gut, dass man so in Kontakt bleiben kann» e «Meiner Meinung nach sollten Jugendliche soziale Medien benutzen». Em «weil ich habe viele Freunde», porém, a ordem do verbo após «weil» não está correta.",
+      "tip": "Depois de «weil», coloque o verbo conjugado no fim da oração: «weil ich habe viele Freunde» → «weil ich viele Freunde habe».",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; como não há sinais indiretos de problemas de compreensão, esta é uma estimativa mais ampla, alinhada às outras evidências da apresentação.",
+      "tip": "Ao apresentar, articule com clareza palavras longas e importantes para a mensagem, como «Jugendlichen», «Informationen» e «Aufmerksamkeit».",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza a fala em uma sequência clara e conecta vantagens e desvantagens com expressões como “Sin embargo” e “En cambio”. Algumas justificativas ficam breves, como a observação sobre as cidades menores, sem desenvolver muito a comparação.",
+      "tip": "Ao apresentar uma proposta, ligue a vantagem a uma consequência e depois compare com uma alternativa: “Aunque cerrar el centro los domingos ayudaría a las familias, abaratar el transporte público sería más eficaz durante toda la semana”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você desenvolve as respostas sem interrupções visíveis no texto, por exemplo: “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. O transcript não permite avaliar como você soou; por isso, esta estimativa de fluidez e pronúncia é mais ampla.",
+      "tip": "Para tornar os pontos principais mais fáceis de entender, articule com clareza palavras importantes como “contaminación” e “frecuente”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa estruturas variadas e compreensíveis, como “Si se invirtiera más en transporte”. Há, porém, deslizes de concordância e na construção condicional em “la gente están dispuesta” e “Si tendría más tiempo”.",
+      "tip": "Em hipóteses, use o imperfeito do subjuntivo depois de “si” e o condicional na consequência. Por exemplo: “Si tendría más tiempo, explicaría” passa a “Si tuviera más tiempo, explicaría”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você mobiliza vocabulário pertinente ao tema, como “abaratar el transporte público”, “la contaminación” e “los atascos de horas”, e expressa opiniões com justificativas. A maior parte das ideias é formulada com estruturas simples, sem muita elaboração lexical.",
+      "tip": "Acrescente vocabulário para explicar efeitos concretos de uma proposta. Em vez de apenas dizer “el tráfico mejoraría mucho”, você pode especificar: “se reducirían los atascos y mejoraría la calidad del aire”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você avalia quatro propostas e responde às perguntas sobre a melhor opção e a situação no seu país, por exemplo: “Sin duda, abaratar el transporte público”. A comunicação é clara, mas algumas justificativas e comparações ficam pouco desenvolvidas.",
+      "tip": "Ao escolher a melhor proposta, compare-a diretamente com uma que descartaria e explique o motivo: “Aunque cobrar por entrar en el centro podría reducir el tráfico, abaratar el transporte público sería más justo y beneficiaría a más personas”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

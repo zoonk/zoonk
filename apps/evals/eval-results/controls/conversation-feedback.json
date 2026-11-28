@@ -1,0 +1,78 @@
+{
+  "pairs": [
+    {
+      "input": {
+        "learnerLanguage": "pt",
+        "level": "A2",
+        "objectivesMet": [
+          "Ask about the rent",
+          "Book a viewing"
+        ],
+        "scenario": {
+          "characterName": "Sarah",
+          "objectives": [
+            "Ask about the rent",
+            "Ask what's included",
+            "Book a viewing"
+          ],
+          "situation": "Você viu um anúncio de apartamento na Queen Street e liga para a proprietária, Sarah, para perguntar o aluguel e marcar uma visita.",
+          "title": "Ligar para marcar uma visita"
+        },
+        "targetLanguage": "en",
+        "turns": [
+          {
+            "speaker": "character",
+            "text": "Hi, this is Sarah from Queen Street Apartments. How can I help?"
+          },
+          {
+            "speaker": "learner",
+            "text": "Hello, I see the apartment in the internet. Is available?"
+          },
+          {
+            "speaker": "character",
+            "text": "Yes, it's still available. It's a one-bedroom on the second floor."
+          },
+          {
+            "speaker": "learner",
+            "text": "How much is the rent?"
+          },
+          {
+            "speaker": "character",
+            "text": "It's twelve hundred dollars a month."
+          },
+          {
+            "speaker": "learner",
+            "text": "Is include the water and the light?"
+          },
+          {
+            "speaker": "character",
+            "text": "Water is included, but electricity isn't."
+          },
+          {
+            "speaker": "learner",
+            "text": "Ok. I can visit the apartment in Saturday?"
+          },
+          {
+            "speaker": "character",
+            "text": "Saturday morning is taken, but I can do Saturday at 2 p.m."
+          },
+          {
+            "speaker": "learner",
+            "text": "Yes, Saturday at two is perfect. Thank you very much."
+          },
+          {
+            "speaker": "character",
+            "text": "Great, see you then!"
+          }
+        ]
+      },
+      "expectations": "A2 Brazilian learner who reached two objectives with typical mistakes: dropping the subject (\"Is available?\", \"Is include the water\"), \"in Saturday\" for \"on Saturday\" and \"in the internet\". The fix should be one of these, most usefully the missing subject or \"Does it include...\", with a \"why\" that mentions Portuguese dropping the subject when relevant. \"Went well\" can quote \"How much is the rent?\" or \"Saturday at two is perfect\". Pronunciation words must be ones the learner said whose usual slip for Brazilians can change the word or make it hard to understand, like \"rent\" (a first \"r\" that can sound like \"h\"), presented as often hard for Brazilians; not accent-only sounds like the \"th\" in \"Thank you\". In Brazilian Portuguese.",
+      "clean": "{\n  \"wentWell\": [\n    \"How much is the rent?\",\n    \"Saturday at two is perfect.\"\n  ],\n  \"improve\": {\n    \"said\": \"I can visit the apartment in Saturday?\",\n    \"better\": \"Can I visit the apartment on Saturday?\",\n    \"why\": \"Em inglês, usamos a preposição \\\"on\\\" antes de dias da semana, e não \\\"in\\\".\"\n  },\n  \"pronunciation\": [],\n  \"encouragement\": \"Você conseguiu perguntar o preço do aluguel e marcar a visita com clareza.\"\n}",
+      "flawed": "{\n  \"wentWell\": [\n    \"How much is the rent?\",\n    \"Saturday at two is perfect.\"\n  ],\n  \"improve\": {\n    \"said\": \"I can visit the apartment in Saturday?\",\n    \"better\": \"Can I visit the apartment on Saturday?\",\n    \"why\": \"In English, we use the preposition \\\"on\\\" before days of the week, not \\\"in\\\".\"\n  },\n  \"pronunciation\": [],\n  \"encouragement\": \"Você conseguiu perguntar o preço do aluguel e marcar a visita com clareza.\"\n}",
+      "criterion": "language",
+      "defect": "The \"why\" for a Brazilian Portuguese reader is written in English instead of Portuguese.",
+      "falseAllegation": "The clean answer's encouragement is written in English instead of Portuguese.",
+      "provenance": "Saved eval output for a synthetic eval case; the flawed side rewrites one learner-facing field in the wrong language by hand."
+    }
+  ]
+}

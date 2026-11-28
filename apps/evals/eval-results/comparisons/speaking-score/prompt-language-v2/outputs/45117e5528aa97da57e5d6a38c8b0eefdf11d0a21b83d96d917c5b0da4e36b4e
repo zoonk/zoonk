@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa estruturas variadas e vocabulário adequado ao tema, como em “When I don't sleep well, I can't concentrate at all”. Alguns erros de forma, como “more easy to fit into a busy day” e “it depends of your routine”, reduzem a precisão.",
+      "tip": "Com adjetivos curtos, forme o comparativo com “-er”: troque “more easy to fit into a busy day” por “easier to fit into a busy day”.",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza as ideias com conectores como “On the other hand” e “So maybe”, e dá uma razão para sua escolha em “because without it nothing else works”. As justificativas e os pontos são desenvolvidos de forma breve, sem explorar muito as ideias.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência ou exemplo: em vez de parar em “I can't concentrate at all”, você poderia dizer “I can't concentrate at all, which makes studying much harder”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, alinhada à faixa sugerida pelos outros aspectos da sua comunicação; não há sinais textuais claros de palavras mal compreendidas ou pedidos para repetir.",
+      "tip": "Para facilitar a compreensão, marque bem a sílaba tônica de “exercise” e “concentrate” ao falar.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde ao que a outra pessoa diz, acrescenta uma experiência própria em “that's true for me too” e faz perguntas para manter a troca, como “What do you think about sleep?”. Também propõe uma escolha e a justifica, embora pudesse desenvolver mais a discussão antes de decidir.",
+      "tip": "Depois de responder à opinião da outra pessoa, convide-a a explicar mais: após “that's true for me too”, acrescente “Do you find it difficult to get enough sleep during the week?”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você lida com o tema e consegue expressar e justificar opiniões, como em “I'd say doing exercise is more easy to fit into a busy day” e “I'd go for sleep, because without it nothing else works”. A comunicação é clara e pertinente, mas erros de precisão e justificativas breves limitam o desenvolvimento geral.",
+      "tip": "Ao defender uma escolha, acrescente um exemplo concreto: depois de “I'd go for sleep”, você poderia dizer “because without it nothing else works, especially when you need to concentrate at school or at work”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

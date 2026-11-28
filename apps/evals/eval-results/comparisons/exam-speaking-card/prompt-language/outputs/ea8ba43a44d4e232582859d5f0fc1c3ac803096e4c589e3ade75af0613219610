@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Usted y su amiga quieren hacer una ruta en bicicleta por Sevilla. El examinador representa a su amiga.",
+    "Hablen durante unos cuatro minutos y decidan juntos cómo hacer la ruta."
+  ],
+  "prompts": [
+    "Cuándo hacer la ruta y dónde quedar.",
+    "Qué lugares visitar.",
+    "Cuánto tiempo pasar en bicicleta.",
+    "Qué llevar.",
+    "Dónde parar a descansar."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com sua amiga, interpretada pela examinadora, e planeje um passeio de bicicleta.",
+  "character": {
+    "name": "Rosa",
+    "role": "amiga",
+    "place": "Sevilla"
+  },
+  "characterBrief": "Play Rosa, the candidate's friend. You are both in Seville and want to plan a bicycle ride, as in the previous photo. Speak in simple Spanish and use usted. Follow the plan in order, but respond naturally to the candidate's ideas and allow time for their answers. Do not correct, praise or grade. Begin with the opening line. Then ask: «¿Dónde podemos quedar para coger las bicicletas?»; «¿Qué lugares quiere visitar durante la ruta?»; «¿Cuánto tiempo quiere ir en bicicleta?»; «¿Qué necesitamos llevar?»; «¿Dónde podemos parar a descansar?»; «¿Quiere hacer algo más después de la ruta?». React to the candidate's choices, for example: «Sí, podemos hacerlo así» or «Yo prefiero ir por la mañana. ¿Qué le parece?». If an answer is short, use one or two follow-ups as needed: «¿Por qué?» and «¿Tiene otra idea?». Near the end, briefly confirm the plan using the candidate's actual choices: «Entonces, quedamos en [lugar] y vamos a [lugar]. ¿Es así?». Finish with «De acuerdo, hasta entonces».",
+  "openingLine": "Vamos a preparar nuestra ruta en bicicleta por Sevilla. ¿Qué día le gustaría hacerla?",
+  "hints": [
+    "Un momento, voy a pensarlo.",
+    "A mí me parece bien porque es más cómodo.",
+    "Yo prefiero otra opción.",
+    "¿Qué le parece a usted?",
+    "Podemos decidirlo juntos."
+  ]
+}

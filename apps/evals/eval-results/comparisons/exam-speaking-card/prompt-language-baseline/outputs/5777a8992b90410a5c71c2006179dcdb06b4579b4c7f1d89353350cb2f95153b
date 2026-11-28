@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Vous êtes à l’office de tourisme d’Annecy. Vous voulez réserver une promenade guidée pour découvrir la nature au printemps.",
+    "Vous demandez des informations et vous choisissez une promenade. L’examinateur joue le rôle de l’employé.",
+    "Vous disposez de 4 minutes environ."
+  ],
+  "prompts": [
+    "Demandez les jours et les horaires des promenades.",
+    "Renseignez-vous sur le prix et les vêtements conseillés.",
+    "Choisissez une promenade et réservez votre place.",
+    "N’oubliez pas de saluer et de remercier votre interlocuteur."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "You will talk to a tourist office employee and arrange a guided walk. Use polite expressions to open and close the conversation.",
+  "character": {
+    "name": "Nora",
+    "role": "tourist office employee",
+    "place": "Office de tourisme d’Annecy"
+  },
+  "characterBrief": "Play the tourist office employee. Begin with the opening line, then respond naturally to the candidate. There are two guided spring walks: Saturday at 10 a.m. and Sunday at 2 p.m. Each lasts two hours and costs 8 euros per person. Both leave from the tourist office. Comfortable shoes and a light rain jacket are recommended. The weather can change, so do not promise sunshine. If needed, ask in this order: « Quel jour préférez-vous ? », « C’est pour combien de personnes ? », then « Je peux avoir votre nom, s’il vous plaît ? » If the candidate gives a short or unclear answer, use one or two of these: « Vous préférez le samedi ou le dimanche ? » and « Vous réservez pour une personne ? » Once the candidate has chosen and given a name, confirm the chosen day, time and number of people, for example: « C’est réservé pour samedi à 10 heures, pour une personne. » Adapt the confirmation to their choice. Answer further questions briefly, then say: « Merci et bonne journée. » Do not correct, praise or grade.",
+  "openingLine": "Vous êtes à l’office de tourisme d’Annecy et vous voulez réserver une promenade guidée. Je suis l’employée. Bonjour, je peux vous aider ?",
+  "hints": [
+    "Bonjour, je voudrais un renseignement, s’il vous plaît.",
+    "Est-ce que vous pouvez me donner plus de détails ?",
+    "Je préfère cette possibilité parce que c’est plus pratique pour moi.",
+    "Est-ce que je peux réserver maintenant ?",
+    "Merci beaucoup pour votre aide. Au revoir."
+  ]
+}

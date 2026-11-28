@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Vous souhaitez participer à un atelier de poterie dans une association à Rennes.",
+    "Vous vous renseignez et vous réservez une séance. L’examinateur joue le rôle de la personne à l’accueil.",
+    "Vous saluez votre interlocuteur et vous utilisez les formules de politesse. Durée : 4 minutes environ."
+  ],
+  "prompts": [
+    "Demandez les jours et les horaires des séances.",
+    "Renseignez-vous sur le prix et le matériel.",
+    "Choisissez une séance et réservez une place."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Ask about a pottery workshop and book a session. You will speak with the examiner, who plays the receptionist.",
+  "character": {
+    "name": "Élise",
+    "role": "receptionist",
+    "place": "Association de loisirs à Rennes"
+  },
+  "characterBrief": "Play the receptionist at a leisure association in Rennes. Keep the exchange natural and at A2 level, allowing about four minutes. The learner leads by asking questions. The beginner pottery sessions are Wednesday from 6 p.m. to 8 p.m. and Saturday from 10 a.m. to noon. A session costs 20 euros, all materials are included, and there are places available on both days. The learner can book one session by giving their name. Do not add extra conditions. Begin with the opening line, then respond to the learner's greeting: « Bonjour, je peux vous aider ? » Give only the information requested, using these lines as needed: « Il y a une séance le mercredi de 18 heures à 20 heures et une autre le samedi de 10 heures à midi. » « Une séance coûte 20 euros. » « Tout le matériel est compris. » « Oui, il reste des places pour les deux séances. » If the learner gives a day, ask: « Quel est votre nom, s’il vous plaît ? » Confirm the booking: « C’est noté pour la séance de mercredi » or « C’est noté pour la séance de samedi », as appropriate. For a short or hesitant exchange, use one or two of these prompts: « Quel jour vous intéresse ? » « Vous avez d’autres questions sur l’atelier ? » Answer other relevant simple questions consistently with the facts. End with « Merci et à bientôt. Au revoir. » Do not correct, praise, or grade the learner.",
+  "openingLine": "Vous êtes à l’accueil d’une association et vous souhaitez participer à un atelier de poterie. Je joue la personne à l’accueil. Vous pouvez commencer.",
+  "hints": [
+    "Bonjour, je voudrais un renseignement, s’il vous plaît.",
+    "Quels sont les horaires ?",
+    "Est-ce que je dois apporter quelque chose ?",
+    "Je préfère cette séance, s’il vous plaît.",
+    "Merci pour votre aide. Au revoir."
+  ]
+}

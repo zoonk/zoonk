@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Converse con el examinador durante unos 4 minutos sobre el trabajo desde casa.",
+    "Hable de sus opiniones y experiencias personales."
+  ],
+  "prompts": [
+    "¿Qué ventajas y desventajas tiene trabajar desde casa?",
+    "¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?",
+    "¿Cómo pueden mantener el contacto los compañeros?",
+    "¿Qué forma de trabajo prefiere usted y por qué?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com o examinador sobre o tema da sua apresentação, dando opiniões e falando de suas experiências.",
+  "character": {
+    "name": "Javier",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Conduct a conversation of about four minutes, building on the candidate's Task 1 presentation. Ask the questions in order, adapting references to what the candidate has said and allowing time for full answers. If an answer is brief, use one or two of the backup questions. Do not assume the candidate has worked from home. Do not correct, praise or grade.\n\nStart: «Ahora vamos a conversar sobre el tema de su presentación. ¿Qué ventajas y desventajas cree que tiene trabajar desde casa?»\n\nThen ask: «¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue la experiencia?». If neither applies, ask: «¿Cómo cree que sería estudiar o trabajar desde casa?»\n\nContinue: «¿Cómo pueden mantener el contacto los compañeros cuando trabajan desde casa?». Then ask: «¿Qué forma de trabajo prefiere usted y por qué?»\n\nFor brief answers, use: «¿Puede contarme algo más?» and «¿Por qué piensa eso?». End with: «Muchas gracias. Hemos terminado esta tarea».",
+  "openingLine": "Ahora vamos a conversar sobre el tema de su presentación. ¿Qué ventajas y desventajas cree que tiene trabajar desde casa?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, depende de la situación.",
+    "Creo que es importante porque puede ayudar a las personas.",
+    "Estoy de acuerdo, aunque también hay otros aspectos.",
+    "No estoy seguro, pero diría que depende."
+  ]
+}

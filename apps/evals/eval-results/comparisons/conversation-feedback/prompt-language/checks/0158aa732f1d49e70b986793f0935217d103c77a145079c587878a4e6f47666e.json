@@ -1,0 +1,11 @@
+{
+  "caseId": "pt-en-b2-strong-call",
+  "costUsd": 0,
+  "criteria": [],
+  "name": "code checks",
+  "passed": 5,
+  "problems": [],
+  "run": 2,
+  "side": "incumbent",
+  "total": 5
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Your answers stay on topic, and the cue-card response gives a reason and outcomes, as in “Now I can sleep longer” and “I have more time for my family and for running in the forest.” The ideas are clear, but they are developed with simple links and mostly short sentences.",
+      "tip": "Extend each point with a specific consequence or example. For instance, after “I have more time for my family,” add “so we can have dinner together without rushing.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant vocabulary for work and daily life, including “engineer for a car company” and “running in the forest.” Most of your word choices are familiar and general, such as “nice” and “good decision,” rather than more precise descriptions.",
+      "tip": "Replace general evaluations with more specific descriptions. Instead of “the team is nice,” try “the team is supportive and easy to work with.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You produce several clear simple sentences, but there are errors in forms such as “I am working here since three years” and “I must not wear a tie at home,” which changes the intended meaning. You use limited sentence structures overall.",
+      "tip": "Use the present perfect with “for” to describe a situation continuing over a period: instead of “I am working here since three years,” say “I've worked here for three years.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, and it contains no clear signs of words being misunderstood or requests to repeat. This wider estimate follows the pattern of your other criteria rather than the transcript's clean appearance.",
+      "tip": "Make the “th” at the start of “three” clear, and keep the final “s” in “hours” audible so listeners can distinguish the words.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

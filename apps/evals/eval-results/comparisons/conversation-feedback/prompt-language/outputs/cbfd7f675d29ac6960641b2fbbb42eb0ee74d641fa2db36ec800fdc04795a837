@@ -1,0 +1,13 @@
+{
+  "wentWell": [
+    "¿Cuánto es la renta?",
+    "Quiero ver el departamento el sábado, ¿podés?"
+  ],
+  "improve": {
+    "said": "el departamento es disponible",
+    "better": "el departamento está disponible",
+    "why": "In Spanish, use 'estar' instead of 'ser' for temporary states like availability."
+  },
+  "pronunciation": [],
+  "encouragement": "You successfully asked about the rent and arranged a time to see the apartment."
+}

@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu a primeira frase exatamente, mas depois alterou ou omitiu partes: disse “Please show your card in the door” e “You can borrow ten books”, sem preservar todas as palavras das frases originais. Nas frases mais longas, também deixou de fora trechos importantes, como em “Students who want a group room... reserve online... one day”.",
+      "tip": "Agrupe as frases longas em blocos e mantenha palavras pequenas e cláusulas até o fim: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas com informações relevantes, como “One day the bus is broken” e “Because students don't have much money”. Porém, as respostas ficam curtas e pouco desenvolvidas; na previsão, você lista opções em “Maybe more bicycle. Or electric car” e encerra com “I don't know”.",
+      "tip": "Depois de dar sua opinião, acrescente uma consequência ou um exemplo: em vez de parar em “Bus is expensive”, explique, por exemplo, “Free bus passes would help students save money and get to class on time.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você consegue transmitir ideias básicas, mas há erros frequentes de estrutura e tempo verbal, como em “Is about thirty minutes” e “I arrive late in the class”. Em “Quiet study rooms is on the second floor”, a concordância também não corresponde ao sujeito plural.",
+      "tip": "Em relatos de um acontecimento passado, use o passado nos verbos e inclua o sujeito: troque “One day the bus is broken” por “One day the bus was broken”, e “I arrive late in the class” por “I arrived late for class.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa palavras básicas e pertinentes ao tema, como “bus”, “expensive” e “electric car”, o que ajuda a comunicar suas ideias. O vocabulário, porém, permanece limitado e pouco específico, como em “Maybe more bicycle”, sem desenvolver por que essa opção poderia crescer.",
+      "tip": "Para falar de transporte futuro com mais precisão, acrescente expressões sobre a mudança e seu motivo: “More students may cycle to campus because bike lanes are becoming safer.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como sua fala soou, então não permite avaliar diretamente a pronúncia, o ritmo ou a entonação; esta é uma estimativa mais ampla, centrada no nível sugerido pelas demais respostas.",
+      "tip": "Ao repetir as frases, marque o acento das palavras-chave para ajudar o ouvinte a acompanhar a informação, por exemplo: “STUdent card” e “FRONT desk”.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

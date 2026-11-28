@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu os cinco pontos: apresentou o tema e a estrutura, falou de sua experiência e do Brasil, mencionou vantagens e desvantagens, deu sua opinião e encerrou com agradecimento. Isso fica claro em trechos como „Ich benutze jeden Tag Instagram“ e „Vielen Dank für Ihre Aufmerksamkeit“.",
+      "tip": "Para desenvolver ainda mais o ponto sobre sua experiência, acrescente um exemplo concreto, como: „Ich benutze Instagram besonders, wenn ich mit meinen Freunden aus anderen Städten sprechen möchte.“",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação segue uma sequência fácil de acompanhar, marcada por „Zuerst erzähle ich von meinen Erfahrungen“ e „am Ende sage ich meine Meinung“. As ideias são claras, mas as ligações entre vantagens e desvantagens poderiam ser mais elaboradas.",
+      "tip": "Use uma estrutura de contraste para ligar os dois lados do tema: „Einerseits kann man schnell Informationen finden, andererseits vergleicht man sich oft mit anderen.“",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como „in Kontakt bleiben“, „Informationen finden“ e „mit anderen vergleichen“. As escolhas são adequadas, embora a apresentação recorra principalmente a palavras e expressões comuns.",
+      "tip": "Amplie o vocabulário com expressões mais específicas, por exemplo, substitua „Man kann schnell Informationen finden“ por „Soziale Medien ermöglichen einen schnellen Zugang zu Informationen.“",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você forma frases claras e usa estruturas como „Ich finde es gut, dass man so in Kontakt bleiben kann“. Porém, há um erro na ordem do verbo na oração com „weil“: „weil ich habe viele Freunde in anderen Städten“.",
+      "tip": "Depois de „weil“, coloque o verbo conjugado no final da oração. Corrija „weil ich habe viele Freunde in anderen Städten“ para „weil ich viele Freunde in anderen Städten habe“.",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; por isso, esta é uma estimativa mais ampla, baseada nos outros aspectos da sua fala.",
+      "tip": "Ao apresentar, articule com clareza palavras importantes para o tema, como „soziale Medien“ e „Aufmerksamkeit“, para que cada palavra seja fácil de entender.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

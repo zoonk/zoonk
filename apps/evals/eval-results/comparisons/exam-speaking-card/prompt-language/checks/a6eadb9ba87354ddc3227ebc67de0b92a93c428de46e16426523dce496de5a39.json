@@ -1,0 +1,15 @@
+{
+  "caseId": "pt-es-dele-b1-continues-presentation",
+  "costUsd": 0,
+  "criteria": [
+    "examFit"
+  ],
+  "name": "code checks",
+  "passed": 3,
+  "problems": [
+    "Prompts have 0 items instead of 1 to 7."
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 4
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Respondes de forma pertinente y enlazas ideas con expresiones como “because I like very much the nature” y “Also I play football on Sundays”. Sin embargo, varias respuestas se quedan en una secuencia breve de ideas y no desarrollan mucho las explicaciones.",
+      "tip": "Después de responder, agrega un motivo y un detalle concreto para desarrollar la idea: “I usually go hiking in the mountains with my friends because it helps me unwind, and we often stop at a viewpoint to take photos.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario pertinente para hablar de viajes y turismo, como “the old part of the city, Alfama” y “the prices of the flats”. Aun así, gran parte del vocabulario es común y algunas descripciones son generales, como “the city is very beautiful”.",
+      "tip": "Cambia una descripción general por una expresión más precisa: en vez de “the city is very beautiful”, prueba “the city is architecturally stunning”.",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Comunicas tus ideas con oraciones sencillas y algunas estructuras más largas, pero aparecen errores frecuentes de concordancia y forma verbal, como “my parents was working”, “we eat a lot of fish” y “the people was very kind”.",
+      "tip": "Con un sujeto plural, usa “were” en vez de “was”: “my parents was working” → “my parents were working”.",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonó tu habla y no muestra señales indirectas claras de problemas de comprensión; por eso, esta estimación más amplia se guía por el nivel que reflejan tus otras respuestas.",
+      "tip": "Para que los nombres y las palabras largas se entiendan con claridad, practica decir “Alfama” en sílabas claras y marca el acento inicial de “tourists”.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

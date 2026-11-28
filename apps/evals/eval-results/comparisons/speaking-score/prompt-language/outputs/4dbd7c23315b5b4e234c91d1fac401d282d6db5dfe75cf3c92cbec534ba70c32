@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "You organize the description in a clear sequence, moving from the family and station to your guesses about their trip, then answering the personal question with a relevant example: “Pero el año pasado viajé en tren por España, de Madrid a Sevilla”. Your links are clear but mostly simple, and you do not say what the family might be talking about.",
+      "tip": "Add a brief inference about the people’s conversation and link it to your description, for example, “Quizá están hablando de a qué hora sale el tren.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "You give connected, understandable ideas, including “Pienso que van a visitar a los abuelos o a la playa.” The transcript cannot show how you sounded, so this is a wider estimate based on the sustained, connected language in your replies.",
+      "tip": "When giving several details, group them into short phrases and keep the key words clear, especially “horarios” and “experiencia,” so the listener can follow your description easily.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Most of your simple sentence structures are well controlled, as in “el año pasado viajé en tren por España.” There is a subject-verb agreement error in “Me gusta mucho los trenes.”",
+      "tip": "With “gustar,” make the verb agree with the thing that is liked: change “Me gusta mucho los trenes” to “Me gustan mucho los trenes.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "You use enough everyday vocabulary to describe the scene and share a personal experience, including “una estación de tren” and “fue una experiencia muy buena.” The vocabulary and structures stay fairly basic, with little elaboration beyond simple details and guesses.",
+      "tip": "Add a more precise detail about the journey, for example, “El trayecto fue tranquilo y pudimos disfrutar del paisaje.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "In this task, you describe the setting, identify the people, give a reason for their likely trip, and connect the topic to your own experience: “viajé en tren por España, de Madrid a Sevilla”. The communication is clear, though the photo description could cover more of the requested details.",
+      "tip": "Before finishing the photo description, include one more detail about what the people may be doing or discussing, such as “Los niños quizá preguntan cuándo van a llegar.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "en-es-dele-a1-introduction",
+  "challenger": {
+    "costUsd": 0.001814,
+    "durationMs": 5076.502292000019,
+    "hash": "7ffbb10537f8ac927bcf622eefe92b0947728f6295cf0bb80e89837b4a3dc02e",
+    "systemPromptHash": "3d8e9864af45fa3e165e2b7a58c1d005778d42802d2d24dac5645f39e8cc2e1b",
+    "userPromptHash": "a21f14d3edaeccad865aee7850813367b4ac7be5edd4ebc500dfc4ea66cb11ba"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

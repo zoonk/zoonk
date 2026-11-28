@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você organiza as ideias com clareza e usa conectores para mostrar contraste e causa, como em “But on the other hand, my job is here” e “because banning it completely is not realistic nowadays.” Algumas respostas poderiam desenvolver mais as consequências e os exemplos, o que limita a continuidade e a elaboração das ideias.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência ou um exemplo específico. Por exemplo: “That can make conversations feel less personal, especially when friends are trying to share important news.”",
+      "bandHigh": 7,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado para falar de tecnologia, relações sociais e escolhas pessoais, como em “I depend on it too much” e “use technology in a responsible way.” Algumas combinações de palavras soam imprecisas, como “the thing I use more in my day”, e há repetição de “use”, o que reduz a flexibilidade lexical.",
+      "tip": "Troque expressões genéricas por combinações mais precisas: em vez de “the thing I use more in my day”, experimente “the device I rely on most throughout the day.”",
+      "bandHigh": 7,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e complexas, incluindo condicionais, orações relativas e modais, como em “Without it, my life would be much more complicated” e “who grew up with this technology.” Há erros em construções como “I use it since I wake up” e “I also use it for pay things”, embora o sentido geral permaneça claro.",
+      "tip": "Para uma rotina diária, use o presente simples com “from ... until”; para indicar a finalidade, use “to” antes do verbo: “I use it from the moment I wake up until I go to sleep” e “I also use it to pay for things.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, orientada pela clareza geral das suas respostas; não há sinais textuais claros de palavras incompreendidas ou pedidos para repetir.",
+      "tip": "Para ajudar o ouvinte a reconhecer as palavras com facilidade, pratique o acento de “technology” na sílaba “NOL” e de “especially” na sílaba “SPESH”, mantendo essas sílabas bem nítidas.",
+      "bandHigh": 7,
+      "bandLow": 6
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

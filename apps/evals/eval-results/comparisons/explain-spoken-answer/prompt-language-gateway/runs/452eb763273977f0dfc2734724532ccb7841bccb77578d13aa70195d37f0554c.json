@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-rent-hent",
+  "challenger": {
+    "costUsd": 0.00021538,
+    "durationMs": 4431.4469579999995,
+    "hash": "833e8d3951a0c9fb90f7d6a8c3a6b4914744870aec6a25a2218229cbd6c27bc2",
+    "systemPromptHash": "21645f133fb76055e1e16c5956ccddff367b5cf87fc5015fb9d826893963a3b9",
+    "userPromptHash": "28f47a25eae24caaee0fc6b1e27db28b06b60cea48090262e054dc417fc3bed1"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00028644999999999994,
+    "durationMs": 3651.1100829999996,
+    "hash": "358d42b869e5ee1ca77aaca31a78c9bc2574e72fe270b3b1ac9e7cad1dd72fb7",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "28f47a25eae24caaee0fc6b1e27db28b06b60cea48090262e054dc417fc3bed1"
+  },
+  "run": 1
+}

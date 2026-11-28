@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas com ideias relacionadas, como “Porque tienen el móvil.”, mas quase não desenvolve as opiniões nem compara os dados da pesquisa com sua própria experiência.",
+      "tip": "Depois de responder, acrescente uma comparação e uma justificativa, por exemplo: “Estoy de acuerdo con el resultado, porque muchos jóvenes prefieren usar el móvil en su tiempo libre.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você transmite algumas respostas curtas, como “No mucho. A veces.”, mas há hesitação em “Eh...” e pouca continuidade entre as ideias. A transcrição não mostra como você soou; por isso, esta é uma estimativa mais ampla também quanto à pronúncia.",
+      "tip": "Antes de responder, organize a ideia em dois blocos, opinião e motivo, e diga ambos em uma sequência, por exemplo: “No leo mucho, porque suelo pasar bastante tiempo con el móvil.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa algumas estruturas simples, como “en Brasil también”, mas aparecem erros em “El móvil es mucho importante” e “Yo no sabo los números”, além de trechos em português como “Eu acho que...”.",
+      "tip": "Para dizer que algo é importante, use “muy” antes do adjetivo, não “mucho”: “El móvil es mucho importante” → “El móvil es muy importante”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “los jóvenes no leen mucho” e “El móvil”, mas as respostas recorrem a palavras e estruturas muito básicas e não apresentam detalhes sobre os resultados.",
+      "tip": "Acrescente vocabulário para explicar tendências e comparar resultados, por exemplo: “Me sorprende que solo una quinta parte lea a diario, mientras que muchos jóvenes prefieren otras actividades.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você responde a perguntas sobre os hábitos de leitura e menciona o Brasil, como em “Sí, en Brasil también.”, mas oferece pouca informação para comparar os resultados, explicar suas opiniões ou manter a conversa.",
+      "tip": "Ao comentar um resultado, diga se concorda, compare-o com sua realidade e explique o motivo, por exemplo: “Estoy de acuerdo con el resultado; en Brasil también muchos jóvenes usan el móvil en lugar de leer.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "coherence",
+  "heard": true
+}

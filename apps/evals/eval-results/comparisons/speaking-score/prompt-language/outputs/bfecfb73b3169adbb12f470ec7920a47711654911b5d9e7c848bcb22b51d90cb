@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa comparativos e formas corretas para explicar motivos, como “it's more personal and relaxed” e “I want to do something with my hands”. As ideias são claras, mas o vocabulário e as estruturas permanecem bastante simples.",
+      "tip": "Acrescente uma expressão mais específica para explicar o contraste: em vez de apenas “meet other people”, você poderia dizer “share ideas and learn from one another”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza a comparação com “In the first photo”, “In the second photo” e “while”, e acrescenta outro ponto com “Also”. Porém, as ideias são apresentadas de forma breve e pouco desenvolvida.",
+      "tip": "Depois de cada comparação, desenvolva a ideia com uma explicação curta, por exemplo: “This could be because learning with a relative feels less formal.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você responde às perguntas com motivos pertinentes e uma preferência clara, como em “I'd prefer pottery, because I spend all day in front of a computer”. A comunicação é coerente, mas as respostas trazem pouco desenvolvimento além das razões principais.",
+      "tip": "Ao dar sua preferência, acrescente um detalhe concreto sobre o que gostaria de aprender, por exemplo: “I'd like to make a bowl that I could use at home.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

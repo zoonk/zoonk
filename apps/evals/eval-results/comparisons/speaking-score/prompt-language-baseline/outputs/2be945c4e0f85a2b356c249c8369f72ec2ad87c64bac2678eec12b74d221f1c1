@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você apresenta os cinco pontos pedidos: introduz o tema, fala de sua experiência e do Brasil, apresenta vantagens, desvantagens e opinião, e encerra agradecendo: “Vielen Dank für Ihre Aufmerksamkeit.” Os tópicos são pertinentes, mas vários recebem pouca explicação ou desenvolvimento.",
+      "tip": "Acrescente uma explicação ou um exemplo concreto a cada ponto. Por exemplo, desenvolva “Viele Kinder haben schon mit zehn Jahren ein Handy” com uma consequência: “Viele Kinder haben schon mit zehn Jahren ein Handy, deshalb lassen sie sich im Unterricht oft ablenken.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A sequência é fácil de acompanhar, e você sinaliza a organização com “Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland”. As ideias seguem uma ordem clara, embora as transições entre os pontos sejam simples.",
+      "tip": "Use uma frase de transição para ligar a situação no Brasil à sua opinião, por exemplo: “Diese Situation zeigt, warum eine zeitliche Begrenzung sinnvoll sein kann.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa palavras pertinentes ao tema, como “Informationen finden und neue Leute kennenlernen” e “vergleicht sich mit anderen”. O vocabulário é claro, mas permanece relativamente simples e apresenta poucos detalhes mais específicos.",
+      "tip": "Substitua uma afirmação geral por uma consequência mais precisa, por exemplo: “Viele Jugendliche vergleichen sich ständig mit anderen, was ihr Selbstwertgefühl beeinträchtigen kann.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas, como “Ich finde es gut, dass man so in Kontakt bleiben kann”, e a maior parte das frases é clara. Há um erro na posição do verbo após “weil”: “weil ich habe viele Freunde in anderen Städten”.",
+      "tip": "Depois de “weil”, o verbo conjugado vai para o fim da oração. Você disse “weil ich habe viele Freunde”; diga “weil ich viele Freunde habe”.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, e não há sinais indiretos claros de dificuldade de compreensão. Por isso, esta é uma estimativa mais ampla, orientada pelos outros aspectos da sua produção.",
+      "tip": "Ao ensaiar, articule com clareza “Jugendliche”, “Informationen” e “Aufmerksamkeit”, para que essas palavras-chave sejam fáceis de reconhecer.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "taskCompletion",
+  "heard": true
+}

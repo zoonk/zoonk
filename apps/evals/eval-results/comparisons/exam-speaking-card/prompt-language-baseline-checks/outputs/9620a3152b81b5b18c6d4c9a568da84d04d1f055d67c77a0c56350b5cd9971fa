@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía durante unos tres minutos.",
+    "Puede utilizar las siguientes preguntas como guía."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o que van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adults in their twenties sitting together at a small outdoor café table on a pedestrian street in Spain. Two women and a man wear casual spring clothes. One woman is serving a slice of cake onto a plate while the others smile and watch. There are cups and plates on the table. Warm late-afternoon sunlight, natural expressions, no visible text, signs, logos or screens.",
+      "alt": "Três jovens em uma mesa de café ao ar livre, compartilhando um pedaço de bolo."
+    }
+  ],
+  "summary": "Você vai descrever uma fotografia, usando as perguntas como guia. A examinadora vai ouvir sua descrição sem interromper.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction, then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask questions, correct, praise or grade. At the end, say: «Muchas gracias. La tarea ha terminado».",
+  "openingLine": "Ahora va a describir la fotografía. Puede utilizar las preguntas como guía. Tiene unos tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía hay varias personas.",
+    "Creo que están en un lugar público.",
+    "Me parece que se conocen.",
+    "Creo que están contentos porque sonríen.",
+    "Después van a hacer otra cosa."
+  ]
+}

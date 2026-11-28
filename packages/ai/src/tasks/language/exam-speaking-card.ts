@@ -8,7 +8,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { formatCast } from "../_utils/cast";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import taskPrompt from "./exam-speaking-card.prompt.md";
 import {
@@ -105,7 +105,7 @@ export type GenerateExamSpeakingCardParams = {
 function buildSystemPrompt(params: GenerateExamSpeakingCardParams): string {
   const { role, stimulus } = params.task;
 
-  return selectPromptVariants({
+  const template = selectPromptVariants({
     template: taskPrompt,
     variants: {
       continues: Boolean(params.previous),
@@ -117,6 +117,11 @@ function buildSystemPrompt(params: GenerateExamSpeakingCardParams): string {
       text: stimulus === "text",
     },
   });
+
+  return fillPromptLanguages({ learnerLanguage: params.learnerLanguage, template }).replaceAll(
+    "{{TARGET_LANGUAGE}}",
+    () => SPEAKING_EXAM_VARIETIES[params.exam],
+  );
 }
 
 function formatPrevious(previous: PreviousCard): string {

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You keep your answers on topic and connect ideas with phrases such as “because it is cheaper for the companies” and “Now I can sleep longer.” Your longer answer covers the change and its effects, but most responses stay fairly brief and the ideas are linked with a limited range of connectors.",
+      "tip": "Build one answer step further by linking an effect to a specific example: instead of stopping at “I have more time for my family,” try “I have more time for my family, so we can eat dinner together on weekdays.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant words and phrases such as “more relaxed,” “for running in the forest,” and “in the factory.” Much of the vocabulary is simple or general, as in “the team is nice” and “stay very long in the office,” which limits precision and variety.",
+      "tip": "Replace general descriptions with more precise collocations: instead of “the team is nice,” try “I work with a supportive team, which makes the long hours easier to manage.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use clear simple sentences and some longer structures, including “Sometimes I must stay very long in the office and then I have no time for sport.” However, several forms are inaccurate, including “I am working here since three years” and “I must not wear a tie at home.”",
+      "tip": "Use the present perfect continuous with “for” to describe an activity that began in the past and continues now: “I am working here since three years” becomes “I have been working here for three years.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on the levels suggested by your other criteria; it provides no clear sign of words being misunderstood or needing repetition.",
+      "tip": "For clarity, make the syllables in “possibility” distinct and stress “bil”: pos-si-BIL-i-ty.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as ideias com clareza e usa conectores para organizar e contrastar pontos, como em “On top of that” e “although I can see why a small business couldn't justify it”. Algumas respostas, porém, ficam compactas e poderiam avançar um pouco mais com um exemplo ou consequência.",
+      "tip": "Depois de apresentar uma proposta, acrescente uma consequência concreta para desenvolvê-la: “That way, employees could pursue a skill they genuinely care about without creating an open-ended cost for the company.”",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário variado e preciso, incluindo expressões naturais como “eat into the time” e “spilled over into other areas of my life”. Para chegar a uma faixa mais alta, poderia mostrar essa mesma flexibilidade lexical de forma ainda mais consistente em respostas de diferentes temas.",
+      "tip": "Para dar mais precisão à ideia de progresso lento, você pode ampliar “patient with slow progress” para “patient through painstakingly slow progress”.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e complexas com bom controle, por exemplo em “I decided I needed something that had nothing to do with screens”. Ainda aparecem alguns deslizes, como a falta do artigo em “I work as data analyst” e a discordância em “A lot of them could easily have been an email”.",
+      "tip": "Antes de uma profissão contável no singular, use “a” ou “an”: “I work as data analyst” → “I work as a data analyst.”",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou; como não há sinais indiretos de falhas de compreensão, esta faixa mais ampla acompanha a estimativa dos outros critérios.",
+      "tip": "Para ajudar o ouvinte a reconhecer palavras longas, marque a sílaba tônica em “unforgiving” (GIV) e “allowance” (LOW).",
+      "bandHigh": 8,
+      "bandLow": 7
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

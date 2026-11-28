@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You keep your answers on topic and link ideas with reasons, as in “Yes, I think so, because it is cheaper for the companies.” The answers are mostly brief, with little development beyond the main point.",
+      "tip": "After giving a reason, add a specific consequence: “Because I save time commuting, I can spend more evenings with my family.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant words for work and daily life, including “engineer,” “team,” and “running in the forest.” Much of the vocabulary is general, and some phrasing is imprecise, such as “stay very long in the office.”",
+      "tip": "Choose a more precise phrase for working extra hours: replace “stay very long in the office” with “work overtime.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You communicate with mostly simple sentences, but some forms are inaccurate, as in “I am working here since three years” and “I must not wear a tie at home.”",
+      "tip": "For an action that started in the past and continues, use the present perfect continuous with “for”: change “I am working here since three years” to “I’ve been working here for three years.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate centered on the other criteria; the words on the page do not prove how clearly they were spoken.",
+      "tip": "Use clear word stress so key terms are easy to understand, especially “engineer” and “possibility.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

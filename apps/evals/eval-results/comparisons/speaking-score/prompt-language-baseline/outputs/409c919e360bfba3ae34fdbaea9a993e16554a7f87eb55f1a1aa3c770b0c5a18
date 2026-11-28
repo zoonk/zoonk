@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "You organize the photo description and your personal response in a clear sequence, linking ideas with phrases such as “porque seguramente van de vacaciones” and “Pero el año pasado viajé en tren por España”. The ideas are mostly connected in a simple, linear way.",
+      "tip": "Make the links between your observations more explicit by adding a short explanation, for example: “Como llevan una maleta grande, parece que van a pasar varios días fuera”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate. Your ideas progress through connected phrases such as “Es por la mañana, porque hay mucha luz” and “Pero el año pasado viajé en tren por España”, with no clear sign in the transcript of communication breaking down.",
+      "tip": "Group the description into short idea units and pause briefly between them, for example: “En la foto hay una familia en una estación. Parece que van de vacaciones”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Most of your sentences use simple structures clearly, as in “El año pasado viajé en tren por España”. There is a subject-verb agreement error in “Me gusta mucho los trenes”, which keeps your control from being fully consistent.",
+      "tip": "With gustar, make the verb agree with the thing that is liked: “Me gusta mucho los trenes” → “Me gustan mucho los trenes”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "range",
+      "evidence": "You use enough everyday vocabulary to describe the scene and share an experience, including “una estación de tren”, “los horarios” and “fue una experiencia muy buena”. Your descriptions and opinions stay fairly simple, with limited elaboration.",
+      "tip": "Add a few more precise details about the scene, for example: “La familia parece estar esperando junto al andén antes de subir al tren”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "You address the main parts of the task by describing the family and connecting the photo to your own travel experience: “Creo que son los padres y dos niños” and “viajé en tren por España, de Madrid a Sevilla”. Your communication is clear, though the description and personal response remain brief and straightforward.",
+      "tip": "Connect your personal experience back to the scene and explain your view, for example: “Como ellos, yo también viajé con una maleta; el tren me pareció cómodo porque pude disfrutar del paisaje”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

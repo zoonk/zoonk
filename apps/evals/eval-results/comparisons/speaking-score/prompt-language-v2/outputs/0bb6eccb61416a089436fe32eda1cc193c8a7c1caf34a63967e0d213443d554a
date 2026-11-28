@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas com ideias compreensíveis, como “Porque tienen el móvil”, mas suas respostas são muito curtas e pouco conectadas, então ainda não desenvolve uma comparação ou mantém a conversa com autonomia.",
+      "tip": "Depois de responder, acrescente uma comparação e uma justificativa usando conectores: “En mi país ocurre algo parecido, aunque creo que los jóvenes leen menos porque pasan mucho tiempo con el móvil.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "As respostas são breves, como “No mucho. A veces”, e há uma hesitação inicial em “Eh... los jóvenes no leen mucho”. O transcript não permite avaliar como você soou, então esta estimativa é mais ampla e considera também a brevidade e a simplicidade das suas falas.",
+      "tip": "Ao dizer “El móvil es mucho importante para ellos”, faça uma pausa breve entre as ideias e articule cada palavra com clareza; use a forma “El móvil es muy importante para ellos.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você forma frases simples compreensíveis, como “Los jóvenes no leen mucho”, mas há erros recorrentes, como “El móvil es mucho importante” e “Yo no sabo los números”.",
+      "tip": "Para intensificar um adjetivo, use “muy” antes dele, não “mucho”: “El móvil es mucho importante” passa a “El móvil es muy importante”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário básico relacionado ao tema, como “los hábitos de lectura” e “El móvil”, mas não amplia muito as opiniões ou as comparações; também aparecem trechos em português, como “Eu acho que” e “Muito legal”.",
+      "tip": "Acrescente expressões para dar uma opinião mais precisa sobre os dados: “Me sorprende que solo un veinte por ciento lea a diario, porque hoy en día el móvil compite con los libros.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você responde a perguntas sobre os dados, o seu país e os próprios hábitos, por exemplo, “Sí, en Brasil también”, mas oferece pouca elaboração e não explica com clareza em que concorda ou discorda dos resultados.",
+      "tip": "Quando comparar os resultados com o seu país, diga primeiro se concorda e depois explique por quê: “Coincido con los resultados, porque muchos jóvenes prefieren usar el móvil en su tiempo libre.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

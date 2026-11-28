@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas com clareza e mantém o foco, por exemplo ao explicar que aprender cello “taught me to be patient with slow progress, which has spilled over into other areas of my life”. Conectores como “On top of that” e “although” ajudam a organizar as ideias, embora algumas respostas pudessem explorar um pouco mais as consequências dos pontos apresentados.",
+      "tip": "Para desenvolver ainda mais uma resposta, acrescente uma consequência ao motivo apresentado. Depois de explicar por que falta tempo, você poderia dizer: “As a result, people may struggle to maintain a consistent practice routine.”",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário preciso e expressões naturais, como “eat into the time” e “the intonation is so unforgiving”. Para chegar mais alto, poderia variar ainda mais as escolhas de palavras ao desenvolver os argumentos, em vez de depender principalmente de formulações diretas.",
+      "tip": "Para tornar a proposta sobre benefícios mais específica, substitua “a modest allowance” por “a modest learning stipend”, que nomeia com mais precisão o tipo de apoio.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e complexas com boa precisão, como em “I'd argue it can pay off, since people who are learning something tend to be more engaged overall”. Há alguns deslizes pontuais: “I work as data analyst” precisa de artigo, e “A lot of them could easily have been an email” apresenta uma incompatibilidade entre o plural “them” e o singular “an email”.",
+      "tip": "Em inglês, um cargo no singular normalmente precisa de artigo: “I work as data analyst” → “I work as a data analyst”.",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, baseada nos outros critérios. Suas respostas bem construídas apontam para uma faixa semelhante, mas o texto não permite confirmar a facilidade com que um ouvinte entendeu cada palavra.",
+      "tip": "Ao dizer “intonation” e “unforgiving”, marque claramente a sílaba tônica para ajudar o ouvinte a reconhecer as palavras sem esforço.",
+      "bandHigh": 8,
+      "bandLow": 7
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobre bem as cinco partes da apresentação: introduz o tema e a estrutura, fala da própria experiência e do Brasil, compara vantagens e desvantagens, dá sua opinião e encerra com agradecimento, como em “Meiner Meinung nach ist eine Mischung am besten” e “Vielen Dank fürs Zuhören.”",
+      "tip": "Para desenvolver ainda mais a apresentação, acrescente um exemplo concreto a uma das ideias, por exemplo: “Zum Beispiel kann man mit einem Online-Kurs jeden Monat viel Geld sparen.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A sequência é clara e bem conectada por marcadores como “Zuerst”, “danach”, “anschließend” e “zum Schluss”; a comparação também avança de forma lógica em “Ein großer Vorteil ist, dass man flexibel ist und Geld spart.”",
+      "tip": "Torne mais explícita a passagem da situação no Brasil para a comparação, usando uma ponte como: “Vor diesem Hintergrund möchte ich nun die Vor- und Nachteile vergleichen.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema e consegue falar de experiência, acesso e aprendizagem, por exemplo, “Vollzeit arbeite” e “die einzige Möglichkeit, eine Fremdsprache zu lernen”. A escolha de palavras é clara, mas a apresentação ainda usa sobretudo expressões comuns e desenvolve pouco os pontos.",
+      "tip": "Substitua uma expressão geral por uma formulação mais específica, por exemplo, desenvolva “Ein großer Vorteil ist, dass man flexibel ist” para “Ein großer Vorteil ist die zeitliche Flexibilität, weil man den Unterricht an den eigenen Alltag anpassen kann.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você controla bem estruturas variadas, incluindo orações subordinadas com “weil” e “damit”, além de uma oração relativa em “in einem Kurs, in dem der Lehrer einen direkt korrigiert”. Também constrói comparações e expressa opinião sem erros evidentes.",
+      "tip": "Para variar a forma de expressar consequência, use “sodass” e coloque o verbo no fim da oração: “Viele Leute wohnen weit weg von großen Städten, sodass das Internet für sie oft die einzige Möglichkeit ist.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; como não há sinais indiretos de dificuldade de compreensão, esta é uma estimativa mais ampla, alinhada ao desempenho linguístico observado.",
+      "tip": "Ao apresentar, articule com clareza palavras-chave como “Möglichkeit”, “korrigiert” e “Präsentation”, para que o público acompanhe facilmente as ideias principais.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

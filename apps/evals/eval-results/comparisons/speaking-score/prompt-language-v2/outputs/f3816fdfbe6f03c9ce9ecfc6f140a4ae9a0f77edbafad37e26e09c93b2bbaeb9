@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza as propostas com contrastes e justificativas, por exemplo, “Por un lado” e “Sin embargo”, e responde às perguntas sobre a melhor opção e a situação no seu país. A discussão poderia desenvolver mais as propostas e as relações entre elas.",
+      "tip": "Depois de apresentar uma vantagem e uma desvantagem, explique a consequência para a cidade. Por exemplo: “Aunque cerrar el centro los domingos puede molestar a algunos vecinos, también reduciría el ruido y la contaminación.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você expressa suas ideias em sequências compreensíveis, como “Sin duda, abaratar el transporte público” e “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, baseada no encadeamento das suas respostas.",
+      "tip": "Ao apresentar os pontos principais, articule com clareza expressões como “transporte público” e “contaminación”, para que suas ideias sejam fáceis de acompanhar.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa estruturas variadas, como “Si se invirtiera más en transporte, el tráfico mejoraría mucho”, mas há erros de concordância e de hipótese em “la gente están dispuesta” e “Si tendría más tiempo”.",
+      "tip": "Em uma condição hipotética com «si», use o imperfeito do subjuntivo nessa oração e o condicional na consequência: “Si tuviera más tiempo, explicaría también la de los aparcamientos en las afueras.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você apresenta opiniões e razões sobre o tema com expressões como “perjudica a las personas que tienen menos dinero” e “el tráfico mejoraría mucho”. O vocabulário e as estruturas usados são adequados, mas a variedade mostrada permanece relativamente simples.",
+      "tip": "Amplie a descrição dos efeitos usando vocabulário mais específico sobre mobilidade urbana. Por exemplo: “Abaratar el transporte público podría reducir la congestión y mejorar la calidad del aire.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você compara propostas, escolhe uma e justifica sua opinião, além de descrever diferenças entre São Paulo e cidades menores: “En cambio, en ciudades más pequeñas se puede ir andando a casi todos los sitios”. A comunicação cumpre os pontos centrais, embora alguns argumentos pudessem ser mais desenvolvidos.",
+      "tip": "Ao falar da situação no seu país, acrescente uma consequência concreta à comparação entre cidades. Por exemplo: “A diferencia de São Paulo, donde los atascos pueden durar horas, en las ciudades pequeñas caminar facilita los desplazamientos diarios.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

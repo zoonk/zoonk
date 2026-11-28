@@ -11,7 +11,7 @@ import {
   addressFormTemplate,
   getAddressFormPrompt,
 } from "../_utils/address-form";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type ConversationTurn,
@@ -95,7 +95,12 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  */
 export async function writeConversationFeedback(params: WriteConversationFeedbackParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`;
+
+  const systemPrompt = fillPromptLanguages({
+    ...params,
+    template: `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`,
+  });
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

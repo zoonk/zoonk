@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa estruturas e vocabulário adequados ao tema, por exemplo, “Eating well is essential”. Alguns erros de forma, como “more easy” e “depends of”, reduzem a precisão.",
+      "tip": "Em comparações com adjetivos curtos, acrescente “-er”: “more easy” → “easier”. Depois de “depend”, use “on”: “depends of your routine” → “depends on your routine”.",
+      "bandHigh": 3,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza suas ideias com conectores como “On the other hand” e “So”, e mantém as respostas relevantes ao tema. Poderia desenvolver um pouco mais as razões para suas opiniões, em vez de passar rapidamente de uma ideia à outra.",
+      "tip": "Depois de dar uma opinião, acrescente uma razão ou um exemplo: “I think spending time outdoors is important because it can help people feel less stressed.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, baseada nos outros aspectos do seu desempenho. Não há sinais claros no texto que indiquem dificuldades de compreensão.",
+      "tip": "Para deixar a fala mais fácil de acompanhar, destaque a sílaba tônica de “concentrate”: con-CEN-trate.",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde ao que a outra pessoa diz, pergunta “What do you think about sleep?” e propõe uma escolha com “Shall we decide?”. Para desenvolver ainda mais a interação, poderia explorar mais as opiniões da outra pessoa antes de concluir.",
+      "tip": "Depois de ouvir uma opinião, faça uma pergunta curta para desenvolver a conversa: “You said sleep is underrated. Why do you think students don’t get enough?”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você comunica suas opiniões com clareza sobre vários aspectos do tema, como em “When I don't sleep well, I can't concentrate at all”. A mensagem é coerente, embora alguns erros gramaticais e o desenvolvimento breve das ideias limitem a precisão e a elaboração.",
+      "tip": "Para tornar suas contribuições mais completas, combine opinião, justificativa e consequência: “I’d choose sleep because it helps people concentrate, which is especially important for students.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-missed-word",
+  "challenger": {
+    "costUsd": 0.0000669,
+    "durationMs": 1584.5486669999955,
+    "hash": "932137fb57151772abe5141f97c6296831e4a2dcd622614160624153bda835ca",
+    "systemPromptHash": "a99c6bef839c7815137643bfd8344eb2030ea796776364f91b85aab2d38d7bc5",
+    "userPromptHash": "91fc867b3c29a63c2439d18fdd75100e3ec5d1c0a9bfd2ff5692245a1894b377"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00013412,
+    "durationMs": 2751.916207999995,
+    "hash": "926ca97f9874f6e5bbeb580a70bbb61647e48ad65a2146bc751ef27503f3bea4",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "91fc867b3c29a63c2439d18fdd75100e3ec5d1c0a9bfd2ff5692245a1894b377"
+  },
+  "run": 2
+}

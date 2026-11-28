@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You keep your answers relevant and connect the steps in your story with “She showed me step by step, and then I watched videos in the evening.” Some answers are brief, and the ideas rely on straightforward links such as “On the other hand,” rather than developing a wider range of connections.",
+      "tip": "Extend a point with a consequence or example. After “sharing food is a way to understand another culture,” you could add, “For example, learning the stories behind a dish helps me understand the traditions it comes from.”",
+      "bandHigh": 7,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some expressive and topic-specific language, including “it was a steep learning curve” and “I feel more confident with the patients.” Much of your other wording is familiar and general, such as “amazing dishes” and “useful for everybody,” which limits precision and variety.",
+      "tip": "Replace a general adjective with a more precise one. Instead of “amazing dishes,” try “aromatic, spice-rich dishes.”",
+      "bandHigh": 7,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You attempt longer sentences with clauses, as in “I wanted to learn it because I think sharing food is a way to understand another culture.” However, several common forms are inaccurate, including “I am doing this job since two years,” “I am agree with that,” and “It depends of the skill.”",
+      "tip": "For something that started in the past and continues now, use the present perfect with “for” plus a duration: “I am doing this job since two years” becomes “I've been doing this job for two years.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on your other criteria; it contains no clear sign that a listener had trouble understanding you.",
+      "tip": "Make the stressed syllables clear so key words are easy to catch, especially “overwhelming,” “spices,” and “culture.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

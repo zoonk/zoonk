@@ -1,0 +1,412 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-es-dele-b2-proposals",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-es-dele-a2-photo",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-fr-delf-b2-document",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-es-dele-b2-survey",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-de-goethe-b1-plan-together",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "es-en-cambridge-b2-collaborative",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-cambridge-b2-long-turn-photos",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-es-dele-b1-continues-presentation",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-es-dele-a2-role-play-continues-photo",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-dele-b1-photo",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-dele-a1-introduction",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-de-goethe-a2-plan-diary",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-fr-delf-a2-role-play",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "insufficient evidence",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "Some runs are missing a matched output.",
+  "rows": [
+    {
+      "attempted": 0,
+      "casesByLanguage": {
+        "pt": 8,
+        "es": 1,
+        "en": 4
+      },
+      "costPer1000": null,
+      "date": "2026-11-28T13:24:14.401Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        },
+        "es": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        },
+        "en": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        }
+      },
+      "losses": 0,
+      "missingMatches": 26,
+      "p50": null,
+      "p95": null,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "check": true,
+          "criterion": "examFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "en",
+          "weight": 1
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 0,
+      "ties": 0,
+      "unresolved": 13,
+      "weightedMajorsByLanguage": {
+        "pt": 0,
+        "es": 0,
+        "en": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 26,
+      "casesByLanguage": {
+        "pt": 8,
+        "es": 1,
+        "en": 4
+      },
+      "costPer1000": null,
+      "date": "2026-11-28T13:24:14.401Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        },
+        "es": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        },
+        "en": {
+          "costPer1000": null,
+          "p50": null,
+          "p95": null,
+          "successful": 0
+        }
+      },
+      "losses": 0,
+      "missingMatches": 26,
+      "p50": null,
+      "p95": null,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-es-dele-b1-continues-presentation",
+              "run": 1
+            }
+          ],
+          "both": [],
+          "check": true,
+          "criterion": "examFit",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "examFit",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "material",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "script",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "languages",
+          "language": "en",
+          "weight": 1
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 26,
+      "ties": 0,
+      "unresolved": 13,
+      "weightedMajorsByLanguage": {
+        "pt": 1,
+        "es": 0,
+        "en": 0
+      },
+      "wins": 0
+    }
+  ]
+}

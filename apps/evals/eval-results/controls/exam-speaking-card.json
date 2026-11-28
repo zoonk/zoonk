@@ -1,0 +1,28 @@
+{
+  "pairs": [
+    {
+      "input": {
+        "exam": "dele",
+        "learnerLanguage": "pt",
+        "level": "A2",
+        "paper": "Prueba 4: Expresión e interacción orales",
+        "previous": null,
+        "task": {
+          "brief": "The candidate describes a photo, guided by about six questions: who the people are, the place, what they're doing, their relationship, how they feel, and what happened before or comes next. The examiner gives the instruction, then listens without intervening.",
+          "minutes": 3,
+          "name": "Tarea 2: Descripción de una fotografía",
+          "role": "examiner",
+          "stimulus": "photos"
+        },
+        "title": "DELE A2"
+      },
+      "expectations": "DELE A2 Task 2 for a Brazilian candidate: one photo scene in English of an everyday moment with people (who, what they wear, what they do, where, the light) and nothing to read in it, its alt in Brazilian Portuguese, and about six guiding questions in simple Spain Spanish (who the people are, the place, what they're doing, how they feel, what happened before). The examiner gives the instruction and listens.",
+      "clean": "{\n  \"instructions\": [\n    \"Describa la fotografía durante unos tres minutos.\",\n    \"Puede utilizar las siguientes preguntas como guía.\"\n  ],\n  \"prompts\": [\n    \"¿Quiénes son las personas?\",\n    \"¿Dónde están?\",\n    \"¿Qué están haciendo?\",\n    \"¿Qué relación cree que tienen?\",\n    \"¿Cómo cree que se sienten?\",\n    \"¿Qué cree que han hecho antes o que van a hacer después?\"\n  ],\n  \"text\": null,\n  \"table\": null,\n  \"photos\": [\n    {\n      \"scene\": \"A realistic photograph of three adults in their twenties sitting together at a small outdoor café table on a pedestrian street in Spain. Two women and a man wear casual spring clothes. One woman is serving a slice of cake onto a plate while the others smile and watch. There are cups and plates on the table. Warm late-afternoon sunlight, natural expressions, no visible text, signs, logos or screens.\",\n      \"alt\": \"Três jovens em uma mesa de café ao ar livre, compartilhando um pedaço de bolo.\"\n    }\n  ],\n  \"summary\": \"Você vai descrever uma fotografia, usando as perguntas como guia. A examinadora vai ouvir sua descrição sem interromper.\",\n  \"character\": {\n    \"name\": \"Andrea\",\n    \"role\": \"examinadora\",\n    \"place\": \"Sala de examen\"\n  },\n  \"characterBrief\": \"You are the examiner. Give the opening instruction, then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask questions, correct, praise or grade. At the end, say: «Muchas gracias. La tarea ha terminado».\",\n  \"openingLine\": \"Ahora va a describir la fotografía. Puede utilizar las preguntas como guía. Tiene unos tres minutos. Puede empezar cuando quiera.\",\n  \"hints\": [\n    \"En la fotografía hay varias personas.\",\n    \"Creo que están en un lugar público.\",\n    \"Me parece que se conocen.\",\n    \"Creo que están contentos porque sonríen.\",\n    \"Después van a hacer otra cosa.\"\n  ]\n}",
+      "flawed": "{\n  \"instructions\": [\n    \"Describa la fotografía durante unos tres minutos.\",\n    \"Puede utilizar las siguientes preguntas como guía.\"\n  ],\n  \"prompts\": [\n    \"¿Quiénes son las personas?\",\n    \"¿Dónde están?\",\n    \"¿Qué están haciendo?\",\n    \"¿Qué relación cree que tienen?\",\n    \"¿Cómo cree que se sienten?\",\n    \"¿Qué cree que han hecho antes o que van a hacer después?\"\n  ],\n  \"text\": null,\n  \"table\": null,\n  \"photos\": [\n    {\n      \"scene\": \"A realistic photograph of three adults in their twenties sitting together at a small outdoor café table on a pedestrian street in Spain. Two women and a man wear casual spring clothes. One woman is serving a slice of cake onto a plate while the others smile and watch. There are cups and plates on the table. Warm late-afternoon sunlight, natural expressions, no visible text, signs, logos or screens.\",\n      \"alt\": \"Três jovens em uma mesa de café ao ar livre, compartilhando um pedaço de bolo.\"\n    }\n  ],\n  \"summary\": \"Va a describir una fotografía, usando las preguntas como guía. La examinadora va a escuchar su descripción sin interrumpir.\",\n  \"character\": {\n    \"name\": \"Andrea\",\n    \"role\": \"examinadora\",\n    \"place\": \"Sala de examen\"\n  },\n  \"characterBrief\": \"You are the examiner. Give the opening instruction, then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask questions, correct, praise or grade. At the end, say: «Muchas gracias. La tarea ha terminado».\",\n  \"openingLine\": \"Ahora va a describir la fotografía. Puede utilizar las preguntas como guía. Tiene unos tres minutos. Puede empezar cuando quiera.\",\n  \"hints\": [\n    \"En la fotografía hay varias personas.\",\n    \"Creo que están en un lugar público.\",\n    \"Me parece que se conocen.\",\n    \"Creo que están contentos porque sonríen.\",\n    \"Después van a hacer otra cosa.\"\n  ]\n}",
+      "criterion": "languages",
+      "defect": "The summary for a Brazilian Portuguese learner is written in Spanish, the exam's language, instead of Portuguese.",
+      "falseAllegation": "The clean photo alt is written in Spanish instead of Portuguese.",
+      "provenance": "Saved eval output for a synthetic eval case; the flawed side rewrites one learner-facing field in the wrong language by hand."
+    }
+  ]
+}

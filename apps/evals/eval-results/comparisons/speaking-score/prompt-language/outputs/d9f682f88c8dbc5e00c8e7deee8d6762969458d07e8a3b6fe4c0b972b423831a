@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu exatamente “The library opens at eight”, mas, em “Please show your student card at the door”, disse “Please show your card in the door”, alterando palavras e preposição. Nas frases mais longas, perdeu partes importantes, como em “Students who want a group room... reserve online... one day.”",
+      "tip": "Agrupe a frase em blocos curtos para guardar a ordem e os detalhes: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você respondeu às perguntas e apresentou uma razão para sua opinião, como em “Because students don't have much money.” Porém, várias respostas ficaram em frases muito curtas, como “Maybe more bicycle. Or electric car. I don't know.”",
+      "tip": "Depois da sua opinião, acrescente um efeito ou exemplo concreto: em vez de parar em “Bus is expensive”, desenvolva: “A free pass would help students save money and get to class reliably.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usou estruturas simples para comunicar ideias, mas houve problemas com verbos e frases completas: “Is about thirty minutes” não tem sujeito, e “I arrive late in the class” não mantém o passado da história. Isso torna algumas respostas menos claras e precisas.",
+      "tip": "Em inglês, uma frase precisa de sujeito antes do verbo: transforme “Is about thirty minutes” em “It is about thirty minutes.”",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usou palavras relevantes ao tema, como “bus”, “expensive” e “electric car”, e conseguiu indicar opções de transporte. Ainda assim, as respostas recorrem a vocabulário básico e pouco desenvolvido, como em “Maybe more bicycle.”",
+      "tip": "Use expressões mais precisas para falar de transporte: em vez de “the bus is broken”, diga “the bus broke down” para explicar que o ônibus teve uma pane.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla; não há nela um pedido para repetir nem outra indicação direta de dificuldade de compreensão. Pelo texto, suas respostas curtas, como “I go by bus”, oferecem poucos dados sobre ritmo e entonação.",
+      "tip": "Ao dizer “I go by bus”, destaque “bus” e faça uma pausa breve antes de acrescentar a duração, para que a informação principal fique fácil de acompanhar.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

@@ -1,0 +1,31 @@
+{
+  "instructions": [
+    "Usted y una amiga van a hacer un paseo en bicicleta por Sevilla. Su amiga es la examinadora.",
+    "Hable con ella para organizar el paseo durante unos cuatro minutos."
+  ],
+  "prompts": [
+    "Decidan qué día y a qué hora van a salir.",
+    "Elijan un lugar para encontrarse y alquilar las bicicletas.",
+    "Hablen de los lugares que quieren visitar.",
+    "Decidan qué van a llevar.",
+    "Elijan dónde y cuándo van a descansar."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com uma amiga, interpretada pela examinadora, para organizar um passeio de bicicleta.",
+  "character": {
+    "name": "Andrea",
+    "role": "amiga",
+    "place": "Una plaza de Sevilla"
+  },
+  "characterBrief": "Play Andrea, the candidate's friend. You are planning a bicycle ride in Seville together. Begin with the opening line. Follow the candidate's answers and ask these questions naturally, in order, skipping or adapting anything already discussed: «¿Qué día te viene bien? ¿A qué hora podemos salir?», «¿Dónde quedamos? ¿Alquilamos las bicicletas cerca de allí?», «¿Qué lugares quieres visitar?», «¿Qué podemos llevar para el paseo?», «¿Dónde podemos parar a descansar? ¿A qué hora?». Offer simple suggestions when useful: «Podemos pasar por el parque de María Luisa», «Yo puedo llevar agua» or «Podemos descansar en una terraza». React to the candidate's choices with «Sí, me parece bien» or, if suggesting an alternative, «¿Y si vamos un poco más tarde?». If an answer is short, use one or two follow-ups: «¿Por qué prefieres ese lugar?» and «¿Qué otra cosa podemos hacer?». Improvise briefly from the candidate's answers and allow them to ask you questions. Keep the exchange going for about four minutes, then close with «Entonces, ya tenemos un plan. Hasta pronto». Never correct, praise or grade.",
+  "openingLine": "Vamos a organizar un paseo en bicicleta por Sevilla. ¿Qué día te viene bien?",
+  "hints": [
+    "Déjame pensar un momento.",
+    "Para mí, es mejor así porque es más cómodo.",
+    "Sí, me parece una buena idea.",
+    "No estoy muy seguro. ¿Y si hacemos otra cosa?",
+    "¿Qué prefieres tú?"
+  ]
+}

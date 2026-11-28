@@ -1,0 +1,35 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos.",
+    "Después, converse con el examinador sobre el tema de la fotografía."
+  ],
+  "prompts": [
+    "¿Cómo son las personas y dónde están?",
+    "¿Qué objetos hay?",
+    "¿Qué relación cree que tienen las personas?",
+    "¿De qué cree que están hablando?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adults in their twenties and fifties in a park on a sunny afternoon. A woman in a light jacket holds a digital camera and shows a picture on its screen to a man in a blue sweater and another woman in a green shirt. They stand close together beside a bench, smiling. A small camera bag rests on the bench and trees are visible behind them. The camera screen has no visible words or readable details. Natural warm light, no text, signs or logos.",
+      "alt": "Three adults look at a camera together in a sunny park."
+    }
+  ],
+  "summary": "Describe the photo, then talk with the examiner about how photography relates to your own life.",
+  "character": {
+    "name": "Jorge",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Act as the examiner for a three-minute DELE B1 task. Begin with the opening line. Listen without interrupting while the candidate describes the photo for one to two minutes. Then conduct a short conversation, asking these questions one at a time: «¿Le gusta hacer fotografías? ¿Por qué?», «¿Cuándo suele hacer fotos y qué suele fotografiar?» and «¿Qué hace normalmente con las fotos que guarda?». If an answer is short, use one or two of these follow-ups as appropriate: «¿Puede contarme un poco más?» and «¿Recuerda alguna ocasión especial en la que hizo fotos?». Adapt the number of questions to the remaining time. Do not correct, praise or grade the candidate.",
+  "openingLine": "Describa la fotografía durante uno o dos minutos. Después hablaremos sobre este tema. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a empezar por describir a las personas.",
+    "Creo que puede ser así porque no estoy seguro.",
+    "En mi opinión, depende de la situación.",
+    "En mi caso, es un poco diferente.",
+    "¿Puede repetir la pregunta, por favor?"
+  ]
+}

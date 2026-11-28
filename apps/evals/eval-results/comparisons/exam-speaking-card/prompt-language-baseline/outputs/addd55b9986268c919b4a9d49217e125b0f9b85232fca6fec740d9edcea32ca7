@@ -1,0 +1,62 @@
+{
+  "instructions": [
+    "Sie möchten mit Ihrer Partnerin in die Bibliothek gehen und Bücher ausleihen.",
+    "Finden Sie zusammen einen Termin. Sie haben etwa 5 Minuten Zeit."
+  ],
+  "prompts": [
+    "Wann haben Sie Zeit?",
+    "Machen Sie einen Vorschlag.",
+    "Reagieren Sie auf die Vorschläge Ihrer Partnerin.",
+    "Einigen Sie sich auf eine Uhrzeit."
+  ],
+  "text": null,
+  "table": {
+    "title": "Ihr Kalender für Samstag",
+    "columns": [
+      "Uhrzeit",
+      "Ihr Termin"
+    ],
+    "rows": [
+      [
+        "10:00 bis 11:00",
+        "Deutschkurs"
+      ],
+      [
+        "11:00 bis 12:00",
+        "frei"
+      ],
+      [
+        "12:00 bis 13:00",
+        "Mittagessen mit Anna"
+      ],
+      [
+        "13:00 bis 14:00",
+        "Einkaufen"
+      ],
+      [
+        "14:00 bis 15:00",
+        "frei"
+      ],
+      [
+        "15:00 bis 16:00",
+        "Sport"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Find a time to go to the library together by comparing your schedule with another candidate’s. Ask questions, make suggestions, and agree on a time.",
+  "character": {
+    "name": "Ida",
+    "role": "other candidate",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Your private calendar for the same Saturday is: 10:00–11:00 free, 11:00–12:00 an appointment, 12:00–13:00 free, 13:00–14:00 a language course, 14:00–15:00 free, 15:00–16:00 music class. Do not reveal the whole calendar at once. Speak about half the time in turns of one to three short sentences, ask the candidate's opinion and react to their answers. Use lines such as: ‘Um zehn Uhr habe ich Zeit. Wie ist es bei dir?’, ‘Um elf Uhr habe ich leider einen Termin.’, ‘Um zwölf Uhr bin ich frei. Passt dir das?’, ‘Um vierzehn Uhr habe ich auch Zeit. Wollen wir dann gehen?’ Once you find the shared free time, agree and optionally ask: ‘Treffen wir uns vor der Bibliothek?’ Let the conversation develop naturally for about five minutes. Never correct the candidate.",
+  "openingLine": "Wann hast du am Samstag Zeit für die Bibliothek?",
+  "hints": [
+    "Ich muss kurz nachsehen.",
+    "Um diese Uhrzeit habe ich leider keine Zeit.",
+    "Wie wäre es um vierzehn Uhr?",
+    "Das passt mir gut.",
+    "Wann hast du Zeit?"
+  ]
+}

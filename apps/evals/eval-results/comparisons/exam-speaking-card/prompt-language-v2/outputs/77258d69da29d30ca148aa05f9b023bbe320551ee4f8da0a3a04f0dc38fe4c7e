@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Dégagez le problème soulevé par le document et présentez votre opinion sous la forme d’un exposé argumenté.",
+    "Vous disposez de 7 minutes environ pour votre présentation."
+  ],
+  "prompts": [
+    "Présentez le thème et formulez la question que vous allez traiter.",
+    "Annoncez le plan de votre exposé.",
+    "Développez votre point de vue à l’aide d’arguments et d’exemples.",
+    "Terminez par une conclusion."
+  ],
+  "text": {
+    "title": "Entre amis, faut-il tout organiser ?",
+    "body": "Trouver un moment pour voir ses amis peut demander plusieurs semaines de messages. Entre les emplois du temps, les activités familiales et les déplacements, les rencontres improvisées semblent parfois difficiles à organiser. Pour garder le contact, certains groupes fixent désormais un rendez-vous régulier : un dîner le premier vendredi du mois, une promenade chaque dimanche ou une soirée jeux toutes les six semaines.\n\n« Avant, on attendait que quelqu’un propose quelque chose et les mois passaient », raconte Léa, 32 ans, qui retrouve ses amis une fois par mois à Rennes. Depuis qu’ils ont choisi une date régulière, elle apprécie de savoir que ces moments ont une place dans son agenda. Chacun peut venir sans être obligé de participer à chaque rencontre.\n\nMais cette manière de faire ne convient pas à tout le monde. Pour Hugo, qui préfère les invitations de dernière minute, un rendez-vous inscrit longtemps à l’avance peut ressembler à une obligation de plus. Il craint aussi que les habitudes laissent peu de place aux nouvelles idées ou aux rencontres inattendues.\n\nEntre le plaisir de se retrouver et la liberté de décider au dernier moment, chaque groupe cherche son équilibre."
+  },
+  "table": null,
+  "photos": [],
+  "summary": "Você vai apresentar e defender seu ponto de vista a partir de um documento, com argumentos e exemplos. A examinadora ouvirá sua apresentação sem interromper.",
+  "character": {
+    "name": "Anaïs",
+    "role": "examinadora",
+    "place": "Salle d’examen à Rennes"
+  },
+  "characterBrief": "You are the examiner for the DELF B2 monologue. Say the opening instruction exactly as written in openingLine. Then listen without interrupting while the candidate presents for about seven minutes. Do not ask questions, correct, praise or grade the candidate.",
+  "openingLine": "Vous allez présenter le problème soulevé par le document et défendre votre point de vue de manière argumentée. Vous disposez d’environ sept minutes. Vous pouvez commencer.",
+  "hints": [
+    "Je vais d’abord présenter la question, puis examiner plusieurs aspects du sujet.",
+    "À mon avis, il faut prendre en compte plusieurs éléments.",
+    "Cette position me semble justifiée pour plusieurs raisons.",
+    "On pourrait certes penser le contraire, mais il me semble que cette idée a ses limites.",
+    "Pour conclure, je dirais que la situation dépend avant tout du contexte."
+  ]
+}

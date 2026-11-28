@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the sentences accurately, including the longer ones. In the final sentence, you said “before the appointment,” leaving out the small possessive “their” from the original.",
+      "tip": "You dropped “their” before “appointment.” Break the ending into groups and keep each link: “upload them / at least two days before / their appointment.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with clear reasons and relevant detail, for example, “Seeing planners balance all of that, and actually change the design because of what residents said, is what convinced me this was the field for me.” Your predictions are also connected and coherent, though adding a concrete example to them would develop the answer further.",
+      "tip": "After predicting that universities will emphasize projects and placements, add a specific example: “For example, a planning student could complete a transit project with a local agency before graduating.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You handle complex sentences and clauses well, as in “I expected it to be a dry, technical process, but it turned out to be incredibly human.” There are a couple of small accuracy slips: “the most of graduates” and “less opportunities.”",
+      "tip": "Use “fewer” with countable plural nouns such as “opportunities”: “graduates will face fewer opportunities to learn on the job.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use precise, natural phrases such as “reshape the way an entire neighborhood lives and works” and “a double-edged sword.” Your word choices are strong, though some phrases, such as “higher demand,” are broader and less specific than the rest.",
+      "tip": "Make the prediction more specific by naming the kind of demand: instead of “in higher demand than ever,” try “in greater demand for roles that combine data analysis with public communication.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can’t show how you sounded, so this is a wider estimate. There are no signs here of words being misunderstood or of a request to repeat, and your organized phrasing supports an estimate in line with your other performance.",
+      "tip": "Use clear stress and a short pause to make the list easy to follow in “people were worried about noise, about losing parking, about their small shops.”",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,32 @@
+{
+  "instructions": [
+    "Usted y una amiga van a hacer una excursión en bicicleta por Sevilla, como las personas de la fotografía.",
+    "Hable con su amiga y organice la excursión. La conversación durará unos cuatro minutos."
+  ],
+  "prompts": [
+    "Decidan qué día y a qué hora van a salir.",
+    "Elijan los lugares que quieren visitar.",
+    "Hablen de dónde pueden alquilar las bicicletas.",
+    "Decidan qué van a llevar.",
+    "Piensen dónde van a comer o descansar.",
+    "Queden en un lugar para encontrarse."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai combinar um passeio de bicicleta com uma amiga, interpretada pela examinadora. Conversem sobre os preparativos e cheguem a um acordo.",
+  "character": {
+    "name": "Karla",
+    "role": "amiga",
+    "place": "Sevilla"
+  },
+  "characterBrief": "Play Karla, the candidate's friend. The two of you are planning a bicycle outing in Seville, linked to the previous photograph. Start with the opening line. Follow the candidate's answers, improvise naturally in simple Spanish and avoid repeating points already settled. Use these questions in order as needed: «¿Qué día te viene bien? ¿A qué hora podemos salir?», «¿Qué lugares te gustaría visitar?», «¿Dónde podemos alquilar las bicicletas?», «¿Qué podemos llevar?», «¿Dónde podemos parar para comer o descansar?» and «¿Dónde quedamos?». Offer simple suggestions if useful: «Podemos ir por el parque de María Luisa» and «Podemos descansar en una cafetería». You are available on Saturday morning, but can accept another time. Do not invent rental prices or opening hours. For short answers, use up to two follow-ups: «¿Por qué prefieres eso?» and «¿Qué otra cosa podemos hacer?». Aim for a conversation of about four minutes, then confirm the agreed plan briefly and say «Muy bien, hasta entonces». Never correct, praise or grade the candidate.",
+  "openingLine": "Vamos a organizar una excursión en bicicleta por Sevilla. ¿Qué día te viene bien?",
+  "hints": [
+    "Un momento, voy a pensarlo.",
+    "A mí me parece bien porque es más cómodo.",
+    "Prefiero otra opción, si te parece.",
+    "¿Qué te parece esta idea?",
+    "Entonces, ¿quedamos así?"
+  ]
+}

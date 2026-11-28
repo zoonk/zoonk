@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Un museo municipal quiere atraer a más jóvenes adultos, que actualmente lo visitan poco.",
+    "Valore las ventajas y los inconvenientes de al menos cuatro propuestas durante 3 o 4 minutos.",
+    "Después, converse con el examinador sobre las propuestas y sobre la situación en su país durante 2 o 3 minutos."
+  ],
+  "prompts": [
+    "Organizar visitas guiadas en horario de tarde.",
+    "Ofrecer talleres de creación artística los fines de semana.",
+    "Crear contenidos sobre las obras para redes sociales.",
+    "Programar exposiciones temporales de artistas jóvenes.",
+    "Celebrar encuentros con artistas en el museo.",
+    "Preparar recorridos temáticos con una aplicación móvil."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Avalie as vantagens e desvantagens de pelo menos quatro propostas e, depois, converse com a examinadora sobre elas e sobre a situação no seu país.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Begin with the opening line. Listen without interrupting while the candidate assesses at least four proposals for 3 to 4 minutes. Then conduct a conversation for 2 to 3 minutes. Ask in order: «¿Cuál de estas propuestas le parece la más adecuada para atraer a más jóvenes adultos al museo? ¿Por qué?», «¿Cómo es la situación de los museos en su país?», and «En su opinión, ¿qué papel deberían tener los museos en la vida cultural de una ciudad?». If an answer is short, use one or both of these follow-up questions as appropriate: «¿Podría explicar un poco más su opinión?» and «¿Podría poner algún ejemplo?». Allow the candidate time to develop each answer. Do not correct, praise or grade.",
+  "openingLine": "Valore las ventajas y los inconvenientes de al menos cuatro propuestas durante 3 o 4 minutos. Después conversaremos sobre ellas. Puede empezar cuando quiera.",
+  "hints": [
+    "Antes de decidirme, me gustaría considerar las distintas posibilidades.",
+    "Una ventaja de esta propuesta es que podría ser útil, aunque también presenta algunos inconvenientes.",
+    "En mi opinión, esta opción sería más adecuada porque tiene varias ventajas.",
+    "No estoy del todo de acuerdo, ya que también habría que tener en cuenta otros aspectos.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

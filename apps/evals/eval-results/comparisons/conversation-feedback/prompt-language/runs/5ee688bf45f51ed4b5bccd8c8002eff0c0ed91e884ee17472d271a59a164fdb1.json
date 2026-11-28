@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-ar-a2-voseo-kept",
+  "challenger": {
+    "costUsd": 0.0009848,
+    "durationMs": 1006.8086660000008,
+    "hash": "88396e7ee2a83c4ce42cad96b43f87a5d725f6899d41a59c90083b0f748f0904",
+    "systemPromptHash": "15efe18c097ffc4a69b28d1e66ba766dd7363185d22eaad12b4ac57c91b62768",
+    "userPromptHash": "b9f728a78affd42b626e1148f944d07bfc6b88e8a7e4c12acca9e5e36b1d98c6"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0010524,
+    "durationMs": 1136.927416999999,
+    "hash": "fa1622b37ba5b64ec6fbc859c2b43561a1aa97b274c1dc979cfaa68392bc55b1",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "b9f728a78affd42b626e1148f944d07bfc6b88e8a7e4c12acca9e5e36b1d98c6"
+  },
+  "run": 1
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "en-de-goethe-a2-plan-diary",
+  "challenger": {
+    "costUsd": 0.005102100000000001,
+    "durationMs": 13054.797834000026,
+    "hash": "23e89149e4645332306a28e733013812151d76240766960a8d5c446da9e42c4f",
+    "systemPromptHash": "2c1c7e182ead2fa0db6efec88667f91697e84c9e78074c2d09b3141eb2e22bc2",
+    "userPromptHash": "b393d81d51c772310c7dbf1f50774fbd702ddb1fd48da3885ee09cbb02ad2364"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

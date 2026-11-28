@@ -1,0 +1,58 @@
+{
+  "instructions": [
+    "Converse con el entrevistador sobre los resultados de la encuesta.",
+    "Diga qué habría respondido usted y compare su respuesta con los resultados. Dispone de unos 4 minutos."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted a la encuesta? ¿Por qué?",
+    "¿En qué se parece o se diferencia su respuesta de los resultados?",
+    "¿Le sorprende algún dato de la encuesta?",
+    "¿Cómo cree que cambiará la forma de desplazarse por la ciudad en el futuro?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Cómo se desplaza habitualmente por la ciudad? Encuesta municipal de movilidad de Logroño, 2024. Datos ficticios.",
+    "columns": [
+      "Medio principal",
+      "Respuestas"
+    ],
+    "rows": [
+      [
+        "A pie",
+        "35 %"
+      ],
+      [
+        "En autobús",
+        "27 %"
+      ],
+      [
+        "En coche",
+        "22 %"
+      ],
+      [
+        "En bicicleta",
+        "10 %"
+      ],
+      [
+        "Otros medios",
+        "6 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Converse com o examinador sobre os resultados de uma pesquisa, comparando-os com sua própria resposta e dando suas opiniões. Esta tarefa não tem preparação prévia.",
+  "character": {
+    "name": "Fernando",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct an informal conversation for about four minutes. This task is not prepared. Begin with the opening line and let the candidate answer. Then ask, in order: «¿En qué se parece o se diferencia su respuesta de los resultados de la encuesta?», «¿Le sorprende algún dato? ¿Por qué?» and «¿Cómo cree que cambiará la forma de desplazarse por la ciudad en el futuro?». Respond naturally to what the candidate says and allow time for developed answers. If an answer is short, use one or both of these follow-ups as appropriate: «¿Podría explicar un poco más por qué?» and «¿Puede poner algún ejemplo?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Ahora vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted a la encuesta y por qué?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, depende de varios factores.",
+    "Estoy de acuerdo en parte, pero creo que hay otros aspectos que considerar.",
+    "La principal razón es que resulta más adecuado en determinadas circunstancias.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

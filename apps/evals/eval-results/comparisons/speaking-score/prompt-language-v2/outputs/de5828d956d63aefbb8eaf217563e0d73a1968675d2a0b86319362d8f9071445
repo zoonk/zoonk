@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the longer sentences accurately, including “The employer fair, which usually takes place in the gym, will be held outdoors this year.” In the final item, you changed “who'd” to “who would” and “their appointment” to “the appointment,” losing a small detail.",
+      "tip": "Keep small words intact by grouping the sentence into chunks: “Students who'd like feedback on their cover letters / should upload them / at least two days before their appointment.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with clear reasons and examples, such as describing how planners “actually change the design because of what residents said” and explaining who unpaid internships can exclude. Your predictions are coherent but stay fairly broad, without a specific example of which tasks may change.",
+      "tip": "Make your job-market prediction more concrete by adding an example: “For instance, automating data entry could leave graduates with fewer chances to learn basic workplace processes.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a wide range of structures accurately, including “If a company benefits from your work, it should pay for it.” A couple of errors appear in “the most of graduates” and “less opportunities,” which keep the accuracy from being consistently strong.",
+      "tip": "Use “fewer” with countable plural nouns like “opportunities”: change “less opportunities” to “fewer opportunities.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use varied, precise language and natural expressions such as “double-edged sword,” “a foot in the door,” and “fully formed.” Some parts of your forecast, including “routine tasks,” remain general rather than naming specific tasks.",
+      "tip": "Make broad terms more precise by naming examples: instead of “routine tasks get automated,” try “data entry and basic scheduling get automated.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate; it provides no clear sign of a breakdown in communication, and your other performance gives a general guide to the estimate.",
+      "tip": "Make the contrast in your forecast easy to follow by clearly stressing “routine tasks get automated” and “higher demand.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

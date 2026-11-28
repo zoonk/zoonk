@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Organizas tus respuestas de forma comprensible y usas conectores como \"Also\" y \"For example\" para añadir ideas. Sin embargo, varias respuestas desarrollan poco la idea y la explicación del viaje se apoya en frases sencillas.",
+      "tip": "Desarrolla una opinión con una consecuencia concreta: en vez de terminar en “I think so”, podrías añadir “This can make everyday life more difficult for local residents, especially when rents rise.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario pertinente para hablar de viajes y turismo, como \"the old part of the city\" y \"the prices of the flats\". Aun así, el vocabulario tiende a ser común y algunas expresiones no suenan naturales, como \"for know other cultures\".",
+      "tip": "Para expresar el propósito de viajar con más naturalidad y precisión, cambia “for know other cultures” por “to experience different cultures firsthand.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Combinas pasado, presente y una idea con \"would\", pero hay errores recurrentes de concordancia, tiempo verbal y forma del verbo, por ejemplo \"my parents was working\" y \"we eat a lot of fish and pastries\". Estos errores no suelen impedir que se entienda tu mensaje.",
+      "tip": "Después del modal “should”, usa el verbo en forma base, sin “to”: “The government should to control it” → “The government should control it.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonaste, y no muestra señales claras de que te hayan pedido repetir o de que alguna palabra se haya entendido mal; por eso esta es una estimación más amplia, guiada por los demás criterios.",
+      "tip": "Para que las palabras clave se distingan con claridad, marca la sílaba tónica en “MOUN-tains”, “BEAU-ti-ful” y “GOV-ern-ment”.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Compare the two photographs and answer the question. You have about one minute.",
+    "Then answer a short question about the photographs."
+  ],
+  "prompts": [
+    "Why might the people enjoy reading in these situations?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three teenagers in casual jumpers and jeans sitting together around a table in a public library. Each has an open book, and two of them are smiling as they look at the same picture. Bookshelves are softly blurred in the background. Gentle daylight comes through a nearby window. No visible text, signs, logos or screens.",
+      "alt": "Três adolescentes leem juntos em uma mesa de biblioteca."
+    },
+    {
+      "scene": "A realistic photograph of a woman in her thirties wearing a light jacket and trousers, sitting alone on a park bench and reading an open book. A takeaway drink rests beside her, and trees and a quiet path are visible behind her. Warm afternoon sunlight falls across the bench. No visible text, signs, logos or screens.",
+      "alt": "Uma mulher lê sozinha em um banco de parque."
+    }
+  ],
+  "summary": "Compare as duas fotos e responda à pergunta durante cerca de um minuto. Depois, responda a uma pergunta breve da examinadora.",
+  "character": {
+    "name": "Maya",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction and let the candidate speak for about one minute without interrupting. Then ask: 'Which of these places would you prefer to read in?' Allow a short answer. If it is very brief, ask: 'Why would you choose that place?' Then close with: 'Thank you.' Do not correct, praise or grade the candidate.",
+  "openingLine": "Here are your photographs. They show people reading in different situations. I'd like you to compare the photographs and say why the people might enjoy reading in these situations. You have about a minute. Please begin.",
+  "hints": [
+    "Let me think about that for a moment.",
+    "One similarity is that they both seem to be enjoying themselves.",
+    "The main difference is that the situations are quite different.",
+    "They might feel this way because of the people around them.",
+    "Personally, I would prefer that option because it suits me better."
+  ]
+}

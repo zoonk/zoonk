@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas com clareza e conecta as ideias sem perder o foco, como em “Looking back, I'm really proud I stuck with it, because it taught me to be patient with slow progress”. As respostas são bem organizadas, embora não haja evidência suficiente de uma variedade ainda maior de desenvolvimento ao longo do teste.",
+      "tip": "Ao apresentar uma opinião, acrescente uma consequência concreta para desenvolver o argumento: “A middle ground would be a modest allowance, which could boost morale without putting too much pressure on a small business.”",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário preciso e expressões naturais, por exemplo “eat into the time” e “the intonation is so unforgiving”. O repertório é forte, mas as respostas não mostram de forma consistente a flexibilidade e a precisão excepcionais esperadas nas faixas mais altas.",
+      "tip": "Para tornar uma descrição mais específica, substitua uma expressão geral por uma colocação mais precisa: em vez de “slow progress”, experimente “painstakingly slow progress”.",
+      "bandHigh": 8.5,
+      "bandLow": 8
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas, incluindo condicionais e orações subordinadas, como “although I can see why a small business couldn't justify it”. Há alguns deslizes pontuais, por exemplo “I work as data analyst”, em que falta o artigo antes de uma profissão contável no singular.",
+      "tip": "Em inglês, use “a” ou “an” antes de uma profissão contável no singular: “I work as data analyst” → “I work as a data analyst”.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; como não há sinais indiretos claros de problemas de compreensão, esta é uma estimativa mais ampla, alinhada às outras evidências.",
+      "tip": "Ao falar, dê destaque às sílabas tônicas de “intonation” e “unforgiving” para ajudar o ouvinte a reconhecer essas palavras com facilidade.",
+      "bandHigh": 8.5,
+      "bandLow": 7.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

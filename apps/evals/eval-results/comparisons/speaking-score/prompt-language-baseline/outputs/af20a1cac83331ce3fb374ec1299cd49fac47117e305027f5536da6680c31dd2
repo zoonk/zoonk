@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você formula uma pergunta central, anuncia uma sequência e conclui com uma posição clara: « est-ce que le télétravail améliore vraiment la qualité de vie des salariés ? » e « je pense que le télétravail améliore la qualité de vie, à condition qu'il soit bien organisé ». Os exemplos ajudam a sustentar o ponto de vista, mas os argumentos são pouco desenvolvidos e o documento de partida quase não é retomado.",
+      "tip": "Depois de cada exemplo, explique como ele sustenta sua opinião e acrescente uma nuance, por exemplo: « Cela montre que le télétravail peut réduire la fatigue, mais que ses effets dépendent des conditions de travail. »",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como « la limite entre la vie professionnelle et la vie privée » e « le travail hybride ». A escolha das palavras é geralmente clara, mas o vocabulário permanece bastante geral e algumas ideias são expressas de modo repetitivo, sem muita precisão.",
+      "tip": "Para expressar a mesma ideia com mais precisão, troque « passer plus de temps avec sa famille » por « mieux concilier vie professionnelle et vie familiale ».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas, como « à condition qu'il soit bien organisé », mas há uma construção inadequada em « Malgré que l'entreprise économise de l'argent ». Esse problema de construção, junto com estruturas em geral simples, reduz o controle gramatical demonstrado.",
+      "tip": "Em francês padrão, use « bien que » antes de uma oração, ou « malgré » antes de um substantivo. Assim, troque « Malgré que l'entreprise économise de l'argent » por « Bien que l'entreprise économise de l'argent ».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; por isso, esta é uma estimativa mais ampla, orientada pelas demais evidências, que mostram ideias e frases geralmente compreensíveis.",
+      "tip": "Ao ensaiar, articule com clareza « télétravail », « professionnelle » e « hybride », mantendo nítidos os sons de cada palavra para facilitar a compreensão.",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

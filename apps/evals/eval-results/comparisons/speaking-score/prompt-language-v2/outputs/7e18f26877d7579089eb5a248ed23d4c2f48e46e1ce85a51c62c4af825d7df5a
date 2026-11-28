@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas com clareza e conecta as ideias, por exemplo: “But on the other hand, my job is here, so it's a difficult decision.” Em alguns momentos, poderia ampliar as justificativas com exemplos mais específicos, em vez de concluir logo após apresentar a opinião.",
+      "tip": "Depois de explicar sua opinião, acrescente uma situação concreta para desenvolvê-la; por exemplo: “For instance, when we meet for dinner, everyone often checks their phone instead of joining the conversation.”",
+      "bandHigh": 7,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado para falar de rotina, tecnologia e relações, como em “I depend on it too much” e “use technology in a responsible way.” Algumas escolhas são pouco precisas, como “the thing I use more in my day” e “use it for pay things”.",
+      "tip": "Para descrever a localização de algo com mais precisão, use “conveniently located”; por exemplo: “My apartment is conveniently located near my office.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina frases simples e complexas, como em “I live in an apartment in Curitiba, it's not very big but it's quite comfortable and it's close to my office, so I can walk to work”. Porém, há erros em estruturas frequentes, como “I use it since I wake up until I go to sleep” e “I also use it for pay things”.",
+      "tip": "Para indicar finalidade, use “to + verbo” ou “for + substantivo/gerúndio”; troque “I also use it for pay things” por “I also use it to pay for things.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou e não traz sinais claros de palavras mal compreendidas ou pedidos de repetição; por isso, esta é uma estimativa mais ampla, alinhada às outras faixas.",
+      "tip": "Para deixar palavras longas mais fáceis de entender, destaque a sílaba tônica em “COMfortable” e “tech-NOL-ogy”, sem acelerar o restante da palavra.",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

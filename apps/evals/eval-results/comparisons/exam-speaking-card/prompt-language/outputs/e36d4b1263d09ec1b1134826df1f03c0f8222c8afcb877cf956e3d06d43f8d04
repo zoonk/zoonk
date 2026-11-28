@@ -1,0 +1,60 @@
+{
+  "instructions": [
+    "Converse con el examinador sobre los resultados de la encuesta.",
+    "Diga qué habría respondido usted, compare su respuesta con los resultados y dé su opinión.",
+    "Dispone de unos 4 minutos. No necesita preparar esta tarea."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted a la encuesta?",
+    "¿En qué coincide o discrepa con los resultados?",
+    "¿Qué resultados le llaman más la atención y por qué?",
+    "¿Qué factores influyen en la elección de las actividades de ocio?",
+    "¿Cree que estas preferencias pueden cambiar con el tiempo?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Qué actividad prefiere hacer en su tiempo libre? Encuesta de hábitos de ocio, Observatorio Ciudadano del Ocio, 2025. Datos ficticios, 600 participantes.",
+    "columns": [
+      "Actividad preferida",
+      "Porcentaje de respuestas"
+    ],
+    "rows": [
+      [
+        "Ver películas o series",
+        "28 %"
+      ],
+      [
+        "Salir con amigos",
+        "24 %"
+      ],
+      [
+        "Practicar deporte",
+        "20 %"
+      ],
+      [
+        "Leer",
+        "16 %"
+      ],
+      [
+        "Practicar una afición artística",
+        "12 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Converse com a examinadora sobre os resultados de uma pesquisa, comparando-os com suas preferências e dando sua opinião. Você não precisa se preparar antes.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE B2 examiner. Hold an informal conversation for about four minutes. Address the candidate as usted. The survey is fictional and each participant chose one preferred activity. Start with the opening line, then listen and respond naturally. Ask these questions in order, allowing time for developed answers: «¿Qué habría respondido usted a esta encuesta?», «¿En qué coincide o discrepa su respuesta con los resultados?», «¿Qué resultado le llama más la atención? ¿Por qué?», «¿Qué factores cree que influyen en la elección de las actividades de ocio?», «¿Cree que estas preferencias pueden cambiar con el tiempo? ¿Por qué?». If an answer is short, use one or two of these follow-ups: «¿Podría explicar un poco más su opinión?» and «¿Puede poner algún ejemplo?». Do not present the survey as evidence of a trend. Do not correct, praise or grade the candidate. At the end say: «Muchas gracias. Hemos terminado esta tarea».",
+  "openingLine": "Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted a la pregunta?",
+  "hints": [
+    "Si me permite un momento, voy a pensarlo.",
+    "En mi opinión, esto se debe a varios factores.",
+    "Coincido en parte, aunque también creo que hay otras posibilidades.",
+    "No estoy del todo de acuerdo, porque depende de las circunstancias.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

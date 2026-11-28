@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você apresenta a questão, anuncia um plano, dá exemplos e termina com uma posição clara: « La question que je me pose est la suivante : est-ce que le télétravail améliore vraiment la qualité de vie des salariés ? » e « Pour conclure, je pense que le télétravail améliore la qualité de vie, à condition qu'il soit bien organisé. » Os argumentos são pertinentes, mas ficam pouco desenvolvidos.",
+      "tip": "Desenvolva cada argumento explicando uma consequência e acrescentando um exemplo concreto, por exemplo: « Le temps gagné dans les transports permet aux salariés de se reposer davantage et de mieux concilier travail et vie familiale. »",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como « la limite entre la vie professionnelle et la vie privée » e « le travail hybride ». A escolha de palavras é adequada, mas algumas ideias ficam formuladas de modo geral, sem muita variedade lexical.",
+      "tip": "Troque expressões gerais por formulações mais precisas para resumir uma ideia, por exemplo: « Le travail hybride limite l’isolement tout en préservant l’autonomie des salariés. »",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você constrói frases com conectores e condições, como « à condition qu'il soit bien organisé », mas há problemas de construção em « Les gens qui travaillent à la maison ils sont souvent plus isolés » e « Malgré que l'entreprise économise de l'argent ». Essas formas reduzem o controle gramatical, embora a mensagem continue compreensível.",
+      "tip": "Evite repetir o sujeito depois de uma oração relativa: em « Les gens qui travaillent à la maison ils sont souvent plus isolés », retire « ils » e diga « Les gens qui travaillent à la maison sont souvent plus isolés. »",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, e não há sinais indiretos de incompreensão; por isso, esta é uma estimativa mais ampla, orientada pelas demais competências.",
+      "tip": "Para favorecer a compreensão, articule com clareza palavras importantes do tema, como « télétravail », « hybride » e « électricité ».",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

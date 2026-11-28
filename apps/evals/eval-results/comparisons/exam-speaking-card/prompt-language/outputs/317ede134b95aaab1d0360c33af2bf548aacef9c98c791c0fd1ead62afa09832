@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Vous êtes à Tours et vous souhaitez louer un vélo pour l’après-midi.",
+    "Vous demandez des renseignements à l’employé, puis vous choisissez un vélo.",
+    "Vous saluez votre interlocuteur et utilisez les formules de politesse. Vous avez 4 minutes environ."
+  ],
+  "prompts": [
+    "Demandez les horaires et les prix.",
+    "Renseignez-vous sur les types de vélos et les accessoires.",
+    "Choisissez un vélo et demandez comment le louer."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Ask about renting a bike for an afternoon and make your choice. You will speak with the examiner, who plays the rental shop employee.",
+  "character": {
+    "name": "Romain",
+    "role": "bike rental employee",
+    "place": "Boutique de location de vélos à Tours"
+  },
+  "characterBrief": "Play a bike rental employee in Tours. Begin with the opening line, then let the candidate greet you. Reply: « Bonjour, je peux vous aider ? » Let the candidate lead and answer only what they ask. The shop is open from 9 a.m. to 6 p.m. An afternoon rental runs from 2 p.m. to 6 p.m. A standard bike costs 8 euros and an electric bike costs 15 euros. A helmet is free and a lock is included. Both types are available today. No reservation is needed. To rent a bike, the customer gives their name and pays at the shop. Bikes must be returned by 6 p.m. Use simple French, such as « Le vélo classique coûte 8 euros pour l’après-midi » and « Le casque est gratuit ». If the candidate needs help continuing, ask in order as useful: « Vous souhaitez louer le vélo pour quand ? », « Vous préférez un vélo classique ou électrique ? », « Est-ce que vous voulez un casque ? » and « À quelle heure allez-vous revenir ? » If an answer is unclear, ask « Vous pouvez répéter, s’il vous plaît ? » When the candidate has made a choice, confirm it in French and close politely: « Très bien. Merci et bonne journée ! » Do not correct, praise or grade.",
+  "openingLine": "Vous souhaitez louer un vélo à Tours. Je suis l’employé de la boutique. Vous pouvez commencer.",
+  "hints": [
+    "Bonjour, je voudrais un renseignement, s’il vous plaît.",
+    "Est-ce que vous pouvez me dire les horaires ?",
+    "Quelle est la différence entre les deux ?",
+    "Je préfère cette solution parce que c’est plus pratique pour moi.",
+    "Merci pour votre aide. Au revoir."
+  ]
+}

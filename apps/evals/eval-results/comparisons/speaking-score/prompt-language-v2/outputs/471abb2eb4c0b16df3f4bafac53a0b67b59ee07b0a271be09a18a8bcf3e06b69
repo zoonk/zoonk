@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu bem as cinco partes: apresentou o tema e a estrutura, contou sua experiência, descreveu a situação no Brasil, comparou vantagens e desvantagens, deu sua opinião e encerrou. Isso fica claro em “Ein großer Vorteil ist, dass man flexibel ist und Geld spart” e “Meiner Meinung nach ist eine Mischung am besten”.",
+      "tip": "Para aprofundar ainda mais a parte sobre o Brasil, inclua um exemplo concreto, como “Zum Beispiel können Menschen auf dem Land an einem Online-Kurs teilnehmen, ohne in die Stadt fahren zu müssen.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "As ideias avançam em uma sequência fácil de acompanhar, marcada por expressões como “Zuerst”, “danach”, “anschließend” e “zum Schluss”. Você também conecta causa e consequência em “Viele Leute wohnen weit weg von großen Städten, deshalb ist das Internet für sie oft die einzige Möglichkeit”.",
+      "tip": "Na comparação, ligue a opinião final diretamente aos argumentos anteriores, por exemplo: “Obwohl Online-Kurse flexibler sind, finde ich eine Mischung am besten, weil man dabei auch regelmäßig sprechen kann.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado e variado para falar do tema, como em “Vollzeit arbeite”, “die einzige Möglichkeit” e “sich selbst motivieren”. A escolha de palavras é precisa, embora algumas ideias pudessem ser desenvolvidas com termos mais específicos sobre cursos e aprendizagem.",
+      "tip": "Acrescente termos mais específicos ao explicar os benefícios dos cursos, por exemplo: “Der direkte Austausch mit der Lehrkraft hilft, Fehler schneller zu erkennen.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e subordinadas com bom controle, como “weil ich Vollzeit arbeite”, “damit ich auch mit echten Menschen sprechen kann” e “in dem der Lehrer einen direkt korrigiert”. As frases permanecem claras e não há erros gramaticais evidentes nos trechos apresentados.",
+      "tip": "Para ampliar suas estruturas, experimente usar uma oração concessiva: em vez de apenas “Ein Nachteil ist jedoch, dass man sich selbst motivieren muss”, diga “Obwohl man flexibel lernen kann, muss man sich selbst motivieren.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, baseada na clareza e na organização verbal que aparecem nos demais critérios. Não há sinais indiretos no diálogo de que tenha sido necessário pedir repetição.",
+      "tip": "Ao apresentar, articule com clareza palavras importantes para acompanhar o raciocínio, como “anschließend”, “Möglichkeit” e “motivieren”, para que o público reconheça facilmente cada etapa e argumento.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

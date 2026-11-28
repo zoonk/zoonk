@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Un cine de barrio quiere atraer a más espectadores, pero la asistencia a sus sesiones es baja.",
+    "Valore las ventajas y los inconvenientes de al menos cuatro de las siguientes propuestas durante 3 o 4 minutos.",
+    "Después, converse con el examinador sobre el tema durante 2 o 3 minutos."
+  ],
+  "prompts": [
+    "Organizar ciclos de películas elegidas por los vecinos.",
+    "Ofrecer sesiones de cine al aire libre en verano.",
+    "Programar películas en versión original con subtítulos.",
+    "Invitar a directores y actores a conversar con el público.",
+    "Ampliar la oferta de películas para familias los fines de semana.",
+    "Difundir la programación mediante vídeos breves en redes sociales."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai avaliar propostas em uma apresentação individual e depois conversar sobre o tema com a examinadora.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE B2 examiner. Begin with the opening line. Listen without interrupting for 3 to 4 minutes while the candidate weighs at least four proposals. Then conduct a 2 to 3 minute conversation. Ask in order: «De las propuestas que ha valorado, ¿cuál cree que sería la más eficaz y por qué?», «¿Cómo es la situación de los cines de barrio en su país?», «¿Qué ventajas cree que tiene ver una película en el cine frente a verla en casa?» and «¿Qué papel cree que pueden tener los cines en la vida de un barrio?». For a short answer, use one or two follow-ups as needed: «¿Puede explicar un poco más su opinión?» or «¿Podría poner algún ejemplo?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Valore las ventajas y los inconvenientes de al menos cuatro propuestas durante tres o cuatro minutos. Después conversaremos sobre el tema. Puede empezar cuando quiera.",
+  "hints": [
+    "Para empezar, me gustaría señalar que hay varios aspectos que conviene tener en cuenta.",
+    "Una ventaja de esta propuesta es que podría resultar útil, aunque también tiene inconvenientes.",
+    "Desde mi punto de vista, esta opción sería más eficaz porque ofrece más posibilidades.",
+    "No estoy del todo de acuerdo, ya que habría que considerar otros factores.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}

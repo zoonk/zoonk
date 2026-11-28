@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "You organize the description in a clear sequence, from the family and station to their possible plans, using links such as “pero también contentos” and “porque seguramente van de vacaciones.” You answer the travel question, though you do not say what the people in the photo might be talking about.",
+      "tip": "Add a link between the scene and a possible conversation, for example: “Mientras esperan el tren, quizá están hablando de sus planes para las vacaciones.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate; your connected answer, including “El año pasado viajé en tren por España, de Madrid a Sevilla,” gives some evidence of continuous speech, but it cannot establish your pace or intelligibility.",
+      "tip": "For clear understanding, give extra attention to the exact phrases “estación de tren” and “experiencia muy buena,” making each word distinct.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "You control simple structures well in sentences such as “Los niños parecen cansados” and “el año pasado viajé en tren por España.” There is a subject–verb agreement error in “Me gusta mucho los trenes.”",
+      "tip": "With gustar, make the verb agree with the thing liked: change “Me gusta mucho los trenes” to “Me gustan mucho los trenes.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "range",
+      "evidence": "You use enough everyday vocabulary to describe the scene, including “una maleta grande,” “la pantalla con los horarios,” and “van de vacaciones.” The vocabulary and sentence patterns stay fairly simple, with little expansion of your ideas.",
+      "tip": "Upgrade a general evaluation with a more specific description, for example, expand “una experiencia muy buena” to “un viaje muy agradable y cómodo.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "You describe the family, their likely plans, and your own train experience, and you respond relevantly to the examiner. You do not speculate about what the people might be discussing, so the description does not cover every part of the task.",
+      "tip": "Include one plausible detail about the people’s conversation, such as: “Puede que estén hablando de dónde pasarán las vacaciones.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você expressa opiniões com clareza e usa vocabulário pertinente, como “I can't concentrate at all” e “some people simply work at night”. O comparativo “more easy” e a combinação “depends of” mostram algumas falhas de precisão, embora a mensagem continue clara.",
+      "tip": "Para adjetivos curtos, normalmente forme o comparativo com “-er”, em vez de usar “more”: troque “more easy to fit” por “easier to fit”.",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza as ideias com clareza, passando de alimentação e exercício para sono e atividades ao ar livre, e usa conectores como “On the other hand” e “because”. Algumas ideias ficam pouco desenvolvidas, por exemplo, você diz que o sono é importante, mas não explica muito além de “without it nothing else works”.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência ou exemplo concreto: “Sleep is important because it helps people make better decisions during the day.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, alinhada às outras evidências de comunicação clara.",
+      "tip": "Ao dizer “concentrate” e “routine”, destaque as sílabas tônicas para facilitar a compreensão: conCENtrate e rouTINE.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde às ideias da outra pessoa, acrescenta uma perspectiva própria e convida à participação com “What do you think about sleep?”. Também propõe uma escolha e dá uma justificativa em “I'd go for sleep, because without it nothing else works”, embora pudesse desenvolver mais as respostas às contribuições da outra pessoa.",
+      "tip": "Depois de responder à ideia da outra pessoa, faça uma pergunta que convide a desenvolver o assunto: “I agree that sleep matters. How do you think people can get more of it?”",
+      "bandHigh": 3.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você comunica opiniões relevantes com coerência e dá motivos compreensíveis, como em “When I don't sleep well, I can't concentrate at all”. Algumas imprecisões gramaticais e o desenvolvimento breve das ideias limitam a precisão e a profundidade geral.",
+      "tip": "Para fortalecer uma resposta, combine opinião, motivo e exemplo: “I'd choose sleep because it improves concentration; for example, I find it harder to study after a poor night's sleep.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

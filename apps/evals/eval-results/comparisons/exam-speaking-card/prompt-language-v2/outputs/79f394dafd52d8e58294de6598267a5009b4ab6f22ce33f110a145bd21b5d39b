@@ -1,0 +1,34 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos.",
+    "Después, converse con el examinador sobre el tema de la fotografía. La tarea dura unos tres minutos."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas y dónde están?",
+    "¿Qué objetos hay y qué están haciendo las personas?",
+    "¿Qué relación cree que tienen entre ellas?",
+    "¿De qué cree que están hablando?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adult volunteers cleaning a neighborhood park in Spain on a bright spring morning. A woman in her thirties wearing a green sweatshirt and jeans holds open a reusable rubbish bag while a man in his forties in a blue jacket and a woman in her twenties in a beige sweater pick up litter with gloves. They are smiling and talking beside a park bench, with trees and a path behind them. No text, signs, logos or screens.",
+      "alt": "Three adults talk while picking up litter in a park."
+    }
+  ],
+  "summary": "Describe a photo, then talk with the examiner about how its topic relates to your own life.",
+  "character": {
+    "name": "Andrea",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Act as the examiner. This task is not prepared. Start with the opening line and listen without interrupting while the candidate describes the photograph for one to two minutes. Then ask these questions in order, allowing time for each answer: «¿Ha participado alguna vez en una actividad de voluntariado? ¿Cómo fue?» If the candidate has not, ask «¿Le gustaría participar en alguna? ¿Por qué?». Then ask «¿Qué actividades le gustaría hacer con otras personas para mejorar su barrio o su ciudad?». Finally ask «¿Cree que es importante que las personas hagan actividades como esta juntas? ¿Por qué?». If an answer is very short, use one or both of these follow-ups: «¿Puede contarme algo más?» and «¿Por qué piensa eso?». Keep the whole task to about three minutes. End with «Muchas gracias». Do not correct, praise or grade.",
+  "openingLine": "Ahora va a describir esta fotografía durante uno o dos minutos. Después hablaremos sobre el tema. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a empezar por describir lo que veo.",
+    "Es posible que se conozcan porque parecen estar cómodos.",
+    "En mi opinión, esto es importante porque ayuda a las personas.",
+    "No estoy seguro, pero creo que podría ser una buena idea."
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You develop the cue-card answer in a clear sequence, as in “She showed me step by step, and then I watched videos in the evening,” and you give reasons for your opinions. Your discussion answers are relevant but brief, so the ideas are not developed consistently at greater length.",
+      "tip": "In discussion answers, add a specific consequence or example after your opinion: “Schools could teach budgeting because it helps students make informed choices when they start earning money.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some apt expressions, including “a steep learning curve” and “overwhelming,” to discuss your experiences. Some descriptions stay general, such as “you have more choice,” rather than specifying what the options are.",
+      "tip": "Make general descriptions more precise: instead of “you have more choice,” try “you can choose from a wider range of demonstrations and expert advice.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a mix of sentence structures, including “I wanted to learn it because I think sharing food is a way to understand another culture.” However, several recurring errors appear in phrases such as “I am doing this job since two years” and “I am agree with that.”",
+      "tip": "For an action that began in the past and continues now, use the present perfect with “for” to give a duration: change “I am doing this job since two years” to “I have been doing this job for two years.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate guided by your performance on the other criteria. It does not provide clear signs of words being garbled or misunderstood.",
+      "tip": "When saying “overwhelming” and “confident,” make each syllable clear so listeners can recognize the words easily.",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

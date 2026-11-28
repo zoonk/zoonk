@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía durante unos tres minutos.",
+    "Puede hablar de los siguientes aspectos."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of two women in their thirties sitting together at a wooden table in a small public library. One wears a green jumper and holds an open book with blank, unmarked pages; the other wears a blue cardigan and smiles while looking at it. A few closed, unmarked books are on the table. Soft afternoon light enters through a window. No visible text, signs, logos or screens.",
+      "alt": "Duas mulheres sentadas juntas em uma biblioteca olham um livro aberto."
+    }
+  ],
+  "summary": "Você vai descrever uma fotografia e falar sobre as pessoas e a situação. A examinadora vai ouvir você sem interromper.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Give the instruction exactly as in the opening line, then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask follow-up questions, correct, praise or grade. When the candidate has finished, say: «Gracias.».",
+  "openingLine": "Ahora describa la fotografía. Puede hablar de los aspectos de la lista. Tiene unos tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía veo a varias personas.",
+    "Creo que están en un lugar tranquilo.",
+    "Me parece que se conocen.",
+    "Quizás antes han hecho otra cosa.",
+    "Después pueden hacer algo juntos."
+  ]
+}

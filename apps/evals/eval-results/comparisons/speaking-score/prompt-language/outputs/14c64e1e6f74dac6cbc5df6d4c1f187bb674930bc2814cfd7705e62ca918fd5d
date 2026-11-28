@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu os cinco pontos pedidos: apresentou o tema e a estrutura, falou da própria experiência e do Brasil, comparou vantagens e desvantagens, deu sua opinião e encerrou agradecendo. Isso fica claro em “Zuerst erzähle ich, wie ich selbst Deutsch lerne” e “Meiner Meinung nach ist eine Mischung am besten”.",
+      "tip": "Para fechar com uma síntese ainda mais explícita, retome sua ideia principal em uma frase antes do agradecimento, por exemplo: “Zusammenfassend verbindet eine Mischung aus Online- und Präsenzkursen viele Vorteile.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "Sua apresentação segue uma sequência fácil de acompanhar, com marcadores como “Zuerst”, “danach”, “anschließend” e “zum Schluss”. A passagem entre a situação no Brasil e os argumentos poderia ser mais explicitamente conectada.",
+      "tip": "Conecte a situação brasileira à comparação com uma frase de transição, por exemplo: “Das erklärt, warum Online-Kurse für viele Menschen eine gute Möglichkeit sind.”",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como em “flexibel ist und Geld spart” e “sich selbst motivieren muss”. A escolha é clara, mas a apresentação poderia incluir expressões mais específicas para desenvolver melhor os argumentos.",
+      "tip": "Troque uma expressão geral por uma formulação mais precisa ao explicar o acesso aos cursos, por exemplo: “Online-Kurse sind für Menschen auf dem Land eine zugängliche Alternative.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você controla bem estruturas como a oração com “weil ich Vollzeit arbeite” e a finalidade em “damit ich auch mit echten Menschen sprechen kann”. A apresentação usa essas estruturas com segurança, mas mostra variedade limitada de conectores subordinativos.",
+      "tip": "Para expressar contraste, use “obwohl” e coloque o verbo conjugado no fim da oração subordinada. A partir de “weil ich Vollzeit arbeite”, você poderia dizer: “Obwohl ich Vollzeit arbeite, lerne ich hauptsächlich online.”",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou; sem sinais indiretos de dificuldade de compreensão, esta é uma estimativa mais ampla, baseada na organização e no controle linguístico observáveis nas outras respostas.",
+      "tip": "Ao falar, articule com clareza as sílabas de palavras mais longas, como “Sprachschule” e “Möglichkeit”, para que sejam fáceis de entender.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

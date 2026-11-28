@@ -1,0 +1,15 @@
+{
+  "caseId": "pt-de-goethe-b1-presentation",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 5,
+  "problems": [
+    "coherence is 4 to 4, outside 2 to 3 (plus or minus 0.5)."
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 6
+}

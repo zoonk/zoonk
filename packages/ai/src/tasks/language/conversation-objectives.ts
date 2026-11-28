@@ -5,7 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import {
   type ConversationTurn,
   formatConversationTranscript,
@@ -100,7 +100,11 @@ export async function checkConversationObjectives(params: CheckConversationObjec
     throw new Error("A check needs at least one open objective.");
   }
 
-  const systemPrompt = params.exam ? testSystemPrompt : basePrompt;
+  const systemPrompt = fillPromptLanguages({
+    ...params,
+    template: params.exam ? testSystemPrompt : basePrompt,
+  });
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

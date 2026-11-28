@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-es-dele-b2-proposals",
+  "challenger": {
+    "costUsd": 0.00545875,
+    "durationMs": 8935.369541000002,
+    "hash": "e04f8fdff733d8ff2c65921cad123c18855e41d44ea39fc1f30863814a96e27c",
+    "systemPromptHash": "e690f285a37a4ba043cca841992264a1339fd92668aefe0ea73e44314940c172",
+    "userPromptHash": "97e6cf00e68cefa54245ef9f05ce13cb3e4204216cd6d8fb7be398587eb998bf"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

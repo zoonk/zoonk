@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-de-goethe-b1-plan-together",
+  "challenger": {
+    "costUsd": 0.005281000000000001,
+    "durationMs": 9983.852708000006,
+    "hash": "f3eacb658215314361044b7f2080d31973bb13e49d3ffbb692cc5e6bbfe0591b",
+    "systemPromptHash": "3c8860399ea62ad159220cc49c109c7e26b199247a794010afa09c495d4defc9",
+    "userPromptHash": "b827ec43217ca7eb64e75e6714888d2fa0cb5f63fcca27e1c9de1f816ae9ea10"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}
