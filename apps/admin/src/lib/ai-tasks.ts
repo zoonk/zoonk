@@ -79,6 +79,7 @@ const AI_TASK_DESCRIPTIONS: Record<string, string> = {
   "library-search-terms": "Writes search terms to find existing content",
   "listening-audio": "Records a listening exercise's speakers",
   "live-conversation": "Plays the character in a practice call",
+  "member-coverage": "Finds members of a complete list the plan leaves out",
   "memory-extraction": "Picks out lasting facts about a learner",
   "memory-gate": "Decides whether a fact is worth remembering",
   "memory-insight": "Turns a week of study into one tip",

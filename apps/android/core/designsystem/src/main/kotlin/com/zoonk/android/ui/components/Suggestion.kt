@@ -50,7 +50,9 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
@@ -505,14 +507,20 @@ private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outline
 private fun resultStyle() =
     if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.zoonkType.sheetText else MaterialTheme.zoonkType.compact
 
-/** Main's `SuggestionDescription`: a line's size in its line, reading size in its sheet, a row description's on the page. */
+/**
+ * Main's `SuggestionDescription`: a line's size in its line, reading size in its sheet, a row description's on the page,
+ * laid out as a paragraph (main's `text-pretty`) so a short last word doesn't sit alone.
+ */
 @Composable
-private fun descriptionStyle() =
-    when (LocalPresentation.current) {
-        Presentation.Line -> MaterialTheme.zoonkType.compact
-        Presentation.Sheet -> MaterialTheme.zoonkType.sheetText
-        Presentation.Panel, Presentation.Card -> MaterialTheme.typography.bodySmall
-    }
+private fun descriptionStyle(): TextStyle {
+    val style =
+        when (LocalPresentation.current) {
+            Presentation.Line -> MaterialTheme.zoonkType.compact
+            Presentation.Sheet -> MaterialTheme.zoonkType.sheetText
+            Presentation.Panel, Presentation.Card -> MaterialTheme.typography.bodySmall
+        }
+    return style.copy(lineBreak = style.lineBreak.copy(strategy = LineBreak.Strategy.HighQuality))
+}
 
 private enum class Presentation { Line, Panel, Card, Sheet }
 

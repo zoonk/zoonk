@@ -108,6 +108,7 @@ private struct SubjectContent: View {
   // Above the panes, so a fold or a resize that rebuilds them keeps what the learner opened.
   @State private var showsAllChapters = false
   @State private var showsDoneChapters = false
+  @State private var showsLeftOut = false
   @State private var openTopics: Set<SyllabusSubject.Topic.ID> = []
   @State private var restoring = VisitRequest<Bool>()
   @State private var writeFailed = false
@@ -417,6 +418,18 @@ private struct SubjectContent: View {
             .fixedSize(horizontal: true, vertical: false)
           }
         }
+      }
+      .listSectionSpacing(subject.leftOutTopics.isEmpty ? listSectionGap : 0)
+
+      // Main's fold sits flush under the chapter list, divided like its rows though outside it:
+      // it isn't a chapter.
+      if !subject.leftOutTopics.isEmpty {
+        Section {
+          LeftOutTopicsRows(names: subject.leftOutTopics, isUnfolded: $showsLeftOut)
+        } footer: {
+          LeftOutWhy()
+        }
+        .listSectionSeparator(.visible, edges: .top)
       }
     }
   }
@@ -797,6 +810,33 @@ struct SubjectTopicRow: View {
   }
 }
 
+/// Main's `LeftOutWhy`: why the fold above leaves topics out, and the way to fit them in.
+private struct LeftOutWhy: View {
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text(
+        "They don't fit before your date.", tableName: "Plan",
+        comment:
+          "Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan."
+      )
+      .typeStyle(.note)
+      .foregroundStyle(.mutedForeground)
+
+      Button {
+        router.showRoot(of: .plan)
+      } label: {
+        Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
+      }
+      .buttonStyle(.outline)
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .listRowSeparator(.hidden)
+    .layoutSectionText()
+  }
+}
+
 /// Main's `NotPlannedCallout`: a notice card saying why the subject isn't in the plan, with the way
 /// back main offers for each reason.
 private struct SubjectNotPlannedNotice: View {
@@ -815,7 +855,12 @@ private struct SubjectNotPlannedNotice: View {
   let restoring: VisitRequest<Bool>
 
   var body: some View {
-    Label {
+    // On the first line's baseline, as main's notice sets its mark, where a label centers it.
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      Image(systemName: "minus.circle")
+        .foregroundStyle(.mutedForeground)
+        .accessibilityHidden(true)
+
       VStack(alignment: .leading, spacing: 10) {
         switch reason {
         case .skipped:
@@ -869,9 +914,6 @@ private struct SubjectNotPlannedNotice: View {
         }
       }
       .foregroundStyle(Color(.foreground))
-    } icon: {
-      Image(systemName: "minus.circle")
-        .foregroundStyle(.mutedForeground)
     }
     .typeStyle(.note)
     .frame(maxWidth: .infinity, alignment: .leading)

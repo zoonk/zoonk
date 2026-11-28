@@ -23,6 +23,12 @@ export const boundaries = {
   },
   "@zoonk/ai/tasks/curriculum/coverage-check": { checkCoverage: vi.fn() },
   "@zoonk/ai/tasks/curriculum/goal-opening": { generateGoalOpening: vi.fn() },
+  // A goal that names no complete list, unless a test says otherwise.
+  "@zoonk/ai/tasks/curriculum/member-coverage": {
+    checkMemberCoverage: vi.fn(async () => ({
+      data: { members: [], reason: null, set: null, uncovered: [] },
+    })),
+  },
   "@zoonk/ai/tasks/curriculum/skill-graph-calls": {
     generateSkillGraphFrame: vi.fn(),
     generateSkillGraphSection: vi.fn(),

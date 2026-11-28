@@ -122,18 +122,24 @@ private struct PlanPhaseRow: View {
         route: context.goal.kind == .language
           ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
       ) {
-        header(next: own.state == .current)
+        // The left-out row under it says what this phase's line would.
+        header(next: own.state == .current, foldsLeftOut: true)
       }
       .currentRow(own.state == .current)
+
+      leftOutRows
 
       if isOpen {
         events
       }
-    } else if phase.chapters.isEmpty && phase.checkpoint == nil && phase.mocks.nextDate == nil {
+    } else if phase.chapters.isEmpty && phase.leftOutTopics.isEmpty && phase.checkpoint == nil
+      && phase.mocks.nextDate == nil
+    {
       header(next: false)
     } else {
       DisclosureGroup(isExpanded: expansion) {
         chapterRows
+        leftOutRows
         events
       } label: {
         // Open, a phase named like one of its chapters goes by its place, so the two rows don't read
@@ -170,6 +176,18 @@ private struct PlanPhaseRow: View {
           }
         })
     }
+  }
+
+  private var leftOutRows: some View {
+    LeftOutTopicsRows(
+      names: phase.leftOutTopics,
+      isUnfolded: Binding {
+        disclosure.showsLeftOut
+      } set: { shows in
+        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+          $0.showsLeftOut = shows
+        }
+      })
   }
 
   private func foldLabel(hidden: Int, showsAll: Bool) -> Text {
@@ -243,19 +261,27 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
-  private func header(next: Bool, byPlace: Bool = false) -> some View {
+  private func header(next: Bool, byPlace: Bool = false, foldsLeftOut: Bool = false)
+    -> some View
+  {
     PlanPhaseLabel(
-      context: context, phase: phase, description: meta, next: next, byPlace: byPlace)
+      context: context, phase: phase,
+      description: foldsLeftOut && phase.outOfPlan == .topics(phase.leftOutTopics.count)
+        ? nil : meta,
+      next: next, byPlace: byPlace)
   }
 
   private var meta: Text? {
-    switch phase.leftOut {
+    switch phase.outOfPlan {
     case .notInPlan:
       return planOutsideReason(phase.notPlannedReason, module: context.goal.kind != .exam)
     case .lessons(let count):
       return Text(
         "\(count) lessons not studied", tableName: "Plan",
         comment: "A phase the date passed with lessons not studied")
+    case .topics(let count):
+      // Open, the fold among its rows says it.
+      return isExpanded ? nil : leftOutTopicsLine(count)
     case .challenge, .noTimeForChallenge:
       return context.goal.kind == .language
         ? Text(
@@ -952,6 +978,19 @@ struct SyllabusSubjectRow: View {
           .foregroundStyle(.mutedForeground)
           .layoutPart(.note)
       }
+
+      if !subject.leftOutTopics.isEmpty {
+        // The mark beside the words, not inside them, so the line measures as text.
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+          Image(systemName: "minus.circle")
+            .foregroundStyle(.mutedForeground.opacity(0.7))
+            .accessibilityHidden(true)
+          leftOutTopicsText(subject.leftOutTopics.count)
+            .foregroundStyle(.mutedForeground)
+            .layoutPart(.note)
+        }
+        .typeStyle(.meta)
+      }
     }
   }
 
@@ -1126,4 +1165,80 @@ func examExtraLabel(hasNotice: Bool, document: ExamDocument) -> String {
         "Labels a language certificate's optional study, such as its strategy, which its official guide doesn't list"
     )
   }
+}
+
+/// How many topics of a module or a phase the plan's date leaves out, wherever the plan says it.
+func leftOutTopicsText(_ count: Int) -> Text {
+  Text(verbatim: leftOutTopicsWords(count))
+}
+
+/// Main's `LeftOutTopicsLine`: the fold's mark, then the count, under a row's name.
+func leftOutTopicsLine(_ count: Int) -> Text {
+  let mark = Text(Image(systemName: "minus.circle")).foregroundStyle(.mutedForeground.opacity(0.7))
+
+  return Text("\(mark)\(Text(verbatim: " " + leftOutTopicsWords(count)))")
+    .accessibilityLabel(leftOutTopicsWords(count))
+}
+
+func leftOutTopicsWords(_ count: Int) -> String {
+  String(
+    localized: "\(count) topics not in your plan", table: "Plan", locale: .appLanguage,
+    comment:
+      "Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date."
+  )
+}
+
+/// Main's `LeftOutTopicsRow`: the topics the plan's date leaves out of a phase or a module, folded
+/// under one row that names them.
+struct LeftOutTopicsRows: View {
+  let names: [String]
+  @Binding var isUnfolded: Bool
+
+  var body: some View {
+    if !names.isEmpty {
+      FoldRow(isUnfolded: $isUnfolded) {
+        ListRow(leftOutTopicsText(names.count).foregroundStyle(.mutedForeground)) {
+          Image(systemName: "minus.circle")
+            .foregroundStyle(.mutedForeground)
+        }
+      }
+
+      if isUnfolded {
+        FoldedNames(names: names)
+      }
+    }
+  }
+}
+
+/// Main's `FoldedNames`: names a fold opens to, which open nothing themselves, as one quiet list of
+/// bullets hanging off the rows' title edge.
+struct FoldedNames: View {
+  let names: [String]
+
+  var body: some View {
+    let hang = Self.bulletWidth + Self.bulletGap
+
+    RowLayout(hasMark: true) {
+      Color.clear.frame(width: 0, height: 0)
+    } words: {
+      VStack(alignment: .leading, spacing: 4) {
+        ForEach(Array(names.enumerated()), id: \.offset) { _, name in
+          HStack(alignment: .firstTextBaseline, spacing: Self.bulletGap) {
+            Text(verbatim: "•")
+              .frame(width: Self.bulletWidth, alignment: .leading)
+              .accessibilityHidden(true)
+            Text(name)
+          }
+        }
+      }
+      .alignmentGuide(.leading) { $0[.leading] + hang }
+      .typeStyle(.body)
+      .foregroundStyle(.mutedForeground)
+    } value: {
+    }
+    .listRowSeparator(.hidden)
+  }
+
+  private static let bulletWidth = 8.0
+  private static let bulletGap = 6.0
 }

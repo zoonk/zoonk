@@ -9,6 +9,7 @@ import {
   type SyllabusView,
 } from "../syllabus-contract";
 import { getDisplayWeights } from "./display-weights";
+import { listHeldSkillIds, listLeftOutSkills } from "./left-out-skills";
 import { getSubjectProgress } from "./subject-progress";
 import {
   buildChapters,
@@ -17,7 +18,12 @@ import {
   getItemAreas,
   withoutKey,
 } from "./syllabus-chapters";
-import { type SyllabusInput, type SyllabusItem, hasSyllabusNotice } from "./syllabus-input";
+import {
+  type SyllabusInput,
+  type SyllabusItem,
+  type SyllabusSkill,
+  hasSyllabusNotice,
+} from "./syllabus-input";
 import {
   draftSubjects,
   findWrittenPart,
@@ -102,6 +108,45 @@ function measureSubject({
   };
 }
 
+function listHeldExtras({
+  extraIds,
+  items,
+}: {
+  extraIds: ReadonlySet<string>;
+  items: readonly SyllabusItem[];
+}): Set<string> {
+  return new Set(
+    items.flatMap((item) =>
+      (item.status === "todo" || item.status === "done") &&
+      item.skillId &&
+      extraIds.has(item.skillId)
+        ? [item.skillId]
+        : [],
+    ),
+  );
+}
+
+/** Topics carry their own marks, and a subject wholly out lists its skills in `covers`. */
+function listSubjectLeftOut({
+  input,
+  items,
+  skills,
+  subject,
+}: {
+  input: SyllabusInput;
+  items: readonly SyllabusItem[];
+  skills: readonly SyllabusSkill[];
+  subject: Pick<SyllabusSubject, "extra" | "notPlannedReason" | "topics">;
+}): string[] {
+  if (subject.notPlannedReason || subject.extra || subject.topics.length > 0) {
+    return [];
+  }
+
+  const facts = { ...input, heldSkillIds: listHeldSkillIds(items) };
+
+  return listLeftOutSkills({ facts, skills }).map((skill) => skill.name);
+}
+
 /** Topic status requires evidence from mapped plan skills; otherwise display notice topics without claiming coverage. */
 export function buildSyllabus(
   input: SyllabusInput,
@@ -128,15 +173,7 @@ export function buildSyllabus(
   const ordinary = skills.filter((skill) => !skill.extra);
   const extraIds = new Set(skills.filter((skill) => skill.extra).map((skill) => skill.skillId));
 
-  const heldExtras = new Set(
-    items.flatMap((item) =>
-      (item.status === "todo" || item.status === "done") &&
-      item.skillId &&
-      extraIds.has(item.skillId)
-        ? [item.skillId]
-        : [],
-    ),
-  );
+  const heldExtras = listHeldExtras({ extraIds, items });
 
   const extraAreas = listAreas(skills.filter((skill) => heldExtras.has(skill.skillId)));
   const { drafts: subjectsInScope, kind } = draftSubjects({ areas: listAreas(ordinary), notice });
@@ -227,6 +264,12 @@ export function buildSyllabus(
       group: draft.group,
       imageUrl: draft.areas.map((area) => areaCourses.get(area)?.imageUrl).find(Boolean) ?? null,
       key: keys[index] ?? draft.name,
+      leftOut: listSubjectLeftOut({
+        input,
+        items,
+        skills: ownSkills,
+        subject: { extra, notPlannedReason, topics },
+      }),
       ...getSubjectProgress(own),
       ...measured,
       matrix: [...(draft.matrix ?? [])],
