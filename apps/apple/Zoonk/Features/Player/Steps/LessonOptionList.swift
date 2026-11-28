@@ -71,6 +71,7 @@ struct LessonOptionList: View {
               Group {
                 if let result = result(option) {
                   VerdictMark(result: result)
+                    .foregroundStyle(Color(.foreground))
                     .frame(minHeight: 20)
                     .padding(2)
                     .background(.boxBackground, in: .circle)
