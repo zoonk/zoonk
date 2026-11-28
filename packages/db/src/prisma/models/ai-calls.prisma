@@ -31,6 +31,8 @@ model AiCall {
   costUsd          Float?   @map("cost_usd")
   gatewayCostUsd   Float?   @map("gateway_cost_usd")
   latencyMs        Int      @map("latency_ms")
+  /// A billed run whose answer couldn't be used, such as one that failed its schema.
+  failed           Boolean  @default(false)
   createdAt        DateTime @default(now()) @map("created_at")
 
   @@index([createdAt])
