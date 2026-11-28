@@ -237,18 +237,36 @@ async function runClaimedProgram({
           sandboxName: row.sandboxName,
         });
 
-  const result = "result" in attempt ? attempt.result : unavailable(runId);
+  return finishRun({ attempt, row });
+}
 
-  await prisma.codeRun.update({
-    data: {
-      errorOutput: result.errorOutput,
-      finishedAt: new Date(),
-      output: result.output,
-      sandboxName: "result" in attempt ? attempt.sandboxName : row.sandboxName,
-      stop: result.stop,
-    },
-    where: { id: row.id },
+/** A run no sandbox ever started gives its charge back; any other run keeps it. */
+async function finishRun({ attempt, row }: { attempt: Attempt; row: CodeRun }) {
+  const result = "result" in attempt ? attempt.result : unavailable(row.id);
+  const charged = "result" in attempt || attempt.started;
+
+  await prisma.$transaction(async (transaction) => {
+    await transaction.codeRun.update({
+      data: {
+        errorOutput: result.errorOutput,
+        finishedAt: new Date(),
+        output: result.output,
+        sandboxName: "result" in attempt ? attempt.sandboxName : row.sandboxName,
+        stop: result.stop,
+      },
+      where: { id: row.id },
+    });
+
+    if (!charged) {
+      await transaction.usageRecord.deleteMany({
+        where: { kind: "codeRun", targetId: row.id, userId: row.userId },
+      });
+    }
   });
+
+  if (!charged) {
+    revalidateCacheTags([getAllowanceCacheTag(row.userId)]);
+  }
 
   return result;
 }

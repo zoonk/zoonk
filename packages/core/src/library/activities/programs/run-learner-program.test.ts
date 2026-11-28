@@ -91,6 +91,31 @@ describe("learner code run admission", () => {
     expect(sandboxDriver.reuse).toHaveBeenCalledTimes(2);
   });
 
+  it("charges nothing when no sandbox ever ran the program", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    vi.mocked(sandboxDriver.fork).mockResolvedValueOnce(scriptedSandbox());
+    await finish(await runLearnerProgram(program()));
+
+    const unwritable = scriptedSandbox();
+    unwritable.write.mockRejectedValueOnce(new Error("Session ended"));
+    vi.mocked(sandboxDriver.reuse).mockResolvedValueOnce(unwritable);
+    vi.mocked(sandboxDriver.fork).mockRejectedValueOnce(new Error("Sandbox API is down"));
+
+    const lost = await finish(await runLearnerProgram(program()));
+
+    expect(lost.stop).toBe("unavailable");
+
+    await expect(prisma.codeRun.findUnique({ where: { id: lost.runId } })).resolves.toMatchObject({
+      finishedAt: expect.any(Date),
+      stop: "unavailable",
+    });
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "codeRun", userId: user.id } }),
+    ).resolves.toBe(1);
+  });
+
   it("keeps the charge for a program that started and runs it only once", async () => {
     const user = await userFixture();
     mockSession(user.id);
