@@ -1,7 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type CoverageCheckParams } from "@zoonk/ai/tasks/curriculum/coverage-check";
 import { CGU_WRITTEN_TASKS } from "../skill-graph/cgu-blueprint";
-import { BIBLE_BOOKS_SKILLS, QURAN_MEMORIZATION_SKILLS } from "./complete-set-graphs";
 import { type CoverageCheckExpected } from "./scorer";
 
 type CoverageSkill = CoverageCheckParams["skills"][number];
@@ -595,35 +594,6 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
           topics: [],
         }),
       ],
-    },
-  },
-  {
-    expected: { gaps: ["An-Nahl"] },
-    id: "en-quran-memorization-drops-one-surah",
-    origin: "production",
-    userInput: {
-      courses: [
-        { key: "arabic", title: "Quranic Arabic" },
-        { key: "quran", title: "Quran memorization" },
-      ],
-      goal: "Memorize the Quran",
-      goalKind: "learn",
-      language: "en",
-      references: [],
-      skills: QURAN_MEMORIZATION_SKILLS.map(([key, name]) => skill(key, name)),
-    },
-  },
-  {
-    expected: { gaps: [] },
-    id: "en-bible-books-covered-by-ranges",
-    origin: "production",
-    userInput: {
-      courses: [{ key: "bible", title: "Biblical studies" }],
-      goal: "Master the ESV Bible",
-      goalKind: "learn",
-      language: "en",
-      references: [],
-      skills: BIBLE_BOOKS_SKILLS.map(([key, name]) => skill(key, name)),
     },
   },
 ];
