@@ -3238,6 +3238,37 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "이 화면 도움말"
 
+#: src/lesson/lesson-notice.tsx
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "다시 켜기"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "LnHBcu"
+msgid "Quick check · {current} of {total}"
+msgstr "간단 확인 · {current}/{total}"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "KC15MC"
+msgid "Your answer here didn't save. Answer it again to finish the lesson."
+msgstr "이 문제의 답안이 저장되지 않았어요. 레슨을 마치려면 다시 답해 주세요."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "rKXfRV"
+msgid "This question was waiting for its picture. Answer it to finish the lesson."
+msgstr "그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "오늘은 쓰기 문제를 건너뛰어요."
+
+#. Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day.
+#: src/lesson/lesson-notice.tsx
+msgctxt "EoOxGU"
+msgid "Speaking is off for today."
+msgstr "오늘은 말하기를 사용할 수 없어요."
+
 #: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
@@ -3292,31 +3323,6 @@ msgstr "오늘 쓰기 문제 건너뛰기"
 msgctxt "JfMPi0"
 msgid "I already know this"
 msgstr "이미 알고 있어요"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "Bvu2Yr"
-msgid "Turn back on"
-msgstr "다시 켜기"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "LnHBcu"
-msgid "Quick check · {current} of {total}"
-msgstr "간단 확인 · {current}/{total}"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "KC15MC"
-msgid "Your answer here didn't save. Answer it again to finish the lesson."
-msgstr "이 문제의 답안이 저장되지 않았어요. 레슨을 마치려면 다시 답해 주세요."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "rKXfRV"
-msgid "This question was waiting for its picture. Answer it to finish the lesson."
-msgstr "그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "36aQ8F"
-msgid "Writing is off for today."
-msgstr "오늘은 쓰기 문제를 건너뛰어요."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
@@ -3455,16 +3461,22 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "답을 써 주세요"
 
+#. The learner blocked the microphone for Zoonk in the browser. “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "g0T0lw"
+msgid "Allow the microphone in your browser settings, then tap Record."
+msgstr "브라우저 설정에서 마이크를 허용한 다음 녹음 버튼을 눌러 보세요."
+
+#. The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "idhizk"
+msgid "We can't use your microphone. Check it, then tap Record."
+msgstr "마이크를 사용할 수 없어요. 마이크를 확인한 다음 녹음 버튼을 눌러 보세요."
+
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "지금은 말할 수 없어요"
-
-#. On a question answered aloud: the learner types this one answer instead of saying it.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "typeSpokenAnswer"
-msgid "Type instead"
-msgstr "대신 입력하기"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3472,19 +3484,9 @@ msgid "I can talk now"
 msgstr "이제 말할 수 있어요"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "0gloy9"
-msgid "Say it instead"
-msgstr "대신 말로 답하기"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "eUqe2x"
-msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
-msgstr "대신 말하려면 브라우저 설정에서 Zoonk의 마이크 사용을 허용해 주세요."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "uTDJ3g"
-msgid "We can't use your microphone, so type what you'd say."
-msgstr "마이크를 사용할 수 없어요. 말하려던 내용을 글로 입력하세요."
+msgctxt "2fUdG_"
+msgid "This device can't record your voice."
+msgstr "이 기기에서는 음성을 녹음할 수 없어요."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

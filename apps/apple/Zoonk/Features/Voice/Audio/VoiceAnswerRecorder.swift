@@ -45,7 +45,10 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
       return .microphoneOff(
         String(
           localized: "Allow the microphone in Settings, then tap Record.",
-          table: "Voice", comment: "How to turn the microphone back on to record a spoken answer"))
+          table: "Voice",
+          comment:
+            "The learner refused the microphone for the app. “Record” is the label of the button that starts the recording."
+        ))
     }
 
     if let active = RecordNote(active: recorder.status) {

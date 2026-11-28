@@ -70,8 +70,17 @@ function RecordAnswer({ stepId }: { stepId: string }) {
 
   const micLine =
     micProblem === "blocked"
-      ? t("Allow the microphone in your browser settings, then tap Record.")
-      : micProblem && t("We can't use your microphone. Check it, then tap Record.");
+      ? t({
+          description:
+            "The learner blocked the microphone for Zoonk in the browser. “Record” is the label of the button that starts the recording.",
+          message: "Allow the microphone in your browser settings, then tap Record.",
+        })
+      : micProblem &&
+        t({
+          description:
+            "The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.",
+          message: "We can't use your microphone. Check it, then tap Record.",
+        });
 
   const note = useRecordNote({
     acquiring: recorder.status === "acquiring",

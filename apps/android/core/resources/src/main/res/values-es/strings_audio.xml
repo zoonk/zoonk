@@ -7,7 +7,10 @@
   "audio_getting_ready": "b07a98f4bbed5d322cbd6afb4fc0d38b0d7039abda04f4d145cd2e65c2fbffb6",
   "audio_here_is_what_it_says": "df29384daff4eaa95d4e4f20b00b9a5e8104d4544baeeeb9005ad1c1a5c9b7a9",
   "audio_listening": "2e9db6bc4141529666706cc9daada614bd6dc7bdfe22062e5ca62bfe4f35f829",
+  "audio_microphone_ask_again": "ed88916e4fd017ddd8c9ab520562539fd7533abd5ff2a0954635f09a9cd4df8c",
+  "audio_microphone_blocked": "872266315bdffe49e2bd8fcf490979865fdc8ca02837b36997a8829ea5fb6e24",
   "audio_microphone_off_title": "9c22a4cf0b236aad487d0f0ea5dfd267f564253b01027f594891589ca52c99c4",
+  "audio_microphone_unavailable": "a2c4beaf257b27a1163b6c6cf496e0bf814d34946af5d50c688cff0ceb090974",
   "audio_no_speech": "3a174d597983fa9b37f69c95f6a72e8ac10994b168afdde14fb498eb175272cd",
   "audio_open_settings": "6ed5b10c2399cce480778bba1aa172f8e13bf3641795a41851b4a5015ad2100f",
   "audio_record": "dbfd2d949c8e96b9b58141dabc4d166052e9c6d68e091319571cc1103a28cd4e",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Toca Grabar y dilo en voz alta</string>
     <string name="audio_microphone_off_title">El micrófono está desactivado</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Toca Grabar y permite el acceso al micrófono.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Permite el acceso al micrófono en Configuración y luego toca Grabar.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">No podemos usar tu micrófono. Revísalo y luego toca Grabar.</string>
     <string name="audio_open_settings">Abrir Configuración</string>
 </resources>

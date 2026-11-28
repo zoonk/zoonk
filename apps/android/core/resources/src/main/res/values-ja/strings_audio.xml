@@ -7,7 +7,10 @@
   "audio_getting_ready": "044cbc868ec019a7f5ef24f9a3ac3462ff22af9cb291516af66c3fc8d51734bd",
   "audio_here_is_what_it_says": "70e538659f1065640d548af207c2de0c847da3e21032a3f973d81e9700548709",
   "audio_listening": "c9348d8aefd9969ccd1cba95d7e4e18e9c7ee404a480dd5d5059e68e0ee09aa3",
+  "audio_microphone_ask_again": "1c2a6b5003de9a6829829bf9ac0df8f33f92626b3b25ad5cd9e67109ba2a685a",
+  "audio_microphone_blocked": "6229e15bc0eb80844a5fde6960ef05db68649020efef18c959a3cd85ad258e65",
   "audio_microphone_off_title": "12154dd0d90bcd2ddcdca1783c36ccb9fcc359797693643ba2e4e29b42310db2",
+  "audio_microphone_unavailable": "8309fa102c4d02d555b00ca5c46abf8e002d6297f10e5d72675296d45edb9e6b",
   "audio_no_speech": "59688df3e7f3d67a754f719b43161f1cd677629f09fabe4deec27b2dd24a3005",
   "audio_open_settings": "9945fe5c9979a3d245acb4c0ee47b7e75fa99feb86d6a2536dc26cf1d48822e2",
   "audio_record": "8327ca0ab6c34341f29cc190040b83eecc676a3c891d85699258f5402327ec30",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">「録音」をタップして、声に出して言ってください</string>
     <string name="audio_microphone_off_title">マイクがオフになっています</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">「録音」をタップして、マイクの使用を許可してください。</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">設定でマイクを許可してから、「録音」をタップしてください。</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">マイクを使用できません。マイクを確認してから、「録音」をタップしてください。</string>
     <string name="audio_open_settings">設定を開く</string>
 </resources>

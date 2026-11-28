@@ -3238,6 +3238,37 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Ajuda com esta tela"
 
+#: src/lesson/lesson-notice.tsx
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "Reativar"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "LnHBcu"
+msgid "Quick check · {current} of {total}"
+msgstr "Teste rápido · {current} de {total}"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "KC15MC"
+msgid "Your answer here didn't save. Answer it again to finish the lesson."
+msgstr "Sua resposta aqui não foi salva. Responda de novo para concluir a aula."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "rKXfRV"
+msgid "This question was waiting for its picture. Answer it to finish the lesson."
+msgstr "Esta pergunta estava esperando a imagem. Responda para concluir a aula."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "Perguntas de escrita desativadas por hoje."
+
+#. Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day.
+#: src/lesson/lesson-notice.tsx
+msgctxt "EoOxGU"
+msgid "Speaking is off for today."
+msgstr "As perguntas de fala ficaram desativadas pelo resto do dia."
+
 #: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
@@ -3292,31 +3323,6 @@ msgstr "Pular perguntas de escrita hoje"
 msgctxt "JfMPi0"
 msgid "I already know this"
 msgstr "Eu já sei isso"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "Bvu2Yr"
-msgid "Turn back on"
-msgstr "Reativar"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "LnHBcu"
-msgid "Quick check · {current} of {total}"
-msgstr "Teste rápido · {current} de {total}"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "KC15MC"
-msgid "Your answer here didn't save. Answer it again to finish the lesson."
-msgstr "Sua resposta aqui não foi salva. Responda de novo para concluir a aula."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "rKXfRV"
-msgid "This question was waiting for its picture. Answer it to finish the lesson."
-msgstr "Esta pergunta estava esperando a imagem. Responda para concluir a aula."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "36aQ8F"
-msgid "Writing is off for today."
-msgstr "Perguntas de escrita desativadas por hoje."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
@@ -3455,16 +3461,22 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Escreva sua resposta"
 
+#. The learner blocked the microphone for Zoonk in the browser. “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "g0T0lw"
+msgid "Allow the microphone in your browser settings, then tap Record."
+msgstr "Permita o acesso ao microfone nas configurações do navegador e toque em Gravar."
+
+#. The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "idhizk"
+msgid "We can't use your microphone. Check it, then tap Record."
+msgstr "Não conseguimos usar seu microfone. Confira se ele está funcionando e toque em Gravar."
+
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Não posso falar agora"
-
-#. On a question answered aloud: the learner types this one answer instead of saying it.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "typeSpokenAnswer"
-msgid "Type instead"
-msgstr "Digitar"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3472,19 +3484,9 @@ msgid "I can talk now"
 msgstr "Posso falar agora"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "0gloy9"
-msgid "Say it instead"
-msgstr "Prefiro falar"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "eUqe2x"
-msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
-msgstr "Para falar em vez de digitar, permita o uso do microfone pelo Zoonk nas configurações do navegador."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "uTDJ3g"
-msgid "We can't use your microphone, so type what you'd say."
-msgstr "A gente não consegue usar seu microfone, então digite o que você falaria."
+msgctxt "2fUdG_"
+msgid "This device can't record your voice."
+msgstr "Este dispositivo não consegue gravar sua voz."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

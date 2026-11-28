@@ -430,13 +430,12 @@ extension LessonPlayerState.Notice {
         comment: "A question left out while its picture was drawn came back once it was drawn")
     case .writingSkipped:
       String(
-        localized: "Writing is off for today.", table: "Player",
-        comment: "\"Skip writing questions today\" left the lesson's writing out")
+        localized: "Writing is off for today.", table: "Player")
     case .speakingSkipped:
       String(
         localized: "Speaking is off for today.", table: "Player",
         comment:
-          "\"I can't talk now\" left out the lesson's questions answered out loud that can't be listened to instead"
+          "Shown after \"I can't talk now\" left the lesson's speaking questions out for the rest of the day."
       )
     }
   }

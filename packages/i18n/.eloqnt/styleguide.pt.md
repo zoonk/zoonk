@@ -41,7 +41,7 @@
 - “score”, including an exam's “band”: “pontuação”, not “nota” or “faixa”; the admission cut-off stays “nota de corte”
 - “again”, including “Retry”: “de novo”, not “novamente”
 - “listening”: “escuta”
-- “Speaking”: “Conversação”
+- “Speaking” as a skill’s name (in a skill list or an exam part): “Conversação”. Speaking in a lesson, where the learner answers questions out loud: “falar”, “perguntas de fala”, never “Conversação”
 - “Free” (subscription name): “Grátis”
 - “Get Plus”: “assinar o Plus”, not “mudar para o Plus”
 - “language”: “idioma”

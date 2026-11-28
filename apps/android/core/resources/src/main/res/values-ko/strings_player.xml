@@ -100,7 +100,6 @@
   "player_lesson_of": "f2e3f32fe7f41ea048e072aa5be6c39c5b4c618baa05a8e4b9b95d6999aee175",
   "player_lesson_ready": "15974cea53a7d6aecba26a37f4a8731a472e446b003ba19c9db942edc32d6a13",
   "player_listen": "3840fbf9176a031dc18f83778aef41d73981c0be9f655fa2db608e3950db06c8",
-  "player_microphone_is_blocked": "96f35d86a81b2d8aad0eb2394a43227a46916e8205c9e315767d45bccf39f45c",
   "player_next_lesson": "b5d9524a893ec8ebab4fc49d1f0bb49ddbd9024df72f534454f7a57f097fb3dc",
   "player_next_step_failed": "56042968d7471d3d94379487efa5ed4a37345ebc8ba8b62ceee1b54820f29480",
   "player_not_found_description": "8fd57e8aac9aedac567f162217a14b94c25363a0295a4fde5a2a3cf73f2bc9a4",
@@ -113,6 +112,7 @@
   "player_notice_answer_not_saved": "ae62b6807073e0d45e5e9c92e3d4abe70551dac8b28cbb21f0b690d3789ccf0c",
   "player_notice_picture_ready": "dc438a40dac0f3d4ab94dad36bd3beefe9632a7167116152665edc46b7a40a6c",
   "player_notice_self_correct": "d984649639fa70ee8e5602fc980419775975f4f130bc600ddcf7de4442cb23a7",
+  "player_notice_speaking_skipped": "736eee9761a75fc39226deea99fea4e20c48a93d9b998afdec29cde7328ee500",
   "player_notice_writing_skipped": "6d2363a80615d234d31d5f9eb9177a31cc5a0fc5529212690269d966b82f522a",
   "player_offer_no_thanks": "1ed1b1f66e58da51a94ac0d4b52b20fe92072d554b059ffae9ffca51872fef52",
   "player_offer_taking_time": "cd288dfa3aaf597fba43ae6f9c84b54f575ff0537ff678212284a5e660d1e422",
@@ -144,7 +144,6 @@
   "player_saved_to_mistakes": "c4186f157d6392212790c00ea0554633298de41115c383ba142eb5558a8d4ea0",
   "player_saved_to_mistakes_back_at_end": "a579a7d8ea264c9f26e27c1142bd9c188812219d125a816be0d0af003046a597",
   "player_saving_progress": "e0f0153d3008188529aa478cfb12799887e47643c9b0df520bc9dc9cd890e614",
-  "player_say_it_instead": "cfab6b0ddb6c3b529975cfb6a3f763b1ce69fa264a4b5b05bd78a8d00808093a",
   "player_screen_options": "83c1b103275fc5175d841f5494cbb41ac2e95263767b268e1c8ae3fb6092e016",
   "player_set_aside_description": "d88a38905d2a7e46e65f9bb86c1aa06319eca39ac4bf6a9c538341be566deb96",
   "player_set_aside_title": "f4c345ce7c4e3e3edc833195a42cce1b9303ec7b4359c5ed80a70a316b6cc758",
@@ -165,6 +164,7 @@
   "player_summary_ideas": "a6dc0d55f20dbdeca0d505f4f16fc49e09285343be58a38d9fd518ae3e9f93ca",
   "player_time_studied": "8d717833957281ebf127c7c0f566d662795543a96bcf9a0decffa53dbd368118",
   "player_try_again": "95737d2eb9a6f0f443a636e4cc818c39e187a282219e4a7012c86b1e02f40484",
+  "player_turn_back_on": "15c4c3fb952b165e2b481342edfc1d6e04b2a86f657202a2ee6895f3d815bb60",
   "player_unchecked_compare": "0bfe5624bad4fbe94f558d73c678a9302ac9aea43d0c996e04b2ad8dfc2a9400",
   "player_unchecked_updated": "b8d5cec5d35c66705b66c37f91dfb90aa2dc878183cd4c261dcb8185325a79f7",
   "player_verdict_almost": "c2f9494c4261da5dcbb17f9182bd2df6263cf2b493934d4385d1aa062d6299e9",
@@ -182,7 +182,6 @@
   "player_worked_example": "98c0c432a47947a4017e9671bc2042384e8906b252570e974fb5a7b111422e57",
   "player_worked_example_result": "3dc301f7dc1e1d60e034c7f4b90bb6b00fbc415949ae8868015159bf9af437bf",
   "player_worked_example_steps": "1795dd8814ac9ed6ff00538182350b3ee684311ca581811e8f022b7348227f67",
-  "player_write_again": "23114fa7bf624154f7feaed69b457a27950cf9fe36692e8711dd2f164af63d7b",
   "player_write_your_answer": "92a5bf659c9f703f92af4e773e735b57f3be306937908e6b9cd2e293dc10b88e",
   "player_writing_lesson": "7e265e7c590bcfc2a1970cafa4ef7efdb5d20e507bdbf6fdbeaf225628360f7f",
   "player_writing_note": "d5a15c866bf35a37588bbd9bf39434f1cabd4c9d179d10d1d68c21b5cf261ee3",
@@ -231,7 +230,9 @@
     <string name="player_notice_answer_not_saved">이 문제의 답안이 저장되지 않았어요. 레슨을 마치려면 다시 답해 주세요.</string>
     <string name="player_notice_picture_ready">그림이 준비되기를 기다리던 문제예요. 레슨을 마치려면 이 문제에 답해 주세요.</string>
     <string name="player_notice_writing_skipped">오늘은 쓰기 문제를 건너뛰어요.</string>
-    <string name="player_write_again">다시 켜기</string>
+    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <string name="player_notice_speaking_skipped">오늘은 말하기가 꺼져 있어요.</string>
+    <string name="player_turn_back_on">다시 켜기</string>
     <string name="player_verdict_almost">거의 맞았어요</string>
     <string name="player_verdict_correct">정답이에요!</string>
     <string name="player_verdict_guess">정답은 이거예요</string>
@@ -345,9 +346,6 @@
     <string name="player_can_talk_now">이제 말할 수 있어요</string>
     <string name="player_cant_listen_now">지금은 들을 수 없어요</string>
     <string name="player_can_listen_now">이제 들을 수 있어요</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">소리 내어 말하기</string>
-    <string name="player_microphone_is_blocked">마이크 사용이 차단됐어요.</string>
     <string name="player_what_we_heard">이렇게 들렸어요</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (들리지 않음)</string>

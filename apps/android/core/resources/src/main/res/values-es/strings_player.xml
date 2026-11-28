@@ -100,7 +100,6 @@
   "player_lesson_of": "11ec22b4b2f97a81333d67a2357f416b7f98020bf3861ef216da20eb084b6794",
   "player_lesson_ready": "bc1f1659f97247fcc3f2eb9fdfcf4bd1b332d76f813992f09415309df5f2488c",
   "player_listen": "344ce00cfaa6d2bfcd3c5585266a33583e4fa5b133f9b7ba8223cdb06e9e0de5",
-  "player_microphone_is_blocked": "cb06b5f3ec32202e67e3c132169ee49ed3f77a20022e652fcfb472ed5ff176e3",
   "player_next_lesson": "8e219129fcc6c3abcaf36cc94eab9f574ec949d29ce3912ccd22c1da52b8f07a",
   "player_next_step_failed": "45ef95312b0c194767275264e2fefd174f68f672b45594bc11e60018471e0fed",
   "player_not_found_description": "f34568552d68bf59dc1a5cc7a82629907bb6a4bf49bbcaf3ad8b47837fe4138f",
@@ -113,7 +112,8 @@
   "player_notice_answer_not_saved": "fba4eb5b38ccb5c8ca248464af784991c7225349749fe340adf85fa760884f46",
   "player_notice_picture_ready": "bb739a7a5866d8df3728d7e7e0df81fc2b24ceefb95c84ec4c2900476a30f5ff",
   "player_notice_self_correct": "a711c7456cd8a8acbe62fe8f2d732961e0340961429a61a375bf0351ffd7ea6e",
-  "player_notice_writing_skipped": "c1e44531d44a5cadd0e682fc597e2b4107af46cdda09c69970abee2902eed01f",
+  "player_notice_speaking_skipped": "bf79bcbc13036afa468e89cf34849de09da306ab2259329b33b3b353acfe11a5",
+  "player_notice_writing_skipped": "d92717c31b850bccb493fa45771b599aa533e8935b51eda4ce8f7903176bd8f4",
   "player_offer_no_thanks": "4917f1672f6604205393940353213a46195a4b00a25485ca60945d9b6961a6f0",
   "player_offer_taking_time": "3a5f0f0fc4c79fde318aae740613c7402bf2694f19c1281a3b59fa143976aa73",
   "player_offer_tricky": "9729d82f8f1e74fab0b81b90e119e5fa77b9eb524bbbc545e6f76e913f923310",
@@ -144,7 +144,6 @@
   "player_saved_to_mistakes": "4c9692224ff3bca1fde64c8bc90eb3342e8a18dafdf87c56007a97c606c4332a",
   "player_saved_to_mistakes_back_at_end": "f63b3eab122af4243541411c87b234be7db058b27bb1e08c5432e210b1b74bfa",
   "player_saving_progress": "dccc838f81370befa1da6bc7c2e4ac0a9af990bdfb01c3a7566bebdc0913df18",
-  "player_say_it_instead": "41755450d1629b6505d7a1ab6226b0d4a0692726f486dda39b88f22a41d0e33f",
   "player_screen_options": "e48d8267d45e80aea7d46a217467585e919b1a203208627e7d6ecad445d030fc",
   "player_set_aside_description": "229bf4d5f76fdf2351ea9786af24dda7534c7b68be98a54e8e96a06f193bf758",
   "player_set_aside_title": "af9f3bd4b7b17133f58b00d05794db6151f279d3932b89549f8ef6caccf123d5",
@@ -165,6 +164,7 @@
   "player_summary_ideas": "5c954731b1a7d4d8f964c312e71f99eecb0d20fd636b67ec66c3352500a14d25",
   "player_time_studied": "ea7da704b84baf2800504204c7535edbee45d2d030103e56d090e06106f30467",
   "player_try_again": "d290eb67e5cd1ca8d613178aa2e3cb9e6c1413c1439adaee9cf943a616a5667a",
+  "player_turn_back_on": "3bb30a17412e0890710d91b5eb415eb367cdda8db17e375b3fbf86edf0484c70",
   "player_unchecked_compare": "55d0ffe34802061ad1e2b5859d17637dda1efd0f3d9a7cb8d326a2337e6967a4",
   "player_unchecked_updated": "964afc97988dd5da43dc0a9272e3a7e43624bdb69dec31376a0877ba59402f65",
   "player_verdict_almost": "4e32ff3ce698ca330886142f6a6b537abf4546c2815e5606ab25d5787a0ba034",
@@ -182,7 +182,6 @@
   "player_worked_example": "4e72beb5a55a7d1fe179ec8c475f4bfc7a76470ba80e9ae4cc253d508cdbd2be",
   "player_worked_example_result": "d859348d095685d5f80815ef2e9c90168f692740b4557936644d3903c6098076",
   "player_worked_example_steps": "628b714bd8c43e9fdd798492e69c504b0374219d3217957536052bbc4bfb4fad",
-  "player_write_again": "14c0f02277c8af4c8b675ad701d9123427834d65d683f0922e6a9ff21747e00d",
   "player_write_your_answer": "590d33de54161b510f73183165516b3a5bad0982a6142562c54bbb3057b4b67a",
   "player_writing_lesson": "0ad253d27c7eef2ba98d0a61196a3c6dc39cee4d2987a3ce384f560fbbc12fec",
   "player_writing_note": "ff20d4777567c2acc41ef5f86eccb9343d59972f1e4c1a59f4c84325105a0542",
@@ -230,8 +229,10 @@
     <string name="player_notice_self_correct">No es correcto. Revísalo y corrígelo por tu cuenta, luego comprueba tu respuesta.</string>
     <string name="player_notice_answer_not_saved">Tu respuesta a esta pregunta no se guardó. Responde de nuevo para terminar la lección.</string>
     <string name="player_notice_picture_ready">Faltaba la imagen de esta pregunta. Respóndela para terminar la lección.</string>
-    <string name="player_notice_writing_skipped">Las preguntas de escritura están desactivadas por hoy.</string>
-    <string name="player_write_again">Volver a activar</string>
+    <string name="player_notice_writing_skipped">Las preguntas de respuesta escrita están desactivadas por hoy.</string>
+    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <string name="player_notice_speaking_skipped">La expresión oral está desactivada por hoy.</string>
+    <string name="player_turn_back_on">Volver a activar</string>
     <string name="player_verdict_almost">Ya casi</string>
     <string name="player_verdict_correct">¡Correcto!</string>
     <string name="player_verdict_guess">Esta es la respuesta</string>
@@ -351,9 +352,6 @@
     <string name="player_can_talk_now">Ya puedo hablar</string>
     <string name="player_cant_listen_now">Ahora no puedo escuchar</string>
     <string name="player_can_listen_now">Ahora puedo escuchar</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">Responder en voz alta</string>
-    <string name="player_microphone_is_blocked">El micrófono está bloqueado.</string>
     <string name="player_what_we_heard">Lo que escuchamos</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (no se escuchó)</string>

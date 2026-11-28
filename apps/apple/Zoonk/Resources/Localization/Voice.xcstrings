@@ -1217,6 +1217,65 @@
         }
       }
     },
+    "Allow the microphone in Settings, then tap Record." : {
+      "comment" : "The learner refused the microphone for the app. “Record” is the label of the button that starts the recording.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erlaube das Mikrofon in den Einstellungen und tippe dann auf „Aufnehmen“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permite el acceso al micrófono en Configuración y luego toca Grabar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorise l’accès au micro dans Réglages, puis appuie sur Enregistrer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consenti l’accesso al microfono nelle Impostazioni, poi tocca Registra."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "設定でマイクを許可してから、「録音」をタップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정에서 마이크를 허용한 다음 녹음을 누르세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zezwól na dostęp do mikrofonu w Ustawieniach, a potem stuknij „Nagraj”."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Permita o uso do microfone nas Configurações e toque em Gravar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar’da mikrofona izin ver, ardından Kaydet’e dokun."
+          }
+        }
+      }
+    },
     "Almost time. %@ will say goodbye after your answer." : {
       "comment" : "The call's time is up: the character ends it after the learner's answer",
       "localizations" : {
@@ -9801,6 +9860,65 @@
         }
       }
     },
+    "We can't use your microphone. Check it, then tap Record." : {
+      "comment" : "The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir können dein Mikrofon nicht verwenden. Überprüfe es und tippe dann auf „Aufnehmen“."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos usar tu micrófono. Revísalo y luego toca Grabar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On ne peut pas utiliser ton micro. Vérifie-le, puis appuie sur Enregistrer."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non riusciamo a usare il microfono. Controlla il microfono, poi tocca Registra."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "マイクを使用できません。マイクを確認してから、「録音」をタップしてください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "마이크를 사용할 수 없어요. 마이크를 확인한 다음 녹음 버튼을 눌러 보세요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nie możemy użyć mikrofonu. Sprawdź go, a potem naciśnij „Nagraj”."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos usar seu microfone. Confira se ele está funcionando e toque em Gravar."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mikrofonunu kullanamıyoruz. Kontrol et, sonra Kaydet’e dokun."
+          }
+        }
+      }
+    },
     "We couldn't check your answer this time. Try again." : {
       "comment" : "Grading a spoken answer failed",
       "localizations" : {
@@ -11163,12 +11281,6 @@
           }
         }
       }
-    },
-    "Allow the microphone in Settings, then tap Record." : {
-      "comment" : "How to turn the microphone back on to record a spoken answer"
-    },
-    "We can't use your microphone. Check it, then tap Record." : {
-      "comment" : "The microphone is allowed but didn't start, so a recording couldn't begin"
     }
   },
   "version" : "1.0"

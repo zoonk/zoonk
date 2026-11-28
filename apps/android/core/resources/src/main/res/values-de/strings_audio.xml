@@ -7,7 +7,10 @@
   "audio_getting_ready": "3455a448e240b5d943045aee48ce4994296af154acbe13145909677f7fbf78d4",
   "audio_here_is_what_it_says": "2d69b8ce3e90cf023d0131389069f2dc426b0b595466b145d47f486d3a2e771c",
   "audio_listening": "c07ac25fa7dab78174874c44c10c6641d70ba75e11ebb2344b37b364d72c7a41",
+  "audio_microphone_ask_again": "add815e8d60646a0f2c8dca3963276c854da6c18e754c15652f5cd53a00fa23b",
+  "audio_microphone_blocked": "a7b591f76d81e9529815b361d4cb77c894a5957bcceba202cebe3a46f87d285f",
   "audio_microphone_off_title": "5f7afc0750443c7193fcc591441dc373e4dffaca8ec864256e84cd4815954356",
+  "audio_microphone_unavailable": "6c71f13600e6b28a6f44fbfeebaa5404daf9f3fd3f0658d18b15e17babcb3f28",
   "audio_no_speech": "287cba3f7b11ebe3497f8830a7f44053015c5ea676048609f135d423934274c9",
   "audio_open_settings": "3c509064eed7ea6452dc877695c6a226781d7be7b1aeb09662bea8655e3a1b5d",
   "audio_record": "4e6695e18715ef1a3a0e4ec1d35be771a1e555bf2545325003fe7688e72d93a9",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tippe auf „Aufnehmen“ und sprich es laut aus</string>
     <string name="audio_microphone_off_title">Das Mikrofon ist ausgeschaltet</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Tippe auf „Aufnehmen“ und erlaube den Zugriff auf das Mikrofon.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Erlaube das Mikrofon in den Einstellungen und tippe dann auf „Aufnehmen“.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">Wir können dein Mikrofon nicht verwenden. Überprüfe es und tippe dann auf „Aufnehmen“.</string>
     <string name="audio_open_settings">Einstellungen öffnen</string>
 </resources>

@@ -120,7 +120,9 @@ enum RecordNote: Equatable {
       BarNote(
         LocalizedStringResource(
           "We can't use your microphone. Check it, then tap Record.", table: "Voice",
-          comment: "The microphone is allowed but didn't start, so a recording couldn't begin"),
+          comment:
+            "The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording."
+        ),
         tone: .status)
     case .microphoneOff(let line):
       BarNote(

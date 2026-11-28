@@ -100,7 +100,6 @@
   "player_lesson_of": "1062104bd23d7e1820e0e9ab8e5196b8f29622506e859c4b90a9fa2d35c421c5",
   "player_lesson_ready": "47e72635d6ae0169e2c8a38732c02976761eeeb99c49a07ad8b5f6dc52b83097",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
-  "player_microphone_is_blocked": "d285d91469688de0407a6e5896b06ea69958b2858ad3559b8e555b427f815df5",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
   "player_next_step_failed": "90105c9d7e343aefd8e2b116b65654edbaf1a21ae27e4ffebdee6b1e22cd6c21",
   "player_not_found_description": "f5a78dba3e1d80b5eb6789f033dbd8d66d06fa4bf448cb4fd18670a274c23a5a",
@@ -113,7 +112,8 @@
   "player_notice_answer_not_saved": "0fd793d07d09efdb1491ae3d3cb108330b802939371467ee1efd533a81fe4040",
   "player_notice_picture_ready": "376e19d769b6a20991b0705e38e12108c7a2684956989f240de13827bd4bde31",
   "player_notice_self_correct": "f2dd7fd9e38d9a4d5d3a879c1526907ca47e445b4841004909c4f2a8b8324553",
-  "player_notice_writing_skipped": "b66c40e4d91a0e05894e424ace84ed20c2aec06324dbfb43cd11929c40f3d0ac",
+  "player_notice_speaking_skipped": "9056d45f0d40cd3df034f1792de3173390628ff67a7eb1005bcc9cab310f1b11",
+  "player_notice_writing_skipped": "8f1b25454876121f8ce4721d29d18031cfc4d5b24fd698ebf3bf926bcfd72251",
   "player_offer_no_thanks": "6746925ee9a0d649b62060162bcbff0b96a0f408f78af5cf33a8732992d9eec0",
   "player_offer_taking_time": "07a7964ad76bc6785c1b40101010a1207321f1ef158c395b4afbab1203e6ffee",
   "player_offer_tricky": "a11fc80a555409235e6d43b60cb117f4fa77f79d25f8e28bf86262380ed29b5c",
@@ -144,7 +144,6 @@
   "player_saved_to_mistakes": "4802ce138af5b670ef1ee4ecee353be3c33b908c3f5627a227995249680f62b2",
   "player_saved_to_mistakes_back_at_end": "f09263f6928d2bd4876e9a286ea1038c8646ee4d468fb4859329aeed21cc981c",
   "player_saving_progress": "1b97c936b457ec649c07c3914d357ef065ef365d1876f3a26d014053761a7678",
-  "player_say_it_instead": "986eab8f39e59227d5876b872874551afd293f06946a4e9f3ec77e55a3df6e71",
   "player_screen_options": "95751c6cf9db4249ccaaf7fa72763b2ce39d1d554b7e2b6c687b49c2353fcd6b",
   "player_set_aside_description": "2e5459cf0b8380e8fdeeab8fadad809e471c88e212818a68202ea3e98dbe9d4e",
   "player_set_aside_title": "69908e141da5eaaed3d909e6751750fd9db91c6a66d8c052dfb8f2eeba186e0b",
@@ -165,6 +164,7 @@
   "player_summary_ideas": "1693857678708108e9bde80eacae9c9432860ee9ab55def2f5928f61a3428820",
   "player_time_studied": "de809d138f482b1ab33389771eebbdf8d9351f3b123c45d02dfb518835869ec7",
   "player_try_again": "98c42e59730cf58e9c534343d929414f919eb4b3d2e66179d23be4828287cd4e",
+  "player_turn_back_on": "180c279df61834c1d0001d01ecdc5f9408c1f937e3d6893d9bd5130abf281836",
   "player_unchecked_compare": "0d34c3fd5c5cc6dc3fb94325f2497695982069a7b44951cca100a8f7c8492bec",
   "player_unchecked_updated": "02b2fd227ff9b38072057147a46520e2aecc40a16ab0372a19216e0ab045ea4d",
   "player_verdict_almost": "9089dbe39a23e172c9175286850fb03bf42908070012881a8171d5c3661c362e",
@@ -182,7 +182,6 @@
   "player_worked_example": "7897eb665990df87124caba92e31630030574a3499f14b334fc9b47209d006c9",
   "player_worked_example_result": "43af72607b04329561399251dcd527b45a7658a7b767999be7daf96e04e45432",
   "player_worked_example_steps": "d9c7c02325c39d0acfb5f9da66d0c8db82e4bda0cf8ce72699b301ceb20a4a33",
-  "player_write_again": "a681135ce7f2adf1fdb1cc6470238c87883ca1114b168f87d4e2067582d4bfa0",
   "player_write_your_answer": "f53d264f3d7b71f794b1f327cebb49195974befd19a765f870f0ac742bb07b2e",
   "player_writing_lesson": "c921bb17f2aa38d5ce18f8d4b884b2297a1a0482db305ead7c9290cc8fefea38",
   "player_writing_note": "76e514026c6ba4fe8b1901c3e015ec8f18d94e339d1fb93f96f3551bb71414f9",
@@ -230,8 +229,10 @@
     <string name="player_notice_self_correct">正解ではありません。もう一度見直して自分で直し、答え合わせをしてください。</string>
     <string name="player_notice_answer_not_saved">この問題の回答が保存されませんでした。レッスンを完了するには、もう一度答えてください。</string>
     <string name="player_notice_picture_ready">画像の準備ができました。この問題に答えてレッスンを完了してください。</string>
-    <string name="player_notice_writing_skipped">今日は書いて答える問題をスキップしています。</string>
-    <string name="player_write_again">オンに戻す</string>
+    <string name="player_notice_writing_skipped">今日は記述式の問題を出しません。</string>
+    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <string name="player_notice_speaking_skipped">今日はスピーキングはお休みです。</string>
+    <string name="player_turn_back_on">記述式の問題を再開する</string>
     <string name="player_verdict_almost">あと少し</string>
     <string name="player_verdict_correct">正解です！</string>
     <string name="player_verdict_guess">答えはこちらです</string>
@@ -345,9 +346,6 @@
     <string name="player_can_talk_now">今は話せる</string>
     <string name="player_cant_listen_now">今は音を聞けない</string>
     <string name="player_can_listen_now">今は音を聞ける</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">声に出して答える</string>
-    <string name="player_microphone_is_blocked">マイクの使用が許可されていません。</string>
     <string name="player_what_we_heard">聞き取った内容</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s（聞き取れませんでした）</string>

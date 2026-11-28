@@ -100,7 +100,6 @@
   "player_lesson_of": "2cca02e8bb2d4a5925e506f368b57a442f0b2203eaba854c1207ad8cc4f7c059",
   "player_lesson_ready": "6af5fe19979e5b3c84c2f9d10c57ff24862a60e7db77ceae901a5a0c9be55944",
   "player_listen": "33c25f4330c7d879754a4b64be21df831570adff59c8eed9c194d146ccfb27f9",
-  "player_microphone_is_blocked": "c199168e492578f366c342778f80c5c8c53eb81a37c480ab93e3938bee21d65b",
   "player_next_lesson": "b00fccbe9c29eda0ceab8b948e61124faa4f9af58d7b524a2308fe1e70986da2",
   "player_next_step_failed": "d1f777100b36305bacc4330dc1ed5e3cfee66e865e09636d4960db9b71bdb7b2",
   "player_not_found_description": "d1d27b40335119d21104d8254348200acb58d8b5cb8678cb4255c9b51de623b2",
@@ -113,7 +112,8 @@
   "player_notice_answer_not_saved": "56f75c60eb844d8849658737700fbee81abc5e2ba9763189647c760292172e78",
   "player_notice_picture_ready": "dcf5e54e5edbd59bab7c7e850bd4d5d0f4db789a877675e1d30d4d2c32a8c8fe",
   "player_notice_self_correct": "99d65f95ef078e827584e8187c5647e4dc2548b05b1ddab02624725bbfccfc27",
-  "player_notice_writing_skipped": "d34b56ac7464e99ed6e90fd68f3fe566a45b285218f82045a26cc8c07d324a3e",
+  "player_notice_speaking_skipped": "b8b6a9288c85569aacc000feb3ecce254b2b6df1d83531e8ecb4993894807473",
+  "player_notice_writing_skipped": "94757439bbc0954804d6a31e2626bdcdf73e2d6f14dbdf3ceb18dc209fbabe44",
   "player_offer_no_thanks": "8c5c6fef37e41353028b2d81988488b0d5adf062666bee38d9bcfda998e87d50",
   "player_offer_taking_time": "8e3630038744fa37f852f3ef096e7c8c7052b61c80d542911a08d120ff60122f",
   "player_offer_tricky": "9c8c8fa75e2ca30dcb9d3b7639563e84a18f670709b9c1d1b545cc990af2ec30",
@@ -144,7 +144,6 @@
   "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
   "player_saved_to_mistakes_back_at_end": "00db9c7403bdc876e33e38b9cb934167db2ed24a0b8acec4f8329f8d05f8cf9f",
   "player_saving_progress": "42a818f1e45dc359825f0f69f5b5aa7b4daf6b6cf667bf3ffd7b1c0c34bd36e7",
-  "player_say_it_instead": "785c9c4b63e85cdecee1dc39fbec00282b88b53197d96d6ea59547083b18b6cd",
   "player_screen_options": "1371cbf567e6f1ecd49cd9197e5007149b44c3bb26d1cdedeb82d041104633d0",
   "player_set_aside_description": "a89e23f293641bba300c93a1db56fabca0aef800ea94c7a7e43639fedd2b695d",
   "player_set_aside_title": "58ec14edf499fc8c9c54c2dcb5fbf6ae93484119f537ca2585b870034c14f8ec",
@@ -165,6 +164,7 @@
   "player_summary_ideas": "f52ee79a8c0cb12ab86d298e33084f9f863b7280c7a7033d41417772f4c1e662",
   "player_time_studied": "e3b55502a938d1fc6393370fdd2d53b55918163339f8f08a212337b37ff3bd75",
   "player_try_again": "d1a991547322d000dd857669394a2cbc6d4497e844e593cf2b44a494fd341270",
+  "player_turn_back_on": "65ced1f32f7fc61ff92c3d402659de70a5aaf4132d71a930e5c0354b1097bf1f",
   "player_unchecked_compare": "1cd4d7704d12a2db08f6851d3742158475a3488dfefe4e8f48d70e2dfd698617",
   "player_unchecked_updated": "82f1523a11fa3701dc21b35e31a81bd852c1a5d758251c5ee0d019169538581c",
   "player_verdict_almost": "7334d95922ae0c87089bb1859821242d481e5bde0aca77f7e385f5fad9ecf505",
@@ -182,7 +182,6 @@
   "player_worked_example": "9d7137d7ca29ab80d0092c14fe58756a63d5b7e1df064a444e15fb98e5ab2e2c",
   "player_worked_example_result": "ce1f5ccb42ff17be5e572132c3b17f93c7be24baa534d9d6db4d61b3e32ca6ec",
   "player_worked_example_steps": "e1a5bebe5ffa38368d8efb639bdb008dfce7dd7fe065482b2402b352be4ecfb9",
-  "player_write_again": "f32e14059ed0124e713b8c264390c4f3429365983c9d8cd13a8eb91b63df8ef5",
   "player_write_your_answer": "e1c16190c02a438984cd1c63db0276699090637ed13f7d368fb32d87090355c3",
   "player_writing_lesson": "3a5e5d20c8638656c638ebf8e95645e2305e4c7375338ff30fd0f321982e0f69",
   "player_writing_note": "9177af8a543d1a3e68e63eae60c80de2e2e0b64a7182d1e89c59f4f3dbfb1f23",
@@ -230,8 +229,10 @@
     <string name="player_notice_self_correct">Ce n’est pas ça. Regarde à nouveau, corrige ta réponse, puis vérifie.</string>
     <string name="player_notice_answer_not_saved">Ta réponse à cette question n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon.</string>
     <string name="player_notice_picture_ready">Cette question attendait son image. Réponds-y pour terminer la leçon.</string>
-    <string name="player_notice_writing_skipped">Les questions à réponse écrite sont désactivées pour aujourd’hui.</string>
-    <string name="player_write_again">Réactiver</string>
+    <string name="player_notice_writing_skipped">Les questions à l’écrit sont désactivées pour aujourd’hui.</string>
+    <!-- Shown after "I can't talk now" left the lesson's speaking questions out for the rest of the day. -->
+    <string name="player_notice_speaking_skipped">L’expression orale est désactivée pour aujourd’hui.</string>
+    <string name="player_turn_back_on">Réactiver</string>
     <string name="player_verdict_almost">Tu y es presque</string>
     <string name="player_verdict_correct">Correct !</string>
     <string name="player_verdict_guess">Voici la réponse</string>
@@ -351,9 +352,6 @@
     <string name="player_can_talk_now">Je peux parler maintenant</string>
     <string name="player_cant_listen_now">Je ne peux pas écouter maintenant</string>
     <string name="player_can_listen_now">Je peux écouter maintenant</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">Dis-le à voix haute</string>
-    <string name="player_microphone_is_blocked">Le micro est bloqué.</string>
     <string name="player_what_we_heard">Ce que nous avons entendu</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (non entendu)</string>
