@@ -1127,9 +1127,35 @@ enum PlanDate {
       .time(pattern: seconds >= 3600 ? .hourMinuteSecond : .minuteSecond).locale(.appLanguage))
   }
 
-  /// A month and its year in parts, for a screen that sets the year apart: "Jul 2027".
-  static func monthAndYear(_ date: Date) -> AttributedString {
-    date.formatted(DateRole.rowMonth.style(weekday: false).year().attributedStyle)
+  /// A month and its year, for a screen that sets the year apart (main's `getMonthYearParts`): "Jul
+  /// 2027", with the year as the language writes it alone ("2027", "2027년", "2027年") and the gap
+  /// beside it as `year`.
+  static func monthAndYear(_ isoDate: String, locale: Locale = .appLanguage) -> (
+    text: String, year: Range<String.Index>?
+  ) {
+    guard let date = date(isoDate) else {
+      return (isoDate, nil)
+    }
+
+    let text = date.formatted(DateRole.rowMonth.style(weekday: false, locale: locale).year())
+    let year = date.formatted(DateRole.year.style(weekday: false, locale: locale))
+
+    guard let found = text.range(of: year) else {
+      return (text, nil)
+    }
+
+    var start = found.lowerBound
+    var end = found.upperBound
+
+    while start > text.startIndex, text[text.index(before: start)].isWhitespace {
+      start = text.index(before: start)
+    }
+
+    while end < text.endIndex, text[end].isWhitespace {
+      end = text.index(after: end)
+    }
+
+    return (text, start..<end)
   }
 
   /// A clock counting down to `deadline`, which the system keeps current.

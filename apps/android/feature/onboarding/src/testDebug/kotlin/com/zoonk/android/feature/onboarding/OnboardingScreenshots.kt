@@ -791,6 +791,22 @@ class OnboardingScreenshots {
         capture("phone-font200", screens = FINISH_SCREENS)
     }
 
+    /** Every study day switched off on an undated plan's time question: it asks for one instead of a finish. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun noStudyDaysPhone() {
+        compose.setContent { ZoonkTheme { Surface { FINISH_SCREENS.first().second() } } }
+        compose.waitForIdle()
+        listOf("Mon", "Tue", "Wed", "Thu", "Fri").forEach {
+            compose.onNodeWithText(it).performClick()
+            compose.waitForIdle()
+        }
+        // The chips fade as each is switched off; the picture is of where they settle.
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.waitForIdle()
+        write("time-no-days-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
@@ -1302,6 +1318,7 @@ class OnboardingScreenshots {
             api: FakePlanApi,
             isGuest: Boolean = false,
             run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
+            goal: com.zoonk.api.models.Goal = examGoal(),
         ) {
             val preview =
                 remember {
@@ -1311,7 +1328,7 @@ class OnboardingScreenshots {
                 }
             SetupColumn {
                 PlanRevealStep(
-                    examGoal(),
+                    goal,
                     isGuest,
                     run,
                     onRetryRun = {},
@@ -1328,13 +1345,40 @@ class OnboardingScreenshots {
             reason: PlanFinishReason? = null,
         ) = adviceOf(null, endDate = endDate, targetDate = null).copy(precision = precision, finishReason = reason)
 
+        /** An undated Python plan whose phases end as [ends] say, each by its precision; a phase with no end has no place yet. */
         private fun undatedPlan(
             endDate: LocalDate?,
             precision: PlanFinishPrecision? = null,
             reason: PlanFinishReason? = null,
-        ) = planOf(targetDate = null, endDate = endDate).let {
+            ends: List<Pair<LocalDate?, PlanFinishPrecision?>>,
+        ) = planOf(targetDate = null, endDate = endDate, phases = learnPhases(ends)).let {
             it.copy(estimate = it.estimate.copy(precision = precision, finishReason = reason))
         }
+
+        private fun learnPhases(ends: List<Pair<LocalDate?, PlanFinishPrecision?>>): List<String> {
+            val named =
+                listOf(
+                    "Python basics" to "Write small programs with variables and types",
+                    "Data structures" to "Organize data with lists and dictionaries",
+                    "Web apps" to "Build a small web app with Flask",
+                )
+            return ends.mapIndexed { index, (end, precision) ->
+                val start = if (index == 0) LocalDate.now() else ends[index - 1].first?.plusDays(1)
+                val dates =
+                    if (end == null || start == null) {
+                        """"startDate":null,"endDate":null,"later":true,"precision":null"""
+                    } else {
+                        """"startDate":"$start","endDate":"$end","later":false,"precision":"${precision?.value}""""
+                    }
+                """
+                {"chapterCount":0,"chapters":[],"hours":20,"index":$index,"kind":"learn","lessonsDone":0,"lessonsTotal":12,
+                 "mocks":{"count":0,"nextDate":null},"milestone":"${named[index].second}","name":"${named[index].first}",
+                 "notPlannedReason":null,"state":"${if (index == 0) "current" else "upcoming"}",$dates}
+                """.trimIndent()
+            }
+        }
+
+        private fun learnGoal() = examGoal().copy(kind = com.zoonk.api.models.Goal.Kind.LEARN, title = "Learn Python", displayName = "Learn Python")
 
         @Composable
         private fun UndatedSchedule(
@@ -1365,13 +1409,38 @@ class OnboardingScreenshots {
                     )
                 },
                 "reveal-month" to {
-                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(LocalDate.now().plusDays(120), PlanFinishPrecision.MONTH) })
+                    val today = LocalDate.now()
+                    val ends =
+                        listOf(
+                            today.plusDays(30) to PlanFinishPrecision.MONTH,
+                            today.plusDays(75) to PlanFinishPrecision.MONTH,
+                            today.plusDays(120) to PlanFinishPrecision.MONTH,
+                        )
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(today.plusDays(120), PlanFinishPrecision.MONTH, ends = ends) },
+                        goal = learnGoal(),
+                    )
                 },
                 "reveal-year" to {
-                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(LocalDate.now().plusYears(5), PlanFinishPrecision.YEAR) })
+                    val today = LocalDate.now()
+                    val ends =
+                        listOf(
+                            today.plusDays(60) to PlanFinishPrecision.MONTH,
+                            today.plusYears(2) to PlanFinishPrecision.YEAR,
+                            today.plusYears(5) to PlanFinishPrecision.YEAR,
+                        )
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(today.plusYears(5), PlanFinishPrecision.YEAR, ends = ends) },
+                        goal = learnGoal(),
+                    )
                 },
                 "reveal-beyond" to {
-                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(null, reason = PlanFinishReason.BEYOND_HORIZON) })
+                    val today = LocalDate.now()
+                    val ends = listOf(today.plusDays(60) to PlanFinishPrecision.MONTH, today.plusYears(4) to PlanFinishPrecision.YEAR, null to null)
+                    Reveal(
+                        setupPlanApi().apply { shownPlan = undatedPlan(null, reason = PlanFinishReason.BEYOND_HORIZON, ends = ends) },
+                        goal = learnGoal(),
+                    )
                 },
             )
 

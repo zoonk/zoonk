@@ -111,11 +111,7 @@ export async function loadCourseEstimateData(courseId: string, today: string) {
     ]),
   );
 
-  const kind = getCourseGoalKind({
-    format: course.format,
-    hasExam: exam !== null,
-    targetLanguage: course.targetLanguage,
-  });
+  const kind = getCourseGoalKind(course);
 
   const goal = {
     examBlueprintId: exam?.blueprint.id ?? null,

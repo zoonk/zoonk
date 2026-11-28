@@ -309,7 +309,7 @@ private fun phaseMeta(
                 .mapNotNull { it.nextDate?.toJavaLocalDate() }
                 .minOrNull() ?: return null
         return sameWords(
-            if (resumes == LocalDate.now()) {
+            if (resumes == page.today) {
                 stringResource(R.string.plan_continues_today)
             } else {
                 stringResource(R.string.plan_continues_on, formatPlanDate(resumes, page.today, currentLocale()))

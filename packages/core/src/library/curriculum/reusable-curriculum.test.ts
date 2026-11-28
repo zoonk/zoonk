@@ -74,18 +74,20 @@ async function newGoal({
 async function builtGoal({
   blueprintId,
   details = {},
+  format = "core",
   promptVersion = "v1",
   runId = crypto.randomUUID(),
   visibility = "public",
 }: GoalAttrs & {
   blueprintId: string;
+  format?: "core" | "exam";
   promptVersion?: string;
   runId?: string;
   visibility?: "private" | "public";
 }) {
   const [inputs, course, skills] = await Promise.all([
     newGoal({ blueprintId, details }),
-    courseFixture({ visibility }),
+    courseFixture({ format, visibility }),
     Promise.all([skillFixture(), skillFixture()]),
   ]);
 
@@ -129,7 +131,7 @@ describe(findReusableCurriculum, () => {
 
     expect(reused?.idsByKey).toStrictEqual(idsOf(built.skills));
     expect(reused?.courseIdsByKey).toStrictEqual({ [built.course.id]: built.course.id });
-    expect(reused?.primaryCourseId).toBe(built.course.id);
+    expect(reused?.primaryCourseId).toBeNull();
     expect(reused?.provenance.promptVersion).toBe("older");
 
     expect(reused?.graph.skills.map((skill) => [skill.area, skill.phase])).toStrictEqual([
@@ -855,6 +857,23 @@ describe(resetExamSkillGraphForAdmin, () => {
 
     await expect(findReusableCurriculum({ inputs, scope: SHARED })).resolves.toBeNull();
   });
+});
+
+describe(saveExamSkillGraph, () => {
+  it.each([
+    ["the exam's own course", "exam", true],
+    ["a subject course the exam reuses", "core", false],
+  ] as const)(
+    "keeps the goal's first course as the exam's course only when it's %s",
+    async (_label, format, kept) => {
+      const blueprint = await examBlueprintFixture({ language: "pt" });
+      const built = await builtGoal({ blueprintId: blueprint.id, format });
+
+      await expect(
+        prisma.examSkillGraph.findUniqueOrThrow({ where: { examBlueprintId: blueprint.id } }),
+      ).resolves.toMatchObject({ primaryCourseId: kept ? built.course.id : null });
+    },
+  );
 });
 
 describe("saving an exam's graph again", () => {

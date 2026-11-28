@@ -40,14 +40,24 @@ fun MonthReadout(
     textAlign: TextAlign? = null,
 ) {
     val unit = unitStyle(style).copy(fontWeight = FontWeight.Medium)
-    val at = text.indexOf(year)
-    val shown =
-        buildAnnotatedString {
-            append(text)
-            if (at >= 0) addStyle(unit, at, at + year.length)
-        }
-    Text(text = shown, modifier = modifier, style = readoutStyle(style), textAlign = textAlign)
+    Text(text = monthReadout(text, year, unit), modifier = modifier, style = readoutStyle(style), textAlign = textAlign)
 }
+
+/** The [year] as the language writes it alone ("2026년") and the gap beside it are the small part, as a number's unit is. */
+internal fun monthReadout(
+    text: String,
+    year: String,
+    unit: SpanStyle,
+): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        val at = text.indexOf(year)
+        if (at >= 0) {
+            val start = text.substring(0, at).trimEnd().length
+            val end = text.length - text.substring(at + year.length).trimStart().length
+            addStyle(unit, start, end)
+        }
+    }
 
 private fun readoutStyle(style: TextStyle) = style.withTabularFigures().copy(fontWeight = FontWeight.SemiBold)
 

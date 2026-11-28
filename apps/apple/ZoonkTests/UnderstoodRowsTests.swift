@@ -3,7 +3,7 @@ import XCTest
 @testable import Zoonk
 
 final class UnderstoodRowsTests: XCTestCase {
-  private let today = Calendar.current.date(from: DateComponents(year: 2026, month: 10, day: 28))!
+  private let today = "2026-10-28"
 
   func testAMonthTheLearnerNamedStaysOverTheNoticesDayInAnotherMonth() throws {
     let goal = try understoodGoal(
@@ -37,6 +37,24 @@ final class UnderstoodRowsTests: XCTestCase {
     XCTAssertEqual(date.editValue, "2026-11-20")
     XCTAssertEqual(date.suggestedDate, "2026-11-08")
     XCTAssertEqual(date.source?.name, "gov.br")
+  }
+
+  func testTheOfficialDatesDaysLeftCountFromTheDraftsDayNotTheDevices() throws {
+    let goal = try understoodGoal(
+      draft: [
+        "kind": "exam", "language": "en", "prompt": "pass the ENEM", "title": "Pass the ENEM",
+        "displayName": "ENEM", "targetDate": "2026-11-08",
+      ],
+      examDates: [examDay("2026-11-08")])
+
+    let draftsDay = GoalDate.today(
+      now: try XCTUnwrap(ISO8601DateFormatter().date(from: "2026-10-28T23:30:00Z")),
+      timeZone: "Pacific/Kiritimati")
+
+    let date = try XCTUnwrap(
+      UnderstoodRows.rows(for: goal, today: draftsDay).first { $0.id == "targetDate" })
+
+    XCTAssertEqual(date.note, "10 days left", "Kiritimati is already on October 29")
   }
 
   func testAClearedCountryKeepsItsLanguageRowToPickAgain() throws {

@@ -37,6 +37,7 @@
     "./code/highlight": "./src/code/highlight-code.ts",
     "./code/spoken": "./src/code/spoken-code.ts",
     "./dates": "./src/_utils/iso-date.ts",
+    "./learner-clock": "./src/_utils/learner-clock.tsx",
     "./count-of": "./src/_utils/count-of.ts",
     "./days-left": "./src/_components/days-left.tsx",
     "./eyebrow": "./src/_components/eyebrow.tsx",

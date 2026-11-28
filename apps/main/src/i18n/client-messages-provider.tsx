@@ -1,6 +1,5 @@
 import { getAppLocale } from "@/i18n/locale";
 import { NextIntlClientProvider } from "next-intl";
-import { getTimeZone } from "next-intl/server";
 import { LearnMessages } from "./learn-messages/learn-messages";
 import { getSiteMessages } from "./messages";
 
@@ -18,14 +17,7 @@ export async function ClientMessagesProvider({
   const locale = await getAppLocale();
 
   if (scope === "learn") {
-    // So dates format alike on the server and in the browser.
-    const timeZone = await getTimeZone();
-
-    return (
-      <LearnMessages locale={locale} timeZone={timeZone}>
-        {children}
-      </LearnMessages>
-    );
+    return <LearnMessages locale={locale}>{children}</LearnMessages>;
   }
 
   return (
