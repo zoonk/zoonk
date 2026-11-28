@@ -4,11 +4,17 @@ import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
-import { buildProviderOptions } from "../../provider-options";
+import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
 import systemPrompt from "./check-clip-ending.prompt.md";
 
-const defaultModel = "google/gemini-3.5-flash-lite";
+/**
+ * On 35 labeled clips (27 Nov 2026), Gemini 3.1 Flash Lite caught 31 of 33 additions over three
+ * runs and called one misread clip added, at 1.6 s p95 and $0.13/1k. Gemini 3.5 Flash Lite caught
+ * 5 of 11. Gemini 3.8 Flash and MiMo V2.6 Pro, the other provider, caught all with no false alarm
+ * but took 8 s and 6.5 s p95, past what a learner tapping a new phrase should wait.
+ */
+const defaultModel = "google/gemini-3.1-flash-lite";
 const fallbackModels = ["google/gemini-3.8-flash", "xiaomi/mimo-v2.6-pro"] as const;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the model writes what it heard before choosing. */
@@ -25,6 +31,8 @@ type CheckClipEndingParams = {
   analytics?: AiGenerationContext;
   abortSignal?: AbortSignal;
   model?: string;
+  reasoning?: Reasoning;
+  serviceTier?: ServiceTier;
   useFallback?: boolean;
 };
 
@@ -39,6 +47,8 @@ export async function checkClipEnding({
   language,
   mediaType,
   model = defaultModel,
+  reasoning,
+  serviceTier,
   text,
   useFallback = true,
 }: CheckClipEndingParams) {
@@ -46,7 +56,7 @@ export async function checkClipEnding({
 
 ${formatUntrustedInput({ TEXT: text })}`;
 
-  const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
+  const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
   const { provenance, result } = await runTaskGeneration({
     analytics,
@@ -66,6 +76,7 @@ ${formatUntrustedInput({ TEXT: text })}`;
         model,
         output: Output.object({ schema }),
         providerOptions,
+        reasoning,
       }),
     systemPrompt,
     task: "check-clip-ending",
