@@ -52,20 +52,16 @@ const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: nu
 function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
   return {
     ceremony: (moments, onClose) => (
-      <MainLearnProvider>
-        <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
-      </MainLearnProvider>
+      <SessionCeremony buddy={buddy} moments={moments} onClose={onClose} />
     ),
   };
 }
 
 const FINISHED_CHAPTER_SLOT: Pick<LessonPlayerSlots, "finishedChapter"> = {
   finishedChapter: (chapter) => (
-    <MainLearnProvider>
-      <MainFinishedChapterMaps>
-        <FinishedChapterMoment chapter={chapter} />
-      </MainFinishedChapterMaps>
-    </MainLearnProvider>
+    <MainFinishedChapterMaps>
+      <FinishedChapterMoment chapter={chapter} />
+    </MainFinishedChapterMaps>
   ),
 };
 
@@ -269,5 +265,10 @@ function LessonPlayerVisit({
  */
 export function LessonPlayerClient(props: LessonPlayerClientProps) {
   const { bfcacheId } = useRouter();
-  return <LessonPlayerVisit key={bfcacheId} {...props} />;
+
+  return (
+    <MainLearnProvider>
+      <LessonPlayerVisit key={bfcacheId} {...props} />
+    </MainLearnProvider>
+  );
 }
