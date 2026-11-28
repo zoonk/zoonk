@@ -36,11 +36,7 @@ describe("sandbox program commands", () => {
 
     await expect(
       executeSandboxProgram({ code: "broken", language: "java", runId: randomUUID(), sandbox }),
-    ).resolves.toMatchObject({
-      error: { line: 2, message: "Main.java:2: error: missing" },
-      output: "",
-      stop: "error",
-    });
+    ).resolves.toMatchObject({ error: { line: 2, message: "missing" }, output: "", stop: "error" });
 
     expect(sandbox.run.mock.calls.map(([command]) => command.args[0])).toStrictEqual([
       "prepare",
@@ -95,6 +91,35 @@ describe("sandbox program commands", () => {
     ["swift", "main.swift:8:16: error"],
     ["typescript", "main.ts(8,5): error"],
   ] as const)("reads the source line for %s", (language, diagnostics) => {
-    expect(sandboxRunError(language, diagnostics)).toStrictEqual({ line: 8, message: diagnostics });
+    expect(sandboxRunError(language, diagnostics).line).toBe(8);
+  });
+
+  it.each([
+    [
+      "cpp",
+      "main.cpp: In function 'int main()':\nmain.cpp:8:2: error: expected ';' before 'return'\n    8 |  return 0;",
+      "expected ';' before 'return'",
+    ],
+    ["csharp", "/tmp/Program.cs(8,23): error CS1002: ; expected [/tmp/cs.csproj]", "; expected"],
+    ["go", "# command-line-arguments\n./main.go:8:2: undefined: x", "undefined: x"],
+    [
+      "java",
+      "Main.java:8: error: ';' expected\n        int x = 1\n                 ^\n1 error",
+      "';' expected",
+    ],
+    ["kotlin", "Main.kt:8:9: error: unresolved reference 'x'.", "unresolved reference 'x'."],
+    [
+      "rust",
+      "error[E0425]: cannot find value `x` in this scope\n --> main.rs:8:9\n  |",
+      "cannot find value `x` in this scope",
+    ],
+    ["typescript", "main.ts(8,5): error TS2304: Cannot find name 'x'.", "Cannot find name 'x'."],
+    [
+      "java",
+      'Exception in thread "main" java.lang.ArithmeticException: / by zero\n\tat Main.main(Main.java:8)',
+      'Exception in thread "main" java.lang.ArithmeticException: / by zero',
+    ],
+  ] as const)("names only the error in %s diagnostics", (language, diagnostics, message) => {
+    expect(sandboxRunError(language, diagnostics).message).toBe(message);
   });
 });

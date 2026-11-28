@@ -17,11 +17,39 @@ const STREAM_CAP_BYTES = MAX_PROGRAM_OUTPUT_LENGTH * MAX_UTF8_BYTES_PER_CHARACTE
 const WRAPPER_FAILED = 125;
 const SIGNAL_KILLED = 137;
 
-export function sandboxRunError(language: SandboxLanguage, errorOutput: string) {
-  const line =
-    Number(SANDBOX_TOOLCHAINS[language].errorLine.exec(errorOutput)?.groups?.line) || null;
+const ERROR_LABEL = /^(?:error|warning)(?:\[\w+\]| \w+)?:\s*/iu;
+const TRAILING_PROJECT = /\s+\[[^\]]+\]$/u;
 
-  return { line, message: errorOutput.trim() || "The program stopped with an error" };
+/**
+ * The one line that names what went wrong, without the file and position the editor already
+ * marks and without the compiler's severity label: clients show it beside the line it points at,
+ * and show the full diagnostics separately.
+ */
+function errorMessage(errorLine: RegExp, errorOutput: string) {
+  const lines = errorOutput
+    .split("\n")
+    .map((text) => text.trim())
+    // Go heads its diagnostics with the package being built ("# command-line-arguments").
+    .filter((text) => text && !text.startsWith("#"));
+
+  const named = lines.find((text) => /error/iu.test(text)) ?? lines[0];
+
+  if (!named) {
+    return "The program stopped with an error";
+  }
+
+  const position = errorLine.exec(named);
+  const afterPosition = position ? named.slice(position.index + position[0].length) : named;
+  const text = afterPosition.replace(/^[\s\d,:)]*/u, "") || named;
+
+  return text.replace(ERROR_LABEL, "").replace(TRAILING_PROJECT, "") || named;
+}
+
+export function sandboxRunError(language: SandboxLanguage, errorOutput: string) {
+  const { errorLine } = SANDBOX_TOOLCHAINS[language];
+  const line = Number(errorLine.exec(errorOutput)?.groups?.line) || null;
+
+  return { line, message: errorMessage(errorLine, errorOutput) };
 }
 
 async function runStage({
