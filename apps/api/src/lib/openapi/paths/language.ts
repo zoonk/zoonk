@@ -14,7 +14,7 @@ export const languagePaths = {
   "/steps/{stepId}/spoken-answers": {
     post: {
       description:
-        "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded and returned without recording an attempt, mistake, pronunciation review or language evidence; `attemptId` then identifies the saved answer that closed the screen. An accent never blocks progress. 422 `NO_SPEECH` when no words were heard. The audio is only used for grading and never kept.",
+        "Grades a \"say it out loud\" screen: transcribes the recording as said, compares it with the expected sentence word by word, explains at most two words that didn't match in the learner's language (shared with everyone who says the same thing) and records the answer. An answer to a screen that already has a right answer in its progress window, or a miss after three misses there, is graded and returned without recording an attempt, mistake, pronunciation review or language evidence; `attemptId` then identifies the saved answer that closed the screen. An accent never blocks progress. The audio is only used for grading and never kept.",
       operationId: "createSpokenAnswer",
       requestBody: {
         content: { "multipart/form-data": { schema: spokenAnswerRequestSchema } },
@@ -29,7 +29,11 @@ export const languagePaths = {
         "400": validationErrorResponse,
         "401": unauthorizedResponse,
         "404": notFoundResponse,
-        "422": unprocessableEntityResponse,
+        "422": {
+          ...unprocessableEntityResponse,
+          description:
+            "`NO_SPEECH` when no words were heard. `MISSED_START` when `micStartupMs` indicates a slow mic start and only the opening words were missed or different. Neither outcome records or scores the take.",
+        },
         ...smallAiHelpRefusalResponses,
       },
       security: AUTHENTICATED_SECURITY,

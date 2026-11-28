@@ -33,10 +33,8 @@ import {
   spokenAnswerGradeSchema,
 } from "./spoken-answer-contract";
 
-type RecordingGrade = NonNullable<Awaited<ReturnType<typeof gradeSpokenRecording>>>;
-
 /** Apps built before `checked` require an attempt id, so the unsaved take gets one nothing saved. */
-function notScored(grade: RecordingGrade): SpokenAnswerGrade {
+function notScored(grade: Omit<SpokenAnswerGrade, "attemptId" | "practice">): SpokenAnswerGrade {
   return {
     ...grade,
     attemptId: crypto.randomUUID(),
@@ -133,25 +131,25 @@ export async function gradeSpokenAnswer({
   }
 
   const hear = async (): Promise<
-    | Extract<GradeSpokenAnswerResult, { status: "graded" | "noSpeech" }>
+    | Extract<GradeSpokenAnswerResult, { status: "graded" | "missedStart" | "noSpeech" }>
     | (z.infer<typeof heardRecordingSchema> & { status: "heard" })
   > => {
     const [heard, studySessionId] = await Promise.all([
-      gradeSpokenRecording({ audio, step, userId }),
+      gradeSpokenRecording({ audio, micStartupMs: fields.micStartupMs, step, userId }),
       findOwnStudySessionId({ studySessionId: fields.studySessionId, userId }),
     ]);
 
-    if (!heard) {
-      return { status: "noSpeech" as const };
+    if (heard.status !== "graded") {
+      return heard;
     }
 
-    if (!heard.isCorrect && (await isFixedDuringRun({ step, userId }))) {
-      return { grade: notScored(heard), status: "graded" as const };
+    if (!heard.grade.isCorrect && (await isFixedDuringRun({ step, userId }))) {
+      return { grade: notScored(heard.grade), status: "graded" as const };
     }
 
     return {
       durationMs: fields.durationMs,
-      grade: { ...heard, attemptId: recordingId },
+      grade: { ...heard.grade, attemptId: recordingId },
       receivedAt: receivedAt.toISOString(),
       status: "heard" as const,
       studySessionId,
@@ -187,9 +185,11 @@ export async function gradeSpokenAnswer({
     return { retryAfterSeconds: 1, status: "slowDown" };
   }
 
-  return result.result.status === "noSpeech"
-    ? { status: "noSpeech" }
-    : { grade: spokenAnswerGradeSchema.parse(result.result.grade), status: "graded" };
+  const { status, grade } = result.result;
+
+  return status === "noSpeech" || status === "missedStart"
+    ? { status }
+    : { grade: spokenAnswerGradeSchema.parse(grade), status: "graded" };
 }
 
 const heardRecordingSchema = z.object({

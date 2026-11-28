@@ -1,5 +1,57 @@
 import { describe, expect, it } from "vitest";
-import { matchSpokenAnswer, pickWordsToExplain } from "./spoken-answer-match";
+import {
+  type SpokenWordResult,
+  hasMissedStart,
+  matchSpokenAnswer,
+  pickWordsToExplain,
+} from "./spoken-answer-match";
+
+describe(hasMissedStart, () => {
+  it.each<{
+    expected: boolean;
+    name: string;
+    startup?: number;
+    statuses: SpokenWordResult["status"][];
+  }>([
+    {
+      expected: true,
+      name: "a missed opening word",
+      startup: 400,
+      statuses: ["missed", "correct"],
+    },
+    {
+      expected: true,
+      name: "a different opening word",
+      startup: 700,
+      statuses: ["different", "correct", "correct"],
+    },
+    {
+      expected: true,
+      name: "several opening words",
+      startup: 700,
+      statuses: ["missed", "different", "correct"],
+    },
+    {
+      expected: false,
+      name: "a wrong word in the middle",
+      startup: 700,
+      statuses: ["correct", "different", "correct"],
+    },
+    {
+      expected: false,
+      name: "errors after the opening",
+      startup: 700,
+      statuses: ["missed", "correct", "different"],
+    },
+    { expected: false, name: "a single word", startup: 700, statuses: ["missed"] },
+    { expected: false, name: "a correct take", startup: 700, statuses: ["correct", "correct"] },
+    { expected: false, name: "no mic timing", statuses: ["missed", "correct"] },
+    { expected: false, name: "a faster mic start", startup: 399, statuses: ["missed", "correct"] },
+  ])("returns $expected for $name", ({ expected, startup, statuses }) => {
+    const words = statuses.map((status) => ({ heard: null, status, text: "" }));
+    expect(hasMissedStart({ micStartupMs: startup, words })).toBe(expected);
+  });
+});
 
 describe(matchSpokenAnswer, () => {
   it("accepts the sentence regardless of case and punctuation", () => {

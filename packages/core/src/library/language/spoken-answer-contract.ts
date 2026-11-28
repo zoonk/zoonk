@@ -10,6 +10,7 @@ import { mistakePracticeFeedbackSchema } from "../../mistakes/practice-feedback"
 const SPOKEN_AUDIO_MEDIA_TYPES = ["audio/webm", "audio/mp4", "audio/m4a", "audio/x-m4a"] as const;
 
 const MAX_NOTEBOOK_ANSWER_IDS_LENGTH = 4096;
+const MAX_MIC_STARTUP_MS = 60_000;
 
 export const MAX_SPOKEN_AUDIO_BYTES = 2_000_000;
 
@@ -54,6 +55,16 @@ export const spokenAnswerFieldsSchema = z
       .max(MAX_SPOKEN_ANSWER_DURATION_MS)
       .meta({ description: "How long the learner spoke, in milliseconds" }),
     goalId: uuidSchema().optional(),
+    micStartupMs: z
+      .preprocess(
+        (value) => (typeof value === "string" && value.trim() !== "" ? Number(value) : value),
+        z.int().min(0).max(MAX_MIC_STARTUP_MS),
+      )
+      .optional()
+      .meta({
+        description:
+          "Milliseconds between pressing Record and the recorder starting, measured on a monotonic clock. On iOS and Android, any time awaiting microphone permission is excluded.",
+      }),
     mistakeId: uuidSchema().optional(),
     practiceDurationMs: z.coerce.number().int().pipe(answerDurationSchema).optional(),
     studySessionId: uuidSchema().optional().meta({ description: "Today's study session, if any" }),
@@ -131,6 +142,7 @@ export type SpokenAnswerGrade = z.infer<typeof spokenAnswerGradeSchema>;
 export type GradeSpokenAnswerResult =
   | { grade: SpokenAnswerGrade; status: "graded" }
   | { status: "invalidAudio" }
+  | { status: "missedStart" }
   | { status: "noSpeech" }
   | RefusedUsage
   | { status: "notFound" }

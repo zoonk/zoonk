@@ -21,8 +21,14 @@ async function toSpokenAnswerOutcome(response: Response): Promise<SpokenAnswerOu
     return grade ? { grade, status: "graded" } : { status: "failed" };
   }
 
-  if (isJsonObject(body) && getString(body.error, "code") === LESSON_PLAYER_ERROR_CODES.noSpeech) {
+  const code = isJsonObject(body) ? getString(body.error, "code") : null;
+
+  if (code === LESSON_PLAYER_ERROR_CODES.noSpeech) {
     return { status: "noSpeech" };
+  }
+
+  if (code === LESSON_PLAYER_ERROR_CODES.missedStart) {
+    return { status: "missedStart" };
   }
 
   return readRefusedLimit({ body, status: response.status }) ?? { status: "failed" };
@@ -33,6 +39,7 @@ export async function requestSpokenGrade({
   attemptId,
   audio,
   durationMs,
+  micStartupMs,
   stepId,
   studySessionId,
   practice,
@@ -40,6 +47,7 @@ export async function requestSpokenGrade({
   attemptId: string;
   audio: Blob;
   durationMs: number;
+  micStartupMs?: number;
   stepId: string;
   studySessionId: string | null;
   practice?: { mistakeId: string; goalId: string; answerIds: string[]; practiceDurationMs: number };
@@ -49,6 +57,10 @@ export async function requestSpokenGrade({
   form.set("audio", audio);
   form.set("durationMs", String(Math.round(durationMs)));
   form.set("timeZone", getLocalTimeZone());
+
+  if (micStartupMs !== undefined) {
+    form.set("micStartupMs", String(Math.round(micStartupMs)));
+  }
 
   if (practice) {
     form.set("mistakeId", practice.mistakeId);

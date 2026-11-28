@@ -94,10 +94,11 @@ export async function gradeSpokenMistake({
   const graded = await runAnswerGrade({
     attemptId,
     cacheWithoutModelClaim: true,
-    grade: async () => ({
-      grade: await gradeSpokenRecording({
+    grade: () =>
+      gradeSpokenRecording({
         audio,
         cacheExplanation: false,
+        micStartupMs: fields.micStartupMs,
         step: {
           id: step.id,
           learnerLanguage: lesson.language,
@@ -108,7 +109,6 @@ export async function gradeSpokenMistake({
         },
         userId,
       }),
-    }),
     questionId: step.id,
     userId,
   });
@@ -117,7 +117,12 @@ export async function gradeSpokenMistake({
     return { retryAfterSeconds: 1, status: "slowDown" };
   }
 
-  if (graded.result.grade === null) {
+  if (graded.result.status === "missedStart") {
+    return { status: "missedStart" };
+  }
+
+  // Earlier notebook attempts cached silence as a null grade.
+  if (graded.result.status === "noSpeech" || graded.result.grade === null) {
     return { status: "noSpeech" };
   }
 
