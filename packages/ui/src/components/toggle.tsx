@@ -1,11 +1,12 @@
 "use client";
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle";
+import { BusyContent } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
 const toggleVariants = cva(
-  "group/toggle hit-area hover:bg-muted/60 focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-selected-tint aria-pressed:text-foreground aria-pressed:hover:bg-selected-tint aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText] forced-colors:aria-pressed:forced-color-adjust-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/toggle hit-area hover:bg-muted/60 focus-visible:border-ring focus-visible:ring-ring/50 aria-pressed:bg-selected-tint aria-pressed:text-foreground aria-pressed:hover:bg-selected-tint aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 data-[held=checked]:bg-selected-tint data-[held=checked]:text-foreground relative inline-flex items-center justify-center gap-1 rounded-lg text-sm font-medium whitespace-nowrap transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-held:cursor-progress data-[held=unchecked]:bg-transparent! forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText] forced-colors:aria-pressed:forced-color-adjust-none forced-colors:data-[held=checked]:bg-[Highlight] forced-colors:data-[held=checked]:text-[HighlightText] forced-colors:data-[held=checked]:forced-color-adjust-none forced-colors:data-[held=unchecked]:bg-[Canvas]! forced-colors:data-[held=unchecked]:text-[CanvasText]! [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: { size: "default", variant: "default" },
     variants: {
@@ -18,18 +19,23 @@ const toggleVariants = cva(
         // One of a fixed set that is always all on screen (a week's days): off is the bare, faint
         // label and on the pick's tile, so on and off are told apart without reading. More contrast
         // gives both their line.
-        cell: "text-faint contrast-more:border-input border border-transparent bg-transparent",
-        default: "bg-transparent",
+        cell: "text-faint contrast-more:border-input data-[held=unchecked]:text-faint! border border-transparent bg-transparent",
+        default: "bg-transparent data-[held=unchecked]:text-inherit!",
         // Off, a line and a quiet label; on, the pick's fill takes the line's place.
         outline:
-          "border-input text-muted-foreground contrast-more:aria-pressed:border-input border bg-transparent aria-pressed:border-transparent",
+          "border-input text-muted-foreground contrast-more:aria-pressed:border-input contrast-more:data-[held=checked]:border-input data-[held=unchecked]:border-input! data-[held=unchecked]:text-muted-foreground! border bg-transparent aria-pressed:border-transparent data-[held=checked]:border-transparent",
       },
     },
   },
 );
 
-/** Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. */
+/**
+ * Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. A press made
+ * before the page hydrates draws the state it asks for, its label under the spinner until the press
+ * lands, as a button's is.
+ */
 function Toggle({
+  children,
   className,
   disabled,
   focusableWhenDisabled = false,
@@ -47,11 +53,15 @@ function Toggle({
       className={cn(toggleVariants({ className, size, variant }))}
       data-slot="toggle"
       disabled={keepsFocus ? false : disabled}
+      // A press made before the page hydrates marks it held, drawn in the state it asks for.
+      suppressHydrationWarning
       onPressedChange={(pressed, details) =>
         keepsFocus ? details.cancel() : onPressedChange?.(pressed, details)
       }
       {...props}
-    />
+    >
+      <BusyContent>{children}</BusyContent>
+    </TogglePrimitive>
   );
 }
 

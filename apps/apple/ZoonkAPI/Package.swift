@@ -17,7 +17,16 @@ let package = Package(
         .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
         .product(name: "HTTPTypes", package: "swift-http-types"),
       ],
-      plugins: [.plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")]
-    )
+      plugins: [.plugin(name: "GenerateAPIClient")]
+    ),
+    .executableTarget(name: "GenerateSplitSources"),
+    .plugin(
+      name: "GenerateAPIClient",
+      capability: .buildTool(),
+      dependencies: [
+        "GenerateSplitSources",
+        .product(name: "swift-openapi-generator", package: "swift-openapi-generator"),
+      ]
+    ),
   ]
 )

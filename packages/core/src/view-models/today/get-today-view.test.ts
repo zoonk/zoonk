@@ -12,6 +12,7 @@ import {
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { learnerGoalFixture } from "../../learner/_test-utils/learner-goal";
@@ -22,7 +23,6 @@ import { startPlacementSitting } from "../../learner/placement/start-placement-s
 import { decidePlanChange } from "../../plans/decide-plan-change";
 import { openTodayView } from "../../sessions/_test-utils/open-today-view";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -40,7 +40,7 @@ async function setup() {
   const fixture = await sessionGoalFixture({
     goal: {
       kind: "exam",
-      targetDate: new Date(SESSION_TODAY.getTime() + DAYS_TO_EXAM * DAY_MS),
+      targetDate: new Date(SESSION_TODAY.getTime() + DAYS_TO_EXAM * MS_PER_DAY),
       title: "ENEM 2026",
     },
     userId: user.id,
@@ -51,7 +51,7 @@ async function setup() {
       kind: "mock",
       planId: fixture.plan.id,
       position: fixture.planItems.length,
-      scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
+      scheduledFor: new Date(SESSION_TODAY.getTime() + 4 * MS_PER_DAY),
     }),
     learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
   ]);
@@ -271,7 +271,7 @@ describe(getTodayView, () => {
     expect(today.studiedToday).toBe(false);
 
     expect(today.weeklyChallenge).toMatchObject({
-      date: new Date(SESSION_TODAY.getTime() + 4 * DAY_MS),
+      date: new Date(SESSION_TODAY.getTime() + 4 * MS_PER_DAY),
       kind: "mock",
       planItemId: mock.id,
       title: "Test mock",
@@ -299,14 +299,14 @@ describe(getTodayView, () => {
     const user = await userFixture();
 
     const fixture = await sessionGoalFixture({
-      goal: { targetDate: new Date(SESSION_TODAY.getTime() - 2 * DAY_MS) },
+      goal: { targetDate: new Date(SESSION_TODAY.getTime() - 2 * MS_PER_DAY) },
       userId: user.id,
     });
 
     await Promise.all([
       learningProfileFixture({ activeGoalId: fixture.goal.id, userId: user.id }),
       prisma.planItem.updateMany({
-        data: { scheduledFor: new Date(SESSION_TODAY.getTime() - 3 * DAY_MS) },
+        data: { scheduledFor: new Date(SESSION_TODAY.getTime() - 3 * MS_PER_DAY) },
         where: { planId: fixture.plan.id },
       }),
     ]);

@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type LearningEventKind, type Prisma } from "../../../generated/prisma/client";
 import { localTimeFields } from "../_utils/dates";
 import { localizeText } from "../_utils/localize";
@@ -9,8 +10,6 @@ import { type SeedLearner } from "./types";
 import { type LearnerScope, planItemId } from "./write-goal";
 import { studyMoment } from "./write-learning";
 import { type FinishedBlock } from "./write-session";
-
-const MS_PER_SECOND = 1000;
 
 const ALL_RIGHT = 1;
 const SECONDS_PER_MINUTE = 60;
@@ -38,6 +37,7 @@ const LEDGER_KINDS = {
   boss: "boss",
   capsule: "capsule",
   lesson: "library",
+  placement: "placement",
   practice: "practice",
   weekly: "weeklyChallenge",
 } as const;
@@ -325,9 +325,48 @@ function toDailyTotals(
   });
 }
 
+function reviewEvents(block: FinishedBlock, seconds: number): HistoryEvent[] {
+  const { answers, completedAt, payload } = block;
+
+  const groups = [
+    ...payload.capsules.map((capsule) => ({ ...capsule, lessonKind: LEDGER_KINDS.capsule })),
+    {
+      itemIds: payload.placementItemIds,
+      lessonId: null,
+      lessonKind: LEDGER_KINDS.placement,
+      title: payload.title ?? "",
+    },
+  ];
+
+  const events = groups.flatMap(({ itemIds, lessonId, lessonKind, title }): HistoryEvent[] => {
+    const count = answers.filter(({ itemId }) => itemIds.includes(itemId)).length;
+
+    return count
+      ? [
+          {
+            ...answered(count, ALL_RIGHT),
+            contentIds: lessonId ? { lessonId } : {},
+            day: 0,
+            endedAt: completedAt,
+            kind: "review",
+            lessonKind,
+            seconds: Math.floor((seconds * count) / answers.length),
+            title,
+          },
+        ]
+      : [];
+  });
+
+  const remainder = seconds - events.reduce((sum, event) => sum + event.seconds, 0);
+
+  return events.map((event, index) =>
+    index === events.length - 1 ? { ...event, seconds: event.seconds + remainder } : event,
+  );
+}
+
 function blockEvents(scope: LearnerScope, block: FinishedBlock): HistoryEvent[] {
   const { accuracy } = scope.learner.history;
-  const { capsules, chapterId, drills, itemIds, title } = block.payload;
+  const { chapterId, drills, itemIds, title } = block.payload;
 
   const seconds = Math.round(
     (block.completedAt.getTime() - block.startedAt.getTime()) / MS_PER_SECOND,
@@ -336,15 +375,7 @@ function blockEvents(scope: LearnerScope, block: FinishedBlock): HistoryEvent[] 
   const ended = { day: 0, endedAt: block.completedAt };
 
   if (block.kind === "review") {
-    return capsules.map((capsule): HistoryEvent => ({
-      ...answered(capsule.itemIds.length, ALL_RIGHT),
-      ...ended,
-      contentIds: capsule.lessonId ? { lessonId: capsule.lessonId } : {},
-      kind: "review",
-      lessonKind: LEDGER_KINDS.capsule,
-      seconds: Math.round(seconds / Math.max(capsules.length, 1)),
-      title: capsule.title,
-    }));
+    return reviewEvents(block, seconds);
   }
 
   if (block.kind === "learn" && block.lessonId) {

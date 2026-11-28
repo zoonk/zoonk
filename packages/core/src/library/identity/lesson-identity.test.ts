@@ -7,6 +7,7 @@ import { skillFixture, skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getQuickLessonIdentityKey } from "../quick-lessons/quick-lesson-identity";
+import { getSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import {
   getCandidateIds,
   mockDecision,
@@ -52,7 +53,7 @@ describe("lesson identity search", () => {
     expect(getCandidateIds(decisionSpy)).toStrictEqual([target.id]);
   });
 
-  it("never offers a skill's quick lesson as a lesson to reuse", async () => {
+  it("never offers quick lessons or second takes as lessons to reuse", async () => {
     const word = uniqueWord();
 
     const [request, target] = await Promise.all([
@@ -61,6 +62,10 @@ describe("lesson identity search", () => {
       libraryLessonFixture({
         identityKey: getQuickLessonIdentityKey({ ownerId: null, skillId: randomUUID() }),
         title: `Quick lesson: Percent ${word}`,
+      }),
+      libraryLessonFixture({
+        identityKey: getSecondTakeIdentityKey({ ownerId: null, skillId: randomUUID() }),
+        title: `Percent ${word}`,
       }),
     ]);
 

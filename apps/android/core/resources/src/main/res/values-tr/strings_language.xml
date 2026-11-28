@@ -28,8 +28,6 @@
   "language_level_up": "00d6956f3e1e21d5be17413c393dd7d907b7b72824731a4c9844b5412da3468d",
   "language_levels_move": "c961bdc961b541685cb943982fe033ee30884f99da5a1ccc81118813825daffa",
   "language_pattern_noticed": "ee055190afd8e2d14cfec8505e3134a77a761fe561a4f913f07bae8558a33ca7",
-  "language_pattern_noticed_summary": "afc6701b01cd318c76d13e71639aefb09e0d84ff40276462afdeabebdf5b70b3",
-  "language_pattern_practice": "888c657ade348f679c36d2b6e1e56ff0053ade264e2bcec1e7ef893bcf5148d8",
   "language_pattern_typos": "ddf1af6effed1a8009f78c0aa5f69c07ede3465b9edb3a35e3236b56089a4389",
   "language_pattern_typos_description": "11739653447a5ab9ec9ccab2a110afea3c111fdabbab228775bb1d4dca345920",
   "language_practice_estimates": "a64fce1a61ad92e77c76789340f9e4bf0a449031b80ba054b02ff5eb30481982",
@@ -138,10 +136,6 @@
     <string name="language_alphabet_skip_failed">Kaydedilemedi. Tekrar dene.</string>
     <!-- Button that opens the words to say aloud again; "them" is those words. -->
     <string name="language_say_them">Sesli söyle</string>
-    <!-- %1$s names the rule the learner keeps getting wrong. -->
-    <string name="language_pattern_noticed_summary">Tekrarlayan bir hata fark ettik: %1$s</string>
-    <!-- Opens the noticed pattern. -->
-    <string name="language_pattern_practice">Alıştırma yap</string>
     <string name="language_level">%1$s seviyesi</string>
     <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
     <string name="language_level_toward">%1$s → %2$s</string>

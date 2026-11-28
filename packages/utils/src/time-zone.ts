@@ -1,4 +1,4 @@
-const MS_PER_SECOND = 1000;
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 
 const DATE_PARTS = { day: "numeric", month: "numeric", year: "numeric" } as const;
 

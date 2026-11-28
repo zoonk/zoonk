@@ -4,10 +4,8 @@ extension ActivityRenderer {
   static let findError = ActivityRenderer(
     template: "findError",
     grade: ActivityExpectedAnswer.grader(FindErrorFields.self) { .selection([$0.errorStepId]) }
-  ) { context in
-    if let fields = try? context.fields(as: FindErrorFields.self) {
-      FindErrorCanvas(fields: fields, context: context)
-    }
+  ) { context, fields in
+    FindErrorCanvas(fields: fields, context: context)
   }
 }
 

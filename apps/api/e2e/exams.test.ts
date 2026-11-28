@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { examResultResponseSchema, examViewResponseSchema } from "../src/lib/openapi/schemas/exams";
 import {
   mockEssayGradesResponseSchema,
@@ -18,11 +19,11 @@ import { tapOption } from "./helpers/choices";
 import { FORMATS_QUESTIONS, createFormatsExamGoal } from "./helpers/exam-formats";
 import {
   BREAK_SECTION_QUESTIONS,
-  DAY_MS,
   EXAM_IN_DAYS,
   MOCK_QUESTIONS,
   createBreakExamGoal,
   createExamGoal,
+  createReorderExamGoal,
   examEdition,
   isoDayFromToday,
 } from "./helpers/exams";
@@ -153,7 +154,7 @@ test.describe("Exams API", () => {
         where: { id: blueprintId },
       }),
       prisma.goal.update({
-        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * DAY_MS) },
+        data: { createdAt: new Date(Date.now() - EXAM_IN_DAYS * MS_PER_DAY) },
         where: { id: goal.id },
       }),
     ]);
@@ -378,7 +379,7 @@ test.describe("Exams API", () => {
       schema: mockPlanOfferResultSchema,
     });
 
-    expect(skipped).toMatchObject({ lessonsSkipped: 1, reason: null, status: "applied" });
+    expect(skipped).toMatchObject({ lessonsSkipped: 1, status: "applied" });
 
     const again = await readBody({
       response: await api.post(`${path}/plan-changes`, {
@@ -387,14 +388,62 @@ test.describe("Exams API", () => {
       schema: mockPlanOfferResultSchema,
     });
 
-    expect(again).toStrictEqual({
-      changeId: null,
-      lessonsSkipped: 0,
-      reason: null,
-      status: "unchanged",
+    expect(again).toStrictEqual({ changeId: null, lessonsSkipped: 0, status: "unchanged" });
+
+    const focus = await api.post(`${path}/plan-changes`, {
+      data: { offer: "focus", timeZone: "UTC" },
     });
 
+    expect(focus.status()).toBe(400);
+
     await Promise.all([api.dispose(), other.api.dispose()]);
+  });
+
+  test("moves the topic a finished mock missed earlier in the plan and names it in the result", async () => {
+    const { api, userId } = await createBearerLearner({ baseURL, prefix: "mock-reorder" });
+    const { goal, missed } = await createReorderExamGoal(userId);
+
+    const started = await readBody({
+      response: await api.post(`/v1/goals/${goal.id}/mocks`, {
+        data: { shape: { area: null, day: null, kind: "half" } },
+      }),
+      schema: anytimeMockResponseSchema,
+      status: 201,
+    });
+
+    const path = `/v1/mocks/${started.id}`;
+
+    const running = await readBody({
+      response: await api.get(path),
+      schema: mockViewResponseSchema,
+    });
+
+    await (running.current?.questions ?? []).reduce(async (previous, question) => {
+      await previous;
+
+      await api.put(`${path}/answers`, {
+        data: {
+          answer: tapOption(question.options, { right: false }),
+          durationMs: 5000,
+          flagged: false,
+          itemId: question.itemId,
+        },
+      });
+    }, Promise.resolve());
+
+    const finished = await readBody({
+      response: await api.post(`${path}/finishes`, { data: { timeZone: "UTC" } }),
+      schema: mockStepResponseSchema,
+    });
+
+    expect(finished).toStrictEqual({ status: "finished" });
+
+    const view = await readBody({ response: await api.get(path), schema: mockViewResponseSchema });
+
+    expect(view.result?.movedTopics).toStrictEqual([missed.name]);
+    expect(view.adapt).toBeNull();
+
+    await api.dispose();
   });
 
   test("keeps the notice's break between sections, with each section's tools, and ends it early on request", async () => {

@@ -100,6 +100,7 @@ export type {
 } from "./generated/prisma/client";
 
 export {
+  AttemptEvidence,
   BuddyGlasses,
   BuddyKind,
   ContentFixStatus,

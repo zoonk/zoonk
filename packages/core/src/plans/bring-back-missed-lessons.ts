@@ -1,5 +1,5 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { type TransactionClient } from "@zoonk/db";
 import { trackTestEvents } from "../analytics/test-events";
 import { keepOpenSessionSelection } from "../sessions/_utils/skip-tested-out-blocks";
 import { isPlanReady } from "./_utils/apply-plan-change";
@@ -12,91 +12,18 @@ import {
   mergeChangeTopics,
 } from "./_utils/living-plan-change";
 import { type PlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
-import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
-import { type ComputedPlan, computePlan } from "./_utils/replan";
+import { findTestedOutItemIds, planRelearn, withoutSkippedAreas } from "./_utils/relearn-plan";
+import { type ComputedPlan, type PlanChangeRecord } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
-import { getSkillArea } from "./planner/graph-areas";
 import { type PlanEffect } from "./planner/plan-effect";
 import { type PlanGraph } from "./planner/plan-state";
 
 /** For logs and admin only; the apps word it from its topics. */
 const RELEARN_NOTE = "A miss in practice brought back the lessons of a topic taken as known.";
 
-async function findTestedOutItemIds({
-  context,
-  skillIds,
-}: {
-  context: PlanContext;
-  skillIds: ReadonlySet<string>;
-}): Promise<Set<string>> {
-  if (skillIds.size === 0) {
-    return new Set();
-  }
-
-  const testedOut = context.items.filter((item) => item.status === "testedOut");
-  const lessonIds = testedOut.flatMap((item) => item.lessonId ?? []);
-
-  const taught =
-    lessonIds.length > 0
-      ? await prisma.lessonSkill.findMany({
-          select: { lessonId: true },
-          where: { lessonId: { in: lessonIds }, skillId: { in: [...skillIds] } },
-        })
-      : [];
-
-  const teaching = new Set(taught.map((row) => row.lessonId));
-
-  return new Set(
-    testedOut
-      .filter(
-        (item) =>
-          (item.skillId !== null && skillIds.has(item.skillId)) ||
-          (item.lessonId !== null && teaching.has(item.lessonId)),
-      )
-      .map((item) => item.id),
-  );
-}
-
-async function planWithRestored({
-  context,
-  ids,
-  now,
-}: {
-  context: PlanContext;
-  ids: ReadonlySet<string>;
-  now: Date;
-}): Promise<{ computed: ComputedPlan; restored: PlanContext }> {
-  const items = context.items.map((item) =>
-    ids.has(item.id) ? { ...item, completedAt: null, status: "todo" as const } : item,
-  );
-
-  const restored = { ...context, items };
-
-  const computed = await computePlan({
-    context: restored,
-    keepPhaseDates: true,
-    mode: "forced",
-    now,
-  });
-
-  return { computed, restored };
-}
-
 function recheckChangeDay(day: string | undefined) {
   return day ? { livingPlanDay: day, todaySession: "unchanged" as const } : {};
-}
-
-function getPlannedIds({
-  computed,
-  ids,
-}: {
-  computed: ComputedPlan;
-  ids: ReadonlySet<string>;
-}): Set<string> {
-  return new Set(
-    computed.built.items.flatMap((item) => (item.id && ids.has(item.id) ? [item.id] : [])),
-  );
 }
 
 function restorationEffect({
@@ -119,6 +46,39 @@ function restorationEffect({
       effect.topicsAdded,
     ),
     topicsLeftOut: mergeChangeTopics(previous?.effect?.topicsLeftOut, effect.topicsLeftOut),
+  };
+}
+
+export function getRelearnPayload({
+  computed,
+  graph,
+  livingPlanDay,
+  missed,
+  previous,
+  restoredIds,
+}: {
+  computed: ComputedPlan;
+  graph: PlanGraph;
+  livingPlanDay?: string;
+  missed: readonly string[];
+  previous?: PlanChangePayload;
+  restoredIds: ReadonlySet<string>;
+}) {
+  return {
+    carriedItemIds: [...new Set([...(previous?.carriedItemIds ?? []), ...restoredIds])],
+    effect: restorationEffect({ effect: computed.effect, graph, missed, previous }),
+    ...recheckChangeDay(livingPlanDay),
+    recheckedSkillIds: [...new Set([...(previous?.recheckedSkillIds ?? []), ...missed])],
+    source: "system" as const,
+  };
+}
+
+export function toRelearnChange(payload: ReturnType<typeof getRelearnPayload>): PlanChangeRecord {
+  return {
+    kind: "relearn",
+    payload: toPlanChangePayload(payload),
+    reason: RELEARN_NOTE,
+    status: "applied",
   };
 }
 
@@ -150,16 +110,8 @@ export async function bringBackMissedLessons({
       return;
     }
 
-    const { graph, settings } = context.state;
-    const skipped = new Set(settings.skippedAreas);
-
-    const takenOut = new Set(
-      graph.skills
-        .filter((skill) => skipped.has(getSkillArea({ graph, skill })))
-        .map((skill) => skill.skillId),
-    );
-
-    const missed = skillIds.filter((skillId) => !takenOut.has(skillId));
+    const { graph } = context.state;
+    const missed = withoutSkippedAreas({ skillIds, state: context.state });
 
     if (missed.length === 0) {
       return;
@@ -174,29 +126,20 @@ export async function bringBackMissedLessons({
       return;
     }
 
-    const first = await planWithRestored({ context, ids, now });
-    const plannedIds = getPlannedIds({ computed: first.computed, ids });
-
-    const { computed, restored } =
-      plannedIds.size === ids.size
-        ? first
-        : await planWithRestored({ context, ids: plannedIds, now });
-
-    const restoredIds = getPlannedIds({ computed, ids: plannedIds });
+    const { computed, restored, restoredIds } = await planRelearn({ context, ids, now });
 
     if (livingPlanDay && restoredIds.size === 0) {
       return;
     }
 
-    const previous = batch?.payload;
-
-    const payload = {
-      carriedItemIds: [...new Set([...(previous?.carriedItemIds ?? []), ...restoredIds])],
-      effect: restorationEffect({ effect: computed.effect, graph, missed, previous }),
-      ...recheckChangeDay(livingPlanDay),
-      recheckedSkillIds: [...new Set([...(previous?.recheckedSkillIds ?? []), ...missed])],
-      source: "system",
-    };
+    const payload = getRelearnPayload({
+      computed,
+      graph,
+      livingPlanDay,
+      missed,
+      previous: batch?.payload,
+      restoredIds,
+    });
 
     const save = async (tx: TransactionClient) => {
       await tx.planItem.updateMany({
@@ -224,14 +167,7 @@ export async function bringBackMissedLessons({
         : new Map();
 
     await commitPlan({
-      change: batch
-        ? null
-        : {
-            kind: "relearn",
-            payload: toPlanChangePayload(payload),
-            reason: RELEARN_NOTE,
-            status: "applied",
-          },
+      change: batch ? null : toRelearnChange(payload),
       computed,
       context: restored,
       extraWrites: save,

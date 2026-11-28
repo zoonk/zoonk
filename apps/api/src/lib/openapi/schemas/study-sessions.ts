@@ -99,6 +99,13 @@ export const extraTimeSchema = z
 
 export const studySessionResponseSchema = z
   .object({
+    alternativePosition: z
+      .int()
+      .nonnegative()
+      .nullable()
+      .describe(
+        "Position of the first available non-lesson block other than the next block, or null when there is no next block or alternative.",
+      ),
     blocks: z.array(studyBlockSchema),
     brainPower: z.number().int().min(0),
     catchUp: catchUpSchema,

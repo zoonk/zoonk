@@ -4,18 +4,12 @@ import { type GoalPlan, loadGoalPlan } from "../../../learner/_utils/goal-skill-
 import { getWritingSkillIds } from "../../../learner/writing-skills";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
-import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../../../plans/planner/plan-state";
-import { findSkippableItems, findWeakestArea, getAcedSkillIds } from "../mock-adapt-rules";
+import { findSkippableItems, getAcedSkillIds } from "../mock-adapt-rules";
 import { type MockPurpose, type MockResult } from "../mock-contract";
 import { type MockAdaptView } from "../mock-view-contract";
 
-export type MockPlanOffers = {
-  aced: Set<string>;
-  focusAreas: string[];
-  plan: GoalPlan;
-  view: MockAdaptView;
-};
+export type MockPlanOffers = { aced: Set<string>; plan: GoalPlan; view: MockAdaptView };
 
 export async function loadMockPlanOffers({
   blueprint,
@@ -42,7 +36,7 @@ export async function loadMockPlanOffers({
   }
 
   const graph = parsePlanGraph(row.graph);
-  const { focusAreas, writtenSkillIds } = parsePlanSettings(row.settings);
+  const { writtenSkillIds } = parsePlanSettings(row.settings);
 
   const written = writtenSkillIds
     ? new Set(writtenSkillIds)
@@ -51,16 +45,14 @@ export async function loadMockPlanOffers({
         structure: blueprint ? readBlueprintContent(blueprint).structure : null,
       });
 
-  const planAreas = [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
   const aced = getAcedSkillIds({ items: plan.items, result }).difference(written);
   const skippable = findSkippableItems({ aced, items: plan.items });
-  const focus = findWeakestArea({ focusAreas, planAreas, result });
 
   const topics = result.topics
     .filter((topic) => skippable.some((item) => item.skillIds.includes(topic.skillId)))
     .map((topic) => topic.name);
 
-  if (!focus && skippable.length === 0) {
+  if (skippable.length === 0) {
     return null;
   }
 
@@ -68,13 +60,5 @@ export async function loadMockPlanOffers({
     where: { id: { in: skippable.map((item) => item.id) } },
   });
 
-  return {
-    aced,
-    focusAreas,
-    plan,
-    view: {
-      focus: focus && { area: focus.name, correct: focus.correct, total: focus.total },
-      skip: skippable.length > 0 ? { lessons: countLessons(skippedItems), topics } : null,
-    },
-  };
+  return { aced, plan, view: { skip: { lessons: countLessons(skippedItems), topics } } };
 }

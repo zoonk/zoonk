@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { type Page, expect, test } from "./fixtures";
@@ -57,7 +56,6 @@ test.describe("Journey", () => {
       await expect(estimate).toBeVisible();
 
       const options = page.getByRole("button", { name: "Plan options" });
-      await expectHydrated(options);
       await options.click();
       await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
 
@@ -77,7 +75,6 @@ test.describe("Journey", () => {
       await openJourney(page);
 
       const options = page.getByRole("button", { name: "Plan options" });
-      await expectHydrated(options);
       await options.click();
       await page.getByRole("menuitem", { name: /^Pause.*goal$/u }).click();
 
@@ -150,7 +147,6 @@ test.describe("Journey", () => {
       await openJourney(page);
       const properties = page.getByRole("region", { exact: true, name: "Your plan" });
       const row = properties.getByRole("button", { name: /^Language/u });
-      await expectHydrated(row);
       await expect(row).toHaveText(/English$/u);
       await row.click();
 
@@ -204,7 +200,6 @@ test.describe("Journey", () => {
     await expect(page.getByRole("link", { name: "Continue" })).toBeVisible();
 
     const options = page.getByRole("button", { name: "Plan options" });
-    await expectHydrated(options);
     await options.click();
     await page.getByRole("menuitem", { name: "Pause goal" }).click();
 
@@ -237,7 +232,6 @@ test.describe("Journey", () => {
     await page.goto("/plan");
 
     const options = page.getByRole("button", { name: "Plan options" });
-    await expectHydrated(options);
     await options.click();
     await page.getByRole("menuitem", { name: "Rename goal" }).click();
 

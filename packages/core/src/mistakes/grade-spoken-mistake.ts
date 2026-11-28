@@ -6,8 +6,12 @@ import {
   writeLanguageStepEvidence,
 } from "../language/levels/record-language-evidence";
 import { schedulePronunciationReviews } from "../language/pronunciation/schedule-pronunciation-reviews";
-import { getAnswerAttemptId, recordAnswerOnce } from "../learner/_utils/answer-once";
-import { getLearnerTimeZone } from "../learner/_utils/goal-time-zone";
+import {
+  findSavedAttempt,
+  getAnswerAttemptId,
+  recordAnswerOnce,
+} from "../learner/_utils/answer-once";
+import { runAnswerGrade } from "../learner/_utils/run-answer-grade";
 import { toCheckResult } from "../lesson-player/_utils/check-results";
 import { type PlayableLibraryStep } from "../lesson-player/playable-lesson";
 import {
@@ -22,19 +26,22 @@ import {
   type GradeSpokenAnswerResult,
   type SpokenAnswerFields,
   type SpokenAnswerGrade,
-  spokenAnswerGradeSchema,
 } from "../library/language/spoken-answer-contract";
 import { saveDayBeforeActivity } from "../sessions/ensure-study-session";
 import { getSession } from "../users/get-session";
-import { runMistakeGrade } from "./_utils/mistake-grade";
-import { finishPracticeAnswer } from "./_utils/practice-feedback";
+import { getPracticeAnswerScope } from "./_utils/practice-answer-scope";
+import { refuseClosedMistake } from "./_utils/practice-claim";
+import { countRunSoFar, finishPracticeAnswer } from "./_utils/practice-feedback";
+import {
+  type RecordingInput,
+  recordingGradeSchema,
+  replaySpokenPractice,
+} from "./_utils/spoken-practice-grade";
 import { visibleMistakeWhere } from "./_utils/visible-mistake";
 import { applyDrillRules } from "./drill-answer";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { type MistakeLessonReplay, loadMistakeReplay } from "./mistake-replay";
 import { readMistakeSnapshot } from "./mistake-snapshot";
-
-const recordingGradeSchema = spokenAnswerGradeSchema.omit({ attemptId: true, practice: true });
 
 export async function gradeSpokenMistake({
   audio,
@@ -61,10 +68,54 @@ export async function gradeSpokenMistake({
     where: { ...visibleMistakeWhere, id: fields.mistakeId, userId },
   });
 
-  const replay = mistake ? await loadMistakeReplay({ mistake, userId }) : null;
+  if (!mistake) {
+    return { status: "notFound" };
+  }
+
+  const attemptId = getAnswerAttemptId({
+    key: fields.attemptId,
+    questionId: `spoken:${mistake.id}`,
+    userId,
+  });
+
+  const [saved, scope] = await Promise.all([
+    findSavedAttempt({ attemptId, userId }),
+    getPracticeAnswerScope({
+      blockId: fields.blockId,
+      goalId: fields.goalId,
+      mistakeId: mistake.id,
+      mockId: fields.mockId,
+      timeZone: fields.timeZone,
+      userId,
+    }),
+  ]);
+
+  if (!scope) {
+    return { status: "notFound" };
+  }
+
+  const input = {
+    run: {
+      answerIds: fields.answerIds ?? [],
+      blockId: fields.blockId,
+      goalId: scope.goalId,
+      mockId: fields.mockId,
+    },
+    timeZone: scope.timeZone,
+  };
+
+  const recorded = saved
+    ? await replaySpokenPractice({ attempt: saved, input, mistakeId: mistake.id })
+    : null;
+
+  if (recorded) {
+    return recorded;
+  }
+
+  const replay = await loadMistakeReplay({ mistake, userId });
 
   if (
-    !mistake ||
+    (!saved && mistake.status !== "open") ||
     replay?.kind !== "lesson" ||
     replay.lesson.step.kind !== "spokenAnswer" ||
     replay.lesson.step.id !== stepId
@@ -76,22 +127,49 @@ export async function gradeSpokenMistake({
     return { status: "invalidAudio" };
   }
 
-  const { lesson } = replay;
-  const step = replay.lesson.step;
-
-  const attemptId = getAnswerAttemptId({
-    key: fields.attemptId,
-    questionId: `spoken:${mistake.id}`,
+  return gradeOpenRecording({
+    attemptId,
+    audio,
+    fields,
+    input,
+    lesson: replay.lesson,
+    mistake,
+    step: replay.lesson.step,
     userId,
   });
+}
 
+type SpokenPractice = {
+  attemptId: string;
+  fields: SpokenAnswerFields;
+  input: RecordingInput;
+  lesson: MistakeLessonReplay;
+  mistake: Mistake;
+  step: Extract<PlayableLibraryStep, { kind: "spokenAnswer" }>;
+  userId: string;
+};
+
+async function gradeOpenRecording({
+  attemptId,
+  audio,
+  fields,
+  input,
+  lesson,
+  mistake,
+  step,
+  userId,
+}: SpokenPractice & { audio: SpokenAudio }): Promise<GradeSpokenAnswerResult> {
   const usage = await claimUsage({ kind: "assist", targetId: attemptId });
 
   if (usage.status !== "allowed") {
+    if (fields.blockId && (usage.status === "limitReached" || usage.status === "signUpRequired")) {
+      await countRunSoFar({ input });
+    }
+
     return usage;
   }
 
-  const graded = await runMistakeGrade({
+  const graded = await runAnswerGrade({
     attemptId,
     cacheWithoutModelClaim: true,
     grade: async () => ({
@@ -122,25 +200,20 @@ export async function gradeSpokenMistake({
   }
 
   const grade = recordingGradeSchema.parse(graded.result.grade);
-  return recordSpokenPractice({ attemptId, fields, grade, lesson, mistake, step, userId });
+  return recordSpokenPractice({ attemptId, fields, grade, input, lesson, mistake, step, userId });
 }
 
 async function recordSpokenPractice({
   attemptId,
   fields,
   grade,
+  input,
   lesson,
   mistake,
   step,
   userId,
-}: {
-  attemptId: string;
-  fields: SpokenAnswerFields;
+}: SpokenPractice & {
   grade: Omit<SpokenAnswerGrade, "attemptId" | "practice">;
-  lesson: MistakeLessonReplay;
-  mistake: Mistake;
-  step: Extract<PlayableLibraryStep, { kind: "spokenAnswer" }>;
-  userId: string;
 }): Promise<GradeSpokenAnswerResult> {
   const kind = getDrillKind(mistake.cause);
 
@@ -151,8 +224,8 @@ async function recordSpokenPractice({
     misconception: null,
   });
 
-  const timeZone = await getLearnerTimeZone({ timeZone: fields.timeZone, userId });
-  await saveDayBeforeActivity({ goalId: fields.goalId, timeZone, userId });
+  const { timeZone } = input;
+  await saveDayBeforeActivity({ goalId: input.run?.goalId, timeZone, userId });
 
   const evidence = await loadLanguageStepEvidence({
     isCorrect: grade.score >= SPOKEN_EVIDENCE_SCORE,
@@ -161,9 +234,38 @@ async function recordSpokenPractice({
     userId,
   });
 
+  const lessonResult = toCheckResult({
+    savedMistake: !drilled.isCorrect,
+    verdict: {
+      answerText: grade.transcript,
+      checked: true,
+      correctAnswer: drilled.isCorrect ? null : step.content.targetText,
+      corrections: [],
+      expected: null,
+      feedback: grade.explanation,
+      isCorrect: drilled.isCorrect,
+      keyPoints: null,
+      score: grade.score,
+      spelling: null,
+    },
+  });
+
+  const feedback = {
+    correctAnswer: null,
+    explanation: grade.explanation,
+    lessonResult,
+    trap: drilled.trap,
+    workedSteps: [],
+  };
+
   const outcome = await recordAnswerOnce({
     answer: {
-      answer: { kind: "spoken", practiceMistakeId: mistake.id, transcript: grade.transcript },
+      answer: {
+        kind: "spoken",
+        practiceFeedback: feedback,
+        practiceMistakeId: mistake.id,
+        transcript: grade.transcript,
+      },
       attemptId,
       graded: {
         durationMs: fields.practiceDurationMs ?? fields.durationMs,
@@ -191,12 +293,21 @@ async function recordSpokenPractice({
       timeZone,
       userId,
     },
+    refuse: refuseClosedMistake({ mistakeId: mistake.id, userId }),
     withAnswer: evidence
-      ? (transaction) => writeLanguageStepEvidence(transaction, evidence)
+      ? async (transaction, attempt) => {
+          if (attempt.evidence === "replay") {
+            await writeLanguageStepEvidence(transaction, evidence);
+          }
+        }
       : undefined,
   });
 
-  if (outcome.status === "recorded") {
+  if (outcome.status === "refused") {
+    return { status: "notFound" };
+  }
+
+  if (outcome.status === "recorded" && outcome.recorded.attempt.evidence === "replay") {
     await schedulePronunciationReviews({
       targetLanguage: step.content.language,
       timeZone,
@@ -206,36 +317,10 @@ async function recordSpokenPractice({
     });
   }
 
-  const isCorrect =
-    outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
-
-  const lessonResult = toCheckResult({
-    savedMistake: !isCorrect,
-    verdict: {
-      answerText: grade.transcript,
-      checked: true,
-      correctAnswer: isCorrect ? null : step.content.targetText,
-      corrections: [],
-      expected: null,
-      feedback: grade.explanation,
-      isCorrect,
-      keyPoints: null,
-      score: grade.score,
-      spelling: null,
-    },
-  });
-
   const practice = await finishPracticeAnswer({
-    answerId: attemptId,
-    feedback: {
-      correctAnswer: null,
-      explanation: grade.explanation,
-      isCorrect,
-      lessonResult,
-      trap: drilled.trap,
-      workedSteps: [],
-    },
-    input: { run: { answerIds: fields.answerIds ?? [], goalId: fields.goalId }, timeZone },
+    attempt: outcome.status === "saved" ? outcome.saved : outcome.recorded.attempt,
+    feedback,
+    input,
     mistakeId: mistake.id,
   });
 

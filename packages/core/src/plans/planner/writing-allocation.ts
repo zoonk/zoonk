@@ -181,10 +181,17 @@ function listWritingSchedule({
     ? scheduleWrittenPapers({ studyDays, targetDate, tests: writing.tests })
     : new Map<string, Paper>();
 
+  // A saved schedule is what the learner was shown: today keeps its writing, none included.
+  const shown = input.todayShown && input.settings.writingSchedule ? today : null;
+
   const eligible = studyDays.flatMap(({ date, minutes }, index) => {
     const day = days[index];
 
-    return day && date >= toIsoDate(start) && !keptByDate.has(date) && minutes >= MIN_BLOCK_MINUTES
+    return day &&
+      date >= toIsoDate(start) &&
+      date !== shown &&
+      !keptByDate.has(date) &&
+      minutes >= MIN_BLOCK_MINUTES
       ? [{ date, minutes, today: day.date }]
       : [];
   });

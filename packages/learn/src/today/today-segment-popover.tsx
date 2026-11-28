@@ -14,6 +14,7 @@ import { KindMark, type LearnKind } from "../_components/kind-tile";
 import { FactSegments } from "../_components/task-meta";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
+import { isAlreadyFixed } from "../session/block-kind";
 import { type DayStepPart } from "../session/day-meter-parts";
 import { type DayStep } from "../session/session-types";
 import { useBlockTitle } from "../session/use-block-copy";
@@ -28,7 +29,7 @@ export const DAY_SEGMENT_SLOT = "today-day-segment";
  * the first row, 38px in all, since any taller it would cover one of them.
  */
 const TRIGGER_CLASS =
-  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125";
+  "relative flex min-w-1 grow basis-0 cursor-pointer rounded-meter outline-none transition-[filter] before:absolute before:-inset-x-px before:-top-5 before:-bottom-3 before:content-[''] hover:brightness-95 held-pressed:brightness-90 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:brightness-125 dark:held-pressed:brightness-125";
 
 function useKindNote() {
   const t = useExtracted();
@@ -54,7 +55,8 @@ function useSegmentFacts() {
   const isGettingReady = useStepGettingReady();
 
   return ({ block, state }: { block: DayStep; state: DaySegmentState }): SegmentFacts => {
-    const time = formatDuration(block.estimatedMinutes);
+    // An already fixed row has no time left to spend, so it states no time.
+    const time = isAlreadyFixed(block) ? undefined : formatDuration(block.estimatedMinutes);
 
     if (state === "done") {
       return { status: t("Done") };
@@ -162,7 +164,7 @@ export function HeldSegment({ minutes }: { minutes: number }) {
   return (
     <Popover>
       <SegmentPopover focusable={false} label={`${title}: ${time}`}>
-        <DaySegment kind="lesson" state="ahead" />
+        <DaySegment state="ahead" />
       </SegmentPopover>
       <SegmentContent facts={{ data: time }} kind="lesson" note={note} title={title} />
     </Popover>

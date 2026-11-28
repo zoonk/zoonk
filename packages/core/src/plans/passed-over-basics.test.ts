@@ -3,6 +3,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
@@ -15,10 +16,9 @@ import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
 const TODAY = new Date("2026-10-12T00:00:00Z");
-const DAY_MS = 86_400_000;
 
 function day(offset: number): Date {
-  return new Date(TODAY.getTime() + offset * DAY_MS);
+  return new Date(TODAY.getTime() + offset * MS_PER_DAY);
 }
 
 function setClock(offset: number) {

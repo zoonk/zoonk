@@ -43,22 +43,21 @@ export function practiceFeedback(checked = true): NonNullable<MistakePracticeFee
     lessonResult: result(checked),
     mistakeStatus: checked ? "fixed" : "open",
     reached: NOTHING_REACHED,
+    requiresLaterDay: false,
     trap: null,
     workedSteps: [],
   };
 }
 
-export function openPractice(
-  step: PlayableLibraryStep | null,
-  overrides: Partial<Actions> = {},
-  question?: ComponentProps<typeof MistakePracticeRun>["practice"][number]["questions"][number],
-  drill: PracticeDrill = RETRY_DRILL,
-) {
-  const answer = vi.fn<Actions["answer"]>().mockResolvedValue(practiceFeedback());
-  const finish = vi.fn<Actions["finish"]>().mockResolvedValue(null);
-  const actions = { answer, finish, ...overrides };
+type Practice = ComponentProps<typeof MistakePracticeRun>["practice"];
 
-  const practice: ComponentProps<typeof MistakePracticeRun>["practice"] = [
+/** One notebook entry replaying a lesson's step, or asking a bank question. */
+export function practiceEntries(
+  step: PlayableLibraryStep | null,
+  question?: Practice[number]["questions"][number],
+  drill: PracticeDrill = RETRY_DRILL,
+): Practice {
+  return [
     {
       cause: null,
       drill,
@@ -73,6 +72,7 @@ export function openPractice(
         : null,
       mistakeId: "original-mistake",
       questions: question ? [question] : [],
+      showing: "mistake:original-mistake:1",
       snapshot: {
         answer: "The earlier answer",
         question: question?.question ?? "The original lesson question",
@@ -80,6 +80,21 @@ export function openPractice(
       tutorAvailable: true,
     },
   ];
+}
+
+export function openPractice(
+  step: PlayableLibraryStep | null,
+  overrides: Partial<Actions> = {},
+  question?: ComponentProps<typeof MistakePracticeRun>["practice"][number]["questions"][number],
+  drill: PracticeDrill = RETRY_DRILL,
+  { dayBlock = false, doneHref }: { dayBlock?: boolean; doneHref?: string } = {},
+) {
+  const again = vi.fn<Actions["again"]>().mockResolvedValue(null);
+  const answer = vi.fn<Actions["answer"]>().mockResolvedValue(practiceFeedback());
+  const finish = vi.fn<Actions["finish"]>().mockResolvedValue(null);
+  const actions = { again, answer, finish, ...overrides };
+
+  const practice = practiceEntries(step, question, drill);
 
   render(
     <LearnProvider
@@ -92,7 +107,6 @@ export function openPractice(
           onNavigate: _onNavigate,
           prefetch: _prefetch,
           scroll: _scroll,
-          unstable_dynamicOnHover: _dynamicOnHover,
           ...props
         }) => (
           <a href={href} {...props}>
@@ -115,6 +129,8 @@ export function openPractice(
             <MistakePracticeRun
               actions={actions}
               backHref="/mistakes"
+              dayBlock={dayBlock}
+              doneHref={doneHref}
               lessonHref={null}
               practice={practice}
               renderLesson={(props) => <LessonPracticeStep {...props} />}

@@ -207,7 +207,13 @@ async function openNext({
   }
 
   if (next) {
-    return openSessionBlock({ block: next, sessionId: session.id, timeZone, userId });
+    return openSessionBlock({
+      block: next,
+      goalId: owned.session.goalId,
+      sessionId: session.id,
+      timeZone,
+      userId,
+    });
   }
 
   // The day isn't over while a mock is still being prepared, so there's no summary yet: Today says when to come back.
@@ -270,7 +276,13 @@ async function openTappedBlock({
     return openingResult({ kind: "today" });
   }
 
-  return openSessionBlock({ block, sessionId: opened.session.id, timeZone, userId });
+  return openSessionBlock({
+    block,
+    goalId: saved.goalId,
+    sessionId: opened.session.id,
+    timeZone,
+    userId,
+  });
 }
 
 /**
@@ -307,6 +319,7 @@ async function openMission({
 
   const opened = await openSessionBlock({
     block,
+    goalId: day.session.goalId,
     sessionId: day.session.id,
     timeZone,
     userId: day.userId,

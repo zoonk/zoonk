@@ -263,13 +263,18 @@ const ARRIVED_TIMEOUT_MS = 2000;
 
 /**
  * A screen ignores presses in its first half second, as meant for the screen before it, so this
- * presses again until `arrived` shows (or hides, with `visible: false`).
+ * presses again until `arrived` shows, or with `visible: false` until it hides once it has shown,
+ * since a press can't dismiss what isn't there yet.
  */
 export async function pressUntil(
   press: () => Promise<void>,
   arrived: Locator,
   { visible = true } = {},
 ) {
+  if (!visible) {
+    await expect(arrived).toBeVisible();
+  }
+
   await expect(async () => {
     if ((await arrived.isVisible()) !== visible) {
       await press();

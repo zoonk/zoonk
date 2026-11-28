@@ -1,6 +1,6 @@
 "use client";
 
-import { CurrentPageLoginLink } from "@/components/current-page-login-link";
+import { CurrentPageLoginAnchor } from "@/components/current-page-login-link";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -10,8 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { LogInIcon } from "lucide-react";
+import { EnterLink } from "@zoonk/ui/components/enter-button";
 import { useExtracted } from "next-intl";
 
 /**
@@ -44,12 +43,9 @@ export function SignInAgainDialog({
 
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
-          <CurrentPageLoginLink
-            className={buttonVariants()}
-            icon={<LogInIcon aria-hidden="true" />}
-          >
+          <EnterLink href="/login" link={CurrentPageLoginAnchor}>
             {t("Log in again")}
-          </CurrentPageLoginLink>
+          </EnterLink>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,9 +1,11 @@
 package com.zoonk.android.feature.today
 
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.session.decodeFixture
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.LessonReadiness
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.SuggestedGoal
@@ -33,6 +35,19 @@ class FakeTodayApi(
         return changed
     }
 
+    /** Answered in order, then the last one again; a lesson without any can't be read. */
+    val readiness = mutableMapOf<UUID, MutableList<() -> LessonReadiness>>()
+    val readinessAsked = mutableListOf<UUID>()
+
+    override suspend fun lessonReadiness(
+        session: AuthenticatedSession,
+        lessonId: UUID,
+    ): LessonReadiness {
+        readinessAsked += lessonId
+        val answers = readiness[lessonId] ?: throw ApiException(ApiError.Unavailable, "SERVICE_UNAVAILABLE", 503)
+        return (if (answers.size > 1) answers.removeAt(0) else answers.single())()
+    }
+
     override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 
     override suspend fun prepareLessons(
@@ -43,7 +58,7 @@ class FakeTodayApi(
     override suspend fun mistakes(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = GoalMistakes(MistakeListAvailability(ready = 0, tomorrow = 0), total = 0)
+    ) = GoalMistakes(MistakeListAvailability(ready = 0), total = 0)
 
     override suspend fun language(
         session: AuthenticatedSession,

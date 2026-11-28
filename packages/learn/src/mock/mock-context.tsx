@@ -12,7 +12,7 @@ import { type SectionMoves } from "./section-moves";
 
 export type MockPlanOfferOutcome =
   | { lessonsSkipped: number; status: "applied" }
-  | { reason: "alreadyIn" | "cantMove" | null; status: "unchanged" };
+  | { status: "unchanged" };
 
 export type MockEssayGrading = { mock: MockView; status: "graded" };
 
@@ -20,7 +20,8 @@ export type MockPlayOutcome = { played: number; status: "counted" | "usedUp" };
 
 /** Each resolves to null when it didn't go through. */
 export type MockActions = {
-  adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
+  /** Skips the lessons the mock showed the learner already knows. */
+  adapt: () => Promise<MockPlanOfferOutcome | null>;
   answer: (input: MockAnswerInput) => Promise<boolean | null>;
   endBreak: () => Promise<MockView | null>;
   finish: () => Promise<MockView | null>;
@@ -35,13 +36,12 @@ export type MockActions = {
 
 export type MockEssayGradingStatus = "failed" | "grading" | "idle";
 
-export type MockPlanOffer = "focus" | "skip";
-
 export type MockHrefs = {
   again: string;
   continue: string;
   exit: string;
-  mistakes: string;
+  /** Practice on one finished mock's mistakes. */
+  mistakes: (mockId: string) => string;
   speakingTask: (conversationId: string) => string;
 };
 

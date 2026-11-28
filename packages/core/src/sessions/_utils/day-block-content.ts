@@ -1,7 +1,12 @@
 import { type StudySessionBlock } from "@zoonk/db";
 import { type PlanState } from "../../plans/planner/plan-state";
 import { planWritingScope } from "../../plans/planner/plan-writing-scope";
-import { getBlockItemIds, hasWritingProgress, readBlockPayload } from "../block-payload";
+import {
+  getBlockItemIds,
+  hasWritingProgress,
+  isRemedialPractice,
+  readBlockPayload,
+} from "../block-payload";
 import { type PlannedBlock } from "../session-builder";
 
 function getContent({
@@ -17,6 +22,9 @@ function getContent({
     block.kind,
     block.lessonId,
     block.estimatedMinutes,
+    block.payload.patternId,
+    block.payload.returning,
+    ...block.payload.mistakeIds,
     block.payload.writing?.taskKey,
     block.payload.writing?.unit,
     block.payload.writingLessonId,
@@ -81,6 +89,7 @@ export function hasSameBlocks({
 export function getKeptBlocks(
   blocks: readonly StudySessionBlock[],
   plan: Pick<PlanState, "graph" | "settings"> | undefined,
+  keepRemedial: boolean,
 ): StudySessionBlock[] {
   const keptSkills = plan?.settings.skippedAreas.length
     ? planWritingScope({
@@ -103,6 +112,7 @@ export function getKeptBlocks(
     return (
       block.status !== "pending" ||
       extra ||
+      (keepRemedial && (isRemedialPractice(payload) || payload.returning !== null)) ||
       hasWritingProgress(payload) ||
       (writingLessonId !== undefined &&
         openedLessons.has(writingLessonId) &&

@@ -13,12 +13,11 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
-import { loadDayMissionFacts } from "../sessions/missions/day-facts";
 import { mistakeListInputSchema } from "./contract";
 import { getMistakePractice } from "./get-mistake-practice";
 import { listCurrentUserMistakes } from "./list-current-user-mistakes";
 
-describe("mistake mission and notebook availability", () => {
+describe("mistake notebook and practice availability", () => {
   afterEach(() => vi.useRealTimers());
 
   it("keeps an older mistake visible without offering practice when its skill has no questions", async () => {
@@ -43,9 +42,9 @@ describe("mistake mission and notebook availability", () => {
     const result = await listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id }));
 
     expect(result).toMatchObject({
-      availability: { ready: 0, tomorrow: 0 },
+      availability: { ready: 0 },
       counts: { open: 1 },
-      mistakes: [{ practiceAvailable: false, practiceAvailableTomorrow: false }],
+      mistakes: [{ practiceAvailable: false }],
     });
 
     await expect(getMistakePractice({ goalId: goal.id })).resolves.toMatchObject({
@@ -95,21 +94,18 @@ describe("mistake mission and notebook availability", () => {
 
     const practice = await getMistakePractice({ goalId: goal.id });
 
-    expect(notebook).toMatchObject({
-      availability: { ready: 2, tomorrow: 0 },
-      counts: { open: 2 },
-    });
+    expect(notebook).toMatchObject({ availability: { ready: 2 }, counts: { open: 2 } });
 
     expect(
       notebook.status === "ready" && notebook.mistakes.find((entry) => entry.id === textMistake.id),
-    ).toMatchObject({ practiceAvailable: true, practiceAvailableTomorrow: false });
+    ).toMatchObject({ practiceAvailable: true });
 
     expect(
       practice.status === "ready" && practice.practice.map((entry) => entry.mistakeId).toSorted(),
     ).toStrictEqual([textMistake.id, recordedMistake.id].toSorted());
   });
 
-  it("separates mistakes ready now from today's mistakes using the goal's local midnight", async () => {
+  it("offers open mistakes on both sides of the goal's local midnight", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2026-10-13T02:30:00Z"));
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
@@ -117,7 +113,7 @@ describe("mistake mission and notebook availability", () => {
     await prisma.goal.update({ data: { timezone: "America/Sao_Paulo" }, where: { id: goal.id } });
     mockSession(user.id);
 
-    const [ready, tomorrow] = await Promise.all([
+    const [earlier, today] = await Promise.all([
       mistakeFixture({
         createdAt: new Date("2026-10-12T02:59:59Z"),
         itemId: items[0]!.id,
@@ -137,21 +133,21 @@ describe("mistake mission and notebook availability", () => {
 
     const result = await listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id }));
 
-    expect(result).toMatchObject({ availability: { ready: 1, tomorrow: 1 }, status: "ready" });
+    expect(result).toMatchObject({ availability: { ready: 2 }, status: "ready" });
 
     expect(
-      result.status === "ready" && result.mistakes.find((entry) => entry.id === ready.id),
+      result.status === "ready" && result.mistakes.find((entry) => entry.id === earlier.id),
     ).toMatchObject({ practiceAvailable: true });
 
     expect(
-      result.status === "ready" && result.mistakes.find((entry) => entry.id === tomorrow.id),
-    ).toMatchObject({ practiceAvailable: false });
+      result.status === "ready" && result.mistakes.find((entry) => entry.id === today.id),
+    ).toMatchObject({ practiceAvailable: true });
 
     vi.setSystemTime(new Date("2026-10-13T03:00:00Z"));
 
     await expect(
       listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
-    ).resolves.toMatchObject({ availability: { ready: 2, tomorrow: 0 } });
+    ).resolves.toMatchObject({ availability: { ready: 2 } });
   });
 
   it("doesn't offer an older mistake through today's mistake's passage question on its skill", async () => {
@@ -169,7 +165,7 @@ describe("mistake mission and notebook availability", () => {
     const set = await itemSetFixture();
     const passageQuestion = await itemFixture({ setId: set.id, setPosition: 0, skillId });
 
-    await Promise.all([
+    const [, today] = await Promise.all([
       mistakeFixture({ createdAt: new Date("2026-10-12"), skillId, userId: user.id }),
       mistakeFixture({
         createdAt: new Date("2026-10-13T11:00:00Z"),
@@ -181,22 +177,13 @@ describe("mistake mission and notebook availability", () => {
 
     mockSession(user.id);
 
-    const [notebook, missions, practice] = await Promise.all([
+    const [notebook, practice] = await Promise.all([
       listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId: goal.id })),
-      loadDayMissionFacts({
-        blocks: [],
-        goal,
-        localDate: new Date("2026-10-13"),
-        plannedMinutes: 20,
-        timeZone: "UTC",
-        userId: user.id,
-      }),
       getMistakePractice({ goalId: goal.id }),
     ]);
 
-    expect(notebook).toMatchObject({ availability: { ready: 0, tomorrow: 1 } });
-    expect(missions.readyMistakeCount).toBe(0);
-    expect(practice).toMatchObject({ practice: [], status: "ready" });
+    expect(notebook).toMatchObject({ availability: { ready: 1 } });
+    expect(practice).toMatchObject({ practice: [{ mistakeId: today.id }], status: "ready" });
   });
 
   it("doesn't offer a finer skill's mistake through another mistake's passage question on its goal skill", async () => {
@@ -238,7 +225,7 @@ describe("mistake mission and notebook availability", () => {
     ]);
 
     expect(notebook).toMatchObject({
-      availability: { ready: 0, tomorrow: 0 },
+      availability: { ready: 0 },
       mistakes: [{ practiceAvailable: false }],
     });
 

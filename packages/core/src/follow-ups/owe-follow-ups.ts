@@ -16,6 +16,7 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.blockId ?? followUp.input.removalId ?? followUp.input.sessionId;
     case "prepareMockSupply":
     case "refreshPlanSuggestion":
+    case "catchUpMockReplan":
     case "rebuildGoalCurriculum":
     case "rememberOnboarding":
       return followUp.input.goalId;
@@ -28,7 +29,12 @@ function getFollowUpKey(followUp: FollowUp): string {
       return followUp.input.attemptId;
     case "preparePlacementItems":
       return followUp.input.goalId;
+    case "writeSecondTake":
+      return followUp.input.skillId;
     case "writeLesson":
+      return "lessonId" in followUp.input
+        ? followUp.input.lessonId
+        : `quick:${followUp.input.quickSkillId}`;
     case "writeSentenceOrders":
       return followUp.input.lessonId;
     case "prepareContentFixMedia":
@@ -97,7 +103,12 @@ function askFor({
   });
 }
 
-type FollowUpRequest = { db?: TransactionClient; followUps: readonly FollowUp[]; userId: string };
+type FollowUpRequest = {
+  db?: TransactionClient;
+  followUps: readonly FollowUp[];
+  keepExisting?: boolean;
+  userId: string;
+};
 
 /**
  * Pass the transaction that decides the write, so a rolled-back write owes nothing. The same work
@@ -107,6 +118,7 @@ type FollowUpRequest = { db?: TransactionClient; followUps: readonly FollowUp[];
 export async function recordFollowUps({
   db = prisma,
   followUps,
+  keepExisting = false,
   userId,
 }: FollowUpRequest): Promise<void> {
   if (followUps.length === 0) {
@@ -114,6 +126,20 @@ export async function recordFollowUps({
   }
 
   const requestedAt = new Date();
+
+  if (keepExisting) {
+    await db.followUp.createMany({
+      data: followUps.map((followUp) => ({
+        ...followUp,
+        key: getFollowUpKey(followUp),
+        requestedAt,
+        userId,
+      })),
+      skipDuplicates: true,
+    });
+
+    return;
+  }
 
   await Promise.all(followUps.map((followUp) => askFor({ db, followUp, requestedAt, userId })));
 }

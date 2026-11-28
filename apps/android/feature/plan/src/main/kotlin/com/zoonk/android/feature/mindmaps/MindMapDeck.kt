@@ -82,6 +82,7 @@ fun GoalMindMaps.deck(tab: StudyTab): List<DeckSlot> =
             saved.filter { it.available }.mapNotNull { entry ->
                 val chapterId = entry.chapterId?.toString() ?: return@mapNotNull null
                 when (entry.kind) {
+                    SavedMindMapKind.UNKNOWN_DEFAULT_OPEN_API -> null
                     SavedMindMapKind.CHAPTER -> DeckSlot.Chapter(chapterId)
                     SavedMindMapKind.LESSON -> DeckSlot.Lesson(chapterId, entry.targetId.toString())
                 }

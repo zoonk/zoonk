@@ -49,15 +49,18 @@ class ApiServicesTest {
     fun aMultipartAnswerSendsItsFieldsAsPlainText() =
         runTest {
             server.enqueue(MockResponse.Builder().code(500).build())
+            val attemptId = UUID.randomUUID()
             val audio = MultipartBody.Part.createFormData("audio", "answer.m4a", byteArrayOf(1, 2).toRequestBody("audio/mp4".toMediaType()))
             services.language.createSpokenAnswer(
                 goalId,
                 durationMs = 1200,
                 audio = audio,
+                attemptId = attemptId,
                 studySessionId = goalId,
                 timeZone = "America/Sao_Paulo",
             )
             val body = server.takeRequest().body!!.utf8()
+            assertTrue(body.contains("\r\n\r\n$attemptId\r\n"))
             assertTrue(body.contains("\r\n\r\n1200\r\n"))
             assertTrue(body.contains("\r\n\r\n$goalId\r\n"))
             assertTrue(body.contains("\r\n\r\nAmerica/Sao_Paulo\r\n"))

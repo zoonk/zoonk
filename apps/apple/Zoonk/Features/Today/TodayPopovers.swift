@@ -79,7 +79,7 @@ struct DayProgressRow: View {
   var body: some View {
     let segments = session.daySegments
 
-    DaySegments(segments: segments.map(\.progressMark))
+    DaySegments(segments: segments.map(\.mark))
       .overlay {
         // Equal parts, so the controls line up with them the way the bar lays them out.
         HStack(spacing: DaySegments.gap) {
@@ -137,14 +137,6 @@ private struct DaySegmentButton: View {
 
 // Mirrors main's `today-segment-popover.tsx`.
 extension DaySegment {
-  fileprivate var progressMark: DaySegments.Segment {
-    switch self {
-    case .block(_, .done): .done
-    case .block(_, .current): .current
-    case .block(_, .ahead), .held: .ahead
-    }
-  }
-
   fileprivate var block: StudyBlock? {
     if case .block(let block, _) = self { block } else { nil }
   }

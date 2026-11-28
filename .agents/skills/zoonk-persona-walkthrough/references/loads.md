@@ -1,0 +1,3 @@
+# Loads and navigation
+
+Use a production build on a phone with CPU and network throttling. Walk hard loads, prefetched taps, an early tap before prefetch settles, an unprefetched link and a tap right after a cold load, before the page's code is ready (`verify:pages --nav --no-prefetch` and `--early` measure the last two). Skeletons are valid; judge whether meaningful shell UI responds immediately, the content arrives promptly, and anything blanks, freezes, flashes or shifts. Save before/after filmstrips and report response and content times separately, with your own read of how each feels. Keep private cached prefetches and never hide loading by holding paint.

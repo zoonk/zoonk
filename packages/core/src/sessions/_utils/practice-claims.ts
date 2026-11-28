@@ -1,5 +1,6 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { loadDatedClaims } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadCourseStarts, priorityCourseStarts } from "../../plans/_utils/course-starts";
@@ -21,7 +22,6 @@ export type PracticeClaims = {
 
 /** Promote aging unconfirmed claims so low-weight topics cannot wait indefinitely. */
 const DUE_AFTER_DAYS = 7;
-const DAY_MS = 86_400_000;
 
 const ASKED_WINDOW_DAYS = 14;
 
@@ -42,8 +42,8 @@ async function loadLastAsked({
   today: Date;
 }): Promise<Map<string, number>> {
   const since = Math.min(
-    today.getTime() - ASKED_WINDOW_DAYS * DAY_MS,
-    ...[...starts.values()].map((start) => start.at.getTime() - DAY_MS),
+    today.getTime() - ASKED_WINDOW_DAYS * MS_PER_DAY,
+    ...[...starts.values()].map((start) => start.at.getTime() - MS_PER_DAY),
   );
 
   const blocks = await prisma.studySessionBlock.findMany({
@@ -86,7 +86,7 @@ export async function loadPracticeClaims({
   userId: string;
 }): Promise<PracticeClaims> {
   const claims = await loadDatedClaims({ goalId: goal.id, readClaims, skillIds, userId });
-  const dueBefore = now.getTime() - DUE_AFTER_DAYS * DAY_MS;
+  const dueBefore = now.getTime() - DUE_AFTER_DAYS * MS_PER_DAY;
 
   const toConfirm = [...claims].filter(([, { claim }]) => claim === "toConfirm");
 
@@ -116,7 +116,7 @@ export async function loadPracticeClaims({
   const needed = new Set(prerequisites);
 
   const askedSinceStart = (id: string) =>
-    (lastAsked.get(id) ?? 0) >= (starts.get(id)?.at.getTime() ?? 0) - DAY_MS;
+    (lastAsked.get(id) ?? 0) >= (starts.get(id)?.at.getTime() ?? 0) - MS_PER_DAY;
 
   const priority = new Set([
     ...needed,

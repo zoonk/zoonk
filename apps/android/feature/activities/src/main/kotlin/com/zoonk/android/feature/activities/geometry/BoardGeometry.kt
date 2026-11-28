@@ -151,6 +151,7 @@ internal object BoardGeometry {
             }
         val amount = offset.x + offset.y
         return when (track) {
+            Track.UNKNOWN_DEFAULT_OPEN_API -> null
             null -> offset
             Track.HORIZONTAL -> Vec(amount, 0.0)
             Track.VERTICAL -> Vec(0.0, amount)

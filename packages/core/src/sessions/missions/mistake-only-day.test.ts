@@ -4,11 +4,11 @@ import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
-import { pickInMistake } from "../../_test-utils/shown-choice";
+import { mistakeShowing, pickInMistake } from "../../_test-utils/shown-choice";
 import { answerMistakePractice } from "../../mistakes/answer-mistake-practice";
-import { finishMistakePractice } from "../../mistakes/finish-mistake-practice";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { SESSION_NOW, daysAgo, sessionGoalFixture } from "../_test-utils/session-goal";
+import { openStudyDay } from "../open-study-day";
 
 describe("a day with only original mistakes to practice", () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe("a day with only original mistakes to practice", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("offers the notebook without a substitute block and saves its mission before answering", async () => {
+  it("offers the original mistake as the day’s only block", async () => {
     const user = await userFixture();
 
     const { goal, plan, skills } = await sessionGoalFixture({
@@ -51,8 +51,8 @@ describe("a day with only original mistakes to practice", () => {
       status: "ready",
       today: {
         session: {
-          blocks: [],
-          missions: [{ kind: "fixMistake", opens: { kind: "mistakesPractice" } }],
+          blocks: [{ questions: 1, screen: "mistakesPractice", status: "pending" }],
+          missions: [{ kind: "askBuddy", minutes: 2 }],
           status: "unstarted",
         },
       },
@@ -60,37 +60,32 @@ describe("a day with only original mistakes to practice", () => {
 
     await expect(prisma.studySession.count({ where: { userId: user.id } })).resolves.toBe(0);
 
-    const answered = await answerMistakePractice({
-      input: {
-        answer: await pickInMistake({ mistakeId: mistake.id }),
-        durationMs: 5000,
-        itemId: item.id,
-        run: { answerIds: [], goalId: goal.id },
-        timeZone: "UTC",
-      },
-      mistakeId: mistake.id,
+    await expect(
+      openStudyDay({ goalId: goal.id, shownDate: "2026-09-30", timeZone: "UTC" }),
+    ).resolves.toMatchObject({ status: "opened" });
+
+    const block = await prisma.studySessionBlock.findFirstOrThrow({
+      where: { session: { goalId: goal.id, userId: user.id } },
     });
 
-    if (answered.status !== "ready") {
-      throw new Error(`Expected a saved notebook answer, got ${answered.status}`);
-    }
-
-    expect(answered.feedback.fixed).toBe(true);
+    expect(block.payload).toMatchObject({ mistakeIds: [mistake.id] });
 
     await expect(
-      finishMistakePractice({
-        answerIds: [answered.feedback.answerId],
-        ended: true,
-        goalId: goal.id,
-        timeZone: "UTC",
+      answerMistakePractice({
+        input: {
+          answer: await pickInMistake({ mistakeId: mistake.id }),
+          durationMs: 5000,
+          itemId: item.id,
+          run: { answerIds: [], blockId: block.id },
+          showing: await mistakeShowing(mistake.id),
+          timeZone: "UTC",
+        },
+        mistakeId: mistake.id,
       }),
-    ).resolves.toMatchObject({
-      result: { missionMoment: { completed: ["fixMistake"] } },
-      status: "ready",
-    });
+    ).resolves.toMatchObject({ feedback: { fixed: true }, status: "ready" });
 
     await expect(
-      prisma.studySession.findFirst({ where: { userId: user.id } }),
-    ).resolves.toMatchObject({ missions: { picks: [{ kind: "fixMistake" }] } });
+      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
   });
 });

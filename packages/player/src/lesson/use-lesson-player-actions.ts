@@ -230,7 +230,13 @@ export function useLessonPlayerActions({
 
         dispatch({ stepId, type: "skipWriting" });
       },
-      engage: () => dispatch({ type: "engaged" }),
+      engage: () => {
+        dispatch({ type: "engaged" });
+
+        if (state.run.status === "idle") {
+          void ensureRun();
+        }
+      },
       explainFirst: () => dispatch({ type: "explainFirst" }),
       goBack: () => {
         writeExampleLines();
@@ -243,7 +249,10 @@ export function useLessonPlayerActions({
       },
       retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
-      selectAnswer: (stepId, answer) => dispatch({ answer, stepId, type: "selectAnswer" }),
+      selectAnswer: (stepId, answer) => {
+        void ensureRun();
+        dispatch({ answer, stepId, type: "selectAnswer" });
+      },
       skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
       skipWriting: () => {
         setChosenToday(CANT_WRITE_TODAY, true);
@@ -252,7 +261,16 @@ export function useLessonPlayerActions({
       startRecording: () => dispatch({ type: "recordingStarted" }),
       submitSpokenAnswer: (input) => void submitSpokenAnswer(input),
     }),
-    [check, dispatch, ensureRun, resendUnsaved, state.steps, submitSpokenAnswer, writeExampleLines],
+    [
+      check,
+      dispatch,
+      ensureRun,
+      resendUnsaved,
+      state.run.status,
+      state.steps,
+      submitSpokenAnswer,
+      writeExampleLines,
+    ],
   );
 
   return { actions, reopen: lessonRun.reopen };

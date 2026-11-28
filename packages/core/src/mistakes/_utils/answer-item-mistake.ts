@@ -2,6 +2,7 @@ import "server-only";
 import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { gradeTypedItemAnswer } from "../../learner/_utils/typed-grading";
 import { readRecordedAnswer } from "../../sessions/_utils/session-items";
 import { type MistakePracticeAnswerResult } from "../answer-mistake-practice";
@@ -11,8 +12,7 @@ import { type MistakeDrillKind } from "../mistake-drills";
 import { getAnsweredShowing, getPracticeAnswerKeys, gradeMistakeItem } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { cachedGradeDuration } from "./cached-grade-duration";
-import { runMistakeGrade } from "./mistake-grade";
-import { refuseAnsweredMistake } from "./practice-claim";
+import { refuseClosedMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 
 const typedVerdictSchema = z.object({ feedback: z.string().nullable(), isCorrect: z.boolean() });
@@ -41,7 +41,7 @@ export async function answerItemMistake({
   const { item } = replay;
   const answer = saved ? (readRecordedAnswer(saved.answer) ?? input.answer) : input.answer;
 
-  const showing = getAnsweredShowing({ answer: saved?.answer, mistake });
+  const showing = saved ? getAnsweredShowing({ answer: saved.answer, mistake }) : input.showing;
   const graded = gradeMistakeItem({ answer, replay, showing });
   const model = item.format === "typed" && "text" in answer && !graded.isCorrect;
 
@@ -51,7 +51,7 @@ export async function answerItemMistake({
 
   const checked =
     model && item.format === "typed" && "text" in answer
-      ? await runMistakeGrade({
+      ? await runAnswerGrade({
           attemptId,
           grade: async () => ({
             durationMs: input.durationMs,
@@ -100,11 +100,22 @@ export async function answerItemMistake({
     misconception: graded.snapshot.misconception ?? null,
   });
 
+  const feedback = {
+    correctAnswer: graded.correctAnswer,
+    explanation: verdict.feedback,
+    lessonResult: null,
+    trap: drilled.trap,
+    workedSteps: graded.workedSteps,
+  };
+
   const outcome = saved
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonical.recorded, ...getPracticeAnswerKeys({ mistake, showing }) },
+          answer: {
+            ...canonical.recorded,
+            ...getPracticeAnswerKeys({ feedback, mistake, showing }),
+          },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect },
           itemId: mistake.itemId,
@@ -121,24 +132,17 @@ export async function answerItemMistake({
           timeZone,
           userId,
         },
-        refuse: refuseAnsweredMistake({ mistakeId: mistake.id, timeZone, userId }),
+        refuse: refuseClosedMistake({ mistakeId: mistake.id, userId }),
       });
 
   if (outcome.status === "refused") {
-    return { status: "retryable" };
+    return { status: "invalidItem" };
   }
 
   return {
     feedback: await finishPracticeAnswer({
-      answerId: outcome.status === "saved" ? outcome.saved.id : outcome.recorded.attempt.id,
-      feedback: {
-        correctAnswer: graded.correctAnswer,
-        explanation: verdict.feedback,
-        isCorrect: drilled.isCorrect,
-        lessonResult: null,
-        trap: drilled.trap,
-        workedSteps: graded.workedSteps,
-      },
+      attempt: outcome.status === "saved" ? outcome.saved : outcome.recorded.attempt,
+      feedback,
       input,
       mistakeId: mistake.id,
     }),

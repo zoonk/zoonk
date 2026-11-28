@@ -1,7 +1,6 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { type SessionQuestions } from "./focus-test-contract";
 import { PLACEMENT_WEEK_DAYS } from "./placement-budget";
-
-const MS_PER_MINUTE = 60_000;
 
 /** What an answer takes before the learner has a pace of their own, in either quick format. */
 export const START_PACE_MS = MS_PER_MINUTE;

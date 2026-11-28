@@ -306,7 +306,7 @@ struct TodayDayView: View {
   }
 
   private var followedLessonIDs: [String] {
-    isCovered ? [] : store.writingLessonIDs(in: view)
+    isCovered ? [] : view.writingLessonIDs
   }
 
   private var language: LanguageTodayView? {
@@ -564,8 +564,8 @@ struct TodayDayView: View {
   private func countNotice() {
     switch shownNotice {
     case .insight:
-      if let insight = view.insight {
-        UsageAnalytics.track(.insightShown(.init(insight)))
+      if let insight = view.insight.flatMap(AnalyticsEvent.Insight.init) {
+        UsageAnalytics.track(.insightShown(insight))
       }
     default:
       break
@@ -642,6 +642,10 @@ extension StudyDestination {
       .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):
       .mock(blockId: blockID, sessionId: sessionID)
+    case .mistakesPractice(let blockID):
+      .mistakePractice(.block(blockID))
+    case .pattern(let patternID):
+      .pattern(patternId: patternID, inDay: true)
     case .questionBlock, .session, .lessonWait, .today, .changed:
       nil
     }

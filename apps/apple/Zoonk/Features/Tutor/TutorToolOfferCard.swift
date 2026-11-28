@@ -40,8 +40,10 @@ struct TutorToolOfferCard: View {
   let offer: Components.Schemas.TutorToolOffer
 
   var body: some View {
-    let content = offerContent
+    if let content = offerContent { card(content) }
+  }
 
+  private func card(_ content: Content) -> some View {
     GroupBox {
       VStack(alignment: .leading, spacing: 12) {
         if let description = content.description {
@@ -114,10 +116,11 @@ struct TutorToolOfferCard: View {
     var gate: Text?
   }
 
-  private var offerContent: Content {
+  private var offerContent: Content? {
     let open = Text("Open", tableName: "Tutor", comment: "Opens the app place the buddy offered")
 
     switch offer {
+    case .case15: return nil
     case .case1(let start):
       return Content(
         title: Text(

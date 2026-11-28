@@ -74,12 +74,12 @@ export function buddyStatus({
         ? [
             { done: 1, kind: "somethingNew", status: "done", total: 1 },
             { done: 0, kind: "review", minutes: 5, status: "todo", total: 1 },
-            { done: 0, kind: "fixMistake", minutes: 4, status: "todo", total: 1 },
+            { done: 0, kind: "practice", minutes: 4, status: "todo", total: 1 },
           ]
         : [
             { done: 0, kind: "somethingNew", minutes: 8, status: "todo", total: 1 },
             { done: 0, kind: "review", minutes: 5, status: "todo", total: 1 },
-            { done: 0, kind: "fixMistake", minutes: 4, status: "todo", total: 1 },
+            { done: 0, kind: "practice", minutes: 4, status: "todo", total: 1 },
           ],
     },
   };
@@ -115,10 +115,27 @@ const TUTOR = {
   navigation: { linkComponent: Link, loginHref: "/login", subscriptionHref: "/subscription" },
 };
 
+const CONVERSATION_ID = "5d3e8a1c-2b4f-4e6a-9c7d-1f0a2b3c4d5e";
+
+/** A learner who hasn't asked yet: a blank conversation, and no list to open. */
+const NO_CONVERSATIONS = {
+  conversationHref: (id: string) => `/buddy/${id}`,
+  conversations: [],
+  more: null,
+  newHref: "/buddy/new",
+  openId: null,
+};
+
 function Conversation() {
   const content = useBuddyTutor();
   return (
-    <TutorConversation goalId="exam" initialThread={EMPTY_THREAD} tutor={TUTOR} {...content} />
+    <TutorConversation
+      conversationId={CONVERSATION_ID}
+      goalId="exam"
+      thread={EMPTY_THREAD}
+      tutor={TUTOR}
+      {...content}
+    />
   );
 }
 
@@ -147,17 +164,14 @@ export function BuddyTab({ lang, q }: { lang: Lang; q: URLSearchParams }) {
           saveBuddy: async () => true,
           tools: actions<TutorToolActions>({}),
         })}
+        conversations={NO_CONVERSATIONS}
         hrefs={{ energy: "/energy", logbook: "/logbook", memory: "/settings/memory" }}
-        memoryCount={4}
         situation={{ hasMistake: true, hasToday: true }}
         status={status}
       >
         <Conversation />
       </BuddyScreen>
-      <AutoClick
-        selector="[data-slot=buddy-today] button[aria-haspopup=dialog]"
-        when={q.get("sheet") === "1"}
-      />
+      <AutoClick selector="button[data-slot=buddy-today]" when={q.get("sheet") === "1"} />
     </AppFrame>
   );
 }

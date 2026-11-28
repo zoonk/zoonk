@@ -3,10 +3,11 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { useHideElement } from "@zoonk/ui/hooks/hide-element";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
-import { cn } from "@zoonk/ui/lib/utils";
+import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { createContext, useContext } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
+import { useOpeningFocus } from "./_utils/opening-focus";
 
 /** Lets the portal stay hidden after Next.js's Activity cleanup until a real reopen: https://github.com/vercel/next.js/issues/86577 */
 const DialogOpenContext = createContext<boolean | undefined>(undefined);
@@ -55,8 +56,16 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
-function DialogPopup({ children, className, finalFocus, ...props }: DialogPrimitive.Popup.Props) {
+function DialogPopup({
+  children,
+  className,
+  finalFocus,
+  initialFocus,
+  ref,
+  ...props
+}: DialogPrimitive.Popup.Props) {
   const handoff = useFocusAfterMenuItem(finalFocus);
+  const opening = useOpeningFocus<HTMLDivElement>({ initialFocus });
 
   return (
     <DialogPrimitive.Popup
@@ -64,6 +73,8 @@ function DialogPopup({ children, className, finalFocus, ...props }: DialogPrimit
       data-slot="dialog-content"
       {...props}
       finalFocus={handoff.finalFocus}
+      initialFocus={opening.initialFocus}
+      ref={mergeRefs(opening.ref, ref)}
     >
       <MenuOpenerNotice onOpen={handoff.onOpen} />
       <PopupShortcutLayer value>{children}</PopupShortcutLayer>

@@ -126,14 +126,9 @@
     <string name="today_saved_lessons_line">Lessons you want to do again</string>
     <!-- The line under Completed lessons in Practice anytime. -->
     <string name="today_completed_lessons_line">Do a lesson again</string>
-    <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
     <plurals name="today_mistakes_ready">
         <item quantity="one">%d ready to practice</item>
         <item quantity="other">%d ready to practice</item>
-    </plurals>
-    <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">%d available tomorrow</item>
-        <item quantity="other">%d available tomorrow</item>
     </plurals>
     <string name="today_take_mock">Take a mock exam</string>
     <string name="today_take_mock_detail">Whenever you want: a full exam day or half a day</string>

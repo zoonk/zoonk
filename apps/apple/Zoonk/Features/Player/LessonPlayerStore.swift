@@ -104,7 +104,7 @@ final class LessonPlayerStore {
       choices.setChosenToday(.cantListen, cantListenToday)
 
       if cantListenToday, var state {
-        leaveOutUnplayable(&state)
+        leaveOutDictation(&state)
         self.state = state
       }
     }
@@ -262,6 +262,7 @@ final class LessonPlayerStore {
 
     // Another session's answers are never sent with this one's.
     if identity != self.identity {
+      if self.identity != nil { activated = false }
       held = []
       heldOnDevice = nil
       clock = nil
@@ -280,7 +281,13 @@ final class LessonPlayerStore {
 
     do {
       let revision = lessonResource.revision
-      if refresh {
+      if !refresh, identity != nil, case .ready(let cached) = lessonResource.value,
+        !cached.steps.contains(where: isUnplayable)
+      {
+        showLesson(cached)
+        if activated { beginStart() }
+      }
+      if refresh || !activated {
         await lessonResource.refresh()
       } else {
         await lessonResource.load()
@@ -311,19 +318,11 @@ final class LessonPlayerStore {
             LessonOutline(id: lesson.id, title: lesson.title, description: "", estimatedMinutes: 0))
           return
         }
-        self.lesson = lesson
-        heldForRun = []
-        var state = LessonPlayerState(
-          lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
-        leaveOutUnplayable(&state)
-        self.state = state
-        works = [:]
-        acted = false
-        workedHere = []
-        openedAt = .now
-        // Written content can paint before admission; server actions await the run.
-        screen = .playing
-        if opening == nil || activated {
+        if screen != .playing || (!activated && self.lesson != lesson) {
+          guard !lesson.steps.contains(where: isUnplayable) else { throw APIError.unavailable }
+          showLesson(lesson)
+        }
+        if activated {
           beginStart()
           await starting?.value
         }
@@ -337,7 +336,24 @@ final class LessonPlayerStore {
     }
   }
 
-  func cancelStart() { starting?.cancel() }
+  private func showLesson(_ lesson: PlayableLesson) {
+    if screen != .playing { openedAt = .now }
+    self.lesson = lesson
+    heldForRun = []
+    var state = LessonPlayerState(
+      lessonId: lesson.id, steps: lesson.steps, hasMap: lesson.summary != nil)
+    leaveOutDictation(&state)
+    state.resume(from: lesson.resume)
+    self.state = state
+    works = [:]
+    acted = false
+    workedHere = []
+    screen = .playing
+  }
+
+  func leave() {
+    starting?.cancel()
+  }
 
   @discardableResult
   func setVisible(_ visible: Bool) -> Task<Void, Never>? {
@@ -434,7 +450,6 @@ final class LessonPlayerStore {
     beginStart()
   }
 
-  /// The learner tapped or pressed a key in the lesson, seen once at the player's root.
   func act() {
     if let step = state?.currentStep, step.kind == .activity { workedHere.insert(step.id) }
     acted = true
@@ -516,7 +531,7 @@ final class LessonPlayerStore {
     }
     guard var state = self.state else { return }
 
-    leaveOutUnplayable(&state)
+    leaveOutDictation(&state)
 
     // "Skip writing questions today" lasts the rest of the learner's day on this device.
     if choices.isChosenToday(.cantWrite) {
@@ -582,16 +597,14 @@ final class LessonPlayerStore {
     exampleLines[stepId] = line
   }
 
-  /// Interactions without a renderer can't be answered here, so they're left out of the run.
-  var isUnplayable: (LessonStep) -> Bool = { _ in false }
+  /// Required interactions need a renderer before a run can start.
+  var isUnplayable: (LessonStep) -> Bool = ActivityRendererRegistry.app.isUnplayable
 
   /// A listening sentence that is its own answer can't be read instead without giving the answer
   /// away, so while the learner can't listen it's left out too, as core leaves out one with no sound.
-  private func leaveOutUnplayable(_ state: inout LessonPlayerState) {
-    state.skipSteps(
-      state.queue.filter { id in
-        state.steps[id].map { isUnplayable($0) || (cantListenToday && $0.isDictation) } ?? false
-      })
+  private func leaveOutDictation(_ state: inout LessonPlayerState) {
+    guard cantListenToday else { return }
+    state.skipSteps(state.queue.filter { state.steps[$0]?.isDictation == true })
   }
 
   private func showWaiting(_ outline: LessonOutline, identity: AuthenticatedSession?) async {
@@ -613,7 +626,8 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .generating: waitForWriting(outline)
     case .ready: await load(refresh: true)
-    case .failed: screen = .waiting(outline, .failed)
+    case .failed where lesson?.setAside == true: screen = .waiting(outline, .setAside)
+    case .failed, .unrecognized: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
     }
 
@@ -659,8 +673,6 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Reading never writes anything. A run that ended without the lesson, or a follow that couldn't
-  /// finish, leaves it to the learner to try again.
   private func followWriting(
     _ outline: LessonOutline, run: String?, identity: AuthenticatedSession
   ) async {
@@ -678,7 +690,8 @@ final class LessonPlayerStore {
     switch lesson?.status {
     case .ready where warmUp != nil: screen = .waiting(outline, .written)
     case .ready: await load(refresh: true)
-    case .failed, nil: screen = .waiting(outline, .failed)
+    case .failed, .unrecognized, nil: screen = .waiting(outline, .failed)
+    // The follow returns only once no run writes it.
     case .generating, .notStarted: screen = .waiting(outline, .notStarted)
     }
   }
@@ -728,14 +741,14 @@ final class LessonPlayerStore {
   }
 
   func select(_ answer: LessonAnswer?) {
-    activate()
     guard let stepId = state?.currentStep?.id else { return }
+    act()
     workedHere.insert(stepId)
     state?.select(answer, for: stepId)
   }
 
   func continueLesson() {
-    activate()
+    act()
     writeExampleLinesOnce()
     sendUnsaved()
     state?.continueLesson()
@@ -743,23 +756,25 @@ final class LessonPlayerStore {
   }
 
   func goBack() {
+    act()
     state?.goBack()
   }
 
   func explainFirst() {
     if let stepId = state?.currentStep?.id { workedHere.insert(stepId) }
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
   func knowThis() {
-    activate()
+    act()
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
   func dontKnow() {
+    act()
     guard let stepId = state?.currentStep?.id else { return }
     state?.dontKnow(stepId)
   }
@@ -807,7 +822,7 @@ final class LessonPlayerStore {
       return
     }
 
-    activate()
+    act()
     writeExampleLinesOnce()
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 
@@ -1101,9 +1116,11 @@ final class LessonPlayerStore {
         startClock(run)
         let steps: [LessonStep] =
           if case .ready(let lesson) = lessonResource.value { lesson.steps } else { [] }
-        state?.resync(
-          answers: run.answers, optionalStepIds: run.optionalStepIds,
-          lesson: steps.filter { !isUnplayable($0) })
+        guard !steps.contains(where: isUnplayable) else {
+          state?.completionFailed()
+          return
+        }
+        state?.resync(answers: run.answers, optionalStepIds: run.optionalStepIds, lesson: steps)
       } else if case .obsolete = restarted {
         return
       } else {

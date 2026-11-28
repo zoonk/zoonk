@@ -1,7 +1,6 @@
 "use client";
 
 import { type LanguageUnitView } from "@zoonk/core/view-models/language/contract";
-import { Button, FORWARD_ICON, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -9,9 +8,12 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
+import { RadioInput } from "@zoonk/ui/components/radio-input";
 import { cn } from "@zoonk/ui/lib/utils";
+import { DocumentLink } from "@zoonk/ui/patterns/links/pending";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
+import { EnterButton, EnterLink } from "../../_components/enter-button";
 import { type CallLimit, useLiveLimit } from "../../_components/help-limit-notice";
 import { KindDot } from "../../_components/kind-tile";
 import {
@@ -29,7 +31,6 @@ import { useFormatDuration } from "../../_utils/time-format";
 import { useHeldSlot } from "../../_utils/use-held-slot";
 import { WritingWait } from "../../generation/writing-wait";
 import { useLearnRoutes } from "../../learn-context";
-import { LearnLink } from "../../learn-link";
 import { CallLimitWords } from "../conversation/call-limit-message";
 import { CallReason } from "../conversation/conversation-parts";
 import { type CallStartOutcome, useCallStart } from "../conversation/use-call-start";
@@ -59,12 +60,11 @@ function MinuteChips({
           )}
           key={minutes}
         >
-          <input
+          <RadioInput
             checked={selected === minutes}
             className="sr-only"
             name={name}
             onChange={() => onChange(minutes)}
-            type="radio"
             value={minutes}
           />
           <span className="font-mono tabular-nums">{formatDuration(minutes)}</span>
@@ -181,37 +181,35 @@ function CallSetupAction({
 }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
-  const actionClass = cn(buttonVariants({ size: "lg" }), "w-full");
 
   if (limit?.tier === "guest") {
     // Sign-up leaves the app's router, so it's a full page load.
     return (
-      <a className={actionClass} href={routes.signUp}>
+      <EnterLink className="w-full" href={routes.signUp} link={DocumentLink} size="lg">
         {t("Create a free account")}
-      </a>
+      </EnterLink>
     );
   }
 
   if (isLocked || limit?.tier === "free") {
     return (
-      <LearnLink className={actionClass} href={routes.upgrade}>
+      <EnterLink className="w-full" href={routes.upgrade} size="lg">
         {t("Subscribe")}
-      </LearnLink>
+      </EnterLink>
     );
   }
 
   return (
     // It opens the call's intro, whose button is the one that calls.
-    <Button
+    <EnterButton
       busy={starting}
       className="w-full"
       disabled={limit !== null}
       onClick={onStart}
       size="lg"
-      {...FORWARD_ICON}
     >
       {t("Continue")}
-    </Button>
+    </EnterButton>
   );
 }
 
@@ -286,24 +284,21 @@ export function PracticeConversation({
     );
   }
 
-  // A submit, so a tap before the page hydrates opens the call's setup once it does.
   return (
     <>
-      <form action={() => setOpen(true)} className="contents">
-        <ListRowButton aria-haspopup="dialog" type="submit">
-          <ListRowLeading>
-            <KindDot kind="conversation" />
-          </ListRowLeading>
-          <ListRowContent>
-            <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
-            {character && (
-              <ListRowDescription>
-                {t("with {name} · {role}", { name: character.name, role: character.role })}
-              </ListRowDescription>
-            )}
-          </ListRowContent>
-        </ListRowButton>
-      </form>
+      <ListRowButton aria-haspopup="dialog" onClick={() => setOpen(true)}>
+        <ListRowLeading>
+          <KindDot kind="conversation" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{t("Practice a conversation")}</ListRowTitle>
+          {character && (
+            <ListRowDescription>
+              {t("with {name} · {role}", { name: character.name, role: character.role })}
+            </ListRowDescription>
+          )}
+        </ListRowContent>
+      </ListRowButton>
 
       <PracticeCallSheet
         conversation={conversation}

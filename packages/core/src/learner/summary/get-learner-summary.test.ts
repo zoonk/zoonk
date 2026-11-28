@@ -19,6 +19,7 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
+import { MS_PER_DAY, MS_PER_MINUTE } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   mockAccountSession,
@@ -39,9 +40,6 @@ const TODAY = new Date("2026-03-10T00:00:00.000Z");
 const YESTERDAY = new Date("2026-03-09T00:00:00.000Z");
 const SIGNED_IN_AT = new Date("2026-03-01T08:00:00.000Z");
 const SESSION_ENDS_AT = new Date("2026-04-01T08:00:00.000Z");
-const MINUTE_MS = 60_000;
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 type User = Awaited<ReturnType<typeof userFixture>>;
 
@@ -65,11 +63,10 @@ async function savedDay({ goalId, userId }: { goalId: string; userId: string }) 
       picks: [
         { anchor: { blockKind: "learn" }, kind: "somethingNew", total: 1 },
         { anchor: { blockKind: "review" }, kind: "review", total: 2 },
-        { anchor: {}, kind: "fixMistake", total: 2 },
       ],
       version: 1,
     },
-    startedAt: new Date(NOW.getTime() - 30 * MINUTE_MS),
+    startedAt: new Date(NOW.getTime() - 30 * MS_PER_MINUTE),
     userId,
   });
 
@@ -241,7 +238,7 @@ describe(getLearnerSummary, () => {
     const day = await savedDay({ goalId: goal.id, userId: user.id });
 
     await mistakeFixture({
-      fixedAt: new Date(NOW.getTime() - 5 * MINUTE_MS),
+      fixedAt: new Date(NOW.getTime() - 5 * MS_PER_MINUTE),
       status: "fixed",
       userId: user.id,
     });
@@ -252,7 +249,7 @@ describe(getLearnerSummary, () => {
       activeGoalId: goal.id,
       day: { goalId: goal.id, localDate: TODAY.toISOString().slice(0, 10) },
       goals: [{ id: goal.id, isActive: true, kind: "learn", status: "active", title: goal.title }],
-      missions: { done: 1, total: 3 },
+      missions: { done: 1, total: 2 },
       timeZone: "UTC",
       today: { blocksLeft: 1, next: { minutes: 6, sessionId: day.id, title: "Simple interest" } },
     });
@@ -554,13 +551,13 @@ describe(getLearnerSummary, () => {
     const yesterday = await studySessionFixture({
       goalId: goal.id,
       localDate: YESTERDAY,
-      startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 40 * MS_PER_MINUTE),
       userId: user.id,
     });
 
     await studySessionBlockFixture({
       sessionId: yesterday.id,
-      startedAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 10 * MS_PER_MINUTE),
       status: "active",
     });
 
@@ -673,7 +670,6 @@ describe(getLearnerSummary, () => {
           { anchor: {}, kind: "askBuddy", total: 1 },
           { anchor: {}, kind: "call", total: 1 },
           { anchor: {}, kind: "pronunciation", total: 1 },
-          { anchor: {}, kind: "fixMistake", total: 2 },
         ],
         version: 1,
       },
@@ -685,7 +681,7 @@ describe(getLearnerSummary, () => {
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
     expect(counts.result).toMatchObject({
-      missions: { done: 0, total: 4 },
+      missions: { done: 0, total: 3 },
       places: { speaking: true },
     });
 
@@ -694,12 +690,12 @@ describe(getLearnerSummary, () => {
 
   it("reads again once a day carried over from the night before stops being the learner's", async () => {
     const { goal, user } = await learnerWithGoal();
-    const lastActivity = new Date(NOW.getTime() - 10 * MINUTE_MS);
+    const lastActivity = new Date(NOW.getTime() - 10 * MS_PER_MINUTE);
 
     const yesterday = await studySessionFixture({
       goalId: goal.id,
       localDate: YESTERDAY,
-      startedAt: new Date(NOW.getTime() - 40 * MINUTE_MS),
+      startedAt: new Date(NOW.getTime() - 40 * MS_PER_MINUTE),
       userId: user.id,
     });
 
@@ -710,7 +706,7 @@ describe(getLearnerSummary, () => {
     });
 
     await expect(getLearnerSummary()).resolves.toMatchObject({
-      nextChangeAt: lastActivity.getTime() + 60 * MINUTE_MS,
+      nextChangeAt: lastActivity.getTime() + 60 * MS_PER_MINUTE,
     });
   });
 
@@ -718,7 +714,7 @@ describe(getLearnerSummary, () => {
     "offers Continue for an unfinished written answer from %i days ago",
     async (days) => {
       const { goal, user } = await learnerWithGoal({ kind: "exam" });
-      const localDate = new Date(TODAY.getTime() - days * DAY_MS);
+      const localDate = new Date(TODAY.getTime() - days * MS_PER_DAY);
 
       const day = await studySessionFixture({
         goalId: goal.id,
@@ -760,7 +756,7 @@ describe(getLearnerSummary, () => {
     await Promise.all([
       userProgressFixture({
         currentEnergy: 50,
-        lastActiveAt: new Date(NOW.getTime() - 60 * MINUTE_MS),
+        lastActiveAt: new Date(NOW.getTime() - 60 * MS_PER_MINUTE),
         totalBrainPower: 15_000n,
         userId: user.id,
       }),
@@ -788,7 +784,7 @@ describe(getLearnerSummary, () => {
     await Promise.all([
       userProgressFixture({
         currentEnergy: 2,
-        lastActiveAt: new Date(NOW.getTime() - 10 * MINUTE_MS),
+        lastActiveAt: new Date(NOW.getTime() - 10 * MS_PER_MINUTE),
         totalBrainPower: 30n,
         userId: user.id,
       }),
@@ -879,12 +875,12 @@ describe("the summary's ready mistakes", () => {
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
-    expect(counts.result?.places.readyMistakes).toBe(2);
-    await expect(notebookReady(goal.id)).resolves.toBe(2);
+    expect(counts.result?.places.readyMistakes).toBe(3);
+    await expect(notebookReady(goal.id)).resolves.toBe(3);
     expect(counts.writes).toBe(0);
   });
 
-  it("counts no ready mistakes before any is ready, without writing", async () => {
+  it("counts a mistake made today immediately, without writing", async () => {
     const { goal, items, skills, user } = await learnerWithPlannedGoal();
 
     await mistakeFixture({
@@ -896,12 +892,12 @@ describe("the summary's ready mistakes", () => {
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
-    expect(counts.result?.places.readyMistakes).toBe(0);
-    await expect(notebookReady(goal.id)).resolves.toBe(0);
+    expect(counts.result?.places.readyMistakes).toBe(1);
+    await expect(notebookReady(goal.id)).resolves.toBe(1);
     expect(counts.writes).toBe(0);
   });
 
-  it("is read again at the next local midnight, when today's mistakes become ready", async () => {
+  it("keeps today's mistake ready through the allowance reset and local midnight", async () => {
     const { goal, items, skills, user } = await learnerWithPlannedGoal();
 
     await mistakeFixture({
@@ -913,18 +909,18 @@ describe("the summary's ready mistakes", () => {
 
     const today = await getLearnerSummary();
     const allowanceResets = new Date("2026-03-11T00:00:00.000Z");
-    const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + DAY_MS);
+    const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + MS_PER_DAY);
 
     expect(today).toMatchObject({
       nextChangeAt: allowanceResets.getTime(),
-      places: { readyMistakes: 0 },
+      places: { readyMistakes: 1 },
     });
 
     vi.setSystemTime(allowanceResets);
 
     await expect(getLearnerSummary()).resolves.toMatchObject({
       nextChangeAt: nextMidnight.getTime(),
-      places: { readyMistakes: 0 },
+      places: { readyMistakes: 1 },
     });
 
     vi.setSystemTime(nextMidnight);

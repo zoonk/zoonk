@@ -203,7 +203,7 @@ export const mayaHugeGoal: SeedLearner = {
   milestones: [{ day: -6, key: "yellow", kind: "belt", shown: true }],
   name: "Maya Chen",
   plus: true,
-  session: { finished: 1, started: true },
+  session: { finished: 2, started: true },
   skills: [
     { memory: "mastered", skill: "fractions" },
     { memory: "mastered", skill: "percent-of" },

@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
-import { expectHydrated } from "@zoonk/e2e/hydration";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   courseBandsFixture,
@@ -333,7 +332,6 @@ test.describe("Starting a course in another language", () => {
     await expect(page.getByRole("list").getByText(/What robots are made of/u)).toBeHidden();
 
     const level = page.getByRole("radio", { name: /^O básico/u });
-    await expectHydrated(level);
     await level.click();
     await page.getByRole("button", { name: "Criar meu plano" }).click();
 

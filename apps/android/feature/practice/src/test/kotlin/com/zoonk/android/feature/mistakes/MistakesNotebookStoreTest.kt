@@ -32,7 +32,7 @@ class MistakesNotebookStoreTest {
 
     private fun mistake(id: Int) =
         """{"cause":"gap","createdAt":"2026-10-29T12:00:00Z","fixedAt":null,"id":"00000000-0000-4000-8000-00000000000$id",
-        "itemId":null,"lesson":null,"practiceAvailable":true,"practiceAvailableTomorrow":false,"skill":null,
+        "itemId":null,"lesson":null,"practiceAvailable":true,"skill":null,
         "snapshot":{"answer":"5","question":"2 + 2?"},"status":"open"}"""
 
     private fun page(
@@ -41,7 +41,7 @@ class MistakesNotebookStoreTest {
     ): MistakeList =
         ApiJson.decodeFromString(
             MistakeList.serializer(),
-            """{"availability":{"ready":3,"tomorrow":0},"counts":{"byCause":{"gap":3,"guess":0,"misread":0,"time":0,"trap":0,"unsorted":0},
+            """{"availability":{"ready":3},"counts":{"byCause":{"gap":3,"guess":0,"misread":0,"time":0,"trap":0,"unsorted":0},
             "fixed":0,"open":3},"data":[${ids.joinToString(",") { mistake(it) }}],
             "pagination":{"hasMore":${nextCursor != null},"nextCursor":${nextCursor?.let {
                 "\"$it\""

@@ -48,6 +48,13 @@ import java.util.UUID
 import kotlin.time.Instant
 
 interface TutorApi {
+    /** A goal's buddy conversations, latest first, from [cursor] on. */
+    suspend fun conversations(
+        goalId: String,
+        cursor: String?,
+        session: AuthenticatedSession,
+    ): BuddyConversationList
+
     /** Null before the conversation's first question. */
     suspend fun thread(
         key: TutorThreadKey,
@@ -78,6 +85,19 @@ interface TutorApi {
 internal class LiveTutorApi(
     private val api: ApiClients,
 ) : TutorApi {
+    override suspend fun conversations(
+        goalId: String,
+        cursor: String?,
+        session: AuthenticatedSession,
+    ): BuddyConversationList {
+        val page = perform { api.clients(session).plans.listBuddyConversations(goalId.id, cursor) }
+        return BuddyConversationList(
+            page.conversations.map { BuddyConversation(it.id.toString(), it.title, it.lastAskedAt) },
+            page.currentId?.toString(),
+            page.nextCursor,
+        )
+    }
+
     override suspend fun thread(
         key: TutorThreadKey,
         cursor: String?,
@@ -89,7 +109,12 @@ internal class LiveTutorApi(
             performOrNull {
                 when (key) {
                     is TutorThreadKey.Plan -> {
-                        clients.plans.getPlanQuestionThread(key.goalId.id, PlansApi.ContextKindGetPlanQuestionThread.PLAN, page)
+                        clients.plans.getBuddyConversationQuestionThread(
+                            key.goalId.id,
+                            key.conversationId.id,
+                            PlansApi.ContextKindGetBuddyConversationQuestionThread.PLAN,
+                            page,
+                        )
                     }
 
                     is TutorThreadKey.Subject -> {
@@ -161,7 +186,7 @@ internal class LiveTutorApi(
         val created =
             perform {
                 when (scope) {
-                    is TutorScope.Plan -> clients.plans.createPlanQuestion(scope.goalId.id, request)
+                    is TutorScope.Plan -> clients.plans.createBuddyConversationQuestion(scope.goalId.id, scope.conversationId.id, request)
                     is TutorScope.Subject -> clients.plans.createSubjectQuestion(scope.goalId.id, scope.subjectKey, request)
                     is TutorScope.Chapter -> clients.chapters.createChapterQuestion(scope.chapterId.id, request)
                     is TutorScope.Mock -> clients.exams.createMockQuestion(scope.blockId.id, request)
@@ -417,7 +442,7 @@ private fun turn(
     id = id.toString(),
     question = question,
     answer = answer,
-    status = TutorTurn.Status.entries.first { it.name.equals(status, ignoreCase = true) },
+    status = TutorTurn.Status.entries.firstOrNull { it.name.equals(status, ignoreCase = true) } ?: TutorTurn.Status.Failed,
     createdAt = createdAt,
     about = about(context),
     topic = topic(context),
@@ -454,6 +479,10 @@ private fun topic(context: LessonQuestionContext): String =
 
 private fun about(context: LessonQuestionContext): TutorTurn.About =
     when (context) {
+        is LessonQuestionContext.LessonQuestionContextOneOf4Value -> {
+            TutorTurn.About.Lesson
+        }
+
         is LessonQuestionContext.LessonQuestionContextOneOfValue -> {
             TutorTurn.About.Lesson
         }

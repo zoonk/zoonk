@@ -4,6 +4,7 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { appliedFixFixture } from "../staff/content-fixes/_test-utils/applied-fix";
@@ -18,7 +19,6 @@ import { getPlayableLibraryLesson } from "./get-playable-library-lesson";
 import { startLibraryLesson } from "./start-library-lesson";
 
 const TIME_ZONE = "UTC";
-const MINUTE_MS = 60_000;
 
 const check = playableStepContent.check;
 
@@ -143,7 +143,7 @@ describe("answers to a screen fixed during the run", () => {
 
       await fixScreen({
         content: movedKey,
-        decidedAt: new Date(run.startedAt.getTime() - fixedBeforeStartMinutes * MINUTE_MS),
+        decidedAt: new Date(run.startedAt.getTime() - fixedBeforeStartMinutes * MS_PER_MINUTE),
         step,
       });
 

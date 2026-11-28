@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice, getBaseLanguage, usesNonLatinScript } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
@@ -19,7 +20,6 @@ import { buildSpeechProvenance } from "./speech-provenance";
 import { generateSpeechWithProvider } from "./speech-provider";
 
 const TASK = "language-audio";
-const MS_PER_SECOND = 1000;
 
 /** Flash Lite checks a clip in 1.5 s p95; one MiMo check took 186 s in its eval (8 Nov 2026). */
 const PRONUNCIATION_CHECK_TIMEOUT_MS = 15_000;

@@ -111,7 +111,12 @@ test.describe("Learner model API", () => {
       apiContext.get(`/v1/me/completed-lessons?goalId=${goalId}`),
       apiContext.get("/v1/me/mistake-practice"),
       apiContext.post(`/v1/me/mistakes/${randomUUID()}/answers`, {
-        data: { answer: { selectedIndex: 0 }, durationMs: 1000, itemId: randomUUID() },
+        data: {
+          answer: { selectedIndex: 0 },
+          durationMs: 1000,
+          itemId: randomUUID(),
+          showing: "mistake:unknown:0",
+        },
       }),
       apiContext.get(`/v1/goals/${goalId}/preparation`),
       apiContext.get(`/v1/goals/${goalId}/placement`),

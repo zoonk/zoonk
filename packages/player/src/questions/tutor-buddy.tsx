@@ -73,7 +73,9 @@ export function TutorBuddyProvider({
     controller;
 
   const askAbout = controller.ask;
-  const docked = state.isOpen && shown.presentation === "dock";
+  const hasConversation = state.questions.length > 0 || state.creating !== null || state.hasMore;
+  // A question the limit refuses saves nothing, so the aside keeps its empty state rather than a conversation to go back from.
+  const docked = state.isOpen && shown.presentation === "dock" && hasConversation;
   const drawerOpen = state.isOpen && shown.presentation === "drawer";
   const consulted = shown.presentation !== null || state.questions.length > 0;
 

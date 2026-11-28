@@ -128,23 +128,25 @@ final class StudySessionStore {
     }
   }
 
+  /// Nil when it couldn't be read, or was answered after its learner signed out.
   func lessonReadiness(lessonID: String) async -> Components.Schemas.LessonReadiness? {
-    await read(lessonID) { token in
+    await read { token in
       try await api.lessonReadiness(token: token, lessonID: lessonID)
     }
   }
 
-  /// How the lesson stands once no run writes it.
+  /// How the lesson stands once readiness names no run writing it.
   func followWriting(lessonID: String, run: String?) async -> Components.Schemas.LessonReadiness? {
-    await read(lessonID) { token in
+    await read { token in
       try await api.followWriting(token: token, lessonID: lessonID, run: run)
     }
   }
 
-  /// A lesson its checks set aside shows as such on the next stop from then on. A read answered
-  /// after its learner left is dropped.
+  func lessonChanged() {
+    cache.invalidate([.userSession])
+  }
+
   private func read(
-    _ lessonID: String,
     _ readiness: (_ token: String) async throws -> Components.Schemas.LessonReadiness
   ) async -> Components.Schemas.LessonReadiness? {
     guard let owner = cache.session.authenticatedSession,
@@ -152,10 +154,6 @@ final class StudySessionStore {
       owner == cache.session.authenticatedSession
     else {
       return nil
-    }
-
-    if lesson.setAside {
-      today.setAside(lessonID: lessonID, owner: owner)
     }
 
     return lesson

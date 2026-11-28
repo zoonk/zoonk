@@ -13,10 +13,8 @@ type HistoryRow = {
   firstGoalId: string | null;
   firstSessionAt: Date | null;
   firstSessionGoalId: string | null;
-  fixedAt: Date | null;
   lessonAt: Date | null;
   mockAt: Date | null;
-  patternAt: Date | null;
   reviewAt: Date | null;
   studyDays: number;
 };
@@ -45,7 +43,6 @@ export async function loadFirstStepHistory(userId: string) {
       (SELECT min(ended_at) FROM events WHERE kind = 'checkpoint'
         AND lesson_kind IN ('boss', 'finalBoss') AND correct_answers > 0
         AND correct_answers >= ceil((correct_answers + incorrect_answers) * ${PASS_SHARE}::numeric)) AS "challengeAt",
-      (SELECT min(fixed_at) FROM mistakes WHERE user_id = ${userId}::uuid) AS "fixedAt",
       (SELECT min(q.created_at) FROM lesson_questions q
         JOIN lesson_question_threads t ON t.id = q.thread_id
         WHERE t.user_id = ${userId}::uuid) AS "askedAt",
@@ -54,10 +51,6 @@ export async function loadFirstStepHistory(userId: string) {
         (SELECT min(finished_at) FROM mock_exams WHERE user_id = ${userId}::uuid AND status = 'finished'),
         (SELECT min(ended_at) FROM events WHERE kind = 'mock')
       ) AS "mockAt",
-      LEAST(
-        (SELECT min(practiced_at) FROM mistake_patterns WHERE user_id = ${userId}::uuid),
-        (SELECT min(ended_at) FROM events WHERE lesson_kind = 'patternDrill')
-      ) AS "patternAt",
       (SELECT COALESCE(b.completed_at, b.updated_at) FROM study_session_blocks b
         JOIN study_sessions s ON s.id = b.session_id
         WHERE s.user_id = ${userId}::uuid AND b.kind = 'produce' AND b.status = 'completed'
@@ -83,9 +76,7 @@ export async function loadFirstStepHistory(userId: string) {
     call: row.callAt ?? undefined,
     challenge: row.challengeAt ?? undefined,
     essay: row.essayAt ?? undefined,
-    fixMistake: row.fixedAt ?? undefined,
     mock: row.mockAt ?? undefined,
-    pattern: row.patternAt ?? undefined,
     review: row.reviewAt ?? undefined,
     somethingNew: row.lessonAt ?? undefined,
   };

@@ -3,6 +3,7 @@ import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany, userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { readLifetimeDailyProgress } from "./_utils/daily-progress-rows";
@@ -14,7 +15,6 @@ import { getScoreHistory } from "./get-score-history";
 import { getCurrentUserScorePatterns } from "./get-score-patterns";
 
 const TODAY = new Date("2026-10-14T00:00:00Z");
-const DAY = 86_400_000;
 const LIFETIME = { history: "lifetime" } as const;
 
 function readOverview(shared: boolean) {
@@ -51,7 +51,7 @@ describe("shared daily progress on the statistics overview", () => {
       dailyProgressFixtureMany(
         Array.from({ length: 402 }, (_, index) => ({
           correctAnswers: index % 7,
-          date: new Date(TODAY.getTime() - (400 - index) * DAY),
+          date: new Date(TODAY.getTime() - (400 - index) * MS_PER_DAY),
           energyAtEnd: index % 100,
           incorrectAnswers: index % 3,
           interactiveCompleted: index % 2,
@@ -78,7 +78,7 @@ describe("shared daily progress on the statistics overview", () => {
     expect(ledger.result.every((row) => row.userId === learner.id)).toBe(true);
 
     const history = await getScoreHistory({ locale: "en" });
-    expect(history?.periodStart).toStrictEqual(new Date(TODAY.getTime() - 89 * DAY));
+    expect(history?.periodStart).toStrictEqual(new Date(TODAY.getTime() - 89 * MS_PER_DAY));
     expect(history?.periodEnd).toStrictEqual(TODAY);
     expect(history?.totalAnswers).toBeLessThan(1000);
     await expect(prisma.dailyProgress.count({ where: { userId: learner.id } })).resolves.toBe(402);

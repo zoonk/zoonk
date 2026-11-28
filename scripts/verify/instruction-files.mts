@@ -7,6 +7,8 @@ const ROOT_BYTES = 26_000;
 
 const FILE_BYTES = 9000;
 
+const DESCRIPTION_BYTES = 250;
+
 const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/android-material-guidelines/SKILL.md": 16_000,
   ".agents/skills/android-material-guidelines/references/design-system.md": 46_000,
@@ -14,20 +16,24 @@ const OVER_BUDGET_UNTIL_SPLIT: Record<string, number> = {
   ".agents/skills/apple-human-interface-guidelines/references/design-system.md": 58_000,
   ".agents/skills/apple-human-interface-guidelines/references/official-links.md": 22_000,
   ".agents/skills/verify/references/pages.md": 48_000,
-  ".agents/skills/zoonk-address-issue/SKILL.md": 18_000,
-  ".agents/skills/zoonk-design/SKILL.md": 44_000,
+  ".agents/skills/zoonk-address-issue/SKILL.md": 14_000,
+  ".agents/skills/zoonk-design/SKILL.md": 30_000,
   ".agents/skills/zoonk-design/references/app-patterns.md": 82_000,
   ".agents/skills/zoonk-design/references/color.md": 14_000,
   ".agents/skills/zoonk-design/references/craft.md": 58_000,
   ".agents/skills/zoonk-design/references/foldables.md": 14_000,
-  ".agents/skills/zoonk-persona-walkthrough/references/personas.md": 14_000,
   "apps/android/AGENTS.md": 26_000,
   "apps/apple/AGENTS.md": 22_000,
 };
 
 const lockSchema = z.object({ skills: z.record(z.string(), z.unknown()).default({}) });
 
-type Options = { fileBytes?: number; overBudget?: Record<string, number>; rootBytes?: number };
+type Options = {
+  descriptionBytes?: number;
+  fileBytes?: number;
+  overBudget?: Record<string, number>;
+  rootBytes?: number;
+};
 
 function isDirectory(path: string): boolean {
   return statSync(path, { throwIfNoEntry: false })?.isDirectory() ?? false;
@@ -185,9 +191,79 @@ function sizeProblems(root: string, files: string[], options: Required<Options>)
 
     return bytes > ceiling
       ? [
-          `${path} is ${bytes} bytes, over the ${ceiling} it may hold until it's split. Take as much out as you add, or split it by subject.`,
+          `${path} is ${bytes} bytes, over the ${ceiling} it may hold until it's split. Split it: move what not every task needs into its own file and link it, then lower this ceiling.`,
         ]
       : [];
+  });
+}
+
+function description(skill: string): string | undefined {
+  const lines = skill.replaceAll("\r\n", "\n");
+  const frontmatter = /^---\n(?<yaml>[^]*?)\n---$/mu.exec(lines)?.groups?.yaml;
+
+  return /^description:[ \t]*(?<text>.*)$/mu.exec(frontmatter ?? "")?.groups?.text?.trim();
+}
+
+/** Quotes, block scalars and a `: ` or ` #` inside the text change what YAML reads, or fail to parse. */
+function isPlainLine(text: string): boolean {
+  return !/^[|>'"[\]{}&*!%@`#,?-]|: | #/u.test(text);
+}
+
+function descriptionProblem(path: string, text: string | undefined, limit: number) {
+  if (text === undefined || text === "") {
+    return `${path} has no description: add one that says when to use the skill.`;
+  }
+
+  if (!isPlainLine(text)) {
+    return `${path}'s description isn't one plain line: drop the quotes or block marker, and any ": " or " #" in it.`;
+  }
+
+  const bytes = Buffer.byteLength(text);
+
+  return bytes > limit
+    ? `${path}'s description is ${bytes} bytes, over the ${limit} every agent reads in every session. Say when to use the skill in a sentence or two, not what it holds.`
+    : null;
+}
+
+function descriptionProblems(root: string, limit: number): string[] {
+  return ownSkills(root)
+    .map((name) => {
+      const path = `.agents/skills/${name}/SKILL.md`;
+
+      const text = isFile(join(root, path))
+        ? description(readFileSync(join(root, path), "utf8"))
+        : undefined;
+
+      return descriptionProblem(path, text, limit);
+    })
+    .filter((problem) => problem !== null);
+}
+
+function reachableFrom(skillDirectory: string): Set<string> {
+  const reached = new Set([join(skillDirectory, "SKILL.md")]);
+
+  for (const file of reached) {
+    if (file.startsWith(`${skillDirectory}/`) && file.endsWith(".md") && isFile(file)) {
+      for (const target of linkTargets(readFileSync(file, "utf8"))) {
+        reached.add(resolve(dirname(file), decodeURI(target.split("#")[0] ?? "")));
+      }
+    }
+  }
+
+  return reached;
+}
+
+function unlinkedProblems(root: string): string[] {
+  return ownSkills(root).flatMap((name) => {
+    const skillDirectory = join(root, ".agents/skills", name);
+    const reached = reachableFrom(skillDirectory);
+
+    return listMarkdown(skillDirectory)
+      .filter((file) => !reached.has(file))
+      .map(
+        (file) =>
+          `${relative(root, file)} can't be reached from its SKILL.md, so no agent reads it: link it from the entry with when to read it, or delete it.`,
+      );
   });
 }
 
@@ -206,13 +282,15 @@ function symlinkProblems(root: string): string[] {
 
 /**
  * Holds the instruction files agents load to what keeps them cheap to read and safe to follow:
- * every file small, every link and anchor resolving, and every skill reachable from `.claude/skills`.
+ * every file small, every skill's description short, every reference reachable from its entry, every link
+ * and anchor resolving, and every skill reachable from `.claude/skills`.
  * Skills installed from elsewhere (`skills-lock.json`) aren't ours to edit, so only their symlinks are checked.
  */
 export function instructionFileProblems(root: string, options: Options = {}): string[] {
   const files = instructionFiles(root);
 
   const settings = {
+    descriptionBytes: options.descriptionBytes ?? DESCRIPTION_BYTES,
     fileBytes: options.fileBytes ?? FILE_BYTES,
     overBudget: options.overBudget ?? OVER_BUDGET_UNTIL_SPLIT,
     rootBytes: options.rootBytes ?? ROOT_BYTES,
@@ -225,6 +303,8 @@ export function instructionFileProblems(root: string, options: Options = {}): st
   return [
     ...sizeProblems(root, files, settings),
     ...missing,
+    ...descriptionProblems(root, settings.descriptionBytes),
+    ...unlinkedProblems(root),
     ...linkProblems(root, files),
     ...symlinkProblems(root),
   ];

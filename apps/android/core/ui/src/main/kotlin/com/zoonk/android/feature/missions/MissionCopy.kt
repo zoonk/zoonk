@@ -17,6 +17,10 @@ fun missionName(
     val detail = mission.detail
 
     return when (mission.kind) {
+        Kind.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         Kind.REVIEW -> {
             stringResource(R.string.missions_review)
         }
@@ -50,21 +54,6 @@ fun missionName(
             stringResource(R.string.missions_practice)
         }
 
-        Kind.FIX_MISTAKE -> {
-            val count = mission.total.toInt()
-            if (count ==
-                1
-            ) {
-                stringResource(R.string.missions_fix_a_mistake)
-            } else {
-                pluralStringResource(R.plurals.missions_fix_mistakes, count, count)
-            }
-        }
-
-        Kind.PATTERN -> {
-            stringResource(R.string.missions_pattern)
-        }
-
         Kind.PRONUNCIATION -> {
             stringResource(R.string.missions_pronunciation)
         }
@@ -93,6 +82,10 @@ fun missionOpenLabel(
     val opens = mission.opens?.takeIf { !mission.done && mission.waitReason == null } ?: return null
 
     return when (mission.kind) {
+        Kind.UNKNOWN_DEFAULT_OPEN_API -> {
+            null
+        }
+
         Kind.REVIEW -> {
             stringResource(R.string.missions_open_review)
         }
@@ -127,14 +120,6 @@ fun missionOpenLabel(
 
         Kind.PRACTICE, Kind.WEAK_SPOT -> {
             stringResource(R.string.missions_open_practice)
-        }
-
-        Kind.FIX_MISTAKE -> {
-            stringResource(R.string.missions_open_mistakes)
-        }
-
-        Kind.PATTERN -> {
-            stringResource(R.string.missions_open_pattern)
         }
 
         Kind.PRONUNCIATION -> {
@@ -172,8 +157,7 @@ val Kind.learnKind: LearnKind
             Kind.CHALLENGE, Kind.WEEKLY_CHALLENGE -> LearnKind.Challenge
             Kind.ESSAY -> LearnKind.Essay
             Kind.FINISH_CHAPTER, Kind.SOMETHING_NEW -> LearnKind.Lesson
-            Kind.FIX_MISTAKE, Kind.PATTERN -> LearnKind.Mistakes
             Kind.MOCK -> LearnKind.Mock
-            Kind.PRACTICE, Kind.WEAK_SPOT -> LearnKind.Practice
+            Kind.PRACTICE, Kind.WEAK_SPOT, Kind.UNKNOWN_DEFAULT_OPEN_API -> LearnKind.Practice
             Kind.PRONUNCIATION, Kind.REVIEW -> LearnKind.Review
         }

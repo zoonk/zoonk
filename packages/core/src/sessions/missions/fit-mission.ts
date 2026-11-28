@@ -47,8 +47,8 @@ export function fitMission({
     return pick;
   }
 
-  // A chapter must still mean the whole chapter; reviews and mistake piles can be smaller.
-  if ((pick.kind === "review" || pick.kind === "fixMistake") && pick.total > 1) {
+  // A chapter must still mean the whole chapter; reviews can be smaller.
+  if (pick.kind === "review" && pick.total > 1) {
     return fitMission({ chosen, facts, pick: { ...pick, total: pick.total - 1 } });
   }
 

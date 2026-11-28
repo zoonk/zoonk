@@ -52,6 +52,8 @@ export type QueueUnit = {
   phase: number;
   rankedOut?: boolean;
   reduced?: boolean;
+  /** A chapter's lessons that each teach the same skills, split into runs by skill: taught in order. */
+  sharedRun?: string;
   skillId: string | null;
   title: string;
   teachingShare?: number;
@@ -97,6 +99,9 @@ function toLessonUnit({
     ...(teaches.outcome ? { outcome: true } : {}),
     ...(teaches.reduced ? { reduced: true } : {}),
     phase: lesson.courseOrder?.phase ?? skill.phase,
+    ...(lesson.chapterId && lesson.skillIds.length > 1
+      ? { sharedRun: `${lesson.chapterId}:${lesson.skillIds.toSorted().join("+")}` }
+      : {}),
     skillId: teaches.skillId,
     title: lesson.title,
   };
@@ -126,35 +131,6 @@ function toPlaceholderUnit({
     skillId: skill.skillId,
     title: skill.name,
   } satisfies QueueUnit;
-}
-
-function apportionLessonShares({
-  needs,
-  total,
-}: {
-  needs: readonly number[];
-  total: number;
-}): number[] {
-  const counts = apportion({ total, weights: needs });
-
-  if (total < needs.length) {
-    return counts;
-  }
-
-  const shares = [...counts];
-
-  counts.forEach((count, index) => {
-    if (count > 0) {
-      return;
-    }
-
-    const largestShare = Math.max(...shares);
-    const largestIndex = shares.indexOf(largestShare);
-    shares[largestIndex] = largestShare - 1;
-    shares[index] = 1;
-  });
-
-  return shares;
 }
 
 export function assignLessonSkills({
@@ -191,11 +167,12 @@ export function assignLessonSkills({
   const shared = [...groups.values()].flatMap((group) => {
     const skillIds = group[0]?.skillIds ?? [];
 
-    const counts = apportionLessonShares({
-      needs: skillIds.map((skillId) =>
+    const counts = apportion({
+      minimumOneIfPossible: true,
+      total: group.length,
+      weights: skillIds.map((skillId) =>
         Math.max(1, (sizes.get(skillId) ?? 1) - (alone.get(skillId)?.length ?? 0)),
       ),
-      total: group.length,
     });
 
     const runs = skillIds.flatMap((skillId, index) =>

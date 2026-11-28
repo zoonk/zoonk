@@ -3,6 +3,7 @@ import { type Attempt, type Mistake } from "@zoonk/db";
 import { z } from "zod";
 import { recordAnswerOnce } from "../../learner/_utils/answer-once";
 import { claimModelGrade } from "../../learner/_utils/model-grading";
+import { runAnswerGrade } from "../../learner/_utils/run-answer-grade";
 import { toCheckResult } from "../../lesson-player/_utils/check-results";
 import {
   type LessonAnswerVerdict,
@@ -21,8 +22,8 @@ import { getPracticeAnswerKeys } from "../mistake-item";
 import { type MistakeReplay } from "../mistake-replay";
 import { readMistakeSnapshot } from "../mistake-snapshot";
 import { cachedGradeDuration } from "./cached-grade-duration";
-import { runMistakeGrade } from "./mistake-grade";
-import { refuseAnsweredMistake } from "./practice-claim";
+import { markUncheckedBlockMistake } from "./practice-block";
+import { refuseClosedMistake } from "./practice-claim";
 import { finishPracticeAnswer } from "./practice-feedback";
 import { readSavedPracticeAnswer } from "./saved-practice-answer";
 
@@ -69,6 +70,41 @@ function recordedLessonAnswer({
     : answer;
 }
 
+/** Past the grading cap, a typed answer that isn't an exact match is neither fixed nor saved. */
+async function answerUnchecked({
+  input,
+  mistake,
+  userId,
+  verdict,
+}: {
+  input: Extract<MistakePracticeAnswerInput, { stepId: string }>;
+  mistake: Mistake;
+  userId: string;
+  verdict: LessonAnswerVerdict;
+}): Promise<MistakePracticeAnswerResult> {
+  if (input.run?.blockId) {
+    await markUncheckedBlockMistake({ blockId: input.run.blockId, mistakeId: mistake.id, userId });
+  }
+
+  return {
+    feedback: {
+      answerId: null,
+      correctAnswer: null,
+      explanation: verdict.feedback,
+      fixed: false,
+      fixedMistakeIds: [],
+      isCorrect: false,
+      lessonResult: toCheckResult({ savedMistake: false, verdict }),
+      mistakeStatus: mistake.status,
+      reached: NOTHING_REACHED,
+      requiresLaterDay: false,
+      trap: null,
+      workedSteps: [],
+    },
+    status: "ready",
+  };
+}
+
 export async function answerLessonMistake({
   input,
   mistake,
@@ -107,7 +143,7 @@ export async function answerLessonMistake({
   const model = usesModel({ answer, step: lesson.step });
 
   const graded = model
-    ? await runMistakeGrade({
+    ? await runAnswerGrade({
         attemptId,
         grade: async () => ({
           durationMs: input.durationMs,
@@ -138,22 +174,7 @@ export async function answerLessonMistake({
   }
 
   if (!verdict.checked && !saved) {
-    return {
-      feedback: {
-        answerId: null,
-        correctAnswer: null,
-        explanation: verdict.feedback,
-        fixed: false,
-        fixedMistakeIds: [],
-        isCorrect: false,
-        lessonResult: toCheckResult({ savedMistake: false, verdict }),
-        mistakeStatus: mistake.status,
-        reached: NOTHING_REACHED,
-        trap: null,
-        workedSteps: [],
-      },
-      status: "ready",
-    };
+    return answerUnchecked({ input, mistake, userId, verdict });
   }
 
   const canonicalAnswer = recordedLessonAnswer({ answer, verdict });
@@ -167,11 +188,31 @@ export async function answerLessonMistake({
     misconception: null,
   });
 
+  const isCorrect = saved?.isCorrect ?? drilled.isCorrect;
+
+  const lessonResult = toCheckResult({
+    savedMistake: !isCorrect,
+    verdict: {
+      ...verdict,
+      checked: saved ? true : verdict.checked,
+      correctAnswer: isCorrect ? null : verdict.correctAnswer,
+      isCorrect,
+    },
+  });
+
+  const feedback = {
+    correctAnswer: null,
+    explanation: verdict.feedback,
+    lessonResult,
+    trap: drilled.trap,
+    workedSteps: [],
+  };
+
   const outcome = saved
     ? { saved, status: "saved" as const }
     : await recordAnswerOnce({
         answer: {
-          answer: { ...canonicalAnswer, ...getPracticeAnswerKeys({ mistake }) },
+          answer: { ...canonicalAnswer, ...getPracticeAnswerKeys({ feedback, mistake }) },
           attemptId,
           graded: { durationMs, isCorrect: drilled.isCorrect, score: verdict.score },
           language: lesson.language,
@@ -196,37 +237,17 @@ export async function answerLessonMistake({
           timeZone,
           userId,
         },
-        refuse: refuseAnsweredMistake({ mistakeId: mistake.id, timeZone, userId }),
+        refuse: refuseClosedMistake({ mistakeId: mistake.id, userId }),
       });
 
   if (outcome.status === "refused") {
-    return { status: "retryable" };
+    return { status: "invalidItem" };
   }
-
-  const isCorrect =
-    outcome.status === "saved" ? outcome.saved.isCorrect : outcome.recorded.attempt.isCorrect;
-
-  const lessonResult = toCheckResult({
-    savedMistake: !isCorrect,
-    verdict: {
-      ...verdict,
-      checked: saved ? true : verdict.checked,
-      correctAnswer: saved?.isCorrect ? null : verdict.correctAnswer,
-      isCorrect,
-    },
-  });
 
   return {
     feedback: await finishPracticeAnswer({
-      answerId: outcome.status === "saved" ? outcome.saved.id : outcome.recorded.attempt.id,
-      feedback: {
-        correctAnswer: null,
-        explanation: verdict.feedback,
-        isCorrect,
-        lessonResult,
-        trap: drilled.trap,
-        workedSteps: [],
-      },
+      attempt: outcome.status === "saved" ? outcome.saved : outcome.recorded.attempt,
+      feedback,
       input,
       mistakeId: mistake.id,
     }),

@@ -14,7 +14,7 @@ export function toKeptFacts({
 
   return new Map(
     facts
-      .filter((item) => item.found && supported.has(item.id))
+      .filter((item) => item.found && (item.settled || supported.has(item.id)))
       .map((item) => [item.id, item.citations]),
   );
 }

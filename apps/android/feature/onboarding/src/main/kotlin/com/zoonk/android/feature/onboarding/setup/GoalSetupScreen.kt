@@ -421,6 +421,8 @@ private fun ColumnScope.QuestionStep(
     onReportLevelTest: () -> Unit,
 ) {
     when (step) {
+        OnboardingStep.UNKNOWN_DEFAULT_OPEN_API -> {}
+
         OnboardingStep.ADDRESS_FORM,
         OnboardingStep.WORK,
         OnboardingStep.TOOLS,
@@ -516,7 +518,6 @@ private fun ColumnScope.QuestionStep(
                 store,
                 vm,
                 pending,
-                factsBeside = LocalWaitBeside.current,
                 startsOnRecommended = view.startsOnRecommended,
             )
         }

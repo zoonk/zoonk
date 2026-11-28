@@ -83,12 +83,15 @@ describe("guest tutor link", () => {
 
     const goal = await createGoal(guestId);
 
-    const [lessonThread, planThread] = await Promise.all([
+    const [lessonThread, planThread, secondPlanThread] = await Promise.all([
       prisma.lessonQuestionThread.create({
         data: { kind: "lesson", libraryLessonId: lesson.id, userId: guestId },
       }),
       prisma.lessonQuestionThread.create({
-        data: { goalId: goal.id, kind: "plan", userId: guestId },
+        data: { goalId: goal.id, kind: "plan", updatedAt: OLDER, userId: guestId },
+      }),
+      prisma.lessonQuestionThread.create({
+        data: { goalId: goal.id, kind: "plan", updatedAt: NEWER, userId: guestId },
       }),
     ]);
 
@@ -96,6 +99,11 @@ describe("guest tutor link", () => {
       askTutor({ createdAt: OLDER, question: "Why green?", threadId: lessonThread.id }),
       askTutor({ createdAt: NEWER, question: "And at night?", threadId: lessonThread.id }),
       askTutor({ createdAt: OLDER, question: "Is my plan too long?", threadId: planThread.id }),
+      askTutor({
+        createdAt: NEWER,
+        question: "How should I review?",
+        threadId: secondPlanThread.id,
+      }),
     ]);
 
     await linkGuestAccount({ account: { id: accountId }, guestUserId: guestId });
@@ -108,8 +116,11 @@ describe("guest tutor link", () => {
     });
 
     expect(threads.map((thread) => thread.id)).toStrictEqual(
-      [lessonThread.id, planThread.id].toSorted(),
+      [lessonThread.id, planThread.id, secondPlanThread.id].toSorted(),
     );
+
+    expect(threads).toContainEqual({ ...planThread, userId: accountId });
+    expect(threads).toContainEqual({ ...secondPlanThread, userId: accountId });
 
     const moved = await prisma.lessonQuestion.findMany({
       where: { id: { in: questions.map((question) => question.id) } },

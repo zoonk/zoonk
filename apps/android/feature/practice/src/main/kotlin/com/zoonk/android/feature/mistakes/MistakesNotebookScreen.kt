@@ -90,7 +90,6 @@ import com.zoonk.android.ui.components.MarkIcon
 import com.zoonk.android.ui.components.MarkedLine
 import com.zoonk.android.ui.components.MistakeAnswer
 import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.PageHeader
 import com.zoonk.android.ui.components.PageLoading
 import com.zoonk.android.ui.components.PageTitleRow
 import com.zoonk.android.ui.components.TaskActions
@@ -544,7 +543,7 @@ private fun LazyListScope.notebookHead(
 ) {
     // The same items with or without the hero, so a list's scroll keeps its place as the book opens or closes. Each
     // item brings its own gap: a list's spacing would also follow the hero's empty slot.
-    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { NotebookHero(page) } }
+    item { if (lead.hero) Box(Modifier.padding(bottom = ITEM_GAP)) { PageTitleRow(stringResource(R.string.mistakes_notebook_title)) } }
     item { if (lead.tabs) NotebookTabs(page, actions.onTab) else NotebookListTitle(page) }
     page.pattern?.let { pattern ->
         item {
@@ -576,16 +575,6 @@ private fun LazyListScope.notebookMore(
             OutlinedButton(busy = page.loadingMore, onClick = actions.onMore) { Text(stringResource(R.string.mistakes_show_more)) }
         }
     }
-}
-
-@Composable
-private fun NotebookHero(page: NotebookPage) {
-    val availability = page.head.availability
-    val opensTomorrow = availability.ready == 0L && availability.tomorrow > 0
-
-    val title = stringResource(R.string.mistakes_notebook_title)
-
-    if (opensTomorrow) PageHeader(title, supporting = stringResource(R.string.mistakes_opens_tomorrow)) else PageTitleRow(title)
 }
 
 /** Main's "To fix / Fixed" toggle, as the app's tabs. */
@@ -658,7 +647,6 @@ private fun Entries(
                         ?.snapshot
                         ?.set
                         ?.id == setId,
-                tomorrowOnPage = page.head.availability.ready == 0L,
                 actions = actions,
                 modifier = Modifier.padding(vertical = 16.dp),
             )
@@ -671,8 +659,6 @@ private fun MistakeEntry(
     mistake: Mistake,
     words: TrueFalseWords,
     continued: Boolean,
-    /** The page already says practice opens tomorrow, so the entry doesn't say it again. */
-    tomorrowOnPage: Boolean,
     actions: NotebookActions,
     modifier: Modifier = Modifier,
 ) {
@@ -713,15 +699,7 @@ private fun MistakeEntry(
         snapshot.explanation?.let {
             ItemText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
-        val tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-            if (tomorrow) {
-                Text(
-                    stringResource(R.string.mistakes_practice_tomorrow),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium,
-                )
-            }
             skillId?.let {
                 OutlinedButton(
                     onClick = { actions.onPracticeSkill(it) },
@@ -730,7 +708,7 @@ private fun MistakeEntry(
             TextButton(
                 onClick = { actions.lesson.open(mistake) },
                 busy = actions.lesson.busy == mistake.id,
-                edge = if (skillId == null && !tomorrow) ButtonEdge.Start else null,
+                edge = if (skillId == null) ButtonEdge.Start else null,
             ) { Text(stringResource(R.string.mistakes_open_lesson)) }
         }
         if (mistake.id in actions.lesson.failed) {
@@ -760,9 +738,10 @@ private fun CauseLabel(
 }
 
 @Composable
-private fun causeLabel(cause: MistakeCause): String =
-    stringResource(
+private fun causeLabel(cause: MistakeCause): String {
+    return stringResource(
         when (cause) {
+            MistakeCause.UNKNOWN_DEFAULT_OPEN_API -> return ""
             MistakeCause.GAP -> R.string.mistakes_cause_gap
             MistakeCause.MISREAD -> R.string.mistakes_cause_misread
             MistakeCause.TRAP -> R.string.mistakes_cause_trap
@@ -770,11 +749,13 @@ private fun causeLabel(cause: MistakeCause): String =
             MistakeCause.GUESS -> R.string.mistakes_cause_guess
         },
     )
+}
 
 @get:DrawableRes
 private val MistakeCause.icon: Int
     get() =
         when (this) {
+            MistakeCause.UNKNOWN_DEFAULT_OPEN_API -> R.drawable.ic_lightbulb
             MistakeCause.GAP -> R.drawable.ic_lightbulb
             MistakeCause.MISREAD -> R.drawable.ic_visibility
             MistakeCause.TRAP -> R.drawable.ic_warning

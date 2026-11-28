@@ -4,6 +4,7 @@ import { type LanguageConversationIntro } from "@zoonk/core/language/conversatio
 import { Button } from "@zoonk/ui/components/button";
 import { useTakingLong } from "@zoonk/ui/hooks/taking-long";
 import { type MicrophoneProblem } from "@zoonk/ui/hooks/voice-recorder";
+import { HELD_ASK_ATTRIBUTE } from "@zoonk/ui/lib/held-press-controls";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { StatusRegion } from "../../_components/status-region";
@@ -134,6 +135,7 @@ export function CallIntroFooter({
         <TaskActions>
           <Button
             className="shrink-0"
+            {...{ [HELD_ASK_ATTRIBUTE]: "microphone" }}
             onClick={microphone.call}
             size="lg"
             type="button"
@@ -228,7 +230,7 @@ function CallIntroActions({
         onPointerDown={preloadLiveCall}
         onPointerEnter={preloadLiveCall}
       >
-        <TaskMainButton busy={starting} onClick={onStart}>
+        <TaskMainButton asks="microphone" busy={starting} onClick={onStart}>
           {isCall ? t("Call {name}", { name }) : t("Start call")}
         </TaskMainButton>
       </TaskActions>

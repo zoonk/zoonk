@@ -22,10 +22,12 @@ import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StepOpenFailed
 import com.zoonk.android.feature.session.WritingRow
+import com.zoonk.android.feature.session.alreadyFixed
 import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.practiceTopicsLine
 import com.zoonk.android.feature.session.practisesTopics
+import com.zoonk.android.feature.session.remedialLine
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
@@ -55,8 +57,6 @@ fun DayStepRow(
     isNext: Boolean,
     examDocument: ExamDocument,
     modifier: Modifier = Modifier,
-    lessonStatus: Map<String, LessonGenerationStatus> = emptyMap(),
-    writingStalled: Boolean = false,
     onOpen: (() -> Unit)? = null,
     busy: Boolean = false,
     openFailed: Boolean = false,
@@ -80,18 +80,11 @@ fun DayStepRow(
         divider = divider,
         stateDescription = state,
         leading = { BlockMark(step) },
-        supporting =
-            if (finished && !openFailed) {
-                null
-            } else {
-                {
-                    if (openFailed) StepOpenFailed()
-                    if (!finished) {
-                        StepLines(lessonStatus, writingStalled, step, examDocument)
-                        below?.invoke()
-                    }
-                }
-            },
+        supporting = {
+            if (openFailed) StepOpenFailed()
+            StepLines(day, step, examDocument)
+            if (!finished) below?.invoke()
+        },
         meta =
             if (finished && !step.extra) {
                 null
@@ -107,7 +100,8 @@ fun DayStepRow(
                                 tint = MaterialTheme.zoonk.brain,
                             )
                         }
-                        DayMinutes(step.estimatedMinutes)
+                        // Nothing is left to answer, so there's no time to show.
+                        if (!step.alreadyFixed) DayMinutes(step.estimatedMinutes)
                     }
                 }
             },
@@ -122,44 +116,70 @@ fun DayStepRow(
     }
 }
 
-/** A row's one line: what a lesson belongs to, what practice is on, or how long a challenge is. */
+/** Main's `showSubject`: a row names its subject only on a day that mixes subjects. */
+private val DayView.mixesSubjects: Boolean
+    get() = steps.mapNotNull { it.subject ?: it.subjectExtra?.value }.distinct().size > 1
+
+/**
+ * Main's `RowLines`: the subject first, on a day that mixes subjects or for optional study, even
+ * once done; then, while it's to do, what practice is on, why it's back or how long a challenge is.
+ */
 @Composable
 private fun StepLines(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
+    day: DayView,
     step: DayStep,
     examDocument: ExamDocument,
 ) {
-    val count = step.questions.toInt()
     val extra = step.subjectExtra
-    val line =
+    val subject =
         when {
-            step.isGettingReady(lessonStatus, writingStalled) -> stringResource(R.string.today_step_being_written)
-
-            step.writing == WritingRow.Tomorrow -> blockDetail(step)
-
-            step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
-
-            // A written task says when it waits for tomorrow, that its draft is kept, or what a drill is for, over its subject.
-            step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
-
-            step.practisesTopics -> practiceTopicsLine(step.topics)
-
-            step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
-
-            step.fullReview -> stringResource(R.string.today_step_every_topic)
-
             extra != null -> optionalStudyLabel(hasNotice = extra == StudyBlock.SubjectExtra.NOTICE, document = examDocument)
-
-            else -> step.subject
+            day.mixesSubjects -> step.subject
+            else -> null
         }
 
-    if (line != null) SubLine(line)
+    subject?.let { SubLine(it) }
+    if (!step.isFinished) {
+        // Why the plan added a row is a sentence, so it wraps at large text rather than losing its end.
+        val line = stepLine(step)
+        line?.let { SubLine(it, lines = if (it == remedialLine(step)) 2 else 1) }
+    }
+}
+
+/** Main's `useStepLabel` without the subject, which [StepLines] puts above it. */
+@Composable
+private fun stepLine(step: DayStep): String? {
+    val count = step.questions.toInt()
+    val remedial = remedialLine(step)
+
+    return when {
+        step.isGettingReady -> stringResource(R.string.today_step_being_written)
+
+        step.writing == WritingRow.Tomorrow -> blockDetail(step)
+
+        step.waitReason != null -> stringResource(R.string.today_step_after_lessons)
+
+        remedial != null -> remedial
+
+        step.practisesTopics -> practiceTopicsLine(step.topics)
+
+        step.checkpoint != null -> if (count > 0) pluralStringResource(R.plurals.session_block_questions, count, count) else null
+
+        step.fullReview -> stringResource(R.string.today_step_every_topic)
+
+        // A written task says that its draft is kept, or what a drill is for.
+        step.kind == StudyBlock.Kind.PRODUCE && (step.writing != null || step.drill) -> blockDetail(step)
+
+        else -> null
+    }
 }
 
 @Composable
-private fun SubLine(text: String) {
-    Text(text = text, maxLines = 2, overflow = TextOverflow.Ellipsis)
+private fun SubLine(
+    text: String,
+    lines: Int = 1,
+) {
+    Text(text = text, maxLines = lines, overflow = TextOverflow.Ellipsis)
 }
 
 /**
@@ -213,13 +233,11 @@ fun DayMinutes(minutes: Double) {
 }
 
 /**
- * A lesson nobody has started writing is written when the learner opens it, so it never claims to
- * be in progress.
+ * Only a lesson the day's read says is being written claims to be: one nobody has started is
+ * written when the learner opens it, and one whose writing stopped reads as failed.
  */
-fun DayStep.isBeingWritten(lessonStatus: Map<String, LessonGenerationStatus>): Boolean =
-    kind == StudyBlock.Kind.LEARN && lessonId != null && lessonStatus[lessonId.toString()] == LessonGenerationStatus.GENERATING
+val DayStep.isBeingWritten: Boolean
+    get() = kind == StudyBlock.Kind.LEARN && lesson?.status == LessonGenerationStatus.GENERATING
 
-fun DayStep.isGettingReady(
-    lessonStatus: Map<String, LessonGenerationStatus>,
-    writingStalled: Boolean,
-): Boolean = preparing || (!writingStalled && isBeingWritten(lessonStatus))
+val DayStep.isGettingReady: Boolean
+    get() = preparing || isBeingWritten

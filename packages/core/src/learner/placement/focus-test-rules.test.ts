@@ -1,3 +1,4 @@
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { assert, double, property } from "fast-check";
 import { describe, expect, it } from "vitest";
 import {
@@ -10,9 +11,7 @@ import {
   rankFocus,
 } from "./focus-test-rules";
 
-const MINUTE = 60_000;
-
-function firstSitting(quickSubjects: number, paceMs = MINUTE) {
+function firstSitting(quickSubjects: number, paceMs = MS_PER_MINUTE) {
   const questions = getSittingQuestions({ kind: "first", paceMs, quickSubjects });
   return { minutes: getSittingMinutes({ paceMs, questions }), questions };
 }
@@ -40,31 +39,31 @@ describe("a sitting's promised count", () => {
   it("offers a further sitting of up to ten questions, timed from the same count", () => {
     const questions = getSittingQuestions({
       kind: "continuation",
-      paceMs: MINUTE,
+      paceMs: MS_PER_MINUTE,
       quickSubjects: 24,
     });
 
     expect(questions).toBe(10);
-    expect(getSittingMinutes({ paceMs: MINUTE, questions })).toBe(10);
+    expect(getSittingMinutes({ paceMs: MS_PER_MINUTE, questions })).toBe(10);
     expect(getSittingMinutes({ paceMs: 45_000, questions })).toBe(8);
   });
 
   it("shortens a further sitting for a learner who takes longer", () => {
     expect(
-      getSittingQuestions({ kind: "continuation", paceMs: 2 * MINUTE, quickSubjects: 24 }),
+      getSittingQuestions({ kind: "continuation", paceMs: 2 * MS_PER_MINUTE, quickSubjects: 24 }),
     ).toBe(7);
   });
 
   it("never promises a minute for no questions, and at least one for any", () => {
-    expect(getSittingMinutes({ paceMs: MINUTE, questions: 0 })).toBe(0);
+    expect(getSittingMinutes({ paceMs: MS_PER_MINUTE, questions: 0 })).toBe(0);
     expect(getSittingMinutes({ paceMs: 8000, questions: 2 })).toBe(1);
   });
 });
 
 describe("the learner's pace", () => {
   it("starts at a minute a question until five answers say otherwise", () => {
-    expect(getPaceMs({ answers: 0, durationMs: 0 })).toBe(MINUTE);
-    expect(getPaceMs({ answers: 4, durationMs: 32_000 })).toBe(MINUTE);
+    expect(getPaceMs({ answers: 0, durationMs: 0 })).toBe(MS_PER_MINUTE);
+    expect(getPaceMs({ answers: 4, durationMs: 32_000 })).toBe(MS_PER_MINUTE);
   });
 
   it("is the mean of their answers, quick taps included", () => {

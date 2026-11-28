@@ -298,8 +298,6 @@ private fun StepRow(
         isNext,
         model.today.goal.examDocument ?: ExamDocument.NOTICE,
         modifier,
-        model.today.lessonStatus,
-        model.writingStalled,
         onOpen = onOpen.takeIf { opens },
         busy = busy,
         openFailed = openFailed,
@@ -458,7 +456,7 @@ private fun TodayDayStatus(
             )
         }
 
-        StudySession.State.UNDERWAY -> {
+        StudySession.State.UNDERWAY, StudySession.State.UNKNOWN_DEFAULT_OPEN_API -> {
             return
         }
     }

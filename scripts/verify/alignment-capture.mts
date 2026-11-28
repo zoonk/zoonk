@@ -61,8 +61,8 @@ export type CaptureElement = {
   disabled?: boolean;
   /** A text's: how many lines it runs to. */
   lines?: number | NotMeasured;
-  /** A row's: a supporting line sits under its label. */
-  note?: boolean;
+  /** A note's: how many descriptions it draws, where one note holds them all (Android). */
+  texts?: number | NotMeasured;
   /** A date lead opens a run of entries whose first line also holds the row's accessories. */
   role?: "date" | "words";
   type?: string;

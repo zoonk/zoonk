@@ -29,7 +29,6 @@ import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.beforeAfterRenderer
-import com.zoonk.android.feature.activities.canvasOwnsAnswer
 import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
@@ -83,6 +82,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.NumericCheck
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.model.canvasOwnsAnswer
 import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.feature.questions.decimalEntryRule
 import com.zoonk.android.ui.components.Eyebrow
@@ -149,9 +149,12 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "unitCircle" to unitCircleRenderer,
     )
 
+internal val ActivityFrame.renderer: ActivityRenderer?
+    get() = if (hasSupportedCanvas) activityRenderers[template] else null
+
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */
 val StepContent.Activity.isPlayable: Boolean
-    get() = frame.check !is InteractionCheckValue || frame.template in activityRenderers
+    get() = frame.check !is InteractionCheckValue || frame.renderer != null
 
 /** Main's `ActivityStep`: the badge and prompt, the picture, the check and the template's canvas, then its own feedback. */
 @Composable
@@ -165,7 +168,7 @@ internal fun ActivityView(
     part: StepPart,
 ) {
     val frame = content.frame
-    val renderer = activityRenderers[frame.template]
+    val renderer = frame.renderer
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
     val locked = state.phase != LessonPhase.Playing || step.isRequiredPictureDrawing
@@ -367,6 +370,7 @@ private fun NumericCheckField(
 internal val NumericCheck.allowed: Double
     get() =
         when (tolerance.kind) {
+            ActivityExpectedFormulaTolerance.Kind.UNKNOWN_DEFAULT_OPEN_API -> 0.0
             ActivityExpectedFormulaTolerance.Kind.ABSOLUTE -> tolerance.`value`
             ActivityExpectedFormulaTolerance.Kind.RELATIVE -> tolerance.`value` * abs(answer)
         }
@@ -386,7 +390,7 @@ internal fun ExploredActivityCanvas(
     explore: ExploredActivity,
     cantListen: Boolean,
 ) {
-    val renderer = activityRenderers[explore.frame.template] ?: return
+    val renderer = explore.frame.renderer ?: return
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         ScreenCanvas {
@@ -499,6 +503,8 @@ private fun ActivityFeedback(
             is InteractionCheckValue -> {
                 FeedbackText(check.value.explanation)
             }
+
+            else -> {}
         }
 
         LocalResultNotes.current?.invoke()

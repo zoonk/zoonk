@@ -1,10 +1,10 @@
 ---
 name: zoonk-capability-research
-description: Research current library, platform, AI model, and product capabilities before choosing a substantial implementation, adding infrastructure, or declaring a feature unavailable.
+description: Use before choosing a substantial implementation, adding infrastructure or declaring a feature unavailable, to check what current libraries, platforms, AI models and products already do.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Capability research

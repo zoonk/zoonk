@@ -6,13 +6,13 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { discountMath, discountQuestion } from "../library/items/_test-utils/math-problems";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -163,11 +163,12 @@ describe("math problems in sessions", () => {
       where: { itemId: item.id, userId: user.id },
     });
 
+    expect(attempt.evidence).toBe("independent");
     expect(attempt.answer).toStrictEqual({ number: paid, values: { discount, price } });
 
     const tomorrow = await studySessionFixture({
       goalId: goal.id,
-      localDate: new Date(SESSION_TODAY.getTime() + DAY_MS),
+      localDate: new Date(SESSION_TODAY.getTime() + MS_PER_DAY),
       userId: user.id,
     });
 

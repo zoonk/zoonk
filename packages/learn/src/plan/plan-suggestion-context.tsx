@@ -141,7 +141,7 @@ export function SlotUndo({ item }: { item: SlotItem }) {
 
   return (
     <SuggestionAction
-      action={undo}
+      onClick={undo}
       busy={isPending}
       icon={<Undo2Icon aria-hidden="true" />}
       variant="outline"

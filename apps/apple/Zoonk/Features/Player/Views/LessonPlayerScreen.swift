@@ -124,6 +124,11 @@ private struct LessonPlayerContent: View {
   var body: some View {
     NavigationStack {
       content
+        .simultaneousGesture(TapGesture().onEnded { store.act() })
+        .onKeyPress(phases: .down) { press in
+          if press.key != .tab && press.key != .escape { store.act() }
+          return .ignored
+        }
         // Main's task header: the title in the bar, the lesson's segments under it.
         .taskSegmentsBar(
           segments.map {
@@ -160,12 +165,6 @@ private struct LessonPlayerContent: View {
           }
         }
     }
-    // The learner's own taps and key presses anywhere in the lesson, seen without taking them.
-    .simultaneousGesture(TapGesture().onEnded { store.act() })
-    .onKeyPress(phases: .down) { _ in
-      store.act()
-      return .ignored
-    }
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
         .zoonkSheet()
@@ -182,13 +181,7 @@ private struct LessonPlayerContent: View {
         return
       }
 
-      store.isUnplayable = { [activityRenderers] step in
-        guard case .activity(let content) = step.content, case .interaction = content.check else {
-          return false
-        }
-
-        return activityRenderers.renderer(for: content.template) == nil
-      }
+      store.isUnplayable = activityRenderers.isUnplayable
       await store.load()
     }
     // Per opening: a lesson written on the learner's tap opens after `load()` has returned.
@@ -239,7 +232,7 @@ private struct LessonPlayerContent: View {
     }
     .onDisappear {
       store.setVisible(false)
-      store.cancelStart()
+      store.leave()
       store.reportAbandonment()
     }
   }
@@ -490,7 +483,7 @@ private struct LessonPlayerContent: View {
 
     return (
       LessonSaveTarget(lessonId: lesson.id, title: lesson.title, chapterTitle: lesson.chapterTitle),
-      goalId, savedLessons?.runSaved(lessonId: lesson.id)
+      goalId, savedLessons?.runSaved(lessonId: lesson.id) ?? lesson.saved
     )
   }
 

@@ -32,18 +32,16 @@ export function KeepPlusButton() {
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">{t("Keep Plus, and it renews as before.")}</p>
 
-      <form action={() => keep()} className="contents">
-        <Button
-          busy={pending}
-          className="w-max"
-          icon={<Undo2Icon aria-hidden="true" />}
-          size="lg"
-          type="submit"
-          variant="outline"
-        >
-          {t("Keep Plus")}
-        </Button>
-      </form>
+      <Button
+        busy={pending}
+        className="w-max"
+        icon={<Undo2Icon aria-hidden="true" />}
+        size="lg"
+        onClick={keep}
+        variant="outline"
+      >
+        {t("Keep Plus")}
+      </Button>
     </div>
   );
 }

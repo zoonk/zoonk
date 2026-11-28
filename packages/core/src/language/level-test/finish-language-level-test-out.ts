@@ -1,6 +1,5 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
-import { NOT_LESSON_ANSWER_FILTER } from "@zoonk/db/lesson-answer";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type AnalyticsEvent } from "../../analytics/events";
 import { type TestEnd } from "../../analytics/test-event-catalog";
@@ -56,10 +55,10 @@ async function getPassedTopics({
       skillId: true,
     },
     where: {
+      fromLesson: false,
       itemId: { not: null },
       mockExamId: null,
       skillId: { in: skillIds },
-      ...NOT_LESSON_ANSWER_FILTER,
       userId,
     },
   });

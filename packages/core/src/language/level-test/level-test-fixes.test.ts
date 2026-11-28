@@ -1,6 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { levelTestBankFixture } from "@zoonk/testing/fixtures/level-tests";
+import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { tapInLevelTest } from "../../_test-utils/shown-choice";
@@ -11,8 +12,6 @@ import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { levelTestPart } from "./level-test-parts";
-
-const MINUTE_MS = 60_000;
 
 /** A learner of a pair only this test uses, so its bank fixes reach no other test. */
 async function learnerWithBank() {
@@ -130,7 +129,7 @@ describe("level test answers to a question fixed during the test", () => {
 
     await moveAnswerKey({
       bankId,
-      decidedAt: new Date(Date.now() - 2 * MINUTE_MS),
+      decidedAt: new Date(Date.now() - 2 * MS_PER_MINUTE),
       questionId: first,
     });
 
@@ -153,7 +152,7 @@ describe("level test answers to a question fixed during the test", () => {
 
     await moveAnswerKey({
       bankId,
-      decidedAt: new Date(Date.now() - 10 * MINUTE_MS),
+      decidedAt: new Date(Date.now() - 10 * MS_PER_MINUTE),
       questionId: first,
     });
 
@@ -182,7 +181,7 @@ describe("level test answers to a question fixed during the test", () => {
     const { bankId, goalId } = await learnerWithBank();
 
     await prisma.goal.update({
-      data: { createdAt: new Date(Date.now() - 60 * MINUTE_MS) },
+      data: { createdAt: new Date(Date.now() - 60 * MS_PER_MINUTE) },
       where: { id: goalId },
     });
 
@@ -190,7 +189,7 @@ describe("level test answers to a question fixed during the test", () => {
 
     await moveAnswerKey({
       bankId,
-      decidedAt: new Date(Date.now() - 10 * MINUTE_MS),
+      decidedAt: new Date(Date.now() - 10 * MS_PER_MINUTE),
       questionId: first,
     });
 

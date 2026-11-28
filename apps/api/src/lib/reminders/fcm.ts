@@ -1,11 +1,10 @@
 import { hasFirebaseServiceAccount, sendFirebaseMessage } from "@zoonk/auth/google-service-account";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type PushOutcome, classifyFcmAnswer } from "./push-outcome";
 import { type ReminderText } from "./reminder-copy";
-
-const MS_PER_SECOND = 1000;
 
 /** The Android app registers a Firebase Installation ID, which FCM v1 targets as `fid`. */
 export async function sendFcmReminder({

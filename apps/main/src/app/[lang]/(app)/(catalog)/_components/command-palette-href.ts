@@ -7,7 +7,9 @@ export function getPaletteItemHref(item: PaletteItem) {
   }
 
   if (item.kind === "ask") {
-    return item.question ? (`/buddy?ask=${encodeURIComponent(item.question)}` as const) : "/buddy";
+    return item.question
+      ? (`/buddy/new?ask=${encodeURIComponent(item.question)}` as const)
+      : "/buddy";
   }
 
   if (item.kind === "startGoal") {

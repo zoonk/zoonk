@@ -2,6 +2,12 @@
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
+import {
+  SITEMAP_PAGES,
+  type SitemapResource,
+  getSitemapPageIds,
+} from "../../apps/main/src/data/sitemaps/sitemap-page-ids.ts";
+import { SUPPORTED_LOCALES } from "../../packages/utils/src/locale.ts";
 import { htmlMarkers } from "./html-markers.mts";
 import { getCatalogPlaceholderMatcher, getNavigationRoutes } from "./navigation-routes.mts";
 import { type PageMeta, getRedirectProblems, hasSetCookie } from "./redirect-artifacts.mts";
@@ -185,6 +191,35 @@ async function metadataArtifact({
   return { artifact: "metadata body", problems, route: path };
 }
 
+const SITEMAP_SOURCE = /^\/sitemaps\/(?<resource>[\w-]+)\/sitemap\/\[__metadata_id__\]$/u;
+
+function isSitemapResource(resource: string | undefined): resource is SitemapResource {
+  return resource !== undefined && Object.hasOwn(SITEMAP_PAGES, resource);
+}
+
+/**
+ * Next silently renders a path on each request when its prerender fails, so every path a route
+ * generates must be prerendered: each locale of a route whose only dynamic segment is the language,
+ * and each page of a sitemap.
+ */
+function expectedPaths(source: string): string[] {
+  const resource = SITEMAP_SOURCE.exec(source)?.groups?.resource;
+
+  if (isSitemapResource(resource)) {
+    return getSitemapPageIds(resource).map((id) =>
+      source.replace("[__metadata_id__]", `${id}.xml`),
+    );
+  }
+
+  const segments = source.match(/\[[^\]]+\]/gu) ?? [];
+
+  if (segments.length !== 1 || segments[0] !== "[lang]") {
+    return [];
+  }
+
+  return SUPPORTED_LOCALES.map((locale) => source.replace("[lang]", locale));
+}
+
 async function routeArtifacts({
   manifest,
   metadata,
@@ -200,13 +235,23 @@ async function routeArtifacts({
     ([path, entry]) => (entry.srcRoute ?? path) === source,
   );
 
+  const artifact = metadata ? "metadata body" : "HTML";
+  const prerendered = new Set(entries.map(([path]) => path));
+  const missing = expectedPaths(source).filter((path) => !prerendered.has(path));
+
+  const missingArtifacts =
+    missing.length > 0
+      ? [{ artifact, problems: [`not prerendered: ${missing.join(", ")}`], route: source }]
+      : [];
+
   if (entries.length === 0) {
     return [
       {
-        artifact: metadata ? "metadata body" : "HTML",
+        artifact,
         problems: [metadata ? "no static metadata artifact" : "no prerendered page"],
         route: source,
       },
+      ...missingArtifacts,
     ];
   }
 
@@ -224,6 +269,7 @@ async function routeArtifacts({
 
   return [
     ...artifacts,
+    ...missingArtifacts,
     ...(fallback && fallback !== "STATIC" && navigationStatic !== true
       ? [{ artifact: "fallback", problems: [`dynamic fallback is ${fallback}`], route: source }]
       : []),

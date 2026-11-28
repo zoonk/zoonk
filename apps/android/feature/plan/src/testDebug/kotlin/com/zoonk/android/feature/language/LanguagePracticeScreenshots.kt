@@ -23,7 +23,6 @@ import com.zoonk.api.models.LanguagePlanLevel
 import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.LanguageUnits
 import com.zoonk.api.models.LanguageUnitsAlphabet
-import com.zoonk.api.models.TodayPattern
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -96,7 +95,6 @@ class LanguagePracticeScreenshots {
             )
 
         fun alphabet(pending: Boolean) = LanguageUnitsAlphabet(null, UUID.randomUUID(), 10, pending, "Hiragana")
-        val pattern = TodayPattern(UUID.randomUUID(), TodayPattern.Kind.PATTERN, "Ser and estar")
         val words = LanguageTodayPronunciation(3, listOf("hola", "gracias", "perro"))
 
         compose.setContent {
@@ -106,8 +104,8 @@ class LanguagePracticeScreenshots {
                         LanguageLevelCard(LanguagePlanLevel("A2+", "B1"), "en", onOpenPlan = {})
                         AlphabetRow(alphabet(pending = true), goal, alphabetSkip(goal, store), {})
                         AlphabetRow(alphabet(pending = false), goal, alphabetSkip(goal, store), {})
-                        LanguagePracticeNotice(goal, pattern, words, SuggestionLayout.Line, {})
-                        LanguagePracticeNotice(goal, pattern, null, SuggestionLayout.Panel, {})
+                        LanguagePracticeNotice(goal, words, SuggestionLayout.Line, {})
+                        LanguagePracticeNotice(goal, words, SuggestionLayout.Panel, {})
                     }
                 }
             }

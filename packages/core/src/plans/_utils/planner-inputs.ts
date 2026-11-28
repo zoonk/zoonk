@@ -8,9 +8,10 @@ import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
-import { type DifficultyBias, type PlanGraph } from "../planner/plan-state";
-import { type SkillReadiness } from "../planner/skill-order";
+import { type DifficultyBias, type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { type MockMiss, type SkillReadiness } from "../planner/skill-order";
 import { getLevelFloor } from "./level-bands";
+import { loadPlanMockMisses } from "./mock-misses";
 import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { loadPlanWriting } from "./planner-writing";
@@ -90,6 +91,8 @@ export async function loadPlannerInputs({
   examPicks,
   goal,
   graph,
+  mockReplan,
+  now,
   skippedAreas,
   targetDate,
   userId,
@@ -107,6 +110,8 @@ export async function loadPlannerInputs({
     | "targetLanguage"
   >;
   graph: PlanGraph;
+  mockReplan: PlanSettings["mockReplan"];
+  now: Date;
   skippedAreas: readonly string[];
   targetDate: Date | null;
   userId: string;
@@ -131,6 +136,7 @@ export async function loadPlannerInputs({
     bands,
     startLessonId,
     currentLanguageLevel,
+    mockMisses,
   ] = await Promise.all([
     loadGoalPlannerLessons({ goal, graph, userId }),
     loadSkillPrerequisites(skillIds),
@@ -147,6 +153,7 @@ export async function loadPlannerInputs({
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
     findWrittenStartLessonId(goal),
     loadCurrentLanguageLevel({ ...goal, userId }, { forPlanning: true }),
+    isExam ? loadPlanMockMisses({ goalId: goal.id, mockReplan, now }) : new Map<string, MockMiss>(),
   ]);
 
   const { writingNotice, writtenSkillIds, ...examFacts } = exam;
@@ -187,6 +194,8 @@ export async function loadPlannerInputs({
       }),
     ),
     missedSkillIds: new Set([...missedSkillIds].toSorted()),
+    // Absent rather than empty, so a plan no mock reorders keeps the inputs key it was saved with.
+    ...(mockMisses.size > 0 && { mockMisses }),
     prerequisites: new Map([...prerequisites].toSorted(([a], [b]) => a.localeCompare(b))),
     readiness,
     startLessonId,

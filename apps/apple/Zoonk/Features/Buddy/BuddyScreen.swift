@@ -68,6 +68,9 @@ private struct BuddyContent: View {
   @Environment(BuddyStore.self) private var store
   @Environment(PracticeStore.self) private var practice
   @Environment(TutorStore.self) private var tutor
+  @Environment(AppRouter.self) private var router
+  @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.tutorPlaces) private var places
   @Environment(\.isCoveredByTask) private var isCovered
 
@@ -75,11 +78,15 @@ private struct BuddyContent: View {
   let goalId: String?
 
   @State private var isDayShown = false
+  @State private var isListShown = false
   @State private var isEditing = false
   @State private var isWearing = false
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
   @State private var missionTap = BuddyMissionTap()
+  /// Asking from the day waits for its sheet to close, then puts the cursor in the composer.
+  @State private var asksAfterDay = false
+  @State private var composerFocus = 0
   /// Says the editor's save failed, while the learner is on the page.
   @State private var saving = VisitRequest<Bool>()
 
@@ -94,6 +101,33 @@ private struct BuddyContent: View {
       studiedToday: status.energy.studiedToday)
   }
 
+  /// A guest can't ask, so there's nothing to list.
+  private var canTalk: Bool {
+    session.authenticatedSession != nil && summary.summary.value?.identity.isAnonymous != true
+  }
+
+  /// The goal's conversations, for a learner who can ask.
+  private var list: Resource<BuddyConversations>? {
+    guard canTalk, let goalId else {
+      return nil
+    }
+
+    return store.conversations(goalId: goalId)
+  }
+
+  /// The window's open conversation when it's this goal's.
+  private var scope: TutorScope? {
+    guard let goalId, let open = router.buddyConversation, open.goalId == goalId else {
+      return nil
+    }
+
+    return .plan(goalId: goalId, conversationId: open.id)
+  }
+
+  private var conversation: TutorConversation? {
+    scope.map { tutor.conversation($0) }
+  }
+
   /// Only while it's awake: asleep it naps on, and glowing it's already beaming with its eyes shut,
   /// so a smile would swap its face away.
   private func react(_ act: BuddyAct) {
@@ -105,23 +139,14 @@ private struct BuddyContent: View {
     // A pane rather than an inspector: a hidden tab's inspector turns into a sheet over the shown
     // tab when the width turns compact. The conversation keeps its identity as the pane comes and
     // goes, so what it's asking or opening goes on.
-    PaneBeside(paneEdge: .trailing, primaryShare: 0.55) {
-      dayView(showsTitle: true)
-        // A day opened in a sheet before iPhone Duo unfolded gives way to the pane.
-        .onAppear { isDayShown = false }
+    PaneBeside(isAvailable: list != nil, paneEdge: .trailing, primaryShare: 0.55) {
+      if let goalId {
+        conversationList(goalId: goalId, inSheet: false)
+          // A list opened in a sheet before iPhone Duo unfolded gives way to the pane.
+          .onAppear { isListShown = false }
+      }
     } content: { isBeside in
-      thread(opensDay: !isBeside)
-        .onChange(
-          of: BuddyDayOpening(
-            goalID: status.today?.goalId, localDate: status.today?.localDate,
-            inSheet: isDayShown, inPane: isBeside)
-        ) { previous, opening in
-          if previous.goalID != opening.goalID || previous.localDate != opening.localDate
-            || previous.inSheet && !opening.inSheet && !opening.inPane
-          {
-            missionTap.cancel()
-          }
-        }
+      thread(listsBeside: isBeside)
     }
     .barTitleAfterHero(name)
     .taskOptions(
@@ -131,8 +156,12 @@ private struct BuddyContent: View {
     ) {
       menuItems
     }
-    .sheet(isPresented: $isDayShown) {
-      let day = dayView(showsTitle: false)
+    .modifier(LoadsList(list: list))
+    .sheet(isPresented: $isDayShown, onDismiss: focusComposerAfterDay) {
+      let day = BuddyDayView(status: status, name: name, tap: missionTap) {
+        asksAfterDay = true
+        isDayShown = false
+      }
 
       NavigationStack {
         day
@@ -144,6 +173,20 @@ private struct BuddyContent: View {
       .presentationDetents([.medium, .large])
       .closesOnNavigation()
       .zoonkSheet()
+    }
+    .sheet(isPresented: $isListShown) {
+      if let goalId {
+        let list = conversationList(goalId: goalId, inSheet: true)
+
+        NavigationStack {
+          list
+            .navigationTitle(list.title)
+            .navigationBarTitleDisplayMode(.inline)
+            .sheetClose { isListShown = false }
+        }
+        .presentationDetents([.medium, .large])
+        .zoonkSheet()
+      }
     }
     .sheet(isPresented: $isEditing) {
       BuddyEditor(
@@ -159,15 +202,23 @@ private struct BuddyContent: View {
       BuddyGlassesPicker(status: status)
         .zoonkSheet()
     }
-    .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
-      _, isAsking in
+    .onChange(
+      of: BuddyDayOpening(
+        goalID: status.today?.goalId, localDate: status.today?.localDate, inSheet: isDayShown)
+    ) { previous, opening in
+      if previous.goalID != opening.goalID || previous.localDate != opening.localDate
+        || previous.inSheet && !opening.inSheet
+      {
+        missionTap.cancel()
+      }
+    }
+    .onChange(of: conversation?.isAsking ?? false) { _, isAsking in
       if isAsking {
         react(.glance)
       }
     }
-    .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).answeringID } ?? nil) {
-      answered, answering in
-      let turn = goalId.flatMap { tutor.conversation(.plan(goalId: $0)).turns.last }
+    .onChange(of: conversation?.answeringID) { answered, answering in
+      let turn = conversation?.turns.last
       if let answered, answering == nil, turn?.id == answered, turn?.status == .completed {
         react(.smile)
       }
@@ -181,42 +232,142 @@ private struct BuddyContent: View {
       missionTap.cancel()
       saving.leave()
     }
-    .onChange(of: store.broughtQuestion, initial: true) { _, question in
-      guard let question else {
-        return
+    .onChange(
+      of: BuddyOpening(
+        goalId: goalId, request: router.buddyRequest, isOpen: scope != nil,
+        list: list.map { BuddyOpening.ListRead($0.state) }),
+      initial: true
+    ) {
+      openConversation()
+    }
+    // A link to a conversation that isn't this goal's opens the tab as a visit does.
+    .onChange(of: isMissing) { _, isMissing in
+      if isMissing {
+        router.buddyConversation = nil
       }
-
-      if let goalId {
-        tutor.conversation(.plan(goalId: goalId)).draft = question
-      } else {
-        goalDraft = question
-      }
-
-      store.broughtQuestion = nil
     }
   }
 
-  private func dayView(showsTitle: Bool) -> BuddyDayView {
-    BuddyDayView(
-      status: status, name: name, tap: missionTap,
-      onGlasses: {
-        // A phone's day is a sheet: it gives way to the glasses' own sheet.
-        if !showsTitle {
-          isDayShown = false
-        }
-
-        isWearing = true
-      }, showsTitle: showsTitle)
+  private func focusComposerAfterDay() {
+    if asksAfterDay {
+      asksAfterDay = false
+      composerFocus += 1
+    }
   }
 
-  private func thread(opensDay: Bool) -> some View {
-    conversation(showsFace: !opensDay)
-      .safeAreaBar(edge: .top) {
-        VStack(alignment: .leading, spacing: 0) {
-          PageHeader(Text(name))
+  /// Not the learner's under this goal, or no conversation at all: one always has a question.
+  private var isMissing: Bool {
+    guard let conversation, !conversation.isNew, !conversation.isAsking,
+      !conversation.hasUnsentQuestion, conversation.askFailure == nil
+    else {
+      return false
+    }
 
-          if opensDay {
-            dayLine
+    switch conversation.thread.state {
+    case .failed(.notFound): return true
+    case .loaded(let page): return page.turns.isEmpty
+    default: return false
+    }
+  }
+
+  private func openConversation() {
+    let request = router.buddyRequest
+    router.buddyRequest = nil
+
+    guard let goalId else {
+      if case .new(let ask?) = request {
+        goalDraft = ask
+      }
+
+      return
+    }
+
+    switch BuddyOpening.next(
+      request: request, isOpen: scope != nil, list: list.map { .init($0.state) })
+    {
+    case .conversation(let id):
+      router.buddyConversation = BuddyOpenConversation(goalId: goalId, id: id)
+    case .new(let ask):
+      startNew(goalId: goalId, ask: ask)
+    case nil:
+      break
+    }
+  }
+
+  /// The open one when nothing was asked in it yet; the app names it, and asking makes it.
+  private func startNew(goalId: String, ask: String? = nil) {
+    let open = conversation.flatMap { $0.isNew ? scope : nil }
+    let scope =
+      open ?? .plan(goalId: goalId, conversationId: UUID().uuidString.lowercased())
+    let conversation = tutor.conversation(scope, isNew: true)
+
+    if case .plan(_, let id) = scope {
+      router.buddyConversation = BuddyOpenConversation(goalId: goalId, id: id)
+    }
+
+    if let ask {
+      conversation.draft = ask
+    }
+  }
+
+  private func conversationList(goalId: String, inSheet: Bool) -> BuddyConversationList {
+    BuddyConversationList(
+      goalId: goalId, open: openRow, showsTitle: !inSheet,
+      startNew: {
+        startNew(goalId: goalId)
+        isListShown = false
+      },
+      select: { id in
+        router.buddyConversation = BuddyOpenConversation(goalId: goalId, id: id)
+        isListShown = false
+      })
+  }
+
+  private var openRow: BuddyOpenRow? {
+    guard let conversation, case .plan(_, let id) = conversation.scope else {
+      return nil
+    }
+
+    let questions = conversation.turns + [conversation.asking].compactMap(\.self)
+
+    return BuddyOpenRow(
+      id: id,
+      asked: questions.first.map { first in
+        BuddyOpenRow.Asked(
+          title: first.question, lastAskedAt: questions.last?.createdAt ?? first.createdAt)
+      })
+  }
+
+  /// The buddy's face, its name as the page's title and its Energy after the name on one row, as
+  /// main's; where the list isn't beside it, its button ends the row: the bar has no room left on a
+  /// phone.
+  private func thread(listsBeside: Bool) -> some View {
+    conversationView
+      .safeAreaBar(edge: .top) {
+        PageHeader(Text(name)) {
+          face
+        } beside: {
+          // Beside the name it reads as the buddy's status, not as one of the row's buttons.
+          energyButton
+            .fixedSize()
+        } trailing: {
+          if !listsBeside, list?.value != nil {
+            Button {
+              isListShown = true
+            } label: {
+              Label {
+                Text(
+                  "Conversations", tableName: "Buddy",
+                  comment:
+                    "The list of the learner's separate conversations with their buddy, and the button that opens it."
+                )
+              } icon: {
+                Image(systemName: "bubble.left.and.bubble.right")
+              }
+              .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.ghost.icon.endsRow)
+            .controlSize(.small)
           }
         }
         .listRowEdges()
@@ -228,26 +379,43 @@ private struct BuddyContent: View {
   }
 
   @ViewBuilder
-  private func conversation(showsFace: Bool) -> some View {
+  private var conversationView: some View {
     if let goalId {
-      let mistakes = practice.mistakes(goalId: goalId, fixed: false)
+      if let scope {
+        let mistakes = practice.mistakes(goalId: goalId, fixed: false)
 
-      TutorThreadView(
-        scope: .plan(goalId: goalId),
-        suggestions: suggestions(mistakes: mistakes.state),
-        placeholder: Text(
-          "Ask anything", tableName: "Buddy",
-          comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
-        isPage: true
-      ) {
-        HStack(alignment: .top, spacing: 12) {
-          if showsFace {
-            face
-          }
+        TutorThreadView(
+          scope: scope,
+          suggestions: suggestions(mistakes: mistakes.state),
+          placeholder: Text(
+            "Ask anything", tableName: "Buddy",
+            comment: "Placeholder of the buddy's composer: it answers and changes the plan"),
+          isPage: true,
+          composerFocus: composerFocus
+        ) {
           greeting
         }
+        // Another conversation starts at its own end, with nothing of this one's scroll.
+        .id(scope)
+        .loads(mistakes, refreshable: false)
+      } else if case .failed = list?.state {
+        PageLoadFailure(inBar: false) {
+          Label {
+            Text("Your buddy", tableName: "Buddy", comment: "Title of the Buddy tab")
+          } icon: {
+            Image(systemName: "face.smiling")
+          }
+        } description: {
+          Text(
+            "Something went wrong. Try again.", tableName: "Buddy",
+            comment: "The buddy conversations couldn't be read")
+        } retry: {
+          await list?.refresh()
+        }
+      } else {
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
-      .loads(mistakes, refreshable: false)
     } else {
       BuddyGoalStart(name: name, goal: $goalDraft)
     }
@@ -343,69 +511,51 @@ private struct BuddyContent: View {
       .frame(width: 32, height: 32)
   }
 
-  private var dayLine: some View {
-    HStack(spacing: 16) {
-      Button {
-        isDayShown = true
-      } label: {
-        face
+  private var energyTitle: Text {
+    Text(
+      "\(name)'s Energy", tableName: "Buddy",
+      comment: "The buddy's Energy; the argument is its name")
+  }
+
+  /// Main's Energy on the buddy's row: its value, or a faint dash before the first lesson.
+  private var energyValue: Text {
+    guard let current = status.energy.current else {
+      return Text(verbatim: "–").foregroundStyle(.faint)
+    }
+
+    return Text(
+      (current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage)))
+  }
+
+  private var energyButton: some View {
+    Button {
+      isDayShown = true
+    } label: {
+      Label {
+        energyValue
+      } icon: {
+        Image(systemName: "bolt.fill")
+          .foregroundStyle(.energy)
       }
-      .accessibilityLabel(Text(name))
-      .accessibilityHint(
-        Text(
-          "Shows \(name)'s day", tableName: "Buddy",
-          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-      )
-
-      AccessibilityStack(spacing: 16, stackedSpacing: 4) {
-        Button {
-          places.open(.energy)
-        } label: {
-          Label {
-            if let current = status.energy.current {
-              Text(
-                "\((current / 100).formatted(.percent.precision(.fractionLength(0)).locale(.appLanguage))) Energy",
-                tableName: "Buddy",
-                comment: "The buddy's Energy beside its bolt, such as \"68% Energy\"")
-            } else {
-              Text("Energy", tableName: "Progress")
-            }
-          } icon: {
-            Image(systemName: "bolt.fill")
-              .foregroundStyle(.energy)
-          }
-          .frame(minHeight: 44)
-          .contentShape(.rect)
-        }
-
-        if let today = status.today, !today.missions.isEmpty {
-          Button {
-            isDayShown = true
-          } label: {
-            Label {
-              Text(
-                "\(today.missions.filter { $0.status == .done }.count) of \(today.missions.count) missions",
-                tableName: "Buddy", comment: "Today's missions done, such as \"0 of 3 missions\"")
-            } icon: {
-              Image(systemName: "checklist")
-            }
-            .frame(minHeight: 44)
-            .contentShape(.rect)
-          }
-        }
-      }
-      .fixedSize(horizontal: false, vertical: true)
-
-      Spacer(minLength: 0)
-
-      DisclosureChevron()
+      .labelStyle(.titleAndIcon)
+      .typeStyle(.note)
+      .monospacedDigit()
+      .foregroundStyle(.mutedForeground)
+      .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+      .contentShape(.rect)
     }
     .buttonStyle(.plain)
-    .labelStyle(.titleAndIcon)
-    .typeStyle(.note)
-    .monospacedDigit()
-    .foregroundStyle(.mutedForeground)
-    .contentShape(.rect)
+    .accessibilityLabel(energyTitle)
+    .accessibilityValue(
+      status.energy.current == nil
+        ? Text("Not yet", tableName: "Progress", comment: "A stat without a value yet")
+        : energyValue
+    )
+    .accessibilityHint(
+      Text(
+        "Shows \(name)'s day", tableName: "Buddy",
+        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+    )
   }
 
   @ViewBuilder
@@ -443,6 +593,18 @@ private struct BuddyContent: View {
         comment: "Glasses earned of all of them")
     }
 
+    Button {
+      places.open(.memory)
+    } label: {
+      Label {
+        Text(
+          "What \(name) remembers", tableName: "Buddy",
+          comment: "Opens what the buddy remembers; the argument is its name")
+      } icon: {
+        Image(systemName: "brain")
+      }
+    }
+
     Divider()
 
     Button {
@@ -461,5 +623,17 @@ private struct BuddyDayOpening: Equatable {
   let goalID: String?
   let localDate: String?
   let inSheet: Bool
-  let inPane: Bool
+}
+
+/// Reads the list only for a learner who has one.
+private struct LoadsList: ViewModifier {
+  let list: Resource<BuddyConversations>?
+
+  func body(content: Content) -> some View {
+    if let list {
+      content.loads(list, refreshable: false)
+    } else {
+      content
+    }
+  }
 }

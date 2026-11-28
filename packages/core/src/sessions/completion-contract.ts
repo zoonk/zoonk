@@ -101,8 +101,6 @@ export const questionAnswerSchema = z
 export const missionOpensSchema = z
   .discriminatedUnion("kind", [
     z.object({ blockId: idSchema, kind: z.literal("block") }),
-    z.object({ kind: z.literal("mistakesPractice") }),
-    z.object({ kind: z.literal("pattern"), patternId: idSchema }),
     z.object({ kind: z.literal("pronunciation") }),
     z.object({ chapterId: idSchema, kind: z.literal("call") }),
     z.object({ kind: z.literal("buddy") }),
@@ -121,7 +119,6 @@ const missionDetailSchema = z
     chapterTitle: z.string().optional(),
     count: countSchema.optional(),
     minutes: z.number().min(0).optional(),
-    patternTitle: z.string().optional(),
     rematch: z.boolean().optional(),
     title: z
       .string()

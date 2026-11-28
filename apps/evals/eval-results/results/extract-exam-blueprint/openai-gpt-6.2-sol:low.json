@@ -6,17 +6,17 @@
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 8.933333333333334
+          "score": 9.2
         }
       ],
       "testCase": {
@@ -33,7 +33,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-1",
         "language": "pt",
@@ -44,7 +45,8 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
@@ -53,17 +55,17 @@
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 8/8. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 8.933333333333334
+          "score": 9.2
         }
       ],
       "testCase": {
@@ -80,7 +82,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-2",
         "language": "pt",
@@ -91,7 +94,8 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
@@ -100,17 +104,17 @@
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 16/16. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 8.933333333333334
+          "score": 9.2
         }
       ],
       "testCase": {
@@ -127,7 +131,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-1",
         "language": "en",
@@ -138,7 +143,8 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
@@ -147,17 +153,17 @@
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "majorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "minorErrors",
-          "score": 8.933333333333334
+          "score": 9.2
         },
         {
           "conclusion": "Facts kept 2/3 (read 2). passages found 15/15. problems left 0. missing: {\"kind\":\"shortTopics\"}",
           "kind": "potentialImprovements",
-          "score": 8.933333333333334
+          "score": 9.2
         }
       ],
       "testCase": {
@@ -174,7 +180,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-2",
         "language": "en",
@@ -185,7 +192,220 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "majorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "minorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "potentialImprovements",
+          "score": 8.08
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "majorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "minorErrors",
+          "score": 8.08
+        },
+        {
+          "conclusion": "Facts kept 1/4 (read 1). passages found 2/2. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
+          "kind": "potentialImprovements",
+          "score": 8.08
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 6/6. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Boyle's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Charles's law"
+            },
+            {
+              "kind": "topic",
+              "topic": "Ideal gas law"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "Chem quiz Friday - gas laws\n\nBoyle's law: P1V1 = P2V2 (constant T)\nCharles's law: V1/T1 = V2/T2, T in kelvin!\nIdeal gas law: PV = nRT, R = 0.0821 L·atm/(mol·K)\nEx: 2.0 mol at 300 K in 10 L -> P = (2.0)(0.0821)(300)/10 = 4.9 atm\nSTP: 0 °C and 1 atm, 1 mol of gas = 22.4 L\nPractice 3: a balloon goes from 2.0 L at 25 °C to 50 °C. New volume?",
+              "title": "Gas laws notes"
+            }
+          ],
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     }

@@ -1640,17 +1640,17 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1669,7 +1669,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-1",
         "language": "pt",
@@ -1680,24 +1681,25 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 3/3. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1716,7 +1718,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "pt-class-notes-biologia-celular-2",
         "language": "pt",
@@ -1727,7 +1730,8 @@
               "title": "Resumo pra prova de biologia"
             }
           ],
-          "exam": "Prova de biologia (1º ano), a célula"
+          "exam": "Prova de biologia (1º ano), a célula",
+          "material": true
         }
       }
     },
@@ -1763,7 +1767,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-1",
         "language": "en",
@@ -1774,24 +1779,25 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 3/3 (read 3). passages found 8/8. problems left 0",
+          "conclusion": "Facts kept 3/3 (read 3). passages found 13/13. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -1810,7 +1816,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-class-notes-ap-biology-unit-2-2",
         "language": "en",
@@ -1821,109 +1828,8 @@
               "title": "Unit 2 review"
             }
           ],
-          "exam": "AP Biology unit 2 test"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "topic",
-              "topic": "Velocidade média"
-            },
-            {
-              "kind": "topic",
-              "topic": "Aceleração"
-            },
-            {
-              "kind": "topic",
-              "topic": "Função horária"
-            },
-            {
-              "kind": "shortTopics"
-            }
-          ]
-        },
-        "id": "pt-photo-notes-transcript-with-latex-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
-              "title": "Foto das anotações de física"
-            }
-          ],
-          "exam": "Prova de física (1º ano), cinemática"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
-          "kind": "majorErrors",
-          "score": 7.6
-        },
-        {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
-          "kind": "minorErrors",
-          "score": 7.6
-        },
-        {
-          "conclusion": "Facts kept 1/4 (read 4). passages found 1/1. problems left 0. missing: {\"kind\":\"topic\",\"topic\":\"Velocidade média\"}; {\"kind\":\"topic\",\"topic\":\"Aceleração\"}; {\"kind\":\"topic\",\"topic\":\"Função horária\"}",
-          "kind": "potentialImprovements",
-          "score": 7.6
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "topic",
-              "topic": "Velocidade média"
-            },
-            {
-              "kind": "topic",
-              "topic": "Aceleração"
-            },
-            {
-              "kind": "topic",
-              "topic": "Função horária"
-            },
-            {
-              "kind": "shortTopics"
-            }
-          ]
-        },
-        "id": "pt-photo-notes-transcript-with-latex-2",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
-              "title": "Foto das anotações de física"
-            }
-          ],
-          "exam": "Prova de física (1º ano), cinemática"
+          "exam": "AP Biology unit 2 test",
+          "material": true
         }
       }
     },
@@ -1963,7 +1869,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-1",
         "language": "en",
@@ -1974,24 +1881,25 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
         }
       }
     },
     {
       "steps": [
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "Facts kept 4/4 (read 4). passages found 5/5. problems left 0",
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -2014,7 +1922,8 @@
             {
               "kind": "shortTopics"
             }
-          ]
+          ],
+          "usable": true
         },
         "id": "en-typed-notes-with-formulas-and-a-worked-example-2",
         "language": "en",
@@ -2025,7 +1934,952 @@
               "title": "Gas laws notes"
             }
           ],
-          "exam": "Chemistry quiz on gas laws"
+          "exam": "Chemistry quiz on gas laws",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-2",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-3",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-4",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-5",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-6",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-7",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 4/4 (read 4). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "topic",
+              "topic": "Velocidade média"
+            },
+            {
+              "kind": "topic",
+              "topic": "Aceleração"
+            },
+            {
+              "kind": "topic",
+              "topic": "Função horária"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "pt-photo-notes-transcript-with-latex-8",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Cinemática - MUV\n\nVelocidade média: $v_m = \\Delta s / \\Delta t$\n\nAceleração: $a = \\Delta v / \\Delta t$ (unidade: $m/s^2$)\n\nFunção horária: $s = s_0 + v_0 \\cdot t + a \\cdot t^2 / 2$\n\nEx.: $s = 12 - 3,5 \\cdot t$ → $v_0 = -3,5$ m/s\n\n(movimento retrógrado)\n\nFreando: $a = -2,5$ m/s² (sinal contrário ao de v)\n\nMov. uniformemente variado: $a$ constante $\\neq 0$\n\nExercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele para?",
+              "title": "Foto das anotações de física"
+            }
+          ],
+          "exam": "Prova de física (1º ano), cinemática",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-1",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-2",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-3",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-4",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-5",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-6",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 1/1. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-7",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Facts kept 6/6 (read 6). passages found 5/5. problems left 0",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "subject",
+              "name": "Electricity"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Current"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Ohm's law"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Power"
+            },
+            {
+              "kind": "topic",
+              "subject": "Electricity",
+              "topic": "Series circuit"
+            },
+            {
+              "kind": "shortTopics"
+            }
+          ],
+          "usable": true
+        },
+        "id": "en-photo-notes-under-one-title-8",
+        "language": "en",
+        "userInput": {
+          "documents": [
+            {
+              "text": "# Electricity - circuits\n\nCurrent: $I = Q / t$ (unit: ampere)\n\nOhm's law: $V = I \\cdot R$\n\nEx.: $R = 6\\,\\Omega$, $I = 2$ A → $V = 12$ V\n\nPower: $P = V \\cdot I$\n\nSeries circuit: same current through every resistor, $R_{total} = R_1 + R_2$\n\nQ3: a 9 V battery drives 0.5 A. What is the resistance?",
+              "title": "Photo of physics notes"
+            }
+          ],
+          "exam": "Physics test on circuits",
+          "material": true
         }
       }
     }

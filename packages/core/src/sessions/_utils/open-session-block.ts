@@ -1,5 +1,6 @@
 import "server-only";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
+import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { openLanguageCheckpointCall } from "../../language/conversations/start-language-conversation";
 import { type OpenStudyBlockResult, type StudyBlockOpening } from "../open-block-contract";
 import { type StartStudyBlockResult, startStudyBlock } from "../start-study-block";
@@ -8,8 +9,9 @@ import { type StudyBlockView } from "./session-view";
 type BlockToOpen = {
   block: Pick<
     StudyBlockView,
-    "checkpoint" | "id" | "kind" | "lessonId" | "planItemId" | "screen" | "status"
+    "checkpoint" | "id" | "kind" | "lessonId" | "patternId" | "planItemId" | "screen" | "status"
   >;
+  goalId: string | null;
   sessionId: string;
   timeZone: string | undefined;
   /** From the capability that authorized the session. */
@@ -63,7 +65,7 @@ async function startMockWithoutIntro({
   toOpen: { block, sessionId, timeZone },
 }: {
   screen: StudyBlockOpening;
-  toOpen: Omit<BlockToOpen, "userId">;
+  toOpen: Pick<BlockToOpen, "block" | "sessionId" | "timeZone">;
 }): Promise<OpenStudyBlockResult> {
   const started = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
@@ -127,6 +129,14 @@ async function openChallenge({
 }
 
 function toStartedOpening({ block, sessionId }: BlockToOpen): StudyBlockOpening {
+  if (block.screen === "mistakesPractice") {
+    return { blockId: block.id, kind: "mistakesPractice", sessionId };
+  }
+
+  if (block.screen === "pattern" && block.patternId) {
+    return { blockId: block.id, kind: "pattern", patternId: block.patternId, sessionId };
+  }
+
   if (block.kind === "produce") {
     return { blockId: block.id, kind: "essay", sessionId };
   }
@@ -139,15 +149,18 @@ function toStartedOpening({ block, sessionId }: BlockToOpen): StudyBlockOpening 
 /**
  * Where a block of an owned session opens. A lesson that isn't written is left to the learner's
  * request for it: preparation would compete with that request and hide its refusal or use its
- * allowance. A placeholder has no lesson to ask for until preparation picks it.
+ * allowance. If its former lesson was deleted, the goal can ask for its lessons again.
  */
 export async function openSessionBlock(toOpen: BlockToOpen): Promise<OpenStudyBlockResult> {
-  const { block, sessionId, timeZone } = toOpen;
+  const { block, goalId, sessionId, timeZone, userId } = toOpen;
 
   if (block.kind === "learn" && block.screen !== "lesson") {
     if (!block.lessonId) {
-      await prepareSession(toOpen);
-      return openingResult({ blockId: block.id, kind: "preparingLesson", sessionId });
+      if (goalId) {
+        await oweGoalLessons({ goalId, requirePlan: true, userId });
+      }
+
+      return openingResult({ kind: "today" });
     }
 
     return openingResult({

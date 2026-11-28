@@ -108,6 +108,7 @@ internal fun DailyCoverage(
                     focus.pickedTime.requestFocus()
                 },
                 today = page.today,
+                subjectsTakenOut = page.subjectsTakenOut,
             )
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
@@ -219,7 +220,7 @@ internal fun MoveDateSwitch(
         ) {
             Text(
                 date?.let { stringResource(R.string.plan_move_date_to, formatDate(it, currentLocale(), DateStyle.Long, page.today)) }
-                    ?: stringResource(R.string.plan_move_date),
+                    ?: stringResource(moveDateLabel(page)),
             )
         }
         when (outcome) {
@@ -257,3 +258,6 @@ internal class CoverageFocus {
     val moveDate = FocusRequester()
     val studyEverything = FocusRequester()
 }
+
+internal fun moveDateLabel(page: PlanPageState): Int =
+    if (page.subjectsTakenOut) R.string.plan_move_date_in_plan else R.string.plan_move_date

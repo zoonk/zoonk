@@ -16,6 +16,17 @@ final class AppNavigationTests: XCTestCase {
       ("https://www.zoonk.com/today", .tab(.today)),
       ("https://www.zoonk.com/pt/plan", .tab(.plan)),
       ("https://www.zoonk.com/pt/buddy/earlier-questions?cursor=old", .tab(.buddy)),
+      ("https://www.zoonk.com/buddy", .tab(.buddy)),
+      ("https://www.zoonk.com/buddy?ask=Why%20orbits%3F", .buddy(.new(ask: "Why orbits?"))),
+      ("https://www.zoonk.com/buddy/new", .buddy(.new(ask: nil))),
+      (
+        "https://www.zoonk.com/pt/buddy/new?ask=Can%20I%20skip%20Saturday%3F",
+        .buddy(.new(ask: "Can I skip Saturday?"))
+      ),
+      (
+        "https://www.zoonk.com/pt/buddy/0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10",
+        .buddy(.conversation(id: "0b9a6f3e-5d1c-4f7a-9a51-2f6c3d8e7b10"))
+      ),
       ("https://www.zoonk.com/stats", .route(.statistics())),
       (
         "https://www.zoonk.com/plan/biology%20basics",
@@ -35,7 +46,11 @@ final class AppNavigationTests: XCTestCase {
         .route(.lesson(lessonId: "l1", sessionId: "s1", opening: .block("b1")))
       ),
       ("https://www.zoonk.com/learn/l1?session=", .route(.lesson(lessonId: "l1"))),
-      ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(skillId: "k1"))),
+      ("https://www.zoonk.com/mistakes/practice?skill=k1", .route(.mistakePractice(.skill("k1")))),
+      (
+        "https://www.zoonk.com/mistakes/practice?blockId=b1", .route(.mistakePractice(.block("b1")))
+      ),
+      ("https://www.zoonk.com/mistakes/practice?mockId=m1", .route(.mistakePractice(.mock("m1")))),
       ("https://www.zoonk.com/test-out/c1", .route(.testOut(chapterId: "c1"))),
       (
         "https://www.zoonk.com/test-out/c1?result=r1",
@@ -76,6 +91,7 @@ final class AppNavigationTests: XCTestCase {
       "https://www.zoonk.com/pricing",
       "https://www.zoonk.com/learn",
       "https://www.zoonk.com/content/chapters/c1/extra",
+      "https://www.zoonk.com/buddy/not-a-conversation",
       "com.googleusercontent.apps.123:/oauth2redirect?code=1",
     ] {
       XCTAssertNil(AppLink(url: try XCTUnwrap(URL(string: url))), url)
@@ -127,6 +143,27 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertEqual(first.playback.playingBlockID, "b1", "Another window's block leaves this one's")
     XCTAssertEqual(first.tasks, [.session])
     XCTAssertNil(second.playback.playingBlockID)
+  }
+
+  /// A day's mistakes and pattern open over the session, as the day's other steps do, so going on
+  /// from one shows the day's next stop.
+  @MainActor
+  func testADaysMistakesAndPatternOpenOverTheSession() async throws {
+    func destination(_ json: String) throws -> StudyDestination {
+      StudyDestination(try JSONDecoder().decode(StudyBlockOpening.self, from: Data(json.utf8)))
+    }
+
+    let mistakes = AppRouter()
+    mistakes.openStudy(
+      try destination(#"{"kind":"mistakesPractice","blockId":"b1","sessionId":"s1"}"#))
+    try await waitForTestCondition("Opened") { mistakes.tasks.count == 2 }
+    XCTAssertEqual(mistakes.tasks, [.session, .mistakePractice(.block("b1"))])
+
+    let pattern = AppRouter()
+    pattern.openStudy(
+      try destination(#"{"kind":"pattern","blockId":"b2","patternId":"p1","sessionId":"s1"}"#))
+    try await waitForTestCondition("Opened") { pattern.tasks.count == 2 }
+    XCTAssertEqual(pattern.tasks, [.session, .pattern(patternId: "p1", inDay: true)])
   }
 
   @MainActor

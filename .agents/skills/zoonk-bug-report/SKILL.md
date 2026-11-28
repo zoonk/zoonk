@@ -1,10 +1,10 @@
 ---
 name: zoonk-bug-report
-description: File a Zoonk bug report on GitHub for anyone, technical or not, in any language. Ask in their words for what's missing, write the issue in English and keep private details out. Use when someone asks you to report a bug or a problem in Zoonk.
+description: Use when someone, technical or not and in any language, asks you to report a bug or a problem they hit in Zoonk.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Reporting a Zoonk bug

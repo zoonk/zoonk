@@ -69,7 +69,7 @@ final class TodayVisitTests: XCTestCase {
       goal: try decode(
         #"{"dateEstimated":false,"daysLeft":null,"id":"\#(PageServer.goalID)","kind":"exam","title":"ENEM"}"#
       ),
-      insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+      insight: nil, mockFunding: nil, notice: nil,
       planChange: nil,
       progress: TodayView.Progress(
         lessons: nil, measure: "lessons",

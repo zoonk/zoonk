@@ -1,8 +1,11 @@
 import "server-only";
-import { getLessonGenerationStates } from "../../library/generation/lesson-generation-state";
+import {
+  type LessonGenerationState,
+  getLessonGenerationStates,
+} from "../../library/generation/lesson-generation-state";
 import { type DayBlockScreen, type DayWork, getBlockScreen, isLessonLink } from "../day-block";
 
-type LessonStates = ReadonlyMap<string, { status: string }>;
+type LessonStates = ReadonlyMap<string, LessonGenerationState>;
 
 /** A GET's request-wide lesson states; without it, they're read fresh. */
 export type LessonStatesReader = (lessonIds: readonly string[]) => Promise<LessonStates>;
@@ -28,7 +31,18 @@ export function withLessonScreens<
   return {
     ...day,
     blocks: day.blocks.map((block) => {
-      const screened = { ...block, screen: getBlockScreen(block, lessonStates) };
+      const state =
+        block.kind === "learn" && block.lessonId ? lessonStates.get(block.lessonId) : undefined;
+
+      const lesson = state
+        ? { setAside: state.status === "failed" && state.setAside, status: state.status }
+        : null;
+
+      const screened = {
+        ...block,
+        lesson,
+        ...(block.kind === "learn" && { screen: getBlockScreen(block, lessonStates) }),
+      };
 
       return {
         ...screened,

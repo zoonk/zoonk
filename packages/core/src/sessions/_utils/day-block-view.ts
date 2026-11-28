@@ -6,7 +6,7 @@ import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../bloc
 import { studyCheckpointSchema } from "../block-view-contract";
 import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
-import { getBlockScreen } from "../day-block";
+import { getBlockScreen, isOutsidePlanLesson } from "../day-block";
 import { type DayBlockView } from "../day-view";
 import { getPracticeNumber } from "./practice-number";
 
@@ -111,6 +111,31 @@ function getWritingFields({
   };
 }
 
+function getMistakeWork({
+  block,
+  mistakeIds,
+  pendingMistakeMinutes,
+}: {
+  block: DayBlockInput;
+  mistakeIds: readonly string[];
+  pendingMistakeMinutes?: ReadonlyMap<string, number>;
+}) {
+  if (
+    !pendingMistakeMinutes ||
+    mistakeIds.length === 0 ||
+    (block.status !== "active" && block.status !== "pending")
+  ) {
+    return { estimatedMinutes: block.estimatedMinutes ?? 0, mistakeQuestions: mistakeIds.length };
+  }
+
+  const remaining = mistakeIds.flatMap((id) => pendingMistakeMinutes.get(id) ?? []);
+
+  return {
+    estimatedMinutes: Math.ceil(remaining.reduce((sum, minutes) => sum + minutes, 0)),
+    mistakeQuestions: remaining.length,
+  };
+}
+
 export function toDayBlockView({
   answeredAttemptIds,
   answeredItemIds,
@@ -118,6 +143,7 @@ export function toDayBlockView({
   blocks,
   blockedTestOutChapters = NO_SKILLS,
   oftenTestedSkillIds = NO_SKILLS,
+  pendingMistakeMinutes,
   savedWritingTasks,
   preparing = false,
   subject = null,
@@ -132,6 +158,7 @@ export function toDayBlockView({
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
+  pendingMistakeMinutes?: ReadonlyMap<string, number>;
   savedWritingTasks?: ReadonlyMap<string, DayBlockView["writingTask"] | null>;
   preparing?: boolean;
   subject?: string | null;
@@ -142,6 +169,12 @@ export function toDayBlockView({
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
 
+  const { estimatedMinutes, mistakeQuestions } = getMistakeWork({
+    block,
+    mistakeIds: payload.mistakeIds,
+    pendingMistakeMinutes,
+  });
+
   return {
     answered: itemIds.filter((id) => answeredItemIds.has(id)).length,
     areaId: payload.areaId,
@@ -150,6 +183,7 @@ export function toDayBlockView({
     canDo: block.canDo,
     canTestOut:
       block.kind === "learn" &&
+      !isOutsidePlanLesson(payload) &&
       payload.chapterId !== null &&
       !blockedTestOutChapters.has(payload.chapterId),
     capsules: payload.capsules.map((capsule) => ({
@@ -163,10 +197,11 @@ export function toDayBlockView({
     chapterId: payload.chapterId,
     checkpoint: toViewCheckpoint(payload.checkpoint),
     estimatedBrainPower: estimateBrainPower(getEstimateOutcome(block)),
-    estimatedMinutes: block.estimatedMinutes ?? 0,
+    estimatedMinutes,
     extra: payload.extra,
     fullReview: payload.fullReview,
     kind: block.kind,
+    lesson: null,
     lessonId: block.lessonId,
     mistakesOnly:
       block.kind === "practice" && payload.drills.length > 0 && payload.itemIds.length === 0,
@@ -174,15 +209,21 @@ export function toDayBlockView({
     netScored: payload.netScored,
     oftenTested: teaches && payload.skillIds.some((skillId) => oftenTestedSkillIds.has(skillId)),
     opensInPlayer: false,
+    patternId: payload.patternId,
     planItemId: payload.planItemId,
     planItemKey: payload.planItemKey,
     position: block.position,
     practiceNumber: getPracticeNumber({ block, blocks }),
     preparing,
-    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length),
+    questions: getBlockQuestions(block, payload.checkpoint, itemIds.length + mistakeQuestions),
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
-    screen: getBlockScreen(block),
+    returning: payload.returning,
+    screen: getBlockScreen({
+      ...block,
+      mistakesPractice: payload.mistakeIds.length > 0,
+      patternId: payload.patternId,
+    }),
     status: block.status,
     subject,
     subjectExtra,

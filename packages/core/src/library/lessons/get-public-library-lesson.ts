@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
+import { isSecondTakeIdentityKey } from "../second-takes/second-take-identity";
 import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-first-screen";
 import { readLessonMap } from "./lesson-map";
 import { getDefaultLessonMinutes } from "./lesson-minutes";
@@ -44,7 +45,7 @@ export async function getPublicLibraryLesson({ lessonId }: { lessonId: string })
 
   const lesson = await getCachedPublicLesson(lessonId);
 
-  if (!lesson || lesson.visibility !== "public") {
+  if (!lesson || lesson.visibility !== "public" || isSecondTakeIdentityKey(lesson.identityKey)) {
     return null;
   }
 

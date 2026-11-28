@@ -851,6 +851,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { format: "essay", kind: "format" },
         { kind: "shortTopics" },
       ],
+      usable: true,
     },
     id: "pt-class-notes-biologia-celular",
     language: "pt",
@@ -862,6 +863,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "Prova de biologia (1º ano), a célula",
+      material: true,
     },
   },
   {
@@ -871,6 +873,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { format: "essay", kind: "format" },
         { kind: "shortTopics" },
       ],
+      usable: true,
     },
     id: "en-class-notes-ap-biology-unit-2",
     language: "en",
@@ -882,6 +885,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
       ],
       exam: "AP Biology unit 2 test",
+      material: true,
     },
   },
   {
@@ -892,6 +896,7 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         { kind: "topic", topic: "Função horária" },
         { kind: "shortTopics" },
       ],
+      usable: true,
     },
     id: "pt-photo-notes-transcript-with-latex",
     language: "pt",
@@ -919,6 +924,44 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
         },
       ],
       exam: "Prova de física (1º ano), cinemática",
+      material: true,
+    },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "subject", name: "Electricity" },
+        { kind: "topic", subject: "Electricity", topic: "Current" },
+        { kind: "topic", subject: "Electricity", topic: "Ohm's law" },
+        { kind: "topic", subject: "Electricity", topic: "Power" },
+        { kind: "topic", subject: "Electricity", topic: "Series circuit" },
+        { kind: "shortTopics" },
+      ],
+      usable: true,
+    },
+    id: "en-photo-notes-under-one-title",
+    language: "en",
+    userInput: {
+      documents: [
+        {
+          text: String.raw`# Electricity - circuits
+
+Current: $I = Q / t$ (unit: ampere)
+
+Ohm's law: $V = I \cdot R$
+
+Ex.: $R = 6\,\Omega$, $I = 2$ A → $V = 12$ V
+
+Power: $P = V \cdot I$
+
+Series circuit: same current through every resistor, $R_{total} = R_1 + R_2$
+
+Q3: a 9 V battery drives 0.5 A. What is the resistance?`,
+          title: "Photo of physics notes",
+        },
+      ],
+      exam: "Physics test on circuits",
+      material: true,
     },
   },
   {
@@ -929,6 +972,7 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
         { kind: "topic", topic: "Ideal gas law" },
         { kind: "shortTopics" },
       ],
+      usable: true,
     },
     id: "en-typed-notes-with-formulas-and-a-worked-example",
     language: "en",
@@ -940,6 +984,7 @@ Exercício 4: um carro a 20 m/s freia com $a = -2,5$ m/s². Em quanto tempo ele 
         },
       ],
       exam: "Chemistry quiz on gas laws",
+      material: true,
     },
   },
 ];

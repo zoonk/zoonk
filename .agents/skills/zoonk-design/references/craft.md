@@ -15,7 +15,7 @@ The [deliberate choices](#deliberate-choices) at the end are neither.
 - **Ink.** What is drawn, not its box: a line of text from its first glyph to its last, an icon's shape inside its canvas. A Lucide glyph starts inside its box by about a third of the icon's width for a chevron, a fifth for ✕ and an eighth for an ellipsis. Letters start inside their box too: in Geist an "S" by 0.053 of the text's size (1.6px in a 30px title), a stem ("P") by 0.08, a diagonal ("A") by 0.02, and they end about 0.04 short of it.
 - **Visible box.** The shape the eye sees as a control: its border or ring when it has one, otherwise its fill. Never its 44px hit area.
 - **Bezel.** A visible fill or border around a control. A ghost button at rest has none.
-- **Within.** 1px for text and boxes. A glyph's ink never passes its column's edge, by any part of a pixel; beside text it sits with that text's letters, at most 1px past them toward the edge and 2px short of them (one pull serves every first letter). Check at 390 and 1440, at rest, and a glyph's edge in the pixels of 1x, 2x and 3x screens. The numbers are the web's; [iOS and Android](../SKILL.md#ios-and-android) says what holds there.
+- **Within.** 1px for text and boxes. A glyph's ink never passes its column's edge, by any part of a pixel; beside text it sits with that text's letters, at most 1px past them toward the edge and 2px short of them (one pull serves every first letter). Check at 390 and 1440, at rest, and a glyph's edge in the pixels of 1x, 2x and 3x screens. The numbers are the web's; [iOS and Android](native.md) says what holds there.
 
 ## Edges and alignment
 
@@ -413,7 +413,7 @@ A row, card, tab or button for a paid feature looks like its free neighbors: no 
 
 ## The craft read
 
-The questions of [the craft read](../SKILL.md#the-craft-read), answered for one screenshot, in this order, each with "fine" or a finding you can point at. A rule serves how the screen looks, so the first question is the screen's, not a rule's:
+The questions of [the craft read](checks.md#the-craft-read), answered for one screenshot after [the scan](show-first.md#the-scan), in order, each with "fine" or a finding you can point at:
 
 1. **Proportion, at this size.** Asked at each size the screen is read at, before any ruler: does it look well made at this width? Any empty room held for nothing, chrome taller or wider than what it holds, room that grew with the gutter, a column that starts or ends somewhere odd, something sized for a phone on a wide screen? A screen that follows every rule and still looks worse for one is a finding against that rule (`departs: principle`), with the change to the rule it calls for.
 2. **Left edge.** How many places do text and boxes start, and where? In each list, does every label start on one edge, the rows without a mark included? (E1, E4)
@@ -433,9 +433,9 @@ The questions of [the craft read](../SKILL.md#the-craft-read), answered for one 
 16. **Roles.** Does the page's first thing (its bar's way back or actions, or a title whose bar holds nothing) sit on the sidebar's first row, with no empty bar over a title? Is the title close under a bar that holds something, with the page's name beside the back chevron? Is the main action in the bar at the bottom? Is anything over a title a chip? Does any row, chip or card say something is paid, or any action that leads to paying say anything but "Subscribe"? (E8, R2, R3, R4)
 17. **Keys and closes, at 1440.** Does the main action wear ⏎, and does each icon button whose tooltip is shown wear its key? Does every dialog, sheet and side panel have its ✕ beside its title, one size in each? Is a short form on a computer centered, not docked at the bottom? On a phone, does everything that opens over the page sit on the bottom edge, a question that needs an answer with its two answers stacked and no ✕? (B2, B4)
 
-A still picture can't show what a key does, where focus goes or whether Esc asks first (B1, B3, B5, B6): say so, and leave them to the walk in the running app.
+A still picture can't show what a key does or where focus goes (B1, B3, B5, B6): leave them to the walk in the running app.
 
-Then one line: would a principal designer find anything to pick at here, and what first?
+Then one line: what would a principal designer pick at first?
 
 ### The role read
 
@@ -447,13 +447,13 @@ The craft read takes one screen. The role read takes one role on every screen, b
 
 ### Independent picture review
 
-The independent review of [screen captures](../../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches): many screens, read by someone who sees only the pictures and this file. You design and fix nothing, and you read no code, spec or plan.
+The independent review of [screen captures](../../verify/SKILL.md#7-capture-and-review-every-screen-the-branch-touches): many screens, read by someone who sees only the pictures, this file and [show before you say](show-first.md). You design and fix nothing, and you read no code, spec or plan.
 
 1. **Read in number order.** Pictures that share a number are one screen at other sizes, schemes or languages; a number is a moment in a learner's path, not a hint about what the screen should show. If you can't tell what a screen is for, that is a finding.
 2. **See every pixel.** Look at the whole screen, then its parts, at a size where its smallest text reads. Crop and enlarge a tall or wide picture instead of guessing; at 3× a 1 px offset is 3 image pixels.
-3. **Per picture,** answer [the first-glance test](../SKILL.md#the-first-glance-test)'s questions to yourself, then [the craft read](#the-craft-read). Also look for an empty or broken state: a blank area, an error where content belongs, a placeholder left on, a missing picture, a screen that looks unfinished.
+3. **Per picture,** run [the scan](show-first.md#the-scan) before reading a word, answer [the first-glance test](checks.md#the-first-glance-test)'s questions to yourself, then [the craft read](#the-craft-read). Also look for an empty or broken state: a blank area, an error where content belongs, a placeholder left on, a missing picture, a screen that looks unfinished.
 4. **Across the pictures,** compare what repeats: one date, time, number, unit or range written two ways ("Nov 16" and "16 November", "15 min" and "15 minutes"); one action or thing named two ways; and one piece (a page top, a back link, a bottom bar, a sheet, a list row, an empty state, a wait) drawn, placed or worded differently from one picture to another, on any platform.
-5. **Leave the [deliberate choices](#deliberate-choices) and the [exceptions the user granted](#exceptions-the-user-granted).** A dialog or a sheet pictured alone, on transparent corners, is how the capture draws it. On Apple and Android, the platform's chrome isn't judged ([iOS and Android](../SKILL.md#ios-and-android)).
+5. **Leave the [deliberate choices](#deliberate-choices) and the [exceptions the user granted](#exceptions-the-user-granted).** A dialog or a sheet pictured alone, on transparent corners, is how the capture draws it. On Apple and Android, the platform's chrome isn't judged ([iOS and Android](native.md)).
 6. **Write each fault as [a finding](#a-finding)** as you go, with `confidence` `measured` where you took the numbers from the pixels. A word or a format fault that no rule names takes `rule: none` and the principle. Report only what you can point at.
 
 End with the counts (pictures read, findings by rule) and one line per picture ("fine" or its findings). A retaken picture comes with the one read before and the findings fixed since: answer only whether each is gone and whether anything else got worse.
@@ -478,7 +478,7 @@ End with the counts (pictures read, findings by rule) and one line per picture (
 ```
 
 - `where`: words a person can find the place by. `what`: what is wrong, with the numbers.
-- `rule`: one id from this file, or `none` with the principle it breaks, so this file can grow.
+- `rule`: one id from this file or the scan's (V1 to V3), or `none` with the principle it breaks, so this file can grow.
 - `departs`: `system` (the screen departs from the system) or `principle` (the system departs from a rule).
 - `kind`: `systemic` (a shared component or token: fix once) or `screen` (this screen's own layout). `component`: the file, when known.
 - `confidence`: `measured` (numbers from the page or the pixels), `seen` (visible, not measured) or `suspected`.
@@ -516,8 +516,8 @@ Each is one named place where a rule above doesn't hold, by the user's decision.
 - With a fine pointer a control is 36px; the bottom bar and touch keep 44px (Z1, Z3).
 - A row on Today that counts toward a mission keeps its small violet target (it isn't a paid mark, R4).
 - Where plans are compared (pricing, the subscription page), a plan is named ("Plus"); the action still reads "Subscribe" (R4).
-- The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](../SKILL.md#words)).
+- The way out of a test before its end (the short test, the level test, the Focus test) is a quiet link under the options that reads "Stop and use my answers": leaving early keeps the answers given so far, and the label has to say so, since "Stop" alone reads as losing them ([buttons are verbs](words.md)).
 - Sign-in's three steps (log in, the code, the name) keep "Continue" right under the field, in one layout: log in has several ways in, so no one action to pin, and the form stays the same through sign-in. The pinned bar starts where onboarding does (R2).
 - The lesson's "ask the buddy" sheet is the buddy's chat, so its header is the chat's row (the face, the name, the screen it's about) and its thread and composer keep the chat's 16px sides: a chat reads the same wherever it opens. Its ✕, its header's height, its dim, its corner and how it rises are the sheet's (T1, S4).
 - The command palette has no ✕, since it has no title to put one beside. On a computer its "Esc" keycap is a button that closes it; on a phone its field ends with "Cancel" (B4).
-- The buddy's tab and its sidebar row show the buddy's face and name to every learner, one who hasn't met the buddy included: a navigation label is where a name is first shown, and a tab doesn't appear or rename by state. The page behind it introduces the buddy in "we" words ([names wait for their screen](../SKILL.md#words)).
+- The buddy's tab and its sidebar row show the buddy's face and name to every learner, one who hasn't met the buddy included: a navigation label is where a name is first shown, and a tab doesn't appear or rename by state. The page behind it introduces the buddy in "we" words ([names wait for their screen](words.md)).

@@ -13,12 +13,12 @@ export const TEST_CASES: TestCase<unknown, LevelTestConfirmationsInput>[] = [
     userInput: { learnerLanguage: "pt", level: "A1", targetLanguage: "en" },
   },
   {
-    expectations: `Two Mexican Spanish texts and two voice messages for US English speakers at A2. Understanding a short sequence or connecting two stated facts decides which options apply. A reader who recognizes only a time or place without following the change gets at least one option wrong.`,
+    expectations: `Two Mexican Spanish texts and two voice messages for US English speakers at A2. Understanding a short sequence or connecting two stated facts decides which options apply. A reader who recognizes only a time or place without following the change gets at least one option wrong. No question says how many options to pick or that several are right ("Select all that apply"): the app shows that line.`,
     id: "en-es-a2",
     userInput: { learnerLanguage: "en", level: "A2", targetLanguage: "es" },
   },
   {
-    expectations: `Brazilian Portuguese texts at B1 for US English speakers ("você", Brazilian words), with "select all that apply" questions in US English on the main point, reasons and stated opinions, said in the text in other words: a reader who only matches words picks a wrong option. Each of the two or three correct options must express a distinct idea, including in the travel guide. If the coach mentions a mistake and a disappointing result, only key the mistake as the cause when the coach connects them.`,
+    expectations: `Brazilian Portuguese texts at B1 for US English speakers ("você", Brazilian words), with "select all that apply" questions in US English on the main point, reasons and stated opinions, said in the text in other words: a reader who only matches words picks a wrong option. Each of the two or three correct options must express a distinct idea, including in the travel guide. If the coach mentions a mistake and a disappointing result, only key the mistake as the cause when the coach connects them. No question says how many options to pick or that several are right ("Select all that apply"): the app shows that line.`,
     id: "en-pt-b1",
     userInput: { learnerLanguage: "en", level: "B1", targetLanguage: "pt" },
   },

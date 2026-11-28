@@ -12,7 +12,7 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 
 | Change                            | Checks                                                                                                                                                                                |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Markdown or instruction files     | `pnpm exec oxfmt <files>` (formats them), `pnpm agent-rules:check` (sizes, links and anchors), `git diff --check`                                                                     |
+| Markdown or instruction files     | `pnpm exec oxfmt <files>` (formats them), `pnpm agent-rules:check` (sizes, descriptions, links and anchors), `git diff --check`                                                       |
 | TypeScript behavior               | Focused `pnpm --filter <workspace> test <file>`, `pnpm --filter <workspace> typecheck`, `pnpm exec oxfmt <files>` (formats them; `pnpm format` only checks), then `pnpm lint <files>` |
 | Module boundaries or dependencies | `pnpm knip` and `pnpm knip --production`                                                                                                                                              |
 | App runtime or build integration  | `pnpm build --filter=<app>`; in a checkout with no `.env` files, prefix `VERCEL_ENV=development`, as `pnpm start` does                                                                |

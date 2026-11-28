@@ -1,6 +1,6 @@
 import "server-only";
 import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
-import { MS_PER_DAY } from "@zoonk/utils/date";
+import { MS_PER_WEEK } from "@zoonk/utils/date";
 import { getString } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
@@ -163,7 +163,7 @@ export function findResumableRun(
 }
 
 /** Progress survives a weekend, but a lesson left longer than a week starts over. */
-const PROGRESS_WINDOW_MS = 7 * MS_PER_DAY;
+const PROGRESS_WINDOW_MS = MS_PER_WEEK;
 
 type ProgressRun = Pick<LearningEvent, "contentIds" | "startedAt">;
 
@@ -277,6 +277,7 @@ export async function hasFinishedLessonBefore(
   const earlier = await tx.learningEvent.findFirst({
     select: { id: true },
     where: {
+      ...NOT_A_CAPSULE,
       contentIds: { equals: lessonId, path: ["lessonId"] },
       endedAt: { not: null },
       id: { not: runId },

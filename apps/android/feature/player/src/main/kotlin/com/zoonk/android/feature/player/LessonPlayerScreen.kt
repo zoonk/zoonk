@@ -244,7 +244,7 @@ fun LessonPlayer(
             state?.completion?.status == CompletionStatus.Saving ||
                 state?.completion?.status == CompletionStatus.Saved
         }
-    val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
+    val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage, onAudioToggle = viewModel::act)
     val shownStep = screen?.step?.takeIf { state?.run !is LessonRun.Refused }
     androidx.lifecycle.compose.LifecycleResumeEffect(viewModel, shownStep != null) {
         if (shownStep != null) viewModel.firstSceneVisible()
@@ -263,7 +263,14 @@ fun LessonPlayer(
     val actions =
         remember(viewModel) {
             object : StepActions {
-                override fun select(answer: LessonAnswer?) = viewModel.select(answer)
+                override fun engage() = viewModel.act()
+
+                override fun select(answer: LessonAnswer?) {
+                    engage()
+                    viewModel.select(answer)
+                }
+
+                override fun restoreAnswer(answer: LessonAnswer) = viewModel.restoreAnswer(answer)
 
                 override fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = stepKeys.takePicks(pick)
 
@@ -286,11 +293,17 @@ fun LessonPlayer(
 
                 override val cantTalk get() = viewModel.cantTalk
 
-                override fun setCantTalk(chosen: Boolean) = viewModel.setCantTalk(chosen)
+                override fun setCantTalk(chosen: Boolean) {
+                    engage()
+                    viewModel.setCantTalk(chosen)
+                }
 
                 override val cantListen get() = viewModel.cantListen
 
-                override fun setCantListen(chosen: Boolean) = viewModel.setCantListen(chosen)
+                override fun setCantListen(chosen: Boolean) {
+                    engage()
+                    viewModel.setCantListen(chosen)
+                }
 
                 override suspend fun gradeSpoken(
                     stepId: String,
@@ -457,7 +470,7 @@ fun LessonPlayer(
                 },
             note = state?.takeIf { screen?.primary != null }?.let { lessonBarNote(screen?.step, it, actions) },
         ) { padding ->
-            Column(Modifier.fillMaxSize().padding(padding)) {
+            Column(Modifier.fillMaxSize().padding(padding).onLessonInput(viewModel::act)) {
                 if (state == null || screen == null) {
                     PageLoading()
                 } else {

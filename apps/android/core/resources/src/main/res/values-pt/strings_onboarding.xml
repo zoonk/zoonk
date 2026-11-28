@@ -35,8 +35,8 @@
   "onboarding_buddy_description": "f9fb1507f8031b3222a2843c98b10ae2ab92d7aec0940e194ba89a664455d585",
   "onboarding_buddy_title": "4548e539bc22f9d25027261d755a770b90baa4b9c9e808d8279e9c2a5841d063",
   "onboarding_cancel": "6d2896b005f8a5d929164a64bb51f62c8f7f3e338f9efb632d22840bc27dca5b",
-  "onboarding_change_date": "1bec515e4b9fb4f2822ee674b746970e2bf6df23fcf8bd5c6e994145eeb74fc6",
-  "onboarding_choose_date": "8b9e1357ea2f0207e57e7eb679cf0318a92157bcb9171bba431b0caa660cd0ba",
+  "onboarding_change_end_date": "2a9b75ec39bd5585ad6e4e0f5ce85e4c35fc8d09ee20f786f61d810c97fe170d",
+  "onboarding_change_exam_date": "54be774533504f2f224d581db40c2a868f073389b2856ab5181bde789a05e9fb",
   "onboarding_continue": "f4c1323bd702f30b22713a0bd06010f47d8dccfa03ab79a47f87ed1830ca96d6",
   "onboarding_country_description": "9cdd145767194f458beec4b79dd7026c50d25827bed27573268b26d391f5e6e9",
   "onboarding_country_from_home": "362f6fe9a680dd79287a95fdb579621491b29a5ed115cef082ab82109f1f834a",
@@ -84,11 +84,6 @@
   "onboarding_fix_something": "6ef1f3d30d3f1f024ae229c6651b350a6709650b2049499c4dc50ccd685d3be1",
   "onboarding_follow_ups_description": "b8a6c1b6074f1877cfa8f75bb506e45cd1f025e15ff98f43a6624572bd6b8d95",
   "onboarding_follow_ups_title": "be19e1d3c1055b584694d1beea8b8ce5a6008b07ca7feb39a899c46e9aae4d11",
-  "onboarding_full_course": "344f3fb7a682479d0d0ae9ee2f1b179796c6b6f90ad7e296650dd5aa2a4374da",
-  "onboarding_full_course_finish": "42d43a5c306ffe364cfe25346442461a145576fe784ac7a76a73958ec5991a50",
-  "onboarding_full_course_finish_month": "a25d9686734c18a12d831bcd22b6d1208602bd3a2bb893787e977d80c78e729a",
-  "onboarding_full_course_rule": "914e3bd8835b822c1ffb5e32de22421bece5ae6f80e94cd72b59faa7756b289c",
-  "onboarding_full_course_until_exam": "72212ecdc638a58bec629b678bf2adb097569f62da35aa62bba51c534c9e4637",
   "onboarding_go_to_plan": "c19b21bc401dec2b000f548c8f117b9ad7c17c25aa4520ecaf0ae45037c659ee",
   "onboarding_goals_at_once_line": "18822f4154f9704165ae39dccce2fe509217cb2f86190bd4143a1354a795c007",
   "onboarding_goals_at_once_title": "653adf2cb9d2e93e52c24df93ac9ccd242f152ac2b1cb2709ccb662bda9e5f77",
@@ -303,6 +298,7 @@
   "onboarding_score_placeholder": "849ba2c950d2a1a93c12f17c4933a1f7170ef87985791c0c684ac1b755ae9468",
   "onboarding_score_title": "792ccb2482748e807ebfae6416dd96d926620404baa1f0673c3ddcea8ce594c7",
   "onboarding_see_plan": "f873dd32648ccf369aaaaf10ad1b2af39d6aed547d227cf688fadfad6e6021aa",
+  "onboarding_set_end_date": "c04d4c54c4f7f5dc2caa17eddc64ce157e113073d50d559ff4159c40e5c0d261",
   "onboarding_skip": "3333e00ee78d91bed4e2d042b1cefc2d35603ed09962a1e2187cc3919ca7fb62",
   "onboarding_source": "8ee806d5199d759f3429f95b1d02571845cad108e7bce4b86161666f5eec876f",
   "onboarding_start_description": "7a6e577291ed451d7def826d5582a853f1f27c1fae79c3d8edefe2f2bfbc082b",
@@ -735,18 +731,10 @@
         <item quantity="other">%d dias</item>
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo você pode estudar por dia?</string>
-    <string name="onboarding_full_course">Continuar estudando depois da prova</string>
-    <string name="onboarding_full_course_rule">Até a prova, o que mais cai vem primeiro. O que não couber fica para depois dela.</string>
-    <string name="onboarding_full_course_until_exam">Até a prova, o que mais cai vem primeiro.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's day with its year, such as "May 5, 2027". -->
-    <string name="onboarding_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova no dia %3$s.</string>
-    <!-- %1$s is a daily time; %2$s is the month and year the plan ends; %3$s is the exam's month and year, such as "April 2027". A month can start with a vowel: in French, avoid "de" right before it (for example "prévu en %3$s"). -->
-    <string name="onboarding_full_course_finish_month">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s.</string>
     <string name="onboarding_schedule_time_label">Tempo diário</string>
-    <!-- A link under the daily time that opens the question about the goal's date, when the goal has no date. -->
-    <string name="onboarding_choose_date">Escolher uma data</string>
-    <!-- The same link when the goal has a date. -->
-    <string name="onboarding_change_date">Mudar data</string>
+    <string name="onboarding_change_exam_date">Mudar data da prova</string>
+    <string name="onboarding_change_end_date">Mudar data final</string>
+    <string name="onboarding_set_end_date">Definir data final</string>
     <string name="onboarding_study_days">Dias de estudo</string>
     <string name="onboarding_answers_saved">Suas respostas estão salvas.</string>
     <!-- On a setup question when the plan's run never started. -->

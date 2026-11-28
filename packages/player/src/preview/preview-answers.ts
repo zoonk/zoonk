@@ -1,10 +1,8 @@
 import { type PlayableLibraryStep } from "@zoonk/core/lesson-player/playable-lesson";
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
+import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { type ActivityExpectedAnswer } from "@zoonk/core/library/activities/expected-answer";
-import {
-  type ActivityStepContent,
-  getActivityTemplate,
-} from "@zoonk/core/library/activities/templates";
+import { type ActivityStepContent } from "@zoonk/core/library/activities/templates";
 import { type LessonPlayerAnswer } from "../lesson/lesson-player-types";
 
 const PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
@@ -52,19 +50,11 @@ function interactionAnswer({
 }
 
 function activityAnswer(content: ActivityStepContent): ActivityAnswer | null {
-  const { check } = content;
+  const expected = getActivityExpected(content);
 
-  if (check.kind === "choice") {
-    const correct = check.options.find((option) => option.isCorrect);
-    return correct ? { kind: "choice", optionId: correct.id } : null;
-  }
-
-  if (check.kind === "numeric") {
-    return { kind: "numeric", value: check.answer };
-  }
-
-  const expected = getActivityTemplate(content.template)?.computeExpected(content.fields) ?? null;
-  return expected ? interactionAnswer({ content, expected }) : null;
+  return expected?.kind === "interaction"
+    ? interactionAnswer({ content, expected: expected.answer })
+    : expected;
 }
 
 export function rightAnswer(step: PlayableLibraryStep): LessonPlayerAnswer | null {

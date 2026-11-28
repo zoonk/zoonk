@@ -94,7 +94,15 @@ export async function seedLearnerData({
     }),
     prisma.learnerSkill.create({ data: { reps: brainPower, skillId, userId } }),
     prisma.attempt.create({
-      data: { answer: {}, durationMs: 1000, isCorrect: true, skillId, userId, ...studyTime },
+      data: {
+        answer: {},
+        durationMs: 1000,
+        fromLesson: false,
+        isCorrect: true,
+        skillId,
+        userId,
+        ...studyTime,
+      },
     }),
     prisma.memoryFact.create({
       data: { category: "learning", origin: "said", statement: "Prefers examples", userId },

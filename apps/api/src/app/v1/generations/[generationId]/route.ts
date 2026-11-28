@@ -20,7 +20,11 @@ async function getGeneration(
 
   const run = await readClientRun(path.generationId);
 
-  if (!run) {
+  if (run.outcome === "unknown") {
+    return errors.serviceUnavailable();
+  }
+
+  if (run.outcome !== "found") {
     return errors.notFound("Generation not found");
   }
 

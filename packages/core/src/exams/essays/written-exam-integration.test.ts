@@ -6,6 +6,7 @@ import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture, sourceFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { recordLearnerAnswer } from "../../learner/record-learner-answer";
@@ -38,7 +39,6 @@ vi.mock("@zoonk/ai/tasks/items/write-writing-prompt", () => ({ writeWritingPromp
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 const TARGET = new Date("2026-10-28");
-const DAY_MS = 86_400_000;
 
 const TEXT =
   "An audit recommendation should address the cause of the finding. The report should explain which control failed, how the failure affected the result, and what evidence supports the proposed correction.";
@@ -471,7 +471,7 @@ describe("CGU written exam preparation", () => {
       where: { id: blueprint.id },
     });
 
-    vi.setSystemTime(new Date(NOW.getTime() + 2 * DAY_MS));
+    vi.setSystemTime(new Date(NOW.getTime() + 2 * MS_PER_DAY));
 
     const continued = await openWritingDay(goal.id);
     expect(continued.block.id).toBe(block.id);
@@ -521,6 +521,7 @@ describe("CGU written exam preparation", () => {
     });
 
     const first = await prisma.attempt.findFirstOrThrow({ where: { itemId, userId: user.id } });
+    expect(first).toMatchObject({ cause: null, evidence: null });
     expect(first.score).toBeNull();
     expect(first.answer).toMatchObject({ conditions: { estimatedLines: 22 } });
     await expectDraftFlag(false);
@@ -865,7 +866,7 @@ describe("CGU written exam preparation", () => {
     useModelFixtures(writing.id);
 
     const studyDays = Array.from({ length: 28 }, (_, offset) => ({
-      date: new Date(NOW.getTime() + offset * DAY_MS).toISOString().slice(0, 10),
+      date: new Date(NOW.getTime() + offset * MS_PER_DAY).toISOString().slice(0, 10),
       minutes: 240,
     }));
 
@@ -910,7 +911,7 @@ describe("CGU written exam preparation", () => {
           part: null,
         }),
       },
-      answeredAt: new Date(today.getTime() - DAY_MS),
+      answeredAt: new Date(today.getTime() - MS_PER_DAY),
       itemId,
       userId: user.id,
     });

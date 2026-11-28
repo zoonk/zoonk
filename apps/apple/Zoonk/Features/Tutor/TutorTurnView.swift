@@ -99,8 +99,8 @@ struct TutorTurnView: View {
       .disabled(conversation.answeringID != nil)
     case .failed:
       // Once a limit's day has come, asking for the answer again is the way on.
-      OpeningClock(availableAt: failure?.helpLimit?.availableAt) { now in
-        let opened = failure?.helpLimit?.isOpen(at: now) == true
+      OpeningClock(availableAt: failure?.liftsAt) { now in
+        let opened = failure?.isLifted(at: now) == true
 
         VStack(alignment: .leading, spacing: 12) {
           if let text = turn.answer {
@@ -196,11 +196,11 @@ struct TutorTurnView: View {
     }
 
     switch failure {
-    case .signUpRequired, .limit:
+    case .signUpRequired, .slowDown, .limit:
       return String(
         localized: "This one wasn't answered.", table: "Tutor",
         comment: "A question the learner's limit stopped")
-    case .signedOut, .plusRequired, .gone, .slowDown:
+    case .signedOut, .plusRequired, .gone:
       return failure.message
     case .invalid, .conflict, .failed:
       return Self.unfinished

@@ -5,16 +5,16 @@ import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtur
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 
 export const MOCK_QUESTIONS = 6;
 
 export const citation = { passage: "", sourceId: "notice" };
 
-export const DAY_MS = 86_400_000;
 export const EXAM_IN_DAYS = 60;
 
 export function isoDayFromToday(days: number): string {
-  return new Date(Date.now() + days * DAY_MS).toISOString().slice(0, "yyyy-mm-dd".length);
+  return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, "yyyy-mm-dd".length);
 }
 
 export function examEdition(examDay: string) {
@@ -93,6 +93,97 @@ export async function createExamGoal(userId: string, reserveQuestions = MOCK_QUE
   ]);
 
   return { blueprintId: blueprint.id, goal };
+}
+
+const REORDER_TOPICS = ["Contracts", "Torts", "Statutes"] as const;
+
+/**
+ * An exam goal whose plan teaches three topics of one subject a day at a time, the last of them
+ * the only one its mocks ask about.
+ */
+export async function createReorderExamGoal(userId: string) {
+  const [blueprint, skills, lessons] = await Promise.all([
+    examBlueprintFixture({
+      edition: examEdition(isoDayFromToday(EXAM_IN_DAYS)),
+      name: "Concurso Reorder",
+      structure: {
+        formats: [],
+        mock: {
+          adaptive: false,
+          citations: [],
+          order: null,
+          scoring: { description: "", method: "raw" },
+          sections: [{ day: null, kind: "objective", minutes: 24, name: "Law", questions: 12 }],
+          timeLimitMinutes: 24,
+          totalQuestions: 12,
+        },
+        rules: [],
+        subjects: [{ citation, name: "Law", questions: 12, topics: [], weight: 1 }],
+      },
+    }),
+    Promise.all(REORDER_TOPICS.map((name) => skillFixture({ name: `${name} ${randomUUID()}` }))),
+    Promise.all(
+      REORDER_TOPICS.map((name) =>
+        libraryLessonFixture({ estimatedMinutes: 10, title: `${name} ${randomUUID()}` }),
+      ),
+    ),
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: userId, status: "active" },
+    }),
+  ]);
+
+  const goal = await goalFixture({
+    dailyMinutes: 10,
+    examBlueprintId: blueprint.id,
+    kind: "exam",
+    targetDate: new Date(`${isoDayFromToday(EXAM_IN_DAYS)}T00:00:00.000Z`),
+    timezone: "UTC",
+    userId,
+  });
+
+  const [missed] = skills.slice(-1);
+
+  if (!missed) {
+    throw new Error("Expected the topic the mock asks about");
+  }
+
+  await Promise.all([
+    ...Array.from({ length: 2 * MOCK_QUESTIONS }, () =>
+      itemFixture({
+        content: choiceItemContent(),
+        examBlueprintId: blueprint.id,
+        mockOnly: true,
+        skillId: missed.id,
+      }),
+    ),
+    ...lessons.map((lesson, index) =>
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
+    ),
+  ]);
+
+  await planFixture({
+    goalId: goal.id,
+    graph: {
+      phases: [{ milestone: null, name: "Basics" }],
+      skills: skills.map((skill) => ({
+        area: "Law",
+        lessons: 1,
+        name: skill.name,
+        phase: 0,
+        skillId: skill.id,
+        weight: null,
+      })),
+    },
+    items: lessons.map((lesson, index) => ({
+      lessonId: lesson.id,
+      scheduledFor: new Date(`${isoDayFromToday(index)}T00:00:00.000Z`),
+      skillId: skills[index]?.id ?? null,
+      titleSnapshot: lesson.title,
+    })),
+    phases: [{ name: "Basics" }],
+  });
+
+  return { goal, missed };
 }
 
 const BREAK_AREAS = ["Physics", "Mathematics"] as const;

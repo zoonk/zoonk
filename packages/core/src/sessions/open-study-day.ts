@@ -1,15 +1,36 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { DbNull, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { followUpSchema } from "../follow-ups/follow-up-contract";
+import { oweFollowUps } from "../follow-ups/owe-follow-ups";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { getSession } from "../users/get-session";
-import { readLessonScreens } from "./_utils/lesson-screens";
 import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
 import { followOpenDayZone } from "./_utils/open-day-zone";
 import { openPlannedDay } from "./_utils/open-planned-day";
 import { openSessionBlock } from "./_utils/open-session-block";
+import { type StudySessionRow } from "./_utils/study-session-access";
 import { type OpenStudyDayInput, type OpenStudyDayResult } from "./open-day-contract";
+
+async function oweDayRemedialGeneration(day: StudySessionRow): Promise<void> {
+  const followUp = followUpSchema.safeParse(day.remedialGeneration).data;
+
+  if (!followUp || (followUp.kind !== "writeSecondTake" && followUp.kind !== "writeLesson")) {
+    return;
+  }
+
+  await prisma.$transaction(async (tx) => {
+    const { count } = await tx.studySession.updateMany({
+      data: { remedialGeneration: DbNull },
+      where: { id: day.id, remedialGeneration: { not: DbNull } },
+    });
+
+    if (count > 0) {
+      await oweFollowUps({ db: tx, followUps: [followUp], keepExisting: true, userId: day.userId });
+    }
+  });
+}
 
 /** The explicit learner POST owns persistence; renders and prefetches only select in memory. */
 export async function openStudyDay(
@@ -67,16 +88,18 @@ async function openDay(
     return openDay(input, 1, now);
   }
 
+  if (opened.status === "opened") {
+    await oweDayRemedialGeneration(opened.session);
+  }
+
   const session =
     opened.status === "opened"
-      ? await readLessonScreens(
-          await loadOpenedDayView({
-            initialDay: opened.initialDay,
-            session: opened.session,
-            timeZone,
-            userId,
-          }),
-        )
+      ? await loadOpenedDayView({
+          initialDay: opened.initialDay,
+          session: opened.session,
+          timeZone,
+          userId,
+        })
       : null;
 
   const binding = { goalId: goal.id, localDate };
@@ -96,6 +119,7 @@ async function openDay(
   const openedTarget = target
     ? await openSessionBlock({
         block: target,
+        goalId: session.goalId,
         sessionId: session.id,
         timeZone: input.timeZone,
         userId,

@@ -1,6 +1,5 @@
 "use client";
 
-import { countDoneMissions } from "@zoonk/core/sessions/missions";
 import {
   Drawer,
   DrawerContent,
@@ -8,20 +7,16 @@ import {
   DrawerPopup,
   DrawerTitle,
 } from "@zoonk/ui/components/drawer";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { SheetHeader } from "../_components/sheet-header";
-import { useCountOf } from "../_utils/count-of";
 import { useFormatShare } from "../_utils/percent";
-import { LearnLink } from "../learn-link";
 import { FirstStepsSection } from "../missions/first-steps";
 import { type MissionLinks } from "../missions/mission-links";
 import { MissionsCard } from "../missions/missions-card";
 import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
 import { type BuddyStatusView } from "./buddy-status-view";
-import { MissionsRing } from "./missions-ring";
 import { type LearnBuddy } from "./use-buddy-name";
 
 const PERCENT = 100;
@@ -110,16 +105,15 @@ function NotYet() {
   );
 }
 
+/** Its Energy beside the buddy's name; the sheet it opens holds the rest of the buddy's day. */
 export function BuddyToday({
   buddy,
-  className,
   energyHref,
   missionLinks,
   name,
   status,
 }: {
   buddy: LearnBuddy;
-  className?: string;
   energyHref: string;
   missionLinks: MissionLinks;
   name: string;
@@ -127,55 +121,28 @@ export function BuddyToday({
 }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
-  const countOf = useCountOf();
   const [open, setOpen] = useState(false);
   const [asked, setAsked] = useState(false);
   const { current } = status.energy;
-  const today = status.today;
-  const done = today ? countDoneMissions(today.missions) : 0;
-
-  const total = today?.missions.length ?? 0;
 
   return (
     <>
-      <div
-        // Its links' padding hangs past the row, so their words start where the name's do.
-        className={cn("-mx-2 flex flex-wrap items-center gap-x-2.5 gap-y-1", className)}
+      <button
+        aria-haspopup="dialog"
+        // Right after the name, as its own reading: its padding hangs into the name's gap, and the
+        // free room goes after it instead of between them.
+        className="hit-area text-muted-foreground hover:text-foreground held-pressed:bg-muted held-pressed:text-foreground relative -ms-2 me-auto flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
         data-slot="buddy-today"
+        onClick={() => {
+          setAsked(false);
+          setOpen(true);
+        }}
+        type="button"
       >
-        <LearnLink
-          href={energyHref}
-          className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1 rounded-md px-2 py-1 text-xs tabular-nums"
-        >
-          <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
-          <span>{t("{buddy}'s Energy", { buddy: name })}</span>
-          {current === null ? <NotYet /> : formatShare(current / PERCENT)}
-        </LearnLink>
-        <button
-          aria-haspopup="dialog"
-          className="hit-area text-muted-foreground hover:text-foreground relative flex min-h-7 items-center gap-1.5 rounded-md px-2 py-1 text-xs tabular-nums"
-          onClick={() => {
-            setAsked(false);
-            setOpen(true);
-          }}
-          type="button"
-        >
-          {total > 0 ? (
-            <>
-              <MissionsRing
-                className="size-3.5"
-                missions={{ done, total }}
-                moment={false}
-                strokeWidth={6}
-              />
-              <span>{t("Today's missions")}</span>
-              <span>{countOf(done, total)}</span>
-            </>
-          ) : (
-            <span>{t("{buddy} today", { buddy: name })}</span>
-          )}
-        </button>
-      </div>
+        <ZapIcon aria-hidden="true" className="text-energy size-3.5" />
+        <span className="sr-only">{t("{buddy}'s Energy", { buddy: name })}</span>
+        {current === null ? <NotYet /> : formatShare(current / PERCENT)}
+      </button>
 
       <BuddyTodaySheet
         asked={asked}

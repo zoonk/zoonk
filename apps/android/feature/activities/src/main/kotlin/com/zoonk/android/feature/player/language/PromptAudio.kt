@@ -45,10 +45,14 @@ import com.zoonk.android.ui.components.TaskBarKey
 class PromptAudio internal constructor(
     private val audio: SpokenAudio,
     private val autoplayed: MutableState<String?>,
+    private val onToggle: () -> Unit,
 ) {
     val state: SpeechState get() = audio.state
 
-    fun toggle(url: String) = if (audio.isBusy) audio.cancel() else play(url)
+    fun toggle(url: String) {
+        onToggle()
+        if (audio.isBusy) audio.cancel() else play(url)
+    }
 
     private fun play(url: String) = audio.speak(listOf(SpokenText(null, recording = url)))
 
@@ -72,17 +76,18 @@ class PromptAudio internal constructor(
 fun rememberPromptAudio(
     speech: SpeechPlayer,
     language: String,
+    onToggle: () -> Unit,
 ): PromptAudio {
     val audio = rememberSpokenAudio(speech, language)
     val autoplayed = rememberSaveable { mutableStateOf<String?>(null) }
-    return PromptAudio(audio, autoplayed)
+    return PromptAudio(audio, autoplayed, onToggle)
 }
 
 fun promptAudioUrl(
     language: StepContent.Language,
     cantListen: Boolean,
 ): String? {
-    val exercise = language.exercise.toExercise()
+    val exercise = language.exercise.toExercise() ?: return null
     return when (language.kind) {
         StepKind.Alphabet -> (exercise.content as? ExerciseContent.Alphabet)?.content?.audioUrl
         StepKind.Listening -> exercise.sentence?.let { listeningAudioUrl(it, cantListen) }

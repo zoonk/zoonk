@@ -14,19 +14,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@zoonk/ui/components/alert-dialog";
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
-import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { SignInAgainDialog } from "../../_components/sign-in-again-dialog";
 import { deleteAccountAction } from "./delete-account-action";
 
-const DELETE_BUTTON_CLASS = cn(
-  buttonVariants({ size: "lg", variant: "outline" }),
-  "text-destructive-text border-destructive/40 hover:bg-destructive/10 hover:text-destructive-text",
-);
+const DELETE_BUTTON_CLASS =
+  "text-destructive-text border-destructive/40 hover:bg-destructive/10 hover:text-destructive-text";
 
 async function leaveDeletedAccount() {
   await safeAsync(forgetDeletedSession);
@@ -79,7 +76,10 @@ export function DeleteAccountRow({
     <>
       <AlertDialog onOpenChange={(open) => !open && setFailed(false)}>
         <SettingRow label={t("Your account")}>
-          <AlertDialogTrigger aria-label={t("Delete account")} className={DELETE_BUTTON_CLASS}>
+          <AlertDialogTrigger
+            aria-label={t("Delete account")}
+            render={<Button className={DELETE_BUTTON_CLASS} size="lg" variant="outline" />}
+          >
             {t("Delete…")}
           </AlertDialogTrigger>
         </SettingRow>
@@ -104,7 +104,12 @@ export function DeleteAccountRow({
 
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isPending}>{t("Cancel")}</AlertDialogCancel>
-            <AlertDialogAction busy={isPending} onClick={deleteAccount} variant="destructive">
+            <AlertDialogAction
+              busy={isPending}
+              enter="off"
+              onClick={deleteAccount}
+              variant="destructive"
+            >
               {t("Delete my account")}
             </AlertDialogAction>
           </AlertDialogFooter>

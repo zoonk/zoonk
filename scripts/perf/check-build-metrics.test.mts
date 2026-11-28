@@ -25,33 +25,20 @@ describe("performance gates", () => {
 
     try {
       const good = await check(
-        "Elapsed (wall clock) time (h:mm:ss or m:ss): 0:59.99\nMaximum resident set size (kbytes): 6291456\n",
+        "Elapsed (wall clock) time (h:mm:ss or m:ss): 2:59.99\nMaximum resident set size (kbytes): 8388608\n",
       );
 
+      assert.match(good.stdout, /E2E build: 179.99 s; maximum RSS 8192 MiB/u);
       assert.doesNotMatch(good.stdout, /::warning/u);
 
       const slow = await check(
-        "Elapsed (wall clock) time (h:mm:ss or m:ss): 1:01.01\nMaximum resident set size (kbytes): 6291457\n",
+        "Elapsed (wall clock) time (h:mm:ss or m:ss): 3:00.01\nMaximum resident set size (kbytes): 8388609\n",
       );
 
-      assert.match(slow.stdout, /warning title=Main build time/u);
-      assert.match(slow.stdout, /warning title=Main build RSS/u);
-
-      const mac = await check(
-        "       59.99 real        10.00 user         2.00 sys\n          6442450944  maximum resident set size\n",
-      );
-
-      assert.match(mac.stdout, /Main build: 59.99 s; maximum RSS 6144 MiB/u);
-      assert.doesNotMatch(mac.stdout, /::warning/u);
-
-      const macOverBudget = await check(
-        "       61.01 real        10.00 user         2.00 sys\n          6442451968  maximum resident set size\n",
-      );
-
-      assert.match(macOverBudget.stdout, /warning title=Main build time/u);
-      assert.match(macOverBudget.stdout, /warning title=Main build RSS/u);
+      assert.match(slow.stdout, /warning title=E2E build time/u);
+      assert.match(slow.stdout, /warning title=E2E build RSS/u);
       const missing = await check("missing fields");
-      assert.match(missing.stdout, /warning title=Main build metrics/u);
+      assert.match(missing.stdout, /warning title=E2E build metrics/u);
     } finally {
       await rm(directory, { recursive: true });
     }

@@ -63,7 +63,7 @@ function ContinueAtNextLevel({
   };
 
   return (
-    <SuggestionAction action={start} busy={isPending} icon={<PlayIcon aria-hidden="true" />}>
+    <SuggestionAction onClick={start} busy={isPending} icon={<PlayIcon aria-hidden="true" />}>
       {t("Continue at {level}", { level: levelName(next.level) })}
     </SuggestionAction>
   );

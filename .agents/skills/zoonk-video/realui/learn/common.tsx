@@ -39,7 +39,6 @@ export function Link({
   prefetch: _prefetch,
   scroll: _scroll,
   lessonWritten: _lessonWritten,
-  unstable_dynamicOnHover: _dynamicOnHover,
   ref,
   title,
   ...rest
@@ -68,9 +67,7 @@ export const MISSION_LINKS: MissionLinks = {
     areaPractice: (areaId) => `/practice/${areaId}`,
     buddy: "/buddy",
     call: (chapterId) => `/call/${chapterId}`,
-    mistakesPractice: "/mistakes/practice",
     mockChooser: "/mock/new",
-    pattern: (patternId) => `/pattern/${patternId}`,
     pronunciation: "/pronunciation",
   },
   openBlock: async () => true,

@@ -7,6 +7,11 @@ import { type ExtractionDocument } from "./blueprint-passages";
 import { findNamedFormats } from "./material-formats";
 import { toStems, toTopicKey } from "./topic-key";
 
+/** The Markdown a photo's transcript writes: a heading's `#` and bold around a highlighted term. */
+const HEADING_MARK = /^\s*#{1,6}\s+/u;
+
+const BOLD = /^\*\*(?<term>.+)\*\*$/u;
+
 const NUMBERING = /^\s*(?:\d+(?:\.\d+)*[.)]?|[A-Za-z][.)]|[IVXL]{1,4}\s*[.)–-]|[-–•*·])\s+/u;
 
 const TRAILING_REMARK = /\s*(?:\((?<aside>[^()]*)\)|\s[-–]\s+(?<dash>.+)|(?<bang>!+))\s*$/u;
@@ -24,8 +29,13 @@ function isEmphasis(remark: string): boolean {
   return remark.includes("!") || (letters > 0 && IN_CAPITALS.test(remark) && isPhrase);
 }
 
+function removeMarkdown(heading: string): string {
+  const line = heading.replace(HEADING_MARK, "").trim();
+  return BOLD.exec(line)?.groups?.term ?? line;
+}
+
 function cleanMaterialTopic(heading: string): MaterialTopic {
-  const words = heading.replace(NUMBERING, "").trim();
+  const words = removeMarkdown(heading).replace(NUMBERING, "").trim();
   const remark = TRAILING_REMARK.exec(words);
   const parts = remark?.groups;
   const stress = (parts?.aside ?? parts?.dash ?? parts?.bang ?? "").trim();
@@ -80,7 +90,7 @@ function toEmphasisFrequency({
   );
 }
 
-const toName = (topic: string) => cleanMaterialTopic(topic).name;
+export const toMaterialTopicName = (topic: string) => cleanMaterialTopic(topic).name;
 
 type BlueprintFormat = ExamStructure["formats"][number];
 
@@ -126,7 +136,7 @@ function findAnnouncedHeadings({
   const said = toStems(format.description);
 
   const named = headings.filter((heading) => {
-    const stems = toStems(toName(heading));
+    const stems = toStems(toMaterialTopicName(heading));
     return stems.length > 0 && stems.every((stem) => said.includes(stem));
   });
 
@@ -168,7 +178,7 @@ function toAnnouncedFrequency({
         citation: format.citation,
         level: "high" as const,
         subject: subject.name,
-        topic: toName(heading),
+        topic: toMaterialTopicName(heading),
       })),
     );
   });
@@ -184,7 +194,10 @@ export function toMaterialContent({
   content: BlueprintContent;
   documents: readonly ExtractionDocument[];
 }): BlueprintContent {
-  const read = content.topicFrequency.map((entry) => ({ ...entry, topic: toName(entry.topic) }));
+  const read = content.topicFrequency.map((entry) => ({
+    ...entry,
+    topic: toMaterialTopicName(entry.topic),
+  }));
 
   const formats = [
     ...content.structure.formats,
@@ -211,9 +224,9 @@ export function toMaterialContent({
         ...subject,
         topicGroups: subject.topicGroups?.map((group) => ({
           ...group,
-          topics: [...new Set(group.topics.map((topic) => toName(topic)))],
+          topics: [...new Set(group.topics.map((topic) => toMaterialTopicName(topic)))],
         })),
-        topics: [...new Set(subject.topics.map((topic) => toName(topic)))],
+        topics: [...new Set(subject.topics.map((topic) => toMaterialTopicName(topic)))],
       })),
     },
     topicFrequency: frequency,

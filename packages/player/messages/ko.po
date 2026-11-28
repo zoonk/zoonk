@@ -3618,11 +3618,6 @@ msgid "Ask {name} about this mock exam"
 msgstr "{name}에게 이 모의고사에 대해 질문하기"
 
 #: src/questions/ask-tutor.tsx
-msgctxt "tLlk0f"
-msgid "Ask {name} about your plan"
-msgstr "{name}에게 내 계획에 대해 질문하기"
-
-#: src/questions/ask-tutor.tsx
 msgctxt "VgQdYo"
 msgid "Ask {name} about this module"
 msgstr "이 모듈에 대해 {name}님에게 질문하기"
@@ -3707,11 +3702,6 @@ msgstr "이 레슨은 더 이상 이용할 수 없어요."
 msgctxt "g4aIUa"
 msgid "We couldn't send this question. Try again."
 msgstr "이 질문을 보내지 못했어요. 다시 시도해 보세요."
-
-#: src/questions/lesson-question-errors.tsx
-msgctxt "-xjsCZ"
-msgid "Take a short break, then ask again."
-msgstr "잠시 쉬었다가 다시 질문해 보세요."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"

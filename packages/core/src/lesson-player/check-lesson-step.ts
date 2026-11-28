@@ -123,6 +123,7 @@ async function recordCheck({
       },
       itemId: row.itemId,
       language: row.lesson.language,
+      lessonRun: { lessonId: row.lessonId, startedAt: run.startedAt },
       mistake: questionText
         ? {
             questionText,

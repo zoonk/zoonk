@@ -94,6 +94,18 @@ function scrollsToward(element: Element | null, arrow: string): boolean {
   );
 }
 
+function layerOf(element: Element | null): Element | null {
+  return element?.closest(POPUP_SELECTOR) ?? null;
+}
+
+/**
+ * A key presses a control only in the panel it was pressed in (or on the page, outside every
+ * panel), so one Enter in a sheet opened over another sheet presses only the top one's action.
+ */
+export function isInLayerOf(event: KeyboardEvent, control: Element): boolean {
+  return layerOf(shortcutTarget(event)) === layerOf(control);
+}
+
 /** A held key acts once, so holding Enter never skips screens. */
 export function isScreenShortcut(
   event: KeyboardEvent,

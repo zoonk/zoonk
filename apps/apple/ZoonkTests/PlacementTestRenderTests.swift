@@ -255,10 +255,10 @@ final class PlacementTestRenderTests: XCTestCase {
     let learner = LearnerSummaryStore(
       api: LearnerSummaryAPI(clients: clients), cache: AppCache(session: .preview()))
     let mission = StudyMission(
-      detail: nil, done: 1, kind: .practice, minutes: nil, opens: nil, status: "done",
+      detail: nil, done: 1, kind: .practice, minutes: nil, opens: nil, status: .done,
       total: 1, waitReason: nil)
     let nextMission = StudyMission(
-      detail: nil, done: 0, kind: .review, minutes: nil, opens: nil, status: "ready",
+      detail: nil, done: 0, kind: .review, minutes: nil, opens: nil, status: .todo,
       total: 1, waitReason: nil)
     let moment = DayResult(
       ceremony: nil, certificates: [],

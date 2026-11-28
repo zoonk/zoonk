@@ -9,6 +9,7 @@ import { pronunciationReviewFixture } from "@zoonk/testing/fixtures/pronunciatio
 import { ONE_SECOND_RECORDING } from "@zoonk/testing/fixtures/recordings";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const RECORDING = {
@@ -16,8 +17,6 @@ const RECORDING = {
   mimeType: "audio/webm",
   name: "word.webm",
 };
-
-const DAY_MS = 86_400_000;
 
 async function learnerWithReviews(userId: string) {
   const [{ goal }, organization] = await Promise.all([
@@ -41,7 +40,11 @@ async function learnerWithReviews(userId: string) {
 
   const [review] = await Promise.all([
     pronunciationReviewFixture({ userId, wordId: due.id }),
-    pronunciationReviewFixture({ dueAt: new Date(Date.now() + DAY_MS), userId, wordId: later.id }),
+    pronunciationReviewFixture({
+      dueAt: new Date(Date.now() + MS_PER_DAY),
+      userId,
+      wordId: later.id,
+    }),
   ]);
 
   return { due, goal, review };

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
 import {
   Drawer,
   DrawerContent,
@@ -10,9 +9,9 @@ import {
   DrawerTrigger,
 } from "@zoonk/ui/components/drawer";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { ListPlusIcon, RotateCwIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type ReactElement, type ReactNode, useRef, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { OutlineLimitNotice, useLiveLimit } from "../_components/help-limit-notice";
 import { ListGroup, ListRowContent, ListRowLink, ListRowTitle } from "../_components/list-group";
 import { SheetHeader } from "../_components/sheet-header";
@@ -104,19 +103,14 @@ function FarTopicBody({
       </div>
 
       {copy.action && (
-        <Button
+        <EnterButton
           busy={isPending}
           disabled={isCapped}
-          focusableWhenDisabled
-          icon={
-            isFailure ? <RotateCwIcon aria-hidden="true" /> : <ListPlusIcon aria-hidden="true" />
-          }
           onClick={isFailure ? retry : request}
           size="lg"
-          variant={isFailure ? "outline" : "default"}
         >
           {copy.action}
-        </Button>
+        </EnterButton>
       )}
 
       <StatusRegion>
@@ -173,9 +167,7 @@ function FarTopicPanel({
 
 /**
  * The page is read again only when the sheet closes after the lessons landed: read while open, the
- * plan could take away the row the sheet opened from. `trigger` is a submit button: opening reads
- * the topic's lessons, so the form keeps a press made before the page hydrates and opens it once it
- * does.
+ * plan could take away the row the sheet opened from.
  */
 export function FarTopicSheet({
   actions,
@@ -210,9 +202,7 @@ export function FarTopicSheet({
 
   return (
     <Drawer onOpenChange={changeOpen} open={open}>
-      <form action={() => changeOpen(true)} className="contents">
-        <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
-      </form>
+      <DrawerTrigger render={trigger}>{children}</DrawerTrigger>
 
       <DrawerPopup>
         <FarTopicPanel

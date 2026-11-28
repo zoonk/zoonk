@@ -107,6 +107,7 @@ export async function markLessonBlockDone({
   block,
   brainPower,
   eventId,
+  firstCompletion,
   goalId,
   lessonId,
   timeZone,
@@ -116,6 +117,7 @@ export async function markLessonBlockDone({
   brainPower: number;
   /** The completion that finished the lesson, which records a chapter the block finishes. */
   eventId: string;
+  firstCompletion: boolean;
   goalId: string | null;
   lessonId: string | null;
   timeZone: string;
@@ -143,7 +145,7 @@ export async function markLessonBlockDone({
 
       await oweDaySettlement(tx, { block, timeZone, userId });
 
-      if (!lessonId) {
+      if (!lessonId || !firstCompletion) {
         return { languageGoals: [] };
       }
 

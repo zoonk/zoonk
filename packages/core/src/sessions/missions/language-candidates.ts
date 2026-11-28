@@ -1,17 +1,13 @@
 import { type Goal, prisma } from "@zoonk/db";
 import "server-only";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type UsageTotals, getUsageCounts } from "../../entitlements/_utils/usage-counts";
 import { type EntitlementTier } from "../../entitlements/contract";
-import { offeredToGoal } from "../../language/patterns/find-fresh-pattern";
-import { mistakePatternContentSchema } from "../../language/patterns/pattern-contract";
 import { MAX_PRONUNCIATION_ROUND_WORDS } from "../../language/pronunciation/pronunciation-rules";
 import { type SessionPlanItem } from "../_utils/session-plan-item";
 import { type MissionFactBlock } from "./block-candidates";
 import { hasMissionAllowance } from "./candidate-allowance";
 import { type MissionPick } from "./catalog";
 
-const FRESH_PATTERN_DAYS = 7;
 const SECONDS_PER_MINUTE = 60;
 
 export async function languageCandidates({
@@ -30,32 +26,14 @@ export async function languageCandidates({
   tier: EntitlementTier;
   usage: UsageTotals;
   userId: string;
-}): Promise<{ candidates: MissionPick[]; patternExpiresTomorrow: boolean }> {
+}): Promise<MissionPick[]> {
   if (goal.kind !== "language" || !goal.targetLanguage) {
-    return { candidates: [], patternExpiresTomorrow: false };
+    return [];
   }
 
-  const [patterns, pronunciation] = await Promise.all([
-    prisma.mistakePattern.findMany({
-      orderBy: [{ createdAt: "asc" }, { id: "asc" }],
-      where: {
-        createdAt: { gte: new Date(now.getTime() - FRESH_PATTERN_DAYS * MS_PER_DAY), lte: now },
-        dismissedAt: null,
-        ...offeredToGoal(goal.id),
-        kind: "pattern",
-        language: goal.targetLanguage,
-        practicedAt: null,
-        userId,
-      },
-    }),
-    prisma.pronunciationReview.count({
-      where: { dueAt: { lte: now }, language: goal.targetLanguage, userId },
-    }),
-  ]);
-
-  const pattern = patterns.find(
-    (row) => (mistakePatternContentSchema.safeParse(row.content).data?.drill.length ?? 0) > 0,
-  );
+  const pronunciation = await prisma.pronunciationReview.count({
+    where: { dueAt: { lte: now }, language: goal.targetLanguage, userId },
+  });
 
   const chapterId =
     blocks.find((block) => block.kind === "learn" && block.payload.chapterId)?.payload.chapterId ??
@@ -82,44 +60,27 @@ export async function languageCandidates({
     (item) => item.chapterId === chapterId && item.kind === "chapter",
   )?.titleSnapshot;
 
-  return {
-    candidates: [
-      ...(pattern
-        ? [
-            {
-              anchor: { patternId: pattern.id },
-              detail: { patternTitle: pattern.title },
-              kind: "pattern" as const,
-              opens: { kind: "pattern" as const, patternId: pattern.id },
-              total: 1,
-            },
-          ]
-        : []),
-      ...(pronunciationAllowed
-        ? [
-            {
-              anchor: {},
-              kind: "pronunciation" as const,
-              opens: { kind: "pronunciation" as const },
-              total: 1,
-            },
-          ]
-        : []),
-      ...(callAllowed && chapterId
-        ? [
-            {
-              anchor: { chapterId },
-              detail: chapterTitle ? { chapterTitle } : {},
-              kind: "call" as const,
-              opens: { chapterId, kind: "call" as const },
-              total: 1,
-            },
-          ]
-        : []),
-    ],
-    patternExpiresTomorrow: Boolean(
-      pattern &&
-      pattern.createdAt.getTime() + FRESH_PATTERN_DAYS * MS_PER_DAY <= now.getTime() + MS_PER_DAY,
-    ),
-  };
+  return [
+    ...(pronunciationAllowed
+      ? [
+          {
+            anchor: {},
+            kind: "pronunciation" as const,
+            opens: { kind: "pronunciation" as const },
+            total: 1,
+          },
+        ]
+      : []),
+    ...(callAllowed && chapterId
+      ? [
+          {
+            anchor: { chapterId },
+            detail: chapterTitle ? { chapterTitle } : {},
+            kind: "call" as const,
+            opens: { chapterId, kind: "call" as const },
+            total: 1,
+          },
+        ]
+      : []),
+  ];
 }

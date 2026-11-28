@@ -1,7 +1,8 @@
 import { getAuthPageLocale } from "@/i18n/page-locale";
+import { HeldPressScript, KeepTypingScript } from "@zoonk/ui/components/head-scripts";
+import { HeldPressCommit } from "@zoonk/ui/components/held-press-commit";
 import { Toaster } from "@zoonk/ui/components/toast";
 import { FONT_VARIABLES } from "@zoonk/ui/fonts";
-import { KEEP_TYPING_SCRIPT } from "@zoonk/ui/lib/kept-typing-script";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
@@ -27,10 +28,8 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
   return (
     <html className={FONT_VARIABLES} lang={appLocale}>
       <head>
-        <script
-          // oxlint-disable-next-line react/no-danger -- A fixed script that must run before the first paint.
-          dangerouslySetInnerHTML={{ __html: KEEP_TYPING_SCRIPT }}
-        />
+        <KeepTypingScript />
+        <HeldPressScript />
       </head>
       <body className="bg-background font-sans antialiased">
         <NextIntlClientProvider>
@@ -38,6 +37,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/auth/[local
             {children}
           </main>
           <Toaster />
+          <HeldPressCommit />
         </NextIntlClientProvider>
       </body>
     </html>

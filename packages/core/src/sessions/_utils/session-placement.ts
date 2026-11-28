@@ -5,6 +5,7 @@ import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules"
 import { type GoalPlan, type GoalSkillNode } from "../../learner/_utils/goal-skill-graph";
 import { loadSkippedRecheckSkills } from "../../learner/_utils/load-skill-claims";
 import { type ClaimEvent, listSkippedRechecks } from "../../learner/_utils/skill-claims";
+import { type readPracticeMistakes } from "../../learner/facts/practice-mistakes";
 import { type readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { pickSessionChecks } from "../../learner/placement/_utils/session-placement-items";
 import { listTestSubjects, mapSkillAreas } from "../../learner/placement/focus-test-subjects";
@@ -29,6 +30,7 @@ export type SessionDayContext = {
   now: Date;
   /** A GET's request-wide claim events; without it, they're read fresh. */
   readClaims?: (skillIds: readonly string[]) => Promise<ClaimEvent[]>;
+  readDayMistakes?: () => ReturnType<typeof readPracticeMistakes>;
   /** A GET passes `readActiveSubscription`; without it, the subscription is read fresh. */
   readSubscription?: typeof findActiveSubscription;
   readWritingAnswers?: typeof readScheduledAnswers;

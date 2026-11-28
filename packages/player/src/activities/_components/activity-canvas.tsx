@@ -11,9 +11,15 @@ export const ACTIVITY_BOX_CLASS = "bg-background rounded-xl border";
 /** A box that holds a line or two of text. */
 export const ACTIVITY_CARD_CLASS = cn(ACTIVITY_BOX_CLASS, "px-3 py-2.5");
 
+/** A box pressed before the page hydrates (`data-held`) is drawn as the one the learner is working on. */
+export const ACTIVITY_HELD_CLASS =
+  "data-held:border-viz-accent data-held:ring-viz-accent data-held:ring-1 data-held:ring-inset";
+
 /** Added to a box the learner taps or drags. */
-export const ACTIVITY_PRESS_CLASS =
-  "focus-visible:ring-ring/50 min-h-11 text-left outline-none select-none focus-visible:ring-[3px]";
+export const ACTIVITY_PRESS_CLASS = cn(
+  "focus-visible:ring-ring/50 min-h-11 text-left outline-none select-none focus-visible:ring-[3px]",
+  ACTIVITY_HELD_CLASS,
+);
 
 /** A box the learner types in. */
 export const ACTIVITY_FIELD_CLASS = cn(

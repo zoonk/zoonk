@@ -1,6 +1,7 @@
 import { getLiveCallModel } from "@zoonk/ai/tasks/language/live-call-provider";
 import { getLiveConversationVoice } from "@zoonk/ai/tasks/language/live-conversation-models";
 import { type LanguageConversationSetup } from "@zoonk/core/language/conversations/contract";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type Experimental_RealtimeServerEvent as RealtimeServerEvent } from "ai";
 
 type LiveCallScript = LanguageConversationSetup["script"];
@@ -8,7 +9,6 @@ export type LiveCallCue = LiveCallScript["cues"]["opening"];
 
 const SAMPLE_RATE = 24_000;
 const CHUNK_MS = 100;
-const MS_PER_SECOND = 1000;
 const BYTES_PER_SAMPLE = 2;
 const SILENCE = Buffer.alloc((SAMPLE_RATE * BYTES_PER_SAMPLE * CHUNK_MS) / MS_PER_SECOND);
 const START_TIMEOUT_MS = 20_000;

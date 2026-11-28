@@ -218,6 +218,8 @@ struct MockResult: Hashable, Decodable, Sendable {
   var correct: Double
   var irt: IRT?
   var minutesUsed: Double
+  /// Topics the plan moved earlier when this mock finished, as the plan names them.
+  var movedTopics: [String]?
   var net: Net?
   var plannedMinutes: Double
   /// Nil for an exam not scored in points.
@@ -358,7 +360,7 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   var id: String { itemId }
 }
 
-struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
+struct MockReviewItem: Hashable, OmittableAPIContent, Sendable, Identifiable {
   enum Outcome: String, Decodable, Sendable {
     case blank
     case partial
@@ -385,20 +387,14 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var id: String { itemId }
 }
 
+/// The one plan change a finished mock asks about: skipping lessons it showed the learner knows.
 struct MockAdapt: Hashable, Decodable, Sendable {
-  struct Focus: Hashable, Decodable, Sendable {
-    var area: String
-    var correct: Double
-    var total: Int
-  }
-
   struct Skip: Hashable, Decodable, Sendable {
     var lessons: Int
     var topics: [String]
   }
 
-  var focus: Focus?
-  var skip: Skip?
+  var skip: Skip
 }
 
 struct MockScoreNotes: Hashable, Decodable, Sendable {
@@ -532,6 +528,13 @@ struct MockVerdict: Hashable, Decodable, Sendable {
   var weakest: String?
 }
 
+extension MockView {
+  /// The sitting whose open mistakes the result offers to practice; nil once none are left.
+  var mistakesToPractice: String? {
+    practiceAvailable && purpose != .placement ? mockId : nil
+  }
+}
+
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -574,7 +577,11 @@ struct MockView: Hashable, Decodable, Sendable {
   var minutes: Int
   var missionMoment: DayResult.MissionMoment?
   var mistakes: [Mistake]
+  /// The sitting, once it started: a run practices its mistakes.
+  var mockId: String?
   var number: Int
+  /// The finished mock still has open mistakes to practice.
+  var practiceAvailable: Bool
   /// `practice` where the exam shares one clock with its essay: the timer is pacing, not the board's.
   var pacing: Pacing?
   var passMarks: PassMarks?
@@ -619,12 +626,12 @@ struct MockView: Hashable, Decodable, Sendable {
   }
 }
 
-enum ExamDocument: String, Decodable, Sendable {
+enum ExamDocument: String, OmittableAPIContent, Sendable {
   case guide
   case notice
 }
 
-struct MockOption: Hashable, Decodable, Sendable, Identifiable {
+struct MockOption: Hashable, OmittableAPIContent, Sendable, Identifiable {
   /// One test of an exam held as several, in the notice's words and order.
   struct Section: Hashable, Decodable, Sendable {
     enum Kind: String, Decodable, Sendable {

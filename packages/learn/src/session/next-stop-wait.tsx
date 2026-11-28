@@ -4,17 +4,22 @@ import { type WarmUpDeck } from "@zoonk/core/library/warm-ups/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { EnterButton } from "../_components/enter-button";
 import {
   type LessonNotWritten,
   LessonNotWrittenNotice,
 } from "../_components/lesson-not-written-notice";
-import { usePoll } from "../_utils/use-poll";
 import { FollowedRun } from "../generation/generation-follower";
 import { type LessonKind } from "../generation/generation-kinds";
-import { type GenerationRun, hasStopped, toHeldRun } from "../generation/generation-run";
+import {
+  type GenerationRun,
+  UNNAMED_RUN,
+  toAwaitedRun,
+  toHeldRun,
+} from "../generation/generation-run";
 import { GenerationFailureNotice, GenerationWait } from "../generation/generation-wait";
+import { useReportStopped } from "../generation/use-report-stopped";
 import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { LessonWaitStatus } from "../wait/lesson-wait-status";
@@ -24,111 +29,9 @@ import { type DayStep } from "./session-types";
 import { useBlockTitle } from "./use-block-copy";
 import { useSessionAction } from "./use-session-action";
 
-const WAITING_CHECK_MS = 5000;
-
-// A lesson opens at most five minutes after its text is written, so writing ends well inside this.
-const STUCK_AFTER_MS = { notStarted: 20_000, writing: 600_000 } as const;
-
-/** The wait never shows a set-aside lesson: the session read shows its notice instead. */
-function hasLessonChanged({
-  generationId,
-  lesson,
-  read,
-}: {
-  generationId: string | null;
-  lesson: NextStopLesson;
-  read: { generationId: string | null; lesson: NextStopLesson; setAside: boolean };
-}): boolean {
-  return (
-    read.setAside ||
-    read.lesson !== lesson ||
-    (read.lesson === "writing" && read.generationId !== generationId)
-  );
-}
-
-/**
- * Reads the whole session only when the lesson changed. A failed lesson is still checked: after Try
- * again, it stays failed until the new run takes it.
- */
-function useWaitingCheck({
-  actions,
-  block,
-  generationId,
-  lesson,
-}: {
-  actions: NextStopActions;
-  block: DayStep;
-  generationId: string | null;
-  lesson: NextStopLesson;
-}) {
-  const lessonId = block.kind === "learn" ? block.lessonId : null;
-
-  return usePoll({
-    active: lesson !== "ready",
-    intervalMs: WAITING_CHECK_MS,
-    key: `${lessonId ?? block.position}:${lesson}:${generationId ?? ""}`,
-    onPoll: async (signal) => {
-      if (!lessonId || !actions.readLesson) {
-        actions.refresh();
-        return;
-      }
-
-      const read = await actions.readLesson(lessonId);
-
-      if (!signal.aborted && read && hasLessonChanged({ generationId, lesson, read })) {
-        actions.refresh();
-      }
-    },
-    startNow: false,
-  });
-}
-
-/**
- * Nothing is on its way: the session's snapshot says the lesson failed, its writing never started
- * or went quiet, or the followed run reported it stopped, whichever comes first, and the one still
- * behind doesn't bring the quiz back. A stop belongs to the run and the try it was learned from: a
- * new run, or Try again, starts clean.
- */
-export function useWaitFailed({
-  generationId,
-  lesson,
-}: {
-  generationId: string | null;
-  lesson: NextStopLesson;
-}) {
-  const [attempt, setAttempt] = useState(0);
-  const run = `${generationId ?? ""}:${attempt}`;
-  const [stuckRun, setStuckRun] = useState<string | null>(null);
-  const [stoppedRun, setStoppedRun] = useState<string | null>(null);
-  const quiet = `${lesson}:${run}`;
-
-  useEffect(() => {
-    if (lesson !== "notStarted" && lesson !== "writing") {
-      return;
-    }
-
-    const timer = setTimeout(() => setStuckRun(quiet), STUCK_AFTER_MS[lesson]);
-    return () => clearTimeout(timer);
-  }, [lesson, quiet]);
-
-  return {
-    clearStopped: () => setAttempt((count) => count + 1),
-    failed: lesson === "failed" || stuckRun === quiet || stoppedRun === run,
-    runStopped: () => setStoppedRun(run),
-  };
-}
-
-/** Before the next paint, so the quiz never shows under a run that stopped. */
-function ReportStopped({ onStopped, run }: { onStopped: () => void; run: GenerationRun }) {
-  const stopped = hasStopped(run);
-  const report = useEffectEvent(onStopped);
-
-  useLayoutEffect(() => {
-    if (stopped) {
-      report();
-    }
-  }, [stopped]);
-
+/** A run is followed inside a render callback, so the report is a component of its own. */
+function ReportStopped(props: { onStopped: () => void; run: GenerationRun }) {
+  useReportStopped(props);
   return null;
 }
 
@@ -183,72 +86,81 @@ export function Waiting({
   generationId,
   kind,
   lesson,
+  onInterrupted,
+  onRunStopped,
 }: {
   actions: NextStopActions;
   barHasMainAction: boolean;
   block: DayStep;
-  failed: ReturnType<typeof useWaitFailed>;
+  failed: boolean;
   generationId: string | null;
   kind: LessonKind;
   lesson: NextStopLesson;
+  onInterrupted: () => void;
+  onRunStopped: () => void;
 }) {
   const held = lesson === "ready";
   const runId = useHeldRunId({ generationId, held });
   const since = useMountTime().getTime();
 
-  const poll = useWaitingCheck({ actions, block, generationId, lesson });
-
-  if (failed.failed) {
+  if (failed) {
     const failure = (
       <GenerationFailureNotice
         barHasMainAction={barHasMainAction}
-        failure={lesson === "notStarted" ? "notStarted" : "generation"}
-        retry={() => {
-          failed.clearStopped();
-          poll.restart();
-          void actions.start(block);
-        }}
+        failure="generation"
+        retry={() => void actions.start(block)}
       />
     );
 
     return <WaitContent progress={failure} status={failure} />;
   }
 
+  const content = (run: GenerationRun) => {
+    const shown = toAwaitedRun(run);
+
+    return (
+      <>
+        <ReportStopped onStopped={onRunStopped} run={run} />
+        <WaitContent
+          progress={
+            <WritingProgress
+              barHasMainAction={barHasMainAction}
+              held={held}
+              kind={kind}
+              run={shown}
+              since={since}
+            />
+          }
+          status={
+            shown.status === "failed" ? (
+              <GenerationFailureNotice
+                barHasMainAction={barHasMainAction}
+                failure={shown.failure ?? "connection"}
+                retry={shown.retry}
+              />
+            ) : (
+              <LessonWaitStatus holding={held} kind={kind} run={shown} since={since} />
+            )
+          }
+        />
+      </>
+    );
+  };
+
+  if (!runId) {
+    return content(UNNAMED_RUN);
+  }
+
   return (
     <FollowedRun
       generationId={runId}
-      key={runId ?? "notStarted"}
+      key={runId}
       kind={kind}
+      onInterrupted={onInterrupted}
       onReady={actions.refresh}
       restart={async () => ((await actions.start(block)) ? undefined : null)}
     >
-      {(run) => (
-        <>
-          <ReportStopped onStopped={failed.runStopped} run={run} />
-          <WaitContent
-            progress={
-              <WritingProgress
-                barHasMainAction={barHasMainAction}
-                held={held}
-                kind={kind}
-                run={run}
-                since={since}
-              />
-            }
-            status={
-              run.status === "failed" ? (
-                <GenerationFailureNotice
-                  barHasMainAction={barHasMainAction}
-                  failure={run.failure ?? "generation"}
-                  retry={run.retry}
-                />
-              ) : (
-                <LessonWaitStatus holding={held} kind={kind} run={run} since={since} />
-              )
-            }
-          />
-        </>
-      )}
+      {content}
     </FollowedRun>
   );
 }
@@ -293,10 +205,6 @@ function useAlternativeLabel() {
       return t("Review now");
     }
 
-    if (alternative.kind === "learn") {
-      return t("Next lesson");
-    }
-
     return t("Practice now");
   };
 }
@@ -312,11 +220,9 @@ export function AlternativeButton({
   const other = useSessionAction({ action: () => actions.start(alternative), enterKey: true });
 
   return (
-    <form action={() => void other.run()} className="contents">
-      <EnterButton busy={other.isPending} enter="host" type="submit">
-        {label(alternative)}
-      </EnterButton>
-    </form>
+    <EnterButton busy={other.isPending} enter="host" onClick={other.run}>
+      {label(alternative)}
+    </EnterButton>
   );
 }
 

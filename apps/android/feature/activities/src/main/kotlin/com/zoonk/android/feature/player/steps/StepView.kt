@@ -64,7 +64,11 @@ val LocalAskSimpler = compositionLocalOf<AskSimpler?> { null }
 /** What a screen's view can ask the player to do. */
 @Stable
 interface StepActions {
+    fun engage() = Unit
+
     fun select(answer: LessonAnswer?)
+
+    fun restoreAnswer(answer: LessonAnswer) = select(answer)
 
     /** A view whose pick does more than select (a translation says its word) takes the number keys while it shows. */
     fun takeKeyPicks(pick: ((LessonAnswer?) -> Unit)?) = Unit
@@ -225,7 +229,9 @@ fun keyPick(
 
             is StepContent.Activity -> {
                 val picked =
-                    activityRenderers[content.frame.template]?.keyPick?.invoke(content.content, index)
+                    content.frame.renderer
+                        ?.keyPick
+                        ?.invoke(content.content, index)
                         ?: (content.frame.check as? ChoiceCheckValue)
                             ?.value
                             ?.options

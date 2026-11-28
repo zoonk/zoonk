@@ -1,5 +1,5 @@
 import { type LearnerId, isTapLearner } from "@/lib/learner/learner-snapshot";
-import { type DayBlockRef } from "@zoonk/core/sessions/day-block";
+import { type DayBlockRef, type DayBlockScreen } from "@zoonk/core/sessions/day-block";
 import { type StudyBlockOpening } from "@zoonk/core/sessions/open-block-contract";
 import { type NextStopTap } from "@zoonk/learn/session/next-stop";
 import { type StudyDay } from "@zoonk/learn/session/types";
@@ -21,13 +21,11 @@ type ShownDay = {
   userId: string;
 };
 
-type StepScreen = "challenge" | "essay" | "lesson" | "session" | "unknown";
-
 export type TapStep = {
   blockId: string | null;
   position: number;
   ref: DayBlockRef | null;
-  screen: StepScreen;
+  screen: DayBlockScreen;
 };
 
 export type TapDay = { sessionId: string | null; shown: ShownDay };

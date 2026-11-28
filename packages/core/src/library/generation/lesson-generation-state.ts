@@ -18,16 +18,16 @@ function toLessonGenerationState(lesson: StateRow): LessonGenerationState {
     return { status: "ready" };
   }
 
-  if (lesson.contentStatus === "running" && lesson.contentRunId) {
-    return { runId: lesson.contentRunId, status: "generating" };
-  }
-
-  if (lesson.contentStatus === "failed") {
+  if (lesson.setAsideAt !== null || lesson.contentStatus === "failed") {
     return {
       heldBackDrafts: parseHeldBackDrafts(lesson.heldBackDrafts).length,
       setAside: lesson.setAsideAt !== null,
       status: "failed",
     };
+  }
+
+  if (lesson.contentStatus === "running" && lesson.contentRunId) {
+    return { runId: lesson.contentRunId, status: "generating" };
   }
 
   return { status: "notStarted" };
@@ -119,14 +119,16 @@ export async function completeLessonContent({
 
 export async function releaseStaleLessonClaims({
   lessonId,
+  setAside = false,
   staleRunId,
 }: {
   lessonId: string;
+  setAside?: boolean;
   staleRunId: string;
 }): Promise<boolean> {
   const [content, spec] = await prisma.$transaction([
     prisma.lesson.updateMany({
-      data: { contentStatus: "failed" },
+      data: { contentStatus: "failed", ...(setAside && { setAsideAt: new Date() }) },
       where: {
         contentRunId: staleRunId,
         contentStatus: { in: ["pending", "running"] },

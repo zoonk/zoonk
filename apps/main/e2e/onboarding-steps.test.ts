@@ -55,7 +55,6 @@ test.describe("Refreshing mid-onboarding", () => {
     await page.goto(`/start/${goal.id}`);
 
     const purpose = page.getByRole("radio", { name: /Understand it well/u });
-    await expectHydrated(purpose);
     await purpose.click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -274,7 +273,6 @@ test.describe("Why a language learner studies it", () => {
     await page.goto(`/start/${goal.id}`);
 
     const travel = page.getByRole("radio", { name: /^Travel/u });
-    await expectHydrated(travel);
     await travel.click();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 

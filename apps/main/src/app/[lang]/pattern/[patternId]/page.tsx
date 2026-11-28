@@ -29,8 +29,10 @@ function PatternSkeleton() {
   );
 }
 
-async function PatternContent({ params }: Props) {
-  const { patternId } = await params;
+async function PatternContent({ params, searchParams }: Props) {
+  const [{ patternId }, query] = await Promise.all([params, searchParams]);
+  // Opened from a day's block, the drill goes on to the day's next stop as other blocks do.
+  const fromDay = typeof query.session === "string";
 
   const [result, buddy] = await Promise.all([getMistakePattern(patternId), getLearnerBuddy()]);
 
@@ -48,7 +50,11 @@ async function PatternContent({ params }: Props) {
 
   return (
     <MainLearnProvider>
-      <PatternClient buddy={buddy} pattern={result.pattern} />
+      <PatternClient
+        buddy={buddy}
+        continueHref={fromDay ? "/session" : undefined}
+        pattern={result.pattern}
+      />
     </MainLearnProvider>
   );
 }

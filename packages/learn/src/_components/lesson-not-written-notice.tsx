@@ -29,11 +29,9 @@ function RefusedNotice({
     <LessonLimitNotice
       action={
         retries && (
-          <form action={() => onRetry()} className="contents">
-            <Button size="sm" type="submit" variant="outline">
-              {ready ? t("Start") : t("Try again")}
-            </Button>
-          </form>
+          <Button size="sm" onClick={onRetry} variant="outline">
+            {ready ? t("Start") : t("Try again")}
+          </Button>
         )
       }
       limit={limit}

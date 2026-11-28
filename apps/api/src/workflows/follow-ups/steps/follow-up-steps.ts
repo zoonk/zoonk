@@ -1,9 +1,11 @@
-import { type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
+import { type FollowUp, type OwedFollowUp } from "@zoonk/core/follow-ups/contract";
 import {
   endFollowUp,
   listFollowUps,
   listLearnersWithOldFollowUps,
 } from "@zoonk/core/follow-ups/rows";
+import { ensureQuickLessons } from "@zoonk/core/library/quick-lessons";
+import { ensureSecondTake } from "@zoonk/core/library/second-takes/ensure";
 import { requestLessonGenerationFor } from "@zoonk/core/lookahead/request-lesson-generation";
 import { requestChapterMindMapFor } from "@zoonk/core/mind-maps/request";
 import { type LessonContentInput } from "../../lessons/lesson-content-workflow";
@@ -30,22 +32,47 @@ export async function listLearnersWithOldFollowUpsStep(): Promise<string[]> {
   return listLearnersWithOldFollowUps();
 }
 
-export async function requestLessonWritingStep({
-  lessonId,
-  userId,
-}: {
-  lessonId: string;
-  userId: string;
-}): Promise<LessonContentInput | null> {
+type OwedLesson = Extract<FollowUp, { kind: "writeLesson" | "writeSecondTake" }>["input"];
+
+async function findOwedLessonId(input: OwedLesson, userId: string) {
+  if ("skillId" in input) {
+    return ensureSecondTake({ skillId: input.skillId, userId });
+  }
+
+  if ("quickSkillId" in input) {
+    const lessons = await ensureQuickLessons({ skillIds: [input.quickSkillId] });
+    return lessons.get(input.quickSkillId)?.lessonId;
+  }
+
+  return input.lessonId;
+}
+
+export async function requestLessonWritingStep(
+  input: OwedLesson,
+  userId: string,
+): Promise<LessonContentInput | null> {
   "use step";
+
+  const lessonId = await findOwedLessonId(input, userId);
+
+  if (!lessonId) {
+    return null;
+  }
 
   const writing = await requestLiveLessonWriting({
     lessonId,
-    request: () => requestLessonGenerationFor({ lessonId, userId }),
+    request: () =>
+      requestLessonGenerationFor({ allowSecondTake: "skillId" in input, lessonId, userId }),
   });
 
   return writing.status === "start"
-    ? { analytics: writing.analytics, forExam: writing.forExam, lessonId, wait: "learner" }
+    ? {
+        analytics: writing.analytics,
+        forExam: writing.forExam,
+        lessonId,
+        remedial: !("lessonId" in input),
+        wait: "learner",
+      }
     : null;
 }
 

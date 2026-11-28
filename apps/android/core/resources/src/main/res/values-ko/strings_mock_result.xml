@@ -18,7 +18,6 @@
   "mock_result_by_test": "3929eb0a636a4982235c852399160f62aa61fbcdd16a4977168628120531ca23",
   "mock_result_by_topic": "240b4ee396151acdbea15aba86298a02f8aaa7710b5377da414d8e67b7c53a93",
   "mock_result_calibration_detail": "b8e2b1e28258b256b55541d063fffe5689e6be5604db9ffd6d9ac3f476b4a59f",
-  "mock_result_change_plan": "046e704e6506f9db4fb5004f1f66559b4a7a2646c321b62386fb84d553ade36c",
   "mock_result_continue": "924ebf5cb09f20ac97e2a45a7d06c330257da26e28882f1212b2f6d32daf3f50",
   "mock_result_details": "3df4d28be3bd1027cb397e1c5915ceac64876eac18f59576a2e88cdff1a19ed2",
   "mock_result_down": "8424dd3d2ddc30a4bcedb363e42a724d43972a30b4aa6c7275291ddf0c9243d5",
@@ -29,9 +28,6 @@
   "mock_result_estimated_exam_score": "8cf40eae77c47613bfc6c7372f9170f9f30722b715163cdcb81c8f0ff636f62e",
   "mock_result_estimated_score": "250b9dc3603fe5d2bfcbed1f2e2e93fda8f160e3068c21cc70619c229d7206b5",
   "mock_result_every_minimum": "58412d9ddb1bfc048c53941889133dc71091aef905fe2aa7aacd338780649018",
-  "mock_result_focus_done": "3241ca47552b287d0aa19c6e3e8e4988b64a6303b3c5e68ec242ad79eee8a549",
-  "mock_result_focus_line": "2dea2ba541a8038364b0965589efdb57e7850aaeda537f7aff97f97267f64a72",
-  "mock_result_focus_title": "634756f14d0723c27fc75e978f06ae83e4ec7904cc229321a7173ce1c34ba632",
   "mock_result_grade_it": "adf9ea0b8b41a222bb16459f4c84d07184ca8035cb3cec1e3f43b33550bead0e",
   "mock_result_grading": "7c008e5f78230a42551f147a3a01c3557fb76615d9ce8cb6bb87399fe0ee23ff",
   "mock_result_grading_failed": "0d1269f1f24f7d8f317cc7863db46cfef9a01dd752bc0b52815dd9c46e4c5d68",
@@ -58,7 +54,6 @@
   "mock_result_not_done": "c84557043c3a112cb255022d40e523acf38464b940ab20d8acc193ac4dbdd3e7",
   "mock_result_not_every_task": "940e275946c377c21e900bf4fbc64d16457b1268f24a3e3735339c000c02a3fa",
   "mock_result_not_graded": "b18a4f941671d947c923c0e4a5f982439fc95c99d4abb9cab232e6e40a316d89",
-  "mock_result_not_now": "26e0d1c08eb16b50616d04ff7d96b1546b7751529e263c688e0fbe8f7a5c386a",
   "mock_result_notice_scoring": "d29c2866659d5095e09a1beeecc26a02e73c13d5839005ce757f8523d3f6925b",
   "mock_result_of": "cf967bca4c6ae4f6e85dc152e280395d26f96412d52e88033e2065eeb371d3d5",
   "mock_result_partly_right": "49480cb4851f4b132ad35afd2af17eaf6788cdadc830dffbe99a2ea565896df4",
@@ -67,6 +62,7 @@
   "mock_result_pass_marks_language": "9504ed553828fcb2bff70f9e60d42b848e50bc8a70bf79ae06f0ea8b170d0aa6",
   "mock_result_pass_paper": "baf6a0dfedfbdd29c400f462c2a38e5b3f4da121a9f9e6d4c6900eb08a84829a",
   "mock_result_pass_score": "ab6f17bba8667cd9017c2db3586a9bbdc0f0484af4f0b158232d87dc6b099cb5",
+  "mock_result_plan_moved": "cb5e2a21726ab392ff18123785d01a7820f5de8a823b83d21269847b2c1c7039",
   "mock_result_plan_not_saved": "7873a68edae7b1d718e96131332d03817ad05c8956601bb35898f9b088a6d614",
   "mock_result_plan_unchanged": "0d7104e0fa22e903279dabf1c97fe3fdbe85aeb35acf5eec89fff7a4edccac22",
   "mock_result_points": "b711c1048cded847429cfc977a6bdc7341f9abc9a439656b255136844c8e0711",
@@ -312,24 +308,19 @@
     <string name="mock_result_not_done">미완료</string>
     <string name="mock_result_your_preparation">내 준비도</string>
     <string name="mock_result_your_plan">내 계획</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">전에 놓친 주제가 이제 더 일찍 나와요</string>
     <plurals name="mock_result_skip_title">
         <item quantity="other">이미 아는 레슨 %d개를 건너뛸까요?</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">%1$s에 더 집중할까요?</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">%1$s 관련 문제를 모두 맞혔어요.</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
     <plurals name="mock_result_topics_and_more">
         <item quantity="other">%1$s 외 %2$d개 주제</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="other">이 부분에서 맞힌 문제는 %1$s개이고, 전체 문제는 %2$d개예요.</item>
-    </plurals>
     <string name="mock_result_skip_them">건너뛰기</string>
     <string name="mock_result_keep_them">그대로 두기</string>
-    <string name="mock_result_change_plan">내 계획 바꾸기</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">%1$s에서 상승</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -339,9 +330,6 @@
     <plurals name="mock_result_skip_done">
         <item quantity="other">레슨 %d개를 건너뛰었어요.</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">계획에서 %1$s 학습 시간을 늘려요.</string>
     <string name="mock_result_after">이번 모의고사 이후</string>
     <string name="mock_result_continue">계속하기</string>
-    <string name="mock_result_not_now">나중에</string>
 </resources>

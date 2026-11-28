@@ -50,6 +50,14 @@
   padding-inline-start: var(--row-indent);
 }
 
+/* A control holding a press made before the page hydrated (`HELD_PRESS_SCRIPT` marks it `data-held`) with no glyph that turns into the spinner: it keeps its pressed look until the press reaches it. */
+@custom-variant held-pressed (&[data-held]:not(:has([data-slot=busy-spinner])));
+
+/* Inside a busy `group/busy` or a held control, where a glyph gives way to the spinner. A menu's trigger holding a press keeps its glyph and draws its menu open instead (`held-menu`), as a menu does once the page is ready. */
+@custom-variant in-busy (&:where(.group\/busy[aria-busy=true]:not([data-held][aria-haspopup=menu]) *));
+@custom-variant in-held (&:where([data-held]:not([aria-haspopup=menu]) *));
+@custom-variant held-menu (&[data-held][aria-haspopup=menu]);
+
 /* `SidebarStateScript` marks `<html>` before the first paint. */
 @custom-variant sidebar-collapsed (&:where([data-sidebar-collapsed] [data-slot=sidebar], [data-sidebar-collapsed] [data-slot=sidebar] *));
 
@@ -472,6 +480,12 @@
     --viz-series-6: oklch(0.52 0.14 40);
     --belt-black: var(--color-neutral-700);
   }
+}
+
+/* While a dialog, sheet or menu is open, Enter answers only what's in it: Base UI marks the rest `data-base-ui-inert`, and a dialog under another one `data-nested-*-open`. So the ⏎ of a main action under it isn't drawn. */
+:is([data-base-ui-inert], [data-nested-dialog-open], [data-nested-drawer-open])
+  [data-slot="key-hint"] {
+  display: none;
 }
 
 [data-code-visual] span[style] {

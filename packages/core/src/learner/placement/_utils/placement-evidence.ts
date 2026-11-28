@@ -1,6 +1,5 @@
 import "server-only";
-import { type Attempt, type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
-import { isLessonAnswer } from "@zoonk/db/lesson-answer";
+import { type ItemFormat, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { MAX_PACED_ANSWER_MS, UNKNOWN_STREAK } from "../focus-test-rules";
@@ -29,7 +28,6 @@ const ATTEMPT_EVIDENCE_SELECT = {
   localDate: true,
   mockExamId: true,
   skillId: true,
-  stepId: true,
   studySessionId: true,
 } as const;
 
@@ -39,7 +37,7 @@ type AttemptRow = {
   answeredAt: Date;
   durationMs: number;
   focusTestId: string | null;
-  fromLesson: Attempt["fromLesson"];
+  fromLesson: boolean;
   isCorrect: boolean;
   isPlacement: boolean;
   item: { content: unknown; format: ItemFormat } | null;
@@ -47,7 +45,6 @@ type AttemptRow = {
   localDate: Date;
   mockExamId: string | null;
   skillId: string | null;
-  stepId: string | null;
   studySessionId: string | null;
 };
 
@@ -208,7 +205,7 @@ export async function loadEvidence({
 
       if (
         attempt.itemId !== null &&
-        !isLessonAnswer(attempt) &&
+        !attempt.fromLesson &&
         attempt.mockExamId === null &&
         !("practiceMistakeId" in answerData) &&
         answerData.courseSearch !== true &&

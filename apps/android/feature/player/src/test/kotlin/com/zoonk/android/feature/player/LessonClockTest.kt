@@ -58,6 +58,7 @@ class LessonClockTest {
             lessonId = LESSON_ID,
             studySessionId = null,
             firstAnswer = null,
+            tapped = true,
             store = LessonPlayerStore(api, cache),
             cache = cache,
             sessions = sessions,

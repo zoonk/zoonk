@@ -2,7 +2,7 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
+import { ACTIVITY_HELD_CLASS, ACTIVITY_LINE_CLASS } from "../_components/activity-canvas";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { blankStem, splitForm } from "./pattern-cells";
@@ -75,6 +75,7 @@ function OpenBlank({
       className={cn(
         "-ml-2 flex h-11 min-w-24 items-center rounded-xl border pl-1.75 text-left outline-none select-none",
         "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        ACTIVITY_HELD_CLASS,
         isActive ? cn(ACTIVITY_LINE_CLASS.active, "bg-background") : "border-transparent",
       )}
       onClick={onSelect}

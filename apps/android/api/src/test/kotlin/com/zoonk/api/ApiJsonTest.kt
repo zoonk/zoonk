@@ -3,11 +3,15 @@ package com.zoonk.api
 import com.zoonk.api.models.AnytimeMockInput
 import com.zoonk.api.models.AnytimeMockInputShape
 import com.zoonk.api.models.AnytimeMockInputShapeAnyOf
+import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.MatchAnswer
 import com.zoonk.api.models.MistakePracticePracticeInnerQuestionsInner
+import com.zoonk.api.models.PlanChangeOperationsInner
+import com.zoonk.api.models.StudyMissionOpens
 import com.zoonk.api.models.WrittenTestShape
 import kotlinx.serialization.Serializable
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ApiJsonTest {
@@ -15,6 +19,27 @@ class ApiJsonTest {
     private data class OlderResponse(
         val studied: Boolean,
     )
+
+    @Test
+    fun aMissionStillOpensPronunciationWhenOtherKindsHaveTheSameShape() {
+        val opens = ApiJson.decodeFromString<StudyMissionOpens>("""{"kind":"pronunciation"}""")
+        assertTrue(opens is StudyMissionOpens.StudyMissionOpensOneOf1Value)
+    }
+
+    @Test
+    fun aNewNumberOfListeningPlaysKeepsItsValue() {
+        val listening =
+            ApiJson.decodeFromString<ItemSetListening>(
+                """{"audio":null,"plays":3,"task":null,"title":null,"transcript":null}""",
+            )
+        assertEquals(3.0, listening.plays, 0.0)
+    }
+
+    @Test
+    fun aNestedPlanOperationLeavesTheOuterNoticeRouteAlone() {
+        val operation = ApiJson.decodeFromString<PlanChangeOperationsInner>("""{"kind":"followNotice"}""")
+        assertTrue(operation is PlanChangeOperationsInner.PlanChangeOperationsInnerAnyOf2Value)
+    }
 
     @Test
     fun anOlderResponseModelIgnoresFieldsAddedByTheServer() {

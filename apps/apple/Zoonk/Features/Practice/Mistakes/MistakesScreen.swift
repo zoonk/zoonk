@@ -36,7 +36,7 @@ struct MistakesScreen: View {
         }
 
         Section {
-          PageHeader(title, supporting: subtitle(shown.value).map { Text(verbatim: $0) })
+          PageHeader(title)
         }
 
         if !isBeside {
@@ -54,7 +54,7 @@ struct MistakesScreen: View {
     .bottomBar {
       if (open.value?.availability.ready ?? 0) > 0 {
         Button {
-          hooks.navigate(.mistakePractice(skillId: nil))
+          hooks.navigate(.mistakePractice(.notebook))
         } label: {
           Text(
             LocalizedStringResource(
@@ -77,17 +77,6 @@ struct MistakesScreen: View {
 
   private var title: Text {
     Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
-  }
-
-  private func subtitle(_ list: Components.Schemas.MistakeList?) -> String? {
-    let opensTomorrow =
-      list.map { $0.availability.ready == 0 && $0.availability.tomorrow > 0 } ?? false
-    return opensTomorrow
-      ? String(
-        localized: "Practice opens tomorrow", table: "Practice",
-        comment:
-          "Under the notebook's title, when no mistake is ready today and some are tomorrow")
-      : nil
   }
 
   private func picker(counts: Components.Schemas.MistakeList.CountsPayload?) -> some View {
@@ -204,7 +193,6 @@ private struct MistakeListSections: View {
           ForEach(Array(group.mistakes.enumerated()), id: \.element.id) { position, mistake in
             MistakeEntryView(
               mistake: mistake, labels: labels,
-              tomorrowOnPage: list.availability.ready == 0,
               continuesSet: position > 0 && mistake.snapshot.set != nil
                 && group.mistakes[position - 1].snapshot.set?.value1.id
                   == mistake.snapshot.set?.value1.id
@@ -309,8 +297,6 @@ private struct MistakeEntryView: View {
   @Environment(PracticeStore.self) private var practice
   let mistake: Components.Schemas.Mistake
   let labels: PracticeTrueFalseLabels
-  /// The page already says practice opens tomorrow, so the entry doesn't say it again.
-  let tomorrowOnPage: Bool
   let continuesSet: Bool
   @Environment(\.practiceHooks) private var hooks
 
@@ -370,21 +356,11 @@ private struct MistakeEntryView: View {
   @ViewBuilder
   private var actions: some View {
     let skillId = mistake.practiceAvailable ? mistake.skill?.id : nil
-    let tomorrow = mistake.practiceAvailableTomorrow && !tomorrowOnPage
 
     ButtonRow(spacing: 12) {
-      if tomorrow {
-        Text(
-          "Practice tomorrow", tableName: "Practice",
-          comment: "A mistake from today, ready to practice tomorrow."
-        )
-        .typeStyle(.meta)
-        .foregroundStyle(.mutedForeground)
-      }
-
       if let skillId {
         Button {
-          hooks.navigate(.mistakePractice(skillId: skillId))
+          hooks.navigate(.mistakePractice(.skill(skillId)))
         } label: {
           Text(
             "Practice this topic", tableName: "Practice",
@@ -402,7 +378,7 @@ private struct MistakeEntryView: View {
       }
       .buttonStyle(.ghost)
       .padding(
-        .leading, skillId == nil && !tomorrow ? -ZoonkButtonStyle.horizontalPadding(.small) : 0)
+        .leading, skillId == nil ? -ZoonkButtonStyle.horizontalPadding(.small) : 0)
     }
     .controlSize(.small)
     if lesson.failed.contains(mistake.id) {
@@ -427,7 +403,7 @@ private struct MistakeEntryView: View {
     case .misread: "eye"
     case .time: "timer"
     case .trap: "exclamationmark.triangle"
-    case nil: "circle.dashed"
+    case .unrecognized, nil: "circle.dashed"
     }
   }
 
@@ -450,7 +426,7 @@ private struct MistakeEntryView: View {
         localized: "Ran out of time", table: "Practice", comment: "Mistake cause: ran out of time.")
     case .guess:
       String(localized: "Guessed", table: "Practice", comment: "Mistake cause: guessed.")
-    case nil:
+    case .unrecognized, nil:
       nil
     }
   }

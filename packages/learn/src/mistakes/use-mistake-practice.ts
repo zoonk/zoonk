@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useEffectEvent, useReducer, useRef } from "react";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
+import { useEffect, useEffectEvent, useReducer, useRef, useState } from "react";
 import { type ChoiceAnswer } from "../questions/choice-question";
 import { type AnswerSender, getSentDurationMs } from "./drill/drill-types";
 import {
@@ -12,27 +13,32 @@ import {
   type SentPracticeAnswer,
   createPracticeState,
   practiceReducer,
+  toPracticeAnswer,
 } from "./mistake-practice-state";
 import { type RecordMistakeAction, usePracticeRecording } from "./use-practice-recording";
 
-const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
 /**
  * Each answer carries the run's earlier ones, so a run left halfway still counts; `finish` counts
- * it once more at the end.
+ * it once more at the end, also with no answers: a day's block needs it to complete. `again` reads
+ * a fresh batch in the run's scope.
  */
 export type MistakePracticeActions = {
   record?: RecordMistakeAction;
+  again: () => Promise<PracticeEntry[] | null>;
   answer: (answer: MistakePracticeAnswer) => Promise<MistakePracticeFeedback>;
   finish: (run: { answerIds: string[] }) => Promise<MistakePracticeSummary | null>;
 };
 
+/** A day's block (`dayBlock`) is over only once its finish is acknowledged: it completes Today's row. */
 export function useMistakePractice({
   actions,
+  dayBlock,
   practice,
 }: {
   actions: MistakePracticeActions;
+  dayBlock: boolean;
   practice: PracticeEntry[];
 }) {
   const [state, dispatch] = useReducer(practiceReducer, practice, createPracticeState);
@@ -50,19 +56,16 @@ export function useMistakePractice({
   });
 
   const attempt = useRef<{ answer: string; id: string; index: number } | null>(null);
+  const [again, setAgain] = useState<"failed" | "idle" | "loading">("idle");
 
   useEffect(() => {
     shownAt.current = Date.now();
   }, []);
 
   const finish = useEffectEvent(async () => {
-    // A count that didn't get through still ends the run: each answer was counted as it came.
-    const summary =
-      state.answerIds.length === 0
-        ? null
-        : await actions.finish({ answerIds: state.answerIds }).catch(() => null);
-
-    dispatch({ summary, type: "ended" });
+    // Elsewhere a count that didn't get through still ends the run: each answer counted as it came.
+    const summary = await actions.finish({ answerIds: state.answerIds }).catch(() => null);
+    dispatch(summary || !dayBlock ? { summary, type: "ended" } : { type: "finishFailed" });
   });
 
   useEffect(() => {
@@ -88,14 +91,15 @@ export function useMistakePractice({
     }
 
     const feedback = await actions
-      .answer({
-        answer,
-        attemptId: attempt.current.id,
-        durationMs,
-        ...(step.lesson ? { stepId: step.lesson.step.id } : { itemId: step.question?.itemId }),
-        mistakeId: step.entry.mistakeId,
-        runAnswerIds: state.answerIds,
-      })
+      .answer(
+        toPracticeAnswer({
+          answer,
+          attemptId: attempt.current.id,
+          durationMs,
+          runAnswerIds: state.answerIds,
+          step,
+        }),
+      )
       .catch(() => null);
 
     if (!feedback) {
@@ -124,7 +128,24 @@ export function useMistakePractice({
     void send(sent);
   };
 
+  const practiceAgain = async () => {
+    setAgain("loading");
+    const batch = await actions.again().catch(() => null);
+
+    if (!batch) {
+      setAgain("failed");
+      return;
+    }
+
+    attempt.current = null;
+    recording.reset();
+    shownAt.current = Date.now();
+    setAgain("idle");
+    dispatch({ practice: batch, type: "again" });
+  };
+
   return {
+    again: { failed: again === "failed", loading: again === "loading", start: practiceAgain },
     check: (answer: PracticeAnswer) => check(answer, "check"),
     end: () => dispatch({ type: "end" }),
     next: () => {

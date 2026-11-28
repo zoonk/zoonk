@@ -13,20 +13,40 @@ import { TaskActions } from "./task-layout";
 type GateLink = (props: { children: ReactNode; className?: string; href: string }) => ReactNode;
 
 /** What stopped, and at most one line under it. */
+/** A line that counts down shows each tick, while a screen reader hears `said` in its place. */
+export function SaidLine({ line, said }: { line: ReactNode; said?: string }) {
+  if (said === undefined) {
+    return line;
+  }
+
+  return (
+    <>
+      <span aria-hidden="true" className="tabular-nums">
+        {line}
+      </span>
+      <span className="sr-only">{said}</span>
+    </>
+  );
+}
+
 export function GateWords({
   line,
   provisional,
+  said,
   title,
 }: {
   line?: ReactNode;
   provisional?: boolean;
+  said?: string;
   title?: string;
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5" data-slot="gate-words">
       {title && <p className="text-sm font-medium">{title}</p>}
       {line && (
-        <p className={cn("text-muted-foreground text-sm", provisional && "invisible")}>{line}</p>
+        <p className={cn("text-muted-foreground text-sm", provisional && "invisible")}>
+          <SaidLine line={line} said={said} />
+        </p>
       )}
     </div>
   );

@@ -83,6 +83,7 @@ msgstr "건너뜀"
 #: src/language/level-test/level-test-results.tsx
 #: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-speaking.tsx
 #: src/placement-test/placement-test-flow.tsx
 #: src/placement-test/placement-test-screens.tsx
@@ -268,8 +269,10 @@ msgstr "{days, plural, other {약 #일 남았어요}}"
 #: src/language/conversation/speaking-mock-result.tsx
 #: src/language/exam-speaking/exam-speaking-result.tsx
 #: src/language/level-test/level-test-offer.tsx
+#: src/language/pattern/language-pattern-screen.tsx
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/language/unit/practice-conversation.tsx
+#: src/mistakes/practice-done.tsx
 #: src/mock/mock-entry.tsx
 #: src/mock/mock-result-actions.tsx
 #: src/mock/mock-screen.tsx
@@ -389,11 +392,6 @@ msgstr "하루 {time}씩 공부하면 {level}에 {month}쯤 도달해요."
 msgctxt "6Due7K"
 msgid "You finish around {month}."
 msgstr "{month}쯤에 마쳐요."
-
-#: src/_components/help-limit-notice.tsx
-msgctxt "X6_KO5"
-msgid "Take a short break, then try again."
-msgstr "잠깐 쉬었다가 다시 시도해 보세요."
 
 #: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
@@ -747,6 +745,18 @@ msgctxt "IIe6nO"
 msgid "To review"
 msgstr "복습 필요"
 
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every second until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.1flNDY"
+msgid "Take a short break. You can try again in {seconds, plural, one {# second} other {# seconds}}."
+msgstr "잠깐 쉬어 보세요. {seconds, plural, other {#초}} 후에 다시 시도해 보세요."
+
+#. The line of a notice that the learner sent too many requests in a short time, such as questions to their study buddy, and must wait before the next one. It counts down every minute until they can try again.
+#: src/_components/slow-down-words.ts
+msgctxt "limits.m_DHa2"
+msgid "Take a short break. You can try again in {minutes, plural, one {# minute} other {# minutes}}."
+msgstr "잠깐 쉬어 보세요. {minutes, plural, other {#분}} 후에 다시 시도해 보세요."
+
 #: src/_components/sortable-list.tsx
 msgctxt "TkDZ5b"
 msgid "Stopped moving {item}. It stays where it was."
@@ -909,6 +919,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "하루 {time} 학습을 권장해요. 계획은 목표에 가장 중요한 내용부터 다뤄요."
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {계획에 있는 내용을 {date}까지 모두 학습할 수 있도록 하루에 {time}씩 학습하는 것을 추천해요.} other {계획에 있는 내용을 {date}까지 모두 학습할 수 있도록 하루에 {time}씩 학습하는 것을 추천해요.}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -958,6 +974,12 @@ msgstr "언제 마칠지 계산하고 있어요…"
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "언제 마칠지 계산하지 못했어요."
+
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {계획에 있는 내용을 {date}까지 모두 학습하기에 충분해요.} other {계획에 있는 내용을 {date}까지 모두 학습하기에 충분해요.}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
@@ -1328,6 +1350,7 @@ msgid "Change"
 msgstr "바꾸기"
 
 #: src/appearance/buddy-settings.tsx
+#: src/buddies/buddy-menu.tsx
 #: src/buddies/buddy-screen.tsx
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "DWD-Vm"
@@ -1360,6 +1383,34 @@ msgctxt "y0ef9b"
 msgid "App language"
 msgstr "앱 언어"
 
+#. The first row of the conversations list: starts a conversation with no questions yet.
+#: src/buddies/buddy-conversations.tsx
+msgctxt "PQ8A3I"
+msgid "New conversation"
+msgstr "새 채팅"
+
+#: src/buddies/buddy-conversations.tsx
+msgctxt "sf91oU"
+msgid "Couldn't load more conversations. Try again."
+msgstr "채팅을 더 불러오지 못했어요. 다시 시도해 보세요."
+
+#. A button under a list that loads more of its rows.
+#: src/buddies/buddy-conversations.tsx
+#: src/completed-lessons/completed-lessons-screen.tsx
+#: src/mistakes/mistakes-notebook.tsx
+#: src/saved-lessons/saved-lessons-screen.tsx
+msgctxt "aWpBzj"
+msgid "Show more"
+msgstr "더 보기"
+
+#. The list of the learner's separate conversations with their buddy, and the button that opens it.
+#: src/buddies/buddy-conversations.tsx
+#: src/buddies/buddy-screen-skeleton.tsx
+#: src/buddies/buddy-screen.tsx
+msgctxt "1udzha"
+msgid "Conversations"
+msgstr "채팅"
+
 #: src/buddies/buddy-day-parts.tsx
 msgctxt "6YRolu"
 msgid "Fully grown"
@@ -1390,38 +1441,6 @@ msgstr "{buddy}의 에너지"
 msgctxt "Q88QPu"
 msgid "It starts with your first lesson."
 msgstr "첫 레슨부터 에너지가 생겨요."
-
-#: src/buddies/buddy-day.tsx
-msgctxt "16z6WC"
-msgid "What {buddy} remembers"
-msgstr "{buddy}(이)가 기억하는 것"
-
-#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-msgctxt "86EPQq"
-msgid "{buddy}'s glasses"
-msgstr "{buddy}의 안경"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-screen.tsx
-#: src/journey/schedule-details.tsx
-msgctxt "ca-yU-"
-msgid "Weekly summary"
-msgstr "주간 요약"
-
-#: src/buddies/buddy-day.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "에너지"
-
-#: src/buddies/buddy-day.tsx
-#: src/buddies/buddy-today.tsx
-#: src/missions/missions-card.tsx
-#: src/session/summary/summary-rewards.tsx
-msgctxt "IFviMa"
-msgid "Today's missions"
-msgstr "오늘의 미션"
 
 #. {target} is 7, so a noun that counts it stays plural in every form.
 #: src/buddies/buddy-glasses-picker.tsx
@@ -1538,6 +1557,33 @@ msgctxt "QRnLkX"
 msgid "Comes with your buddy"
 msgstr "짝꿍이 처음부터 갖고 있어요"
 
+#: src/buddies/buddy-menu.tsx
+msgctxt "T3IH3o"
+msgid "More about {buddy}"
+msgstr "{buddy}에 대해 더 보기"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "wjFAMp"
+msgid "Change {buddy}"
+msgstr "{buddy} 바꾸기"
+
+#. Names the glasses the learner has collected for their study buddy, as a row and a menu item that opens them; {buddy} is the buddy's name. A name, not an action.
+#: src/buddies/buddy-menu.tsx
+msgctxt "86EPQq"
+msgid "{buddy}'s glasses"
+msgstr "{buddy}의 안경"
+
+#: src/buddies/buddy-menu.tsx
+msgctxt "16z6WC"
+msgid "What {buddy} remembers"
+msgstr "{buddy}(이)가 기억하는 것"
+
+#: src/buddies/buddy-menu.tsx
+#: src/journey/schedule-details.tsx
+msgctxt "ca-yU-"
+msgid "Weekly summary"
+msgstr "주간 요약"
+
 #: src/buddies/buddy-picker.tsx
 #: src/shell/learn-bar.tsx
 #: src/shell/learn-navigation.tsx
@@ -1550,17 +1596,6 @@ msgctxt "HAlOn1"
 msgid "Name"
 msgstr "이름"
 
-#: src/buddies/buddy-screen.tsx
-msgctxt "T3IH3o"
-msgid "More about {buddy}"
-msgstr "{buddy}에 대해 더 보기"
-
-#: src/buddies/buddy-screen.tsx
-msgctxt "wjFAMp"
-msgid "Change {buddy}"
-msgstr "{buddy} 바꾸기"
-
-#: src/buddies/buddy-screen.tsx
 #: src/buddies/buddy-today.tsx
 msgctxt "xVM8pQ"
 msgid "{buddy} today"
@@ -1598,7 +1633,6 @@ msgstr "Zu"
 #: src/focus-test/focus-test-screens.tsx
 #: src/language/level-test/level-test-offer.tsx
 #: src/language/level-test/level-test-out-screens.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/onboarding/steps/placement-waiting.tsx
 #: src/placement-test/placement-test-offers.tsx
 #: src/plan/plan-fit-suggestion.tsx
@@ -2816,13 +2850,6 @@ msgid "All"
 msgstr "전체"
 
 #: src/completed-lessons/completed-lessons-screen.tsx
-#: src/mistakes/mistakes-notebook.tsx
-#: src/saved-lessons/saved-lessons-screen.tsx
-msgctxt "aWpBzj"
-msgid "Show more"
-msgstr "더 보기"
-
-#: src/completed-lessons/completed-lessons-screen.tsx
 msgctxt "qckJsw"
 msgid "Lessons you finish show up here, so you can do them again anytime."
 msgstr "레슨을 완료하면 여기에 표시돼요. 언제든 다시 해 볼 수 있어요."
@@ -3061,7 +3088,6 @@ msgstr "내가 정한 날짜 사용하기"
 
 #: src/conversation/tutor-plan-change.tsx
 #: src/focus-test/focus-test-proposal.tsx
-#: src/mock/mock-result-plan.tsx
 #: src/plan/plan-offer-preview.tsx
 #: src/today/today-plan-change.tsx
 msgctxt "ZPLfTK"
@@ -6627,16 +6653,6 @@ msgctxt "mEBzEG"
 msgid "Say them"
 msgstr "소리 내어 말하기"
 
-#: src/language/today/language-today-section.tsx
-msgctxt "vM7I9_"
-msgid "Practice it"
-msgstr "연습하기"
-
-#: src/language/today/language-today-section.tsx
-msgctxt "7kZ0WC"
-msgid "We noticed a pattern: {pattern}"
-msgstr "실수 패턴을 발견했어요: {pattern}"
-
 #: src/language/unit/language-unit-screen.tsx
 msgctxt "gHReMQ"
 msgid "Grammar tips"
@@ -7273,17 +7289,6 @@ msgid "Do your first review"
 msgstr "첫 복습하기"
 
 #: src/missions/first-step-copy.tsx
-msgctxt "missions.ttVg8D"
-msgid "Fix your first mistake"
-msgstr "첫 오답 고치기"
-
-#: src/missions/first-step-copy.tsx
-#: src/missions/mission-copy.tsx
-msgctxt "missions.kiRlIl"
-msgid "Practice a pattern"
-msgstr "실수 패턴 연습하기"
-
-#: src/missions/first-step-copy.tsx
 #: src/missions/mission-copy.tsx
 msgctxt "missions.3x5cH9"
 msgid "Ask {buddy} something"
@@ -7377,11 +7382,6 @@ msgid "Practice writing"
 msgstr "글쓰기 연습하기"
 
 #: src/missions/mission-copy.tsx
-msgctxt "missions.wCMhp6"
-msgid "{count, plural, one {Fix a mistake} other {Fix # mistakes}}"
-msgstr "{count, plural, other {오답 #개 고치기}}"
-
-#: src/missions/mission-copy.tsx
 msgctxt "missions.YahrnI"
 msgid "Practice pronunciation"
 msgstr "발음 연습하기"
@@ -7442,16 +7442,6 @@ msgid ", go to today's practice"
 msgstr ", 오늘의 연습으로 이동하기"
 
 #: src/missions/mission-copy.tsx
-msgctxt "0DwB4q"
-msgid ", practice your mistakes"
-msgstr ", 틀린 문제 다시 풀기"
-
-#: src/missions/mission-copy.tsx
-msgctxt "7Qfw5L"
-msgid ", go to the pattern"
-msgstr ", 실수 패턴으로 이동하기"
-
-#: src/missions/mission-copy.tsx
 msgctxt "MuPgWl"
 msgid ", go to pronunciation practice"
 msgstr ", 발음 연습으로 이동하기"
@@ -7496,6 +7486,12 @@ msgstr "두뇌력 +{points} 보상을 받았어요."
 msgctxt "0gBkBl"
 msgid "Missions done"
 msgstr "미션 완료"
+
+#: src/missions/missions-card.tsx
+#: src/session/summary/summary-rewards.tsx
+msgctxt "IFviMa"
+msgid "Today's missions"
+msgstr "오늘의 미션"
 
 #. "It" is the question: it comes back in later practice.
 #: src/mistakes/drill/drill-answer-notes.tsx
@@ -7565,11 +7561,6 @@ msgid "Open the lesson"
 msgstr "레슨 열기"
 
 #: src/mistakes/mistake-entry.tsx
-msgctxt "BICox_"
-msgid "Practice tomorrow"
-msgstr "내일 연습할 수 있어요"
-
-#: src/mistakes/mistake-entry.tsx
 msgctxt "E7KLhm"
 msgid "Practice this topic"
 msgstr "이 주제 연습하기"
@@ -7578,6 +7569,26 @@ msgstr "이 주제 연습하기"
 msgctxt "z2HeMD"
 msgid "Leave. What you answered counts."
 msgstr "나가기. 지금까지 푼 문제는 반영돼요."
+
+#. Under "Already fixed" when marking the day's practice done didn't reach the server.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "tV3pjd"
+msgid "We couldn't mark it done. Check your connection."
+msgstr "완료로 표시하지 못했어요. 인터넷 연결을 확인해 보세요."
+
+#. Title of a practice of mistakes whose end didn't reach the server, so it doesn't count yet.
+#: src/mistakes/mistake-practice-run.tsx
+msgctxt "dHwNew"
+msgid "Your practice isn't saved yet"
+msgstr "아직 연습이 저장되지 않았어요"
+
+#. Title when a day's practice of mistakes opens and every one of its mistakes was already fixed elsewhere.
+#: src/mistakes/mistake-practice-run.tsx
+#: src/mistakes/practice-done.tsx
+#: src/session/use-block-copy.ts
+msgctxt "Q3nyx6"
+msgid "Already fixed"
+msgstr "이미 모두 고쳤어요"
 
 #: src/mistakes/mistake-practice-run.tsx
 #: src/session/use-block-copy.ts
@@ -7639,34 +7650,14 @@ msgid "What you got wrong"
 msgstr "틀린 문제"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "lLGcbO"
-msgid "{ready, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}} · {tomorrow, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{ready, plural, =0 {#개 연습 가능} other {#개 연습 가능}} · {tomorrow, plural, =0 {내일 #개 연습 가능} other {내일 #개 연습 가능}}"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "AMKpbi"
 msgid "Redo what you got wrong"
 msgstr "틀린 문제 다시 풀기"
 
 #: src/mistakes/mistakes-row.tsx
-msgctxt "DZU4se"
-msgid "Today's mistakes return tomorrow"
-msgstr "오늘 틀린 문제는 내일 다시 나와요"
-
-#: src/mistakes/mistakes-row.tsx
 msgctxt "DWCSOn"
 msgid "{count, plural, =0 {# ready to practice} one {# ready to practice} other {# ready to practice}}"
 msgstr "{count, plural, =0 {연습 가능한 문제 #개} other {#문제 연습 가능}}"
-
-#: src/mistakes/mistakes-row.tsx
-msgctxt "XiaKfK"
-msgid "{count, plural, =0 {# available tomorrow} one {# available tomorrow} other {# available tomorrow}}"
-msgstr "{count, plural, =0 {내일 연습 가능한 문제 #개} other {내일 #문제 연습 가능}}"
-
-#: src/mistakes/notebook-availability-text.tsx
-msgctxt "LoO9E7"
-msgid "Practice opens tomorrow"
-msgstr "내일부터 연습할 수 있어요"
 
 #: src/mistakes/practice-done.tsx
 msgctxt "_GkpAM"
@@ -7674,29 +7665,15 @@ msgid "{count, plural, one {# mistake fixed} other {# mistakes fixed}}"
 msgstr "{count, plural, other {#문제 고침}}"
 
 #: src/mistakes/practice-done.tsx
-msgctxt "ith1Nx"
-msgid "Nothing to practice yet"
-msgstr "아직 연습할 문제가 없어요"
+msgctxt "qSu8Tu"
+msgid "Nothing to practice"
+msgstr "연습할 문제가 없어요"
 
+#. Beside Done at the end of a practice of mistakes: starts another round right away.
 #: src/mistakes/practice-done.tsx
-msgctxt "IBOhsd"
-msgid "Mistakes come back for practice from the day after you make them."
-msgstr "틀린 문제는 다음 날부터 다시 연습할 수 있어요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "zaS-g7"
-msgid "The ones you missed come back another day, when they stick better."
-msgstr "틀린 문제는 기억에 더 잘 남도록 다른 날 다시 나와요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "gMgMMy"
-msgid "The ones you missed come back another day. The rest are still ready to practice."
-msgstr "틀린 문제는 다른 날 다시 나와요. 나머지 문제는 언제든 연습할 수 있어요."
-
-#: src/mistakes/practice-done.tsx
-msgctxt "4bskgW"
-msgid "The rest are still ready to practice."
-msgstr "나머지 문제는 언제든 연습할 수 있어요."
+msgctxt "UCNJdd"
+msgid "Practice again"
+msgstr "다시 연습하기"
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/block-question.tsx
@@ -7709,6 +7686,12 @@ msgstr "잘 모르겠어요"
 msgctxt "HJwk2o"
 msgid "{count, plural, =0 {No mistakes fixed} one {Mistake fixed. It leaves your notebook.} other {# mistakes fixed. They leave your notebook.}}"
 msgstr "{count, plural, =0 {고친 오답 없음} other {오답 #개를 고쳤어요. 오답 노트에서 빠져요.}}"
+
+#. After a right answer to a question the learner missed earlier the same day. A mistake is fixed only by a right answer on a later day.
+#: src/mistakes/practice-step.tsx
+msgctxt "rOJjcd"
+msgid "This question comes back another day to make sure."
+msgstr "확실히 익힐 수 있도록 이 문제는 다른 날 다시 나와요."
 
 #: src/mistakes/practice-step.tsx
 #: src/session/question-block/question-feedback.tsx
@@ -8337,11 +8320,6 @@ msgid "{count, plural, one {# lesson} other {# lessons}} skipped."
 msgstr "레슨 {count, plural, other {#개}}를 건너뛰었어요."
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "DRJEUg"
-msgid "Your plan gives {area} more time."
-msgstr "계획에서 {area}에 더 많은 시간을 배정해요."
-
-#: src/mock/mock-result-plan.tsx
 #: src/plan-diff/change-names.ts
 #: src/plan/use-short-list.ts
 msgctxt "v5V1P2"
@@ -8369,16 +8347,6 @@ msgid "Skip {count, plural, one {# lesson} other {# lessons}} you already know?"
 msgstr "이미 아는 레슨 {count, plural, other {#개}}를 건너뛸까요?"
 
 #: src/mock/mock-result-plan.tsx
-msgctxt "b4G-y7"
-msgid "You got {correct, plural, =0 {# of {total} right} one {# of {total} right} other {# of {total} right}} there."
-msgstr "이 영역에서 {correct, plural, =0 {#개를 맞혔어요(전체 {total}개)} other {#개를 맞혔어요(전체 {total}개)}}."
-
-#: src/mock/mock-result-plan.tsx
-msgctxt "1-4FCE"
-msgid "Focus more on {area}?"
-msgstr "{area}에 더 집중할까요?"
-
-#: src/mock/mock-result-plan.tsx
 msgctxt "iaHiP_"
 msgid "Down from {before}"
 msgstr "{before}에서 하락"
@@ -8387,6 +8355,12 @@ msgstr "{before}에서 하락"
 msgctxt "U5RRFl"
 msgid "Up from {before}"
 msgstr "{before}에서 상승"
+
+#. On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line.
+#: src/mock/mock-result-plan.tsx
+msgctxt "5PMRDS"
+msgid "What you missed now comes sooner"
+msgstr "전에 놓친 주제가 이제 더 일찍 나와요"
 
 #: src/mock/mock-result-plan.tsx
 #: src/mock/mock-result-view.tsx
@@ -10482,15 +10456,19 @@ msgid "The Focus test shows what to study most."
 msgstr "집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "날짜를 {date}로 변경하기"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "계획을 모두 마치도록 날짜 변경"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "전체 내용을 공부할 수 있게 날짜 변경하기"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "날짜를 {date}로 변경하기"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
@@ -10608,6 +10586,12 @@ msgstr "‘오늘’에 먼저 나와요."
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, other {하루에 {minutes, number}분씩 #일 동안 더 공부하면 계획을 따라잡을 수 있어요.}}"
+
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {현재 학습 시간으로 계획에 있는 내용을 {date}까지 모두 학습할 수 있어요} other {현재 학습 시간으로 계획에 있는 내용을 {date}까지 모두 학습할 수 있어요}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -10914,9 +10898,19 @@ msgid "You'll use"
 msgstr "사용할 도구"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "계획의 모든 주제를 공부해요. 시험 전까지 다루지 못한 내용은 시험 후에 공부해요."
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 내용은 시험 후에 공부해요."
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "계획의 모든 내용을 공부해요. 종료일은 없어요."
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"
@@ -12442,11 +12436,6 @@ msgid "Review now"
 msgstr "지금 복습하기"
 
 #: src/session/next-stop-wait.tsx
-msgctxt "UI79fv"
-msgid "Next lesson"
-msgstr "다음 레슨"
-
-#: src/session/next-stop-wait.tsx
 msgctxt "kY8Exq"
 msgid "Practice now"
 msgstr "지금 연습하기"
@@ -12744,6 +12733,35 @@ msgctxt "vrNWq4"
 msgid "Earned today"
 msgstr "오늘 얻은 보상"
 
+#. Under "Fix 3 mistakes", a step of the day that practices questions the learner got wrong.
+#: src/session/use-block-copy.ts
+msgctxt "s1C8zD"
+msgid "Questions you missed before"
+msgstr "전에 틀린 문제"
+
+#: src/session/use-block-copy.ts
+msgctxt "hHRG9b"
+msgid "A pattern in your mistakes"
+msgstr "반복되는 실수 패턴"
+
+#. Under a lesson the learner takes again because its idea has been hard for them.
+#: src/session/use-block-copy.ts
+msgctxt "AYWLbe"
+msgid "Once more: this one's been tricky"
+msgstr "다시 한번: 어려웠던 내용이에요"
+
+#. Under a short lesson that explains, in a new way, an idea the learner keeps missing.
+#: src/session/use-block-copy.ts
+msgctxt "yeSnsN"
+msgid "Another way to see it"
+msgstr "다르게 이해해 보기"
+
+#. Under a short lesson written for an idea that has been hard for the learner.
+#: src/session/use-block-copy.ts
+msgctxt "eqv6T0"
+msgid "This one's been tricky"
+msgstr "어려웠던 내용이에요"
+
 #: src/session/use-block-copy.ts
 msgctxt "z0XIiH"
 msgid "What you already know"
@@ -12753,6 +12771,17 @@ msgstr "이미 아는 내용"
 msgctxt "n1W87b"
 msgid "New lesson"
 msgstr "새 레슨"
+
+#: src/session/use-block-copy.ts
+msgctxt "GYx283"
+msgid "{count, plural, one {Fix # mistake} other {Fix # mistakes}}"
+msgstr "{count, plural, other {실수 #개 고치기}}"
+
+#. A study step that drills one rule the learner keeps getting wrong, titled like the day's other practice steps ("Practice: Fractions"). {pattern} names the rule, like "Adjective endings after der".
+#: src/session/use-block-copy.ts
+msgctxt "HECBTo"
+msgid "Practice: {pattern}"
+msgstr "{pattern} 연습"
 
 #. A block practising one subject the learner chose. {subject} names it, like "Percentages".
 #: src/session/use-block-copy.ts
@@ -12902,11 +12931,6 @@ msgstr "학습 탭"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "검색"
-
-#: src/shell/level-link.tsx
-msgctxt "bzSrZ6"
-msgid "Level {level}"
-msgstr "레벨 {level}"
 
 #. Accessible name of the chip that opens Level. belt is the translated belt name; level is the learner’s level number. Each locale controls their order and punctuation.
 #: src/shell/level-link.tsx

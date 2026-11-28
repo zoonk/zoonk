@@ -82,6 +82,8 @@ const OWNERS: Record<string, string> = {
     "The mock schedule sheet owns the request from opening to dismissal.",
   "Features/Practice/Challenge/MockScheduleSheet.swift: request #2":
     "Today shows the undo for this change; leaving its notice ends the request feedback.",
+  "Features/Practice/Mistakes/MistakePracticeScreen.swift: again":
+    "Mistake practice is a task with no split; closing it is leaving the run.",
   "Features/Practice/Mistakes/MistakesScreen.swift: lesson":
     "The notebook owns lesson navigation above both lists and their panes.",
   "Features/Practice/QuestionBlock/QuestionBlockScreen.swift: stopping":

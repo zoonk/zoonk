@@ -10,6 +10,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
@@ -23,6 +24,8 @@ import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.feature.session.FakeStudyApi
 import com.zoonk.android.feature.session.StudyOpener
+import com.zoonk.android.feature.tutor.FakeTutorApi
+import com.zoonk.android.feature.tutor.tutorStore
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.label
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -64,6 +67,8 @@ class BuddyChangesTest {
                 BuddyStore(NoStatusApi, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, scope),
                 LearningProfileStore(ProfileApi(held, fails), cache),
                 StudyOpener(FakeStudyApi(), { _, _ -> error("Not used") }, cache, { "UTC" }),
+                tutorStore(FakeTutorApi(), cache, FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))),
+                SavedStateHandle(),
             )
         var open by mutableStateOf(BuddyChangesOpen(glasses = true, editor = false))
         var editorClosed = 0

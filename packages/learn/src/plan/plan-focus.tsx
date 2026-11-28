@@ -16,6 +16,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CrosshairIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { createContext, use, useId, useState } from "react";
+import { EnterButton } from "../_components/enter-button";
 import { SheetHeader } from "../_components/sheet-header";
 import { FactSegments } from "../_components/task-meta";
 import { TIME_ANSWER_BUTTON_CLASS } from "../_components/time-answer";
@@ -211,16 +212,15 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
       </DrawerContent>
 
       <DrawerFooter>
-        <Button
+        <EnterButton
           busy={isPending}
           disabled={sameAreas(chosen, current) || unchanged !== null}
-          focusableWhenDisabled
           form={formId}
           size="lg"
           type="submit"
         >
           {chosen.length === 0 && current.length > 0 ? t("Remove focus") : t("Save")}
-        </Button>
+        </EnterButton>
       </DrawerFooter>
     </>
   );

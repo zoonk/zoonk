@@ -1,3 +1,4 @@
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { POSTHOG_SYSTEM_DISTINCT_ID } from "@zoonk/utils/posthog";
 import { type AiGeneration } from "./ai-generation-sink";
 
@@ -19,8 +20,6 @@ export type AiGenerationEvent = {
   options?: { process_person_profile: false };
   properties: Record<string, EventPropertyValue>;
 };
-
-const MS_PER_SECOND = 1000;
 
 /**
  * Never carries prompt or response text. A known cost is sent as a passthrough total so PostHog

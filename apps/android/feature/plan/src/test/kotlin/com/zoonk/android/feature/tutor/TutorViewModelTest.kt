@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -53,7 +54,7 @@ internal abstract class TutorFixture {
     protected val bia = AuthenticatedSession("bia", "token-b", "local-b")
     protected val session = FakeSession(ana)
     protected val api = FakeTutorApi()
-    protected val scope = TutorScope.Plan(GOAL)
+    protected val scope = TutorScope.Plan(GOAL, CONVERSATION)
     protected var decision: (PlanChangeDecisionInput.Status) -> MutationResult<PlanChange> = {
         MutationResult.Done(planChange(status = it.value).copy(id = UUID.fromString(OTHER_CHANGE)))
     }
@@ -287,19 +288,80 @@ internal class TutorViewModelTest : TutorFixture() {
         }
 
     @Test
-    fun aHelpLimitTakesTheComposersPlace() =
+    fun aQuestionALimitRefusesWaitsInTheComposerUnderItsNotice() =
+        runTest(dispatcher) {
+            val refusals =
+                listOf(
+                    Triple(402, "USAGE_LIMIT_REACHED", """{"limit":{"period":"day","tier":"free"}}""") to
+                        Limit.Reached(LimitTier.Free, LimitPeriod.Day),
+                    Triple(403, "USAGE_LIMIT_REACHED", """{"limit":{"period":"total","tier":"guest"}}""") to
+                        Limit.Reached(LimitTier.Guest, LimitPeriod.Total),
+                    Triple(403, "SIGN_UP_REQUIRED", null) to Limit.SignUpRequired,
+                )
+            refusals.forEach { (refusal, limit) ->
+                val (status, code, details) = refusal
+                val vm = conversation()
+                api.refusal = ApiException(ApiError.Unavailable, code, status, details?.let(Json::parseToJsonElement))
+
+                vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+                vm.send()
+                advanceUntilIdle()
+
+                assertEquals(limit, vm.state.value.limit(vm.turns))
+                assertEquals("Why?", vm.draft.text.toString())
+                assertFalse(vm.state.value.canAsk(vm.turns))
+                assertTrue(vm.turns.isEmpty())
+                assertTrue(vm.state.value.offersSuggestions)
+
+                vm.limitLifted()
+
+                assertTrue(vm.state.value.canAsk(vm.turns))
+                assertEquals("Why?", vm.draft.text.toString())
+            }
+        }
+
+    @Test
+    fun aQuestionASlowDownRefusesCanBeSentAgainOnceItsWaitIsOver() =
         runTest(dispatcher) {
             val vm = conversation()
-            val details = Json.parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}""")
-            api.refusal = ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, details)
+            val details = Json.parseToJsonElement("""{"retryAfterSeconds":30}""")
+            api.refusal = ApiException(ApiError.Unavailable, "SLOW_DOWN", 429, details)
 
             vm.draft.setTextAndPlaceCursorAtEnd("Why?")
             vm.send()
+            advanceTimeBy(29_000)
+
+            assertEquals(30, (vm.state.value.limit(vm.turns) as Limit.SlowDown).retryAfterSeconds)
+            assertFalse(vm.state.value.canAsk(vm.turns))
+
+            advanceTimeBy(2_000)
+
+            assertNull(vm.state.value.limit(vm.turns))
+            assertTrue(vm.state.value.canAsk(vm.turns))
+            assertEquals("Why?", vm.draft.text.toString())
+
+            api.refusal = null
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf("Why?", "Why?"), api.asked.map { it.question })
+            assertEquals("Why?", vm.turns.single().question)
+        }
+
+    @Test
+    fun aSuggestionALimitRefusesLeavesTheComposerEmptyAndTheSuggestionsInPlace() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val details = Json.parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}""")
+            api.refusal = ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 402, details)
+
+            vm.send(TutorSuggestion("Explain it more simply", "simpler"))
             advanceUntilIdle()
 
             assertEquals(Limit.Reached(LimitTier.Free, LimitPeriod.Day), vm.state.value.limit(vm.turns))
+            assertEquals("", vm.draft.text.toString())
+            assertTrue(vm.state.value.offersSuggestions)
             assertFalse(vm.state.value.canAsk(vm.turns))
-            assertNull(vm.state.value.unresolvedQuestion)
         }
 
     @Test
@@ -313,7 +375,7 @@ internal class TutorViewModelTest : TutorFixture() {
 
             assertEquals("Why?", vm.state.value.unresolvedQuestion)
             assertEquals("Why?", vm.draft.text.toString())
-            assertFalse(vm.state.value.offersSuggestions(vm.turns))
+            assertFalse(vm.state.value.offersSuggestions)
 
             api.refusal = null
             api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
@@ -330,7 +392,82 @@ internal class TutorViewModelTest : TutorFixture() {
                     .size,
             )
             assertNull(vm.state.value.unresolvedQuestion)
-            assertTrue(vm.state.value.offersSuggestions(vm.turns))
+            assertTrue(vm.state.value.offersSuggestions)
+        }
+
+    /** A list read that began before the question saved can't land over it: the conversation stays listed and current. */
+    @Test
+    fun aListReadInFlightWhenAQuestionSavesIsReadAgain() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = tutorStore(api, cache, session)
+            val earlier = BuddyConversation(CONVERSATION, "Why cells?", Instant.parse("2026-11-25T09:00:00Z"))
+            api.conversationPages = mapOf(null to BuddyConversationList(listOf(earlier), currentId = null, nextCursor = null))
+            api.conversationsGate = CompletableDeferred()
+            val list = store.conversations[GOAL]
+            val reading = launch { list.load() }
+            advanceUntilIdle()
+
+            val fresh = store.newConversation(GOAL)
+            val asked = BuddyConversation(fresh, "Why osmosis?", Instant.parse("2026-11-26T09:00:00Z"))
+            api.conversationPages = mapOf(null to BuddyConversationList(listOf(asked, earlier), currentId = fresh, nextCursor = null))
+            val asking = TutorViewModel(TutorScope.Plan(GOAL, fresh), store, SavedStateHandle(), openMission = { MutationResult.Obsolete })
+            asking.thread.load()
+            asking.draft.setTextAndPlaceCursorAtEnd("Why osmosis?")
+            asking.send()
+            advanceUntilIdle()
+
+            api.conversationsGate?.complete(Unit)
+            reading.join()
+            advanceUntilIdle()
+
+            val shown = list.state.value.value!!
+            assertEquals(fresh, shown.currentId)
+            assertEquals(listOf(fresh, CONVERSATION), shown.conversations.map { it.id })
+        }
+
+    @Test
+    fun eachConversationKeepsItsOwnQuestionsAndAFirstOneJoinsTheList() =
+        runTest(dispatcher) {
+            val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
+            val store = tutorStore(api, cache, session)
+            val earlier = BuddyConversation(CONVERSATION, "Why cells?", Instant.parse("2026-11-25T09:00:00Z"))
+            api.conversationPages = mapOf(null to BuddyConversationList(listOf(earlier), currentId = null, nextCursor = null))
+            store.conversations[GOAL].load()
+            val fresh = store.newConversation(GOAL)
+            val answer = CompletableDeferred<Unit>()
+            api.answers = {
+                flow {
+                    emit(TutorAnswerEvent.Text("Because."))
+                    answer.await()
+                    emit(TutorAnswerEvent.Finish)
+                }
+            }
+            val asking = TutorViewModel(TutorScope.Plan(GOAL, fresh), store, SavedStateHandle(), openMission = { MutationResult.Obsolete })
+            val other =
+                TutorViewModel(TutorScope.Plan(GOAL, CONVERSATION), store, SavedStateHandle(), openMission = { MutationResult.Obsolete })
+            asking.thread.load()
+            api.thread = TutorThread(listOf(turn("old", TutorTurn.Status.Completed, "Yes.")), hasMore = false, nextCursor = null)
+            other.thread.load()
+
+            asking.draft.setTextAndPlaceCursorAtEnd("Why osmosis?")
+            other.draft.setTextAndPlaceCursorAtEnd("Half written")
+            asking.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf(TutorScope.Plan(GOAL, fresh)), api.asked.map { it.scope })
+            assertEquals("Because.", asking.turns.single().answer)
+            assertEquals(listOf("old"), other.turns.map { it.id })
+            assertEquals("Half written", other.draft.text.toString())
+            assertEquals(
+                listOf(fresh to "Why osmosis?", CONVERSATION to "Why cells?"),
+                store.conversations[GOAL]
+                    .state.value.value!!
+                    .conversations
+                    .map { it.id to it.title },
+            )
+            answer.complete(Unit)
+            advanceUntilIdle()
         }
 
     @Test
@@ -573,6 +710,38 @@ internal class TutorViewModelTest : TutorFixture() {
 
             api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
             vm.retryAnswer(failed.id)
+            advanceUntilIdle()
+
+            assertEquals(TutorTurn.Status.Completed, vm.turns.single().status)
+            assertTrue(vm.state.value.canAsk(vm.turns))
+        }
+
+    @Test
+    fun anAnswerASlowDownRefusesWaitsUnansweredUntilItsWaitIsOver() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            val details = Json.parseToJsonElement("""{"retryAfterSeconds":30}""")
+            api.answers = { flow { throw ApiException(ApiError.Unavailable, "SLOW_DOWN", 429, details) } }
+            api.question = { id -> turn(id, TutorTurn.Status.Pending, null) }
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceTimeBy(29_000)
+
+            val refused = vm.turns.single()
+            assertEquals(TutorTurn.Status.Failed, refused.status)
+            val slowDown = vm.state.value.limit(vm.turns) as Limit.SlowDown
+            assertEquals(30, slowDown.retryAfterSeconds)
+            assertEquals(TutorFailure.Refused(slowDown), vm.state.value.answerFailures[refused.id])
+            assertFalse(vm.state.value.canAsk(vm.turns))
+
+            advanceTimeBy(2_000)
+
+            assertNull(vm.state.value.limit(vm.turns))
+            assertEquals(TutorFailure.Unanswered, vm.state.value.answerFailures[refused.id])
+
+            api.answers = { flowOf(TutorAnswerEvent.Text("Because."), TutorAnswerEvent.Finish) }
+            vm.retryAnswer(refused.id)
             advanceUntilIdle()
 
             assertEquals(TutorTurn.Status.Completed, vm.turns.single().status)
@@ -860,6 +1029,7 @@ internal class TutorViewModelTest : TutorFixture() {
 }
 
 private const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+private const val CONVERSATION = "1d2c3b4a-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
 private const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
 private val BLOCK: UUID = UUID.fromString("5d1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f")
 

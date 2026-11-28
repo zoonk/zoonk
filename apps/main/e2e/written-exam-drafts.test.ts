@@ -97,10 +97,11 @@ test.describe("Written answer drafts", () => {
       expect(await savedDraftText(day.blockId)).toBe("New server draft");
 
       const keep = dialog.getByRole("button", { name: "Keep this one" });
-      await expect(keep).toBeFocused();
+      await expect(keep).toHaveAttribute("aria-keyshortcuts", "Enter");
+      await expect(dialog).toBeFocused();
       await second.keyboard.press("Escape");
       await expect(dialog).toBeVisible();
-      await expect(keep).toBeFocused();
+      await expect(dialog).toBeFocused();
       await expect(secondField).toHaveValue("Stale device draft");
       expect(await savedDraftText(day.blockId)).toBe("New server draft");
 

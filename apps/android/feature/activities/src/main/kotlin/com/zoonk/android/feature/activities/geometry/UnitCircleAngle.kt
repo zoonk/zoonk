@@ -70,6 +70,7 @@ internal object UnitCircleAngle {
     ): Double? {
         val radians = degrees * PI / HALF_TURN
         return when (trig) {
+            Trig.UNKNOWN_DEFAULT_OPEN_API -> null
             Trig.SIN -> ActivityExpression.sine(radians)
             Trig.COS -> ActivityExpression.cosine(radians)
             Trig.TAN -> if (abs(cos(radians)) < TANGENT_LIMIT) null else ActivityExpression.tangent(radians)

@@ -36,7 +36,10 @@ const ANSWER_RUN = {
   runId: "run-goal-tutor",
 };
 
-async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
+async function setup({
+  dailyMinutes = 12,
+  skippedAreas = [],
+}: { dailyMinutes?: number; skippedAreas?: string[] } = {}) {
   const user = await userFixture();
 
   const library = await planLibraryFixture({
@@ -50,7 +53,7 @@ async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
 
   const { goal } = await unplannedGoalFixture({
     dailyMinutes,
-    settings: { startDate: "2020-09-28" },
+    settings: { skippedAreas, startDate: "2020-09-28" },
     userId: user.id,
   });
 
@@ -162,7 +165,7 @@ async function examSetup({
 async function askBuddy(goalId: string, question = "The English lessons are too basic") {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { goalId, kind: "plan" },
+    target: { conversationId: null, goalId, kind: "plan" },
   });
 
   if (created.status !== "created") {
@@ -235,7 +238,7 @@ describe("app tools the buddy offers", () => {
 
     const thread = await getLessonQuestionThread({
       contextKind: "plan",
-      target: { goalId: goal.id, kind: "plan" },
+      target: { conversationId: null, goalId: goal.id, kind: "plan" },
     });
 
     expect(thread.status === "ready" ? thread.thread?.questions : null).toMatchObject([
@@ -267,6 +270,16 @@ describe("app tools the buddy offers", () => {
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: asked.questionId } }),
     ).resolves.toMatchObject({ toolOffer: null });
+  });
+
+  it("says a plan with one subject left has no focus to choose, not that everything fits", async () => {
+    const { goal } = await setup({ skippedAreas: ["Law"] });
+    const asked = await askBuddy(goal.id);
+
+    await expect(offerTutorTool({ ...asked, tool: "chooseFocus" })).resolves.toStrictEqual({
+      reason: "oneSubject",
+      status: "unavailable",
+    });
   });
 
   it("only lets the generation answering the learner's own question offer a tool", async () => {

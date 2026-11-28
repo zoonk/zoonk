@@ -1,9 +1,9 @@
-import { isRecord } from "./http.ts";
+import { isJsonObject } from "../../../packages/utils/src/json.ts";
 
 export type Note = (body: Record<string, unknown>) => string;
 
 function records(value: unknown): Record<string, unknown>[] {
-  return Array.isArray(value) ? value.filter((entry) => isRecord(entry)) : [];
+  return Array.isArray(value) ? value.filter((entry) => isJsonObject(entry)) : [];
 }
 
 function fixes(count: number): string {

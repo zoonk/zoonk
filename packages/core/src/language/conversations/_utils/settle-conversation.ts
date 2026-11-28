@@ -1,5 +1,6 @@
 import "server-only";
 import { type LearningEventKind, type StudySessionBlock, type TransactionClient } from "@zoonk/db";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { CHECKPOINT_LEDGER_KINDS } from "../../../checkpoints/_utils/checkpoint-results";
 import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
@@ -25,8 +26,6 @@ const LEDGER_KINDS = {
   practice: "conversation",
   speakingMock: "mock",
 } as const satisfies Record<ConversationRow["kind"], LearningEventKind>;
-
-const MS_PER_SECOND = 1000;
 
 type ConversationSettlement = {
   bossKind: "boss" | "finalBoss";

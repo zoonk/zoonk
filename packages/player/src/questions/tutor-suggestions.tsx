@@ -3,14 +3,14 @@
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { getQuestionLimit } from "./lesson-question-errors";
+import { useQuestionLimit } from "./lesson-question-errors";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { type OfferedSuggestion } from "./lesson-question-state";
 
 /** A question on its way, or lost and sent again before anything new, leaves a suggestion nothing to do. */
 export function useOffersSuggestions(): boolean {
   const { state, unresolvedQuestion } = useLessonQuestionController();
-  return !getQuestionLimit(state) && state.creating === null && unresolvedQuestion === null;
+  return state.creating === null && unresolvedQuestion === null;
 }
 
 /** Rows 36px tall with an 8px gap keep each 44px hit area out of its neighbor's. */
@@ -24,6 +24,7 @@ export function TutorSuggestions({
   suggestions: readonly OfferedSuggestion[];
 }) {
   const t = useExtracted();
+  const limited = useQuestionLimit(useLessonQuestionController().state) !== null;
 
   if (suggestions.length === 0) {
     return null;
@@ -35,6 +36,8 @@ export function TutorSuggestions({
         <li className="min-w-0" key={suggestion.question}>
           <Button
             className="bg-background min-h-control h-auto max-w-full py-1.5 text-left whitespace-normal"
+            disabled={limited}
+            focusableWhenDisabled
             onClick={() => onSelect(suggestion)}
             type="button"
             variant="outline"

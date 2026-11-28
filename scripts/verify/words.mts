@@ -311,7 +311,7 @@ export function wordFindings(page: PageWords): Finding[] {
           {
             check: "text before the action",
             level: "warn" as const,
-            message: `over ${WORD_BUDGET.aboveAction} text elements before the main action: which would a learner miss?`,
+            message: `over ${WORD_BUDGET.aboveAction} text elements before the main action: which could a mark, a number or a meter say, and which would a learner miss?`,
             value: page.aboveAction ?? 0,
           },
         ]

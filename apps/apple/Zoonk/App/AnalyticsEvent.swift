@@ -320,11 +320,12 @@ extension AnalyticsEvent.Ceremony {
 }
 
 extension AnalyticsEvent.Insight {
-  init(_ insight: MemoryInsight) {
+  init?(_ insight: MemoryInsight) {
     switch insight.kind {
     case .planChange: self = .planChange
     case .scheduleIdea: self = .schedule
     case .tip: self = .tip
+    case .unrecognized: return nil
     }
   }
 }
@@ -337,6 +338,7 @@ extension LanguageConversation.KindPayload {
     case .checkpoint: "checkpoint"
     case .speakingMock: "speaking_mock"
     case .examSpeaking: "exam_speaking"
+    case .unrecognized: "unknown"
     }
   }
 }

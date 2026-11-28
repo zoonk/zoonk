@@ -9,6 +9,7 @@ function skill(memory: Partial<LearnerSkill>): LearnerSkill {
     createdAt: new Date("2026-09-01T12:00:00Z"),
     difficulty: 5,
     due: null,
+    helpedAt: null,
     id: "learner-skill",
     lapses: 0,
     lastReviewedAt: null,

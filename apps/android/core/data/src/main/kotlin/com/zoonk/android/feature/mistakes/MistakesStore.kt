@@ -26,9 +26,12 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonArray
 import java.util.UUID
 
+/** A run's scope: the goal's notebook, narrowed to a skill or a day's block; or a finished mock alone, with no goal. */
 data class PracticeKey(
     val goalId: UUID?,
-    val skillId: UUID?,
+    val skillId: UUID? = null,
+    val blockId: UUID? = null,
+    val mockId: UUID? = null,
 )
 
 interface MistakesApi {
@@ -50,7 +53,7 @@ interface MistakesApi {
         stepId: UUID,
         recording: VoiceRecording,
         attemptId: UUID,
-        goalId: UUID?,
+        key: PracticeKey,
         answerIds: List<UUID>,
         timeZone: String,
         practiceDurationMs: Long,
@@ -75,7 +78,9 @@ class LiveMistakesApi(
                 session,
             ).mistakes
             .getCurrentUserMistakePractice(
+                blockId = key.blockId,
                 goalId = key.goalId,
+                mockId = key.mockId,
                 skillId = key.skillId,
                 timeZone = timeZone,
                 includeAllFormats =
@@ -95,7 +100,7 @@ class LiveMistakesApi(
         stepId: UUID,
         recording: VoiceRecording,
         attemptId: UUID,
-        goalId: UUID?,
+        key: PracticeKey,
         answerIds: List<UUID>,
         timeZone: String,
         practiceDurationMs: Long,
@@ -108,7 +113,9 @@ class LiveMistakesApi(
             practiceDurationMs = practiceDurationMs.coerceAtMost(3_600_000),
             mistakeId = mistakeId,
             attemptId = attemptId,
-            goalId = goalId,
+            blockId = key.blockId,
+            goalId = key.goalId,
+            mockId = key.mockId,
             answerIds =
                 ApiJson.encodeToString(
                     kotlinx.serialization.builtins.ListSerializer(kotlinx.serialization.serializer<String>()),
@@ -137,11 +144,15 @@ class MistakesStore(
             session?.let { api.practice(it, key, timeZone()) }
         }
 
-    /** [attemptId] stays the same when an answer is sent again, so the server records it once. */
+    /**
+     * [attemptId] stays the same when an answer is sent again, so the server records it once.
+     * [showing] is the order the question's entry showed, so the answer is graded in it.
+     */
     suspend fun answer(
         key: PracticeKey,
         mistakeId: String,
         itemId: String,
+        showing: String,
         answer: Answer,
         durationMs: Long,
         attemptId: UUID,
@@ -151,7 +162,16 @@ class MistakesStore(
             api.answer(
                 session,
                 UUID.fromString(mistakeId),
-                answerInput(key, "itemId", itemId, ApiJson.encodeToJsonElement(answer), durationMs, attemptId, runAnswerIds),
+                answerInput(
+                    key,
+                    "itemId",
+                    itemId,
+                    ApiJson.encodeToJsonElement(answer),
+                    durationMs,
+                    attemptId,
+                    runAnswerIds,
+                    showing,
+                ),
             )
         }
 
@@ -196,7 +216,7 @@ class MistakesStore(
                 UUID.fromString(stepId),
                 recording,
                 attemptId,
-                key.goalId,
+                key,
                 answerIds,
                 timeZone(),
                 practiceDurationMs,
@@ -211,10 +231,12 @@ class MistakesStore(
         durationMs: Long,
         attemptId: UUID,
         runAnswerIds: List<UUID>,
+        showing: String? = null,
     ): MistakePracticeAnswerInput =
         ApiJson.decodeFromJsonElement(
             buildJsonObject {
                 put(idName, id)
+                showing?.let { put("showing", it) }
                 put("answer", answer)
                 put("durationMs", durationMs.coerceAtMost(3_600_000))
                 put("attemptId", attemptId.toString())
@@ -223,19 +245,34 @@ class MistakesStore(
                     "run",
                     buildJsonObject {
                         putJsonArray("answerIds") { runAnswerIds.forEach { add(it.toString()) } }
+                        key.blockId?.let { put("blockId", it.toString()) }
                         key.goalId?.let { put("goalId", it.toString()) }
+                        key.mockId?.let { put("mockId", it.toString()) }
                     },
                 )
             },
         )
 
-    /** Each answer was counted as it came, so this adds only what's new and marks the end. */
+    /** Each answer was counted as it came, so this adds only what's new and marks the end; a day's block completes with it, answered or not. */
     suspend fun finish(
         key: PracticeKey,
         answerIds: List<UUID>,
     ): MutationResult<MistakePracticeCompletion> =
         cache.mutate(invalidating = PRACTICED) { session ->
-            api.finish(session, MistakePracticeFinishInput(answerIds, ended = true, goalId = key.goalId, timeZone = timeZone()))
+            api.finish(
+                session,
+                MistakePracticeFinishInput(
+                    answerIds,
+                    blockId = key.blockId,
+                    ended = true,
+                    goalId = key.goalId,
+                    // As the practice read asks, so "Practice again" learns what's left in the same scope.
+                    includeAllFormats = true,
+                    mockId = key.mockId,
+                    skillId = key.skillId,
+                    timeZone = timeZone(),
+                ),
+            )
         }
 
     private companion object {

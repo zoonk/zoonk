@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, it } from "vitest";
+import { SUPPORTED_LOCALES } from "../../packages/utils/src/locale.ts";
 import { catalogFixture, check, fixture } from "./artifact-test-fixture.mts";
 
 describe("static redirect artifacts", () => {
@@ -87,11 +88,13 @@ function taggedMeta({ status, tags }: { status: number; tags: string }) {
 describe("shared cache tags", () => {
   it("rejects a cache tag every page carries, but not Next's implicit ones", async () => {
     const data = await catalogFixture();
-    const home = join(data.dist, "server/app/en.meta");
+    const homes = SUPPORTED_LOCALES.map((locale) => join(data.dist, `server/app/${locale}.meta`));
 
     try {
       await Promise.all([
-        writeFile(home, taggedMeta({ status: 200, tags: "_N_T_/layout,catalog-courses" })),
+        ...homes.map((home) =>
+          writeFile(home, taggedMeta({ status: 200, tags: "_N_T_/layout,catalog-courses" })),
+        ),
         writeFile(
           `${data.artifact}.meta`,
           taggedMeta({ status: 404, tags: "_N_T_/layout,catalog-courses,course:1" }),
@@ -99,7 +102,7 @@ describe("shared cache tags", () => {
       ]);
 
       await assert.rejects(check(data), { code: 1, stderr: /every page: .*catalog-courses/u });
-      await writeFile(home, taggedMeta({ status: 200, tags: "_N_T_/layout" }));
+      await writeFile(homes[0] ?? "", taggedMeta({ status: 200, tags: "_N_T_/layout" }));
 
       const checked = await check(data);
       assert.doesNotMatch(checked.stdout, /every page/u);
@@ -182,6 +185,60 @@ describe("navigation static route and artifact derivation", () => {
       } else {
         await assert.rejects(check(data), { code: 1 });
       }
+    } finally {
+      await rm(data.root, { recursive: true });
+    }
+  });
+
+  it.each([
+    {
+      artifact: "metadata body",
+      dropped: ["/en/opengraph-image", "/pt/opengraph-image"],
+      source: "/[lang]/opengraph-image",
+    },
+    { artifact: "HTML", dropped: ["/en", "/pt"], source: "/[lang]" },
+    {
+      artifact: "metadata body",
+      dropped: ["/sitemaps/library-chapters/sitemap/7.xml"],
+      source: "/sitemaps/library-chapters/sitemap/[__metadata_id__]",
+    },
+  ])("$source must prerender every path it generates", async ({ artifact, dropped, source }) => {
+    const data = await fixture();
+
+    try {
+      data.manifest.routes = Object.fromEntries(
+        Object.entries(data.manifest.routes).filter(([path]) => !dropped.includes(path)),
+      );
+
+      await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
+
+      await assert.rejects(check(data), {
+        code: 1,
+        stderr: `${source}: not prerendered: ${dropped.join(", ")} (${artifact})\n`,
+      });
+    } finally {
+      await rm(data.root, { recursive: true });
+    }
+  });
+
+  it("names every missing locale when a route lost all of them", async () => {
+    const data = await fixture();
+    const source = "/[lang]/opengraph-image";
+
+    try {
+      data.manifest.routes = Object.fromEntries(
+        Object.entries(data.manifest.routes).filter(
+          ([, entry]) => !("srcRoute" in entry) || entry.srcRoute !== source,
+        ),
+      );
+
+      await writeFile(join(data.dist, "prerender-manifest.json"), JSON.stringify(data.manifest));
+      const paths = SUPPORTED_LOCALES.map((locale) => `/${locale}/opengraph-image`).join(", ");
+
+      await assert.rejects(check(data), {
+        code: 1,
+        stderr: `${source}: no static metadata artifact (metadata body)\n${source}: not prerendered: ${paths} (metadata body)\n`,
+      });
     } finally {
       await rm(data.root, { recursive: true });
     }

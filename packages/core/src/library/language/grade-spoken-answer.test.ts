@@ -19,6 +19,7 @@ import { listOwed } from "../../_test-utils/follow-ups";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { trackServerEvent } from "../../analytics/server";
+import * as languageEvidence from "../../language/levels/record-language-evidence";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
 import { checkLessonStep } from "../../lesson-player/check-lesson-step";
 import { appliedFixFixture } from "../../staff/content-fixes/_test-utils/applied-fix";
@@ -128,6 +129,58 @@ describe(gradeSpokenAnswer, () => {
       data: null,
       error: new Error("Text-to-speech is unavailable"),
     });
+  });
+
+  it("grades and charges a recording once across overlapping requests and a lost reply", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+    mockTranscript(TARGET_TEXT);
+    const fields = { ...FIELDS, attemptId: crypto.randomUUID() };
+    const send = () => gradeSpokenAnswer({ audio: AUDIO, fields, stepId: step.id });
+
+    const pair = await Promise.all([send(), send()]);
+    const first = pair.find((result) => result.status === "graded");
+    expect(first).toMatchObject({ grade: { isCorrect: true }, status: "graded" });
+
+    expect(pair).toStrictEqual(
+      pair.map((result) =>
+        result.status === "slowDown" ? { retryAfterSeconds: 1, status: "slowDown" } : first,
+      ),
+    );
+
+    await expect(send()).resolves.toStrictEqual(first);
+    expect(transcribeSpeech).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.attempt.count({ where: { stepId: step.id, userId: user.id } }),
+    ).resolves.toBe(1);
+
+    await expect(
+      prisma.usageRecord.count({ where: { kind: "assist", userId: user.id } }),
+    ).resolves.toBe(1);
+  });
+
+  it("keeps the paid grade when recording progress fails", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+    mockTranscript(TARGET_TEXT);
+    const fields = { ...FIELDS, attemptId: crypto.randomUUID() };
+    const send = () => gradeSpokenAnswer({ audio: AUDIO, fields, stepId: step.id });
+
+    // Fail after transcription and before the progress transaction.
+    using failure = vi
+      .spyOn(languageEvidence, "loadLanguageStepEvidence")
+      .mockRejectedValueOnce(new Error("unavailable"));
+
+    await expect(send()).rejects.toThrow("unavailable");
+
+    await expect(send()).resolves.toMatchObject({
+      grade: { transcript: TARGET_TEXT },
+      status: "graded",
+    });
+
+    expect(failure).toHaveBeenCalledTimes(2);
+    expect(transcribeSpeech).toHaveBeenCalledOnce();
   });
 
   it("requires a signed-in learner", async () => {
@@ -334,6 +387,7 @@ describe(gradeSpokenAnswer, () => {
     expect(attempt).toMatchObject({
       answer: { kind: "spoken", transcript: "How much is the rent" },
       durationMs: 2400,
+      evidence: "guided",
       isCorrect: true,
       skillId: step.skillId,
       stepId: step.id,

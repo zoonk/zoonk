@@ -274,6 +274,7 @@ export async function addGradedAnswer({
         writingTask: { distinctLines: true, lines: 30, number: 1, points: 30, total: 2 },
       },
       durationMs: 600_000,
+      fromLesson: false,
       hour: 12,
       isCorrect: true,
       itemId,

@@ -78,9 +78,29 @@ export const studyBlockOpeningSchema = z
       .strict()
       .meta({
         description:
-          "The plan hasn't picked this step's lesson yet. The server is preparing it, and a later read has it",
+          "Legacy opening for a study block without a lesson; current responses use `today`.",
         id: "StudyBlockOpeningPreparingLesson",
       }),
+    z
+      .object({
+        blockId: uuidSchema(),
+        kind: z.literal("mistakesPractice"),
+        sessionId: sessionIdSchema,
+      })
+      .strict()
+      .meta({
+        description: "Open mistake practice scoped to this block",
+        id: "StudyBlockOpeningMistakesPractice",
+      }),
+    z
+      .object({
+        blockId: uuidSchema(),
+        kind: z.literal("pattern"),
+        patternId: uuidSchema(),
+        sessionId: sessionIdSchema,
+      })
+      .strict()
+      .meta({ description: "Open the existing pattern drill", id: "StudyBlockOpeningPattern" }),
     z
       .object({ blockId: uuidSchema(), kind: z.literal("essay"), sessionId: sessionIdSchema })
       .strict()

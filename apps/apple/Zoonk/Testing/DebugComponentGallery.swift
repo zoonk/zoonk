@@ -843,7 +843,7 @@
       earlierWork: [], exam: nil, examChoice: nil, focusTest: nil,
       goal: decode(
         #"{"dateEstimated":false,"daysLeft":120,"id":"g1","kind":"exam","title":"ENEM 2027"}"#),
-      insight: nil, lessonStatus: [:], mockFunding: nil, notice: nil, pattern: nil,
+      insight: nil, mockFunding: nil, notice: nil,
       planChange: change, progress: nil,
       session: decode(
         #"""
@@ -924,7 +924,7 @@
   /// The buddy's composer under an empty conversation, as the buddy's page draws it.
   private struct DebugComposer: View {
     @State private var conversation = TutorConversation(
-      scope: .plan(goalId: "debug"), api: DebugTutorAPI(),
+      scope: .plan(goalId: "debug", conversationId: "debug"), api: DebugTutorAPI(),
       cache: AppCache(
         session: .preview(
           account: CurrentAccount(
@@ -1064,7 +1064,7 @@
           .init(weight: 4, fill: .color(LearnKind.conversation.color)),
         ])
         DaySegments(segments: [
-          .done, .done, .current, .ahead, .kind(LearnKind.review.color), .ahead,
+          .done, .done, .current, .ahead, .ahead, .ahead,
         ])
         TaskSegments(
           segments: [.right, .wrong, .read, .current, .ahead, .ahead],

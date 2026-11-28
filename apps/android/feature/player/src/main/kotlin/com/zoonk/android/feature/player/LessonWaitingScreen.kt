@@ -350,6 +350,10 @@ private fun ReadyNow(
 ) {
     val (label, open) =
         when (alternative) {
+            is ReadyAlternative.ReadyAlternativeOneOf2Value -> {
+                return
+            }
+
             is ReadyAlternative.ReadyAlternativeOneOfValue -> {
                 alternative.value.title to { exits.replace(AppRoute.Lesson(alternative.value.lessonId.toString())) }
             }

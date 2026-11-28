@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.mock.chooser
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -108,6 +109,7 @@ class MockStarter(
         when (mock.status) {
             AnytimeMock.Status.STARTED, AnytimeMock.Status.RUNNING -> MockStartOutcome.Opened(checkNotNull(mock.id).toString())
             AnytimeMock.Status.PREPARING -> MockStartOutcome.Preparing
+            AnytimeMock.Status.UNKNOWN_DEFAULT_OPEN_API -> throw ApiException(ApiError.Unavailable)
         }
 }
 

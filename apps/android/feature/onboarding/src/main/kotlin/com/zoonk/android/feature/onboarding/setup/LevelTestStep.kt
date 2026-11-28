@@ -478,15 +478,17 @@ internal fun LevelRows(levels: List<LevelRow>) {
 }
 
 @Composable
-internal fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String =
-    stringResource(
+internal fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String {
+    return stringResource(
         when (skill) {
             LanguageLevelTestOneOf1LevelsInner.Skill.READING -> R.string.onboarding_language_test_reading
+            LanguageLevelTestOneOf1LevelsInner.Skill.UNKNOWN_DEFAULT_OPEN_API -> return ""
             LanguageLevelTestOneOf1LevelsInner.Skill.LISTENING -> R.string.onboarding_language_test_listening
             LanguageLevelTestOneOf1LevelsInner.Skill.SPEAKING -> R.string.onboarding_language_test_speaking
             LanguageLevelTestOneOf1LevelsInner.Skill.WRITING -> R.string.onboarding_language_test_writing
         },
     )
+}
 
 private const val LISTENING_RATE = 0.9f
 

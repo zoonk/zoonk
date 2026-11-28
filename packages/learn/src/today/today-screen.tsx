@@ -34,22 +34,45 @@ export type { TodayHostNotices } from "./today-context";
 
 const WRITING_REFRESH_MS = 5000;
 
-/** Outlasts a learner's ask for lessons, so a screen left open reads the day again once it lapses. */
+/** Outlasts a learner's ask for lessons' outlines, so a screen left open reads the day again once it lapses. */
 const WRITING_WAIT_MS = OUTLINE_STALE_AFTER_MS + WRITING_REFRESH_MS;
-const NO_MISTAKES: MistakeAvailability = { ready: 0, tomorrow: 0 };
+const NO_MISTAKES: MistakeAvailability = { ready: 0 };
 
 const NOTICE_CLASS = "max-[72rem]:-mt-4 sm:col-span-2";
 
 const ASIDE_LEAD_CLASS = "min-[72rem]:order-first";
 
-function isWaitingForLessons(today: TodayView): boolean {
-  const beingWritten = today.session.blocks.some(
-    (block) =>
-      (block.status === "pending" || block.status === "active") &&
-      isStopBeingWritten({ block, lessonStatus: today.lessonStatus }),
-  );
+function isWaitingForOutlines(today: TodayView): boolean {
+  return today.session.lessonsComing || today.session.state === "waiting";
+}
 
-  return beingWritten || today.session.lessonsComing || today.session.state === "waiting";
+function getLessonsBeingWritten(today: TodayView): string[] {
+  return today.session.blocks.flatMap((block) =>
+    (block.status === "pending" || block.status === "active") &&
+    block.lessonId &&
+    isStopBeingWritten(block)
+      ? [block.lessonId]
+      : [],
+  );
+}
+
+/** A row says a lesson is being written only while the API confirms it; any other answer reads the day again. */
+function useLessonsBeingWritten({ actions, today }: { actions: TodayActions; today: TodayView }) {
+  const lessonIds = getLessonsBeingWritten(today);
+
+  usePoll({
+    active: lessonIds.length > 0,
+    intervalMs: WRITING_REFRESH_MS,
+    key: lessonIds.join(","),
+    onPoll: async (signal) => {
+      const reads = await Promise.all(lessonIds.map((lessonId) => actions.readLesson(lessonId)));
+
+      if (!signal.aborted && reads.some((read) => read && read.status !== "generating")) {
+        actions.reread();
+      }
+    },
+    timeoutMs: Number.POSITIVE_INFINITY,
+  });
 }
 
 export function TodayScreen({
@@ -96,8 +119,10 @@ export function TodayScreen({
     analytics.track({ name: "Today Viewed" });
   }, [analytics]);
 
+  useLessonsBeingWritten({ actions, today });
+
   const poll = usePoll({
-    active: isWaitingForLessons(today),
+    active: isWaitingForOutlines(today),
     intervalMs: WRITING_REFRESH_MS,
     key: String(readAt),
     onPoll: actions.refresh,

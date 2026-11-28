@@ -110,7 +110,7 @@ internal fun TodayNotice(
 
         Today.Notice.PRACTICE -> {
             state.language?.let {
-                LanguagePracticeNotice(read.today.goal.id, read.today.pattern, it.pronunciation, layout, state.navigate, modifier)
+                LanguagePracticeNotice(read.today.goal.id, it.pronunciation, layout, state.navigate, modifier)
             }
         }
 
@@ -134,7 +134,7 @@ internal fun TodayNotice(
             }
         }
 
-        null -> {}
+        Today.Notice.UNKNOWN_DEFAULT_OPEN_API, null -> {}
     }
 }
 
@@ -362,6 +362,7 @@ private fun InsightNotice(
     val viewModel = state.viewModel
     val repriced = viewModel.repricedInsights[opened.id]
     val insight = repriced ?: opened
+    if (insight.kind == MemoryInsight.Kind.UNKNOWN_DEFAULT_OPEN_API) return
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }
     val label = stringResource(R.string.today_insight_label)
@@ -423,6 +424,10 @@ private fun InsightActions(
     val applied = insight.planChange?.status == MemoryInsightPlanChange.Status.APPLIED
     val (accept, dismiss) =
         when (insight.kind) {
+            MemoryInsight.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
+                return
+            }
+
             MemoryInsight.Kind.PLAN_CHANGE -> {
                 if (applied) {
                     stringResource(R.string.today_insight_keep_it) to stringResource(R.string.today_undo)
@@ -466,6 +471,10 @@ private fun insightResult(
 ): String {
     val accepted = answer == InsightAnswer.Accepted
     return when (insight.kind) {
+        MemoryInsight.Kind.UNKNOWN_DEFAULT_OPEN_API -> {
+            ""
+        }
+
         MemoryInsight.Kind.PLAN_CHANGE -> {
             if (accepted) planChangeAppliedLine(null) else stringResource(R.string.today_plan_stays)
         }

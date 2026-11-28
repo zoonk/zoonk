@@ -27,33 +27,34 @@ enum StudyFreshStart {
 
 /// One per goal and day, so building it twice returns the same session. Better Auth owns `Session`.
 model StudySession {
-  id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
-  userId         String              @map("user_id") @db.Uuid
-  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
-  goalId         String?             @map("goal_id") @db.Uuid
-  goal           Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
-  localDate      DateTime            @map("local_date") @db.Date
-  status         StudySessionStatus  @default(planned)
-  plannedMinutes Int                 @map("planned_minutes") @db.SmallInt
+  id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId             String              @map("user_id") @db.Uuid
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goalId             String?             @map("goal_id") @db.Uuid
+  goal               Goal?               @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  localDate          DateTime            @map("local_date") @db.Date
+  status             StudySessionStatus  @default(planned)
+  plannedMinutes     Int                 @map("planned_minutes") @db.SmallInt
   /// When the plan changes without the learner, their next read brings the day up to date without
   /// moving what they were shown; null for sessions built before it was kept.
-  planVersion    Int?                @map("plan_version")
-  freshStart     StudyFreshStart?    @map("fresh_start")
-  startSnapshot  Json?               @map("start_snapshot")
+  planVersion        Int?                @map("plan_version")
+  freshStart         StudyFreshStart?    @map("fresh_start")
+  startSnapshot      Json?               @map("start_snapshot")
   /// Kept so the summary still says what this session changed after lessons played later.
-  endSnapshot    Json?               @map("end_snapshot")
-  missions       Json
+  endSnapshot        Json?               @map("end_snapshot")
+  missions           Json
+  remedialGeneration Json?               @map("remedial_generation")
   /// +50 Brain Power, once per learner-local day.
-  fullMealAt     DateTime?           @map("full_meal_at")
-  startedAt      DateTime?           @map("started_at")
-  endedAt        DateTime?           @map("ended_at")
+  fullMealAt         DateTime?           @map("full_meal_at")
+  startedAt          DateTime?           @map("started_at")
+  endedAt            DateTime?           @map("ended_at")
   /// The first "Stop for today": memory reads the day and the plan rebalances then, once, however
   /// often the learner stops.
-  stoppedAt      DateTime?           @map("stopped_at")
-  createdAt      DateTime            @default(now()) @map("created_at")
-  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
-  blocks         StudySessionBlock[]
-  attempts       Attempt[]
+  stoppedAt          DateTime?           @map("stopped_at")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @default(now()) @updatedAt @map("updated_at")
+  blocks             StudySessionBlock[]
+  attempts           Attempt[]
 
   @@unique([userId, goalId, localDate], name: "userGoalDate")
   @@index([userId, localDate])

@@ -210,13 +210,11 @@ function LessonPlayerFrame() {
       data-aside={asideRoot?.["data-aside"]}
       data-phase={state.phase}
       data-slot="lesson-player"
-      onClickCapture={actions.engage}
-      onKeyDownCapture={actions.engage}
-      onPointerDownCapture={actions.engage}
     >
       <LessonHeader />
       <LessonSounds />
 
+      {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- The lesson observes input after its controls handle it. */}
       <main
         aria-label={t("Lesson content")}
         className={cn(
@@ -224,6 +222,16 @@ function LessonPlayerFrame() {
           dotPaper && "dot-paper",
         )}
         id={LESSON_CONTENT_ID}
+        // oxlint-disable-next-line zoonk/held-press-control -- Lesson controls replay their own early presses. The content landmark observes the resulting click.
+        onClick={actions.engage}
+        onKeyDown={(event) => {
+          const lessonKey =
+            event.key.length === 1 || event.key === "Enter" || event.key.startsWith("Arrow");
+
+          if (lessonKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
+            actions.engage();
+          }
+        }}
         ref={mainRef}
         tabIndex={-1}
       >

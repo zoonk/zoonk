@@ -18,7 +18,6 @@
   "mock_result_by_test": "2a70771d17426a23326622b384fb23fcc1147b2b4997d17c55eb73e0415eb629",
   "mock_result_by_topic": "cb28acfb034e935c1b14e26b040541bf0e7800e8bcdf925da422284ee90a8cb6",
   "mock_result_calibration_detail": "79fd68c6552b25d3cb171c8122e4612fedf7ac377ef5b5994933957b0533d443",
-  "mock_result_change_plan": "80f44aeb8180e1c1212c86e54d22c03568be430861fa2c6652fcc0151c784bae",
   "mock_result_continue": "627c1cbf52d9cdb907e22bf318b0ab8fc856ff00252f81fb37a95b9dfa43b4c1",
   "mock_result_details": "f108bc5a2b02847f5f4429bb2e4d10732dd54315ccff1fe705996c0c2b1df04e",
   "mock_result_down": "ef92ce173b512b99620eed388a3eb71668dfae7be3ef5be4fd50e5568708ea0d",
@@ -29,9 +28,6 @@
   "mock_result_estimated_exam_score": "a66fa78372257b2ee93721d11c4e5f4d6d1342b84e0c9be83e017626caf28eff",
   "mock_result_estimated_score": "4c8f15fe642d4e90ea377b727a6e8bb0fb79ccb1bd8f11a7e0036870db834a61",
   "mock_result_every_minimum": "9f362a27731c8b075cd6c00af1828ae4afc044f48200e99062b7d2319d1c6363",
-  "mock_result_focus_done": "95d8b2faa70d01941283ba429d6c9718a5db6ea02169aacdedc9684967973a47",
-  "mock_result_focus_line": "b79bdb412c544b3bd8c83110aafa1934d026aa0df47a38da195a6d18b8de0d7d",
-  "mock_result_focus_title": "16f82e39e86d2b7a6878554730deb16d14eab885a2cfe539385d0f5cfee7d038",
   "mock_result_grade_it": "7e44c8e4ed54359e90125b1f2d70d865e36359e7d8e46366ac041fb164321807",
   "mock_result_grading": "94ee38d6f879a924e3117754ec0ba5a70a6ee3a4d84d06cf9a00e515a56e3c46",
   "mock_result_grading_failed": "6a20eac80fe5876b958fe04ebcaf9b46c4c0b74ac755270ece442a9cc231a225",
@@ -58,7 +54,6 @@
   "mock_result_not_done": "d6cc481b7233793de6e1a2ee623d59077e2e14da809c859142132d4ca0fdce50",
   "mock_result_not_every_task": "ef3bdaf420ef9e2709d5954313769fab8d8d09b323bb2a1b690f45e02560072e",
   "mock_result_not_graded": "2d25238fcee58fd38d1c1699fa78baaa64ff2598de891b856014d90845cedc07",
-  "mock_result_not_now": "39016ef4cc61623adb25a2f76e0734ea6387f74c57f531f9efc47e3be76e278e",
   "mock_result_notice_scoring": "70d4807a1a07f749aedd8fcc789a7aa4f701e52d2510ce8706f06954ea776767",
   "mock_result_of": "4967ccc651ab692f40d85fa5d0c2c8d3d22d9226a05ed703db2750db05034d32",
   "mock_result_partly_right": "bf44ab08d5ab21c83a3e15c1bdd63113bb5c7ab7bfbb281fa3e2c6eabc39d64b",
@@ -67,6 +62,7 @@
   "mock_result_pass_marks_language": "925954d3bd2dff140c1bb079cc5484c5b12021f2ea62b1a462bf3a3db0e94c04",
   "mock_result_pass_paper": "2ad701646fa627a650bd245c60afdefd4e9e75a5260b27da4be8e9c537ab3fb1",
   "mock_result_pass_score": "4264eef24725f4fb97ee0d779180d0e48ca56db2615187402595a5f5b999a050",
+  "mock_result_plan_moved": "8f6dd5a050fcc70dab8dff9f6f4a6d24c05379cdf5e385f48a047db7f4d1f0e3",
   "mock_result_plan_not_saved": "be89f7c37628aa45610523a268c5d93134244f60bb41b34e1a84393bca5904ae",
   "mock_result_plan_unchanged": "56b7382188c051fa921aa4d37a12c1ad6589977515fbd30e53e290af56d84211",
   "mock_result_points": "66b325718335ec506d5670019cd30176b5503337370208b2ede09ca7a2793a38",
@@ -344,13 +340,13 @@
     <string name="mock_result_not_done">Não concluída</string>
     <string name="mock_result_your_preparation">Seu preparo</string>
     <string name="mock_result_your_plan">Seu plano</string>
+    <!-- On a mock exam's result: the plan moved the topics the learner missed earlier. The topics follow, one per line. -->
+    <string name="mock_result_plan_moved">O que você errou agora aparece antes</string>
     <plurals name="mock_result_skip_title">
         <item quantity="one">Pular %d aula sobre o que você já sabe?</item>
         <item quantity="many">Pular %d aulas sobre o que você já sabe?</item>
         <item quantity="other">Pular %d aulas sobre o que você já sabe?</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_title">Focar mais em %1$s?</string>
     <!-- %1$s lists the topics, such as "Fractions, Ratios and 2 more topics". -->
     <string name="mock_result_skip_line">Você acertou tudo em %1$s.</string>
     <!-- %1$s names three topics; %2$d counts the rest: "Fractions, Ratios, Areas and 2 more topics". -->
@@ -359,15 +355,8 @@
         <item quantity="many">%1$s e mais %2$d tópicos</item>
         <item quantity="other">%1$s e mais %2$d tópicos</item>
     </plurals>
-    <!-- %1$s can be a decimal, since some questions give partial credit: "You got 4.5 of 10 right there." -->
-    <plurals name="mock_result_focus_line">
-        <item quantity="one">Você acertou %1$s de %2$d nessa parte.</item>
-        <item quantity="many">Você acertou %1$s de %2$d nessa parte.</item>
-        <item quantity="other">Você acertou %1$s de %2$d nessa parte.</item>
-    </plurals>
     <string name="mock_result_skip_them">Pular aulas</string>
     <string name="mock_result_keep_them">Manter aulas</string>
-    <string name="mock_result_change_plan">Mudar meu plano</string>
     <!-- The share the learner is prepared rose since the last mock exam: "Up from 12%". -->
     <string name="mock_result_up_from">Subiu de %1$s</string>
     <!-- The share the learner is prepared fell since the last mock exam: "Down from 15%". -->
@@ -379,9 +368,6 @@
         <item quantity="many">%d aulas puladas.</item>
         <item quantity="other">%d aulas puladas.</item>
     </plurals>
-    <!-- %1$s is a subject, such as "Mathematics". -->
-    <string name="mock_result_focus_done">Seu plano reserva mais tempo para %1$s.</string>
     <string name="mock_result_after">Depois deste simulado</string>
     <string name="mock_result_continue">Continuar</string>
-    <string name="mock_result_not_now">Agora não</string>
 </resources>

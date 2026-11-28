@@ -4,9 +4,9 @@ import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer";
 import { OVERLAY_ACTIONS_CLASS } from "@zoonk/ui/lib/overlay-actions";
 import { OVERLAY_DIM_CLASS } from "@zoonk/ui/lib/overlay-dim";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
-import { useRef } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import { MenuOpenerNotice, useFocusAfterMenuItem } from "./_utils/menu-handoff";
+import { useOpeningFocus } from "./_utils/opening-focus";
 import { PanelCloseButton } from "./_utils/panel-close";
 import type * as React from "react";
 
@@ -47,13 +47,6 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
 }
 
 /**
- * A panel opens on its first field, a choice included (the checked radio of a group is the one it
- * can focus); with none, Base UI's default. Choice pieces carry a hidden input that never takes focus.
- */
-const FIRST_FIELD =
-  "input:not([type=hidden],[disabled],[tabindex='-1']),textarea:not([disabled]),select:not([disabled]),[role=radio][tabindex='0'],[role=checkbox]:not([aria-disabled=true])";
-
-/**
  * A sheet docked at the bottom on a phone, where it also closes with a swipe down. From `sm` it is
  * a centered dialog, like `Dialog`: a pointer has no use for a grab handle, and a docked box puts
  * a short form far from where the learner was looking. Base UI needs the Viewport wrapper for
@@ -72,7 +65,7 @@ function DrawerPopup({
   opensOnField?: boolean;
 }) {
   const handoff = useFocusAfterMenuItem(finalFocus);
-  const popupRef = useRef<HTMLDivElement>(null);
+  const opening = useOpeningFocus<HTMLDivElement>({ initialFocus, opensOnField });
 
   return (
     <DrawerPrimitive.VirtualKeyboardProvider>
@@ -100,12 +93,8 @@ function DrawerPopup({
             data-slot="drawer-popup"
             {...props}
             finalFocus={handoff.finalFocus}
-            initialFocus={
-              initialFocus ??
-              (() =>
-                (opensOnField && popupRef.current?.querySelector<HTMLElement>(FIRST_FIELD)) || true)
-            }
-            ref={mergeRefs(popupRef, ref)}
+            initialFocus={opening.initialFocus}
+            ref={mergeRefs(opening.ref, ref)}
           >
             <div
               className="bg-foreground/20 contrast-more:bg-foreground/50 mx-auto mt-3 h-1 w-10 shrink-0 rounded-full sm:hidden"

@@ -72,6 +72,8 @@ CI checks the file byte-for-byte against the source contract, so a stale artifac
 
 The generator only builds the operations listed under `filter` in `ZoonkAPI/Sources/ZoonkAPI/openapi-generator-config.yaml`, plus the schemas they use, so endpoints the app doesn't call can't break its build. Add an operation there when a feature starts calling it.
 
+The package's own build plugin, `ZoonkAPI/Plugins/GenerateAPIClient`, runs swift-openapi-generator and then spreads its three largest files over a fixed set of smaller ones. The generated API is the same. The compiler holds a whole file in memory at once, so smaller files compile in parallel within the memory CI's runner has, and a declaration's file depends only on its name, so a contract change recompiles the files it touches instead of the whole client. Raise the plugin's file counts if those files grow large again. Once swift-openapi-generator can split its own output from a build plugin ([SOAR-0017](https://github.com/apple/swift-openapi-generator/pull/973)), use that and delete the plugin's splitting.
+
 ## StoreKit testing
 
 The shared `Zoonk` scheme activates `Zoonk/Resources/StoreKit/Subscriptions.storekit` when the app runs from Xcode. This test-only file contains the Plus monthly and yearly products and is excluded from the app bundle. The `pnpm iphone` and `pnpm ipad` launchers install the built app directly and therefore do not attach the scheme's StoreKit configuration; use Xcode Run when local product data is required.
@@ -115,4 +117,4 @@ Release builds send usage analytics to the "Zoonk" project in PostHog, the one t
 
 ## Continuous Integration
 
-On a pull request that changes the Apple app, GitHub Actions checks only Swift formatting; run `pnpm apple:check` locally for the Mac unit tests, translations and String Catalogs. After merge, it builds the iPhone and iPad app, checks the String Catalogs and runs the full iPhone unit suite. To run the iPhone tests a change affects before merge, use `make test ONLY_TESTING=ZoonkTests/<Suite>`. Run UI tests locally with `make ui-test`.
+On a pull request that changes the Apple app, GitHub Actions checks only Swift formatting; run `pnpm apple:check` locally for the Mac unit tests, translations and String Catalogs. After merge, it builds the iPhone and iPad app, checks the String Catalogs and runs the Mac unit tests. The tests that need an iPhone run only when you run them: `make test ONLY_TESTING=ZoonkTests/<Suite>` for the ones a change affects, or the Apple Unit Tests workflow (`gh workflow run apple-tests.yml --ref <branch>`) for the full iPhone suite. Run UI tests locally with `make ui-test`.

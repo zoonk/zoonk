@@ -59,7 +59,8 @@ fun CertificateName.languageWord(): String {
 fun CertificateName.words(): String =
     when (kind) {
         CertificateKind.Course -> {
-            courseLevel?.let { stringResource(R.string.certificates_course_level, title.orEmpty(), courseLevelName(it)) } ?: title.orEmpty()
+            courseLevel?.let { courseLevelName(it) }?.let { stringResource(R.string.certificates_course_level, title.orEmpty(), it) }
+                ?: title.orEmpty()
         }
 
         CertificateKind.LanguageLevel -> {
@@ -77,7 +78,7 @@ fun CertificateName.rowName(): String = if (kind == CertificateKind.Course && co
 @ReadOnlyComposable
 fun CertificateName.rowLine(): String {
     val date = formatDate(completedOn.toJavaLocalDate(), currentLocale(), DateStyle.Short)
-    return courseLevel?.takeIf { kind == CertificateKind.Course }?.let { factsLine(courseLevelName(it), date) } ?: date
+    return courseLevel?.takeIf { kind == CertificateKind.Course }?.let { courseLevelName(it) }?.let { factsLine(it, date) } ?: date
 }
 
 /** Main's `useCertificateSentence`: the certificate page's headline, which a reader checks. */

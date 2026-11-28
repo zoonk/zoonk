@@ -551,27 +551,22 @@ struct PracticeResultNumbers: View {
   var day: DayResult?
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 16) {
+    VStack(alignment: .leading, spacing: 12) {
+      // Main's `MomentReadouts`: the score and what it earned on one line, the same at every
+      // task's end (B2's R1).
       FlowLayout(spacing: 32, alignment: .firstTextBaseline) {
         // With no total, a count alone: a duel stops once it's decided, so a total reads wrong.
         if let correct, total.map({ $0 > 0 }) ?? true {
-          MomentReadout {
-            Text(total.map { "\(correct)/\($0)" } ?? "\(correct)")
-          } words: {
-            Text(
-              "Right", tableName: "Practice",
-              comment: "Readout label: right answers out of the total.")
-          }
+          ScoreReadout(correct: correct, total: total)
+        }
+
+        if brainPower > 0 {
+          EarnedBrainPower(points: brainPower)
         }
       }
 
-      // What it earned, the same line at every task's end (B2's R1).
-      if brainPower > 0 {
-        EarnedBrainPower(points: brainPower)
-      }
-
-      ForEach(facts, id: \.self) { fact in
-        Text(fact).typeStyle(.note).foregroundStyle(.mutedForeground)
+      if !facts.isEmpty {
+        FactSegments(facts).typeStyle(.data).foregroundStyle(.mutedForeground)
       }
 
       if let day, !day.isEmpty {
@@ -579,6 +574,33 @@ struct PracticeResultNumbers: View {
       }
     }
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+/// Main's `ScoreWords`: "3 of 4 right", its number in the readout's type.
+private struct ScoreReadout: View {
+  @Environment(\.self) private var environment
+  let correct: Int
+  let total: Int?
+
+  var body: some View {
+    let number = Text(correct, format: .number)
+      .font(TypeStyle.readout.font(in: environment))
+      .foregroundStyle(Color(.foreground))
+
+    Group {
+      if let total {
+        Text(
+          "\(number) of \(total) right", tableName: "Practice",
+          comment: "A task's score: right answers, the first number shown large, out of all asked.")
+      } else {
+        Text(
+          "\(number) right", tableName: "Practice",
+          comment: "How many answers the learner got right in a challenge, shown large.")
+      }
+    }
+    .typeStyle(.note.weight(.medium))
+    .foregroundStyle(.mutedForeground)
   }
 }
 

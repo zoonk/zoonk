@@ -1,9 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  DAY_MS,
   SESSION_NOW,
   SESSION_TODAY,
   checkpointItemFixture,
@@ -21,8 +21,8 @@ async function buildAndSaveDay({
   index: number;
   userId: string;
 }): Promise<PlannedBlock[]> {
-  const now = new Date(SESSION_NOW.getTime() + index * DAY_MS);
-  const localDate = new Date(SESSION_TODAY.getTime() + index * DAY_MS);
+  const now = new Date(SESSION_NOW.getTime() + index * MS_PER_DAY);
+  const localDate = new Date(SESSION_TODAY.getTime() + index * MS_PER_DAY);
   vi.setSystemTime(now);
 
   const built = buildSessionBlocks(

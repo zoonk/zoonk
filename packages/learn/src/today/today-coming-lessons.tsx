@@ -8,7 +8,7 @@ import { ChangeSaveError } from "../_components/save-error";
 import { TITLE_ROW_CLASS, TRUNCATED_TITLE_CLASS } from "../_components/title-row";
 import { useFormatDuration } from "../_utils/time-format";
 import { useSessionAction } from "../session/use-session-action";
-import { getRowClass } from "./today-block-row";
+import { ROW_MARK_CLASS, getRowClass } from "./today-block-row";
 import { useTodayScreen } from "./today-context";
 import { getHeldMinutes } from "./today-time";
 
@@ -45,14 +45,12 @@ function ComingLessonsValue({ asks, minutes }: { asks: boolean; minutes: number 
 
   return (
     <>
-      <form action={() => void run()} className="contents">
-        <Button busy={isPending} size="sm" type="submit" variant="outline">
-          {t({
-            description: "Button that asks for today's lessons to be made ready.",
-            message: "Get lessons",
-          })}
-        </Button>
-      </form>
+      <Button busy={isPending} size="sm" onClick={run} variant="outline">
+        {t({
+          description: "Button that asks for today's lessons to be made ready.",
+          message: "Get lessons",
+        })}
+      </Button>
 
       {failed && <ChangeSaveError className="basis-full text-xs" />}
     </>
@@ -67,12 +65,12 @@ export function ComingLessonsRow() {
 
   return (
     <li className={getRowClass({ isNext: false })} data-slot="today-coming-lessons">
-      <span className="flex h-5 w-4 shrink-0 items-center justify-center">
+      <span className={ROW_MARK_CLASS}>
         <KindMark kind="lesson" />
       </span>
 
       <div className={cn(TITLE_ROW_CLASS, "min-w-0 flex-1")}>
-        <div className="flex flex-col gap-px">
+        <div className="flex flex-col gap-px" data-slot="today-row-lines">
           <span className={cn(TRUNCATED_TITLE_CLASS, "text-sm leading-5 font-medium")}>
             {title}
           </span>

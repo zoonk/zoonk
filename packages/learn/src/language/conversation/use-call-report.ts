@@ -1,6 +1,7 @@
 "use client";
 
 import { type LanguageConversationView } from "@zoonk/core/language/conversations/contract";
+import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { useCallback, useMemo, useRef } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type CallHangUpReason } from "./live-call-ending";
@@ -11,8 +12,6 @@ import {
   summarizeReplyGaps,
 } from "./live-call-report";
 import { type TranscriptTurn, toConversationTurns } from "./live-call-transcript";
-
-const MS_PER_SECOND = 1000;
 
 export type CallReport = ReturnType<typeof useCallReport>;
 

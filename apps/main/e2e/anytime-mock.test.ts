@@ -159,6 +159,7 @@ test.describe("Mocks whenever the learner wants", () => {
           ),
         },
         durationMs: 60_000,
+        fromLesson: false,
         hour: 12,
         isCorrect: true,
         itemId: essay.id,
@@ -177,6 +178,66 @@ test.describe("Mocks whenever the learner wants", () => {
     await expect(page.getByText("Controle externo", { exact: true })).toBeVisible();
     await expect(page.getByText("Not sure", { exact: true })).toBeVisible();
     await expect(page.getByText("Back the thesis with the law.")).toBeVisible();
+  });
+
+  test("a finished mock's Practice mistakes opens a run of that mock's mistakes at once and leads back to its result", async ({
+    browser,
+  }) => {
+    const { answers, user } = await createAnytimeMockLearner({ plus: true });
+    const page = await openAs(browser, user);
+    let asked = 0;
+
+    await page.goto("/mock/new");
+
+    await page
+      .getByRole("radiogroup", { name: "The exam" })
+      .getByText("The full exam", { exact: true })
+      .click();
+
+    await page.getByRole("button", { name: "Start" }).click();
+    await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
+
+    const knows = () => {
+      asked += 1;
+      return asked % 2 === 0;
+    };
+
+    const handIn = async () => {
+      // Each section opens on its first question; the previous one's counter is gone by then.
+      await expect(page.getByText(/^Question 1 of \d+/u)).toBeVisible();
+      await answerMockQuestions({ answers, knows, page });
+
+      await page
+        .getByRole("button", { name: /^Hand in/u })
+        .first()
+        .click();
+
+      await confirmMockHandIn(page);
+    };
+
+    // The full exam has two sections, each handed in on its own.
+    await handIn();
+    await handIn();
+
+    // An anytime mock's address names the mock itself.
+    const mockId = /\/mock\/(?<id>[\w-]+)$/u.exec(page.url())?.groups?.id ?? "";
+
+    const practice = page
+      .getByRole("link", { name: /^Practice mistakes/u })
+      .filter({ visible: true });
+
+    // A wide screen shows the whole result as one step, with its actions on the bar.
+    await expect(practice).toBeVisible();
+
+    await practice.click();
+    await expect(page).toHaveURL(`/mistakes/practice?mockId=${mockId}&mockPage=${mockId}`);
+    await expect(page.getByRole("radio").first()).toBeVisible();
+
+    // The run goes back where it was opened from.
+    await page.getByRole("link", { name: "Leave" }).click();
+    await expect(page).toHaveURL(`/mock/${mockId}`);
+
+    await page.context().close();
   });
 
   test("keeps the mock action bar in place, with no empty row, when an answer fails to save", async ({

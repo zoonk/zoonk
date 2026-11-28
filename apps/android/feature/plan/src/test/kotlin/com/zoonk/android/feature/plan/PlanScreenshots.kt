@@ -42,6 +42,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.PlanAreasInner
 import com.zoonk.api.models.PlanBase
 import com.zoonk.api.models.PlanCertificates
 import com.zoonk.api.models.PlanChangePreview
@@ -209,6 +210,20 @@ class PlanScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examWithASubjectTakenOutPhone() =
+        capture(
+            "plan-exam-subject-taken-out-phone",
+            exam =
+                examPage(dated = true).let {
+                    val takenOut = area("Spanish").replace("\"skipped\":false", "\"skipped\":true")
+                    val areas = ApiJson.decodeFromString<List<PlanAreasInner>>("[${area("Natural sciences")},$takenOut]")
+                    it.copy(plan = it.plan.copy(areas = areas, suggestedTime = PlanSuggestedTime(PlanSuggestedTime.Kind.EVERYTHING, 110)))
+                },
+            structure = examSyllabus(),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
     fun examWithoutADatePhone() = capture("plan-exam-no-date-phone", exam = examPage(dated = false))
 
     @Test
@@ -331,8 +346,9 @@ class PlanScreenshots {
         val timeLeft = page.copy(plan = plan("\"status\":{\"kind\":\"needsAdjusting\",\"options\":[\"addTime\"]},\"fitOffer\":null"))
         val sheets: Map<String, @Composable ColumnScope.(PlanLinks) -> Unit> =
             mapOf(
-                "plan-sheet-pace" to { links -> PaceDetails(page, page.plan.status!!.pace, links, onAdjust = {}) },
-                "plan-sheet-pace-time-left" to { links -> PaceDetails(timeLeft, timeLeft.plan.status!!.pace, links, onAdjust = {}) },
+                "plan-sheet-pace" to { links -> PaceDetails(page, requireNotNull(page.plan.status?.pace), links, onAdjust = {}) },
+                "plan-sheet-pace-time-left" to
+                    { links -> PaceDetails(timeLeft, requireNotNull(timeLeft.plan.status?.pace), links, onAdjust = {}) },
                 "plan-sheet-progress" to
                     { links -> PreparationDetails(Standing.Progress(progress(), done = 13, known = 0, total = 46), links) },
                 "plan-sheet-preparation-review" to
