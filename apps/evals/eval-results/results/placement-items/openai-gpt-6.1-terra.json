@@ -582,29 +582,607 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "The meeting pairs have distinct conventional matches. In the lunch item, exactly the first three replies favor a quiet place and leave the discussion open. In the outing item, ticket buying is conditional, Valentina proposes deferring the lunch decision, and another speaker offers to look for places. None of the three claimed completed decisions or actions is supported. The keys are sound.",
-          "score": 10,
+          "reasoning": "Most keys work, including the distinction between an observed decrease and a proven cause. However, the rephrasing and stockout items each permit a defensible selection different from the key, triggering the two-item cap.",
+          "score": 5,
           "label": "Correctness",
           "weight": 30
         },
         {
           "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Both multiple-select items explain specific mistakes. In particular, the outing feedback distinguishes searching for places from choosing a restaurant, and a proposed purchase from a completed one. The matching feedback explains why each pair works, but offers little help understanding an incorrect pairing.",
-          "score": 8,
+          "reasoning": "Most labels identify a specific mistake, such as using “to” after a modal, and the Portuguese reasons explain it. Some distractors stack errors, weakening the diagnosis. In the repetition item, adding “again” alone does not produce “repeat again the question”; the feedback should distinguish redundancy from word order. In the completed-project item, switching to the present does not account for “the number of errors fall,” which also lacks subject–verb agreement.",
+          "score": 7,
           "label": "Misconceptions & feedback",
           "weight": 25
         },
         {
           "categoryId": "realism",
-          "reasoning": "Choosing a lunch venue and coordinating a train trip are credible situations, and the quoted speech is natural Italian throughout. The meeting reads more like a phrase bank than an overheard exchange, and the settings lack a concrete detail placing them in Italy.",
+          "reasoning": "The inventory, reporting, and service-time examples sound like work an analyst might discuss. The opening and clarification sections could largely belong to any interview, however, and some options sound more like manufactured grammar traps than plausible intermediate replies. The Toronto setting is not apparent.",
           "score": 8,
           "label": "Exam and setting realism",
           "weight": 25
         },
         {
           "categoryId": "skillFit",
-          "reasoning": "The three independent, tap-only situations vary in format and difficulty, and the Italian lines stay in Italian while instructions and feedback use Portuguese. The lunch item integrates comprehension with participation. The meeting tests participation without multi-speaker tracking, while the outing tests multi-speaker tracking without participation.",
+          "reasoning": "All three skills have the requested counts, use English, and can be answered without typing. The project items test meaningful distinctions in sequence, direction, and certainty. Variety is weaker elsewhere: the two opening select-all tasks both ask learners to filter professional replies by spotting grammar errors, and the clarification tasks repeat much the same recognition exercise. The basic greeting match offers little evidence of intermediate proficiency.",
           "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 12,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1373,
+          "cacheWriteTokens": 0,
+          "inputTokens": 7015,
+          "outputTokens": 942,
+          "reasoningTokens": 47
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "skills[1].taps[1]",
+          "keyedAnswer": "Select “Could you put that another way, please?”, “Would you mind rephrasing the question?”, and “Could you explain what you mean by that?”",
+          "kind": "twoDefensible",
+          "workedAnswer": "The first two explicitly ask for different wording. The third asks for an explanation, which might be a rephrasing but could instead be an example or added detail. Selecting only the first two fits the command; selecting all three fits the broader situation."
+        },
+        {
+          "itemLocator": "skills[2].taps[1]",
+          "keyedAnswer": "Select the first three statements, including “The team used my analysis to adjust orders, and fewer products ran out.”",
+          "kind": "twoDefensible",
+          "workedAnswer": "The first two statements follow from the setup. The third is defensible as a loose description, but the stated metric counts incidents, not products. One product could go out of stock four times before the adjustment and twice afterward: incidents decreased, but the number of affected products stayed at one. A learner can therefore reasonably omit the third statement."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "Two select-all items can mis-score a learner who reads closely. Asking for an explanation is not necessarily asking for a rephrasing, and fewer stockout incidents do not necessarily mean that fewer products went out of stock.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Several opening and clarification items are easier than B1–B2. “Yes, please” is a basic exchange, and “I look forward to meet you yesterday” can be eliminated from the time contradiction alone. The feedback on “repeat again the question” also misses the awkward placement of “again.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use a specific analyst interview question in the clarification section: for example, have the learner confirm which reporting period the interviewer means. Replace one repeated select-all task with ordering the parts of a project reply. Both changes would test more than recognition of grammatical sentences.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has three tap questions (match pairs, an order or \"select all that apply\") on the language itself, such as putting a reply's words or an answer's parts in order or picking every natural reply, each in its own situation and answered by tapping alone. Situations are a data analyst's interview, varied, without the learner's own name.",
+        "id": "pt-en-language-interview-placement-1",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "en",
+          "skills": [
+            {
+              "description": "Cumprimentar o entrevistador, apresentar-se e conduzir os primeiros minutos da conversa.",
+              "level": "intermediate",
+              "name": "Iniciar uma entrevista de emprego",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Pedir para repetir, reformular ou falar mais devagar sem perder a confiança.",
+              "level": "intermediate",
+              "name": "Pedir esclarecimentos na entrevista",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Contar um projeto de dados com o problema, o que você fez e o resultado.",
+              "level": "intermediate",
+              "name": "Apresentar um projeto de dados",
+              "quickCount": 1,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "One single-choice prompt asks only what the candidate can say to request repetition. The unkeyed imperative requests exactly that; the feedback itself acknowledges this before criticizing its tone. The interview context favors the keyed reply, but the wording does not make it the only defensible answer. The other keys, including the inventory narrative order and the project-function matches, are supported.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The explanations of “interesting” versus “interested,” “do you means,” and the difference between identifying and eliminating delays teach specific distinctions. However, “I have met you tomorrow,” “I have no priorities,” and the claim that no customer would ever leave again are implausible alternatives. Explaining why each is wrong does not make it a useful diagnostic of an intermediate learner's mistake.",
+          "score": 6,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The inventory, delivery, and customer-survey projects are credible analyst interview material. The support-analyst vacancy is a concrete setting mismatch, and replies such as “You talk too badly” and “Explain yourself better. That question makes no sense” make the professional choice conspicuous rather than recreating a realistic interview-language decision.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "All three skills have a quick question and three tap activities, and all require some English comprehension. The clarification quick question and first tap substantially repeat the task of recognizing a request to hear a question again. The two project choice items likewise ask learners to select a faithful summary against similar negation, tense, and overclaim traps. The formulaic greeting and Portuguese matching targets further limit the range of intermediate English sampled.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 12 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 12,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1373,
+          "inputTokens": 6619,
+          "outputTokens": 880,
+          "reasoningTokens": 69
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "skills[1].quick[0]",
+          "keyedAnswer": "Sorry, could you repeat the last part of the question?",
+          "kind": "twoDefensible",
+          "workedAnswer": "The keyed question politely requests repetition. “Repeat the last part. You weren't clear.” also explicitly requests repetition. It is accusatory, but the prompt asks which reply requests repetition, not which does so tactfully."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "The repetition question has two replies that do what the prompt asks: both request the last part again. The key depends on politeness, but the question does not specify that criterion. Several other items are weak placement tests because learners can reject hostile remarks, contradictions, or impossible timelines without distinguishing between plausible B1–B2 replies. One opening scenario also explicitly changes the job from data analyst to support analyst.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Two matching activities use Portuguese for half of the tappable content rather than reserving it for instructions and feedback. The greeting-order item is largely solvable from capitalization, punctuation, and the fixed phrase “to meet you,” so it provides little evidence of intermediate ability.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Ask which reply politely requests repetition *without blaming the interviewer* if that is the intended distinction. For a more diagnostic project item, offer equally fluent accounts that differ on one consequential detail, such as whether the findings helped plan improvements or showed that the improvements worked. Use short English cues on both sides of the matching activities.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions for a Brazilian learning US English for a job interview in Toronto, three situation skills at B1 to B2 (intermediate). Every question practices English itself: what the learner reads, chooses or writes as the language (the interviewer's line, the reply options, the typed answer) is in natural US English at about B1 to B2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. Never a question about interview manners or steps that a learner could answer without knowing English, and never a question written entirely in Portuguese. Each skill also has three tap questions (match pairs, an order or \"select all that apply\") on the language itself, such as putting a reply's words or an answer's parts in order or picking every natural reply, each in its own situation and answered by tapping alone. Situations are a data analyst's interview, varied, without the learner's own name.",
+        "id": "pt-en-language-interview-placement-2",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "en",
+          "skills": [
+            {
+              "description": "Cumprimentar o entrevistador, apresentar-se e conduzir os primeiros minutos da conversa.",
+              "level": "intermediate",
+              "name": "Iniciar uma entrevista de emprego",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Pedir para repetir, reformular ou falar mais devagar sem perder a confiança.",
+              "level": "intermediate",
+              "name": "Pedir esclarecimentos na entrevista",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Contar um projeto de dados com o problema, o que você fez e o resultado.",
+              "level": "intermediate",
+              "name": "Apresentar um projeto de dados",
+              "quickCount": 1,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Both single-choice keys are unique, all translation pairs are accurate, and each plural prompt has one defensible set. In particular, either nationality or city can answer “Di dove sei?”, and the attendant gives €3.50 for the tramezzino and €1.20 for the coffee. No wrong-key or factual-error cap applies.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The feedback usually identifies exactly what the learner selected: “ti chiami” names the listener, and €1.20 is the coffee price rather than the sandwich price. Several distractors are less diagnostic: swapping the highly recognizable caffè and panino in both directions or repeatedly substituting a question about the time is less plausible than confusing two ways of asking about a purchase. The labels describe those choices accurately, but repetition does not make them stronger learner mistakes.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The bar-counter language, euro prices, and references to Ancona and Udine fit beginner Italian. The setting requirement is not fully met: Oksana is not an Italian name, and most encounters could take place anywhere. “Il caffè costa un euro. Per favore.” also reads like a constructed distractor rather than a natural turn at a counter.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The price report requires useful comprehension, but the Oksana/Davide and Federica/Noemi pairs each test the same skill in essentially the same way, triggering the repetition cap. Both matching tasks rely on translation recall and offer Portuguese rather than Italian response halves. The result has three tappable tasks per skill, but they provide less independent placement evidence than three distinct situations would.",
+          "score": 6,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 8,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 1334,
+          "inputTokens": 5342,
+          "outputTokens": 731,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The placement set tests nearly the same decision twice within each skill. Davide's item repeats Oksana's name–origin–name-question checklist; Noemi's item repeats Federica's order-and-price request, even reusing the time-versus-price trap. The two matching items test Portuguese translations rather than asking learners to match Italian utterances with Italian replies. Oksana also does not meet the Italian-name requirement, and her encounter has no cue placing it in Italy.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The plural questions and keys indicate select-all tasks, but the prompts do not explicitly say to tap every correct option. Some distractors are easy to dismiss without much Italian, particularly the repeated café/sandwich swap and the awkward standalone “Per favore” after a price statement.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the price-comprehension item, which tests a different part of the bar exchange. Replace a repeated order with a tap-to-order dialogue, and use a first meeting in a named Italian setting to match questions such as “Di dove sei?” with natural Italian answers.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions for a Brazilian starting Italian, two everyday situation skills at A1 to A2 (beginner). Every question practices Italian itself: what someone says and the reply options are in natural Italian at about A1 to A2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. The situations happen in Italy: the people have Italian names, any city or town named is Italian, and any money is in euros. A question that sets the learner in a Brazilian city (Santarém, Maringá, São Luís) or pays in reais fails. Each skill also has three tap questions (match pairs, an order or \"select all that apply\") on the Italian itself, each in its own situation and answered by tapping alone.",
+        "id": "pt-it-language-beginner-placement-in-italy-1",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "it",
+          "skills": [
+            {
+              "description": "Dizer seu nome, de onde você é e perguntar o nome da outra pessoa.",
+              "level": "beginner",
+              "name": "Apresentar-se a alguém novo",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Pedir um café ou um lanche no balcão e perguntar quanto custa.",
+              "level": "beginner",
+              "name": "Pedir algo em um bar",
+              "quickCount": 1,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All eight keys hold. “Come ti chiami?” asks for a name, each plural selection prompt has one defensible set, and both matching tasks have unique pairings. In the panino item, asking the price of the coffee does not meet the stated goal. The malformed Italian options are correctly rejected and explained, not presented as correct Italian.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The contrast between “Sono a Udine” and “Sono di Udine” diagnoses a plausible mistake and explains its effect on meaning. In contrast, “Io è un tramezzino” and “Mi chiamo un tramezzino” are implausible attempts to order food, and “Dove si trova?” lacks a clear referent at the counter. The labels and reasons are generally specific, but several traps are weak.",
+          "score": 7,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The towns are Italian, and exchanges such as “Vuole un tramezzino o un cornetto?” followed by “Un cornetto, grazie” suit an everyday beginner encounter. Oksana does not meet the explicit Italian-name requirement, and replies that identify the customer as a sandwich sound out of place in the bar setting.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "Both skills have three tap-answerable tasks, and selecting suitable Italian introductions and orders exercises the intended skills. However, the first quick item offers only Portuguese answers, and both matching tasks ask for Portuguese descriptions rather than Italian conversational responses. The coffee quick item and panino tap item both ask learners to recognize an order followed by a price question in nearly identical wording.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 8,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1334,
+          "cacheWriteTokens": 0,
+          "inputTokens": 5326,
+          "outputTokens": 690,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "The first introduction question asks the learner to identify Oksana’s intent using Portuguese options rather than choose an Italian reply. Oksana also fails the Italian-name requirement. Both matching tasks use Portuguese function labels as half of the answer set, and several snack-order options are not natural Italian.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The coffee and panino questions test nearly the same decision, even reusing the duration distractor. The two items labeled hard are not clearly harder than the medium items: one asks for a basic origin reply, and the other can largely be solved by eliminating malformed sentences.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use Italian question–reply pairs for matching. For the panino task, establish that the snack has already been ordered and ask the learner to select price questions about that snack rather than repeat the coffee-order task. In the final bar item, use grammatical near misses, such as ordering an item the server did not offer.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Placement questions for a Brazilian starting Italian, two everyday situation skills at A1 to A2 (beginner). Every question practices Italian itself: what someone says and the reply options are in natural Italian at about A1 to A2, while the setup, the question, reasons and feedback are in Brazilian Portuguese. The situations happen in Italy: the people have Italian names, any city or town named is Italian, and any money is in euros. A question that sets the learner in a Brazilian city (Santarém, Maringá, São Luís) or pays in reais fails. Each skill also has three tap questions (match pairs, an order or \"select all that apply\") on the Italian itself, each in its own situation and answered by tapping alone.",
+        "id": "pt-it-language-beginner-placement-in-italy-2",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "it",
+          "skills": [
+            {
+              "description": "Dizer seu nome, de onde você é e perguntar o nome da outra pessoa.",
+              "level": "beginner",
+              "name": "Apresentar-se a alguém novo",
+              "quickCount": 1,
+              "tapCount": 3
+            },
+            {
+              "description": "Pedir um café ou um lanche no balcão e perguntar quanto custa.",
+              "level": "beginner",
+              "name": "Pedir algo em um bar",
+              "quickCount": 1,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The first two options in each multi-select item are exactly the messages that meet its full prompt. On the matching board, the four replies respectively accept, decline, change the day and change the hour. All four pairings are correct and distinct.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors reflect plausible mistakes, and the Portuguese feedback distinguishes errors such as omitting the hour and accepting instead of proposing. “Horário alternativo incorreto” is less diagnostic than the other labels: the learner kept the original hour while changing the day.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The three independent situations are plausible exchanges between friends in Italy. Expressions such as “Domenica, invece?” and “Facciamo venerdì alle sei di sera?” are natural at this level. All eight cards on the four-pair board are short enough to read at a glance.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set covers proposing, accepting, declining and rescheduling through tapping alone. However, the first and third items test recognition of the same Friday-at-18:00 proposal in the same multi-select format. Although the third prompt asks for a refusal too, no distractor offers Friday at 18:00 while getting the refusal wrong.",
+          "score": 7,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1286,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3609,
+          "outputTokens": 714,
+          "reasoningTokens": 141
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The first and third taps both ask learners to select messages proposing Friday at 18:00. The third adds a refusal, but learners can identify both correct replies from the day and time alone. Its feedback for “Facciamo venerdì alle 17?” also misses a useful detail: 17:00 was Noemi’s original time.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Keep the compact matching board. In the third tap, offer a distractor such as “Giovedì posso. Va bene venerdì alle 18?” It gives the requested alternative but says the learner is available on Thursday, so the learner must check the refusal as well as the day and time.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Tap questions for a Brazilian learning Italian, a conversation skill at A1 to A2 (beginner): agreeing on a day and time to meet a friend. The Italian is natural and set in Italy, and the setup, the question and reasons are in Brazilian Portuguese. A match board has 4 or 5 pairs, and each card is a word or a short phrase the learner takes in at a glance on a phone (a day and when it is, a short question and its short answer, a line and its short reply). A card that holds a long line of dialogue, two speakers' lines (\"A: Martedì per me è impossibile. B: Giovedì invece non ho impegni.\") or a message fails, however correct its Italian. A whole exchange is practiced in another format, such as picking every natural reply to one line or putting a reply's words in order. Each tap question is in its own situation and answered by tapping alone.",
+        "id": "pt-it-conversation-taps-no-dialogue-cards-1",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "it",
+          "skills": [
+            {
+              "description": "Combinar com um amigo o dia e a hora de um encontro: propor, aceitar, recusar e sugerir outro horário.",
+              "level": "beginner",
+              "name": "Marcar um encontro com um amigo",
+              "quickCount": 0,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "All four matches work in the context of today's five o'clock invitation. Both keyed replies to Simone decline Tuesday and propose Wednesday at 16:00. Friday at 19:00 and Saturday at 10:00 are the only proposals supported by Noemi's message. The Thursday key is defensible, though the question could specify stated availability more explicitly.",
+          "score": 9,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "Most feedback pinpoints the learner's mistake: reversing Tuesday and Wednesday, accepting instead of declining, or reading dopo as “before.” The Thursday reason correctly explains the lack of evidence, but the weekday-confusion label does not capture that inference.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The invitations and replies sound natural between friends in Italy. The Portuguese setups are clear, the four-pair board is readable at a glance, and the longer availability message appears as context rather than on a match card.",
+          "score": 10,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The three situations build from distinguishing acceptance, refusal and counterproposals to selecting a rescheduling reply and then proposing a time from a friend's availability. The two multiple-select items require different decisions, and every item can be answered by tapping alone.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1286,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3517,
+          "outputTokens": 587,
+          "reasoningTokens": 65
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The Thursday distractor in the Noemi item has a weaker diagnosis than the others. Its label says the learner confused two weekdays, but its feedback identifies a different mistake: assuming Noemi is free on a day she did not mention.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Ask “Quais propostas caem em horários em que Noemi disse que pode?” and label the Thursday choice “Disponibilidade presumida”. This makes clear why Thursday should not be selected without implying that Noemi is busy that day.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "Tap questions for a Brazilian learning Italian, a conversation skill at A1 to A2 (beginner): agreeing on a day and time to meet a friend. The Italian is natural and set in Italy, and the setup, the question and reasons are in Brazilian Portuguese. A match board has 4 or 5 pairs, and each card is a word or a short phrase the learner takes in at a glance on a phone (a day and when it is, a short question and its short answer, a line and its short reply). A card that holds a long line of dialogue, two speakers' lines (\"A: Martedì per me è impossibile. B: Giovedì invece non ho impegni.\") or a message fails, however correct its Italian. A whole exchange is practiced in another format, such as picking every natural reply to one line or putting a reply's words in order. Each tap question is in its own situation and answered by tapping alone.",
+        "id": "pt-it-conversation-taps-no-dialogue-cards-2",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "it",
+          "skills": [
+            {
+              "description": "Combinar com um amigo o dia e a hora de um encontro: propor, aceitar, recusar e sugerir outro horário.",
+              "level": "beginner",
+              "name": "Marcar um encontro com um amigo",
+              "quickCount": 0,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "Each plural prompt has one defensible selection set: the first two options in each item. The courtyard depends on the rain stopping and the room is occupied from 17:00 onward. Both ingredient checks remain relevant. Both keyed meeting replies accept Thursday morning and ask about meeting online; stating a preference for meeting in person does not fulfill the second requirement.",
+          "score": 10,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The feedback usually identifies the precise misunderstanding, especially reversing “dalle 17 in poi” and treating “dobbiamo ancora controllare” as completed work. The label “Confundir presencial e on-line” is less diagnostic: the learner could understand both formats but miss the distinction between stating a preference and asking for confirmation. The reason explains this better than the label.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The venue, snack and workplace discussions are plausible everyday situations, and the Italian dialogue and choices stay in Italian. The snack item's two cautious, explicitly signposted interventions stand out against three confident declarations, making it easier to guess which replies fit.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The three independent tap tasks progress from tracking constraints to joining a conversation and expressing a two-part intention. The last item, however, supplies that intention so completely that the learner can select both replies by matching them to the Portuguese prompt without following the speakers. This limits the difficulty spread and the evidence of multi-speaker comprehension.",
+          "score": 8,
           "label": "Skill fit & variety",
           "weight": 20
         },
@@ -622,25 +1200,25 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 1286,
-          "inputTokens": 3686,
-          "outputTokens": 612,
-          "reasoningTokens": 0
+          "inputTokens": 3862,
+          "outputTokens": 731,
+          "reasoningTokens": 117
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Only the lunch question directly tests both following other speakers and choosing how to join in. The meeting item pairs isolated remarks with stock replies; none of the matches depends on what another speaker said. The outing item requires tracking a real exchange, but the learner taps third-person summaries rather than a line they could contribute.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "The meeting item is closer to beginner phrase matching than B1–B2 interaction, and its feedback explains the intended pairs without diagnosing a likely mix-up. The situations are plausible in Italy, but none clearly establishes the Italian setting.",
+          "conclusion": "The hard item is easier than advertised: the Portuguese prompt supplies both the time to accept and the question to ask, and the two keyed replies are near-paraphrases. In the snack item, both keyed replies explicitly ask to take the floor and suggest a check; none of the distractors does. That pattern hints at the key without requiring close attention to the dialogue.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Give the meeting speakers connected turns so the learner must track who requested clarification and who is waiting to speak. For the outing, ask what Valentina could say next: a suitable reply could acknowledge that one person will confirm tonight and that lunch is still undecided. Keep the existing tense and certainty traps as conversational replies.",
+          "conclusion": "Make the hard item ask what remains to be settled, so the learner must infer that Friday is ruled out while the online format is still open. In the snack item, give a distractor a polite turn-taking opener but have it misstate what was checked. This would test the content of the intervention rather than its opening words.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -648,6 +1226,92 @@
       "testCase": {
         "expectations": "Tap questions for a Brazilian learning Italian, a conversation skill at B1 to B2 (intermediate): following a conversation between several people and joining in without contradicting what each one said. What the people say and every line the learner could say are in natural Italian set in Italy, while the setup, the question and reasons are in Brazilian Portuguese. Every Italian line stays in Italian from its first word to its last: an option that starts in Italian and ends in Portuguese (\"Se ho capito bene, nessuna delle due quer alterar o horário atual\") fails, even as a wrong option, since it gives the answer away. Wrong options are mistakes made in Italian, such as mixing up who said what or misreading a tense. Each tap question is in its own situation and answered by tapping alone.",
         "id": "pt-it-group-conversation-taps-whole-italian-1",
+        "userInput": {
+          "language": "pt",
+          "quickFormat": "multipleChoice",
+          "targetLanguage": "it",
+          "skills": [
+            {
+              "description": "Acompanhar conversas entre várias pessoas, entrar na fala e responder de maneira apropriada.",
+              "level": "intermediate",
+              "name": "Conversar com várias pessoas",
+              "quickCount": 0,
+              "tapCount": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "The first two options form the defensible set in each item: they respect the picnic’s weather conditions, propose moving the preparation meeting rather than the presentation, and support exhibiting copies while protecting the originals, respectively. No rejected option meets the corresponding goal. The meeting stem leaves the selection instruction implicit, but neither accepted reply is miskeyed.",
+          "score": 8,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors represent identifiable misunderstandings, and the Portuguese feedback explains the distinction that matters. For example, the picnic feedback distinguishes changing the venue from postponing the event, and the meeting feedback distinguishes asking whether a change has already happened from proposing it.",
+          "score": 10,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The picnic contingency, preparation meeting and concern about damaging family photographs are plausible situations in Italy. The spoken lines stay in natural Italian, including the distractors. “Posso intervenire?” is slightly formal immediately after “Voi che ne pensate?”, but remains credible among colleagues.",
+          "score": 9,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The three independent tap situations vary the conversational task: tracking a conditional plan, offering an alternative and backing a speaker’s proposal. The picnic requires the dialogue to resolve the choices. The meeting and exhibition stems, however, state enough of the intended reply in Portuguese that a learner can largely match meanings rather than track what each speaker said. This particularly weakens the item labeled hard.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1286,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3847,
+          "outputTokens": 687,
+          "reasoningTokens": 116
+        }
+      },
+      "keyFlaws": [],
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The meeting question has two appropriate replies, but “O que ele pode dizer?” does not tell the learner to select both. It also supplies the days and the direction of the change in Portuguese, so the learner can identify both replies without following the colleagues’ exchange.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use an explicit plural selection instruction for the meeting. To make the exhibition item a stronger intermediate challenge, say only that Valentina wants to support her second friend. Let the learner infer from the Italian dialogue which photos should stay out of the exhibition and why.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "Tap questions for a Brazilian learning Italian, a conversation skill at B1 to B2 (intermediate): following a conversation between several people and joining in without contradicting what each one said. What the people say and every line the learner could say are in natural Italian set in Italy, while the setup, the question and reasons are in Brazilian Portuguese. Every Italian line stays in Italian from its first word to its last: an option that starts in Italian and ends in Portuguese (\"Se ho capito bene, nessuna delle due quer alterar o horário atual\") fails, even as a wrong option, since it gives the answer away. Wrong options are mistakes made in Italian, such as mixing up who said what or misreading a tense. Each tap question is in its own situation and answered by tapping alone.",
+        "id": "pt-it-group-conversation-taps-whole-italian-2",
         "userInput": {
           "language": "pt",
           "quickFormat": "multipleChoice",
