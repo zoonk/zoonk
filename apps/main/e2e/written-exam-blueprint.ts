@@ -15,7 +15,6 @@ export const CRITERIA = [
 
 export const GRADING = {
   criteria: CRITERIA.map((criterion) => ({ ...criterion, citation: CITATION })),
-  kind: "points" as const,
   language: null,
   rounding: null,
   zeroing: [],

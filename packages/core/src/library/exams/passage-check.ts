@@ -6,7 +6,8 @@ const MIN_WORD_SHARE = 0.9;
 const WORD_PATTERN = /[\p{L}\p{N}]+/gu;
 const NUMBER_PATTERN = /\d+(?:[.,]\d+)*/gu;
 
-function normalizeText(text: string): string {
+/** Normalized text that keeps the page's line breaks, a table row or a list item per line. */
+function normalizeLines(text: string): string {
   return text
     .normalize("NFKC")
     .toLowerCase()
@@ -15,8 +16,13 @@ function normalizeText(text: string): string {
     .replaceAll(/[“”«»]/gu, '"')
     .replaceAll(/[‐‑‒–—]/gu, "-")
     .replaceAll(/-\s*\n\s*/gu, "")
-    .replaceAll(/\s+/gu, " ")
+    .replaceAll(/[^\S\n]+/gu, " ")
+    .replaceAll(/\s*\n\s*/gu, "\n")
     .trim();
+}
+
+function normalizeText(text: string): string {
+  return normalizeLines(text).replaceAll("\n", " ");
 }
 
 function toWords(text: string): string[] {
@@ -66,9 +72,12 @@ function sharesWordsAndNumbers({
   return passageWords.length > 0 && found / passageWords.length >= MIN_WORD_SHARE;
 }
 
+function joinHyphenatedWords(text: string): string {
+  return normalizeLines(text).replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "");
+}
+
 function toWordLine(text: string): string {
-  const joined = normalizeText(text).replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "");
-  return ` ${toWords(joined).join(" ")} `;
+  return ` ${toWords(joinHyphenatedWords(text)).join(" ")} `;
 }
 
 export function findNamesInDocument({
@@ -90,6 +99,154 @@ export function findNamesInDocument({
 
 function isLongEnough(normalizedPassage: string): boolean {
   return normalizedPassage.length >= MIN_PASSAGE_LENGTH;
+}
+
+type Span = { end: number; start: number };
+type NameAt = Span & { name: string };
+
+function findNameAt({ name, text }: { name: string; text: string }): NameAt[] {
+  const words = toWords(joinHyphenatedWords(name));
+
+  if (words.length === 0) {
+    return [];
+  }
+
+  const pattern = new RegExp(
+    String.raw`(?<![\p{L}\p{N}])${words.join(String.raw`[^\p{L}\p{N}]+`)}(?![\p{L}\p{N}])`,
+    "gu",
+  );
+
+  return [...text.matchAll(pattern)].map((match) => ({
+    end: match.index + match[0].length,
+    name,
+    start: match.index,
+  }));
+}
+
+function isInsideLonger(found: NameAt, all: readonly NameAt[]): boolean {
+  return all.some(
+    (other) =>
+      other !== found &&
+      other.start <= found.start &&
+      found.end <= other.end &&
+      other.end - other.start > found.end - found.start,
+  );
+}
+
+/**
+ * Each name the page holds with what follows it up to the next name: a table row or a list item, the
+ * way specifications print a heading and then its number. A name inside a longer one ("Algebra" in
+ * "Advanced Algebra") doesn't start an entry.
+ */
+function splitAtNames({ names, page }: { names: readonly string[]; page: string }): NameAt[] {
+  const found = names.flatMap((name) => findNameAt({ name, text: page }));
+
+  const cuts = found
+    .filter((item) => !isInsideLonger(item, found))
+    .toSorted((first, second) => first.start - second.start);
+
+  return cuts.map((cut, index) => ({
+    end: cuts[index + 1]?.start ?? page.length,
+    name: cut.name,
+    start: cut.start,
+  }));
+}
+
+type WordAt = Span & { word: string };
+
+function toWordsAt(text: string): WordAt[] {
+  return [...text.matchAll(WORD_PATTERN)].map((match) => ({
+    end: match.index + match[0].length,
+    start: match.index,
+    word: match[0],
+  }));
+}
+
+/**
+ * Where the passage's words, from the page's word `from`, end. Words the quote skips (cells,
+ * "…") must sit on the line of the words around them; adjacent words may wrap to the next line.
+ */
+function findSpanEnd({
+  from,
+  page,
+  pageWords,
+  words,
+}: {
+  from: number;
+  page: string;
+  pageWords: readonly WordAt[];
+  words: readonly string[];
+}): number | null {
+  let matched = 0;
+  let last = from;
+
+  for (let index = from; index < pageWords.length; index += 1) {
+    const at = pageWords[index];
+    const previous = pageWords[last];
+
+    if (!at || !previous) {
+      return null;
+    }
+
+    if (index - last > 1 && page.slice(previous.end, at.start).includes("\n")) {
+      return null;
+    }
+
+    if (at.word === words[matched]) {
+      matched += 1;
+      last = index;
+    }
+
+    if (matched === words.length) {
+      return at.end;
+    }
+  }
+
+  return null;
+}
+
+function findPassageSpans({ page, passage }: { page: string; passage: string }): Span[] {
+  const words = toWords(joinHyphenatedWords(passage));
+
+  if (words.length === 0 || !isLongEnough(normalizeText(passage))) {
+    return [];
+  }
+
+  const pageWords = toWordsAt(page);
+
+  return pageWords.flatMap((at, from) => {
+    const end = at.word === words[0] ? findSpanEnd({ from, page, pageWords, words }) : null;
+    return end === null ? [] : [{ end, start: at.start }];
+  });
+}
+
+/**
+ * The entries, normalized, that start inside a stretch of the page holding the passage, each a name
+ * and the page's text after it up to the next name or the stretch's end. What sits beside a name is
+ * read from the page, never from the quote, so a number the page prints beside another name can't
+ * become this one's.
+ */
+export function findQuotedEntries({
+  names,
+  passage,
+  text,
+}: {
+  names: readonly string[];
+  passage: string;
+  text: string;
+}): { entry: string; name: string }[] {
+  const page = joinHyphenatedWords(text);
+  const spans = findPassageSpans({ page, passage });
+  const entries = spans.length > 0 ? splitAtNames({ names, page }) : [];
+
+  return spans.flatMap((span) =>
+    entries
+      .filter((entry) => span.start <= entry.start && entry.start < span.end)
+      .map((entry) => ({
+        entry: page.slice(entry.start, Math.min(entry.end, span.end)),
+        name: entry.name,
+      })),
+  );
 }
 
 /**

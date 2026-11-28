@@ -1,7 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { sleep } from "workflow";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { rebuildGoalCurriculumWorkflow } from "./rebuild-goal-curriculum-workflow";
 
@@ -34,5 +35,34 @@ describe(rebuildGoalCurriculumWorkflow, () => {
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
+  });
+
+  it("waits for the research owed with it before rebuilding", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ kind: "exam", planRevealedAt: null, userId: user.id });
+    await planFixture({ goalId: goal.id });
+
+    const followUp = await prisma.followUp.create({
+      data: {
+        input: { goalId: goal.id },
+        key: goal.id,
+        kind: "rebuildGoalCurriculum",
+        userId: user.id,
+      },
+    });
+
+    await prisma.followUp.create({
+      data: { input: { goalId: goal.id }, key: goal.id, kind: "researchGoal", userId: user.id },
+    });
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      await prisma.followUp.deleteMany({ where: { userId: user.id } });
+    });
+
+    await expect(rebuildGoalCurriculumWorkflow({ followUp, goalId: goal.id })).rejects.toThrow(
+      /no longer owed/u,
+    );
+
+    expect(sleep).toHaveBeenCalledExactlyOnceWith("10s");
   });
 });

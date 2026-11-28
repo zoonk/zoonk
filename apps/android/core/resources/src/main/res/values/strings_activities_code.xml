@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activities_code_badge_run">Run the code</string>
-
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_loading">Getting %1$s ready. This takes a few seconds the first time.</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_failed">%1$s didn\'t load. Check your connection and try again.</string>
     <string name="activities_code_run">Run</string>
     <string name="activities_code_run_again">Run again</string>
-    <string name="activities_code_start_over">Start over with the original code</string>
+    <string name="activities_code_start_over">Start over</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>
 
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
-    <plurals name="activities_code_lines_yours">
-        <item quantity="one">Line %1$s is yours</item>
-        <item quantity="other">Lines %1$s are yours</item>
+    <plurals name="activities_code_edit_lines">
+        <item quantity="one">Edit line %1$s</item>
+        <item quantity="other">Edit lines %1$s</item>
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">Line %1$d, yours to edit</string>
-    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <!-- What a program printed. -->
     <string name="activities_code_output">Output</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">Expected</string>
@@ -36,7 +34,6 @@
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Not quite:</string>
 
-    <string name="activities_code_badge_test_pattern">Test a pattern</string>
     <!-- The field for a regular expression, for TalkBack. -->
     <string name="activities_code_your_pattern">Your pattern</string>
     <!-- The field for a spreadsheet formula, for TalkBack. -->
@@ -117,10 +114,7 @@
     <string name="activities_code_pattern_that_works">A pattern that works</string>
     <string name="activities_code_formula_that_works">A formula that works</string>
 
-    <string name="activities_code_badge_query_data">Query the data</string>
-    <!-- The field for a SQL query, and its label. -->
-    <string name="activities_code_your_query">Your query</string>
-    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <!-- Above the SQL query and its field. -->
     <string name="activities_code_query">Query</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQL words, tables and columns</string>
@@ -168,7 +162,8 @@
     <string name="activities_code_not_set">not set</string>
     <string name="activities_code_predict_first">Predict first. Then step forward to see what happens.</string>
     <string name="activities_code_step_to_see">Step forward to see if you\'re right.</string>
-    <string name="activities_code_step_next_line">Step forward to run the next line.</string>
+    <!-- Under a code trace whose predictions aren't all made yet. -->
+    <string name="activities_code_predict_ahead">We\'ll stop for you to predict a value.</string>
     <string name="activities_code_whole_run">That\'s the whole run. Check your predictions when you\'re ready.</string>
     <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
     <string name="activities_code_whole_run_explored">That\'s the whole run.</string>

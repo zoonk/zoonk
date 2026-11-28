@@ -76,17 +76,12 @@
         <item quantity="other">You\'re not sure of %d answers.</item>
     </plurals>
     <string name="mock_every_answered">Every question is answered.</string>
-    <string name="mock_essay_blank">The essay is blank.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">The written question is blank.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
         <item quantity="one">%d written question is blank.</item>
         <item quantity="other">%d written questions are blank.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d essay is blank.</item>
-        <item quantity="other">%d essays are blank.</item>
     </plurals>
     <string name="mock_hand_in_final">After this, your answers can\'t change.</string>
     <string name="mock_keep_answering">Keep answering</string>
@@ -137,7 +132,6 @@
     <string name="mock_expired_title">Time ran out while you were away</string>
     <string name="mock_expired_detail">This one doesn\'t count.</string>
     <string name="mock_take_another">Take another</string>
-    <string name="mock_your_essay">Your essay</string>
     <plurals name="mock_words">
         <item quantity="one">%d word</item>
         <item quantity="other">%d words</item>

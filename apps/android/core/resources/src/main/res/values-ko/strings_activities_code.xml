@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_code_badge_query_data": "d640e0c2a89cbfb1bf7ed5c603a279317d4e991608a0f017182eca7256c18058",
-  "activities_code_badge_run": "ec8dc701f71608781fb84b3c506d129dd7ed3a60f6281d1e02f995651bc2d045",
   "activities_code_badge_step_through": "4f08682f65375cc8d0d0e7a0a283077bafcdce8a082655d7240d8a818a01c5e5",
-  "activities_code_badge_test_pattern": "760195b2b7bdc06e0d8a911866440411c05630a8f349d119a2faa53dace01b35",
   "activities_code_before_first_line": "71dd353268702befb9a977d379233f0ce63b569c56bc390656c5eed496d5f882",
   "activities_code_changed_code": "4524d190ac7171a5796996e18e1eb6cee5c72d4f3547cb6afa5637bdc1406454",
   "activities_code_changed_query": "2cdec5f889bd37eb600cf38e8cd8ee382c21fcb39923b95d9d8f92029a7dda24",
   "activities_code_code": "fd0b4217d1611b08e9c7b3be1c7c47b8b747d6ca29752493a0104a437b28f13d",
   "activities_code_current_line": "23750329640289ea05972703e238304b9c168e7b8af761834aa5155536ef5bfe",
+  "activities_code_edit_lines": "4fc43991ee2f940aec6cf5dff2e19bcd68feec860db0062a7d0115d47d8d3ae7",
   "activities_code_error_line": "ed75b51a7998d1441212b7670c900edb7d080977fd089f798c0599828eb5677d",
   "activities_code_examples_pass": "591428b83edae31221d7595a8e3e8930ec43678a2dcff04f94b92d5fc733614b",
   "activities_code_expected": "2b0dd9386df8acb532999b02e47f5974b2b75741e8d2a5efbe30fd60e1200480",
@@ -18,7 +16,6 @@
   "activities_code_formula_that_works": "aab1c5cb4e278e04a953f602ce0ac6ee0fcbabe23ec8c7396010dbccf95db501",
   "activities_code_hint_mistake": "e2a229e416b4f6ab10adb5e001b8454192269fb65b9bf689c4d686bbafd7e203",
   "activities_code_line_yours": "29996614760b966c8d833266dda0a71d2d932574768d73aab3f6517937a4e313",
-  "activities_code_lines_yours": "c46c79b2640d44aa0de301e500542323c5b867be91ee9d56518da4904b70e6cf",
   "activities_code_no_table": "1d7ee5ebdb0acd7ac37609924d4bc6446fcf20a482e788939988a3d82ee21a32",
   "activities_code_not_quite": "71955eee4a75634981e600330e56cfc2b4d01f818d5f62080ce9cd80ccc7fc8f",
   "activities_code_not_set": "6a2751276d243703612abebeceb1e0cad567f35cda685b02143ea379833917f8",
@@ -27,6 +24,7 @@
   "activities_code_pass_count": "3a44e7385f8675554d298fe3250cee93d18e8ea176ef18739af87655b509b4f5",
   "activities_code_pattern_cant_run": "4d80c2a5aeccca0c2a54dadc5972561785cd5d61b8afdb39133156d52eb77563",
   "activities_code_pattern_that_works": "0bb7c5e9d527997c02783c45f2e299cef3356e047ec3a7fc501db4bbbabf6857",
+  "activities_code_predict_ahead": "686be035b964adc1f2279674baf5e81769e89c8196b9f809612ddc0af2ea894a",
   "activities_code_predict_first": "76cdbff41a57741352756a95730fbf5f75120ca7ae51860e1253e425e73f87ce",
   "activities_code_query": "ec322ce8cb684a69f130bff439fedab755e21beeb6d54435f0b0216aa2cd69c5",
   "activities_code_query_that_works": "09ef36c29172964a02794cacbda31f7aff825e8690e960351f1dbf97bcdc6d35",
@@ -69,10 +67,9 @@
   "activities_code_snippet_word": "a5d9a2cca42671026c99d8a86e4db28d73a9eebb264144b3de72efc5e6e09bc2",
   "activities_code_snippet_zero_or_more": "bd34e23fc27ea0a666f5976195e3ac40c7cc62e8c78a80b13508787baa2d4dd4",
   "activities_code_sql_words": "e41a1a020242bee0cf6765c38bf794f2bd092611460db5d429886fb010fd2b2d",
-  "activities_code_start_over": "c55def11320e75fbcb903cedd9092227e14dab01a6fd042e4a511f29cfaab846",
+  "activities_code_start_over": "9a3a4aa6bf205003b5a8332a983a76e5e3ebede7467fab5b71febc49078f12e9",
   "activities_code_step_back": "4eee94b4cec06ed4af6711baeb16b7764b674ab5958c57750e53df71de1e38a0",
   "activities_code_step_forward": "b32d2e0a6db63f13ae467f59a32390d9fba0ea7ad24d4d5ba53dfe1bda9f9d10",
-  "activities_code_step_next_line": "1434bfcc84948ab47ee102ca5a9be6a110ec82e281a359eba3e6004c72dbca9f",
   "activities_code_step_of": "0181f6a1edc8656eed11d2965c17d7281a71a631fab7a69890c77eef14dc38dd",
   "activities_code_step_to_see": "d066bc05a3f1f1856e81af5df0f719f23ab781a26a6773b60cb017f8e535fec6",
   "activities_code_stopped_after": "c29e21f3d9112973feb73b22efc68e7939262769f1c9622c2caa1e194cbfc505",
@@ -89,29 +86,27 @@
   "activities_code_your_formula": "d15bca4a058f9c3fe858999fd724f50c3e7450da6422f8efa51e69c355e527be",
   "activities_code_your_pattern": "74da8fb8db6320a6e9a5f8cb73d898d38444ba772de225825623a81b5abb0376",
   "activities_code_your_predictions": "ac8ea5e6e3e2556f8f17da6179f9fbd816c433a042b9ef56b660c67f76ac599a",
-  "activities_code_your_query": "27900b17883ed6e0d24d8876c2be953615b64fc27b631edb4155b542bca9c3a0",
   "activities_code_your_result": "71d484720be1d16be4e932c14ab4b145d8f2ed5e03d0901d5a89f18f00fbe75f",
   "activities_code_your_result_rows": "24a73b19e4094024f45ebcf7efe4a669bffe69ba05409f159af3b8f2ac6fe95c"
 }
 -->
 <resources>
-    <string name="activities_code_badge_run">코드 실행하기</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_loading">%1$s 실행 환경을 준비하고 있어요. 처음에는 몇 초 걸려요.</string>
     <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
     <string name="activities_code_runtime_failed">%1$s 실행 환경을 불러오지 못했어요. 인터넷 연결을 확인하고 다시 시도해 보세요.</string>
     <string name="activities_code_run">실행</string>
     <string name="activities_code_run_again">다시 실행하기</string>
-    <string name="activities_code_start_over">원래 코드로 다시 시작하기</string>
+    <string name="activities_code_start_over">처음부터 다시 시작하기</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">코드</string>
     <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
-    <plurals name="activities_code_lines_yours">
-        <item quantity="other">%1$s번 줄은 직접 수정할 수 있어요</item>
+    <plurals name="activities_code_edit_lines">
+        <item quantity="other">%1$s번 줄 수정</item>
     </plurals>
     <!-- A line of code the learner may edit, for TalkBack. -->
     <string name="activities_code_line_yours">%1$d번 줄, 직접 수정할 수 있어요</string>
-    <!-- What a program shown to explore printed, with no expected output beside it. -->
+    <!-- What a program printed. -->
     <string name="activities_code_output">출력</string>
     <!-- The output the program should print. -->
     <string name="activities_code_expected">예상 출력</string>
@@ -126,7 +121,6 @@
     <string name="activities_code_too_much_output">출력이 너무 많아 실행을 멈췄어요. 끝나지 않는 반복문이 있나요?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">아직 맞지 않아요:</string>
-    <string name="activities_code_badge_test_pattern">규칙 확인하기</string>
     <!-- The field for a regular expression, for TalkBack. -->
     <string name="activities_code_your_pattern">내 정규식</string>
     <!-- The field for a spreadsheet formula, for TalkBack. -->
@@ -202,10 +196,7 @@
     <string name="activities_code_hint_mistake">%1$s:</string>
     <string name="activities_code_pattern_that_works">조건에 맞는 패턴</string>
     <string name="activities_code_formula_that_works">조건에 맞는 수식</string>
-    <string name="activities_code_badge_query_data">데이터 조회하기</string>
-    <!-- The field for a SQL query, and its label. -->
-    <string name="activities_code_your_query">내 쿼리</string>
-    <!-- Above the SQL query shown to explore, already written and ready to run. -->
+    <!-- Above the SQL query and its field. -->
     <string name="activities_code_query">쿼리</string>
     <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
     <string name="activities_code_sql_words">SQL 키워드, 테이블과 열</string>
@@ -249,7 +240,8 @@
     <string name="activities_code_not_set">값 없음</string>
     <string name="activities_code_predict_first">먼저 예상해 보세요. 그다음 단계로 넘어가 결과를 확인하세요.</string>
     <string name="activities_code_step_to_see">다음 단계로 넘어가 예상이 맞는지 확인하세요.</string>
-    <string name="activities_code_step_next_line">다음 단계로 넘어가 다음 줄을 실행하세요.</string>
+    <!-- Under a code trace whose predictions aren't all made yet. -->
+    <string name="activities_code_predict_ahead">값을 예측할 수 있도록 잠시 멈출게요.</string>
     <string name="activities_code_whole_run">실행이 모두 끝났어요. 준비가 되면 예상이 맞는지 확인하세요.</string>
     <!-- At the last step of a code trace shown to explore, with nothing to predict. -->
     <string name="activities_code_whole_run_explored">실행이 모두 끝났어요.</string>

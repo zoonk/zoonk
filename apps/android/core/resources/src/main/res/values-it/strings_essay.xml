@@ -31,6 +31,7 @@
   "essay_grade_answer": "2dbbf65e834087859787f05af0547b75f17c5ad23f6b5d228e8b92b8a4af191f",
   "essay_grade_rewrite": "2f14ad53b9ac302ac34712a084d23f1f822a59874d9c16740ff08ea26f8289e4",
   "essay_graded_by_level": "1d26f5fe4dc1872b9bce0f1c1ca928f8a9c18ce0b4b7655e81927957314ca2d4",
+  "essay_graded_by_level_why": "0cf5977efc9d8d15a9661d587307b20be077c56b22e7ade2aff77b5612d9a9d3",
   "essay_graded_earlier_version": "90eb840d4fc8179636e8ff44744ab7b1ff35d978ee95f9f684085574e10badf0",
   "essay_grading": "9a3986b4fdcd359f224d8c10b64cf7d43171c3ce6f502ca8d4768210e4eaa12a",
   "essay_grading_criteria": "eb8119f6f2208aee5678a1500498cd68b18b36de5a2729e80b07d717a9dace0b",
@@ -312,6 +313,7 @@
     <string name="essay_no_points_in_notice">Il bando d’esame non specifica quanti punti vale ogni criterio.</string>
     <string name="essay_criteria_from_notice">Criteri e punteggi dal bando d’esame.</string>
     <string name="essay_criteria_from_notice_practice_key">Criteri e punteggi dal bando d’esame. La griglia di valutazione è nostra, per esercitarti.</string>
+    <string name="essay_graded_by_level_why">Valutazione per livello. Per questa risposta non è ancora disponibile una stima del punteggio.</string>
     <string name="essay_see_comments">Leggi i commenti</string>
     <string name="essay_comments">Commenti</string>
     <string name="essay_your_text">Il tuo testo</string>

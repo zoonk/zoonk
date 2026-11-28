@@ -658,6 +658,122 @@
         }
       }
     },
+    "Edit line %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeile %@ bearbeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar línea %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier la ligne %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica riga %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@行目を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@번째 줄 편집"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytuj wiersz %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar linha %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satırı düzenle %@"
+          }
+        }
+      }
+    },
+    "Edit lines %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeilen %@ bearbeiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar líneas %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier les lignes %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifica righe %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@行を編集"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "줄 %@개 편집"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edytuj wiersze %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar linhas %@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satırları düzenle %@"
+          }
+        }
+      }
+    },
     "Expected" : {
       "comment" : "The output a program should print",
       "localizations" : {
@@ -894,65 +1010,6 @@
         }
       }
     },
-    "Line %@ is yours" : {
-      "comment" : "The one line of a program the learner edits",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zeile %@ kannst du bearbeiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes editar la línea %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux modifier la ligne %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi modificare la riga %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@行目を編集できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@번 줄을 수정할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Możesz edytować linię %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A linha %@ é sua para editar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Düzenleyebileceğin satır: %@"
-          }
-        }
-      }
-    },
     "Line %lld, yours to edit" : {
       "comment" : "VoiceOver: a line of a program the learner edits",
       "localizations" : {
@@ -1077,65 +1134,6 @@
         }
       }
     },
-    "Lines %@ are yours" : {
-      "comment" : "The lines of a program the learner edits, like “2 and 3”",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zeilen %@ kannst du bearbeiten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes editar las líneas %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux modifier les lignes %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi modificare le righe %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@行目を編集できます"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@번 줄을 수정할 수 있어요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Możesz edytować linie %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As linhas %@ são suas para editar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Düzenleyebileceğin satırlar: %@"
-          }
-        }
-      }
-    },
     "Matches the expected output" : {
       "comment" : "VoiceOver: the program printed what it should",
       "localizations" : {
@@ -1195,61 +1193,61 @@
         }
       }
     },
-    "Not quite" : {
-      "comment" : "Gentle verdict after a wrong answer, above the feedback on its likely mistake",
+    "Not quite:" : {
+      "comment" : "Before the feedback on the likely mistake behind a program's wrong output",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das stimmt so nicht"
+            "value" : "Das stimmt so nicht:"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Casi"
+            "value" : "No es así:"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce n’est pas ça"
+            "value" : "Ce n’est pas ça :"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Non proprio"
+            "value" : "Non proprio:"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "少し違います"
+            "value" : "少し違います："
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "조금 달라요"
+            "value" : "정답은 아니에요:"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie do końca"
+            "value" : "Niezupełnie:"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não é bem isso"
+            "value" : "Não é bem isso:"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tam olmadı"
+            "value" : "Pek öyle değil:"
           }
         }
       }
@@ -1373,7 +1371,6 @@
       }
     },
     "Output" : {
-      "comment" : "What an explored program printed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1491,7 +1488,6 @@
       }
     },
     "Query" : {
-      "comment" : "Label of an explored SQL editor",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1785,61 +1781,60 @@
         }
       }
     },
-    "Start over with the original code" : {
-      "comment" : "Undo the learner's edits to a program",
+    "Start over" : {
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit dem ursprünglichen Code von vorn beginnen"
+            "value" : "Von vorn beginnen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restaurar el código original"
+            "value" : "Volver a empezar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repartir du code d’origine"
+            "value" : "Recommencer"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ricomincia dal codice originale"
+            "value" : "Ricomincia"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "元のコードに戻す"
+            "value" : "最初からやり直す"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "원래 코드로 다시 시작하기"
+            "value" : "처음부터 다시 시작하기"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przywróć oryginalny kod"
+            "value" : "Zacznij od nowa"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recomeçar com o código original"
+            "value" : "Começar de novo"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kodu ilk hâline döndür"
+            "value" : "Baştan başla"
           }
         }
       }
@@ -2088,65 +2083,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bir adım ilerle"
-          }
-        }
-      }
-    },
-    "Step forward to run the next line." : {
-      "comment" : "Under a code trace",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gehe einen Schritt weiter, um die nächste Zeile auszuführen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avanza un paso para ejecutar la siguiente línea."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avance d’une étape pour exécuter la ligne suivante."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vai avanti per eseguire la riga successiva."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1ステップ進むと、次の行が実行されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "다음 단계로 넘어가 다음 줄을 실행해 보세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Przejdź o krok dalej, by wykonać następną linię."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Avance um passo para executar a próxima linha."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sonraki satırı çalıştırmak için bir adım ilerle."
           }
         }
       }
@@ -3028,6 +2964,64 @@
         }
       }
     },
+    "We'll stop for you to predict a value." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir halten an, damit du einen Wert vorhersagen kannst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Haremos una pausa para que predigas un valor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On fera une pause pour te laisser prédire une valeur."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci fermeremo per chiederti di prevedere un valore."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "値を予想するところで一時停止します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "값을 예상해 볼 수 있도록 잠시 멈출게요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zatrzymamy się, by dać ci czas na przewidzenie wartości."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A gente vai pausar para você prever um valor."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir değeri tahmin etmen için duraklayacağız."
+          }
+        }
+      }
+    },
     "You changed the code. Run it again to see the new output." : {
       "comment" : "Under the output of a program the learner edited since running it",
       "localizations" : {
@@ -3266,124 +3260,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ demiştin; sonuç %2$@ oldu."
-          }
-        }
-      }
-    },
-    "Your output" : {
-      "comment" : "What the learner's program printed",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Ausgabe"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu salida"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce que ton programme affiche"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo risultato"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "実際の出力"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 출력"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twój wynik"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua saída"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Senin çıktın"
-          }
-        }
-      }
-    },
-    "Your query" : {
-      "comment" : "Label of the learner's SQL editor",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Abfrage"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu consulta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ta requête"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La tua query"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "クエリ"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "내 쿼리"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Twoje zapytanie"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sua consulta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sorgun"
           }
         }
       }

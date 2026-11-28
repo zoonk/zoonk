@@ -12,6 +12,7 @@ import {
 } from "../../library/exams/blueprint-contract";
 import { listAnnouncedQuestions } from "../../library/exams/material-formats";
 import { type TopicLevel, listTopicLevels } from "../../library/exams/topic-frequency";
+import { type ExamDomains, readExamDomains } from "../planner/exam-domain-size";
 import { type MockClock } from "../planner/mock-identity";
 import { type PlanGraph } from "../planner/plan-state";
 import { type ExamSubjectShare } from "../planner/selected-coverage";
@@ -21,6 +22,7 @@ type ExamFacts = {
   announcements: string[];
   areaShares: Map<string, number> | null;
   examSubjects: ExamSubjectShare[] | null;
+  examDomains?: ExamDomains;
   fullMockMinutes: number;
   materialExam: boolean;
   mockClocks: MockClock[];
@@ -72,6 +74,7 @@ async function loadNoticeFacts({
   return {
     announcements: ownerId ? listAnnouncedQuestions(parsed?.formats ?? []) : [],
     areaShares: parsed ? getAreaShares({ graph, structure: parsed }) : null,
+    ...readExamDomains(parsed),
     examSubjects: parsed ? getExamSubjectShares({ graph, structure: parsed }) : null,
     fullMockMinutes: getWeeklyMockMinutes({ fullLength: true, structure }),
     materialExam: ownerId !== null,

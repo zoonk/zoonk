@@ -57,6 +57,27 @@ describe(toUnderstandingView, () => {
     expect(card?.draft.details).toMatchObject({ examDay: "booked", examTarget: "score" });
   });
 
+  it("shows an exam's country as the learner said it, as whose exam it is", async () => {
+    const card = await cardOf({
+      goal: {
+        contentCountry: "CA",
+        countryDependent: true,
+        examDay: "booked",
+        examName: `Knowledge Test ${randomUUID()}`,
+        kind: "exam",
+        subject: "the driving test",
+        title: "Pass the driving test",
+      },
+    });
+
+    expect(card?.contentCountry).toMatchObject({
+      code: "CA",
+      editable: false,
+      kind: "exam",
+      source: "said",
+    });
+  });
+
   it("gives an exam the notice's days with their source, and remembers the day it offers next to a month the learner named", async () => {
     const blueprintId = randomUUID();
 

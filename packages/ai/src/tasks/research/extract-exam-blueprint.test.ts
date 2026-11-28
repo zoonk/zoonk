@@ -8,6 +8,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("./extract-exam-blueprint.prompt.md", () => ({ default: "Read the exam's documents." }));
 vi.mock("./extract-question-formats.prompt.md", () => ({ default: "List the formats." }));
 vi.mock("./find-written-task-subjects.prompt.md", () => ({ default: "Tie tasks to subjects." }));
+vi.mock("./read-written-grading.prompt.md", () => ({ default: "Read how answers are marked." }));
 
 vi.mock("./extract-exam-blueprint-reading-again.prompt.md", () => ({
   default: "Include what LEFT_OUT lists.",
@@ -114,6 +115,22 @@ describe(extractExamBlueprint, () => {
 
     expect(prompt).toContain(
       String.raw`The topics of \"Língua Portuguesa\": none is in the documents`,
+    );
+  });
+
+  it("names the subjects that each hold the whole exam when it reads again", async () => {
+    vi.mocked(streamText).mockClear();
+    vi.mocked(streamText).mockImplementation(() => failedStream(new Error("Refused")));
+    vi.mocked(generateText).mockRejectedValue(new Error("The narrow read failed too"));
+
+    await readFailing([
+      { kind: "wholeExamSubjects", subjects: ["Civil", "Mechanical"], total: 110 },
+    ]);
+
+    const [options] = vi.mocked(streamText).mock.calls.at(-1) ?? [];
+
+    expect(JSON.stringify(options?.prompt)).toContain(
+      String.raw`\"Civil\", \"Mechanical\" each have all 110 of the exam's questions`,
     );
   });
 });

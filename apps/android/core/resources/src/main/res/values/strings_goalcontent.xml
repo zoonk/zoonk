@@ -118,6 +118,8 @@
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">What it covers</string>
     <string name="goalcontent_adjust_plan">Adjust plan</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">They don\'t fit before your date.</string>
     <string name="goalcontent_add_back">Add it back</string>
     <string name="goalcontent_save_failed">That didn\'t save. Try again.</string>
     <plurals name="goalcontent_chapters_done">

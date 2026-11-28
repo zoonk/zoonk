@@ -69,11 +69,13 @@ function toGraphPlan({
 export async function createGoalPlanStep({
   followUp,
   initialCourseStart,
+  membersChecked,
   waitsForNotice,
   ...input
 }: GraphPlanInput & {
   followUp?: GoalRebuildFollowUp;
   initialCourseStart?: boolean;
+  membersChecked: boolean;
   waitsForNotice: boolean;
 }): Promise<PlanStepOutcome<PlanSetupTask[]>> {
   "use step";
@@ -85,6 +87,7 @@ export async function createGoalPlanStep({
       ...plan,
       followUp,
       graph: initialCourseStart ? { ...plan.graph, editionCandidate: true } : plan.graph,
+      membersCheckedAt: membersChecked ? new Date() : null,
       waitsForNotice,
     });
 

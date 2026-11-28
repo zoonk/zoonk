@@ -83,6 +83,7 @@ function getSkillMinutes({
   const outlined = lessons.reduce((total, lesson) => total + lesson.minutes, 0);
 
   const standIn = countStandInLessons({
+    domain: skill.domain,
     lessons: skill.lessons,
     outlined: skill.outlined,
     taught: lessons.length,

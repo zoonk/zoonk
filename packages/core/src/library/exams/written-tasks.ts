@@ -8,7 +8,6 @@ type Task = z.infer<typeof sectionTaskSchema>;
 
 const LEVELS: NonNullable<Task["grading"]> = {
   criteria: [],
-  kind: "levels",
   language: null,
   rounding: null,
   zeroing: [],

@@ -232,7 +232,7 @@ private struct OutlineDisclosure<Label: View, Content: View>: View {
         label
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        DisclosureChevron(pointsDown: isExpanded)
+        DisclosureChevron(foldIsOpen: isExpanded)
       }
     }
     .accessibilityValue(

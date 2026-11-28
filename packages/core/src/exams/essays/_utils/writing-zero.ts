@@ -2,9 +2,14 @@ import { type WritingEvidence } from "@zoonk/ai/tasks/grading/grade-essay";
 import { type z } from "zod";
 import { type writingZeroKindSchema } from "../../../library/exams/written-grading";
 import { type writtenItemSchema } from "../writing-contract";
-import { WRITING_LINE_BREAK, estimateWritingLines } from "../writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_LINE_BREAK,
+  estimateWritingLines,
+} from "../writing-lines";
 
 type Basis = z.infer<typeof writtenItemSchema>;
+type ZeroKind = z.infer<typeof writingZeroKindSchema>;
 type Rule = Basis["grading"]["zeroing"][number];
 
 const IDENTITY_PLACEHOLDER =
@@ -12,6 +17,17 @@ const IDENTITY_PLACEHOLDER =
 
 const IDENTITY =
   /^(?:assinado por|assinatura\s*:|meu nome [ée]|signed by|signature\s*:|my name is)\s+(?<name>\p{L}+(?:\s+\p{L}+)+)[.!]?$/iu;
+
+const TEXT_VERIFIED_ZEROS: ReadonlySet<ZeroKind> = new Set([
+  "blank",
+  "copiedSupport",
+  "identification",
+  "tooFewLines",
+]);
+
+export function isTextVerifiedWritingZero(kind: ZeroKind | null | undefined): boolean {
+  return kind ? TEXT_VERIFIED_ZEROS.has(kind) : false;
+}
 
 function originalText(text: string, quote: string) {
   const start = text.indexOf(quote);
@@ -33,15 +49,14 @@ function originalText(text: string, quote: string) {
   return `${before}${after}`.trim();
 }
 
-function shortEnough(text: string, maxLines: number | null | undefined, basis: Basis) {
+function shortEnough(text: string, maxLines: number | null | undefined) {
   return (
     typeof maxLines === "number" &&
-    estimateWritingLines({ charactersPerLine: basis.charactersPerLine, text }) <= maxLines
+    estimateWritingLines({ charactersPerLine: WRITING_CHARACTERS_PER_LINE, text }) <= maxLines
   );
 }
 
 function matchesNominatedRule({
-  basis,
   context,
   maxLines,
   onTopicQuote,
@@ -49,7 +64,6 @@ function matchesNominatedRule({
   zeroKind,
   zeroQuote,
 }: {
-  basis: Basis;
   context: string | null;
   maxLines: Rule["maxLines"];
   onTopicQuote: string | null;
@@ -60,7 +74,7 @@ function matchesNominatedRule({
   switch (zeroKind) {
     case "copiedSupport": {
       const original = context?.includes(zeroQuote) ? originalText(text, zeroQuote) : null;
-      return original !== null && shortEnough(original, maxLines, basis);
+      return original !== null && shortEnough(original, maxLines);
     }
     case "identification": {
       const name = IDENTITY.exec(zeroQuote)?.groups?.name;
@@ -82,44 +96,33 @@ function matchesNominatedRule({
 }
 
 function matchesRule({
-  basis,
   context,
   evidence,
-  index,
   rule,
   text,
 }: {
-  basis: Basis;
   context: string | null;
   evidence: WritingEvidence;
-  index: number;
   rule: Rule;
   text: string;
-}): z.infer<typeof writingZeroKindSchema> | null {
+}): ZeroKind | null {
   const { kinds, maxLines } = rule;
 
   if (kinds?.includes("blank") && text.trim() === "") {
     return "blank";
   }
 
-  if (kinds?.includes("tooFewLines") && shortEnough(text, maxLines, basis)) {
+  if (kinds?.includes("tooFewLines") && shortEnough(text, maxLines)) {
     return "tooFewLines";
   }
 
-  const { onTopicQuote, zeroKind, zeroQuote, zeroRuleIndex } = evidence;
+  const { onTopicQuote, zeroKind, zeroQuote } = evidence;
 
-  if (
-    zeroRuleIndex !== index ||
-    !zeroKind ||
-    !kinds?.includes(zeroKind) ||
-    !zeroQuote?.trim() ||
-    !text.includes(zeroQuote)
-  ) {
+  if (!zeroKind || !kinds?.includes(zeroKind) || !zeroQuote?.trim() || !text.includes(zeroQuote)) {
     return null;
   }
 
   const matches = matchesNominatedRule({
-    basis,
     context,
     maxLines,
     onTopicQuote,
@@ -136,21 +139,26 @@ export function verifiedWritingZero({
   context,
   eligible,
   evidence,
-  ruleIndexes,
 }: {
   basis: Basis;
   context: string | null;
   eligible: string;
   evidence: WritingEvidence;
-  ruleIndexes: readonly number[];
 }) {
-  for (const [index, rule] of basis.grading.zeroing.entries()) {
-    if (ruleIndexes.includes(index)) {
-      const kind = matchesRule({ basis, context, evidence, index, rule, text: eligible });
+  const { zeroing } = basis.grading;
 
-      if (kind) {
-        return { kind, reason: rule.text };
-      }
+  const blankRule =
+    eligible.trim() === "" ? zeroing.find(({ kinds }) => kinds?.includes("blank")) : undefined;
+
+  if (blankRule) {
+    return { kind: "blank" as const, reason: blankRule.text };
+  }
+
+  for (const rule of zeroing) {
+    const kind = matchesRule({ context, evidence, rule, text: eligible });
+
+    if (kind) {
+      return { kind, reason: rule.text };
     }
   }
 

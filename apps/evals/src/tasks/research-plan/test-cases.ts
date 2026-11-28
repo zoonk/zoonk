@@ -5,6 +5,17 @@ import { type ResearchPlanExpected } from "./scorer";
 export const TEST_CASES: TestCase<ResearchPlanExpected, ExamResearchPlanParams>[] = [
   {
     expected: {
+      country: "CA",
+      domains: ["tc.canada.ca", "tc.gc.ca", "canada.ca"],
+      language: "en",
+      nameIncludes: ["pilot"],
+    },
+    id: "pilot-licence-with-the-learners-country",
+    language: "en",
+    userInput: { details: '{"contentCountry":"CA"}', goal: "Private pilot licence" },
+  },
+  {
+    expected: {
       country: "BR",
       domains: ["inep.gov.br", "gov.br"],
       language: "pt",

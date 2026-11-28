@@ -3,7 +3,12 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { toNameWords } from "@zoonk/utils/name-words";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getAnsweredQuestions } from "../../view-models/onboarding/onboarding-steps";
-import { type ChoiceGroup, findChosenOptions, listChoiceGroups } from "./choice-groups";
+import {
+  type ChoiceGroup,
+  findChosenOptions,
+  isRequiredChoice,
+  listChoiceGroups,
+} from "./choice-groups";
 import { type ExamChoice, type ExamPicks } from "./exam-choices";
 import { scopeExamStructure } from "./exam-scope";
 
@@ -56,17 +61,18 @@ function findNamedOptions({
 
 /**
  * Only what the learner stated as theirs: the goal's own words can name an option for another
- * goal or with doubt, which the goal reading leaves out of the position it records. The position
- * is the reading's while it still holds the value the reading wrote; a target answer or an edit
- * on the understood screen replaces it with the learner's own typing.
+ * goal or with doubt, which the goal reading leaves out of the position and the exam option it
+ * records. The position is the reading's while it still holds the value the reading wrote; a
+ * target answer or an edit on the understood screen replaces it with the learner's own typing.
  */
 function readStatedTexts(details: Record<string, unknown>): { read: string[]; typed: string[] } {
   const followUps: unknown[] = Array.isArray(details.followUps) ? details.followUps : [];
   const position = typeof details.targetPosition === "string" ? details.targetPosition : null;
   const fromReading = position !== null && position === details.positionFromReading;
+  const option = typeof details.examOption === "string" ? [details.examOption] : [];
 
   return {
-    read: fromReading ? [position] : [],
+    read: [...(fromReading ? [position] : []), ...option],
     typed: [
       fromReading ? null : position,
       details.targetNote,
@@ -76,9 +82,10 @@ function readStatedTexts(details: Record<string, unknown>): { read: string[]; ty
 }
 
 /**
- * The options the learner states they take (the position the goal reading recorded, and their
- * target and follow-up answers), for the choices they haven't picked. Once they answered the
- * choice's question, even with "Decide later", nothing is picked for them.
+ * The options the learner states they take (the position and exam option the goal reading
+ * recorded, and their target and follow-up answers), for the choices they haven't picked. Once
+ * they answered the choice's question with "Decide later", nothing is picked for them, except in a
+ * choice that can't wait.
  */
 export function findNamedChoices({
   goal,
@@ -90,15 +97,15 @@ export function findNamedChoices({
   structure: ExamStructure;
 }): ExamChoice[] {
   const details = isJsonObject(goal.details) ? goal.details : {};
-
-  if (getAnsweredQuestions(details).includes("examChoice")) {
-    return [];
-  }
-
+  const deferred = getAnsweredQuestions(details).includes("examChoice");
   const { read, typed } = readStatedTexts(details);
   const structure = scopeExamStructure({ examSubjects: picks.examSubjects, structure: whole });
 
   return listChoiceGroups(structure).flatMap((group) => {
+    if (deferred && !isRequiredChoice({ group, structure })) {
+      return [];
+    }
+
     const isPicked = picks.examChoices.some(
       (choice) => choice.group === group.name && findChosenOptions({ choice, structure }),
     );

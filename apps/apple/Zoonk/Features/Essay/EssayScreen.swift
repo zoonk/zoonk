@@ -231,6 +231,7 @@ private struct EssayContent: View {
           }
         }
         .presentationDetents(sheet == .question ? [.large] : [.medium, .large])
+        .zoonkSheet()
       }
       .feedbackSheet(
         isPresented: $showsSaveReport,
@@ -450,7 +451,7 @@ private struct EssayContent: View {
 
 /// The field fills the screen; the line count graders would read stays under it, in view while the
 /// keyboard is up.
-private struct WritingEditorPage: View {
+struct WritingEditorPage: View {
   @Bindable var writer: EssayWriter
   let essay: EssayView
   let onSend: () -> Void

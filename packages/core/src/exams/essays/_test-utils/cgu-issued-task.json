@@ -1,0 +1,76 @@
+{
+  "task": {
+    "count": 1,
+    "description": "Questão discursiva 1",
+    "grading": {
+      "criteria": [
+        {
+          "citation": {
+            "passage": "9.7.5 … a) a apresentação e a estrutura textuais e o desenvolvimento do tema totalizarão a nota relativa ao domínio do conteúdo (NC), cuja pontuação máxima será limitada ao valor de 30,00 pontos;",
+            "sourceId": "cgu-2026-affc-edital-1"
+          },
+          "id": "content",
+          "points": 30,
+          "text": "a apresentação e a estrutura textuais e o desenvolvimento do tema (NC)"
+        }
+      ],
+      "kind": "points",
+      "language": {
+        "citation": {
+          "passage": "9.7.5 … d) será calculada, então, a nota … pela fórmula NQ1 = NC - 6 × NE ÷ TL, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;",
+          "sourceId": "cgu-2026-affc-edital-1"
+        },
+        "factor": 6,
+        "formula": "NQ1 = NC - 6 × NE ÷ TL",
+        "method": "errorsPerLine",
+        "text": "a avaliação do domínio da modalidade escrita totalizará o número de erros (NE) do candidato"
+      },
+      "rounding": null,
+      "zeroing": [
+        {
+          "citation": {
+            "passage": "9.7.5 … f) nos casos de fuga ao tema ou de não haver texto, o candidato receberá nota na questão igual a zero.",
+            "sourceId": "cgu-2026-affc-edital-1"
+          },
+          "kinds": ["blank", "offTopic"],
+          "text": "fuga ao tema ou ausência de texto"
+        }
+      ]
+    },
+    "key": "cgu-question-30",
+    "lines": 30,
+    "points": 30
+  },
+  "taskBasis": "[30,30,{\"criteria\":[30],\"kind\":\"points\",\"language\":{\"factor\":6,\"formula\":\"NQ1=NC-6×NE÷TL\",\"method\":\"errorsPerLine\"},\"rounding\":null,\"zeroing\":[{\"kinds\":[\"blank\",\"offTopic\"],\"maxLines\":null}]}]",
+  "writing": {
+    "aspects": [
+      {
+        "criterionId": "content",
+        "description": "Apresentação e estrutura textual: texto dissertativo em parágrafos",
+        "points": 3
+      },
+      {
+        "criterionId": "content",
+        "description": "Os planos anteriores ao Real fracassaram por não enfrentarem o déficit público",
+        "points": 9
+      },
+      {
+        "criterionId": "content",
+        "description": "Instrumentos heterodoxos atuam diretamente sobre os preços",
+        "points": 9
+      },
+      { "criterionId": "content", "description": "As três etapas do Plano Real", "points": 9 }
+    ],
+    "assessedSkillIds": ["0195f1d2-7c4a-7d3e-9a10-4b5c6d7e8f90"],
+    "charactersPerLine": 70,
+    "criteria": [{ "id": "content", "name": "Domínio do conteúdo", "points": 30 }],
+    "keySource": "practiceKey",
+    "lines": 30,
+    "minimumWords": 30,
+    "part": "Prova discursiva",
+    "points": 30,
+    "taskKey": "cgu-question-30",
+    "title": "Plano Real e déficit público",
+    "unit": "answer"
+  }
+}

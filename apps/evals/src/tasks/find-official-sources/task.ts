@@ -164,9 +164,7 @@ function scoreSearch({
   const sites = countSites(current);
 
   const gaps = [
-    ...(missing.length > 0
-      ? [`No official page for these sections' format: ${missing.join(", ")}`]
-      : []),
+    ...(missing.length > 0 ? [`No official document found for: ${missing.join(", ")}`] : []),
     ...(boardMiss ? [boardMiss] : []),
     ...(sites < (expected.minOfficialSites ?? 0) ? [`The text on ${sites} official site`] : []),
   ];

@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  type RawGoalUnderstanding,
-  normalizeGoalUnderstanding,
-} from "./normalize-goal-understanding";
+import { normalizeGoalUnderstanding } from "./normalize-goal-understanding";
+import { type RawGoalUnderstanding } from "./understood-goal";
 
 const DAILY_MINUTES_LIMITS = { max: 1440, min: 5 };
 
@@ -17,6 +15,8 @@ function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal 
     examDay: null,
     examMonth: null,
     examName: null,
+    examNotBooked: false,
+    examOption: null,
     examSubjects: null,
     examTarget: null,
     examYear: null,
@@ -344,14 +344,20 @@ describe(normalizeGoalUnderstanding, () => {
     });
   });
 
-  it("keeps a learn goal's country only as a real code, and only for learn goals", () => {
+  it("keeps a learn or exam goal's country only as a real code", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({ contentCountry: " de ", countryDependent: true, title: "Impostos" }),
           rawGoal({ contentCountry: "ZZ", countryDependent: true, title: "Finanças" }),
-          rawGoal({ contentCountry: "PT", examName: "Exame", kind: "exam", title: "Exame" }),
+          rawGoal({
+            contentCountry: "ca",
+            countryDependent: true,
+            examName: "PPL",
+            kind: "exam",
+            title: "Pilot licence",
+          }),
         ],
       }),
       today: TODAY,
@@ -361,26 +367,110 @@ describe(normalizeGoalUnderstanding, () => {
       goals: [
         { contentCountry: "DE", countryDependent: true },
         { contentCountry: undefined, countryDependent: true },
-        { contentCountry: undefined, countryDependent: false },
+        { contentCountry: "CA", countryDependent: true },
       ],
     });
   });
 
-  it("never marks an exam or a language as waiting for a country", () => {
+  it("drops the country named with an exam that is the same everywhere", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
-          rawGoal({ countryDependent: true, examName: "ENEM", kind: "exam", title: "ENEM" }),
-          rawGoal({ countryDependent: true, kind: "language", targetLanguage: "en", title: "En" }),
+          rawGoal({
+            contentCountry: "KE",
+            countryDependent: false,
+            examName: "SAT",
+            kind: "exam",
+            title: "SAT",
+          }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ contentCountry: undefined, countryDependent: false }],
+    });
+  });
+
+  it("never gives a language a country or marks it as waiting for one", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            contentCountry: "US",
+            countryDependent: true,
+            kind: "language",
+            targetLanguage: "en",
+            title: "En",
+          }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ contentCountry: undefined, countryDependent: false }],
+    });
+  });
+
+  it("keeps an exam's stated option and not-booked reading only on exam goals", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            examDay: "booked",
+            examName: "FE",
+            examNotBooked: true,
+            examOption: " Mechanical ",
+            kind: "exam",
+            title: "FE",
+          }),
+          rawGoal({ examNotBooked: true, examOption: "Mechanical", title: "Mechanics" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { examNotBooked: true, examOption: "Mechanical" },
+        { examNotBooked: undefined, examOption: undefined },
+      ],
+    });
+  });
+
+  it("reads a booked exam with a date, or an official one, as not waiting for a booking", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            examDay: "booked",
+            examName: "IELTS",
+            examNotBooked: true,
+            kind: "exam",
+            targetDate: "2026-12-01",
+            title: "IELTS",
+          }),
+          rawGoal({
+            examDay: "official",
+            examName: "ENEM",
+            examNotBooked: true,
+            kind: "exam",
+            title: "ENEM",
+          }),
         ],
       }),
       today: TODAY,
     });
 
     expect(
-      result.route === "goals" && result.goals.map((goal) => goal.countryDependent),
-    ).toStrictEqual([false, false]);
+      result.route === "goals" && result.goals.map((goal) => goal.examNotBooked),
+    ).toStrictEqual([undefined, undefined]);
   });
 
   it("asks for more when nothing usable is left", () => {

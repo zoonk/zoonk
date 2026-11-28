@@ -9,6 +9,7 @@ import { unpinnedCourseSourceId } from "../goals/course-start-details";
 import { type GoalRebuildFollowUp } from "../goals/goal-rebuild-follow-up";
 import {
   getAnsweredQuestions,
+  isBookedExam,
   isCourseDateSkipped,
 } from "../view-models/onboarding/onboarding-steps";
 import { commitPlan } from "./_utils/commit-plan";
@@ -75,6 +76,10 @@ async function getExamTarget({
     return { asksNotice: false, noticeDate: null, targetDate: null };
   }
 
+  if (isBookedExam({ details: isJsonObject(goal.details) ? goal.details : {}, kind: goal.kind })) {
+    return { asksNotice: false, noticeDate: null, targetDate: goalDate };
+  }
+
   if (goalDate && !(followNotice && goalDate === noticeDate)) {
     return kept;
   }
@@ -125,6 +130,7 @@ async function findNoticeNextDay({
 
 type GraphPlanning = {
   droppedNoticeSkillIds: readonly string[];
+  membersMark: { membersCheckedAt?: Date | null };
   primaryCourseId?: string;
   followUp?: GoalRebuildFollowUp;
   followNotice: boolean;
@@ -137,6 +143,7 @@ type GraphPlanning = {
 async function planFromGraph({
   droppedNoticeSkillIds,
   followUp,
+  membersMark,
   primaryCourseId,
   followNotice,
   goalId,
@@ -151,6 +158,7 @@ async function planFromGraph({
   }
 
   const { goal } = context;
+  const { id: planId, version } = context.plan;
   const isFirst = context.state.graph.skills.length === 0;
 
   const [target, skills] = await Promise.all([
@@ -193,6 +201,7 @@ async function planFromGraph({
     (!primaryCourseId || primaryCourseId === goal.primaryCourseId) &&
     isPlanUnchanged({ computed, context })
   ) {
+    await prisma.plan.updateMany({ data: membersMark, where: { id: planId, version } });
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 
@@ -208,6 +217,7 @@ async function planFromGraph({
 
   const plan = {
     ...provenance,
+    ...membersMark,
     ...(isFirst ? { setupTasks } : {}),
     ...(isFirst && waitsForNotice ? { noticeWaitUntil: getNoticeWaitEnd(new Date()) } : {}),
   };
@@ -284,6 +294,7 @@ async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> 
 export async function createGoalPlan({
   droppedNoticeSkillIds = [],
   followUp,
+  membersCheckedAt,
   primaryCourseId,
   followNotice = false,
   fromPlanLink = false,
@@ -300,6 +311,8 @@ export async function createGoalPlan({
    */
   followNotice?: boolean;
   followUp?: GoalRebuildFollowUp;
+  /** Null leaves the graph's member check owed to the daily sweep; omitted keeps the plan's mark. */
+  membersCheckedAt?: Date | null;
   primaryCourseId?: string;
   fromPlanLink?: boolean;
   goalId: string;
@@ -328,6 +341,7 @@ export async function createGoalPlan({
       followUp,
       goalId,
       graph: planGraphSchema.parse(graph),
+      membersMark: membersCheckedAt === undefined ? {} : { membersCheckedAt },
       primaryCourseId,
       provenance,
       waitsForNotice,

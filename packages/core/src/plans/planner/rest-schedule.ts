@@ -188,6 +188,11 @@ function scheduleWith({
 
   const cut = scheduleCoresFirst({
     carried: input.carried,
+    domains: new Map(
+      input.graph.skills.flatMap((skill) =>
+        skill.domain ? [[skill.skillId, skill.domain] as const] : [],
+      ),
+    ),
     schedulePending,
     units: splitStandIns(
       putCoresFirst(input.units, {

@@ -1,6 +1,7 @@
 import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { writesExamExtras } from "./_utils/skill-graph-extras";
+import { hasWrittenOptions } from "./exam-outline";
 import { type SkillGraphParams } from "./skill-graph-calls";
 import template from "./skill-graph.prompt.md";
 
@@ -25,6 +26,7 @@ export function startsWithSubject({
 
 /** Every call of one exam's graph reads the same text, so they share a cached prefix. */
 export function buildSkillGraphSystemPrompt({
+  examBlueprint,
   firstSkill,
   goalKind,
   hasMaterial = false,
@@ -37,6 +39,7 @@ export function buildSkillGraphSystemPrompt({
   targetLanguage,
 }: Pick<
   SkillGraphParams,
+  | "examBlueprint"
   | "firstSkill"
   | "goalKind"
   | "hasMaterial"
@@ -52,6 +55,7 @@ export function buildSkillGraphSystemPrompt({
     template,
     variants: {
       budget: Boolean(lessonBudget),
+      domainShares: Boolean(examBlueprint?.subjects.some((subject) => subject.topicGroups?.length)),
       exam: goalKind === "exam",
       extras: writesExamExtras({ goalKind, hasMaterial, lessonBudget }),
       firstSkill: goalKind === "learn" && Boolean(firstSkill),
@@ -61,6 +65,7 @@ export function buildSkillGraphSystemPrompt({
       material: hasMaterial,
       product: Boolean(product),
       subjectStart: startsWithSubject({ goalKind, hasMaterial, ownLevel, purpose }),
+      writtenOptions: hasWrittenOptions(examBlueprint),
     },
   });
 

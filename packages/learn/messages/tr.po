@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "Cevabın ve doğru cevap"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3239,11 +3238,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "İleri seviye"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "Kompozisyonun"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -4841,6 +4835,7 @@ msgstr "{name} ile konuş"
 #: src/onboarding/steps/reveal-body.tsx
 #: src/plan/plan-past-date-suggestion.tsx
 #: src/plan/plan-suggestion.tsx
+#: src/syllabus/subject-chapters.tsx
 #: src/syllabus/subject-not-planned.tsx
 #: src/today/today-falling-behind.tsx
 msgctxt "2f2Vee"
@@ -5197,6 +5192,7 @@ msgstr "İlk haftalık meydan okumana katıl"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5214,21 +5210,6 @@ msgid "Not measured yet"
 msgstr "Henüz ölçülmedi"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "Gerekli {minimum} puanın üzerinde"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "Gerekli {minimum} puana ulaşmak için {points} puan eksiğin var"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "Gerekli {minimum} puana yakın"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "Diğer puanların ne olursa olsun, {part} puanlarının {share} kadarını almalı."
@@ -5239,9 +5220,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "Diğer puanların ne olursa olsun, {part} {minimum} puan almalı."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "Geçmek için gereken minimum puanın altında"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "Geçmek için gereken minimum puanın altında görünüyor"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8480,6 +8461,11 @@ msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{val
 msgstr "{name} için en az {unit, select, percent {{minimum} başarı} other {{value, plural, other {# puan}}}} gerekiyor, ancak bu deneme sınavında yer almıyor."
 
 #: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Henüz puan tahmini yok"
+
+#: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
 msgid "By test"
 msgstr "Testlere göre"
@@ -9425,6 +9411,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene göre seçiyoruz."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr "Bu hangi ülkenin sınavı?"
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "Derslerin hangi ülkeye göre hazırlansın?"
@@ -9469,6 +9460,16 @@ msgstr "Sınavın {date} (ve {second}) tarihlerinde"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {Hedef tarihin bugün, bu yüzden planlanacak gün kalmadı.} other {Hedeflediğin {date} tarihi geçti.}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr "Henüz tarih almadım"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr "Sınavın ne zaman?"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -10000,11 +10001,6 @@ msgstr "Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planı
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "Tarihini seç"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla."
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts
@@ -11059,10 +11055,11 @@ msgctxt "VDuR1W"
 msgid "The official exam date is {date}."
 msgstr "Sınavın resmî tarihi {date}."
 
+#. Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence.
 #: src/plan/use-operation-question.ts
-msgctxt "EP7Gpz"
-msgid "Add {topics} to your plan?"
-msgstr "Planına {topics} eklensin mi?"
+msgctxt "UDs2Ah"
+msgid "Add to your plan: {topics}?"
+msgstr "Planına eklensin mi: {topics}?"
 
 #: src/plan/use-operation-question.ts
 msgctxt "oeLkPK"
@@ -13096,6 +13093,12 @@ msgctxt "tSwkMF"
 msgid "Asked a lot"
 msgstr "Sık sorulan"
 
+#. Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date.
+#: src/syllabus/left-out-topics.tsx
+msgctxt "JUUl4s"
+msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
+msgstr "{count, plural, one {# konu planında yok} other {# konu planında yok}}"
+
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
 msgctxt "zK-7PG"
@@ -13146,6 +13149,12 @@ msgstr "{count, plural, other {# ünite tamamlandı}}"
 msgctxt "oUXyHJ"
 msgid "{done, plural, one {# chapter done} other {# chapters done}}, {known, plural, one {# you already know} other {# you already know}}"
 msgstr "{done, plural, other {# ünite tamamlandı}}, {known, plural, other {# üniteyi zaten biliyordun}}"
+
+#. Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan.
+#: src/syllabus/subject-chapters.tsx
+msgctxt "TKVmQQ"
+msgid "They don't fit before your date."
+msgstr "Belirlediğin tarihe kadar yetişmiyorlar."
 
 #: src/syllabus/subject-chapters.tsx
 msgctxt "Do1Pfd"
@@ -14447,6 +14456,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Sınav ilanında her ölçütün kaç puan değerinde olduğu belirtilmiyor."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Düzeye göre değerlendirildi. Bu cevap için henüz puan tahmini yapılamıyor."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "Sınav ilanındaki ölçütler ve puanlar."
@@ -14653,3 +14667,23 @@ msgstr "Cevabın parçası olmayan adları, imzaları ve işaretleri kaldır."
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "Seni tanıtabilecek şeyleri çıkar"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "Gereken {minimum} puanın üstünde görünüyor"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "Gereken {minimum} puanın altında görünüyor"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "Gereken {minimum} puan sınırının altında da üstünde de olabilir"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "Henüz gereken {minimum} puana ulaşıp ulaşmadığını söyleyemiyoruz"

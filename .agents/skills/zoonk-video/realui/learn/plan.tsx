@@ -115,6 +115,7 @@ function chapter(input: Partial<PlanChapterView> & { title: string }): PlanChapt
 function phase(input: Partial<PlanPhaseView> & { index: number; name: string }): PlanPhaseView {
   return {
     challengeLeftOut: false,
+    leftOut: [],
     chapterCount: 1,
     chapters: [],
     checkpoint: null,
@@ -300,6 +301,7 @@ export function careerSyllabus(lang: "en" | "pt"): SyllabusView {
       areas: [module.name],
       chapters: [],
       covers: "covers" in module ? [...module.covers] : [],
+      leftOut: [],
       displayWeight: null,
       group: null,
       imageUrl: null,

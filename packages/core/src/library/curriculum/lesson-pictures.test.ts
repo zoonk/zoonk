@@ -43,6 +43,19 @@ function kindsAfterDropping(dropped: number[], planned: LessonScreen[] = screens
 }
 
 describe(dropDecorativePictures, () => {
+  it.each(["activity", "application"] as const)(
+    "keeps the template on an %s when its picture is dropped",
+    (kind) => {
+      const planned = {
+        ...pictured(kind),
+        activityTemplate: "labeledDiagram",
+        visualKind: "template" as const,
+      };
+
+      expect(kindsAfterDropping([0], [planned])).toStrictEqual([["template", null]]);
+    },
+  );
+
   it("leaves a screen whose picture only decorates with nothing, never a table in its place", () => {
     const kinds = kindsAfterDropping([0, 1, 4]);
 

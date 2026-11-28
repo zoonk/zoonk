@@ -323,11 +323,66 @@
             },
             {
               "count": 1,
-              "grading": "enem",
               "kind": "writtenTask",
-              "lines": null,
+              "lines": 30,
               "points": 1000,
-              "zeroing": true
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "scales": [
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ]
+              ]
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "tooFewLines",
+                "wrongForm"
+              ]
             }
           ]
         },
@@ -338,12 +393,15 @@
             {
               "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
               "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
             }
           ],
           "exam": "ENEM"
         }
-      },
-      "score": 6
+      }
     }
   ],
   "taskId": "extract-exam-blueprint"

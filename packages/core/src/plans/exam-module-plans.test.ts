@@ -13,7 +13,7 @@ import {
   moduleBlueprintFixture,
 } from "../exams/choices/_test-utils/choice-blueprint";
 import { chooseExamOption } from "../exams/choices/choose-exam-option";
-import { hasUnpickedChoice } from "../exams/choices/load-exam-choices";
+import { loadUnpickedChoices } from "../exams/choices/load-exam-choices";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
@@ -68,7 +68,7 @@ describe("plans of an exam whose candidates take two of its modules", () => {
     const { goal, plan } = await setup();
 
     await expect(loadStudiedAreas(plan.id)).resolves.toStrictEqual([READING_ES]);
-    await expect(hasUnpickedChoice(goal)).resolves.toBe(true);
+    await expect(loadUnpickedChoices(goal)).resolves.toMatchObject({ hasUnpickedChoice: true });
   });
 
   it("study exactly the modules picked, and swap them when the pick changes", async () => {
@@ -84,7 +84,7 @@ describe("plans of an exam whose candidates take two of its modules", () => {
       READING_ES,
     ]);
 
-    await expect(hasUnpickedChoice(goal)).resolves.toBe(false);
+    await expect(loadUnpickedChoices(goal)).resolves.toMatchObject({ hasUnpickedChoice: false });
 
     await pickModules({ goalId: goal.id, subjects: [PREMED] });
 

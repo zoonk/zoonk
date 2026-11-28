@@ -6,10 +6,12 @@ import { unfinishedExtraWritingWhere } from "../../exams/essays/_utils/extra-wri
 import { getWritingDecimals } from "../../exams/essays/_utils/writing-decimals";
 import { getWritingScope, writingNeedsChoice } from "../../exams/essays/_utils/writing-scope";
 import { indexWritingTasks } from "../../exams/essays/_utils/writing-task-positions";
+import { canCalibrateWritingTask } from "../../exams/essays/writing-rubric-policy";
 import { projectWrittenParts } from "../../exams/estimates/written-projection";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { readExtraWritingLimit } from "../../learner/facts/extra-writing";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { readLatestWrittenMocks } from "../../learner/facts/written-mocks";
 import { type WrittenSample, readWrittenSamples } from "../../learner/facts/written-samples";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { listWrittenTasks } from "../../library/exams/written-tasks";
@@ -202,12 +204,15 @@ export async function loadWrittenPracticeView({
 
   const writable = tasks.filter(({ key }) => scopes.get(key)?.available);
 
-  const [samples, writeAction] = await Promise.all([
+  const [samples, mocks, writeAction] = await Promise.all([
     readWrittenSamples({ goalId: goal.id, userId: goal.userId }),
+    tasks.some((task) => canCalibrateWritingTask(task))
+      ? readLatestWrittenMocks({ goalId: goal.id, userId: goal.userId })
+      : [],
     writable.length > 0 ? loadWriteActions({ goal, tasks: writable }) : null,
   ]);
 
-  const points = projectWrittenParts({ samples, structure: chosen, tasks });
+  const points = projectWrittenParts({ mocks, samples, structure: chosen, tasks });
   const byPart = Map.groupBy(samples, (sample) => sample.prompt.part);
 
   return {

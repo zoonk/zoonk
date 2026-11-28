@@ -17,8 +17,11 @@ export const cn = createCn({
       container: ["column", "form", "wide"],
       ease: ["spring", "accelerate", "swing", "follow"],
       radius: ["meter"],
-      /** The frame's gutter (`--spacing-frame`), so a later `px-0` replaces a `px-frame`. */
-      spacing: ["frame"],
+      /**
+       * The frame's gutter and a control's height (`--spacing-frame`, `--spacing-control`), so a
+       * later `px-0` replaces a `px-frame` and a `min-h-control` replaces a `min-h-11`.
+       */
+      spacing: ["frame", "control"],
       text: ["2xs", "block", "compact", "reading"],
     },
   },

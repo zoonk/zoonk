@@ -9,9 +9,12 @@ export const getHookByToken = vi.fn((token: string): Promise<{ runId: string }> 
   Promise.reject(new HookNotFoundError(token)),
 );
 export const registerLifecycleHooks = vi.fn();
+export const resumeHook = vi.fn((token: string, _payload: unknown): Promise<{ runId: string }> =>
+  Promise.reject(new HookNotFoundError(token)),
+);
 
 export function resetWorkflowApiMock(): void {
-  [getHookByToken, getRun, registerLifecycleHooks, start].forEach((mock) => {
+  [getHookByToken, getRun, registerLifecycleHooks, resumeHook, start].forEach((mock) => {
     mock.mockReset();
   });
 }

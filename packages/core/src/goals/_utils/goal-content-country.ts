@@ -45,6 +45,70 @@ function getOnboardingId(draft: GoalDraft): string | null {
   return typeof id === "string" && isUuid(id) ? id : null;
 }
 
+type NewGoalCountry = {
+  contentCountry: string | null;
+  countryDependent: boolean | null;
+  source: CountrySource;
+};
+
+function readUnderstoodCountry(understood: unknown) {
+  const countryDependent =
+    isJsonObject(understood) && typeof understood.countryDependent === "boolean"
+      ? understood.countryDependent
+      : null;
+
+  const saved =
+    isJsonObject(understood) && isJsonObject(understood.draft)
+      ? understood.draft.contentCountry
+      : undefined;
+
+  return { countryDependent, saved };
+}
+
+function isChosenCountry(country: unknown): country is string | null {
+  return country === null || (typeof country === "string" && isCountryCode(country));
+}
+
+/**
+ * An exam's country is the one the learner's words or pick gave, never their home: the home
+ * country is only where they live, and anyone can sit another country's exam.
+ */
+function resolveExamCountry({
+  draft,
+  understood,
+}: {
+  draft: GoalDraft;
+  understood: unknown;
+}): NewGoalCountry {
+  const { countryDependent, saved } = readUnderstoodCountry(understood);
+  const chosen = draft.contentCountry === undefined ? saved : draft.contentCountry;
+  const country = isChosenCountry(chosen) ? chosen : null;
+
+  return {
+    contentCountry: country,
+    countryDependent,
+    source: country ? requestedCountrySource({ country, understood }) : "default",
+  };
+}
+
+async function readStoredUnderstanding({
+  draft,
+  tx,
+  userId,
+}: {
+  draft: GoalDraft;
+  tx: TransactionClient;
+  userId: string;
+}) {
+  const onboardingId = getOnboardingId(draft);
+
+  const stored = onboardingId
+    ? await tx.onboardingDraft.findFirst({ where: { id: onboardingId, userId } })
+    : null;
+
+  return readStoredGoal({ draft, understanding: stored?.understanding });
+}
+
 export async function resolveNewGoalCountry({
   courseCountry,
   draft,
@@ -55,11 +119,12 @@ export async function resolveNewGoalCountry({
   draft: GoalDraft;
   tx: TransactionClient;
   userId: string;
-}): Promise<{
-  contentCountry: string | null;
-  countryDependent: boolean | null;
-  source: CountrySource;
-}> {
+}): Promise<NewGoalCountry> {
+  if (draft.kind === "exam" && courseCountry === undefined) {
+    const understood = await readStoredUnderstanding({ draft, tx, userId });
+    return resolveExamCountry({ draft, understood });
+  }
+
   if (draft.kind !== "learn") {
     return { contentCountry: courseCountry ?? null, countryDependent: null, source: "default" };
   }
@@ -72,28 +137,15 @@ export async function resolveNewGoalCountry({
     };
   }
 
-  const onboardingId = getOnboardingId(draft);
-
-  const [stored, profile] = await Promise.all([
-    onboardingId ? tx.onboardingDraft.findFirst({ where: { id: onboardingId, userId } }) : null,
+  const [understood, profile] = await Promise.all([
+    readStoredUnderstanding({ draft, tx, userId }),
     tx.userLearningProfile.findUnique({ where: { userId } }),
   ]);
 
-  const understood = readStoredGoal({ draft, understanding: stored?.understanding });
-
-  const countryDependent =
-    isJsonObject(understood) && typeof understood.countryDependent === "boolean"
-      ? understood.countryDependent
-      : null;
-
-  const saved =
-    isJsonObject(understood) && isJsonObject(understood.draft)
-      ? understood.draft.contentCountry
-      : undefined;
-
+  const { countryDependent, saved } = readUnderstoodCountry(understood);
   const chosen = draft.contentCountry === undefined ? saved : draft.contentCountry;
 
-  if (chosen === null || (typeof chosen === "string" && isCountryCode(chosen))) {
+  if (isChosenCountry(chosen)) {
     return {
       contentCountry: chosen,
       countryDependent,
@@ -132,9 +184,19 @@ export function hasCountryReading(goal: Pick<Goal, "details">): boolean {
   return isJsonObject(goal.details) && typeof goal.details.countryDependent === "boolean";
 }
 
+/** A learn goal unless its reading found it the same everywhere; an exam only when its reading found it varies by country. */
 export function isCountryGoal(goal: Pick<Goal, "kind" | "details">): boolean {
-  return (
-    goal.kind === "learn" &&
-    (!isJsonObject(goal.details) || goal.details.countryDependent !== false)
-  );
+  const countryDependent = isJsonObject(goal.details) ? goal.details.countryDependent : undefined;
+
+  switch (goal.kind) {
+    case "learn":
+      return countryDependent !== false;
+    case "exam":
+      return countryDependent === true;
+    case "explain":
+    case "language":
+      return false;
+    default:
+      return false;
+  }
 }

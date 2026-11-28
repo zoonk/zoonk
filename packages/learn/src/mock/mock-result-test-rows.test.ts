@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type MockPoints, toTestRows } from "./mock-result-test-rows";
+import { type MockPoints, reachedEveryMinimum, toTestRows } from "./mock-result-test-rows";
 
 const tally = {
   asked: 100,
@@ -42,4 +42,33 @@ describe(toTestRows, () => {
 
     expect(shown(points).map((row) => row.name)).toStrictEqual(["General", "Specific"]);
   });
+});
+
+describe(reachedEveryMinimum, () => {
+  const reached = pointsWith({ met: true, minimum: { unit: "points", value: 10 }, short: 0 });
+
+  const written = (standing: "below" | "met" | "overlaps" | "unmeasured") => ({
+    ...reached,
+    written: [
+      {
+        max: 100,
+        minimum: { unit: "points" as const, value: 50 },
+        name: "Written test",
+        range: { high: 70, low: 60 },
+        standing,
+        tasks: [],
+      },
+    ],
+  });
+
+  it("says every minimum was reached once the tests checked reach theirs", () => {
+    expect(reachedEveryMinimum(reached)).toBe(true);
+  });
+
+  it.each(["met", "overlaps", "unmeasured", "below"] as const)(
+    "never says so beside a written minimum that is %s",
+    (standing) => {
+      expect(reachedEveryMinimum(written(standing))).toBe(false);
+    },
+  );
 });

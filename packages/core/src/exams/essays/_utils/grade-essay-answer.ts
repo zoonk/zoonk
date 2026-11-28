@@ -14,12 +14,17 @@ import {
   type WritingResult,
   writtenAnswerSchema,
 } from "../writing-contract";
-import { WRITING_MAX_CHARACTERS_PER_LINE, countWritingLines } from "../writing-lines";
-import { getWritingArithmetic } from "../writing-rubric-policy";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_MAX_CHARACTERS_PER_LINE,
+  countWritingLines,
+} from "../writing-lines";
+import { type WritingGrader, isNumericWritingRubric } from "../writing-rubric-policy";
 import { type EssayContent, readEssayContent } from "./essay-content";
 import { endEssayGradeClaim } from "./essay-grade-claims";
 import { getWritingAttemptId } from "./writing-attempt-id";
 import { applyWritingArithmetic, buildWritingFeedback } from "./writing-feedback";
+import { getScoringRowKinds, getWritingGraderSheet } from "./writing-sheet";
 import { indexWritingTasks } from "./writing-task-positions";
 
 const GOOD_SHARE = 0.6;
@@ -36,11 +41,11 @@ export async function gradeWriting({
   language: string;
   previousNextSteps: readonly string[];
   text: string;
-}): Promise<WritingResult & { estimatedLines: number }> {
+}): Promise<WritingResult & { estimatedLines: number; grader?: WritingGrader }> {
   const basis = content.writing;
 
   const { estimatedLines, ignoredFrom } = countWritingLines({
-    charactersPerLine: basis.charactersPerLine,
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
     limit: basis.lines,
     maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
     text,
@@ -50,9 +55,11 @@ export async function gradeWriting({
 
   if (countWords(eligible) < basis.minimumWords || eligible.trim().length === 0) {
     const evidence: WritingEvidence = {
-      aspects: [],
+      awards: [],
       criteria: [],
+      elements: [],
       errors: [],
+      limits: [],
       nextStep: null,
       onTopicQuote: null,
       zeroKind: null,
@@ -69,7 +76,6 @@ export async function gradeWriting({
     });
 
     const result = applyWritingArithmetic({
-      arithmetic: getWritingArithmetic(basis),
       basis,
       belowWordFloor: true,
       context: content.context,
@@ -77,6 +83,7 @@ export async function gradeWriting({
       estimatedLines,
       evidence,
       feedback,
+      numeric: isNumericWritingRubric(basis),
     });
 
     return { ...result, estimatedLines };
@@ -84,17 +91,11 @@ export async function gradeWriting({
 
   const { data: evidence, provenance } = await gradeWritingEvidence({
     analytics,
-    aspects: basis.aspects,
     context: content.context,
     keyPoints: content.keyPoints,
     language,
     question: content.question,
-    scoringBasis: {
-      ...basis.grading,
-      criteria: basis.grading.criteria.length > 0 ? basis.grading.criteria : basis.criteria,
-      lines: basis.lines,
-      points: basis.points,
-    },
+    ...getWritingGraderSheet(basis),
     text: eligible,
   });
 
@@ -107,16 +108,17 @@ export async function gradeWriting({
   });
 
   const grade = applyWritingArithmetic({
-    arithmetic: getWritingArithmetic(basis, provenance),
     basis,
     context: content.context,
     eligible,
     estimatedLines,
     evidence,
     feedback,
+    numeric: provenance ? isNumericWritingRubric(basis, provenance) : false,
   });
 
-  return { ...grade, estimatedLines };
+  const grader = provenance && { model: provenance.model, promptVersion: provenance.promptVersion };
+  return { ...grade, estimatedLines, ...(grade.kind === "points" && grader && { grader }) };
 }
 
 export type EssayGradeConditions = Omit<WritingConditions, "estimatedLines">;
@@ -199,7 +201,7 @@ export async function recordEssayGrade(
   const {
     conditions,
     durationMs,
-    grade,
+    grade: { grader, ...grade },
     item,
     mockExamId,
     mockPrompt,
@@ -212,7 +214,7 @@ export async function recordEssayGrade(
   const attemptId = getWritingAttemptId({ admissionId: conditions.admissionId, itemId: item.id });
   const basis = readEssayContent(item)?.writing;
 
-  if (!basis || (grade.kind === "points" && !getWritingArithmetic(basis))) {
+  if (!basis || (grade.kind === "points" && !isNumericWritingRubric(basis, grader))) {
     throw new Error("The writing grade is incompatible with its scoring basis.");
   }
 
@@ -228,12 +230,14 @@ export async function recordEssayGrade(
         conditions: writtenConditions,
         examBlueprintId: item.examBlueprintId,
         grade,
+        ...(grader && { grader }),
         itemId: item.id,
         ...(mockPrompt && { mockPrompt }),
         text,
         writing: writtenAnswerSchema.shape.writing.parse({
           ...basis,
           part: basis.part ?? task.part,
+          ...(grade.kind === "points" && { rowKinds: getScoringRowKinds(basis) }),
         }),
         ...(task.writingTask && { writingTask: task.writingTask }),
       },

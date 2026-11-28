@@ -47,10 +47,12 @@ import {
   cacd2025H42,
   cacd2025H43,
 } from "./cebraspe-answers";
+import { CEBRASPE_TECHNICAL_CASES } from "./cebraspe-technical";
 import {
   type GradeWritingExpected,
   type GradeWritingInput,
   type Grading,
+  type WritingCase,
   publishedCase,
   publishedQuestion,
 } from "./shared";
@@ -110,7 +112,6 @@ function questionInput({
       passage: `Anexo IV, item ${annex} e padrão definitivo`,
       sourceId: `cacd-${year}-standards`,
     },
-    kind: "points",
     ...question,
     taskKey: `cacd-${year}-${key}`,
     text,
@@ -118,7 +119,6 @@ function questionInput({
 
   input.context = question.context ?? null;
   input.basis.grading.zeroing = zeroing(year, noticeSection);
-  input.arithmetic = { rounding: null, zeroRules: [0, 1, 2] };
   return input;
 }
 
@@ -151,12 +151,18 @@ function sectionRows(rows: [string, ...[string, number][]][]): Sections {
   return rows.map(([name, ...aspects], index) => ({ aspects, id: `q${index + 1}`, name }));
 }
 
-function history2024(title: string, question: string, lines: 40 | 60, rows: Grid[]): Question {
+function history2024(
+  title: string,
+  { context, question }: { context: string; question: string },
+  lines: 40 | 60,
+  rows: Grid[],
+): Question {
   // The guide's partial marks are consistent with thirds. The public standard describes
   // the expected evidence, but does not specify the intermediate concept descriptors.
   const totals = lines === 60 ? [100, 200, 300] : [67, 133, 200];
 
   return {
+    context,
     lines,
     question,
     sections: sectionRows(rows.map(([name, ...requirements]) => steps(name, totals, requirements))),
@@ -164,10 +170,27 @@ function history2024(title: string, question: string, lines: 40 | 60, rows: Grid
   };
 }
 
-// CACD 2024 definitive History standard, questions 1–4.
+// CACD 2024 History questions as the guide reproduces the test; their quesitos follow the
+// definitive standard.
 const WWI = history2024(
   "O Brasil e a Primeira Guerra Mundial",
-  "Com referência ao Decreto nº 3.361, de 26 de outubro de 1917, discorra sobre o Brasil e a Primeira Guerra Mundial, abordando os dez aspectos a seguir.",
+  {
+    context: `Em 26/10/1917, o governo brasileiro reconheceu, por meio do Decreto n.º 3.361/1917, o estado de guerra iniciado pelo Império Alemão contra o Brasil: “Fica reconhecido e proclamado o estado de guerra iniciado pelo Império Alemão contra o Brasil e autorizado o Presidente da República a tomar todas as medidas de defesa nacional e segurança pública que julgar necessárias, abrindo os créditos precisos ou realizando as operações de crédito que forem convenientes para esse fim; revogadas as disposições em contrário.”
+
+Coleção de Leis do Brasil. vol. I, p. 169 (com adaptações).`,
+    question: `Tendo como referência o fragmento de texto apresentado, discorra sobre o Brasil e a Primeira Guerra Mundial. Ao elaborar seu texto, aborde os seguintes aspectos:
+
+1. A neutralidade do Brasil na guerra;
+2. Os ataques às embarcações Paraná, Tijuca e Lapa;
+3. As manifestações populares no Brasil contra os ataques alemães;
+4. O debate intelectual na imprensa brasileira;
+5. A Liga Brasileira pelos Aliados;
+6. A guerra submarina irrestrita alemã de 1917 e o Brasil;
+7. A entrada dos Estados Unidos da América na guerra e o Brasil;
+8. O motivo imediato da entrada do Brasil na guerra;
+9. A contribuição do Brasil para o esforço de guerra aliado;
+10. O Brasil na Conferência da Paz de Paris após a guerra.`,
+  },
   60,
   [
     [
@@ -235,7 +258,23 @@ const WWI = history2024(
 
 const VARGAS = history2024(
   "Fim do Estado Novo e queremismo",
-  "Discorra sobre o final do Estado Novo e o queremismo, abordando os dez aspectos a seguir.",
+  {
+    context: `Ao longo do ano de 1945, o movimento conhecido como queremismo exigiu, nas ruas, a permanência de Vargas no poder, entusiasmando parcelas significativas dos trabalhadores brasileiros. O queremismo era uma questão difícil de ser enfrentada, tanto na tradição liberal quanto nos setores de esquerda: a ditadura do Estado Novo entrou em crise e se enfraqueceu, mas, no mesmo movimento, o prestígio do ditador cresceu. Quando o regime democrático surgiu como alternativa política para o país, os trabalhadores exigiram que Vargas continuasse no poder.
+
+Jorge Ferreira. Queremismo, trabalhadores e cultura popular. In: Varia História, n. 28, dezembro/2002, p. 69 (com adaptações).`,
+    question: `Tendo como referência o fragmento de texto apresentado, discorra sobre o final do Estado Novo e o queremismo. Ao elaborar seu texto, aborde os seguintes aspectos:
+
+1. A “diplomacia pendular” de Vargas;
+2. A crise dos submarinos e a entrada do Brasil na Segunda Guerra Mundial;
+3. A incompatibilidade entre a manutenção do sistema ditatorial no Brasil e o apoio do país para a derrota do Eixo na Europa e na Ásia;
+4. A Lei Agamenon Magalhães, seus objetivos imediatos e seu lugar na experiência democrática brasileira entre 1945 e 1964;
+5. A formação de partidos de abrangência nacional e o pluripartidarismo;
+6. A configuração política e social das bases dos partidos PTB, PSD e UDN e o retorno do PCB à legalidade;
+7. A disputa presidencial de 1945: brigadeiro Eduardo Gomes e general Eurico Gaspar Dutra;
+8. Os direitos trabalhistas e o queremismo;
+9. O Departamento de Imprensa e Propaganda e seu uso no queremismo;
+10. A deposição de Vargas e a eleição de 1945.`,
+  },
   60,
   [
     [
@@ -303,7 +342,23 @@ const VARGAS = history2024(
 
 const MODERNISM = history2024(
   "Semana de Arte Moderna e modernismos",
-  "Discorra sobre a cidade de São Paulo na década de 1920, a Semana de Arte Moderna de 1922 e os modernismos no Brasil da Primeira República.",
+  {
+    context: `“Queremos luz, ar, ventiladores, aeroplanos, reivindicações obreiras, idealismos, motores, chaminé de fábrica, sangue, velocidade, sonho, na nossa Arte! E que o rufo de um automóvel, nos trilhos de dois versos, espante da poesia o último deus homérico, que ficou anacronicamente, a dormir e sonhar, na era do jazz-band e do cinema, com a frauta [sic] dos pastores da Arcádia e os seios divinos de Helena.”
+
+Trecho da conferência de Menotti del Picchia na Semana de Arte Moderna de 1922. Retirado de: JARDIM, Eduardo. Eu sou trezentos: Mário de Andrade: vida e obra. Rio de Janeiro: Edições de Janeiro, 2018. p. 59.`,
+    question: `Considerando que o fragmento apresentado tem caráter meramente motivador, discorra sobre a cidade de São Paulo na década de 1920, a Semana de Arte Moderna de 1922 e os modernismos no Brasil da Primeira República. Em seu texto, aborde os seguintes aspectos:
+
+1. O contexto social da cidade de São Paulo na década de 1920;
+2. O contexto intelectual da cidade de São Paulo na década de 1920;
+3. O contexto artístico da cidade de São Paulo na década de 1920;
+4. As características da Semana de Arte Moderna de 1922;
+5. As temáticas presentes na Semana de Arte Moderna de 1922;
+6. As propostas artísticas presentes na Semana de Arte Moderna de 1922;
+7. Os participantes da Semana de Arte Moderna de 1922;
+8. Outros modernismos e ideias modernas no Brasil da Primeira República;
+9. A publicação da revista Klaxon: mensário de arte moderna;
+10. Desdobramentos da Semana de Arte Moderna de 1922.`,
+  },
   40,
   [
     [
@@ -371,7 +426,23 @@ const MODERNISM = history2024(
 
 const JK = history2024(
   "Plano de Metas do governo Juscelino Kubitschek",
-  "Discorra sobre a política econômica do governo Juscelino Kubitschek, o Plano de Metas e seus impactos econômicos e sociais.",
+  {
+    context: `Em fins de 1956, (...) o governo [de Juscelino] formulou um ambicioso conjunto de objetivos setoriais, conhecido por Plano de Metas, que constitui a mais sólida decisão consciente da industrialização na história econômica do país. Estes objetivos iriam servir durante os próximos cinco anos de norteio à política econômica e, em certos aspectos, ao longo de sua execução suas postulações iniciais foram superadas e seu caráter de política de desenvolvimento industrial confirmado.
+
+Carlos Lessa. O Plano de Metas — 1957/60. In: Quinze Anos de Política Econômica. São Paulo: Editora Brasiliense, 1981, p. 27-117.`,
+    question: `Discorra sobre a política econômica do governo Juscelino Kubitschek (JK), o Plano de Metas e os seus impactos econômicos e sociais, abordando os seguintes aspectos:
+
+1. O compromisso de JK com o desenvolvimentismo e a importância do planejamento para a economia nacional e o lançamento do Plano de Metas;
+2. A caracterização do Plano de Metas e a apresentação dos setores apontados como prioritários;
+3. A educação no Plano de Metas;
+4. A previsão constitucional da transferência da capital e a construção de Brasília como meta-síntese;
+5. A interiorização da capital, a integração nacional e o combate às desigualdades regionais;
+6. O financiamento do Plano de Metas: investimentos públicos;
+7. O financiamento do Plano de Metas: capital privado, o tratamento preferencial ao capital estrangeiro e a indústria automobilística;
+8. A inflação e a dívida externa;
+9. O Plano de Estabilização Monetária (PEM) e a tentativa de controle das contas públicas;
+10. O Brasil e o FMI durante o governo JK.`,
+  },
   40,
   [
     [
@@ -440,9 +511,29 @@ const JK = history2024(
 // The 2025 standard describes the content. The guide shows exact marks for Q1's
 // 9.33 answer and the post-appeal 4-point maximum for its sixth quesito.
 const LEAGUE: Question = {
+  context: `PACTO DA LIGA DAS NAÇÕES
+(Versalhes, 28 de junho de 1919)
+
+(...)
+Artigo 1.º
+Composição
+
+1. São Membros originários da Liga das Nações aqueles entre os signatários cujos nomes figuram no Anexo ao presente Pacto, bem como os Estados, igualmente indicados no Anexo, que tiverem acedido ao presente Pacto sem nenhuma reserva, por meio de declaração depositada no Secretariado, dentro dos dois meses seguintes à entrada em vigor do Pacto, e a qual será notificada aos demais Membros da Liga.
+2. Todo Estado, Domínio ou Colônia que se governe livremente e não esteja designado no Anexo poderá tornar-se Membro da Liga, se sua admissão for aprovada pelos dois terços da Assembleia, contanto que dê garantias efetivas da sua sincera intenção de observar os seus compromissos internacionais e de que aceita as regras estabelecidas pela Liga no tocante às suas forças e armamentos militares, navais e aéreos.
+3. Todo Membro da Liga poderá, após aviso prévio de dois anos, retirar-se dela, contanto que, nesse momento, tenha preenchido todas as suas obrigações internacionais, inclusive as do presente Pacto.
+(...)`,
   lines: 60,
-  question:
-    "Considerando o artigo 1º do Pacto da Liga das Nações, disserte sobre a participação do Brasil como membro originário da organização.",
+  question: `Considerando os termos do artigo 1.º do Pacto da Liga das Nações, reproduzido anteriormente, disserte a respeito da participação do Brasil como membro originário da Liga das Nações.
+
+Ao elaborar seu texto, aborde os seguintes aspectos:
+
+1. participação do Brasil na Primeira Guerra Mundial e posição brasileira ao final do conflito; [valor: 4,00 pontos]
+2. participação do Brasil na Conferência da Paz de 1919; [valor: 4,00 pontos]
+3. motivações para o apoio dos Estados Unidos da América à adesão do Brasil como membro da Liga das Nações; [valor: 4,00 pontos]
+4. duas atuações da diplomacia brasileira na Liga das Nações; [valor: 6,00 pontos]
+5. pretensão brasileira pelo assento permanente no Conselho da Liga das Nações; [valor: 4,00 pontos]
+6. manifestações da opinião pública interna do Brasil a respeito da participação do Brasil na Liga das Nações; [valor: 4,00 pontos]
+7. acontecimentos que ocasionaram a retirada do Brasil da Liga das Nações. [valor: 4,00 pontos]`,
   sections: sectionRows([
     steps(
       "Brasil na Primeira Guerra",
@@ -511,9 +602,17 @@ const LEAGUE: Question = {
 // For the full-credit anchors, the standard supports the topics and criterion
 // ceilings. The equal atom split does not assert unpublished intermediate marks.
 const SLAVERY: Question = {
+  context: `“Poderemos plantar nosso arroz onde quisermos, e em qualquer brejo, sem que para isso peçamos licença, e poderemos cada um tirar jacarandás ou outro qualquer pau sem darmos parte para isso. A estar todos os artigos acima, a concedemos estar sempre de posse de ferramentas, estamos prontos para o servirmos como dantes, por que não queremos seguir os maus costumes dos mais Engenhos. Poderemos brincar, folgar, e cantar em todos os tempos que quisermos sem que nos empeça e nem seja preciso licença.”
+
+Tratado proposto a Manoel da Silva Ferreira pelos seus escravos durante o tempo em que se conservaram levantados. In: Stuart Schwartz. Escravos, roceiros e rebeldes. Bauru, SP: EDUSC, 2001, p. 115.`,
   lines: 60,
-  question:
-    "Discorra sobre a questão escrava no Brasil ao longo do período imperial, abordando as formas e os usos do trabalho escravo, a extinção do tráfico, as revoltas e o movimento abolicionista.",
+  question: `Considerando que o excerto acima tem caráter unicamente motivador, discorra sobre a “questão escrava” no Brasil ao longo do período imperial.
+
+Ao elaborar seu texto, aborde os seguintes aspectos:
+
+1. formas e usos de trabalho escravo no Brasil do século XIX; [valor: 10,00 pontos]
+2. políticas de extinção do tráfico e a continuidade da escravidão no Brasil; [valor: 10,00 pontos]
+3. revoltas que ocorreram no Brasil com participação de cativos e o movimento abolicionista. [valor: 10,00 pontos]`,
   sections: sectionRows([
     steps(
       "Formas e usos do trabalho escravo",
@@ -550,9 +649,17 @@ const SLAVERY: Question = {
 };
 
 const INDEPENDENCE: Question = {
+  context:
+    "Após a revolução liberal portuguesa em 1820 e o consequente retorno da família real a Portugal em 1821, houve a tentativa por Portugal do reestabelecimento do regime colonial no Brasil, que até aquele momento possuía o status de Reino Unido a Portugal e Algarves. Contra tal intento, subverteram-se as lideranças brasileiras, a opinião pública e as precárias forças que foram rapidamente organizadas e contaram com o apoio de José Bonifácio e do príncipe regente D. Pedro para realizarem o rompimento com Portugal.",
   lines: 40,
-  question:
-    "Discorra sobre o processo de independência do Brasil, consideradas as fases de ruptura com Portugal e dois fatos de cada dimensão: político-jurídica, militar e diplomática.",
+  question: `Tendo em vista o contexto comentado no texto precedente, disserte a respeito do processo de independência do Brasil, consideradas suas diferentes fases e dimensões.
+
+Ao elaborar seu texto, aborde os seguintes aspectos:
+
+1. as fases do processo de ruptura com Portugal; [valor: 2,00 pontos]
+2. dois fatos relacionados à dimensão político-jurídica; [valor: 6,00 pontos]
+3. dois fatos relacionados à dimensão militar; [valor: 6,00 pontos]
+4. dois fatos relacionados à dimensão diplomática. [valor: 6,00 pontos]`,
   sections: sectionRows([
     steps(
       "Fases da ruptura",
@@ -594,9 +701,17 @@ const INDEPENDENCE: Question = {
 };
 
 const ESTADO_NOVO: Question = {
+  context: `O sr. Getúlio Vargas passará, indiscutivelmente, para a história da República, como o renovador da estrutura material das forças de terra e mar. (...) E bastou a iniciativa do senhor Getúlio Vargas para que surgissem as quilhas velozes que singram os mares desfraldando a nossa bandeira aos ventos de todos os quadrantes.
+
+Heider Villares Sucena. O Brasil, potência militar. In: Diário Carioca. Rio de Janeiro: Fundação Biblioteca Nacional, jan./1939, p. 14 (com adaptações).`,
   lines: 40,
-  question:
-    "Discorra sobre o Departamento de Imprensa e Propaganda no Estado Novo, a cultura, a identidade nacional e a política da boa vizinhança.",
+  question: `Considerando que o fragmento de texto acima tem caráter unicamente motivador, disserte sobre a cultura brasileira no âmbito da política do Estado Novo, instaurado por Getúlio Vargas, e da ação do Departamento de Imprensa e Propaganda (DIP) no que diz respeito aos aspectos culturais e identitários, e à política da boa vizinhança desse período.
+
+Em seu texto, aborde os seguintes aspectos:
+
+1. uso e valorização da cultura popular, em especial no que se refere aos estilos musicais e aos meios de difusão; [valor: 6,00 pontos]
+2. construção de representações nacionais do povo brasileiro; [valor: 7,00 pontos]
+3. a política da boa vizinhança e o uso da indústria cinematográfica nesse processo. [valor: 7,00 pontos]`,
   sections: sectionRows([
     steps(
       "Valorização da cultura popular",
@@ -752,7 +867,10 @@ const HISTORY_CASES = [
   historyCase(2025, 3, INDEPENDENCE, 3, cacd2025H33, 15.33, 680.43, [2, null, null, null]),
   historyCase(2025, 3, INDEPENDENCE, 4, cacd2025H34, 8.67, null, [1, null, null, null]),
   historyCase(2025, 4, ESTADO_NOVO, 1, cacd2025H41, 20, 698.84),
-  historyCase(2025, 4, ESTADO_NOVO, 2, cacd2025H42, 20, 720.42),
+  doubtful(
+    historyCase(2025, 4, ESTADO_NOVO, 2, cacd2025H42, 20, 720.42),
+    "The guide prints about 1,190 words for 40 written lines (pp. 81–83), twice the other 20/20 answer to it, so the text can't be what fit on the sheet",
+  ),
   historyCase(2025, 4, ESTADO_NOVO, 3, cacd2025H43, 20, 712.82),
 ];
 
@@ -966,4 +1084,12 @@ const LANGUAGE_CASES = [
   ),
 ];
 
-export const CEBRASPE_PUBLISHED_CASES = [...HISTORY_CASES, ...LANGUAGE_CASES];
+function doubtful(testCase: WritingCase, reason: string): WritingCase {
+  return { ...testCase, expected: testCase.expected && { ...testCase.expected, doubtful: reason } };
+}
+
+export const CEBRASPE_PUBLISHED_CASES = [
+  ...HISTORY_CASES,
+  ...LANGUAGE_CASES,
+  ...CEBRASPE_TECHNICAL_CASES,
+];

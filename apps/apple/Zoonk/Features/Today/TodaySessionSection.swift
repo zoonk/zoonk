@@ -512,7 +512,6 @@ struct BlockRow: View {
 
         if !block.isAlreadyFixed {
           Text(studyDuration(minutes: block.estimatedMinutes))
-            .layoutPart(.value)
             .typeStyle(.data)
             .foregroundStyle(.mutedForeground)
         }

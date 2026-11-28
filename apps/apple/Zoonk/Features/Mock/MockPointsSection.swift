@@ -34,6 +34,10 @@ struct MockPointsSection: View {
         }
         .accessibilityElement(children: .combine)
       }
+
+      ForEach(points.writtenRows, id: \.name) { part in
+        MockWrittenRow(part: part)
+      }
     } header: {
       SectionTitle(
         Text("By test", tableName: "Mock", comment: "Each test's points in a mock's result"))
@@ -47,6 +51,49 @@ struct MockPointsSection: View {
           }
         }
       }
+    }
+  }
+}
+
+private struct MockWrittenRow: View {
+  let part: WrittenPartPoints
+
+  var body: some View {
+    LabeledContent {
+      if let range = part.range, let max = part.max {
+        Text(verbatim: WritingLabels.range(range, of: max, decimals: part.decimals))
+          .monospacedDigit()
+      }
+    } label: {
+      Text(part.name)
+
+      if part.range != nil, part.max != nil {
+        WrittenStandingLine(part: part)
+      } else {
+        FactSegments(
+          [
+            part.minimum?.needs,
+            String(localized: "No points estimate yet", table: "Mock"),
+          ].compactMap { $0 }
+        )
+        .foregroundStyle(.mutedForeground)
+      }
+    }
+    .accessibilityElement(children: .combine)
+  }
+}
+
+extension PointsMinimum {
+  var needs: String {
+    switch unit {
+    case .percent:
+      String(
+        localized: "Needs \(MockLabels.minimum(self)) of its points", table: "Mock",
+        comment: "A test's minimum share of points, which this mock doesn't judge")
+    case .points:
+      String(
+        localized: "Needs \(MockLabels.points(value))", table: "Mock",
+        comment: "A test's minimum, which this mock doesn't judge; the argument is like '8 points'")
     }
   }
 }
@@ -129,14 +176,8 @@ extension MockPoints.Test {
       return String(
         localized: "Reached the \(reached) it needs", table: "Mock",
         comment: "A test that reached its minimum; the argument is like '8 points' or '50%'")
-    case (nil, .percent):
-      return String(
-        localized: "Needs \(needed) of its points", table: "Mock",
-        comment: "A test's minimum share of points, which this mock doesn't judge")
-    case (nil, .points):
-      return String(
-        localized: "Needs \(MockLabels.points(minimum.value))", table: "Mock",
-        comment: "A test's minimum, which this mock doesn't judge; the argument is like '8 points'")
+    case (nil, _):
+      return minimum.needs
     }
   }
 }

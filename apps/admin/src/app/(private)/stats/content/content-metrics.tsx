@@ -8,6 +8,7 @@ import { AdminMetricTrendChart } from "../_components/admin-metric-trend-chart";
 import { completeMetricTrend } from "../_utils/complete-metric-trend";
 import { type ContentAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
+import { ActivityUseAnalysis } from "./activity-use-analysis";
 import { ContentChart } from "./content-chart-filter";
 import { getContentTotalRows } from "./content-total-rows";
 import { ContentTotalsTable } from "./content-totals-table";
@@ -51,6 +52,10 @@ export async function ContentMetrics({
   view: ContentAnalysisView;
 }) {
   "use cache: private";
+
+  if (view.id === "activity-use") {
+    return <ActivityUseAnalysis statsPeriod={statsPeriod} />;
+  }
 
   if (view.id === "content-totals") {
     return <ContentTotalsAnalysis statsPeriod={statsPeriod} />;

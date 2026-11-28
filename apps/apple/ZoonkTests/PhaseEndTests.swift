@@ -233,7 +233,8 @@ final class PhaseEndTests: XCTestCase {
 
     return """
       { "notPlannedReason":null,"challengeLeftOut": false, "chapters": [], "checkpoint": \(checkpoint),
-        "endDate": \(end.map { "\"\($0)\"" } ?? "null"), "index": \(index), "kind": "\(kind)", "lessonsDone": 0,
+        "endDate": \(end.map { "\"\($0)\"" } ?? "null"), "index": \(index), "kind": "\(kind)", "leftOut": [],
+        "lessonsDone": 0,
         "lessonsTotal": 10, "mocks": { "count": 0, "nextDate": null }, "name": null,
         "startDate": null, "state": "\(state)" }
       """

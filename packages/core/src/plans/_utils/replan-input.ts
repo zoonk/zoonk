@@ -3,6 +3,7 @@ import { getKnownSubjects } from "../../learner/placement/placement-contract";
 import { chooseBases } from "../planner/base-choices";
 import { type BossMinutes } from "../planner/boss-minutes";
 import { readCourseWeights } from "../planner/course-weights";
+import { type ExamDomains, sizeExamDomains } from "../planner/exam-domain-size";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
@@ -39,22 +40,36 @@ function shapePlannerInputs<
   >,
 >({
   context,
+  examDomains,
   loaded,
   resolved,
   state,
+  writtenSkillIds,
 }: {
   context: PlanContext;
+  examDomains?: ExamDomains;
   loaded: Loaded;
   resolved: PlanState["graph"];
   state: PlanState;
+  writtenSkillIds?: readonly string[];
 }) {
+  const settledSkillIds = getSettledSkillIds({ ...loaded, items: context.items });
+
+  const sized = sizeExamDomains({
+    domains: examDomains,
+    graph: resolved,
+    lessons: loaded.lessons,
+    settled: settledSkillIds,
+    written: new Set(writtenSkillIds),
+  });
+
   const { graph: fullGraph, planned: graph } = sizeLanguageGraph({
     bands: loaded.bands,
     currentLevel: loaded.currentLanguageLevel,
     goal: context.goal,
-    graph: resolved,
+    graph: sized,
     keepSkillIds: new Set([...loaded.missedSkillIds, ...getStartedSkillIds(context.items)]),
-    settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
+    settledSkillIds,
     state,
   });
 
@@ -96,6 +111,7 @@ export async function loadReplanFacts({
   const [
     {
       areaShares,
+      examDomains,
       examSubjects,
       materialExam,
       topicLevels,
@@ -131,7 +147,14 @@ export async function loadReplanFacts({
     });
 
     return {
-      ...shapePlannerInputs({ context: { ...forContext, items }, loaded, resolved, state }),
+      ...shapePlannerInputs({
+        context: { ...forContext, items },
+        examDomains,
+        loaded,
+        resolved,
+        state,
+        writtenSkillIds,
+      }),
       items,
       reopenedItemIds,
     };
