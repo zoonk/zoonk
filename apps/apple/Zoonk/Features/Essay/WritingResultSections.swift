@@ -130,34 +130,37 @@ private struct WritingPointsSection: View {
 
 }
 
-/// A range of points on its scale: what's surely earned, then what may be, then the rest.
+/// A range of points on its scale: what's surely earned, then what may be, then the rest. With
+/// nothing measured there is nothing to draw, so the words beside it say so.
 struct RangeBar: View {
-  let range: WritingRange
+  let range: WritingRange?
   let max: Double
   var minimum: Double?
 
   var body: some View {
-    let low = Swift.max(0, Swift.min(1, range.low / max))
-    let high = Swift.max(low, Swift.min(1, range.high / max))
+    if let range {
+      let low = Swift.max(0, Swift.min(1, range.low / max))
+      let high = Swift.max(low, Swift.min(1, range.high / max))
 
-    MeterParts(
-      parts: [
-        low > 0 ? .init(weight: low, fill: .color(.success)) : nil,
-        high > low ? .init(weight: high - low, fill: .color(.success.opacity(0.4))) : nil,
-        high < 1 ? .init(weight: 1 - high, fill: .track) : nil,
-      ].compactMap { $0 }
-    )
-    .overlay(alignment: .leading) {
-      if let minimum {
-        GeometryReader { proxy in
-          Capsule()
-            .fill(Color(.foreground))
-            .frame(width: 2, height: 14)
-            .position(x: proxy.size.width * Swift.min(1, minimum / max), y: proxy.size.height / 2)
+      MeterParts(
+        parts: [
+          low > 0 ? .init(weight: low, fill: .color(.success)) : nil,
+          high > low ? .init(weight: high - low, fill: .color(.success.opacity(0.4))) : nil,
+          high < 1 ? .init(weight: 1 - high, fill: .track) : nil,
+        ].compactMap { $0 }
+      )
+      .overlay(alignment: .leading) {
+        if let minimum {
+          GeometryReader { proxy in
+            Capsule()
+              .fill(Color(.foreground))
+              .frame(width: 2, height: 14)
+              .position(x: proxy.size.width * Swift.min(1, minimum / max), y: proxy.size.height / 2)
+          }
         }
       }
+      .accessibilityHidden(true)
     }
-    .accessibilityHidden(true)
   }
 }
 
@@ -538,15 +541,5 @@ struct MinimumLegend: View {
         .typeStyle(.note)
         .foregroundStyle(.mutedForeground)
     }
-  }
-}
-
-/// A meter's place while nothing is measured yet: a dashed outline.
-struct UnmeasuredBar: View {
-  var body: some View {
-    RoundedRectangle(cornerRadius: 3, style: .continuous)
-      .strokeBorder(.border, style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
-      .frame(height: 6)
-      .accessibilityHidden(true)
   }
 }

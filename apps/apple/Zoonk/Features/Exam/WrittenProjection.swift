@@ -220,7 +220,7 @@ private struct ScoreRow<Detail: View>: View {
   let range: WritingRange?
   let max: Double?
   var decimals: Int?
-  /// Graded by level: no points to wait for, so no meter holds their place.
+  /// Graded by level: no points to wait for.
   var levels: Bool
   var minimum: Double?
   var written: Bool
@@ -261,12 +261,8 @@ private struct ScoreRow<Detail: View>: View {
         name.typeStyle(.rowTitle)
       }
 
-      if let max, !(levels && range == nil) {
-        if let range {
-          RangeBar(range: range, max: max, minimum: minimum)
-        } else {
-          UnmeasuredBar()
-        }
+      if let max {
+        RangeBar(range: range, max: max, minimum: minimum)
       }
 
       detail
