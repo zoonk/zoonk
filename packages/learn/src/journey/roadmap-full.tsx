@@ -39,12 +39,14 @@ const moveBetweenBands = moveFocusWithArrows("roadmap-band");
 function PhaseBand({
   focusable,
   isLast,
+  labelled,
   links,
   phase,
   todayShare,
 }: {
   focusable: boolean;
   isLast: boolean;
+  labelled: boolean;
   links: JourneyPathLinks;
   phase: PlanPhaseView;
   todayShare: number | null;
@@ -70,7 +72,7 @@ function PhaseBand({
           />
         }
       >
-        <BandFace isLast={isLast} phase={phase} todayShare={todayShare} />
+        <BandFace isLast={isLast} labelled={labelled} phase={phase} todayShare={todayShare} />
       </DrawerTrigger>
 
       <DrawerPopup>
@@ -101,6 +103,7 @@ function PhaseColumn({
       <PhaseBand
         focusable={focusable}
         isLast={isLast}
+        labelled={labelled}
         links={links}
         phase={phase}
         todayShare={todayShare}

@@ -5,7 +5,7 @@ import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { CurrentPhaseMark } from "./current-phase-mark";
 import { usePhaseRowName } from "./path-phase-row";
-import { BandTodayTick, EndDateSizer } from "./roadmap-lane";
+import { AxisDateSizer, BandTodayTick } from "./roadmap-lane";
 import { BAND_CHECK_CLASS, BandName, splitBandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
 
@@ -13,10 +13,12 @@ const PERCENT = 100;
 
 export function BandFace({
   isLast,
+  labelled,
   phase,
   todayShare = null,
 }: {
   isLast: boolean;
+  labelled: boolean;
   phase: PlanPhaseView;
   todayShare?: number | null;
 }) {
@@ -36,7 +38,7 @@ export function BandFace({
         }
         name={name}
       />
-      {isLast && <EndDateSizer />}
+      <AxisDateSizer isLast={isLast} labelled={labelled} phase={phase} />
       {phase.state === "current" && <span className="sr-only">{t(", you are here")}</span>}
       {phase.state === "done" && <span className="sr-only">{t(", done")}</span>}
       {phase.state === "current" && (

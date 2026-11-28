@@ -101,11 +101,30 @@ function GoalDate() {
   return <PlanDateText {...finish} />;
 }
 
-/** In the last phase's band, so that phase is never narrower than the date under it. */
-export function EndDateSizer() {
+/**
+ * In the band of a phase the axis dates, and in the last one over the goal's date, so a band is
+ * never narrower than the date under it and two dates never run together.
+ */
+export function AxisDateSizer({
+  isLast,
+  labelled,
+  phase,
+}: {
+  isLast: boolean;
+  labelled: boolean;
+  phase: PlanPhaseView;
+}) {
   const finish = useRoadmapFinish();
 
-  if (!finish) {
+  if (labelled) {
+    return (
+      <span aria-hidden="true" className={BAND_SIZER_CLASS}>
+        <PhaseWhen className="text-2xs" phase={phase} />
+      </span>
+    );
+  }
+
+  if (!isLast || !finish) {
     return null;
   }
 

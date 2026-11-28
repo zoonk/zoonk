@@ -299,9 +299,17 @@ private fun RoadmapFull(
     val names = phases.map { phaseRowName(it, page.mocksRequirePlus) }
     val parted = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = true) }
     val loose = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = false) }
-    // Main's `EndDateSizer`: the last band is never narrower than the date under it, so the date keeps one line.
+    // Main's `AxisDateSizer`: a band is never narrower than the date under it, so dates keep one line and never meet.
     val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
-    val bands = bandLayout(parted, loose, weights, width, endDate)
+    val dates =
+        phases.mapIndexed { index, phase ->
+            when {
+                phase.index in axisDated -> phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
+                index == phases.lastIndex -> endDate
+                else -> null
+            }
+        }
+    val bands = bandLayout(parted, loose, weights, width, dates)
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -523,7 +531,7 @@ private fun bandLayout(
     loose: List<BandName>,
     weights: List<Float>,
     width: Dp,
-    endDate: AnnotatedString?,
+    dates: List<AnnotatedString?>,
 ): BandLayout {
     val measurer = rememberTextMeasurer()
     val style = bandStyle()
@@ -544,12 +552,11 @@ private fun bandLayout(
         val narrowest = MIN_BAND_WIDTH.roundToPx()
         val gap = BAND_GAP.roundToPx()
         val total = width.roundToPx()
-        val lastFloor = endDate?.let { measurer.measure(it, dateStyle).size.width + padding } ?: 0
+        val dateFloors = dates.map { date -> max(narrowest, date?.let { measurer.measure(it, dateStyle).size.width + padding } ?: 0) }
 
         fun least(names: List<BandName>) =
             names.mapIndexed { index, name ->
-                val floor = if (index == names.lastIndex) max(narrowest, lastFloor) else narrowest
-                max(floor, ceil(measure(name).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding)
+                max(dateFloors[index], ceil(measure(name).multiParagraph.intrinsics.minIntrinsicWidth).toInt() + padding)
             }
 
         val partsLeast = least(parted)
@@ -566,7 +573,7 @@ private fun bandLayout(
             sizes.mapIndexed { index, size ->
                 size.width ?: if (size.fit == BandFit.PARTS) partsLeast[index] else narrowest
             }
-        val floors = minimums.mapIndexed { index, minimum -> if (index == names.lastIndex) max(minimum, lastFloor) else minimum }
+        val floors = minimums.mapIndexed { index, minimum -> max(minimum, dateFloors[index]) }
         val widths = weightedWidths(weights, total.toFloat(), floors.map(Int::toFloat), gap.toFloat()).map { floor(it).toInt() }
         val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).coerceAtLeast(0)).size.height } ?: 0
         return BandLayout(names, widths.map { it.toDp() }, max(BAND_HEIGHT.roundToPx(), text + BAND_PADDING_Y.roundToPx() * 2).toDp())
