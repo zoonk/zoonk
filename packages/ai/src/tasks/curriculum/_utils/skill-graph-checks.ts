@@ -1,10 +1,13 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { findWritingFlaws } from "@zoonk/utils/text-flaws";
+import { type CourseLevel } from "./course-levels";
+import { findPastCourseLevel } from "./past-course-level";
 
 export type CheckedGraphSkill = {
   area: string;
   description: string;
   key: string;
+  level?: CourseLevel;
   libraryId?: string;
   name: string;
   phase: number;
@@ -20,6 +23,7 @@ type SkillGraphProblemCode =
   | "markdown"
   | "nearDuplicate"
   | "offNoticeFirst"
+  | "pastCourseLevel"
   | "placeholder"
   | "repeatedPhaseName"
   | "textbookChain";
@@ -330,12 +334,14 @@ function findWritingProblems({
   );
 }
 
-/** `exam` is whether the graph follows an exam's notice. */
+/** `exam` is whether the graph follows an exam's notice; `courseLevel`, the one band it teaches. */
 export function findSkillGraphProblems({
+  courseLevel,
   exam,
   phases,
   skills,
 }: {
+  courseLevel?: CourseLevel;
   exam: boolean;
   phases: readonly GraphPhase[];
   skills: readonly CheckedGraphSkill[];
@@ -348,6 +354,7 @@ export function findSkillGraphProblems({
     ...(exam ? findTextbookChains(graph) : []),
     ...(exam ? findOffNoticeFirst(skills) : []),
     ...findNearDuplicates(skills),
+    ...findPastCourseLevel({ courseLevel, skills }),
     ...findRepeatedPhaseNames({ phases, skills }),
     ...findWritingProblems({ phases, skills }),
   ];

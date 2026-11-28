@@ -162,10 +162,12 @@ export function toScopedGraphPrompt({
   inputs: ScopedInputs;
   scope: Pick<CurriculumScope, "country" | "generalGoal" | "ownerId">;
 }): GraphPrompt {
+  // A private course has no next level to continue at, so its path stays whole.
   if (scope.ownerId) {
     return {
       ...inputs.graphPrompt,
       context: withCountryContext({ context: inputs.graphPrompt.context, scope }),
+      courseLevel: undefined,
       hasMaterial: inputs.hasMaterial,
     };
   }

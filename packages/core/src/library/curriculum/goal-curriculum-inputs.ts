@@ -25,6 +25,7 @@ import {
 } from "../sources/material-pages";
 import { type StartedCourse, toStartedCourse } from "./course-start-graph";
 import { toExamOutline } from "./exam-curriculum-outline";
+import { getGoalCourseLevel } from "./goal-course-level";
 import { listGoalReferences } from "./goal-references";
 import { getLessonBudget } from "./lesson-budget";
 import { toExamIdentity, toSharedContext } from "./shared-graph-prompt";
@@ -39,6 +40,7 @@ const SYLLABUS_PURPOSES = new Set<(typeof PURPOSES)[number]>(["deep", "careerCha
 
 const OMITTED_CONTEXT_FIELDS = new Set([
   "answered",
+  "courseLevel",
   "courseStart",
   "level",
   "onboardingId",
@@ -244,6 +246,7 @@ export async function loadGoalCurriculumInputs(
     },
     graphPrompt: {
       context: toContext({ details, material }),
+      courseLevel: getGoalCourseLevel({ details, kind: goal.kind }),
       examBlueprint: outline,
       goal: goal.prompt,
       goalKind: goal.kind,

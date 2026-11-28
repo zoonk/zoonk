@@ -1,5 +1,6 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { type ExamOutline } from "../exam-outline";
+import { type CourseLevel } from "./course-levels";
 import { type LibrarySkill, applyLibraryReuse } from "./library-skills";
 import { type RawSkillGraph, type SkillGraph, normalizeSkillGraph } from "./normalize-skill-graph";
 import { type SkillGraphProblem, findSkillGraphProblems } from "./skill-graph-checks";
@@ -7,6 +8,7 @@ import { writesExamExtras } from "./skill-graph-extras";
 import { getSectionCall, joinSections } from "./skill-graph-sections";
 
 type DraftParams = {
+  courseLevel?: CourseLevel;
   examBlueprint?: ExamOutline;
   goalKind: "learn" | "exam" | "language";
   hasMaterial?: boolean;
@@ -58,6 +60,7 @@ export function findRedraftProblems({
   params: DraftParams;
 }): SkillGraphProblem[] {
   return findSkillGraphProblems({
+    courseLevel: params.goalKind === "learn" ? params.courseLevel : undefined,
     exam: params.goalKind === "exam",
     phases: data.phases,
     skills: data.skills,

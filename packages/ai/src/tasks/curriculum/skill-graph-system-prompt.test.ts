@@ -42,6 +42,17 @@ describe(buildSkillGraphSystemPrompt, () => {
     expect(prompt).toContain("(with `LESSON_BUDGET`, in a skill of its own)");
   });
 
+  it("gives only a learn goal with a band the rules for writing that one band", () => {
+    const banded = buildSkillGraphSystemPrompt({ courseLevel: "beginner", goalKind: "learn" });
+    const whole = buildSkillGraphSystemPrompt({ goalKind: "learn" });
+    const exam = buildSkillGraphSystemPrompt({ courseLevel: "beginner", goalKind: "exam" });
+
+    expect(banded).toContain("`COURSE_LEVEL`");
+    expect(banded).toContain("# One band");
+    expect(whole).not.toContain("COURSE_LEVEL");
+    expect(exam).not.toContain("COURSE_LEVEL");
+  });
+
   it("tells only a product goal how to title and fill the product's course", () => {
     const product = { brand: "Acme", courseTitle: "Gizmo", name: "Gizmo" };
     const withProduct = buildSkillGraphSystemPrompt({ goalKind: "learn", product });

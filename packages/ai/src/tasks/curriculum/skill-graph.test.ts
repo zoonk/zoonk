@@ -476,6 +476,22 @@ describe(generateSkillGraph, () => {
     expect(provenance.promptVersion).not.toBe(SKILL_GRAPH_PROMPT_VERSION);
   });
 
+  it("tells a broad learn goal's graph the one band it stops at", async () => {
+    vi.mocked(streamText).mockReset();
+    vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
+
+    await generateSkillGraph({
+      courseLevel: "beginner",
+      goal: "Physics",
+      goalKind: "learn",
+      language: "en",
+      ownLevel: "none",
+      purpose: "deep",
+    });
+
+    expect(sentPrompts()[0]?.prompt).toContain("COURSE_LEVEL: beginner\n");
+  });
+
   it("tells a product goal's graph the product and the title of its course", async () => {
     vi.mocked(streamText).mockReset();
     vi.mocked(streamText).mockReturnValue(answer(WHOLE_GRAPH) as never);
