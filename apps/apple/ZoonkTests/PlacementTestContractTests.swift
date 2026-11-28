@@ -95,6 +95,24 @@ final class PlacementTestContractTests: XCTestCase {
     XCTAssertEqual(test.attempt?.questions, 8)
     XCTAssertEqual(PlacementTestCopy.planLine(test), ["In progress", "Question 4 of 8"])
 
+    let atTheCeiling = try planTest(
+      #"""
+      {"estimatedMinutes":4,"kind":"learn","offer":null,"result":null,"state":"continue",
+       "attempt":{"answered":8,"chapter":null,"estimatedMinutes":4,
+                  "id":"c367d72f-4d87-408a-ba10-6bbcddca31ba","length":"quick","part":1,
+                  "partComplete":false,"questions":8}}
+      """#)
+    XCTAssertEqual(
+      PlacementTestCopy.planLine(atTheCeiling), ["In progress"],
+      "With no question left to ask, the row names none")
+
+    let languageAtTheCeiling = try planTest(
+      #"""
+      {"answered":12,"attempt":null,"estimatedMinutes":6,"kind":"language",
+       "nextTestOutLevel":null,"result":null,"state":"continue","total":12}
+      """#)
+    XCTAssertEqual(PlacementTestCopy.planLine(languageAtTheCeiling), ["In progress"])
+
     let fresh = try planTest(
       #"""
       {"estimatedMinutes":4,"kind":"learn","offer":{"estimatedMinutes":4,"questions":8},
