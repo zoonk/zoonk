@@ -18,6 +18,7 @@ struct LanguageTestResultView: View {
 
   var body: some View {
     let restored = undo?.restored != nil
+    let skipped = restored ? 0 : result?.lessonsSkipped ?? 0
 
     ZoonkList {
       StepHeader(
@@ -28,7 +29,7 @@ struct LanguageTestResultView: View {
         description: undo?.restored ?? lead.map { Text(verbatim: $0) })
 
       Section {
-        VStack(alignment: .leading, spacing: 0) {
+        SkippedCaption(lessons: skipped) {
           Grid(horizontalSpacing: 16, verticalSpacing: 0) {
             ForEach(Array(skills.enumerated()), id: \.element) { index, skill in
               if index > 0 {
@@ -37,13 +38,12 @@ struct LanguageTestResultView: View {
 
               row(skill)
             }
-          }
 
-          // As a course's result says it under its course line.
-          if let lessons = result?.lessonsSkipped, lessons > 0, !restored {
-            Text(verbatim: PlacementTestCopy.lessonsSkipped(lessons))
-              .typeStyle(.data)
-              .foregroundStyle(.mutedForeground)
+            // The caption under the rows is about every row: right under the last one, it would
+            // read as that row's own line.
+            if skipped > 0 {
+              Divider()
+            }
           }
         }
       }

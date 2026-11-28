@@ -72,7 +72,7 @@ struct PlacementCourseLine: View {
   let lessonsSkipped: Int
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
+    SkippedCaption(lessons: lessonsSkipped) {
       MeterParts(
         parts: course.chapters.map { chapter in
           MeterParts.Part(
@@ -84,19 +84,31 @@ struct PlacementCourseLine: View {
             ringed: chapter.start)
         },
         height: 6, gap: 3)
-
-      // A result that skipped nothing says so by its line alone.
-      if lessonsSkipped > 0 {
-        Text(verbatim: PlacementTestCopy.lessonsSkipped(lessonsSkipped))
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-      }
     }
     // Main's line sits closer to the title than to what follows: with the heading's own room
     // under it, a section's step.
     .padding(.top, 8)
     .padding(.bottom, 12)
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// What a result drew (the course's line, a language's level rows) with how many lessons the test
+/// skipped under it, which the picture can't say; nothing under it when none were.
+struct SkippedCaption<Picture: View>: View {
+  let lessons: Int
+  @ViewBuilder let picture: Picture
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      picture
+
+      if lessons > 0 {
+        Text(verbatim: PlacementTestCopy.lessonsSkipped(lessons))
+          .typeStyle(.data)
+          .foregroundStyle(.mutedForeground)
+      }
+    }
   }
 }
 
