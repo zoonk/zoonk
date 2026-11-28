@@ -11,9 +11,8 @@ import { createPortal } from "react-dom";
 const TASK_LAYER_ATTRIBUTE = "data-task-layer";
 
 /**
- * A full-screen task opened from a page of the app's frame without leaving it, such as a test's
- * questions inside onboarding: the frame (sidebar, bars) leaves the screen and the task takes the
- * window, as a task on its own route does. The page under it stays mounted with its state.
+ * A full-screen task opened from a page of the app's frame without a route of its own: the frame
+ * leaves the screen and the page under the task stays mounted with its state.
  */
 export function TaskLayer({ children }: { children: React.ReactNode }) {
   const mounted = useIsMounted();

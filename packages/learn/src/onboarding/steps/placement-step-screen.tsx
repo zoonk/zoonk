@@ -27,7 +27,7 @@ export function PlacementStepScreen({
   // The server decides: a test the learner asked for opens at once, an offered one waits for a pick.
   const mode = placement?.mode ?? "resume";
   const test = placement?.test;
-  const firstLesson = view.firstLesson?.title ?? null;
+  const firstLessonTitle = view.firstLesson?.title ?? null;
 
   if (goal.kind === "exam") {
     return (
@@ -36,7 +36,7 @@ export function PlacementStepScreen({
         asked={mode === "direct"}
         goalId={goal.id}
         host="onboarding"
-        firstLesson={firstLesson}
+        firstLessonTitle={firstLessonTitle}
         onDone={onDone}
         readWarmUp={actions.readWarmUp}
         run={run}
@@ -51,7 +51,7 @@ export function PlacementStepScreen({
         actions={actions.languagePlanTest(goal.id)}
         goal={goal}
         goalId={goal.id}
-        host={{ firstLesson, mode, surface: "onboarding" }}
+        host={{ firstLessonTitle, mode, surface: "onboarding" }}
         onLeave={() => onDone()}
         ownLanguage={{
           language: getNativeLanguage(view),
@@ -71,7 +71,7 @@ export function PlacementStepScreen({
       goalId={goal.id}
       host={{
         decline: () => actions.finishPlacement({ fromScratch: true, goalId: goal.id }),
-        firstLesson,
+        firstLessonTitle,
         mode,
         surface: "onboarding",
       }}

@@ -13,12 +13,12 @@ export type TestOutView = Extract<LanguageLevelTestOutResult, { status: "ready" 
 type TestOutQuestion = NonNullable<TestOutView["next"]>;
 type TestOutTapQuestion = TestOutQuestion & { format: PlacementQuestion["format"] };
 
-/** The test's questions in the sections it asks them in: reading, listening, then both skills' check. */
 export function toLevelTestGroups(total: number): number[] {
   const reading = Math.min(LEVEL_TEST_BLOCK_SIZE, total);
   const listening = Math.min(LEVEL_TEST_BLOCK_SIZE, total - reading);
+  const check = total - reading - listening;
 
-  return [reading, listening, total - reading - listening].filter((size) => size > 0);
+  return [reading, listening, check].filter((size) => size > 0);
 }
 
 export type ListeningOut = "cantListen" | "notUnderstood" | "skip";

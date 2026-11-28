@@ -30,7 +30,6 @@ function toPlacementAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null 
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
-/** The bar's second button where a question has its own, such as a listening question's. */
 type SecondAction = {
   label: React.ReactNode;
   /** Pressed in place of answering "I don't know yet". */
@@ -93,17 +92,14 @@ export function PlacementQuestionScreen({
   total,
   trueFalseLabels = "trueFalse",
 }: {
-  /** Questions answered before this one. */
   answered: number;
   /** Saves from this screen (answers and Stop) that failed in a row. */
   failures: number;
-  /** The sizes of the test's sections in order, where it has them. */
   groups?: readonly number[];
   media?: React.ReactNode;
   /** Whether stopping now uses the answers given; from the second question when the test doesn't say. */
   canStop?: boolean;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
-  /** The learner left from this question. */
   onClose?: () => void;
   onStop: () => void;
   pending: boolean;
@@ -112,7 +108,6 @@ export function PlacementQuestionScreen({
   stopHint?: string;
   /** What the question tests: a skill, a chapter, a subject. */
   subject: string;
-  /** The most questions the test asks. */
   total: number;
   trueFalseLabels?: TrueFalseLabels;
 }) {

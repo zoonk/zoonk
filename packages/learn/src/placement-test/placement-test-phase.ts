@@ -169,7 +169,6 @@ export function toPlacementTestPhase({
   };
 }
 
-/** Where a finish leaves the learner: at the test's result. */
 export function toFinishedPhase({
   attemptId,
   finished,

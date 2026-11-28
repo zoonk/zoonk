@@ -12,7 +12,7 @@ type OfferChoice = "firstLesson" | "levelTest" | "testOut";
 /** Onboarding offers the test beside a first lesson; the Plan offers it alone or beside a test-out. */
 export function LevelTestOfferStep({
   analytics,
-  firstLesson,
+  firstLessonTitle,
   offer,
   onStartTestOut,
   onboarding,
@@ -21,8 +21,7 @@ export function LevelTestOfferStep({
   testOutLevel,
 }: {
   analytics: TestAnalytics;
-  /** Onboarding's first lesson by its name, where it's known. */
-  firstLesson: string | null;
+  firstLessonTitle: string | null;
   offer: LevelTestOffer;
   onStartTestOut: (level: string) => void;
   onboarding: boolean;
@@ -47,7 +46,7 @@ export function LevelTestOfferStep({
   if (onboarding) {
     return (
       <TestOffer<OfferChoice>
-        cards={[levelTest, texts.firstLesson(firstLesson)]}
+        cards={[levelTest, texts.firstLesson(firstLessonTitle)]}
         description={texts.lessonsLine}
         failed={failed}
         initial="levelTest"

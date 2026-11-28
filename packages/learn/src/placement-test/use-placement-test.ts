@@ -24,8 +24,7 @@ export type PlacementTestHost =
   | {
       /** "First lesson": saves that the learner starts without a test; false when it didn't. */
       decline: () => Promise<boolean>;
-      /** The first lesson's name, where onboarding knows it. */
-      firstLesson: string | null;
+      firstLessonTitle: string | null;
       mode: "direct" | "offer" | "resume";
       surface: "onboarding";
     }
@@ -185,7 +184,6 @@ export function usePlacementTest({
       save("main", async () =>
         host.surface === "onboarding" && (await host.decline()) ? onLeave() : false,
       ),
-    /** Closes a test the learner came back to after its questions ran out. */
     onFinish: (attempt: OpenAttempt) => save("main", () => close(attempt)),
     onLeave: (button: Exclude<TestPressed, null>, attemptId?: string) =>
       save(button, () => onLeave(attemptId).catch(() => false)),

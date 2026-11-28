@@ -63,7 +63,7 @@ export function FocusTestFlow({
   asked = false,
   goalId,
   host,
-  firstLesson = null,
+  firstLessonTitle = null,
   onDone,
   plan = null,
   readWarmUp,
@@ -75,8 +75,7 @@ export function FocusTestFlow({
   asked?: boolean;
   goalId: string;
   host: FocusTestHost;
-  /** Onboarding's first lesson by its name, where it's known. */
-  firstLesson?: string | null;
+  firstLessonTitle?: string | null;
   /** Leaves the test: onboarding saves its step, a plan goes back to it. False when it didn't. */
   onDone: () => Promise<boolean>;
   plan?: FocusTestPlanActions | null;
@@ -104,8 +103,7 @@ export function FocusTestFlow({
   // Only onboarding has a skip to save: a plan that's already there just goes back to itself.
   const skip = (button: "main" | "other") => test.onLeave({ button, closes: onboarding });
 
-  /** The test once it's open: its questions, the wait for them and its result, each a task screen. */
-  const open = (
+  const openScreen = (
     shown: Exclude<typeof phase, { kind: "invitation" | "loadFailed" | "loading" }>,
   ) => {
     switch (shown.kind) {
@@ -182,7 +180,7 @@ export function FocusTestFlow({
         <FocusTestInvitation
           failed={failed}
           host={host}
-          firstLesson={firstLesson}
+          firstLessonTitle={firstLessonTitle}
           next={phase.next}
           onShown={() =>
             analytics.offered({
@@ -205,7 +203,7 @@ export function FocusTestFlow({
     case "question":
     case "ended":
     case "checkpoint":
-      return <OnboardingTask>{open(phase)}</OnboardingTask>;
+      return <OnboardingTask>{openScreen(phase)}</OnboardingTask>;
     default:
       return phase satisfies never;
   }

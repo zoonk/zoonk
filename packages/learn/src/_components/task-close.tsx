@@ -15,12 +15,11 @@ import { type TaskExitConfirmation, type TaskExitDialog } from "../shell/task-ex
 
 const exitDialog = createOnDemand(() => import("../shell/task-exit-dialog"));
 
-/** What a task's own ways out are handed: `onLeave` leaves as the ✕ would have. */
 type TaskExitAsk = { onLeave: () => void; onOpenChange: (open: boolean) => void; open: boolean };
 
 const TaskExitAskContext = createContext<TaskExitAsk | null>(null);
 
-/** For what a task passes as its ✕'s `ask`: whether it's open, and the way to leave from it. */
+/** For the node a task passes as `TaskClose`'s `ask`: `onLeave` leaves as the ✕ would have. */
 export function useTaskExitAsk(): TaskExitAsk {
   const ask = use(TaskExitAskContext);
 
@@ -40,7 +39,6 @@ function CloseMark({ label }: { label: string }) {
   );
 }
 
-/** What the ✕ and Esc ask before leaving: the task's own ways out, or a yes-or-no question. */
 function TaskExitQuestion({
   ask,
   confirm,
@@ -96,10 +94,7 @@ export function TaskClose({
   prefetch,
   toApp = false,
 }: {
-  /**
-   * The task's own ways out, such as a test's sheet, opened first by the ✕ and by Esc in place of
-   * leaving. It reads `useTaskExitAsk`. Without it the ✕ leaves.
-   */
+  /** The task's own ways out, which the ✕ and Esc open in place of leaving; it reads `useTaskExitAsk`. */
   ask?: React.ReactNode;
   /** A promise for work still being saved, which leaving waits for; null when nothing is in flight. */
   beforeExit?: () => Promise<unknown> | null;
