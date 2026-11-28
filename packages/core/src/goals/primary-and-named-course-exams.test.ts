@@ -78,7 +78,7 @@ async function primaryAndNamedCourse() {
   return { exams, shared };
 }
 
-describe("a course one exam stores as primary and another names", () => {
+describe("an exam course one exam owns and another names", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -86,17 +86,18 @@ describe("a course one exam stores as primary and another names", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  it("resolves to no single exam, like a course two exams store or two exams name", async () => {
-    const { shared } = await primaryAndNamedCourse();
-    await expect(loadCourseExam(shared.id)).resolves.toBeNull();
+  it("resolves to the exam that owns it", async () => {
+    const { exams, shared } = await primaryAndNamedCourse();
+    const exam = await loadCourseExam(shared.id);
+    expect(exam?.blueprint.id).toBe(exams[0]!.id);
   });
 
-  it("starts the shared course as an undated exam goal of no single exam", async () => {
-    const [{ shared }, user] = await Promise.all([primaryAndNamedCourse(), userFixture()]);
+  it("starts the course as the owning exam's goal, with its date", async () => {
+    const [{ exams, shared }, user] = await Promise.all([primaryAndNamedCourse(), userFixture()]);
     mockSession(user.id);
 
     await expect(startCourseGoal({ courseId: shared.id, input: {} })).resolves.toMatchObject({
-      goal: { examBlueprintId: null, kind: "exam", targetDate: null },
+      goal: { examBlueprintId: exams[0]!.id, kind: "exam", targetDate: "2020-10-11" },
       status: "created",
     });
   });
