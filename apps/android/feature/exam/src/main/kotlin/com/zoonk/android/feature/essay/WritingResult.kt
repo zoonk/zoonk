@@ -451,7 +451,7 @@ private fun WritingCriteria(
                             stringResource(
                                 R.string.essay_score_of,
                                 pointsRange(range.low, range.high, decimals),
-                                formatPoints(row.max, locale, decimals),
+                                formatPoints(row.max, locale),
                             ),
                             Modifier.sizeIn(minWidth = 64.dp),
                             textAlign = TextAlign.End,

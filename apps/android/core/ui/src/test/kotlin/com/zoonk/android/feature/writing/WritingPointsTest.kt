@@ -47,6 +47,21 @@ class WritingPointsTest {
     }
 
     @Test
+    fun aMaximumReadsAsItIs() {
+        compose.setContent {
+            Column {
+                PointsValue(14.67, 14.67, 22.0, 1)
+                PointsValue(0.0, 0.0, 9.5, 1)
+                PointsValue(16.6, 18.1, 30.0, 0, headline = true)
+            }
+        }
+
+        compose.onNodeWithText("14.7 of 22").assertIsDisplayed()
+        compose.onNodeWithText("0.0 of 9.5").assertIsDisplayed()
+        compose.onNodeWithText("16–19 of 30").assertIsDisplayed()
+    }
+
+    @Test
     fun deductionsRoundToOneDecimalWithoutNegativeZero() {
         compose.setContent {
             Column {

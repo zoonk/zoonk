@@ -89,7 +89,10 @@ internal fun rangeEnds(
     return formatPoints(shownLow, locale, decimals) to formatPoints(shownHigh, locale, decimals)
 }
 
-/** A score on its scale with exactly its [decimals]; a fixed amount, such as a question's worth, as it is. */
+/**
+ * A score on its scale with exactly its [decimals]; a fixed amount, such as a maximum or a question's worth, as it is,
+ * never padded to a mark's decimals: "14.7 of 22", never "14.7 of 22.0".
+ */
 fun formatPoints(
     value: Double,
     locale: Locale,
@@ -135,7 +138,7 @@ fun PointsReadout(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     val range = pointsRange(low, high, decimals, headline = true)
-    val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale(), decimals))
+    val ofMax = stringResource(R.string.essay_of_max, formatPoints(max, currentLocale()))
     Text(
         buildAnnotatedString {
             append(range)
@@ -227,7 +230,7 @@ fun PointsValue(
                 stringResource(
                     R.string.essay_points_of,
                     pointsRange(low, high, decimals, headline),
-                    formatPoints(max, currentLocale(), decimals),
+                    formatPoints(max, currentLocale()),
                 )
             }
 

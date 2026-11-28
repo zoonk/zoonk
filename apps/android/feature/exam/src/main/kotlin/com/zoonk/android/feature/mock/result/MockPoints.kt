@@ -6,24 +6,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.writing.MarkedLine
 import com.zoonk.android.feature.writing.WrittenStandingLine
 import com.zoonk.android.feature.writing.pointsRange
 import com.zoonk.android.ui.format.currentLocale
@@ -183,9 +178,8 @@ private fun TestRowItem(row: TestRow) {
             if (lines.isNotEmpty()) {
                 MarkedLine(
                     text = lines.factsLine(),
-                    met = row.met,
                     color = if (row.met == false) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
+                    icon = row.met?.let { if (it) R.drawable.ic_check else R.drawable.ic_close },
                 )
             }
         }
@@ -242,27 +236,6 @@ private fun WrittenPartPointsMinimum.toPointsMinimum(): PointsMinimum =
         unit = if (unit == WrittenPartPointsMinimum.Unit.PERCENT) PointsMinimum.Unit.PERCENT else PointsMinimum.Unit.POINTS,
         value = value,
     )
-
-/** A line led by a check when [met] or a cross when not, so a miss reads in words and shape, not only in color. */
-@Composable
-private fun MarkedLine(
-    text: String,
-    met: Boolean?,
-    color: Color,
-    style: TextStyle,
-) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        met?.let {
-            Icon(
-                painterResource(if (it) R.drawable.ic_check else R.drawable.ic_close),
-                contentDescription = null,
-                modifier = Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }),
-                tint = color,
-            )
-        }
-        Text(text, color = color, style = style)
-    }
-}
 
 @Composable
 private fun requirementLine(

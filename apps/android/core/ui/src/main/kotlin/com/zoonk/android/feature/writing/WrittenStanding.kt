@@ -8,9 +8,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,42 +45,43 @@ fun WrittenStandingLine(part: WrittenPartPoints) {
 
     when (part.standing) {
         WrittenPartPoints.Standing.MET -> {
-            StandingLine(
-                stringResource(R.string.plan_written_above_minimum, points),
-                muted,
-                R.drawable.ic_check,
-                MaterialTheme.colorScheme.tertiary,
-            )
+            MarkedLine(stringResource(R.string.plan_written_above_minimum, points), muted, R.drawable.ic_check)
         }
 
         WrittenPartPoints.Standing.BELOW -> {
             val error = MaterialTheme.colorScheme.error
-            StandingLine(stringResource(R.string.plan_written_likely_below, points), error, R.drawable.ic_close, error)
+            MarkedLine(stringResource(R.string.plan_written_likely_below, points), error, R.drawable.ic_close)
         }
 
         WrittenPartPoints.Standing.OVERLAPS -> {
             val warning = MaterialTheme.zoonk.warningText
-            StandingLine(stringResource(R.string.plan_written_close_to_minimum, points), warning, R.drawable.ic_warning, warning)
+            MarkedLine(stringResource(R.string.plan_written_close_to_minimum, points), warning, R.drawable.ic_warning)
         }
 
         WrittenPartPoints.Standing.UNMEASURED -> {
-            StandingLine(stringResource(R.string.plan_written_cant_say, points), muted)
+            MarkedLine(stringResource(R.string.plan_written_cant_say, points), muted)
         }
 
         WrittenPartPoints.Standing.UNKNOWN_DEFAULT_OPEN_API, null -> {}
     }
 }
 
+/**
+ * A row's small line led by a mark in the line's own color, the mark as tall as the line, so every row in a list starts
+ * its words at one edge and a verdict reads in words and shape, not only in color.
+ */
 @Composable
-private fun StandingLine(
+fun MarkedLine(
     text: String,
     color: Color,
     @DrawableRes icon: Int? = null,
-    tint: Color = color,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        icon?.let { Icon(painterResource(it), null, Modifier.size(14.dp), tint = tint) }
-        Text(text, color = color, style = MaterialTheme.typography.bodySmall)
+    val style = MaterialTheme.typography.bodySmall
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+        icon?.let {
+            Icon(painterResource(it), null, Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }), tint = color)
+        }
+        Text(text, color = color, style = style)
     }
 }
 
