@@ -21,6 +21,7 @@ type Finished = Extract<PlacementFinishOutcome, { status: "finished" }>;
 /**
  * Where the test starts the learner. `course` draws the course's line and is null when the result
  * exists before the plan does; `changeId` is null when nothing was skipped, so there is no Undo.
+ * `saved`: a past test's result opened from the Plan, whose main action only goes back.
  */
 export type PlacementResultPhase = Pick<PlacementResult, "chapter" | "course" | "nextLesson"> & {
   attemptId: string;
@@ -28,6 +29,7 @@ export type PlacementResultPhase = Pick<PlacementResult, "chapter" | "course" | 
   heldUntilTomorrow: boolean;
   kind: "result";
   lessonsSkipped: number;
+  saved?: true;
 };
 
 export type PlacementTestPhase =
@@ -112,11 +114,46 @@ function toUnopenedPhase({
     : { kind: "unavailable" };
 }
 
+function toClosedPhase({
+  asked,
+  attemptId,
+  canStart,
+  outcome,
+  result,
+  surface,
+}: {
+  asked: boolean;
+  attemptId: string | undefined;
+  canStart: boolean;
+  outcome: Exclude<PlacementOutcome, { status: "failed" }>;
+  result: PlacementResult | null;
+  surface: "onboarding" | "plan";
+}): PlacementTestPhase {
+  if (!result) {
+    return toUnopenedPhase({ asked, canStart, outcome });
+  }
+
+  const shown = toResultPhase({
+    changeId: result.changeId,
+    heldUntilTomorrow: result.heldUntilTomorrow === true,
+    result,
+  });
+
+  if (surface === "onboarding" || result.attemptId === attemptId) {
+    return shown;
+  }
+
+  const nothingToStart = !asked && !canStart;
+
+  return nothingToStart ? { ...shown, saved: true } : toUnopenedPhase({ asked, canStart, outcome });
+}
+
 /**
  * `asked`: the learner already chose the test, so it's waited for instead of offered again.
  * `attemptId`: the test the learner was in. A read that finds it closed, such as after another
- * device stopped it, shows its result on the Plan too, where a past result is otherwise not shown.
- * `canStart`: false when the course has nothing a test could skip, so the Plan offers no start.
+ * device stopped it, shows its result on the Plan too.
+ * `canStart`: false when the course has nothing a test could skip. The Plan then offers no start
+ * and opens the last test's result instead, when one was taken.
  */
 export function toPlacementTestPhase({
   asked = false,
@@ -139,13 +176,7 @@ export function toPlacementTestPhase({
   const result = ("result" in outcome && outcome.result) || null;
 
   if (!attempt) {
-    return result && (surface === "onboarding" || result.attemptId === attemptId)
-      ? toResultPhase({
-          changeId: result.changeId,
-          heldUntilTomorrow: result.heldUntilTomorrow === true,
-          result,
-        })
-      : toUnopenedPhase({ asked, canStart, outcome });
+    return toClosedPhase({ asked, attemptId, canStart, outcome, result, surface });
   }
 
   if (outcome.status === "generationFailed") {

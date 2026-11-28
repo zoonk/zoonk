@@ -119,6 +119,7 @@ function PlacementOpenTest({
             test.onOpenLesson(lessonId, onStartLesson);
           }}
           onboarding={onboarding}
+          pending={test.isPending}
           pressed={pressed}
           result={phase}
           undo={{ changeId: phase.changeId, onUndo: actions.undo }}

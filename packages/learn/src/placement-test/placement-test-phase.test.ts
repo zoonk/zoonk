@@ -107,11 +107,21 @@ describe(toPlacementTestPhase, () => {
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual(RESULT_PHASE);
   });
 
-  it("offers no start from the Plan when the course has no test to start", () => {
+  it("opens the saved result from the Plan when a test was taken and none is left to start", () => {
     expect(
       toPlacementTestPhase({
         canStart: false,
         outcome: { attempt: null, result: RESULT, status: "unavailable" },
+        surface: "plan",
+      }),
+    ).toStrictEqual({ ...RESULT_PHASE, saved: true });
+  });
+
+  it("offers no start from the Plan when the course has no test to start and none was taken", () => {
+    expect(
+      toPlacementTestPhase({
+        canStart: false,
+        outcome: { attempt: null, result: null, status: "unavailable" },
         surface: "plan",
       }),
     ).toStrictEqual({ kind: "unavailable" });
