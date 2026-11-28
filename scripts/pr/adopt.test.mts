@@ -6,21 +6,24 @@ import { z } from "zod";
 import { adoptRenders } from "./adopt.mts";
 import { CLEAN, checkFixture, kinds, sha256 } from "./check-fixture.mts";
 import { checkPictures } from "./check.mts";
-import { type Side, readManifest, readOf, writeManifest } from "./media.mts";
+import { type Side, isRecorded, readManifest, readOf, writeManifest } from "./media.mts";
 
 const fixture = checkFixture();
 
-/**
- * A real render's layout file (`PlanScreenshots.phone`, or `OnboardingScreenshots.phone`'s
- * connection lost, with `-Pzoonk.shots`), its picture stood in by a few bytes whose hash it
- * records, built from `commit` with `uncommitted` changes or none.
- */
 function render(
-  build: { commit?: string; uncommitted: string },
-  { bytes = "picture", name = "plan-phone" }: { bytes?: string; name?: string } = {},
+  build: Record<string, unknown>,
+  { apple = false, bytes = "picture", name = "plan-phone" } = {},
 ) {
   const folder = mkdtempSync(join(fixture.repository, "render-"));
-  const text = readFileSync(join(import.meta.dirname, `fixtures/android-${name}.json`), "utf8");
+
+  const text = readFileSync(
+    join(
+      import.meta.dirname,
+      apple ? "../verify/fixtures/apple-platform-limits.json" : `fixtures/android-${name}.json`,
+    ),
+    "utf8",
+  );
+
   const capture = z.record(z.string(), z.unknown()).parse(JSON.parse(text));
 
   writeFileSync(join(folder, `${name}.png`), bytes);
@@ -31,7 +34,11 @@ function render(
     sha256: sha256("picture"),
   };
 
-  writeFileSync(join(folder, `${name}.json`), JSON.stringify({ ...capture, picture }));
+  writeFileSync(
+    join(folder, `${name}.json`),
+    JSON.stringify({ ...capture, ...(apple && { build: picture.build }), picture }),
+  );
+
   return join(folder, `${name}.json`);
 }
 
@@ -157,5 +164,48 @@ describe("pr:media adopt, an Android render into a capture folder", () => {
     );
 
     assert.deepEqual(before.result.problems, []);
+  });
+});
+
+describe("Apple layout captures", () => {
+  it("adopts the measured picture with its Apple build and layout", async () => {
+    const build = { changesDigest: "", commit: fixture.current, dirty: false };
+    const { result, to } = await adoptAndCheck([render(build, { apple: true })]);
+    const [item] = (await readManifest(to)) ?? [];
+    assert.ok(item && isRecorded(item));
+    assert.equal(item.platform, "apple");
+    assert.deepEqual(item.build, build);
+    assert.equal(result.notMeasured, 0);
+    assert.ok(!kinds(result).includes("uncommitted"));
+  });
+
+  it("fails the picture gate for a dirty Apple build", async () => {
+    const { result } = await adoptAndCheck([
+      render({ changesDigest: sha256("edit"), dirty: true }, { apple: true }),
+    ]);
+
+    assert.ok(kinds(result).includes("uncommitted"));
+  });
+
+  it("refuses a clean picture stamp paired with a dirty Apple layout stamp", async () => {
+    const path = render({ changesDigest: "", dirty: false }, { apple: true });
+    const capture = z.record(z.string(), z.unknown()).parse(JSON.parse(readFileSync(path, "utf8")));
+
+    writeFileSync(
+      path,
+      JSON.stringify({
+        ...capture,
+        build: { changesDigest: sha256("edit"), commit: fixture.current, dirty: true },
+      }),
+    );
+
+    await assert.rejects(adoptAndCheck([path]), /conflicting apple build stamp/u);
+  });
+
+  it("refuses an Apple capture with only an Android build stamp", async () => {
+    await assert.rejects(
+      adoptAndCheck([render({ uncommitted: "clean" }, { apple: true })]),
+      /build stamp/u,
+    );
   });
 });

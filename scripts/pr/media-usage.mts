@@ -63,10 +63,10 @@ Checks the pictures a PR body shows and the after captures collected for the PR.
            three to a table, each with what it shows and what was verified. Paste it as it is.
   before   records existing before pictures and where they came from; they pass, since a before
            picture's build isn't checked. --to is tmp/pr-media/registered by default for both.
-  adopt    puts Android renders into a capture folder as the check reads them: each picture
-           beside its <name>.json (a JVM render with -Pzoonk.shots), its record in capture.json
+  adopt    puts measured Apple or Android renders into a capture folder as the check reads them: each picture
+           beside its <name>.json from its native layout capture, its record in capture.json
            with the build it came from, and its layout in alignment.json. --to is
-           tmp/pr-media/android/<side> by default.
+           tmp/pr-media/<platform>/<side> by default.
 
 <dir> is tmp/pr-media by default, where pnpm pr:capture writes. After read or resolve there, the
 before-and-after section is written again once the check passes.`;
