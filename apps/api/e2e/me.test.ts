@@ -30,11 +30,6 @@ async function expectApiError({
   expect(body.error.code).toBe(code);
 }
 
-/** A native client's requests: a bearer token and no cookies kept from earlier responses. */
-function newBearerContext({ baseURL, token }: { baseURL: string; token: string }) {
-  return request.newContext({ baseURL, extraHTTPHeaders: { Authorization: `Bearer ${token}` } });
-}
-
 async function createBearerApiContext({
   baseURL,
   uniqueId,
@@ -87,7 +82,10 @@ async function createBearerApiContext({
     throw new Error("Sign-in response did not include a session token.");
   }
 
-  const apiContext = await newBearerContext({ baseURL, token });
+  const apiContext = await request.newContext({
+    baseURL,
+    extraHTTPHeaders: { Authorization: `Bearer ${token}` },
+  });
 
   return { apiContext, email, name, token, userId: user.id, username };
 }
@@ -163,7 +161,7 @@ test.describe("Current User API", () => {
     const uniqueId = randomUUID().slice(0, 8);
     const takenUsername = `taken_me_${uniqueId}`;
 
-    const [{ apiContext, email, name, token, userId, username }, taken] = await Promise.all([
+    const [{ apiContext, email, name, userId, username }, taken] = await Promise.all([
       createBearerApiContext({ baseURL, uniqueId }),
       userFixture(),
     ]);
@@ -173,17 +171,13 @@ test.describe("Current User API", () => {
       prisma.user.update({ data: { username: takenUsername }, where: { id: taken.id } }),
     ]);
 
-    // The taken username's refusal sets Better Auth's session cache cookie, which a native client
-    // never sends back, so the refusals come from a request context of their own.
-    const refusalContext = await newBearerContext({ baseURL, token });
-
     const [conflict, ...invalid] = await Promise.all([
-      refusalContext.patch("/v1/me", { data: { username: takenUsername } }),
-      refusalContext.patch("/v1/me", { data: {} }),
-      refusalContext.patch("/v1/me", { data: { role: "admin" } }),
-      refusalContext.patch("/v1/me", { data: { name: "a".repeat(NAME_MAX_LENGTH + 1) } }),
+      apiContext.patch("/v1/me", { data: { username: takenUsername } }),
+      apiContext.patch("/v1/me", { data: {} }),
+      apiContext.patch("/v1/me", { data: { role: "admin" } }),
+      apiContext.patch("/v1/me", { data: { name: "a".repeat(NAME_MAX_LENGTH + 1) } }),
       ...["", "ab", "a".repeat(31), "invalid-name"].map((invalidUsername) =>
-        refusalContext.patch("/v1/me", { data: { username: invalidUsername } }),
+        apiContext.patch("/v1/me", { data: { username: invalidUsername } }),
       ),
     ]);
 
@@ -194,7 +188,9 @@ test.describe("Current User API", () => {
       ),
     ]);
 
-    await refusalContext.dispose();
+    // The taken username's refusal sets Better Auth's session cache cookie, which a native client
+    // never sends back (its requests keep no cookies).
+    await apiContext.clearCookies();
 
     await expect(prisma.user.findUniqueOrThrow({ where: { id: userId } })).resolves.toMatchObject({
       name,
@@ -314,14 +310,12 @@ test.describe("Current User API", () => {
       prisma.user.update({ data: { emailVerified: true }, where: { id: userId } }),
     ]);
 
-    // The refusal sets Better Auth's session cache cookie, which a native client never sends back
-    // (its requests keep no cookies), so it comes from a request context of its own.
-    const staleContext = await newBearerContext({ baseURL, token });
-
-    const stale = await staleContext.delete("/v1/me", { data: {} });
+    const stale = await apiContext.delete("/v1/me", { data: {} });
 
     await expectApiError({ code: "FORBIDDEN", response: stale, status: 403 });
-    await staleContext.dispose();
+    // The refusal sets Better Auth's session cache cookie, which a native client never sends back
+    // (its requests keep no cookies).
+    await apiContext.clearCookies();
     await expect(prisma.user.findUnique({ where: { id: userId } })).resolves.not.toBeNull();
 
     const otpResponse = await apiContext.post("/v1/email-sign-in-codes", { data: { email } });
