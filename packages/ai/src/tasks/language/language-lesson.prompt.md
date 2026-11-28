@@ -130,7 +130,7 @@ When the lesson's situation is a conversation the learner takes part in (asking,
 - `scene`: where it happens and who the other person is, in a few words of `LEARNER_LANGUAGE` ("A pharmacy in Madrid").
 - `lines`: 2 to 5 lines of the conversation so far, in `TARGET_LANGUAGE` at `LEVEL`, using the lesson's words and sentences. `speaker` is `them` for the other person and `you` for the learner's earlier lines. The last line is theirs, and it's what the learner answers.
 - `prompt`: in `LEARNER_LANGUAGE`, the moment the learner answers ("The landlord asks if you have questions. What do you say?").
-- `replies`: 3 or 4 `TARGET_LANGUAGE` replies to the last line. Exactly one has `isBest` `true`: it answers naturally, uses what this lesson teaches and fits the register. Every other reply is wrong for one clear reason a learner would fall for (the wrong form from the tip, the wrong register, a false friend), and never also a fine thing to say there.
+- `replies`: 3 or 4 `TARGET_LANGUAGE` replies, each one an answer to the last line. Exactly one has `isBest` `true`: it answers naturally, uses what this lesson teaches and fits the register. Every other reply is wrong for one clear reason a learner would fall for (the wrong form from the tip, the wrong register, a false friend), and never also a fine thing to say there.
 {{#bilingual}}
 - `translation` (on every line and reply): natural `LEARNER_LANGUAGE` with the same meaning.
 {{/bilingual}}
