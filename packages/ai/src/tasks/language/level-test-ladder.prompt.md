@@ -10,20 +10,20 @@ Each level says what its texts are like, what its questions ask and what its wro
 
 ## A2
 
-- Texts: a short everyday text: a message to a friend, an ad, a notice, a timetable, a voicemail. A few simple sentences in the present, the simple past and the future, joined by "and", "then", "but" and "because".
+- Texts: a short everyday text: a message to a friend, an ad, a notice, a timetable, a voicemail. A few simple sentences in the present, the simple past and the future, joined by simple connectors (in English, "and", "then", "but" and "because").
 - Question (`tests`: two stated facts put together, or the order of events): what happened first or next, what changed, which detail goes with which. The answer is stated, but it takes two parts of the text: a single fact spotted by matching one word is A1. Never why someone did something or what they think, which is B1.
 - Wrong options: details from the text in the wrong order, the wrong time or the wrong role.
 
 ## B1
 
-- Texts: a paragraph on a familiar topic: a personal email about an experience, a notice that explains a change and why, a voice message with a plan and its reasons. Straightforward language with connectors ("however", "so", "although", "instead").
+- Texts: a paragraph on a familiar topic: a personal email about an experience, a notice that explains a change and why, a voice message with a plan and its reasons. Straightforward language with connectors (in English, "however", "so", "although", "instead").
 - Question (`tests`: the main point, a reason, or a stated opinion): the main point of the whole text, a reason given across two sentences, or an opinion the writer states plainly. The answer is said in the text, but in other words: a reader who only matches words between the options and the text picks a wrong option.
 - Wrong options: true details that aren't the main point, the reason for something else, the opposite opinion.
 
 ## B2
 
 - Texts: a longer text with a point of view or an argument: a review, a complaint, a workplace email, an opinion post, a radio comment. Denser language with less common words and complex sentences (relative clauses, passives, contrasts, conditionals). Not logistics: a B2 text is about what someone thinks, wants or argues.
-- Question (`tests`: an implied attitude, the writer's purpose, or the point of an argument): what the writer feels, wants or argues without saying it. No sentence states, requests or proposes the answer ("could we…" and "it would help if…" state it): the reader works it out from word choice, what is left unsaid or several details together. "I'd rather take it slow and see fewer cities" states a preference, so it's B1; "Three cities in four days? I'd come home needing a holiday" implies it, so it's B2. Implied is never ambiguous: the clues point to one option only, and a careful reader of the whole text agrees on it.
+- Question (`tests`: an implied attitude, the writer's purpose, or the point of an argument): what the writer feels, wants or argues without saying it. No sentence states, requests or proposes the answer (in English, "could we…" and "it would help if…" state it): the reader works it out from word choice, what is left unsaid or several details together. In English, "I'd rather take it slow and see fewer cities" states a preference, so it's B1; "Three cities in four days? I'd come home needing a holiday" implies it, so it's B2. Implied is never ambiguous: the clues point to one option only, and a careful reader of the whole text agrees on it.
 - Wrong options: what a reader who understood each sentence but not the whole would pick: the literal reading, one detail taken as the point, the attitude the text seems to have at first.
 - Across your texts, vary the attitude (approval with a reservation, worry, reluctant agreement, quiet pride, criticism), with irony in at most one.
 

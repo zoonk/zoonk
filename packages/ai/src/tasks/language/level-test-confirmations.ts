@@ -8,7 +8,7 @@ import {
   CONFIRMATION_SITUATIONS,
   type LevelTestLanguages,
   QUESTION_TESTS,
-  formatLevelTestLanguages,
+  formatLevelTestPlace,
   formatWords,
   hashText,
   withLevelTestRules,
@@ -31,8 +31,6 @@ const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 
 /** At five options, a blind guess at a select-all answer passes about 1 time in 32. */
 const MIN_OPTIONS = 5;
-
-const systemPrompt = withLevelTestRules(template);
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what the options test comes first, then the text, its question, the misreading one level below, and the options. */
 function createConfirmationsSchema(level: TestLevel) {
@@ -113,8 +111,12 @@ function toConfirmation({
 function buildUserPrompt({
   level,
   previousPassages,
-  ...languages
-}: LevelTestLanguages & { level: TestLevel; previousPassages?: readonly string[] }): string {
+  targetLanguage,
+}: {
+  level: TestLevel;
+  previousPassages?: readonly string[];
+  targetLanguage: string;
+}): string {
   const words = LEVEL_TEST_PASSAGE_WORDS[level];
 
   const situations = LEVEL_TEST_SKILLS.flatMap((skill) =>
@@ -128,7 +130,7 @@ function buildUserPrompt({
     : "";
 
   return `
-${formatLevelTestLanguages(languages)}
+${formatLevelTestPlace(targetLanguage)}
 LEVEL: ${level}
 READING_WORDS: ${formatWords(words.reading)}
 LISTENING_WORDS: ${formatWords(words.listening)}
@@ -140,6 +142,7 @@ ${situations.join("\n")}${previous}
 /** The "select all that apply" questions that confirm a level before its lessons are skipped. */
 export async function generateLevelTestConfirmations(params: GenerateLevelTestConfirmationsParams) {
   const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = withLevelTestRules({ ...params, template });
   const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({

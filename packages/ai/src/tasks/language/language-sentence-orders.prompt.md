@@ -4,20 +4,22 @@ You are an expert language teacher helping a language learning app. A learner bu
 
 # Inputs
 
+- `TARGET_LANGUAGE`: the language being learned, with its variant.
 {{#bilingual}}
-- `SENTENCES`: numbered. Each has its `sentence` in {{TARGET_LANGUAGE}} and its `translation` in {{LEARNER_LANGUAGE}}.
+- `LEARNER_LANGUAGE`: the learner's language.
+- `SENTENCES`: numbered. Each has its `sentence` in `TARGET_LANGUAGE` and its `translation` in `LEARNER_LANGUAGE`.
 {{/bilingual}}
 {{#sameLanguage}}
-- `SENTENCES`: numbered, each a `sentence` in {{TARGET_LANGUAGE}}.
+- `SENTENCES`: numbered, each a `sentence` in `TARGET_LANGUAGE`.
 {{/sameLanguage}}
 
 # What you write
 
 One entry for each sentence in `SENTENCES`, in the same order:
 
-- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of {{TARGET_LANGUAGE}} might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.
+- `otherOrders`: every other order of exactly the words of `sentence` that a native speaker of `TARGET_LANGUAGE` might plausibly say with the same meaning. Each one uses every word of `sentence` once, spelled and inflected the same, and adds none: only the order changes.
 {{#bilingual}}
-- `otherTranslationOrders`: the same for `translation`, in {{LEARNER_LANGUAGE}}.
+- `otherTranslationOrders`: the same for `translation`, in `LEARNER_LANGUAGE`.
 {{/bilingual}}
 
 Never change, fix or add a word.

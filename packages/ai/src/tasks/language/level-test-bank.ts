@@ -13,7 +13,7 @@ import {
   type LevelTestLanguages,
   QUESTION_SITUATIONS,
   QUESTION_TESTS,
-  formatLevelTestLanguages,
+  formatLevelTestPlace,
   formatWords,
   hashText,
   withLevelTestRules,
@@ -50,8 +50,6 @@ const fallbackModels = [
 /** The test's scoring counts on a one-in-four guess, so every question shows four options. */
 const WRONG_OPTIONS = 3;
 const OPTIONS_PER_QUESTION = WRONG_OPTIONS + 1;
-
-const systemPrompt = withLevelTestRules(template);
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what the question tests comes first, then the text, its question, the evidence for the answer, how a learner one level below would misread it, and the right option before the wrong ones. */
 function createQuestionsSchema(level: TestLevel) {
@@ -119,14 +117,15 @@ function buildQuestionsPrompt({
   level,
   situations,
   skill,
-  ...languages
-}: LevelTestLanguages & {
+  targetLanguage,
+}: {
   level: TestLevel;
   situations: readonly string[];
   skill: LevelTestSkill;
+  targetLanguage: string;
 }): string {
   return `
-${formatLevelTestLanguages(languages)}
+${formatLevelTestPlace(targetLanguage)}
 LEVEL: ${level}
 SKILL: ${skill}
 WORDS: ${formatWords(LEVEL_TEST_PASSAGE_WORDS[level][skill])}
@@ -144,6 +143,7 @@ async function writeQuestions({
 }) {
   const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
   const situations = QUESTION_SITUATIONS[level][skill].slice(offset, offset + count);
+  const systemPrompt = withLevelTestRules({ ...params, template });
   const userPrompt = buildQuestionsPrompt({ ...params, situations, skill });
 
   const providerOptions = buildProviderOptions({
@@ -208,7 +208,7 @@ export async function generateLevelTestBank({
   return {
     data: { questions: parts.flatMap((part) => part.data.questions) },
     provenance: combineTaskProvenance(parts.map((part) => part.provenance)),
-    systemPrompt,
+    systemPrompt: withLevelTestRules({ ...params, template }),
     usage: sumLanguageModelUsage(parts.map((part) => part.usage)),
     userPrompt: parts.map((part) => part.userPrompt).join("\n"),
   };
