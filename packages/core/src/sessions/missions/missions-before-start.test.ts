@@ -1,4 +1,5 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
+import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
 import { prisma } from "@zoonk/db";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -100,6 +101,11 @@ async function dueWordFixture(userId: string) {
       words: [{ heard: null, issue: null, status: "correct", text: word.word }],
     },
   } as Awaited<ReturnType<typeof assessPronunciation>>);
+
+  // Answers run concurrently, so every transcription hears speech and the verdicts above decide.
+  vi.mocked(transcribeSpeech).mockResolvedValue({ data: { text: "rent" } } as Awaited<
+    ReturnType<typeof transcribeSpeech>
+  >);
 
   return pronunciationReviewFixture({ userId, wordId: word.id });
 }

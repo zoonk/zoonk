@@ -1,5 +1,6 @@
+import { type PlanGraphSkill } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
-import { type Worth, isCutCore, rankShortAreas } from "./rank-cores";
+import { type Worth, isCutCore, rankDomainLessons, rankShortAreas } from "./rank-cores";
 
 function sumMissingCores(dropped: readonly QueueUnit[]): Map<string, number> {
   return dropped
@@ -83,11 +84,13 @@ function listYieldingCarried({
 
 export function scheduleCoresFirst<TSchedule extends { dropped: readonly QueueUnit[] }>({
   carried = [],
+  domains,
   schedulePending,
   units,
   worth,
 }: {
   carried?: readonly QueueUnit[];
+  domains?: ReadonlyMap<string, NonNullable<PlanGraphSkill["domain"]>>;
   schedulePending: (units: readonly QueueUnit[]) => TSchedule;
   units: readonly QueueUnit[];
   worth: Worth | null;
@@ -101,8 +104,19 @@ export function scheduleCoresFirst<TSchedule extends { dropped: readonly QueueUn
   const missing = sumMissingCores(first.dropped);
   const reordered = putLeastWorthCoresLast({ missing, units, worth });
 
+  const shortAreas = new Set(
+    domains?.size
+      ? first.dropped.filter((unit) => domains.has(unit.skillId ?? "")).map((unit) => unit.area)
+      : [],
+  );
+
+  const balanced =
+    domains && shortAreas.size > 0
+      ? rankDomainLessons({ areas: shortAreas, domains, units: reordered ?? units })
+      : reordered;
+
   return {
-    ...(reordered ? schedulePending(reordered) : first),
+    ...(balanced ? schedulePending(balanced) : first),
     yielded: listYieldingCarried({ carried, missing, units, worth }),
   };
 }

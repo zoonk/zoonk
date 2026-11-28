@@ -1,6 +1,9 @@
+import { prisma } from "@zoonk/db";
+import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { describe, expect, it } from "vitest";
+import { chooseExamOptionSkills } from "../_utils/exam-option-skills";
 import { addSharedOptionSkills, joinOptionSkills, setAsideOptionSkills } from "./option-skills";
-import { type PlanGraph } from "./plan-state";
+import { type PlanGraph, parsePlanGraph } from "./plan-state";
 
 const ENGLISH = "Lengua Extranjera: inglés";
 const FRENCH = "Lengua Extranjera: francés";
@@ -92,5 +95,68 @@ describe(addSharedOptionSkills, () => {
 
     expect(ids(graph)).toStrictEqual(["reading", "fr-1", "history", "essay"]);
     expect(graph.skills.find((item) => item.skillId === "fr-1")?.phase).toBe(0);
+  });
+});
+
+describe(chooseExamOptionSkills, () => {
+  it("keeps the picked option's reading and writing when switching or rebuilding", async () => {
+    const french = "French";
+    const spanish = "Spanish";
+    const group = "Foreign language";
+    const reading = "Read public notices";
+    const common = { ...skill("common-writing", "Writing"), outcome: true };
+
+    const blueprint = await examBlueprintFixture({
+      structure: {
+        formats: [],
+        mock: null,
+        rules: [],
+        subjects: [french, spanish].map((name) => ({
+          choiceGroup: group,
+          citation: { passage: "Choose French or Spanish", sourceId: "notice" },
+          name,
+          questions: null,
+          topics: name === french ? [reading] : [],
+          weight: null,
+        })),
+      },
+    });
+
+    const full: PlanGraph = {
+      phases: GRAPH.phases,
+      skills: [
+        { ...skill("french-reading", french), topics: [reading] },
+        { ...skill("french-writing", "Writing"), outcome: true, subject: french },
+        { ...skill("spanish-writing", "Writing"), outcome: true, subject: spanish },
+        common,
+      ],
+    };
+
+    const pick = (graph: PlanGraph, subject: string) =>
+      chooseExamOptionSkills({
+        goal: { examBlueprintId: blueprint.id, kind: "exam" },
+        graph: parsePlanGraph(graph),
+        picks: { examChoices: [{ group, subjects: [subject] }], examSubjects: [] },
+      });
+
+    const pickedSpanish = await pick(full, spanish);
+    expect(ids(pickedSpanish)).toStrictEqual(["spanish-writing", "common-writing"]);
+
+    const pickedFrench = await pick(pickedSpanish, french);
+    expect(ids(pickedFrench)).toStrictEqual(["french-reading", "french-writing", "common-writing"]);
+
+    await prisma.examSkillGraph.create({
+      data: {
+        examBlueprintId: blueprint.id,
+        generatedAt: new Date(),
+        graph: full,
+        model: "test",
+        promptVersion: "test",
+        runId: crypto.randomUUID(),
+      },
+    });
+
+    const rebuilt = await pick({ ...full, skills: [common] }, french);
+    expect(ids(rebuilt)).toStrictEqual(ids(pickedFrench));
   });
 });

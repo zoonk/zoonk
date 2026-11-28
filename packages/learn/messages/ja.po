@@ -9410,6 +9410,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "レッスンで使う例や通貨、単位を国に合わせます。"
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr "どの国の試験ですか？"
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "どの国に合わせたレッスンにしますか？"
@@ -9454,6 +9459,16 @@ msgstr "試験日は{date}と{second}です"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {目標日が今日のため、計画に組み込める日が残っていません。} other {目標日の{date}はすでに過ぎています。}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr "まだ申し込んでいない"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr "試験日はいつですか？"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -9985,11 +10000,6 @@ msgstr "この試験は年に数回実施されます。受験日を選ぶまで
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "受験日を選ぶ"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "この試験は予約時に受験日を選びます。もう予約しましたか？ここで設定できます。"
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts

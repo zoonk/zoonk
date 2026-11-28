@@ -485,6 +485,31 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(GuessScale.compare(guess: 11, actual: 11.57, isCorrect: true), .close)
   }
 
+  /// Main's dialogue keeps every reply once checked, so each one says why it fits or doesn't.
+  @MainActor
+  func testCheckedDialogueKeepsEveryReplyAndItsWhy() async throws {
+    try await readsWhatVoiceOverReads()
+    let dialogue = try content(
+      #"{"template":"dialogueSimulator","prompt":"Reply.","check":{"kind":"interaction","explanation":"x"},"fields":{"language":"es","lines":[{"speaker":"them","text":"Hola","translation":"Hi"}],"replies":[{"id":"polite","isBest":true,"text":"Buenos días","translation":"Good morning","why":"Polite."},{"id":"blunt","isBest":false,"text":"Dame","translation":"Give me","why":"Rude."},{"id":"stiff","isBest":false,"text":"Saludos","translation":"Greetings","why":"Too formal."}],"scene":"A pharmacy."}}"#
+    )
+    let window = try show(
+      ActivityRenderer.dialogueSimulator.canvas(
+        ActivityCanvasContext(
+          template: dialogue.template, payload: dialogue.payload, check: nil,
+          phase: .checked(isCorrect: false), answer: .selection(["blunt"]), setAnswer: { _ in },
+          complete: { _ in })
+      )
+      .zoonkStyles())
+
+    try await waitForTestCondition("The checked dialogue never drew") {
+      self.spoken(in: window).contains { $0.contains("Rude.") }
+    }
+    let said = spoken(in: window).joined(separator: "\n")
+    for why in ["Polite.", "Rude.", "Too formal."] {
+      XCTAssertTrue(said.contains(why), "\(why) is missing from \(said)")
+    }
+  }
+
   private func content(_ json: String) throws -> ActivityStepContent {
     try JSONDecoder().decode(ActivityStepContent.self, from: Data(json.utf8))
   }

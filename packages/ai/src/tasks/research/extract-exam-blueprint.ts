@@ -192,6 +192,7 @@ export type ReadingCorrection =
   | { document: number; kind: "missingSubject"; name: string; passage: string }
   | { document: number; kind: "missingCount"; passage: string; questions: number; subject: string }
   | { kind: "countsOffTotal"; sum: number; total: number }
+  | { kind: "wholeExamSubjects"; subjects: string[]; total: number }
   | { kind: "unconfirmed"; part: "examDate" | "scale" | "topics"; subject: string | null };
 
 export type ExtractExamBlueprintParams = {
@@ -265,6 +266,13 @@ function describeUnconfirmed(
     : "- The exam's day: its passage doesn't state everything its date says. Give it the passage that states the day, and a `label` in that passage's words.";
 }
 
+function describeWholeExamSubjects(
+  correction: Extract<ReadingCorrection, { kind: "wholeExamSubjects" }>,
+): string {
+  const names = correction.subjects.map((name) => `"${name}"`).join(", ");
+  return `- ${names} each have all ${correction.total} of the exam's questions, so no candidate sits them all. When the documents say candidates take one of them, each is a whole version of the exam: give them one \`choiceGroup\`, the documents' name for the choice, and quote in each one's \`passages\` the line that says candidates take one. When they don't, read each one's questions again.`;
+}
+
 function describeCorrection(correction: ReadingCorrection): string {
   if (correction.kind === "missingSubject") {
     return `- The subject "${correction.name}", named in document ${correction.document}: "${correction.passage}"`;
@@ -276,6 +284,10 @@ function describeCorrection(correction: ReadingCorrection): string {
 
   if (correction.kind === "unconfirmed") {
     return describeUnconfirmed(correction);
+  }
+
+  if (correction.kind === "wholeExamSubjects") {
+    return describeWholeExamSubjects(correction);
   }
 
   return `- The subjects' questions add up to ${correction.sum}, but the exam has ${correction.total}.`;

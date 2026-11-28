@@ -47,6 +47,12 @@ export const examChoiceViewSchema = z
           "What the plan and mocks leave out while nothing is picked: `name` is the test the options make up (a specialty's own test), or the choice itself. `points` and `questions` are what the options a candidate takes are worth and how many questions they have; `examPoints` and `examQuestions` the whole exam's with them. Each is null when the notice doesn't say",
       }),
     options: z.array(z.object({ name: z.string(), shortName: z.string().nullable() })),
+    required: z
+      .boolean()
+      .meta({
+        description:
+          "True when the options make up the whole exam (each a whole version candidates sit one of), so the plan has nothing to study until one is picked; false when the rest of the exam can be studied while it waits",
+      }),
     subjects: z
       .array(z.string())
       .meta({

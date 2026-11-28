@@ -62,12 +62,15 @@ function ExamDateStep({
 }
 
 export function DateStep({
+  booked,
   dateProblem,
   exam,
   initialDate,
   timeZone,
   ...props
 }: StepProps & {
+  /** An exam the learner books their own day for: not having booked it yet is the other answer. */
+  booked: boolean;
   dateProblem: OnboardingDateProblem | null;
   exam: { days: string[]; estimated: boolean } | null;
   initialDate: string | null;
@@ -105,6 +108,7 @@ export function DateStep({
   return (
     <DateFieldStep
       {...props}
+      booked={booked}
       initialDate={kept}
       noSitting={dateProblem?.kind === "noSitting" ? dateProblem : null}
       passedNote={passedNote}
@@ -116,6 +120,7 @@ export function DateStep({
 const MONTH_LENGTH = "YYYY-MM".length;
 
 function DateFieldStep({
+  booked,
   initialDate,
   noSitting,
   onAnswer,
@@ -123,7 +128,12 @@ function DateFieldStep({
   pending,
   subject,
   today,
-}: DateStepProps & { initialDate: string | null; noSitting: NoSitting | null; today: string }) {
+}: DateStepProps & {
+  booked: boolean;
+  initialDate: string | null;
+  noSitting: NoSitting | null;
+  today: string;
+}) {
   const t = useExtracted();
   const inputId = useId();
   const noteId = useId();
@@ -149,8 +159,9 @@ function DateFieldStep({
       onContinue={() => onAnswer({ question: "targetDate", targetDate: date })}
       onSkip={() => onAnswer({ question: "targetDate", targetDate: null })}
       pending={pending}
+      skipLabel={booked ? t("Not booked yet") : undefined}
       subject={subject}
-      title={t("Is there a date you're aiming for?")}
+      title={booked ? t("When is your exam?") : t("Is there a date you're aiming for?")}
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor={inputId}>{t("Date")}</Label>

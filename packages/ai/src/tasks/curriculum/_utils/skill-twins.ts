@@ -33,7 +33,7 @@ const LINKING_WORDS = new Set([
   "your",
 ]);
 
-type NamedSkill = { area: string; key: string; name: string };
+type NamedSkill = { area: string; key: string; name: string; subject?: string };
 
 function toObjectStems(name: string): Set<string> {
   const [, ...object] = toNameWords(name).filter((word) => !LINKING_WORDS.has(word));
@@ -58,7 +58,12 @@ export function findTwinCandidates<TSkill extends NamedSkill>(
   return skills.flatMap((skill, index) => {
     const siblings = skills
       .slice(0, index)
-      .filter((other) => other.area === skill.area && sharesObject(stemsOf(skill), stemsOf(other)));
+      .filter(
+        (other) =>
+          other.area === skill.area &&
+          other.subject === skill.subject &&
+          sharesObject(stemsOf(skill), stemsOf(other)),
+      );
 
     return siblings.length > 0 ? [{ siblings, skill }] : [];
   });

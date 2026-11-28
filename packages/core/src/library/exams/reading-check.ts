@@ -90,15 +90,37 @@ function toMissingCounts({
   });
 }
 
-function findTotalProblems(content: BlueprintContent): ReadingProblem[] {
+function listObjectiveCounts(structure: BlueprintContent["structure"]): Subject[] {
+  return listCountedSubjects(structure).filter((subject) => !isWrittenOnly({ structure, subject }));
+}
+
+/**
+ * Subjects outside any choice that each hold all the exam's questions, so no candidate can sit
+ * them all: an exam taken in one of several whole versions (a discipline each) read as compulsory
+ * subjects. Code never turns them into a choice, since equal counts prove only the contradiction.
+ */
+export function findWholeExamSubjects(content: BlueprintContent): ReadingProblem | null {
   const { edition, structure } = content;
   const total = structure.mock?.totalQuestions ?? edition.questionCount;
 
-  const objective = listCountedSubjects(structure).filter(
-    (subject) => !isWrittenOnly({ structure, subject }),
+  const whole = listObjectiveCounts(structure).filter(
+    (subject) => !subject.choiceGroup && subject.questions === total,
   );
 
-  const counts = objective.map((subject) => subject.questions);
+  return total !== null && whole.length > 1
+    ? { kind: "wholeExamSubjects", subjects: whole.map((subject) => subject.name), total }
+    : null;
+}
+
+function findTotalProblems(content: BlueprintContent): ReadingProblem[] {
+  const { edition, structure } = content;
+  const total = structure.mock?.totalQuestions ?? edition.questionCount;
+  const counts = listObjectiveCounts(structure).map((subject) => subject.questions);
+  const whole = findWholeExamSubjects(content);
+
+  if (whole) {
+    return [whole];
+  }
 
   if (total === null || counts.length === 0 || counts.includes(null)) {
     return [];
@@ -179,7 +201,11 @@ export function toReadingCorrections({
   documents: readonly Pick<ExtractionDocument, "sourceId">[];
   problem: ReadingProblem;
 }): ReadingCorrection[] {
-  if (problem.kind === "countsOffTotal" || problem.kind === "unconfirmed") {
+  if (
+    problem.kind === "countsOffTotal" ||
+    problem.kind === "unconfirmed" ||
+    problem.kind === "wholeExamSubjects"
+  ) {
     return [problem];
   }
 

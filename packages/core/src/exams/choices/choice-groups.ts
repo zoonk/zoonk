@@ -28,6 +28,21 @@ export function listChoiceGroups<T extends Pick<Subject, "choiceGroup" | "name">
     .filter((group) => group.options.length > group.take);
 }
 
+/** Every subject of the exam is one of the choice's options or part of one, so nothing is left to study without a pick. */
+export function isRequiredChoice({
+  group,
+  structure,
+}: {
+  group: ChoiceGroup<Subject>;
+  structure: ExamStructure;
+}): boolean {
+  const options = new Set(group.options.map((option) => option.name));
+
+  return structure.subjects.every(
+    (subject) => options.has(subject.name) || options.has(subject.partOf ?? ""),
+  );
+}
+
 /** One place per subject of the exam, a choice's taking its first `take` options: what a candidate sits. */
 export function listCountedSubjects<T extends Pick<Subject, "choiceGroup" | "name" | "partOf">>({
   choiceGroups,

@@ -30,6 +30,8 @@ type ExpectedFact =
   | { kind: "subjectGroups"; subject: string; groups: string[] }
   | { kind: "groupedSubjects"; groups: string[] }
   | { kind: "choice"; options: string[]; partOf?: string; take?: number }
+  /** Every candidate sits every subject: no subject is an option of a choice. */
+  | { kind: "noChoice" }
   | { kind: "section"; day?: number; minutes?: number; name?: string; questions?: number }
   | { kind: "listeningParts"; parts: number; plays?: number; questions: number }
   | {
@@ -611,6 +613,8 @@ function isFactFound({ fact, reading }: { fact: ExpectedFact; reading: Reading }
       return hasSubjectGroups({ fact, reading });
     case "choice":
       return hasChoice({ fact, reading });
+    case "noChoice":
+      return reading.subjects.every((subject) => !subject.choiceGroup);
     case "groupedSubjects":
       return hasGroupedSubjects({ fact, reading });
     case "format":

@@ -1,6 +1,6 @@
 import { type ExamResearchPlan } from "@zoonk/ai/tasks/research/plan";
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { getWorkflowMetadata } from "workflow";
+import { createHook, getWorkflowMetadata } from "workflow";
 import { type Run } from "workflow/api";
 import { claimRunToken, joinRun, startOnce } from "../_shared/run-token";
 import { scheduleFreshnessChecksStep } from "../freshness/steps/schedule-freshness-checks-step";
@@ -30,6 +30,42 @@ import { lookUpTargetCutoffStep } from "./steps/target-cutoff-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 import { waitForMaterialReading } from "./wait-for-material-reading";
 
+export function getGoalResearchToken(goalId: string): string {
+  return `research-goal:${goalId}`;
+}
+
+export function getExamCountryToken(goalId: string): string {
+  return `research-country:${goalId}`;
+}
+
+/**
+ * Another country's exam by the same name is another exam, so none is read before the learner says
+ * whose. Their answer owes this research (`researchGoal`), which wakes this wait; the goal is read
+ * again once the wait exists, so an answer saved just before it is never missed.
+ */
+async function waitForExamCountry(goal: ResearchGoal): Promise<ResearchGoal | null> {
+  if (!goal.awaitingCountry) {
+    return goal;
+  }
+
+  using answered = createHook({ token: getExamCountryToken(goal.id) });
+
+  if (await answered.getConflict()) {
+    return null;
+  }
+
+  const current = await loadResearchGoalStep(goal.id);
+
+  if (current && !current.awaitingCountry) {
+    return current;
+  }
+
+  await answered;
+  const latest = await loadResearchGoalStep(goal.id);
+
+  return latest?.awaitingCountry ? null : latest;
+}
+
 export type ResearchInput = {
   goalId: string;
   /** When absent or empty, research reads the material the learner uploaded with the goal. */
@@ -47,7 +83,10 @@ async function finishExam({
   goal: ResearchGoal;
   isShared: boolean;
 }): Promise<ResearchResult> {
-  await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id });
+  // Refused when the notice is another country's than the one the learner gave for their exam.
+  if (!(await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id }))) {
+    return { reason: "noOfficialSource", status: "needsUpload" };
+  }
 
   // The lookups only add to the notice and the plan, so one that fails is left to the next research.
   if (isShared) {
@@ -241,7 +280,8 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
   const { workflowRunId } = getWorkflowMetadata();
 
   await recordResearchRunStep({ goalId: input.goalId, runId: workflowRunId });
-  const goal = await loadResearchGoalStep(input.goalId);
+  const loaded = await loadResearchGoalStep(input.goalId);
+  const goal = loaded && (await waitForExamCountry(loaded));
 
   if (!goal) {
     return { status: "missing" };

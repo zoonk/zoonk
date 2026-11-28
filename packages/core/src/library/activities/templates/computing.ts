@@ -201,7 +201,7 @@ function tracerIssues(fields: CodeTracerFields) {
 export const codeTracerTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Step through code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+    "Step through JavaScript or Python code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
   expected: (fields) => ({
     kind: "assignment",
     pairs: Object.fromEntries(

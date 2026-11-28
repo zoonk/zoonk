@@ -1,5 +1,5 @@
 import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
-import { type NoticeReading, findNoticeReading } from "@zoonk/core/library/exams/save";
+import { type NoticeReading, findNoticeReading } from "@zoonk/core/library/exams/notice-reading";
 
 export async function findNoticeReadingStep({
   identity,

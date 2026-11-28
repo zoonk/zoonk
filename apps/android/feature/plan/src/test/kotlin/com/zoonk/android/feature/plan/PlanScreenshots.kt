@@ -255,6 +255,7 @@ class PlanScreenshots {
                 group = group,
                 leftOut = ExamChoiceLeftOut(examPoints = null, examQuestions = null, name = group, points = null, questions = 24 * take),
                 options = options.map { ExamChoiceOptionsInner(name = it, shortName = null) },
+                required = false,
                 subjects = emptyList(),
                 take = take,
             )
@@ -1335,12 +1336,12 @@ class PlanScreenshots {
 
         const val LANGUAGE_CHOICE =
             """{"group":"Língua estrangeira","leftOut":{"examPoints":null,"examQuestions":180,"name":"Língua estrangeira","points":null,"questions":5},
-             "options":[{"name":"Inglês","shortName":null},{"name":"Espanhol","shortName":null}],"subjects":[],"take":1}"""
+             "options":[{"name":"Inglês","shortName":null},{"name":"Espanhol","shortName":null}],"subjects":[],"take":1,"required":false}"""
 
         const val MODULES_CHOICE =
             """{"group":"Módulos","leftOut":{"examPoints":null,"examQuestions":null,"name":"Módulos","points":null,"questions":48},
              "options":[{"name":"Biología","shortName":null},{"name":"Química","shortName":null},{"name":"Derecho","shortName":null},
-              {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2}"""
+              {"name":"Premedicina","shortName":null}],"subjects":["Biología"],"take":2,"required":false}"""
 
         val EDITOR_CHOICES =
             """

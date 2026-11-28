@@ -360,7 +360,9 @@ private struct TranslationView: View {
     LessonOptionList(
       options: exercise.translationOptions.map {
         LessonOption(
-          id: $0.id, text: $0.word, detail: $0.romanization, isCorrect: $0.id == word.id)
+          id: $0.id, text: $0.word,
+          detail: $0.romanization.map { RichInline(text: AttributedString($0)) },
+          isCorrect: $0.id == word.id)
       },
       selectedId: context.answer.flatMap {
         if case .translation(let id) = $0 { id } else { nil }

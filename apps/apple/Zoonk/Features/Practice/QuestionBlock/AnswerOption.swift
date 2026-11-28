@@ -23,7 +23,7 @@ struct AnswerOption: View {
   var isLocked = false
   var tag: AnyView?
   let text: RichInline
-  var detail: String?
+  var detail: RichInline?
   /// Without one, the answer is shown after the fact: the same look, with nothing to press and no
   /// mark, led by its marker (such as a step's place) in ink once picked, or else by its verdict's.
   let action: (() -> Void)?
@@ -149,7 +149,7 @@ struct TagBesideOrUnder: View {
   @Environment(\.locale) private var locale
 
   let text: RichInline
-  var detail: String?
+  var detail: RichInline?
   var tag: AnyView?
   var hasMarker = false
 
@@ -165,7 +165,7 @@ struct TagBesideOrUnder: View {
         }
 
         if let detail {
-          Text(verbatim: detail)
+          RichInlineText(detail)
             .typeStyle(.note)
             .foregroundStyle(.mutedForeground)
         }
@@ -188,7 +188,7 @@ struct TagBesideOrUnder: View {
         }
 
         if let detail {
-          ForEach(readingUnits(in: AttributedString(detail)), id: \.self) { unit in
+          ForEach(readingUnits(in: detail.text), id: \.self) { unit in
             Text(unit)
               .typeStyle(.note)
               .hidden()

@@ -94,6 +94,7 @@ export const boundaries = {
   "@zoonk/ai/tasks/research/extract-question-formats": { extractQuestionFormats: vi.fn() },
   "@zoonk/ai/tasks/research/find-choice-options": { findChoiceOptions: vi.fn() },
   "@zoonk/ai/tasks/research/find-course-weights": { findCourseWeights: vi.fn() },
+  "@zoonk/ai/tasks/research/find-domain-shares": { findDomainShares: vi.fn() },
   "@zoonk/ai/tasks/research/find-official-sources": { findOfficialSources: vi.fn() },
   "@zoonk/ai/tasks/research/find-product-pages": { findProductPages: vi.fn() },
   "@zoonk/ai/tasks/research/find-subject-questions": { findSubjectQuestions: vi.fn() },

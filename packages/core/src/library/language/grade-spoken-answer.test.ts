@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import { explainSpokenAnswer } from "@zoonk/ai/tasks/language/explain-spoken-answer";
-import { transcribeSpeech } from "@zoonk/ai/tasks/language/transcribe-speech";
+import {
+  NO_SPEECH_CHECK_MODEL,
+  transcribeSpeech,
+} from "@zoonk/ai/tasks/language/transcribe-speech";
 import { prisma } from "@zoonk/db";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -18,6 +21,7 @@ import { runDeferredWork } from "../../_test-utils/deferred-work";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { GUEST_OUT_OF_HELP, useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { gradingTranscriptions } from "../../_test-utils/transcriptions";
 import { trackServerEvent } from "../../analytics/server";
 import * as languageEvidence from "../../language/levels/record-language-evidence";
 import { lessonRunFixture } from "../../lesson-player/_test-utils/lesson-run-fixture";
@@ -56,30 +60,52 @@ const FIELDS = { durationMs: 2400, timeZone: "America/Sao_Paulo" };
 
 /** Unless a test says otherwise, the recording judge hears what the transcript says. */
 function judgeAgreesWithTranscript() {
-  vi.mocked(assessPronunciation).mockImplementation(async ({ expectedText, language }) => {
-    const transcript = await vi.mocked(transcribeSpeech).mock.results.at(-1)?.value;
-    const heard = transcript?.data.text ?? "";
-    const { words } = matchSpokenAnswer({ expected: expectedText, heard, language });
+  vi.mocked(assessPronunciation).mockImplementation(
+    async ({ expectedText, language, transcriberHeard }) => {
+      const heard = transcriberHeard ?? "";
+      const { words } = matchSpokenAnswer({ expected: expectedText, heard, language });
 
-    return {
-      data: { transcript: heard, words: words.map((word) => ({ ...word, issue: null })) },
-    } as Awaited<ReturnType<typeof assessPronunciation>>;
-  });
+      return {
+        data: { transcript: heard, words: words.map((word) => ({ ...word, issue: null })) },
+      } as Awaited<ReturnType<typeof assessPronunciation>>;
+    },
+  );
 }
 
+const queuedTranscripts: string[] = [];
+
+/** What the no-speech check hears; any text means someone spoke. */
+let noSpeechCheckHears: string;
+
 function mockTranscript(text: string) {
-  vi.mocked(transcribeSpeech).mockResolvedValueOnce({
-    data: { text },
-    provenance: {
-      generatedAt: new Date().toISOString(),
-      latencyMs: 1,
-      model: "openai/gpt-transcribe",
-      promptVersion: "test",
-      provider: "openai",
-      requestedModel: "openai/gpt-transcribe",
-      runId: crypto.randomUUID(),
-      usage: {},
-    },
+  queuedTranscripts.push(text);
+}
+
+/** The default transcriber writes the queued transcripts in order; the no-speech check hears speech. */
+function transcribeQueued() {
+  queuedTranscripts.length = 0;
+  noSpeechCheckHears = "mm";
+
+  vi.mocked(transcribeSpeech).mockImplementation(async ({ model }) => {
+    const text = model === NO_SPEECH_CHECK_MODEL ? noSpeechCheckHears : queuedTranscripts.shift();
+
+    if (text === undefined) {
+      throw new Error("No transcript queued");
+    }
+
+    return {
+      data: { text },
+      provenance: {
+        generatedAt: new Date().toISOString(),
+        latencyMs: 1,
+        model: model ?? "openai/gpt-transcribe",
+        promptVersion: "test",
+        provider: "openai",
+        requestedModel: model ?? "openai/gpt-transcribe",
+        runId: crypto.randomUUID(),
+        usage: {},
+      },
+    };
   });
 }
 
@@ -124,6 +150,7 @@ async function createSpokenStep(lesson: Parameters<typeof libraryLessonFixture>[
 describe(gradeSpokenAnswer, () => {
   beforeEach(() => {
     judgeAgreesWithTranscript();
+    transcribeQueued();
 
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
@@ -149,7 +176,7 @@ describe(gradeSpokenAnswer, () => {
     );
 
     await expect(send()).resolves.toStrictEqual(first);
-    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(gradingTranscriptions()).toHaveLength(1);
 
     await expect(
       prisma.attempt.count({ where: { stepId: step.id, userId: user.id } }),
@@ -180,7 +207,7 @@ describe(gradeSpokenAnswer, () => {
     });
 
     expect(failure).toHaveBeenCalledTimes(2);
-    expect(transcribeSpeech).toHaveBeenCalledOnce();
+    expect(gradingTranscriptions()).toHaveLength(1);
   });
 
   it("requires a signed-in learner", async () => {
@@ -376,11 +403,8 @@ describe(gradeSpokenAnswer, () => {
 
     expect(explainSpokenAnswer).not.toHaveBeenCalled();
 
-    expect(transcribeSpeech).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ language: "en" }),
-    );
-
-    expect(vi.mocked(transcribeSpeech).mock.calls[0]?.[0]).not.toHaveProperty("model");
+    expect(gradingTranscriptions()).toStrictEqual([[expect.objectContaining({ language: "en" })]]);
+    expect(gradingTranscriptions()[0]?.[0]?.model).toBeUndefined();
 
     const attempt = await prisma.attempt.findUniqueOrThrow({ where: { id: grade?.attemptId } });
 
@@ -844,6 +868,7 @@ describe(gradeSpokenAnswer, () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);
     mockTranscript("");
+    noSpeechCheckHears = "";
 
     await expect(
       gradeSpokenAnswer({ audio: AUDIO, fields: FIELDS, stepId: step.id }),
