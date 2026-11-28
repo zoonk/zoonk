@@ -129,28 +129,28 @@ struct FinishReadout: View {
   }
 }
 
-/// The month reads first and big, its year small, in the locale's order.
+/// The month big, its year small with its own unit ("2026년"), in the locale's order: one text, so
+/// the gap beside the year is as small as a quantity's before its unit.
 private struct MonthYear: View {
   let isoDate: String
 
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibilityWeight
+
   var body: some View {
-    let parts = PlanDate.date(isoDate).map(PlanDate.monthAndYear) ?? AttributedString(isoDate)
+    Text(shown).typeStyle(.readout)
+  }
 
-    HStack(alignment: .firstTextBaseline, spacing: 0) {
-      ForEach(Array(parts.runs.enumerated()), id: \.offset) { _, run in
-        let text = Text(verbatim: String(parts[run.range].characters))
+  private var shown: AttributedString {
+    let (text, year) = PlanDate.monthAndYear(isoDate)
+    var shown = AttributedString(text)
 
-        if run.dateField == .year {
-          text
-            .typeStyle(.rowTitle)
-            .foregroundStyle(.mutedForeground)
-        } else {
-          text
-            .typeStyle(.readout)
-        }
-      }
+    if let year, let range = Range(year, in: shown) {
+      shown[range].font = BigQuantity.unitFont(
+        dynamicTypeSize: dynamicTypeSize, legibilityWeight: legibilityWeight)
+      shown[range].foregroundColor = Color(.mutedForeground)
     }
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(String(parts.characters))
+
+    return shown
   }
 }

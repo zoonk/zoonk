@@ -17,6 +17,21 @@ final class PlanHeaderFactsTests: XCTestCase {
     XCTAssertEqual(planDaysLeft(plan, goal: goal(.exam, .paused))?.shown, "60 days left")
   }
 
+  func testAMonthsYearIsSmallWithItsOwnUnitAndTheGapBesideIt() {
+    let cases = [
+      ("en_US", "Dec", " 2026"), ("pt_BR", "dez. de", " 2026"), ("ko_KR", "12월", "2026년 "),
+      ("ja_JP", "12月", "2026年"),
+    ]
+
+    for (identifier, month, year) in cases {
+      let (text, range) = PlanDate.monthAndYear("2026-12-14", locale: Locale(identifier: identifier))
+      let small = range.map { String(text[$0]) }
+
+      XCTAssertEqual(small, year, identifier)
+      XCTAssertEqual(text.replacingOccurrences(of: year, with: ""), month, identifier)
+    }
+  }
+
   func testAnEndDateNotSetSaysOnlyThat() {
     let value = PlanEndDateValue(target: nil, isExam: false, today: "2027-01-04")
 
