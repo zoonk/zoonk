@@ -84,8 +84,15 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    // Once checked or locked the key does nothing, so it hides in its room and the words stay put, as main's does.
-    val key = answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
+    // While locked the key does nothing, so it hides in its room; once checked it gives the room up, as main's does.
+    val key =
+        answerKey(
+            LocalConfiguration.current.keyboard,
+            checked = result != null,
+            locked = !enabled,
+            ordered = tag != null,
+            keyed = LocalOptionKeys.current,
+        )
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -302,17 +309,20 @@ internal enum class AnswerKey { None, Hidden, Visible }
 /** Whether what's here shows its number keys: a keyboard is attached and a key picks it ([LocalOptionKeys]). */
 @Composable
 fun optionKeysShown(): Boolean =
-    answerKey(LocalConfiguration.current.keyboard, checked = false, ordered = false, keyed = LocalOptionKeys.current) != AnswerKey.None
+    answerKey(LocalConfiguration.current.keyboard, checked = false, locked = false, ordered = false, keyed = LocalOptionKeys.current) !=
+        AnswerKey.None
 
 /** An option's number key: only with a keyboard, where the key picks it ([keyed]) and the option isn't a place in an order. */
 internal fun answerKey(
     keyboard: Int,
     checked: Boolean,
+    locked: Boolean,
     ordered: Boolean,
     keyed: Boolean,
 ): AnswerKey =
     when {
-        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
-        checked -> AnswerKey.Hidden
+        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED -> AnswerKey.None
+        ordered || checked -> AnswerKey.None
+        locked -> AnswerKey.Hidden
         else -> AnswerKey.Visible
     }

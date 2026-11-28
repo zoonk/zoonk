@@ -140,16 +140,18 @@ function AnswerTag({ className, ...props }: React.ComponentProps<"span">) {
 
 /**
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). A picked row's key
- * turns ink, the row's mark as a radio's dot is. Once checked or disabled the key does nothing, so
- * it hides in its room and the answer stays put.
+ * turns ink, the row's mark as a radio's dot is. While locked the key does nothing, so it hides in
+ * its room; once checked it gives the room up, as on a touch screen.
  */
 export function OptionMarker({
-  isChecked,
+  isChecked = false,
+  isLocked = false,
   layout,
   marker,
   picked,
 }: {
-  isChecked: boolean;
+  isChecked?: boolean;
+  isLocked?: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
@@ -160,8 +162,9 @@ export function OptionMarker({
     <LineMarker
       aria-hidden="true"
       className={cn(
-        isKey && "hidden pointer-fine:flex",
-        isKey && isChecked && "invisible",
+        isKey && "hidden",
+        isKey && !isChecked && "pointer-fine:flex",
+        isKey && isLocked && "invisible",
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
@@ -233,7 +236,8 @@ export function AnswerOption({
       {...props}
     >
       <OptionMarker
-        isChecked={Boolean(result) || Boolean(props.disabled)}
+        isChecked={Boolean(result)}
+        isLocked={Boolean(props.disabled)}
         layout={layout}
         marker={marker}
         picked={picked && !result}
