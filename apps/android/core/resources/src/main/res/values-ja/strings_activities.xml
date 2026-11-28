@@ -17,6 +17,7 @@
   "activities_chart_span": "99fc48870b487093a6e79e44b34be85b260cab873fb335b4620f37c2c23af7f2",
   "activities_chart_spans": "f889cb20551d3e72b1501da884aee8da45064d33cbc2b9f89e871d3374ae839d",
   "activities_chart_tap_span": "a97b8f890cf0f467bd29c5f4e6d1ced440e23325549b56a972476d6366c2001e",
+  "activities_dialogue_best_reply": "d320686ec87ff1240b781bd9f6d402abc69ede31836d6632c91e791ef429f853",
   "activities_dialogue_conversation": "e4121bf6e6b680937108c713048ce723de35398fba7fb1b194415f9e5bc1dc03",
   "activities_dialogue_hear_best": "483c13ddc4d982385adf6c3634b2e07c8a8a4c5e22aaf4bdc7ebd574af62a589",
   "activities_dialogue_hear_line": "7cc625d122fdac19126ff0b2d6e489310b603116e47c2212d9f4092d47d87da4",
@@ -142,6 +143,7 @@
     <string name="activities_dialogue_you_said">自分の発言：</string>
     <string name="activities_dialogue_hear_line">このセリフを聞く</string>
     <string name="activities_dialogue_hear_best">最適な返答を聞く</string>
+    <string name="activities_dialogue_best_reply">最も適切な返答：</string>
     <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
     <string name="activities_dialogue_your_reply">返答</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->

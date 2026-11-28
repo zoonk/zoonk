@@ -22,7 +22,7 @@ export const LANGUAGE_LESSON_SCORE_CATEGORIES = defineScoreCategories([
     weight: 20,
   },
   {
-    expectations: `Wrong options are plausible for a learner yet clearly wrong where they're used, and never appear in the answer next to them. The tip names one real pattern the sentences use, and its examples and practice all test that pattern. Each practice blank has exactly one right answer. Writing answers are all correct and cover common right variants. Speaking prompts set up a real moment in the learner's language.`,
+    expectations: `Wrong options are plausible for a learner yet clearly wrong where they're used, and never appear in the answer next to them. The tip names one real pattern the sentences use, and its examples and practice all test that pattern. Each practice blank has exactly one right answer. Writing answers are all correct and cover common right variants. Speaking prompts set up a real moment in the learner's language. When the situation is a conversation the learner takes part in, a dialogue ends on the other person's line and has exactly one best reply, and every other reply is wrong there for a reason a learner would fall for; a lesson like that without a dialogue scores at most 7. A pattern table appears only when the tip is about a set of endings: the new word follows the model in every row, and each blank's right ending is the longest choice its answer ends with.`,
     id: "practiceDesign",
     label: "Practice design",
     weight: 20,

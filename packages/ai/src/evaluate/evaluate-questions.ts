@@ -175,12 +175,7 @@ async function logEvaluation({
   };
 
   await Promise.all([
-    captureAiGeneration({
-      context: analytics,
-      properties: { evaluation_answers: JSON.stringify(run.answers) },
-      provenance,
-      task,
-    }),
+    captureAiGeneration({ context: analytics, provenance, task }),
     captureEvaluationRun(
       toEvaluationRunRecord({
         analytics,

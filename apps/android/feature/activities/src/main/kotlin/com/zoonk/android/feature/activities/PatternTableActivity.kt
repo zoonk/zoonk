@@ -24,13 +24,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.IntrinsicMeasurable
+import androidx.compose.ui.layout.IntrinsicMeasureScope
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasurePolicy
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -107,32 +111,15 @@ private fun PatternTableActivity(props: ActivityProps) {
                                 }
 
                                 else -> {
-                                    Box {
-                                        Box(
-                                            Modifier
-                                                .alpha(
-                                                    if (props.isChecked) 0f else 1f,
-                                                ).then(if (props.isChecked) Modifier.clearAndSetSemantics {} else Modifier),
-                                        ) {
-                                            OpenBlank(
-                                                row,
-                                                blankStem(fields.choices, row.answer),
-                                                filled["$index"],
-                                                active == index,
-                                                !props.isLocked && !props.isChecked,
-                                            ) { active = index }
-                                        }
-                                        Box(
-                                            Modifier
-                                                .alpha(
-                                                    if (props.isChecked) 1f else 0f,
-                                                ).then(if (props.isChecked) Modifier else Modifier.clearAndSetSemantics {}),
-                                        ) {
-                                            CheckedBlank(
-                                                blankStem(fields.choices, row.answer),
-                                                filled["$index"],
-                                                if (props.isChecked) expected["$index"] else patternEnding(fields.choices, row.answer),
-                                            )
+                                    val stem = blankStem(fields.choices, row.answer)
+                                    Box(contentAlignment = Alignment.CenterStart) {
+                                        BlankRoom(row, stem, fields.choices)
+                                        if (props.isChecked) {
+                                            InColumnWidth { CheckedBlank(stem, filled["$index"], expected["$index"]) }
+                                        } else {
+                                            OpenBlank(row, stem, filled["$index"], active == index, !props.isLocked) {
+                                                active = index
+                                            }
                                         }
                                     }
                                 }
@@ -339,6 +326,56 @@ private fun OpenBlank(
             )
         }
     }
+}
+
+/**
+ * The open blank with every ending it can take, measured but never placed, so its cell is sized for
+ * all of them and picking an ending moves no column and no row.
+ */
+@Composable
+private fun BlankRoom(
+    row: PatternRow,
+    stem: String,
+    choices: List<String>,
+) {
+    Layout(
+        content = { (listOf(null) + choices).forEach { OpenBlank(row, stem, it, isActive = false, enabled = false) {} } },
+        modifier = Modifier.clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val sizes = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+        layout(sizes.maxOf { it.width }, sizes.maxOf { it.height }) {}
+    }
+}
+
+/**
+ * Main's checked pair (`w-0 min-w-full`): it takes the width its column already has and wraps in it, so
+ * Check never widens the column at the labels' expense.
+ */
+@Composable
+private fun InColumnWidth(content: @Composable () -> Unit) {
+    Layout(
+        content = content,
+        measurePolicy =
+            object : MeasurePolicy {
+                override fun MeasureScope.measure(
+                    measurables: List<Measurable>,
+                    constraints: Constraints,
+                ): MeasureResult {
+                    val placeable = measurables.single().measure(constraints.copy(minWidth = 0))
+                    return layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+                }
+
+                override fun IntrinsicMeasureScope.minIntrinsicWidth(
+                    measurables: List<IntrinsicMeasurable>,
+                    height: Int,
+                ) = 0
+
+                override fun IntrinsicMeasureScope.maxIntrinsicWidth(
+                    measurables: List<IntrinsicMeasurable>,
+                    height: Int,
+                ) = 0
+            },
+    )
 }
 
 @Composable

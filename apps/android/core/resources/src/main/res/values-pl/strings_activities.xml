@@ -17,6 +17,7 @@
   "activities_chart_span": "e95f5115ecbb98e632cfea5a10f7d038044a11d41faf55befa64db466cd46d5f",
   "activities_chart_spans": "f37695631e0203edb3f0e4ce0bf4b3d1637fac5c6f7fec02937a5b8862221be1",
   "activities_chart_tap_span": "4ae6fdaf6c50dd1a7e9e3b2ccb48f741b6dfee05fa7269c1d26553af192e8782",
+  "activities_dialogue_best_reply": "82c9342a0636cba8bbd896f3b5e08700b88ae9ac8152aa7ba197797b13be012f",
   "activities_dialogue_conversation": "11c2e509db94237feb4696075aa7deedf644a88e9affd3d2871d27596f13fc09",
   "activities_dialogue_hear_best": "d066acae98b574ec49dedf199fe5282e11572dd504f57192eadb91ac178178c6",
   "activities_dialogue_hear_line": "dabba9d86ee6d410336b0e151cb57582ee60d4f75d845aa6d378447d2a07802f",
@@ -142,6 +143,7 @@
     <string name="activities_dialogue_you_said">Twoja wypowiedź:</string>
     <string name="activities_dialogue_hear_line">Posłuchaj tej wypowiedzi</string>
     <string name="activities_dialogue_hear_best">Posłuchaj najlepszej odpowiedzi</string>
+    <string name="activities_dialogue_best_reply">Najlepsza odpowiedź:</string>
     <!-- The name of the list of replies the learner picks from in a conversation, for TalkBack. -->
     <string name="activities_dialogue_your_reply">Twoja odpowiedź</string>
     <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->

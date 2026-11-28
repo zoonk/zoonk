@@ -66,8 +66,8 @@ export function combineStoredProvenance(runs: readonly StoredProvenance[]): Stor
 }
 
 /**
- * Latency is the slowest call's and the row keeps the first call's run id; each call still sends
- * its own `$ai_generation` event.
+ * Latency is the slowest call's and the row keeps the first call's run id; each call still logs
+ * its own AI call.
  */
 export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProvenance {
   const first = firstRun(runs);
