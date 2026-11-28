@@ -752,7 +752,18 @@ internal fun SpokenAnswerView(
                         stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
                     ) { switchTo(false) }
                 } else {
-                    StepWayOut(R.drawable.ic_mic_off, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                    val label = stringResource(R.string.player_cant_talk_now)
+                    val alternative =
+                        stringResource(
+                            if (content.listening !=
+                                null
+                            ) {
+                                R.string.player_spoken_listen
+                            } else {
+                                R.string.player_type_spoken_answer
+                            },
+                        )
+                    StepWayOut(R.drawable.ic_mic_off, label, accessibleLabel = "$label. $alternative") { switchTo(true) }
                 }
             }
         }
@@ -951,9 +962,15 @@ internal fun GhostAction(
 internal fun StepWayOut(
     icon: Int,
     label: String,
+    accessibleLabel: String? = null,
     onClick: () -> Unit,
 ) {
-    OutlinedButton(onClick = onClick, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
+    OutlinedButton(
+        onClick = onClick,
+        modifier = if (accessibleLabel == null) Modifier else Modifier.semantics { contentDescription = accessibleLabel },
+        size = ButtonSize.Large,
+        leadingIcon = { ButtonIcon(icon) },
+    ) { Text(label) }
 }
 
 data class ChoiceOption(

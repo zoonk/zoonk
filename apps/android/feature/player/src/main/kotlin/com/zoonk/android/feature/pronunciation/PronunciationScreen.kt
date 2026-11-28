@@ -422,9 +422,7 @@ private fun RoundMeter(round: PronunciationRound) {
             contentDescription = label
             progressBarRangeInfo = ProgressBarRangeInfo(round.outcomes.size.toFloat(), 0f..total.toFloat())
         },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
         TaskSegments(round.segments)
     }
 }

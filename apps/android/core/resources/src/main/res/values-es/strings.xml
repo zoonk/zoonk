@@ -70,6 +70,8 @@
   "not_found_title": "6be6cc1e91ab29b4b09a3d4b085b009cdd3999e4c21f3e408311c581e03f4a94",
   "player_not_saved": "4e266e63c02e5ffacce35c878acfbef62defeeb19de316b042480e4dc9fd8393",
   "player_not_saved_description": "b82c75378ad1a68faaeea1ad108700349135a601eae32ce3b77e4b82b09f0eb4",
+  "player_spoken_listen": "dadbfb7806fe4d4dab8399f0da244b2fc6a0ea01ee12c74e244b975b48455005",
+  "player_type_spoken_answer": "9ebced70eefcb311d329c5428e1163cfacbaed99420f286c5fa3341c1e66f2c1",
   "suggestion_other_options": "64590f7781315c2d1ee56a351ba218e57d6e63697d8641f7d0580090bdb93c94",
   "suggestion_save_failed": "480f9201290520e75e0153ad10c21d55772b1d3ee204c42276469109145f20ab",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
@@ -184,4 +186,7 @@
     <string name="player_not_saved_description">Algunas respuestas aún no se guardaron. Seguiremos intentándolo mientras esta lección esté abierta.</string>
     <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">Unidad: %1$s</string>
+    <string name="player_spoken_listen">Escuchar</string>
+    <!-- On a question answered aloud: the learner types this one answer instead of saying it. -->
+    <string name="player_type_spoken_answer">Escribir en su lugar</string>
 </resources>

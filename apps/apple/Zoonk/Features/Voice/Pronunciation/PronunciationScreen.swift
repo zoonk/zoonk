@@ -354,14 +354,7 @@ private struct RoundMeter: View {
   let round: PronunciationRound
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      Text(
-        "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
-        comment: "Where the learner is in the round"
-      )
-      .typeStyle(.data)
-      .foregroundStyle(.mutedForeground)
-
+    ZStack {
       MeterParts(
         parts: round.words.indices.map { position in
           switch round.outcomes[position] {
@@ -374,8 +367,14 @@ private struct RoundMeter: View {
           case nil:
             .init(fill: position == round.index ? .current : .track)
           }
-        })
+        }
+      )
     }
+    .accessibilityElement(children: .ignore)
+    .accessibilityLabel(
+      Text(
+        "Word \(round.index + 1) of \(round.words.count)", tableName: "Voice",
+        comment: "Where the learner is in the round"))
   }
 }
 

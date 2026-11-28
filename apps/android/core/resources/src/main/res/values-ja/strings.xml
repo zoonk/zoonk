@@ -70,6 +70,8 @@
   "not_found_title": "1fb8cec8ca480ca78264b0eaa619f04f058c316fe639e6176734cf37f500d269",
   "player_not_saved": "935a3eb56de624d863959c0f9087faf9f745fdb110e86d99fa21d3c4ccb428fe",
   "player_not_saved_description": "c26124139fa6a455aacde74cc77c906102c28ccb4392a9856a1e5c027284f715",
+  "player_spoken_listen": "270526ac672fce1c1dfa3f7bf18638c410a371af0b28144a1a01a82dc4c55628",
+  "player_type_spoken_answer": "5ad26a0a17a3918f855ccd4b3c1857ab9d811ca0993a87923a85fa6ee3a50e2a",
   "suggestion_other_options": "9c683e929b15323496bc6e9e27f462ef1e81d98936e85c0f8c6afa5d97950f18",
   "suggestion_save_failed": "8dd207612bb75af9bfd2bb062a4f24e8dd6206bb806ea1b7fb1bac9e5ac42e67",
   "suggestion_view": "3f7028098dd17111109fd0e1edbf9177e13d02d8d65ebd9138f484d9726af686",
@@ -184,4 +186,7 @@
     <string name="player_not_saved_description">一部の回答がまだ保存されていません。このレッスンを開いている間は、引き続き保存を試みます。</string>
     <!-- Labels a scale's numbers with what they count or measure; {unit} is the activity's own unit text, such as days, km/h or times. -->
     <string name="activities_guess_in_unit">単位：%1$s</string>
+    <string name="player_spoken_listen">聞く</string>
+    <!-- On a question answered aloud: the learner types this one answer instead of saying it. -->
+    <string name="player_type_spoken_answer">代わりに入力</string>
 </resources>

@@ -640,6 +640,25 @@ private struct SpokenAnswerStepView: View {
     }
   }
 
+  private var modeSwitchLabel: String {
+    guard mode == .speak else {
+      return cantTalk
+        ? String(
+          localized: "I can talk now", table: "Player", comment: "Goes back to answering out loud")
+        : String(
+          localized: "Say it instead", table: "Player", comment: "Tries the microphone again")
+    }
+    let label = String(localized: "I can't talk now", table: "Player")
+    let alternative =
+      listening != nil
+      ? String(localized: "Listen", table: "Player")
+      : String(
+        localized: "Type instead", table: "Player",
+        comment:
+          "On a question answered aloud: the learner types this one answer instead of saying it.")
+    return "\(label). \(alternative)"
+  }
+
   /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
   @ViewBuilder
   private var modeSwitch: some View {
@@ -670,6 +689,7 @@ private struct SpokenAnswerStepView: View {
           }
         }
       }
+      .accessibilityLabel(modeSwitchLabel)
       .buttonStyle(.outline)
       .controlSize(.large)
     }
