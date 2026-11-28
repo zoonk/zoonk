@@ -6,6 +6,10 @@ const FIRST = "Primeira Fase";
 const SECOND = "Segunda Fase";
 const LANGUAGE = "Idioma adicional";
 
+/** The written tests sit two a day from the second day, the additional language last. */
+const FIRST_WRITTEN_DAY = 2;
+const LANGUAGE_DAY = 5;
+
 /** Tested in both phases: true/false items in the first, a written test in the second. */
 export const CACD_SHARED = [
   "Língua Portuguesa",
@@ -21,8 +25,8 @@ function subject(name: string, extra: Partial<ExamStructure["subjects"][number]>
   return { citation, name, questions: null, topics: [], weight: null, ...extra };
 }
 
-function written(name: string) {
-  return { day: null, kind: "written" as const, minutes: 300, name, questions: null };
+function written(name: string, day: number) {
+  return { day, kind: "written" as const, minutes: 300, name, questions: null };
 }
 
 /**
@@ -95,8 +99,10 @@ export function cacdStructure({
           name: "Prova objetiva da Primeira Fase — segundo período",
           questions: null,
         },
-        ...CACD_SHARED.map((name) => written(name)),
-        written(LANGUAGE),
+        ...CACD_SHARED.map((name, index) =>
+          written(name, FIRST_WRITTEN_DAY + Math.floor(index / 2)),
+        ),
+        written(LANGUAGE, LANGUAGE_DAY),
       ],
       timeLimitMinutes: null,
       totalQuestions: 240,

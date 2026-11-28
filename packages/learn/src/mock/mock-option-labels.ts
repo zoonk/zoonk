@@ -87,7 +87,7 @@ export function useMockOptionDetail() {
     }
 
     const subjects = severalDays && option.kind !== "area" ? option.areas : [];
-    const parts = option.covers ?? [...subjects, ...option.written];
+    const parts = option.covers ?? [...new Set([...subjects, ...option.written])];
 
     if (parts.length > 0) {
       return format.list(parts, { type: "conjunction" });
