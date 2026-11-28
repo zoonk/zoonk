@@ -2521,7 +2521,6 @@ msgstr "第{number, number}章"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
@@ -10174,6 +10173,12 @@ msgstr "今日スキップを取り消したレッスンは、明日もう一度
 msgctxt "SGu5bG"
 msgid "You start here"
 msgstr "ここからスタート"
+
+#. A quiet action on the result of a placement test opened again from the plan: it offers a new test.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "p9JOZc"
+msgid "Take the test again"
+msgstr ""
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

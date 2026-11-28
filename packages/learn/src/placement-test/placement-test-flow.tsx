@@ -30,6 +30,7 @@ function toSittingFacts(attempt: PlacementAttemptView): TestFactsNow {
 type Flow = {
   actions: PlacementTestActions;
   analytics: TestAnalytics;
+  canRetake: boolean;
   onStartLesson?: (lessonId: string) => Promise<boolean>;
   onboarding: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
@@ -44,6 +45,7 @@ type OpenPhase = Exclude<PlacementTestPhase, { kind: "loadFailed" | "loading" | 
 function PlacementOpenTest({
   actions,
   analytics,
+  canRetake,
   onStartLesson,
   onboarding,
   phase,
@@ -114,6 +116,7 @@ function PlacementOpenTest({
         <PlacementResult
           failed={failed}
           onDone={() => test.onLeave("main", phase.attemptId)}
+          onRetake={phase.saved && canRetake ? test.onRetake : undefined}
           onStartLesson={(lessonId) => {
             analytics.lessonStarted({ attemptId: phase.attemptId, lessonId });
             test.onOpenLesson(lessonId, onStartLesson);
@@ -211,6 +214,7 @@ export function PlacementTestFlow({
           <PlacementOpenTest
             actions={actions}
             analytics={analytics}
+            canRetake={offer !== null}
             onStartLesson={onStartLesson}
             onboarding={onboarding}
             phase={phase}

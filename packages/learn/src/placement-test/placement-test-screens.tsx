@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
 import { MeterParts } from "@zoonk/ui/components/meter";
 import { useExtracted } from "next-intl";
 import { Eyebrow } from "../_components/eyebrow";
@@ -130,6 +131,7 @@ function ResultLead({
 export function PlacementResult({
   failed,
   onDone,
+  onRetake,
   onStartLesson,
   onboarding,
   pending,
@@ -139,6 +141,8 @@ export function PlacementResult({
 }: {
   failed: boolean;
   onDone: () => void;
+  /** Opens the offer of a new test, from a past test's result; absent when none can start. */
+  onRetake?: () => void;
   onStartLesson: (lessonId: string) => void;
   onboarding: boolean;
   /** The visit is still reading the test, or a save is out: a press now would be dropped. */
@@ -189,6 +193,22 @@ export function PlacementResult({
       )}
 
       {course && nextLesson && <StartLesson lesson={nextLesson} />}
+
+      {onRetake && (
+        <Button
+          className="self-start"
+          disabled={pending || undoing || pressed !== null}
+          onClick={onRetake}
+          type="button"
+          variant="link"
+        >
+          {t({
+            description:
+              "A quiet action on the result of a placement test opened again from the plan: it offers a new test.",
+            message: "Take the test again",
+          })}
+        </Button>
+      )}
     </TestOutcome>
   );
 }

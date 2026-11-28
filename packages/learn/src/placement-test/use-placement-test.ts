@@ -202,6 +202,7 @@ export function usePlacementTest({
       save(button, () => onLeave(attemptId).catch(() => false)),
     onOpenLesson: (lessonId: string, openLesson?: (lessonId: string) => Promise<boolean>) =>
       save("main", () => (openLesson ? openLesson(lessonId) : onLeave()).catch(() => false)),
+    onRetake: () => setPhase({ kind: "offer" }),
     onRetryWait: () => {
       if (!isPending && waiting?.retry) {
         save("main", start);

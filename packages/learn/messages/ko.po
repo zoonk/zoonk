@@ -2521,7 +2521,6 @@ msgstr "챕터 {number, number}"
 
 #: src/chapter/chapter-header.tsx
 #: src/language/unit/unit-header.tsx
-#: src/placement-test/placement-test-screens.tsx
 #: src/plan-diff/use-change-rows.ts
 #: src/plan/plan-fit-suggestion.tsx
 #: src/syllabus/subject-aside.tsx
@@ -10174,6 +10173,12 @@ msgstr "오늘 이 레슨들의 건너뛰기를 취소했어요. 내일 다시 �
 msgctxt "SGu5bG"
 msgid "You start here"
 msgstr "여기서 시작해요"
+
+#. A quiet action on the result of a placement test opened again from the plan: it offers a new test.
+#: src/placement-test/placement-test-screens.tsx
+msgctxt "p9JOZc"
+msgid "Take the test again"
+msgstr ""
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

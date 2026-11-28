@@ -9,6 +9,7 @@ import {
   ANSWERED,
   ORDER_STEPS,
   addOrderQuestions,
+  answerDontKnow,
   answerSeededQuestion,
   createMappedGoal,
   questionOnScreen,
@@ -368,6 +369,36 @@ test("an answer to a test another device stopped shows that test's result", asyn
   await expect(page.getByText("That didn't go through. Your answers are kept.")).toBeHidden();
 });
 
+test("the Plan's row opens the last test's result, and a new test can be taken from it", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await createLearnGoal(noProgressUser.id);
+
+  await page.goto("/placement-test");
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await atQuestion(page, 1);
+  await answerDontKnow(page);
+  await atQuestion(page, 2);
+  await stopTest(page);
+
+  // With nothing skipped the result gives no count of lessons, which would read as work done.
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  await expect(page.getByText(/^\d+ lessons$/u)).toBeHidden();
+
+  await page.goto("/plan");
+  await page.getByRole("link", { name: /Test what you know.*No lessons skipped/u }).click();
+
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "Done" })).toBeVisible();
+  await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeHidden();
+  await page.getByRole("button", { exact: true, name: "Take the test again" }).click();
+
+  await expect(page.getByRole("heading", { name: "Skip what you already know" })).toBeVisible();
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await atQuestion(page, 1);
+});
+
 test("the Plan's row opens the last test's result when no test is left to start", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -385,7 +416,7 @@ test("the Plan's row opens the last test's result when no test is left to start"
   await expect(page.getByText("You start here", { exact: true })).toBeVisible();
   await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
-  await expect(page.getByRole("button", { exact: true, name: "Start" })).toBeHidden();
+  await expect(page.getByRole("button", { exact: true, name: "Take the test again" })).toBeHidden();
   expect(await skippedLessons(goal.id)).toBe(skipped);
 
   await page.getByRole("button", { exact: true, name: "Done" }).click();
