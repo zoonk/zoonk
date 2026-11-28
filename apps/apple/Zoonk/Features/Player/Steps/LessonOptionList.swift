@@ -111,12 +111,16 @@ struct LessonOptionList: View {
           image: picture, alt: option.pictureAlt, isPending: false, asks: true,
           drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio,
           cornerRadius: LessonOptionStyle.pictureRadius)
-      } else {
-        LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
+      } else if picturesPending {
+        LessonPicturePlaceholder(alt: option.pictureAlt)
           .pictureFrame(
             aspectRatio: LessonPicturePlaceholder.optionAspectRatio,
             maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight),
             cornerRadius: LessonOptionStyle.pictureRadius)
+      } else {
+        MissingPictureDescription(
+          alt: option.pictureAlt,
+          minHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight))
       }
 
       // Its name would give the answer away, so it shows once the answer is checked, as on main.
@@ -178,6 +182,35 @@ struct LessonOptionList: View {
     case .guess: .guess
     case nil: option.id == selectedId ? .selected : .plain
     }
+  }
+}
+
+/// Main's description of an option picture that never came: its words in ink on a quiet fill,
+/// with room above and below them that keeps them clear of the corner key and pick mark. It's as
+/// square as the picture would be, up to the picture's height, and grows with its words.
+private struct MissingPictureDescription: View {
+  let alt: String?
+  let minHeight: CGFloat
+
+  var body: some View {
+    ZStack {
+      Color.clear
+        .aspectRatio(LessonPicturePlaceholder.optionAspectRatio, contentMode: .fit)
+        .frame(maxHeight: minHeight)
+
+      if let alt {
+        Text(alt)
+          .typeStyle(.body)
+          .foregroundStyle(Color(.foreground))
+          .multilineTextAlignment(.center)
+          .padding(.horizontal, 8)
+          .padding(.vertical, 32)
+      }
+    }
+    .frame(maxWidth: .infinity)
+    .background(
+      Color.muted.opacity(0.5),
+      in: .rect(cornerRadius: LessonOptionStyle.pictureRadius, style: .continuous))
   }
 }
 

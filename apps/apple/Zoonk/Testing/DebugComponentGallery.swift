@@ -1199,10 +1199,16 @@
           marker: 8, picks: .several, isPicked: true,
           text: RichInline(text: AttributedString("One of several, picked")), action: {})
 
+        // Pictures that never came, so each is described; the long one keeps clear of its marks.
         LessonOptionList(
-          options: ["A red apple", "A green pear"].map {
-            LessonOption(id: $0, text: $0, pictureAlt: $0)
-          },
+          options: [
+            LessonOption(id: "A red apple", text: "A red apple", pictureAlt: "A red apple"),
+            LessonOption(
+              id: "A green pear", text: "A green pear",
+              pictureAlt:
+                "A green pear cut in half on a wooden board, beside a small knife and a folded napkin"
+            ),
+          ],
           selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
 
         LessonOptionList(
