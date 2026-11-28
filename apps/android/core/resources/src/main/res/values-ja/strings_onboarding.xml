@@ -38,10 +38,11 @@
   "onboarding_change_end_date": "90c534ce17cac9542b315495f871acf74ddbaaaa18f23d9ae65eb68c9bddca98",
   "onboarding_change_exam_date": "b9a71663690b24b6d259424607dfa1d574a7f0f30e31e63879c2cdedab32b955",
   "onboarding_continue": "9df52770977ac6b6565f3132a901b54600ad82674dae33f75cb2e55a7769d171",
-  "onboarding_country_description": "5efb2461e973eac172c3c847bf03091900e1dc943af0cf9f2c1bb3a8919ed08f",
+  "onboarding_country_description": "c5961c7f181d2f6d6e919c375d632c52bc73251c74f1c64aa69d38db77bb0488",
   "onboarding_country_from_home": "b151c40c804b9812b88ef7e8f474a89235e0af9887708d1d08df771808be973f",
   "onboarding_country_other": "ab57bef6494e4ba6d6b3c48ac8f41877a92843fe210a5370964ac46158f5185f",
   "onboarding_country_title": "4f418de36534abbfab024f0f9851bbe17b103b8aab585fac72d2e6a091922e84",
+  "onboarding_country_title_exam": "45d82a790ccbe260ce87d343157781525b1b8e1243462413fcfe7cc2b528e65b",
   "onboarding_course_build": "f7b03256c7c4602e8fe74fe6d4e3f9534066f319ae779d05862411b1250ccef2",
   "onboarding_course_chapter_description": "cd4460cd5446d9414d3ce127184497896505234dda02f5085736fbf1f1073ee6",
   "onboarding_course_chapters": "3006bcdb0bd65e90138b3fcddf249938dd571b0f3127298aff391f87684341cd",
@@ -55,9 +56,11 @@
   "onboarding_create_account": "abdaa9890437a6c571cd0f1ef271e4b8f3a74a823ea928629b6d7dd4c5a462aa",
   "onboarding_date_is_today": "131a12bd2f8b18b91d81ae4ec3a1bb9aeb06563fab463cd9bd10bcef8862e3b1",
   "onboarding_date_label": "c01e58072b8801a4a5138cd0116d36c8a6fe882458503be4d61dcd2d3ac065bf",
+  "onboarding_date_not_booked": "878b23c77d8dc51f8440db980053599eb8262a5ee44d332f150d98fff23d998a",
   "onboarding_date_passed": "153724fbaffe41799cf1e75d6dccfdc8c921141371f125e4325f1022a4b32fad",
   "onboarding_date_remove": "85fa6f88dfd1f43010bb9645fbc73e3e49ff134dbed877b76e0aa9689b7860ad",
   "onboarding_date_title": "8f093bdb182d7928f4850504f9f824cd22019acc23c065016d96bd2e3215828d",
+  "onboarding_date_title_booked": "7e4f5c748a1d201416220f88aa2ef7b5f6950978a47187facb2582c25097ff95",
   "onboarding_day_too_short": "2605917a8d7bf13beb542451443a5094c6779134d3ef54b0204c4b7513453ba4",
   "onboarding_days": "bf3d90b0afe406996b3a86599c43ef9bc89a5dd665ab27ba22a526cd68d50b98",
   "onboarding_decide_later": "4106ab4af52dbee1f32b4474be18e94832de6a8b21343c49d46bac24654fd926",
@@ -703,6 +706,8 @@
     <string name="onboarding_exam_expected">要項で確定するまでは、見込みの日程です。</string>
     <string name="onboarding_another_date">別の日付</string>
     <string name="onboarding_date_title">目標日はありますか？</string>
+    <string name="onboarding_date_title_booked">試験日はいつですか？</string>
+    <string name="onboarding_date_not_booked">まだ申し込んでいない</string>
     <string name="onboarding_date_remove">日付を削除する</string>
     <string name="onboarding_date_label">日付</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
@@ -806,8 +811,8 @@
     <string name="onboarding_variety_note">会話練習や質問への回答には%1$sを使います。レッスンとその音声には%2$sを使います。</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">どの国に合わせたレッスンにしますか？</string>
-    <!-- Under that question's title. -->
-    <string name="onboarding_country_description">ここで学ぶ内容は国によって変わります。あとで学習計画から変更できます。</string>
+    <string name="onboarding_country_description">レッスンで使う例や通貨、単位を国に合わせます。</string>
+    <string name="onboarding_country_title_exam">どの国の試験ですか？</string>
     <!-- The last choice of that question, which opens the full list of countries. -->
     <string name="onboarding_country_other">ほかの国</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->

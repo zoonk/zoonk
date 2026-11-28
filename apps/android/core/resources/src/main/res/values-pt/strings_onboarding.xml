@@ -38,10 +38,11 @@
   "onboarding_change_end_date": "2a9b75ec39bd5585ad6e4e0f5ce85e4c35fc8d09ee20f786f61d810c97fe170d",
   "onboarding_change_exam_date": "54be774533504f2f224d581db40c2a868f073389b2856ab5181bde789a05e9fb",
   "onboarding_continue": "f4c1323bd702f30b22713a0bd06010f47d8dccfa03ab79a47f87ed1830ca96d6",
-  "onboarding_country_description": "9cdd145767194f458beec4b79dd7026c50d25827bed27573268b26d391f5e6e9",
+  "onboarding_country_description": "fe927e97458f1bc78377b95850267045c584157c08261ec8fb622e564055a0e2",
   "onboarding_country_from_home": "362f6fe9a680dd79287a95fdb579621491b29a5ed115cef082ab82109f1f834a",
   "onboarding_country_other": "33e191dbcdda8d3e71643a1fd48031e6e362dd900df12352a3c2e928081f6554",
   "onboarding_country_title": "f59e03985086384f8488835e64d331fc85928f9ce84f1cd689962838e1c5e226",
+  "onboarding_country_title_exam": "2168dfc05c144cceb1684f1fddb64754d46573c55cb952a97edda2c0ef50c996",
   "onboarding_course_build": "f952f96c5b570f7169409888ca287e2faa0bb8845e0b195d853fca56af4a732b",
   "onboarding_course_chapter_description": "983b9f2ddd03fce94b482cbc7cb5df6d8d65d71536d7174207603e8552810187",
   "onboarding_course_chapters": "abc062b110a8b13405a98ed1c37dd65a6b5bfc21678f65513c247bdb61a54473",
@@ -55,9 +56,11 @@
   "onboarding_create_account": "bdf9ee7371fda3167e9dfd4273f89cb621af9cc4e69c084082f4925d368c16ba",
   "onboarding_date_is_today": "ac4c25781db948266f46aac642d527459b839a91a3fdb6b4333f9e12a2b9543d",
   "onboarding_date_label": "ba7f9c07f6e329c8a330f1ec72db0fe572844799bad319cc8c0303af3b4bdb3f",
+  "onboarding_date_not_booked": "d691f63a89fec4db8ef250b13128885f2b787cdf013a4de4f478b4cc6c77e0c5",
   "onboarding_date_passed": "57447f4ed0cefeeebe11eb75310d482774a4c66158a5ced32a5769ab2cc6c59f",
   "onboarding_date_remove": "d660bb247879e792c79c55b85d87dd7e700939abb72bf1bd0bad77c20d1badcd",
   "onboarding_date_title": "1b34f35c626326bf6bdab9da8f3df6a6f2f7d33c056194f680855fc5d4579641",
+  "onboarding_date_title_booked": "f1a5cb60eeb825028fd028cadc743c59dcfd96374a20c0d667ef6d421489ced3",
   "onboarding_day_too_short": "c3528cced71e5654b49bce1897050e4927868818042df9563ab4087306907bed",
   "onboarding_days": "ca4deaaa3029e035b12b25eaefff171c8582133ec0b486b636cf37cb14cb12e4",
   "onboarding_decide_later": "e7aa12a729bced0020dd219f83c2c4a75f162fb5e846935d14c121111d9dc993",
@@ -715,6 +718,8 @@
     <string name="onboarding_exam_expected">Essa é a data prevista até que o edital confirme.</string>
     <string name="onboarding_another_date">Outra data</string>
     <string name="onboarding_date_title">Você tem uma data em mente?</string>
+    <string name="onboarding_date_title_booked">Quando é sua prova?</string>
+    <string name="onboarding_date_not_booked">Ainda não marquei</string>
     <string name="onboarding_date_remove">Remover data</string>
     <string name="onboarding_date_label">Data</string>
     <!-- Leads the date question asked again because the goal's date passed. %1$s is that date, such as "May 5". -->
@@ -824,8 +829,8 @@
     <string name="onboarding_variety_note">Suas conversas de prática e nossas respostas às suas perguntas são em %1$s. As aulas e seus áudios são em %2$s.</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">Sobre qual país devem ser suas aulas?</string>
-    <!-- Under that question's title. -->
-    <string name="onboarding_country_description">O que você aprende aqui muda de um país para outro. Dá para mudar depois no seu plano.</string>
+    <string name="onboarding_country_description">A gente usa essa informação para adaptar os exemplos, a moeda e as unidades das suas aulas.</string>
+    <string name="onboarding_country_title_exam">De qual país é a prova?</string>
     <!-- The last choice of that question, which opens the full list of countries. -->
     <string name="onboarding_country_other">Outro país</string>
     <!-- A badge beside the content country in "Here's what we understood": the country came from where the learner said they live, as "you said" marks what came from their words. -->

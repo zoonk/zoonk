@@ -368,9 +368,7 @@
     <string name="onboarding_exam_expected">This is the expected date until the notice confirms it.</string>
     <string name="onboarding_another_date">Another date</string>
     <string name="onboarding_date_title">Is there a date you\'re aiming for?</string>
-    <!-- The date question for an exam whose day the learner picks when they book it, such as a driving test or IELTS. -->
     <string name="onboarding_date_title_booked">When is your exam?</string>
-    <!-- The other answer to that question: the learner hasn't booked the exam yet, so it has no date. -->
     <string name="onboarding_date_not_booked">Not booked yet</string>
     <string name="onboarding_date_remove">Remove date</string>
     <string name="onboarding_date_label">Date</string>
@@ -478,9 +476,7 @@
     <string name="onboarding_variety_note">Your practice calls and our answers to your questions use %1$s. Lessons and their audio use %2$s.</string>
     <!-- The title of the setup question asking which country a course should be about, for a subject that changes by country such as law or taxes. -->
     <string name="onboarding_country_title">Which country should your lessons be about?</string>
-    <!-- Under that question's title. -->
     <string name="onboarding_country_description">We use it for examples, money and units in your lessons.</string>
-    <!-- The same question for an exam whose content changes by country, such as a pilot licence or a bar exam: whose exam it is, since another country's exam of the same name is another exam. -->
     <string name="onboarding_country_title_exam">Which country\'s exam is it?</string>
     <!-- The last choice of that question, which opens the full list of countries. -->
     <string name="onboarding_country_other">Another country</string>
