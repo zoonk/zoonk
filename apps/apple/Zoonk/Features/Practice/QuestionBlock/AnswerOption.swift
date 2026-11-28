@@ -18,7 +18,7 @@ struct AnswerOption: View {
   var picks: ChoiceMark.Kind = .one
   var isPicked = false
   var result: AnswerOptionResult?
-  /// The learner's pick was a guess, so it says "Your guess".
+  /// The learner's pick was a guess, so once checked it says "Your guess".
   var isGuessed = false
   var isLocked = false
   var tag: AnyView?
@@ -96,38 +96,21 @@ struct AnswerOption: View {
       Text(label)
         .typeStyle(.tag)
         .foregroundStyle(tagColor(result))
-    } else if isPicked && isGuessed {
-      // Unspoken: VoiceOver already says the option is selected.
-      Text(yourGuess)
-        .typeStyle(.tag)
-        .foregroundStyle(Color(.foreground))
-        .accessibilityHidden(true)
     }
   }
 
   private var hasTag: Bool {
-    if tag != nil {
-      return true
-    }
-
-    if let result {
-      return resultLabel(result) != nil
-    }
-
-    return isPicked && isGuessed
-  }
-
-  private var yourGuess: LocalizedStringResource {
-    LocalizedStringResource(
-      "Your guess", table: "Practice",
-      comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
+    tag != nil || result.flatMap(resultLabel) != nil
   }
 
   /// The right option says "Correct" when the learner missed it. A pick needs no word of its own:
-  /// its color and the verdict say it, and only a guess, which counts as neither, says so.
+  /// its mark, its color and the verdict say it. Only a guess, which counts as neither right nor
+  /// wrong, says so once it's checked; before, its mark shows the pick.
   private func resultLabel(_ result: AnswerOptionResult) -> LocalizedStringResource? {
     if result == .guess || (isPicked && isGuessed) {
-      return yourGuess
+      return LocalizedStringResource(
+        "Your guess", table: "Practice",
+        comment: "Mark beside the learner's pick when it counts as neither right nor wrong.")
     }
 
     guard result == .right, !isPicked else {
