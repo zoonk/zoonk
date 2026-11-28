@@ -255,6 +255,7 @@ class PlanScreenshots {
                 group = group,
                 leftOut = ExamChoiceLeftOut(examPoints = null, examQuestions = null, name = group, points = null, questions = 24 * take),
                 options = options.map { ExamChoiceOptionsInner(name = it, shortName = null) },
+                required = false,
                 subjects = emptyList(),
                 take = take,
             )
