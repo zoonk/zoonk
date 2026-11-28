@@ -801,6 +801,9 @@ class OnboardingScreenshots {
             compose.onNodeWithText(it).performClick()
             compose.waitForIdle()
         }
+        // The chips fade as each is switched off; the picture is of where they settle.
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.waitForIdle()
         write("time-no-days-phone-screen", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
