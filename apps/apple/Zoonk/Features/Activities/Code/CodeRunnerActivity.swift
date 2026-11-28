@@ -231,9 +231,16 @@ private struct CodeRunnerCanvas: View {
     }
   }
 
-  /// A paste keeps to its line, as main's does.
+  /// A paste keeps to its line, as main's does. A field that stops editing writes its text back
+  /// unchanged, which mustn't mark the run it just started as stale.
   private func edit(_ number: Int, _ value: String) {
-    edits[number] = value.filter { !$0.isNewline }
+    let line = value.filter { !$0.isNewline }
+
+    guard line != lines[number - 1] else {
+      return
+    }
+
+    edits[number] = line
     changed()
   }
 
