@@ -31,52 +31,52 @@ struct PatternTesterCanvas: View {
     return false
   }
 
-  private struct Snippet: Identifiable {
-    let label: String
-    let before: String
-    var after = ""
-    let name: String
-
-    var id: String { label }
-  }
-
   var body: some View {
     ChartsCanvas {
-      LessonRichText(fields.task, literalNumbers: isRegex)
-        .typeStyle(.body)
+      if context.phase != .explore {
+        LessonRichText(fields.task, literalNumbers: isRegex)
+          .typeStyle(.reading.weight(.medium))
+      }
 
-      field
+      VStack(alignment: .leading, spacing: 8) {
+        field
 
-      if !isChecked {
-        snippets
+        CodeSnippetBar(
+          snippets: snippetList,
+          label: Text(
+            "Symbols", tableName: "ActivitiesCharts", comment: "The row of symbol buttons"),
+          isEnabled: !isChecked
+        ) { snippet in
+          snippet.insert(into: &pattern, selection: &selection)
+          change(pattern)
+        }
       }
 
       examples
-
-      if let summary {
-        Text(Self.passingLine(summary))
-          .typeStyle(.body.weight(.medium).monospaced())
-      }
 
       if context.phase != .explore {
         hints
       }
 
-      if isChecked {
+      if isChecked && !passesAll {
         VStack(alignment: .leading, spacing: 4) {
-          isRegex
+          (isRegex
             ? Text(
               "A pattern that works", tableName: "ActivitiesCharts",
               comment: "Above a working regex after the check")
             : Text(
               "A formula that works", tableName: "ActivitiesCharts",
-              comment: "Above a working formula after the check")
+              comment: "Above a working formula after the check"))
+            .typeStyle(.meta.weight(.medium))
+            .foregroundStyle(.mutedForeground)
+
           Text(verbatim: isRegex ? "/\(fields.solution)/" : "=\(fields.solution)")
-            .typeStyle(.body.monospaced())
+            .typeStyle(.reading.monospaced())
             .textSelection(.enabled)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .activityBox()
         }
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
       }
     }
     .announcesStatus(isRegex ? nil : summary.map(Self.passingLine))
@@ -105,69 +105,64 @@ struct PatternTesterCanvas: View {
   }
 
   private var field: some View {
-    VStack(alignment: .leading, spacing: 6) {
-      isRegex
-        ? Text("Your pattern", tableName: "ActivitiesCharts", comment: "Label of a regex field")
-        : Text("Your formula", tableName: "ActivitiesCharts", comment: "Label of a formula field")
-
-      HStack(spacing: 2) {
-        if isRegex {
-          Text(verbatim: "/").foregroundStyle(.mutedForeground)
-        }
-
-        let example =
-          isRegex
-          ? Text("Your pattern", tableName: "ActivitiesCharts", comment: "Label of a regex field")
-          : Text(verbatim: "=A1*B1")
-        TextField(
-          text: Binding(get: { pattern }, set: change), selection: $selection,
-          prompt: example.fieldPrompt()
-        ) { example }
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
-        .keyboardType(.asciiCapable)
-        .disabled(isChecked)
-
-        if isRegex {
-          Text(verbatim: "/").foregroundStyle(.mutedForeground)
-        }
+    HStack(spacing: 2) {
+      if isRegex {
+        Text(verbatim: "/").foregroundStyle(.mutedForeground)
       }
-      .typeStyle(.section.weight(.regular).monospaced())
-      .padding(.horizontal)
-      .frame(minHeight: 52)
-      .activityBox(cornerRadius: Radius.option)
+
+      // Main names its field only to VoiceOver; a SwiftUI field would show its label as a prompt.
+      TextField(
+        text: Binding(get: { pattern }, set: change), selection: $selection,
+        prompt: Text(verbatim: isRegex ? "" : "=A1*B1").fieldPrompt()
+      ) {
+        EmptyView()
+      }
+      .accessibilityLabel(
+        isRegex
+          ? Text("Your pattern", tableName: "ActivitiesCharts", comment: "Label of a regex field")
+          : Text("Your formula", tableName: "ActivitiesCharts", comment: "Label of a formula field")
+      )
+      .textInputAutocapitalization(.never)
+      .autocorrectionDisabled()
+      .keyboardType(.asciiCapable)
+      .disabled(isChecked)
+
+      if isRegex {
+        Text(verbatim: "/").foregroundStyle(.mutedForeground)
+      }
     }
-    .typeStyle(.body.weight(.medium))
+    .typeStyle(.reading.monospaced())
+    .fieldBorder()
   }
 
-  private var snippetList: [Snippet] {
+  private var snippetList: [SnippetKey] {
     if case .formula(let formula) = fields {
       let names = formula.examples.first?.inputs.map(\.name) ?? []
 
-      return names.map { Snippet(label: $0, before: $0, name: $0) } + [
+      return names.map { SnippetKey(label: $0, before: $0, name: $0) } + [
         // "Plus sign", not "Plus": that's the subscription's name.
-        Snippet(
+        SnippetKey(
           label: "+", before: "+",
           name: String(
             localized: "Plus sign", table: "ActivitiesCharts", comment: "The + symbol button")),
-        Snippet(
+        SnippetKey(
           label: "−", before: "-",
           name: String(
             localized: "Minus", table: "ActivitiesCharts", comment: "The − symbol button")),
-        Snippet(
+        SnippetKey(
           label: "×", before: "*",
           name: String(
             localized: "Times", table: "ActivitiesCharts", comment: "The × symbol button")),
-        Snippet(
+        SnippetKey(
           label: "÷", before: "/",
           name: String(
             localized: "Divided by", table: "ActivitiesCharts", comment: "The ÷ symbol button")),
-        Snippet(
+        SnippetKey(
           label: "^", before: "^",
           name: String(
             localized: "To the power of", table: "ActivitiesCharts", comment: "The ^ symbol button")
         ),
-        Snippet(
+        SnippetKey(
           label: "( )", before: "(", after: ")",
           name: String(
             localized: "Parentheses", table: "ActivitiesCharts", comment: "The ( ) symbol button")),
@@ -175,82 +170,61 @@ struct PatternTesterCanvas: View {
     }
 
     return [
-      Snippet(
+      SnippetKey(
         label: "^", before: "^",
         name: String(
           localized: "Start of the text", table: "ActivitiesCharts", comment: "The regex ^ button")),
-      Snippet(
+      SnippetKey(
         label: "$", before: "$",
         name: String(
           localized: "End of the text", table: "ActivitiesCharts", comment: "The regex $ button")),
-      Snippet(
+      SnippetKey(
         label: "\\d", before: "\\d",
         name: String(
           localized: "Any digit", table: "ActivitiesCharts", comment: "The regex \\d button")),
-      Snippet(
+      SnippetKey(
         label: "\\w", before: "\\w",
         name: String(
           localized: "Any letter, digit or underscore", table: "ActivitiesCharts",
           comment: "The regex \\w button")),
-      Snippet(
+      SnippetKey(
         label: "\\s", before: "\\s",
         name: String(
           localized: "Any space", table: "ActivitiesCharts", comment: "The regex \\s button")),
-      Snippet(
+      SnippetKey(
         label: ".", before: ".",
         name: String(
           localized: "Any character", table: "ActivitiesCharts", comment: "The regex . button")),
-      Snippet(
+      SnippetKey(
         label: "[ ]", before: "[", after: "]",
         name: String(
           localized: "One of these characters", table: "ActivitiesCharts",
           comment: "The regex [ ] button")),
-      Snippet(
+      SnippetKey(
         label: "{ }", before: "{", after: "}",
         name: String(
           localized: "Repeat a number of times", table: "ActivitiesCharts",
           comment: "The regex { } button")),
-      Snippet(
+      SnippetKey(
         label: "( )", before: "(", after: ")",
         name: String(localized: "Group", table: "ActivitiesCharts", comment: "The regex ( ) button")
       ),
-      Snippet(
+      SnippetKey(
         label: "?", before: "?",
         name: String(
           localized: "Optional", table: "ActivitiesCharts", comment: "The regex ? button")),
-      Snippet(
+      SnippetKey(
         label: "+", before: "+",
         name: String(
           localized: "One or more", table: "ActivitiesCharts", comment: "The regex + button")),
-      Snippet(
+      SnippetKey(
         label: "*", before: "*",
         name: String(
           localized: "Zero or more", table: "ActivitiesCharts", comment: "The regex * button")),
-      Snippet(
+      SnippetKey(
         label: "|", before: "|",
         name: String(localized: "Or", table: "ActivitiesCharts", comment: "The regex | button")),
     ]
-  }
-
-  private var snippets: some View {
-    HorizontalScroll {
-      HStack(spacing: 6) {
-        ForEach(snippetList) { snippet in
-          Button {
-            insert(snippet)
-          } label: {
-            Text(verbatim: snippet.label)
-              .typeStyle(.body.monospaced())
-              .frame(minWidth: 28, minHeight: 28)
-          }
-          .buttonStyle(.outline)
-          .accessibilityLabel(Text(verbatim: snippet.name))
-        }
-      }
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text("Symbols", tableName: "ActivitiesCharts", comment: "The row of symbol buttons"))
   }
 
   @ViewBuilder
@@ -266,15 +240,17 @@ struct PatternTesterCanvas: View {
           .foregroundStyle(.destructiveText)
       }
 
-      sampleList(
-        Text(
-          "Should match", tableName: "ActivitiesCharts", comment: "Examples a regex should match"),
-        samples: regex.shouldMatch, results: results?.shouldMatch, shouldMatch: true)
-      sampleList(
-        Text(
-          "Should not match", tableName: "ActivitiesCharts",
-          comment: "Examples a regex should not match"),
-        samples: regex.shouldNotMatch, results: results?.shouldNotMatch, shouldMatch: false)
+      VStack(alignment: .leading, spacing: 20) {
+        sampleList(
+          Text(
+            "Should match", tableName: "ActivitiesCharts", comment: "Examples a regex should match"),
+          samples: regex.shouldMatch, results: results?.shouldMatch, shouldMatch: true)
+        sampleList(
+          Text(
+            "Should not match", tableName: "ActivitiesCharts",
+            comment: "Examples a regex should not match"),
+          samples: regex.shouldNotMatch, results: results?.shouldNotMatch, shouldMatch: false)
+      }
     case .formula(let formula):
       formulaExamples(formula)
     }
@@ -284,50 +260,92 @@ struct PatternTesterCanvas: View {
     _ title: Text, samples: [String], results: [PatternSampleResult]?, shouldMatch: Bool
   ) -> some View {
     VStack(alignment: .leading, spacing: 6) {
-      title.typeStyle(.note.weight(.medium)).foregroundStyle(.mutedForeground)
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        title.typeStyle(.body.weight(.medium))
+          .frame(maxWidth: .infinity, alignment: .leading)
 
-      ForEach(Array(samples.enumerated()), id: \.offset) { index, sample in
-        let result = results?[index]
+        if let results {
+          let passing = results.filter(\.passes).count
 
-        HStack {
-          highlighted(sample, match: result?.match)
-            .typeStyle(.body.monospaced())
-          Spacer()
-          if let result {
-            status(result.passes, shouldMatch: shouldMatch)
-          }
+          Text(
+            "\(passing) of \(samples.count) pass", tableName: "ActivitiesCharts"
+          )
+          .typeStyle(.meta.weight(passing == samples.count ? .regular : .medium))
+          .monospacedDigit()
+          .foregroundStyle(passing == samples.count ? Color.mutedForeground : .destructiveText)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .frame(minHeight: 44)
-        .activityBox()
-        .accessibilityElement(children: .combine)
       }
+
+      VStack(alignment: .leading, spacing: 8) {
+        ForEach(Array(samples.enumerated()), id: \.offset) { index, sample in
+          sampleRow(sample, result: results?[index], shouldMatch: shouldMatch)
+        }
+      }
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(title)
+  }
+
+  /// Main's `SampleRow`: once tested, a passing row takes the right answer's ring and tint and a
+  /// failing one the wrong answer's, which also says why.
+  @ViewBuilder
+  private func sampleRow(_ sample: String, result: PatternSampleResult?, shouldMatch: Bool)
+    -> some View
+  {
+    let row = HStack(spacing: 8) {
+      highlighted(sample, match: result?.match, shouldMatch: shouldMatch)
+        .typeStyle(.body.monospaced())
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      if let result {
+        if !result.passes {
+          status(result.passes, shouldMatch: shouldMatch)
+            .typeStyle(.meta.weight(.medium))
+            .foregroundStyle(.destructiveText)
+        }
+
+        Image(systemName: result.passes ? "checkmark" : "xmark")
+          .typeStyle(.body.weight(.semibold))
+          .foregroundStyle(result.passes ? Color.successText : .destructiveText)
+          .accessibilityHidden(true)
+      }
+    }
+    .padding(.horizontal, 12)
+    .padding(.vertical, 8)
+    .frame(minHeight: 44)
+
+    if let result {
+      row
+        .answerSurface(result.passes ? .right : .wrong, cornerRadius: Radius.xl)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(verbatim: sample))
+        .accessibilityValue(status(result.passes, shouldMatch: shouldMatch))
+    } else {
+      row.activityBox()
     }
   }
 
-  private func highlighted(_ sample: String, match: Range<Int>?) -> Text {
+  private func highlighted(_ sample: String, match: Range<Int>?, shouldMatch: Bool) -> Text {
     let units = Array(sample.utf16)
 
-    guard let match, match.lowerBound <= units.count, match.upperBound <= units.count else {
+    guard let match, !match.isEmpty, match.upperBound <= units.count else {
       return Text(verbatim: sample)
     }
 
     let part = { (range: Range<Int>) in
       String(utf16CodeUnits: Array(units[range]), count: range.count)
     }
-    let before = part(0..<match.lowerBound)
-    let found = part(match)
-    let after = part(match.upperBound..<units.count)
+    var found = AttributedString(part(match))
+    found.foregroundColor = shouldMatch ? .successText : .destructiveText
+    found.backgroundColor = (shouldMatch ? Color.success : .destructive).opacity(0.1)
 
     return Text(
-      "\(Text(verbatim: before))\(Text(verbatim: found).underline().foregroundStyle(.vizAccent))\(Text(verbatim: after))"
-    )
+      AttributedString(part(0..<match.lowerBound)) + found
+        + AttributedString(part(match.upperBound..<units.count)))
   }
 
-  private func status(_ passes: Bool, shouldMatch: Bool) -> some View {
-    let text: Text =
-      passes
+  private func status(_ passes: Bool, shouldMatch: Bool) -> Text {
+    passes
       ? (shouldMatch
         ? Text(
           "matches", tableName: "ActivitiesCharts",
@@ -342,48 +360,53 @@ struct PatternTesterCanvas: View {
         : Text(
           "matched", tableName: "ActivitiesCharts",
           comment: "A sample the regex shouldn't match but does"))
-
-    return Label {
-      text
-    } icon: {
-      Image(systemName: passes ? "checkmark" : "xmark")
-    }
-    .typeStyle(.note.weight(.medium))
-    .foregroundStyle(passes ? Color.successText : .destructiveText)
   }
 
+  /// Main's `FormulaExamples`: a table in a box, a failing example's row tinted.
   private func formulaExamples(_ formula: PatternTesterFields.Formula) -> some View {
     let trimmed = pattern.trimmingCharacters(in: .whitespacesAndNewlines)
     let results = trimmed.isEmpty ? nil : PatternFormula.test(pattern, formula: formula)
+    let names = formula.examples.first?.inputs.map(\.name) ?? []
 
-    return Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+    return Grid(alignment: .leading, horizontalSpacing: 0, verticalSpacing: 0) {
       GridRow {
-        ForEach(formula.examples.first?.inputs ?? [], id: \.name) { input in
-          Text(verbatim: input.name)
+        ForEach(names, id: \.self) { name in
+          formulaCell(Text(verbatim: name).monospaced(), alignment: .leading, vertical: 8)
         }
-        Text(
-          "Should give", tableName: "ActivitiesCharts",
-          comment: "Column of a formula example's expected output")
-        Text(
-          "Your result", tableName: "ActivitiesCharts",
-          comment: "Column of the learner's formula result")
+        formulaCell(
+          Text(
+            "Should give", tableName: "ActivitiesCharts",
+            comment: "Column of a formula example's expected output"), alignment: .trailing,
+          vertical: 8)
+        formulaCell(
+          Text(
+            "Your result", tableName: "ActivitiesCharts",
+            comment: "Column of the learner's formula result"), alignment: .trailing, vertical: 8)
       }
-      .typeStyle(.note.weight(.medium))
+      .typeStyle(.meta.weight(.medium))
       .foregroundStyle(.mutedForeground)
+      .background(Color.muted.opacity(0.6), in: .rect)
 
       ForEach(Array(formula.examples.enumerated()), id: \.offset) { index, example in
         let result = results?[index]
 
+        Divider()
+
         GridRow {
           ForEach(example.inputs, id: \.name) { input in
-            Text(verbatim: ActivityNumberFormat.format(input.value))
+            formulaCell(
+              Text(verbatim: ActivityNumberFormat.format(input.value)), alignment: .leading)
           }
-          Text(verbatim: ActivityNumberFormat.format(example.output)).typeWeight(.medium)
-          HStack(spacing: 4) {
-            Text(verbatim: result?.value.map { ActivityNumberFormat.format($0) } ?? "–")
-            if let result {
+          formulaCell(
+            Text(verbatim: ActivityNumberFormat.format(example.output)).fontWeight(.medium),
+            alignment: .trailing)
+          HStack(spacing: 6) {
+            if let value = result?.value {
+              Text(verbatim: ActivityNumberFormat.format(value))
+            }
+            if let result, result.passes || result.value != nil {
               Image(systemName: result.passes ? "checkmark" : "xmark")
-                .foregroundStyle(result.passes ? Color.success : .destructive)
+                .foregroundStyle(result.passes ? Color.successText : .destructiveText)
                 .accessibilityLabel(
                   result.passes
                     ? Text(
@@ -394,10 +417,17 @@ struct PatternTesterCanvas: View {
                       comment: "A sample the regex doesn't match, as it should"))
             }
           }
+          .padding(.horizontal, 12)
+          .padding(.vertical, 10)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .trailing)
         }
-        .typeStyle(.body.monospaced())
+        .typeStyle(.body)
+        .monospacedDigit()
+        .background(result?.passes == false ? Color.destructive.opacity(0.1) : .clear, in: .rect)
       }
     }
+    .activityBox()
+    .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
@@ -405,33 +435,42 @@ struct PatternTesterCanvas: View {
         comment: "The table of formula examples"))
   }
 
+  private func formulaCell(_ text: Text, alignment: Alignment, vertical: CGFloat = 10)
+    -> some View
+  {
+    text
+      .padding(.horizontal, 12)
+      .padding(.vertical, vertical)
+      // As tall as its row, so the row's tint has no gaps.
+      .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
+  }
+
+  /// Main's `PatternHints`: one more at each tap; a checked answer that still fails an example
+  /// shows them all.
   @ViewBuilder
   private var hints: some View {
-    let visible = isChecked ? fields.hints : Array(fields.hints.prefix(hintsShown))
+    let reveals = isChecked && !passesAll
+    let visible = reveals ? fields.hints : Array(fields.hints.prefix(hintsShown))
 
     if !visible.isEmpty {
       VStack(alignment: .leading, spacing: 8) {
         ForEach(visible, id: \.self) { hint in
-          VStack(alignment: .leading, spacing: 2) {
-            LessonRichText(hint.mistake, literalNumbers: isRegex)
-              .typeStyle(.note.weight(.semibold))
-            LessonRichText(hint.hint, literalNumbers: isRegex).typeStyle(.note)
+          Label {
+            RichInlineText(hintLine(hint))
+              .typeStyle(.body)
+          } icon: {
+            Image(systemName: "lightbulb")
+              .foregroundStyle(.vizHighlight)
           }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(12)
-          .background(
-            Color.warning.opacity(0.12), in: .rect(cornerRadius: Radius.lg, style: .continuous))
         }
       }
     }
 
-    if !isChecked && hintsShown < fields.hints.count {
+    if !reveals && hintsShown < fields.hints.count {
       Button {
         let hint = fields.hints[hintsShown]
         hintsShown += 1
-        announcePolitely(
-          [hint.mistake, hint.hint].map { LessonRichText.typeset($0, literalNumbers: isRegex).said }
-            .joined(separator: ": "))
+        announcePolitely(hintLine(hint).said)
       } label: {
         Label {
           hintsShown == 0
@@ -443,7 +482,23 @@ struct PatternTesterCanvas: View {
         }
       }
       .buttonStyle(.outline)
+      .controlSize(.large)
+      .disabled(isChecked)
     }
+  }
+
+  /// Main's hint: the mistake in bold, then what to try, on one line.
+  private func hintLine(_ hint: PatternTesterFields.Hint) -> RichInline {
+    var mistake = LessonRichText.typeset(hint.mistake, literalNumbers: isRegex)
+
+    for run in mistake.text.runs {
+      var intent = run.inlinePresentationIntent ?? []
+      intent.insert(.stronglyEmphasized)
+      mistake.text[run.range].inlinePresentationIntent = intent
+    }
+
+    return mistake + RichInline(text: AttributedString(": "))
+      + LessonRichText.typeset(hint.hint, literalNumbers: isRegex)
   }
 
   /// The last pattern tested, even while the next one runs, so typing reads a line out only when a
@@ -474,6 +529,10 @@ struct PatternTesterCanvas: View {
     return (all.filter(\.passes).count, all.count)
   }
 
+  private var passesAll: Bool {
+    summary.map { $0.passing == $0.total } ?? false
+  }
+
   private var summary: (passing: Int, total: Int)? {
     switch fields {
     case .regex:
@@ -502,24 +561,5 @@ struct PatternTesterCanvas: View {
     let trimmed = next.trimmingCharacters(in: .whitespacesAndNewlines)
     context.setAnswer(
       trimmed.isEmpty ? nil : try? ActivityAnswer(encoding: PatternTesterAnswer(pattern: next)))
-  }
-
-  private func insert(_ snippet: Snippet) {
-    var range = pattern.endIndex..<pattern.endIndex
-
-    if case .selection(let selected) = selection?.indices {
-      range = selected
-    }
-
-    let selected = String(pattern[range])
-    let inserted = snippet.before + selected + snippet.after
-    let next = pattern.replacingCharacters(in: range, with: inserted)
-    let offset =
-      pattern.distance(from: pattern.startIndex, to: range.lowerBound) + snippet.before.count
-      + selected.count
-    change(next)
-
-    let cursor = pattern.index(pattern.startIndex, offsetBy: offset)
-    selection = TextSelection(insertionPoint: cursor)
   }
 }
