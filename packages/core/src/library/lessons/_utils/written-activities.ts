@@ -63,11 +63,12 @@ export async function writeCheckedActivities({
   screens: readonly PublishedLessonScreen[];
   analytics?: Analytics;
 }) {
-  const write = (planned: readonly number[], earlier: readonly CheckedActivity[]) =>
+  const write = (planned: readonly number[], earlier: readonly CheckedActivity[], model?: string) =>
     writeLessonActivities({
       ...context,
       analytics,
       indexes: planned,
+      model,
       problems: earlier.flatMap(({ index, problems }) =>
         problems.map((problem) => ({ problem, screen: index, source: "check" as const })),
       ),
@@ -90,9 +91,11 @@ export async function writeCheckedActivities({
     return firstTry;
   }
 
+  // The rewrite starts on the first draft's model, so one reviewer family reads every kept screen.
   const second = await write(
     failed.map(({ index }) => index),
     failed,
+    first.provenance.model,
   );
 
   const rechecked = await checkWrittenActivities({

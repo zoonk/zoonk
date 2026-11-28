@@ -223,6 +223,21 @@ describe(draftLessonActivities, () => {
     expect(reviewed?.spec.screens[PRACTICE]?.activityTemplate).toBe("codeRunner");
   });
 
+  it("asks the proposal to draw the picture an activity shows", async () => {
+    const { lesson } = await publishLesson();
+    const image = { alt: "A thermometer at minus three degrees", prompt: "A thermometer at −3 °C" };
+    mockPlan();
+    mockWrite({ ...runner(), image });
+    mockReview();
+
+    const draft = await draftLessonActivities({ lessonId: lesson.id });
+
+    expect(draft).toMatchObject({ status: "drafted" });
+
+    const entry = draft.status === "drafted" ? draft.setScreens.screens[PRACTICE] : null;
+    expect(entry).toMatchObject({ kind: "activity", picture: image });
+  });
+
   it("never replaces a live screen that isn't a question", async () => {
     const { lesson } = await publishLesson();
     mockPlan([{ activityTemplate: "codeRunner", index: 1 }]);
@@ -250,6 +265,7 @@ describe(draftLessonActivities, () => {
 
     expect(vi.mocked(writeLessonActivities).mock.lastCall?.[0]).toMatchObject({
       indexes: [PRACTICE],
+      model: "anthropic/claude-opus-5.5",
       problems: [
         expect.objectContaining({
           problem: expect.stringContaining("expectedOutput"),

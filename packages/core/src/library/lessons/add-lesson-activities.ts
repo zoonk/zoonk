@@ -13,6 +13,7 @@ import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
 import { type StepKind, prisma } from "@zoonk/db";
 import { describeActivityTemplates, listPlannerTemplates } from "../activities/writer-templates";
 import { readSavedStepMarks } from "../marks/step-marks";
+import { getStepImageRequest } from "../media/_utils/step-image-request";
 import { toReviewProblems } from "../quality/lesson-review-problems";
 import { loadPublishedLessonInputs, toWritingContext } from "./_utils/lesson-writing-inputs";
 import { ACTIVITY_SERVICE_TIER, writeCheckedActivities } from "./_utils/written-activities";
@@ -26,7 +27,13 @@ type Finding = { problem: string; stepId: string | null };
 
 type ScreenEntry =
   | { id: string }
-  | { content: object; idea: number | null; kind: "activity"; skillId?: string };
+  | {
+      content: object;
+      idea: number | null;
+      kind: "activity";
+      picture?: { alt: string; parts?: readonly string[]; prompt: string };
+      skillId?: string;
+    };
 
 export type LessonActivitiesDraft =
   | { lessonId: string; status: "skipped"; reason: string }
@@ -184,14 +191,28 @@ function toFixScreens({
   return steps.map((step, index) => {
     const content = kept.get(index);
 
-    return content
-      ? {
-          content,
-          idea: readSavedStepMarks(step.marks)?.ideaIndex ?? null,
-          kind: "activity",
-          ...(step.skillId ? { skillId: step.skillId } : {}),
-        }
-      : { id: step.id };
+    if (!content) {
+      return { id: step.id };
+    }
+
+    // A new picture is drawn at proposal only when the screen asks for it.
+    const image = getStepImageRequest({ content, kind: "activity" });
+
+    return {
+      content,
+      idea: readSavedStepMarks(step.marks)?.ideaIndex ?? null,
+      kind: "activity",
+      ...(image
+        ? {
+            picture: {
+              alt: image.alt,
+              prompt: image.prompt,
+              ...(image.parts ? { parts: image.parts } : {}),
+            },
+          }
+        : {}),
+      ...(step.skillId ? { skillId: step.skillId } : {}),
+    };
   });
 }
 
