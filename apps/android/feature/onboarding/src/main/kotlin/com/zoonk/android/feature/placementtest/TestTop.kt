@@ -25,6 +25,7 @@ import com.zoonk.android.data.AnalyticsEvent
 import com.zoonk.android.data.TestContext
 import com.zoonk.android.feature.onboarding.setup.SETUP_COLUMN_WIDTH
 import com.zoonk.android.ui.components.Button
+import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskSegment
@@ -166,6 +167,7 @@ internal fun TestWaysOut(
                     leave()
                 },
                 modifier = Modifier.fillMaxWidth(),
+                size = ButtonSize.Large,
             ) {
                 Text(stringResource(R.string.placementtest_finish_later))
             }
@@ -176,6 +178,7 @@ internal fun TestWaysOut(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = stop.enabled,
+                size = ButtonSize.Large,
             ) {
                 Text(stringResource(R.string.onboarding_placement_stop))
             }
