@@ -26,7 +26,7 @@ type UnderstoodExamDay = "booked" | "official";
 /** Every field present, null when the text didn't say. */
 type RawUnderstoodGoal = {
   /** A test the learner's own teacher or course sets, which no public notice describes. */
-  classTest: boolean;
+  classTest?: boolean;
   contentCountry: string | null;
   countryDependent: boolean;
   displayName?: string;
@@ -74,6 +74,8 @@ export type UnderstoodGoal = {
    * languages from their variety, so theirs is always false.
    */
   countryDependent: boolean;
+  /** A test the learner's own teacher or course sets: no public notice, name or day comes with it. */
+  classTest?: true;
   displayName?: string;
   examDay?: UnderstoodExamDay;
   /** 1 to 12, for an exam named without its day ("in March"). */
@@ -218,6 +220,7 @@ function cleanExamFields(goal: RawUnderstoodGoal) {
   const publicExam = exam && !goal.classTest;
 
   return {
+    classTest: exam && goal.classTest ? (true as const) : undefined,
     examDay: publicExam ? (goal.examDay ?? undefined) : undefined,
     examMonth: exam ? cleanMonth(goal.examMonth) : undefined,
     examName: publicExam ? cleanText(goal.examName) : undefined,

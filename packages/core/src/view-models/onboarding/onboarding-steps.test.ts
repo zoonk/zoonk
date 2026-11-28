@@ -204,6 +204,13 @@ describe(getOnboardingSteps, () => {
     expect(steps.slice(0, 2)).toStrictEqual(["targetDate", "level"]);
   });
 
+  it("asks a typed class test for its date too, since no notice gives a school's own test", () => {
+    expect(examSteps({ classTest: true, subject: "기말고사" }).slice(0, 2)).toStrictEqual([
+      "targetDate",
+      "level",
+    ]);
+  });
+
   it("asks a language goal why, unless it said so", () => {
     const steps = getOnboardingSteps({
       goal: {

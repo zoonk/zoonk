@@ -26,7 +26,6 @@ const fallbackModels = ["openai/gpt-6-luna", "anthropic/claude-haiku-5.5"] as co
 
 /** Flat, with nullable fields, so every provider's structured output reads it the same way. */
 const goalSchema = z.object({
-  classTest: z.boolean(),
   contentCountry: z.string().nullable(),
   countryDependent: z.boolean(),
   displayName: z.string(),
@@ -53,7 +52,7 @@ const goalSchema = z.object({
   title: z.string(),
 });
 
-const schema = z.object({
+const materialSchema = z.object({
   dailyMinutes: z.number().nullable(),
   followUps: z.array(z.string()),
   goals: z.array(goalSchema),
@@ -63,6 +62,14 @@ const schema = z.object({
   studyDays: z.array(z.number()).nullable(),
   studyTime: z.string().nullable(),
   studyTimeNote: z.string().nullable(),
+}) satisfies z.ZodType<RawGoalUnderstanding>;
+
+/**
+ * Material's own rules already say when an exam on it is a class test; asking again there made
+ * readings take a test's date from a syllabus.
+ */
+const wordsSchema = materialSchema.extend({
+  goals: z.array(goalSchema.extend({ classTest: z.boolean() })),
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
 type GoalMaterial = {
@@ -115,6 +122,7 @@ function getSystemPrompt({
   const variants = {
     material: Boolean(material?.overview),
     unreadMaterial: material?.overview === null,
+    wordsOnly: !material?.overview,
   };
 
   return fillPromptLanguages({
@@ -179,7 +187,9 @@ export async function understandGoal(params: UnderstandGoalParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object<RawGoalUnderstanding>({
+          schema: params.material?.overview ? materialSchema : wordsSchema,
+        }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -202,7 +212,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 export const goalRouteClassifier = {
   instructions: selectPromptVariants({
     template,
-    variants: { material: false, unreadMaterial: false },
+    variants: { material: false, unreadMaterial: false, wordsOnly: true },
   }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",

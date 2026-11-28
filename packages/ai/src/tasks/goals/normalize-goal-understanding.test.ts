@@ -258,13 +258,14 @@ describe(normalizeGoalUnderstanding, () => {
     expect(result).toMatchObject({
       goals: [
         {
+          classTest: true,
           examDay: undefined,
           examName: undefined,
           examSubjects: ["국어", "수학", "영어"],
           examTarget: undefined,
           subject: "기말고사",
         },
-        { examDay: "official", examName: "수능" },
+        { classTest: undefined, examDay: "official", examName: "수능" },
       ],
     });
   });
