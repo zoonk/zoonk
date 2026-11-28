@@ -1200,6 +1200,16 @@
             LessonOption(id: $0, text: $0, pictureAlt: $0)
           },
           selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
+
+        LessonOptionList(
+          options: [
+            LessonOption(
+              id: "A red apple", text: "A red apple", isCorrect: true, pictureAlt: "A red apple"),
+            LessonOption(
+              id: "A green pear", text: "A green pear", isCorrect: false,
+              pictureAlt: "A green pear"),
+          ],
+          selectedId: "A green pear", isChecked: true, isLocked: true, select: { _ in })
       }
       .padding(.vertical, 8)
     }

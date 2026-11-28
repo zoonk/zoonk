@@ -12,8 +12,8 @@ struct LessonOption: Identifiable, Hashable {
 
 /// Main's `PlayerChoiceSceneOptions`: number keys pick them on a hardware keyboard, and once
 /// checked only the right option and a wrong pick stay, unless it was a guess. A picture option
-/// keeps its key and its mark in its picture's top corners, each on a disc of the page so it reads
-/// over any picture.
+/// keeps its key, its verdict once checked, and its mark in its picture's top corners, each on the
+/// page's color so it reads over any picture.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
 
@@ -68,13 +68,22 @@ struct LessonOptionList: View {
         pictureLabel(option)
           .overlay(alignment: .topLeading) {
             if HardwareKeyboard.shared.isConnected {
-              KeyMarker(number: marker)
-                .background(
-                  .boxBackground, in: .rect(cornerRadius: Radius.sm, style: .continuous)
-                )
-                .padding(6)
-                .opacity(isLocked || isChecked ? 0 : 1)
-                .dynamicTypeSize(...Self.cornerMarkSize)
+              Group {
+                if let result = result(option) {
+                  VerdictMark(result: result)
+                    .frame(minHeight: 20)
+                    .padding(2)
+                    .background(.boxBackground, in: .circle)
+                } else {
+                  KeyMarker(number: marker)
+                    .background(
+                      .boxBackground, in: .rect(cornerRadius: Radius.sm, style: .continuous)
+                    )
+                    .opacity(isLocked || isChecked ? 0 : 1)
+                }
+              }
+              .padding(6)
+              .dynamicTypeSize(...Self.cornerMarkSize)
             }
           }
           .overlay(alignment: .topTrailing) {
