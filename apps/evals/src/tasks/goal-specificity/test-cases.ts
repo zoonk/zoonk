@@ -249,4 +249,18 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     personalKeywords: ["magpro", "trans-pol"],
     privateCourse: true,
   }),
+  goalCase({
+    generalKeywords: ["수학"],
+    goal: "기말고사 국어, 수학, 영어 평균 90점",
+    id: "ko-term-finals-share-their-subjects",
+    language: "ko",
+    privateCourse: false,
+  }),
+  goalCase({
+    generalKeywords: ["calculus"],
+    goal: "Get through my calculus and physics finals next month",
+    id: "en-class-finals-share-their-subjects",
+    language: "en",
+    privateCourse: false,
+  }),
 ];
