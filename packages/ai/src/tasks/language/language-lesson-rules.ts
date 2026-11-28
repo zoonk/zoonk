@@ -45,7 +45,10 @@ export function definitionNamesWord({
   );
 }
 
-/** A number in digits looks the same in both languages, so the learner picks its word tile by sight. */
+/**
+ * A number in digits looks the same in both languages, so the learner picks its word tile by sight.
+ * Digits joined to letters are a code, such as "A4" or "4G", which stays as written.
+ */
 export function writesNumberInDigits(text: string): boolean {
-  return /\p{Nd}/u.test(text);
+  return /(?<![\p{L}\p{Nd}])\p{Nd}+(?![\p{L}\p{Nd}])/u.test(text);
 }

@@ -56,7 +56,7 @@ Choose them at `LEVEL`. From B1 up, the learner already says the basics of any s
 3 or 4 sentences a real person would say in this situation, using the new words and `KNOWN_WORDS`. Match `LEVEL`: at A1 and A2, 3 to 7 words and everyday structures; at B1 and B2, up to 12 words with connectors; at C1 and C2, natural speech with idioms where they fit. Vary them: a question, an answer, a request.
 
 - `sentence`: entirely in `TARGET_LANGUAGE`. Keep question marks (and the opening "¿" in Spanish); drop decorative final periods and exclamation marks, because the sentence is split into word tiles.
-- Numbers in `sentence` and `translation` are written in words, the way they're said ("numero dodici", not "numero 12"; "alle tre", not "alle 3"). A number in digits looks the same in both languages, so the learner would pick its tile by sight instead of knowing the word.
+- Numbers in `sentence` and `translation` are written in words, the way they're said ("numero dodici", not "numero 12"; "alle tre", not "alle 3"). A number in digits looks the same in both languages, so the learner would pick its tile by sight instead of knowing the word. Names and codes keep their digits ("carta A4", "Fiat 500").
 {{#bilingual}}
 - `translation`: natural `LEARNER_LANGUAGE` with the same meaning and register, not word for word. Same punctuation rule.
 - `explanation`: 1 or 2 sentences in `LEARNER_LANGUAGE` on why the sentence is built this way, compared with how the learner would say it in `LEARNER_LANGUAGE` (word order, a word choice, a structure their language doesn't have). Be accurate about what each part does in this sentence.

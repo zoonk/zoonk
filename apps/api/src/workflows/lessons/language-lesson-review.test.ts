@@ -297,6 +297,29 @@ describe("a language lesson's review", () => {
     ).resolves.not.toBeNull();
   });
 
+  it("publishes a fix that rewrites the screen but keeps its number in digits", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    fixWith(() => {
+      const kept = withDepositOf({ amount: "500", valor: "500" });
+
+      return {
+        ...kept,
+        sentences: kept.sentences.map((sentence, index) =>
+          index === 1 ? { ...sentence, explanation: "“Deposit” é a caução." } : sentence,
+        ),
+      };
+    });
+
+    const { lessonId, result } = await writeLanguageLesson([
+      taskResult(withDepositOf({ amount: "500", valor: "500" }), "openai/gpt-6.1-terra"),
+    ]);
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+    expect(fixLanguageLesson).toHaveBeenCalledOnce();
+    expect(generateLanguageLesson).toHaveBeenCalledOnce();
+  });
+
   it("holds the lesson back when the fix still has an error on a screen it changed", async () => {
     const flagged = { problem: "The option is right too.", screen: FIRST_WORD_CHOICE };
 

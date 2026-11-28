@@ -47,4 +47,9 @@ describe(writesNumberInDigits, () => {
   it("accepts a number written in words", () => {
     expect(writesNumberInDigits("Abito in via Roma, numero dodici")).toBe(false);
   });
+
+  it("accepts a code that joins digits to letters", () => {
+    expect(writesNumberInDigits("Imprima isto em papel A4")).toBe(false);
+    expect(writesNumberInDigits("Il telefono ha il 4G?")).toBe(false);
+  });
 });

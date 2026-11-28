@@ -126,6 +126,8 @@ export async function fixLanguageLessonDraft({
 /**
  * Internal workflow bridge: what still blocks the fixed lesson. A finding the writer saw on a screen
  * it left unchanged is final, matched by screen, not wording; a lesson-wide finding always blocks.
+ * A digit in a tile sentence only makes the exercise easier, so its automatic check asks the writer
+ * once and never holds a lesson back.
  */
 export async function reviewLanguageLessonFix({
   fixed,
@@ -139,10 +141,11 @@ export async function reviewLanguageLessonFix({
   const problems = await reviewLanguageLessonDraft({ ...context, draft: fixed });
 
   return problems.filter(
-    ({ screen }) =>
-      screen === null ||
-      !flaggedScreens.includes(screen) ||
-      !isDeepStrictEqual(before[screen], after[screen]),
+    ({ screen, source }) =>
+      source !== "check" &&
+      (screen === null ||
+        !flaggedScreens.includes(screen) ||
+        !isDeepStrictEqual(before[screen], after[screen])),
   );
 }
 
