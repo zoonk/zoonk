@@ -24,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -330,8 +329,8 @@ private fun OpenBlank(
 }
 
 /**
- * The open blank with every ending it can take, laid out unseen so its cell is sized for all of them:
- * picking an ending moves no column and no row.
+ * The open blank with every ending it can take, measured but never placed, so its cell is sized for
+ * all of them and picking an ending moves no column and no row.
  */
 @Composable
 private fun BlankRoom(
@@ -339,8 +338,12 @@ private fun BlankRoom(
     stem: String,
     choices: List<String>,
 ) {
-    Box(Modifier.alpha(0f).clearAndSetSemantics {}) {
-        (listOf(null) + choices).forEach { OpenBlank(row, stem, it, isActive = false, enabled = false) {} }
+    Layout(
+        content = { (listOf(null) + choices).forEach { OpenBlank(row, stem, it, isActive = false, enabled = false) {} } },
+        modifier = Modifier.clearAndSetSemantics {},
+    ) { measurables, constraints ->
+        val sizes = measurables.map { it.measure(constraints.copy(minWidth = 0, minHeight = 0)) }
+        layout(sizes.maxOf { it.width }, sizes.maxOf { it.height }) {}
     }
 }
 
