@@ -100,8 +100,7 @@ export async function ActivityUseAnalysis({ statsPeriod }: { statsPeriod: StatsP
       <div className="flex flex-col gap-4">
         <p className="text-muted-foreground max-w-2xl text-sm">
           Lessons whose current screens were written in this period, by the subject of their course.
-          {comparisonLabel ? " Arrows compare with the period before." : ""} Language-course lessons
-          are left out: their writer never uses activities.
+          {comparisonLabel ? " Arrows compare with the period before." : ""}
         </p>
 
         <SubjectTable before={before} now={now} />
@@ -156,7 +155,7 @@ function ActivityUseTiles({ before, now }: { before?: ActivityUseRow; now: Activ
             <ShareDetail share={shares.kept} unit={["planned activity", "planned activities"]} />
           )
         }
-        help="Activities the lesson's current plan asks for that its screens show, with the template the plan named. A drop usually means writing or fixing lost them; a staff plan change also counts until the lesson is rewritten."
+        help="Activities the lesson's current plan asks for that its screens show, with the template the plan named. A drop usually means writing or fixing lost them; a staff plan change also counts until the lesson is rewritten. Language lessons pick their activities as they're written, so they don't count here."
         icon={<ListChecksIcon />}
         title="Planned activities kept"
         value={formatShare(shares.kept.percent)}

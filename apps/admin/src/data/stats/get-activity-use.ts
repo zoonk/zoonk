@@ -1,6 +1,8 @@
 import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
+import { ALPHABET_IDENTITY_PREFIX } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma, sql } from "@zoonk/db";
+import { type CourseCategory } from "@zoonk/utils/categories";
 
 export type ActivityUseRow = {
   activityScreens: number;
@@ -14,9 +16,14 @@ export type ActivityUseRow = {
 
 export type ActivityUse = {
   all: ActivityUseRow;
-  /** One row per course subject, and a `null` subject for lessons outside any categorized course. */
+  /**
+   * One row per course subject, and a `null` subject for lessons outside any categorized course.
+   * Language lessons make the `languages` row, whatever their course.
+   */
   subjects: (ActivityUseRow & { subject: string | null })[];
 };
+
+const LANGUAGE_SUBJECT: CourseCategory = "languages";
 
 type ActivityUseSqlRow = ActivityUseRow & { allSubjects: boolean; subject: string | null };
 
@@ -30,10 +37,12 @@ const EMPTY_ROW: ActivityUseRow = {
 };
 
 /**
- * Lessons written from a lesson plan, dated by when their current screens were first written, since
- * that's when the planner's prompt shaped them. Language-course lessons go to a writer that never
- * uses activities, and challenge and explanation lessons have no plan, so they're left out. A lesson
- * counts under each subject of its home course; the all-subjects row counts it once.
+ * Lessons dated by when their current screens were first written, since that's when their activities
+ * were chosen. Only lessons written from a plan count toward planned and kept: a language lesson's
+ * writer picks its own activities and ignores any old plan. Challenge and explanation lessons have no
+ * plan, and alphabet lessons' writer never uses activities, so they're left out. A planned lesson
+ * counts under each subject of its home course and a language lesson under languages; the
+ * all-subjects row counts each lesson once.
  */
 export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
   const rows = await prisma.$queryRaw<ActivityUseSqlRow[]>(sql`
@@ -48,17 +57,23 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
       HAVING MIN(generated_at) >= ${start} AND MIN(generated_at) <= ${end}
     ),
     written AS (
-      SELECT dated.*, chapters.home_course_id AS course_id
+      SELECT
+        dated.*,
+        chapters.home_course_id AS course_id,
+        lessons.target_language IS NOT NULL AS language,
+        CASE WHEN lessons.target_language IS NULL THEN lessons.spec->'screens' END AS plan
       FROM dated
       JOIN library_lessons lessons ON lessons.id = dated.lesson_id
       LEFT JOIN library_chapters chapters ON chapters.id = lessons.home_chapter_id
-      WHERE lessons.target_language IS NULL AND jsonb_typeof(lessons.spec->'screens') = 'array'
+      WHERE CASE
+        WHEN lessons.target_language IS NULL THEN jsonb_typeof(lessons.spec->'screens') = 'array'
+        ELSE NOT starts_with(lessons.identity_key, ${ALPHABET_IDENTITY_PREFIX})
+      END
     ),
     planned AS (
       SELECT written.lesson_id, screen->>'activityTemplate' AS template, COUNT(*)::int AS planned
       FROM written
-      JOIN library_lessons lessons ON lessons.id = written.lesson_id
-      CROSS JOIN LATERAL jsonb_array_elements(lessons.spec->'screens') AS screen
+      CROSS JOIN LATERAL jsonb_array_elements(written.plan) AS screen
       WHERE screen->>'kind' = 'activity'
         OR (screen->>'kind' = 'application' AND screen->>'activityTemplate' IS NOT NULL)
       GROUP BY written.lesson_id, screen->>'activityTemplate'
@@ -85,6 +100,7 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
         written.screens,
         written.activity_screens,
         written.course_id,
+        written.language,
         COALESCE(kept.planned, 0) AS planned,
         COALESCE(kept.kept, 0) AS kept
       FROM written
@@ -105,7 +121,7 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
 
     SELECT
       false AS "allSubjects",
-      categories.category AS subject,
+      CASE WHEN lessons.language THEN ${LANGUAGE_SUBJECT} ELSE categories.category END AS subject,
       COUNT(*)::int AS lessons,
       (COUNT(*) FILTER (WHERE activity_screens > 0))::int AS "lessonsWithActivity",
       SUM(screens)::int AS screens,
@@ -113,8 +129,9 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
       SUM(planned)::int AS "plannedActivities",
       SUM(kept)::int AS "keptActivities"
     FROM lessons
-    LEFT JOIN course_categories categories ON categories.course_id = lessons.course_id
-    GROUP BY categories.category
+    LEFT JOIN course_categories categories
+      ON categories.course_id = lessons.course_id AND NOT lessons.language
+    GROUP BY subject
   `);
 
   return {
