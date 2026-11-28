@@ -158,7 +158,7 @@ private struct DialogueCanvas: View {
           .buttonStyle(.borderless)
         }
 
-        Spacer(minLength: 40)
+        Spacer(minLength: 0)
       } else {
         Spacer(minLength: 40)
 
