@@ -98,7 +98,7 @@ internal fun ColumnScope.FocusTestFlow(
     val open =
         shown != FocusTestPhase.Loading && shown != FocusTestPhase.Starting && shown != FocusTestPhase.LoadFailed &&
             shown !is FocusTestPhase.Offer
-    LaunchedEffect(question?.sitting?.answered, question?.sitting?.questions, title, open) {
+    LaunchedEffect(question?.sitting?.answered, question?.sitting?.questions, title, open, vm.busy) {
         onSitting(
             when {
                 question != null && title != null -> {
@@ -109,8 +109,11 @@ internal fun ColumnScope.FocusTestFlow(
                         sitting.answered,
                         sitting.questions,
                         stop =
-                            TestStop(stopHint.takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN }, vm::stop)
-                                .takeIf { sitting.answered > 0 },
+                            TestStop(
+                                stopHint.takeIf { sitting.hint == FocusTestSitting.Hint.MANY_UNKNOWN },
+                                enabled = !vm.busy,
+                                onStop = vm::stop,
+                            ).takeIf { sitting.answered > 0 },
                     )
                 }
 

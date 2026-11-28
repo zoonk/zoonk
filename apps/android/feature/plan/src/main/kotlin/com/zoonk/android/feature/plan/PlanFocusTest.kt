@@ -41,7 +41,7 @@ internal fun focusTestLine(summary: FocusTestSummary): String {
         }
 
         FocusTestSummary.State.SITTING -> {
-            factsLine(stringResource(R.string.focustest_in_progress), summary.sitting?.let { questionOf(it.answered + 1, it.questions) })
+            factsLine(stringResource(R.string.focustest_in_progress), summary.sitting?.let { questionOf(it.answered, it.questions) })
         }
 
         FocusTestSummary.State.CHECKED -> {
@@ -100,11 +100,18 @@ private fun done(
     lessonsSkipped: Long,
 ): String = factsLine(lessonsSkippedLine(lessonsSkipped.toInt()), formatMomentDay(finishedAt, currentLocale()))
 
+/** The question an open test asks next, by number; null once its answers reach its ceiling, which closing ends. */
+internal fun nextQuestion(
+    answered: Long,
+    total: Long,
+): Long? = (answered + 1).takeIf { answered < total }
+
+/** "Question 3 of 8" while there's one left to ask; an open test with none left says only that it's in progress. */
 @Composable
 private fun questionOf(
-    number: Long,
+    answered: Long,
     total: Long,
-): String = stringResource(R.string.onboarding_test_question_progress, number.toInt(), total.toInt())
+): String? = nextQuestion(answered, total)?.let { stringResource(R.string.onboarding_test_question_progress, it.toInt(), total.toInt()) }
 
 /** The test's one line on the plan: what it's for and what it costs, where the learner is, or its last result and when. */
 @Composable
@@ -117,7 +124,7 @@ private fun placementTestLine(test: PlanPlacementTest): String =
                 row.state == PlanPlacementTestOneOf1.State.CONTINUE -> {
                     factsLine(
                         stringResource(R.string.placementtest_in_progress),
-                        row.total?.let { questionOf((row.answered ?: 0) + 1, it) },
+                        row.total?.let { questionOf(row.answered ?: 0, it) },
                     )
                 }
 
@@ -137,7 +144,7 @@ private fun placementTestLine(test: PlanPlacementTest): String =
             val result = row.result
             when {
                 attempt != null -> {
-                    factsLine(stringResource(R.string.placementtest_in_progress), questionOf(attempt.answered + 1, attempt.questions))
+                    factsLine(stringResource(R.string.placementtest_in_progress), questionOf(attempt.answered, attempt.questions))
                 }
 
                 result != null -> {

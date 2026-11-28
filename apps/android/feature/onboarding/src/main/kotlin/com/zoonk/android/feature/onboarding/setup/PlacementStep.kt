@@ -249,11 +249,13 @@ internal fun ColumnScope.PlacementDone(
     )
 }
 
+/** [action] is "Done" where nothing is left to go on with, as on the plan when no test can open. */
 @Composable
 internal fun ColumnScope.PlacementUnavailable(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_continue),
 ) {
     PlacementOutcome(
         title = stringResource(R.string.onboarding_placement_unavailable_title),
@@ -261,6 +263,7 @@ internal fun ColumnScope.PlacementUnavailable(
         pending = pending,
         failed = failed,
         onContinue = onContinue,
+        action = action,
     )
 }
 
@@ -271,6 +274,7 @@ private fun ColumnScope.PlacementOutcome(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_continue),
 ) {
     SetupContent {
         OnboardingHeading(title)
@@ -281,7 +285,7 @@ private fun ColumnScope.PlacementOutcome(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.onboarding_continue))
+                Text(action)
             }
         }
     }

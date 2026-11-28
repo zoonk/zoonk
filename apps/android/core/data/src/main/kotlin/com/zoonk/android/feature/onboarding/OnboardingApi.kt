@@ -38,7 +38,6 @@ import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
 import com.zoonk.api.models.PlacementCompletionInput
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlacementSittingInput
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
@@ -227,13 +226,12 @@ interface OnboardingApi {
     ): PlacementAnswerResult
 
     /**
-     * Opens an exam goal's next Focus test sitting, or with a [length] the test taken from the plan (its next part once
-     * one closed); asked again, it answers with the one already open.
+     * Opens an exam goal's next Focus test sitting, or a course's test taken from the plan; asked again, it answers with
+     * the one already open.
      */
     suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
-        length: PlacementLength? = null,
     ): Placement
 
     /**
@@ -543,11 +541,10 @@ class LiveOnboardingApi(
     override suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
-        length: PlacementLength?,
     ) = perform {
         api.clients(session).learner.createPlacementSitting(
             UUID.fromString(goalId),
-            PlacementSittingInput(length = length, timeZone = TimeZone.getDefault().id),
+            PlacementSittingInput(timeZone = TimeZone.getDefault().id),
         )
     }
 

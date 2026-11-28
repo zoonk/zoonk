@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -15,6 +17,7 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.orderQuestion
@@ -28,7 +31,9 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.PlacementLength
+import com.zoonk.api.models.PlacementAnswerInput
+import com.zoonk.api.models.PlacementAnswerResult
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,12 +56,15 @@ class PlacementStepFlowTest {
 
     private val api = FakeOnboardingApi()
 
-    private fun show(mode: String = "offer") {
+    private fun show(
+        mode: String = "offer",
+        through: OnboardingApi = api,
+    ) {
         api.setup = { setupView(steps = listOf("placement", "plan"), placement = placementView(mode)) }
         api.reply = { _, _ -> setupView(steps = listOf("plan")) }
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
+        val store = OnboardingStore(through, cache, session) { SignInResult.SignedIn }
         rule.setContent {
             ZoonkTheme {
                 GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, PlanStore(FakePlanApi(), cache), false, rememberAppNavigator())
@@ -83,7 +91,7 @@ class PlacementStepFlowTest {
         rule.onNodeWithText("Up to 8 questions").assertIsDisplayed()
         tap("Start")
 
-        assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK), api.sittingLengths)
+        assertEquals(1, api.sittingsStarted)
         rule.onNodeWithText("Civil procedure").assertIsDisplayed()
         rule.onNodeWithContentDescription("Question 1 of 8").assertIsDisplayed()
     }
@@ -149,6 +157,34 @@ class PlacementStepFlowTest {
 
         val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
         assertEquals(ID, answer.value.attemptId)
+    }
+
+    @Test
+    fun whileAnAnswerSavesTheWaysOutCannotStopUntilItSettles() {
+        val reply = CompletableDeferred<Unit>()
+        val gated =
+            object : OnboardingApi by api {
+                override suspend fun answerPlacement(
+                    session: AuthenticatedSession,
+                    goalId: String,
+                    input: PlacementAnswerInput,
+                ): PlacementAnswerResult {
+                    reply.await()
+                    return api.answerPlacement(session, goalId, input)
+                }
+            }
+        api.placement = asking(1)
+        api.answered = { asking(2) }
+        show(mode = "resume", through = gated)
+        tap("Confirm")
+
+        rule.onNodeWithContentDescription("Leave").performClick()
+        rule.onNodeWithText("Stop and use my answers").assertIsNotEnabled()
+        rule.onNodeWithText("Finish later").assertIsEnabled()
+
+        reply.complete(Unit)
+        rule.waitForIdle()
+        rule.onNodeWithText("Stop and use my answers").assertIsEnabled()
     }
 
     @Test

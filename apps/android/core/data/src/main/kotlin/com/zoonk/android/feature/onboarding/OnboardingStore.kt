@@ -45,7 +45,6 @@ import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -534,15 +533,12 @@ class OnboardingStore(
         }
 
     /**
-     * An exam's Focus test sitting turns its questions on in sessions, which the plan and Today say. With a [length],
-     * the course's test taken from the plan.
+     * Opens an exam's Focus test sitting, whose questions turn on in sessions as the plan and Today say, or a course's
+     * test taken from the plan.
      */
-    suspend fun startPlacementSitting(
-        goalId: String,
-        length: PlacementLength? = null,
-    ): WriteOutcome<Placement> =
+    suspend fun startPlacementSitting(goalId: String): WriteOutcome<Placement> =
         write(setOf(DataDomain.Goals), replacing = { listOf(placements[goalId].replacing(it)) }) {
-            api.startPlacementSitting(it, goalId, length)
+            api.startPlacementSitting(it, goalId)
         }
 
     /**
