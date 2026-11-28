@@ -129,6 +129,35 @@ export function getIsoDateParts({
   ).formatToParts(isoDateToUtc(date.isoDate));
 }
 
+/**
+ * A month and its year for a screen that sets the year apart, in the language's order: the year as
+ * the language writes it alone ("2026", "2026년", "2026年") and the gap beside it are the small part.
+ */
+export function getMonthYearParts({
+  isoDate,
+  locale,
+}: {
+  isoDate: string;
+  locale: string;
+}): { small: boolean; text: string }[] {
+  const text = formatIsoDate({ isoDate, locale, role: "rowMonth", today: isoDate, year: "always" });
+  const year = formatIsoDate({ isoDate, locale, role: "year", today: isoDate });
+  const at = text.indexOf(year);
+
+  if (at === -1) {
+    return [{ small: false, text }];
+  }
+
+  const month = text.slice(0, at).trimEnd();
+  const rest = text.slice(at + year.length).trimStart();
+
+  return [
+    { small: false, text: month },
+    { small: true, text: text.slice(month.length, text.length - rest.length) },
+    { small: false, text: rest },
+  ].filter((part) => part.text !== "");
+}
+
 const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 
 /** A weekday's name from its number, Sunday 0: "Tuesday" or "Tue". */

@@ -3,9 +3,9 @@
 import { type FinishPrecision, type FinishReason } from "@zoonk/core/plans/finish-contract";
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
 import { cn } from "@zoonk/ui/lib/utils";
-import { getIsoDateParts } from "@zoonk/utils/date-format";
+import { getMonthYearParts } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
-import { useFormatIsoDate, useIsoToday } from "../_utils/iso-date";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { useAppLocale } from "../_utils/locale";
 
 /** When an undated plan finishes, as core forecasts it for the schedule shown. */
@@ -33,20 +33,18 @@ export function Readout({
   );
 }
 
-/** The month reads first and big, its year small, in the locale's order. */
+/** The month big, its year small with its own unit ("2026년"), in the locale's order. */
 function MonthYear({ isoDate }: { isoDate: string }) {
   const locale = useAppLocale();
-  const today = useIsoToday();
-  const parts = getIsoDateParts({ isoDate, locale, role: "rowMonth", today, year: "always" });
 
-  return parts.map((part, index) =>
-    part.type === "year" ? (
+  return getMonthYearParts({ isoDate, locale }).map((part, index) =>
+    part.small ? (
       // oxlint-disable-next-line react/no-array-index-key -- the parts are fixed for this date
       <span className="text-muted-foreground text-compact font-medium" key={index}>
-        {part.value}
+        {part.text}
       </span>
     ) : (
-      part.value
+      part.text
     ),
   );
 }

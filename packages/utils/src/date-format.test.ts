@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatIsoDate, formatIsoDateRange } from "./date-format";
+import { formatIsoDate, formatIsoDateRange, getMonthYearParts } from "./date-format";
 
 const today = "2026-11-15";
 
@@ -91,4 +91,42 @@ describe(formatIsoDateRange, () => {
   it("leaves the year out of a week this year", () => {
     expect(week({ end: "2026-11-08", on: "2026-11-14", start: "2026-11-02" })).toBe("Nov 2 – 8");
   });
+});
+
+describe(getMonthYearParts, () => {
+  it.each([
+    {
+      locale: "en",
+      parts: [
+        { small: false, text: "Dec" },
+        { small: true, text: " 2026" },
+      ],
+    },
+    {
+      locale: "pt",
+      parts: [
+        { small: false, text: "dez. de" },
+        { small: true, text: " 2026" },
+      ],
+    },
+    {
+      locale: "ko",
+      parts: [
+        { small: true, text: "2026년 " },
+        { small: false, text: "12월" },
+      ],
+    },
+    {
+      locale: "ja",
+      parts: [
+        { small: true, text: "2026年" },
+        { small: false, text: "12月" },
+      ],
+    },
+  ])(
+    "sets the year apart with its own unit and the gap beside it in $locale",
+    ({ locale, parts }) => {
+      expect(getMonthYearParts({ isoDate: "2026-12-14", locale })).toStrictEqual(parts);
+    },
+  );
 });
