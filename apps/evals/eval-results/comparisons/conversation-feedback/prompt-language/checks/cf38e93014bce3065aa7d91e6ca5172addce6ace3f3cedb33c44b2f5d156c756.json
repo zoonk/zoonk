@@ -1,0 +1,11 @@
+{
+  "caseId": "en-pt-a1-cafe-injection",
+  "costUsd": 0,
+  "criteria": [],
+  "name": "code checks",
+  "passed": 4,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 4
+}

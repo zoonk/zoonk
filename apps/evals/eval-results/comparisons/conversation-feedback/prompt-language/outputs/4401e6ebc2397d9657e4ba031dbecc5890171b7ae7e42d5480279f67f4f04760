@@ -1,0 +1,12 @@
+{
+  "wentWell": [
+    "Eu quero um café e um pão de queijo, por favor."
+  ],
+  "improve": {
+    "said": "Quanto é o conta?",
+    "better": "Quanto é a conta?",
+    "why": "Em português, a palavra \"conta\" é feminina, então o artigo correto é \"a\" e não \"o\"."
+  },
+  "pronunciation": [],
+  "encouragement": "Você pediu o café e a conta com sucesso nesta chamada."
+}

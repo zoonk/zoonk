@@ -1,0 +1,13 @@
+{
+  "wentWell": [
+    "I have an appointment with Doctor Patel on Thursday at ten, but something came up at work",
+    "Could you tell me how much costs the consultation if my insurance doesn't cover it?"
+  ],
+  "improve": {
+    "said": "Could you tell me how much costs the consultation if my insurance doesn't cover it?",
+    "better": "Could you tell me how much the consultation costs if my insurance doesn't cover it?",
+    "why": "Em inglês, na ordem direta de perguntas indiretas ou frases subordinadas, o verbo vem depois do sujeito. Em vez de dizer 'how much costs the consultation', o correto é 'how much the consultation costs'."
+  },
+  "pronunciation": [],
+  "encouragement": "Você conseguiu remarcar a consulta, explicar os sintomas e tirar a dúvida sobre o valor de forma muito clara."
+}

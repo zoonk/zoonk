@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-b2-strong-call",
+  "challenger": {
+    "costUsd": 0.0011562,
+    "durationMs": 1198.7564170000005,
+    "hash": "6e78af1ad82add4225ba72b3fbbb2a19cf8e17dc822672db54dfacf324eb2a82",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "e720468431a46f0001d60affa17cb73e56cdac0a07159f0a7b6e06f44a6bbc77"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

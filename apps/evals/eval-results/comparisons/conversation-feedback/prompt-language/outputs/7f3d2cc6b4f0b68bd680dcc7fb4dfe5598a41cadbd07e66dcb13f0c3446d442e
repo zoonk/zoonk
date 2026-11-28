@@ -1,0 +1,13 @@
+{
+  "wentWell": [
+    "Eu quero um café e um pão de queijo, por favor.",
+    "Não, obrigado."
+  ],
+  "improve": {
+    "said": "Quanto é o conta?",
+    "better": "Quanto é a conta?",
+    "why": "In Portuguese, the word 'conta' is feminine, so it uses the article 'a' instead of 'o'."
+  },
+  "pronunciation": [],
+  "encouragement": "You ordered your items clearly and asked for the bill with confidence."
+}

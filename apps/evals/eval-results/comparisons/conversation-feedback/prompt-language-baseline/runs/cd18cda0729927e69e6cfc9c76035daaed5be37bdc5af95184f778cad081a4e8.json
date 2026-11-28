@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-a2-barely-spoke",
+  "challenger": {
+    "costUsd": 0.0009457999999999999,
+    "durationMs": 993.0091669999983,
+    "hash": "cb6772db0df6d795343a534edc816691c716f2f78dd5b9ed57943c8fc2c53211",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "5238ea6c670e7b28091a076b49784c490d97ab9c8f9fd3cc7b1aa9dc015f0f1f"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

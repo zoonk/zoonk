@@ -1,0 +1,19 @@
+{
+  "wentWell": [
+    "How much is the rent?",
+    "Saturday at two is perfect."
+  ],
+  "improve": {
+    "said": "I can visit the apartment in Saturday?",
+    "better": "Can I visit the apartment on Saturday?",
+    "why": "Em inglês, usamos a preposição \"on\" para dias da semana, então o correto é dizer \"on Saturday\"."
+  },
+  "pronunciation": [
+    {
+      "word": "available",
+      "respelling": "a-VÉI-la-bou",
+      "tip": "A pronúncia correta de \"available\" pode ser difícil. O \"v\" é sonoro e o final soa como \"bou\", prestando atenção para não carregar demais."
+    }
+  ],
+  "encouragement": "Você conseguiu perguntar sobre o aluguel e marcar a visita com clareza."
+}

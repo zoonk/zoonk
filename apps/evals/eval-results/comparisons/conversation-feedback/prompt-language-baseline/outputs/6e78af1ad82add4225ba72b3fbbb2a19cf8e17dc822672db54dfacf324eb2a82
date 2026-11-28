@@ -1,0 +1,14 @@
+{
+  "wentWell": [
+    "I have an appointment with Doctor Patel on Thursday at ten, but something came up at work",
+    "Eleven thirty would be ideal, thanks.",
+    "Could you tell me how much costs the consultation if my insurance doesn't cover it?"
+  ],
+  "improve": {
+    "said": "how much costs the consultation",
+    "better": "how much the consultation costs",
+    "why": "Em inglês, após a pergunta indireta \"Could you tell me\", a ordem das palavras é sujeito antes do verbo, dizendo \"how much the consultation costs\" em vez de inverter o verbo."
+  },
+  "pronunciation": [],
+  "encouragement": "Você conseguiu remarcar a consulta, explicar os sintomas e perguntar sobre o valor com clareza."
+}
