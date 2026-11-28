@@ -68,6 +68,47 @@ final class PlacementTestPhaseTests: XCTestCase {
     XCTAssertEqual(phase(attempt: attempt(), .done), .over(attempt()))
   }
 
+  func testARefusedAnswerIsReadAgainAndAStoppedTestShowsItsResult() {
+    let asked = PlacementTestQuestion(
+      attempt: attempt(answered: 1), question: question, labels: .trueFalse)
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 3)
+    result.attemptId = "a1"
+    result.chapter = "Why prices move"
+    let next = PracticeQuestion(itemId: "i2", format: .order, question: "Next?")
+
+    XCTAssertNil(
+      PlacementTestPhase(
+        refused: asked, attempt: attempt(answered: 1), result: nil, status: .asking,
+        next: question, labels: .trueFalse, onboarding: false),
+      "A read that still asks the question means the answer didn't save")
+
+    for onboarding in [false, true] {
+      XCTAssertEqual(
+        PlacementTestPhase(
+          refused: asked, attempt: nil, result: result, status: .unavailable, next: nil,
+          labels: .trueFalse, onboarding: onboarding),
+        .result(PlacementTestEnd(read: result)),
+        "Another device stopped this test: its result shows, on the plan too")
+    }
+
+    guard
+      case .question(let moved) = PlacementTestPhase(
+        refused: asked, attempt: attempt(answered: 2), result: nil, status: .asking, next: next,
+        labels: .trueFalse, onboarding: false)
+    else {
+      return XCTFail("Expected the question another device moved to")
+    }
+    XCTAssertEqual(moved.question.itemId, "i2")
+
+    var older = result
+    older.attemptId = "a0"
+    XCTAssertEqual(
+      PlacementTestPhase(
+        refused: asked, attempt: nil, result: older, status: .unavailable, next: nil,
+        labels: .trueFalse, onboarding: false),
+      .unavailable, "Another test's result isn't this one's")
+  }
+
   func testAFinishShowsWhereTheLearnerStartsAndItsUndoOnlyWhenItGivesBackWhatItCounts() {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
     result.chapter = "Why prices move"

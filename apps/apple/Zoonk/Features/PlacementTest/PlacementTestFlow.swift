@@ -348,8 +348,7 @@ struct PlacementTestFlow: View {
       } catch is CancellationError {
         return
       } catch {
-        failedAnswer = sent
-        questionFailures += 1
+        await reread(after: sent, refused: asked)
         return
       }
 
@@ -362,6 +361,30 @@ struct PlacementTestFlow: View {
       } catch {
         failed = true
       }
+    }
+  }
+
+  /// An answer that didn't save: a read says whether the test still asks the question, so it's
+  /// tried again, or moved on without it (another device stopped or answered it), so the screen
+  /// follows the read.
+  private func reread(after sent: SentAnswer, refused asked: PlacementTestQuestion) async {
+    guard let placement = try? await store.placement(goalID: goalID),
+      let moved = PlacementTestPhase(refused: asked, placement, onboarding: isOnboarding)
+    else {
+      failedAnswer = sent
+      questionFailures += 1
+      return
+    }
+
+    questionFailures = 0
+    failedAnswer = nil
+    undoRequest.leave()
+
+    reached = moved
+
+    // A test that asks nothing more finishes now; if that fails, its screen holds the retry.
+    if case .over(let attempt) = moved {
+      try? await finish(attempt)
     }
   }
 
