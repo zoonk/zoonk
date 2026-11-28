@@ -18,6 +18,11 @@ function audioCase(
   return { id, userInput: { caseId: id, language, text, ...(lookAlike ? { lookAlike } : {}) } };
 }
 
+/** A phrase that stops on a preposition, which a voice tends to finish with a word of its own. */
+function fragmentCase(id: string, language: string, text: string, origin?: "production") {
+  return { ...audioCase(id, language, text), ...(origin ? { origin } : {}) };
+}
+
 export const TEST_CASES: TestCase<never, LanguageAudioInput>[] = [
   audioCase("en-word", "en", "comfortable"),
   audioCase("en-sentence", "en", "Could you tell me where the nearest train station is?"),
@@ -81,4 +86,9 @@ export const TEST_CASES: TestCase<never, LanguageAudioInput>[] = [
   audioCase("es-lookalike-pie", "es", "pie", { english: "paɪ", native: "pje" }),
   audioCase("fr-lookalike-pain", "fr", "pain", { english: "peɪn", native: "pɛ̃" }),
   audioCase("it-lookalike-pane", "it", "pane", { english: "peɪn", native: "ˈpaːne" }),
+  fragmentCase("it-fragment-abito-a", "it", "abito a", "production"),
+  fragmentCase("it-fragment-vivo-in", "it", "vivo in", "production"),
+  fragmentCase("it-fragment-studio-a", "it", "studio a"),
+  fragmentCase("fr-fragment-habite-a", "fr", "j'habite à"),
+  fragmentCase("de-fragment-wohne-in", "de", "ich wohne in"),
 ];

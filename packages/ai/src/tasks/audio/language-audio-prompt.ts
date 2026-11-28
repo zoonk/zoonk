@@ -8,6 +8,14 @@ export const DEFAULT_LANGUAGE_AUDIO_VOICE: TTSVoice = "Kore";
 const READ_ALOUD_TEMPLATE =
   "The following text is {{LANGUAGE}}. Speak clearly at a moderate pace suitable for language learners. Enunciate each word precisely; read it aloud in {{LANGUAGE}}.";
 
+/**
+ * Without it, Gemini 3.8 Flash finished 11 of 51 fragments such as "studio a" with a word of its
+ * own ("Studio a Palermo"); with it, none of 102 (28 Nov 2026). An alphabet card reads a symbol,
+ * not words.
+ */
+const EXACT_WORDS_RULE =
+  "The text may be an incomplete phrase, such as one that ends in a preposition or an article. Say exactly these words as one natural phrase and stop right after the last word, without adding or starting another word.";
+
 const NATIVE_SOUNDS_TEMPLATE =
   'Some words may look like English words but they are {{LANGUAGE}} words and must be pronounced according to {{LANGUAGE}} phonology. For example, "fruit" in Dutch is pronounced "frœyt", not the English "froot."';
 
@@ -42,6 +50,7 @@ export function getLanguageAudioPrompt({
     isEnglish ? "" : fillLanguage(NATIVE_SOUNDS_TEMPLATE, languageName),
     usagePrompt,
     fillLanguage(READ_ALOUD_TEMPLATE, languageName),
+    usagePrompt ? "" : EXACT_WORDS_RULE,
     ipa ? fillLanguage(WORD_IPA_TEMPLATE, languageName).replace("{{IPA}}", () => ipa) : "",
   ]
     .filter(Boolean)

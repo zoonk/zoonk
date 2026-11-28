@@ -37,6 +37,7 @@ const TRANSCRIPTION_PROMPT =
 const TRANSCRIPTION_VERSION = "3";
 
 export type TranscribeSpeechParams = {
+  abortSignal?: AbortSignal;
   audio: Uint8Array;
   language: string;
   model?: TranscriptionModelId;
@@ -98,6 +99,7 @@ function buildTranscriptionProvenance({
  * and also refuses a language it can't hear.
  */
 export async function transcribeSpeech({
+  abortSignal,
   analytics,
   audio,
   language,
@@ -111,6 +113,7 @@ export async function transcribeSpeech({
   });
 
   const result = await transcribe({
+    abortSignal,
     audio,
     model: zoonkGateway.transcriptionModel(model),
     providerOptions: getProviderOptions(language),

@@ -26,6 +26,7 @@
     "./tasks/audio/listening": "./src/tasks/audio/voice-listening-script.ts",
     "./tasks/audio/listening-voices": "./src/tasks/audio/listening-voices.ts",
     "./tasks/audio/prompt": "./src/tasks/audio/language-audio-prompt.ts",
+    "./tasks/audio/speech-after-text": "./src/tasks/audio/speech-after-text.ts",
     "./tasks/courses/intent": "./src/tasks/courses/course-intent.ts",
     "./tasks/images/input-safety-rewrite": "./src/tasks/images/image-prompt-safety-rewrite.ts",
     "./tasks/courses/details": "./src/tasks/courses/course-details.ts",

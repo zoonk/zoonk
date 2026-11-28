@@ -10,10 +10,12 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { checkWordPronunciation } from "../language/check-word-pronunciation";
+import { transcribeSpeech } from "../language/transcribe-speech";
 import { type WordIpa, writeWordIpa } from "../language/word-ipa";
 import { convertWavToMp3 } from "./convert-wav-to-mp3";
 import alphabetSymbolPrompt from "./generate-language-audio-alphabet-symbol.prompt.md";
 import { DEFAULT_LANGUAGE_AUDIO_VOICE, getLanguageAudioPrompt } from "./language-audio-prompt";
+import { saysMoreThanText } from "./speech-after-text";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
 import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
 import { buildSpeechProvenance } from "./speech-provenance";
@@ -24,6 +26,9 @@ const TASK = "language-audio";
 /** Flash Lite checks a clip in 1.5 s p95; one MiMo check took 186 s in its eval (8 Nov 2026). */
 const PRONUNCIATION_CHECK_TIMEOUT_MS = 15_000;
 const PRONUNCIATION_LISTENS = 2;
+
+/** gpt-transcribe heard a short clip in 1.4 s p95 (28 Nov 2026). */
+const TRANSCRIPT_CHECK_TIMEOUT_MS = 10_000;
 
 /** `promptVersion` covers the voice and the instructions it was read with. */
 export type SpeechProvenance = Pick<
@@ -175,18 +180,58 @@ async function assertNativeReading({
   }
 }
 
+/**
+ * A voice can go on past a fragment ("abito a" read as "abito a Roma"), and MAI-Voice takes no
+ * instructions to stop it. With no transcript the clip is kept, since no audio is worse.
+ */
+async function assertSaysOnlyText({
+  analytics,
+  audio,
+  language,
+  model,
+  text,
+}: {
+  analytics?: AiGenerationContext;
+  audio: Uint8Array;
+  language: string;
+  model: SpeechModelName;
+  text: string;
+}) {
+  const { data, error } = await safeAsync(() =>
+    transcribeSpeech({
+      abortSignal: AbortSignal.timeout(TRANSCRIPT_CHECK_TIMEOUT_MS),
+      analytics,
+      audio,
+      language,
+    }),
+  );
+
+  if (error) {
+    logError("Transcribing a clip to check its words failed:", error);
+    return;
+  }
+
+  const heard = data.data.text;
+
+  if (saysMoreThanText({ heard, language, text })) {
+    throw new Error(`${model} said more than "${text}" (heard "${heard}")`);
+  }
+}
+
 type VoiceInput = {
   analytics?: AiGenerationContext;
   instructions: string;
   language: string;
   lookAlike: LookAlike | null;
   text: string;
+  usage?: LanguageAudioUsage;
   voice: TTSVoice;
 };
 
 /**
- * Inside the retry boundary, so malformed, silent or overlong audio, or a word read the English
- * way, falls back like a transport failure.
+ * Inside the retry boundary, so malformed, silent or overlong audio, a word read the English way or
+ * a clip that says more than its text falls back like a transport failure. An alphabet card's
+ * transcript is a letter's name, not its text, so it isn't compared.
  */
 async function generateWithModel({
   analytics,
@@ -195,6 +240,7 @@ async function generateWithModel({
   lookAlike,
   model,
   text,
+  usage,
   voice,
 }: VoiceInput & { model: SpeechModelName }): Promise<VoicedAudio> {
   const maxSeconds = getMaxSeconds(text);
@@ -211,9 +257,10 @@ async function generateWithModel({
 
   const { audio, durationSeconds } = await convertWavToMp3({ audio: wavAudio, maxSeconds, model });
 
-  if (lookAlike) {
-    await assertNativeReading({ analytics, audio, language, lookAlike, model, text });
-  }
+  await Promise.all([
+    usage ? null : assertSaysOnlyText({ analytics, audio, language, model, text }),
+    lookAlike ? assertNativeReading({ analytics, audio, language, lookAlike, model, text }) : null,
+  ]);
 
   return { audio, durationSeconds, format: "mp3", model, providerMetadata };
 }
@@ -284,6 +331,7 @@ export async function generateLanguageAudio({
       lookAlike,
       models,
       text,
+      usage,
       voice,
     });
 

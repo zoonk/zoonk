@@ -1,6 +1,7 @@
 import { readEvalAudio } from "@/lib/audio-files";
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer, type TokenUsage, toTokenUsage } from "@/lib/types";
+import { saysMoreThanText } from "@zoonk/ai/tasks/audio/speech-after-text";
 import { assessPronunciation } from "@zoonk/ai/tasks/language/assess-pronunciation";
 import {
   type WordPronunciationCheck,
@@ -15,6 +16,15 @@ export type LanguageAudioOutput = { audioPath: string; costUsd: number | null; d
 
 const PRONUNCIATION_MODEL = "google/gemini-3.8-flash";
 const TRANSCRIPTION_MODEL = "openai/gpt-transcribe";
+
+/** Counted like a misread word, so two providers hearing a clip go on past its text confirm it. */
+const ADDED_WORDS = "(words after the text)";
+
+function addedWords({ heard, input }: { heard: string; input: LanguageAudioInput }): string[] {
+  return saysMoreThanText({ heard, language: input.language, text: input.text })
+    ? [ADDED_WORDS]
+    : [];
+}
 
 async function judgeLookAlike({
   audio,
@@ -81,11 +91,17 @@ export const scoreLanguageAudio: TaskScorer = async ({ output, testCase }) => {
     language: input.language,
   });
 
-  const misheard = match.words.filter((word) => word.status !== "correct").map((word) => word.text);
+  const misheard = [
+    ...match.words.filter((word) => word.status !== "correct").map((word) => word.text),
+    ...addedWords({ heard: transcript.data.text, input }),
+  ];
 
-  const unclear = pronunciation.data.words
-    .filter((word) => word.status !== "correct")
-    .map((word) => word.text);
+  const unclear = [
+    ...pronunciation.data.words
+      .filter((word) => word.status !== "correct")
+      .map((word) => word.text),
+    ...addedWords({ heard: pronunciation.data.transcript, input }),
+  ];
 
   const { readRight, score, status, unconfirmed } = listeningVerdict({
     flags: [

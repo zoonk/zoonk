@@ -8,11 +8,13 @@ const {
   checkWordPronunciationMock,
   convertWavToMp3Mock,
   generateSpeechWithProviderMock,
+  transcribeSpeechMock,
   writeWordIpaMock,
 } = vi.hoisted(() => ({
   checkWordPronunciationMock: vi.fn(),
   convertWavToMp3Mock: vi.fn<typeof convertWavToMp3>(),
   generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
+  transcribeSpeechMock: vi.fn(),
   writeWordIpaMock: vi.fn(),
 }));
 
@@ -34,8 +36,14 @@ vi.mock("../language/check-word-pronunciation", () => ({
   checkWordPronunciation: checkWordPronunciationMock,
 }));
 
+vi.mock("../language/transcribe-speech", () => ({ transcribeSpeech: transcribeSpeechMock }));
+
 function wordIpa(data: { englishIpa: string | null; ipa: string | null }) {
   return { data };
+}
+
+function transcript(text: string) {
+  return { data: { text } };
 }
 
 function heardAs(pronunciation: "english" | "native" | "unclear") {
@@ -74,6 +82,59 @@ describe(generateLanguageAudio, () => {
     convertWavToMp3Mock.mockResolvedValue({ audio: mp3Audio, durationSeconds: 2.5 });
     writeWordIpaMock.mockResolvedValue(wordIpa({ englishIpa: null, ipa: "ˈpalavɾa" }));
     checkWordPronunciationMock.mockResolvedValue(heardAs("native"));
+    transcribeSpeechMock.mockResolvedValue(transcript(""));
+  });
+
+  it("voices a fragment again on the next model when its clip goes on past the text", async () => {
+    transcribeSpeechMock
+      .mockResolvedValueOnce(transcript("Abito a Roma."))
+      .mockResolvedValue(transcript("Abito a."));
+
+    const result = await generateLanguageAudio({ language: "it", text: "abito a" });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.provenance.model).toBe(FLASH_LITE);
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE]);
+
+    expect(transcribeSpeechMock).toHaveBeenCalledWith(
+      expect.objectContaining({ audio: mp3Audio, language: "it" }),
+    );
+  });
+
+  it("fails a fragment every model went on past, to voice it again later", async () => {
+    transcribeSpeechMock.mockResolvedValue(transcript("Abito a Roma."));
+
+    const result = await generateLanguageAudio({ language: "it", text: "abito a" });
+
+    expect(result.data).toBeNull();
+    expect(result.error?.message).toContain('said more than "abito a" (heard "Abito a Roma.")');
+    expect(requestedModels()).toStrictEqual([FLASH, FLASH_LITE, MAI_VOICE]);
+  });
+
+  it("keeps a clip when it can't be transcribed", async () => {
+    transcribeSpeechMock.mockRejectedValue(new Error("gpt-transcribe unavailable"));
+
+    const result = await generateLanguageAudio({ language: "it", text: "abito a" });
+
+    expect(result.error).toBeNull();
+    expect(requestedModels()).toStrictEqual([FLASH]);
+  });
+
+  it("tells the voice a fragment may end on a preposition, but not an alphabet card", async () => {
+    await generateLanguageAudio({ language: "it", text: "abito a" });
+
+    expect(firstRequest().instructions).toContain("stop right after the last word");
+
+    generateSpeechWithProviderMock.mockClear();
+    await generateLanguageAudio({ language: "pl", text: "ł", usage: "alphabetSymbol" });
+
+    expect(firstRequest().instructions).not.toContain("stop right after the last word");
+  });
+
+  it("never compares an alphabet card's transcript, which names the letter", async () => {
+    await generateLanguageAudio({ language: "es", text: "h", usage: "alphabetSymbol" });
+
+    expect(transcribeSpeechMock).not.toHaveBeenCalled();
   });
 
   it("gives a word English spells the same its IPA, on Gemini Flash only", async () => {
