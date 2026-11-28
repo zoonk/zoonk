@@ -58,6 +58,7 @@ final class PlacementTestShots: XCTestCase {
         id: id, title: "Why companies sell shares", estimatedMinutes: 5,
         chapter: "What a stock is"))
     var languageResult = PlacementTestResult(finishedAt: .now, lessonsSkipped: 12)
+    languageResult.nextLesson = .init(id: id, title: "There is, there are")
     languageResult.ranges = [
       "reading": LevelRange(high: "B2", low: "B1"), "listening": LevelRange(high: "B1", low: "A2"),
     ]

@@ -95,7 +95,8 @@ struct PlacementCourseLine: View {
   }
 }
 
-/// The lesson the plan goes on with, as the highlighted "Up next" row with its minutes.
+/// The lesson the plan goes on with, as the highlighted "Up next" row, with its minutes where the
+/// result has them (a course's; a language's has none). Both tests' results draw it.
 struct UpNextLessonRow: View {
   let lesson: PlacementTestResult.NextLesson
 
@@ -110,24 +111,6 @@ struct UpNextLessonRow: View {
       }
     }
     .currentRow()
-    .listRowBackground(Color.clear)
-  }
-}
-
-/// The lesson the plan goes on with, under a test's result.
-struct UpNextPanel: View {
-  let title: String
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 4) {
-      Chip(Text(TestCopy.upNext))
-
-      Text(verbatim: title)
-        .typeStyle(.rowTitle)
-    }
-    .padding(16)
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .panel()
     .listRowBackground(Color.clear)
   }
 }

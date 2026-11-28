@@ -92,6 +92,7 @@ final class PlacementTestRenderTests: XCTestCase {
   func testAResultsRowsAreEachReadOnce() async throws {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
     result.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
+    result.nextLesson = .init(id: goalID, title: "There is, there are")
     try await readsWhatVoiceOverReads()
 
     for screen in [
@@ -113,7 +114,7 @@ final class PlacementTestRenderTests: XCTestCase {
       try await waitForLayout(in: window)
       let words = spoken(in: window)
 
-      for said in ["B1–B2", "Not tested yet", "4 of 9 lessons skipped"] {
+      for said in ["B1–B2", "Not tested yet", "4 of 9 lessons skipped", "Up next"] {
         let readings = words.filter { $0.contains(said) }
         XCTAssertLessThanOrEqual(
           readings.count, 1, "\(said) is read \(readings.count) times: \(words)")

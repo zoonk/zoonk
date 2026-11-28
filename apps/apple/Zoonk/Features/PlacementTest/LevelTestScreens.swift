@@ -41,7 +41,7 @@ struct LanguageTestResultView: View {
       .listRowInsets(.vertical, 0)
 
       if let nextLesson = result?.nextLesson, !restored {
-        UpNextPanel(title: nextLesson.title)
+        UpNextLessonRow(lesson: nextLesson)
       }
 
       if let appLanguage, onboarding {
