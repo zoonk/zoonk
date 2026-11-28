@@ -59,6 +59,7 @@ import com.zoonk.android.data.isSaved
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
+import com.zoonk.android.feature.activities.code.LocalCodeRuns
 import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.CertificateCeremony
 import com.zoonk.android.feature.ceremonies.SessionCeremony
@@ -262,6 +263,7 @@ internal fun PlayingLesson(
     CompositionLocalProvider(
         LocalLessonSpeech provides app.speech,
         LocalCodeSandbox provides app.codeSandbox,
+        LocalCodeRuns provides app.codeRuns,
         LocalChallengeTeam provides team,
     ) {
         val saveReport = rememberSaveFailureReport(app, "lesson-end")

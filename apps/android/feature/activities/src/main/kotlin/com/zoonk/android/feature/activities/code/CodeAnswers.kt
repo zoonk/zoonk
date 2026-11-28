@@ -4,12 +4,19 @@ import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf10
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf12
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf9
+import java.util.UUID
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf10Value as PatternAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf12Value as RowsAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf9Value as OutputAnswerValue
 
-fun outputAnswer(output: String): ActivityAnswer =
-    OutputAnswerValue(LessonStepAnswerOneOf3AnswerOneOf9(LessonStepAnswerOneOf3AnswerOneOf9.Kind.OUTPUT, output))
+/** [runId] names the run on our servers that printed [output], whose output the check reads there. */
+fun outputAnswer(
+    output: String,
+    runId: String? = null,
+): ActivityAnswer =
+    OutputAnswerValue(
+        LessonStepAnswerOneOf3AnswerOneOf9(LessonStepAnswerOneOf3AnswerOneOf9.Kind.OUTPUT, output, runId?.let(UUID::fromString)),
+    )
 
 val ActivityAnswer?.output: String? get() = (this as? OutputAnswerValue)?.value?.output
 

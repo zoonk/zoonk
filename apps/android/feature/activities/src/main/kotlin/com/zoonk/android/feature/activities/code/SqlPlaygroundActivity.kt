@@ -88,8 +88,6 @@ val sqlPlaygroundRenderer =
         showsData = { true },
     )
 
-private const val SQLITE = "SQLite"
-
 /** SQL's own word, never translated. */
 private const val NULL_TEXT = "NULL"
 
@@ -167,7 +165,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     focus.requestFocus()
                 }
                 SandboxRunBar(
-                    SQLITE,
+                    CodeLanguage.Sql.displayName,
                     runtime,
                     isExploring = props.isExploring,
                     canRun =
@@ -192,7 +190,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     }
 
                     QueryRun.Timeout -> {
-                        val seconds = CodeLanguage.Sql.timeLimitSeconds
+                        val seconds = checkNotNull(CodeLanguage.Sql.timeLimitSeconds)
                         pluralStringResource(R.plurals.activities_code_query_timeout, seconds, seconds)
                     }
 
@@ -201,7 +199,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
                     }
 
                     else -> {
-                        stringResource(R.string.activities_code_runtime_failed, SQLITE)
+                        stringResource(R.string.activities_code_runtime_failed, CodeLanguage.Sql.displayName)
                     }
                 },
                 Modifier.semantics { liveRegion = LiveRegionMode.Polite },
@@ -477,7 +475,7 @@ private fun SqlReview(
                         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                 ) {
-                    CodeListing(it, CodeLanguage.Sql.fenceName, label)
+                    CodeListing(it, CodeLanguage.Sql.id, label)
                 }
             }
         }

@@ -127,14 +127,14 @@ fun StepView(
     when (val content = step.content) {
         is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions, part, marking)
         is StepContent.Fact -> FactHookView(step, content, part, marking)
-        is StepContent.Explanation -> ExplanationView(step, content, actions, part, marking)
+        is StepContent.Explanation -> ExplanationView(step, content, actions, navigator, part, marking)
         is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1, part, marking)
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions, part, marking)
         is StepContent.Summary -> if (part.showsScreen) SummaryView(content)
         is StepContent.Map -> if (part.showsScreen) LessonMapStepView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions, part, marking, writingOptions)
         is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator, language, part)
-        is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, part)
+        is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions, navigator, part)
         is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions, part)
         is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions, part)
     }

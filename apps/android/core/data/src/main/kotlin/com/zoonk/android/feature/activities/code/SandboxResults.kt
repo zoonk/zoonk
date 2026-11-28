@@ -10,37 +10,94 @@ val PlayableLibraryStepAnyOfContentOneOf16Fields.codeLanguage
     get() =
         when (language) {
             PlayableLibraryStepAnyOfContentOneOf16Fields.Language.UNKNOWN_DEFAULT_OPEN_API -> null
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.CPP -> CodeLanguage.Cpp
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.CSHARP -> CodeLanguage.CSharp
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.GO -> CodeLanguage.Go
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.JAVA -> CodeLanguage.Java
             PlayableLibraryStepAnyOfContentOneOf16Fields.Language.JAVASCRIPT -> CodeLanguage.JavaScript
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.KOTLIN -> CodeLanguage.Kotlin
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.PHP -> CodeLanguage.Php
             PlayableLibraryStepAnyOfContentOneOf16Fields.Language.PYTHON -> CodeLanguage.Python
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.RUBY -> CodeLanguage.Ruby
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.RUST -> CodeLanguage.Rust
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.SWIFT -> CodeLanguage.Swift
+            PlayableLibraryStepAnyOfContentOneOf16Fields.Language.TYPESCRIPT -> CodeLanguage.TypeScript
         }
 
+/**
+ * Core's `PROGRAM_LANGUAGES`, plus the SQL playground's SQLite: the language's name, the file its program is called when a
+ * step names none, and whether it runs on our servers ([CodeRuns]) or in the device's sandbox page ([CodeSandbox]).
+ */
 @Serializable
-enum class CodeLanguage {
+enum class CodeLanguage(
+    val displayName: String,
+    val fileName: String,
+    val runsOnServer: Boolean = true,
+) {
+    @SerialName("cpp")
+    Cpp("C++", "main.cpp"),
+
+    @SerialName("csharp")
+    CSharp("C#", "Program.cs"),
+
+    @SerialName("go")
+    Go("Go", "main.go"),
+
+    @SerialName("java")
+    Java("Java", "Main.java"),
+
     @SerialName("javascript")
-    JavaScript,
+    JavaScript("JavaScript", "main.js", runsOnServer = false),
+
+    @SerialName("kotlin")
+    Kotlin("Kotlin", "Main.kt"),
+
+    @SerialName("php")
+    Php("PHP", "main.php"),
 
     @SerialName("python")
-    Python,
+    Python("Python", "main.py", runsOnServer = false),
+
+    @SerialName("ruby")
+    Ruby("Ruby", "main.rb"),
+
+    @SerialName("rust")
+    Rust("Rust", "main.rs"),
 
     @SerialName("sql")
-    Sql,
+    Sql("SQLite", "query.sql", runsOnServer = false),
+
+    @SerialName("swift")
+    Swift("Swift", "main.swift"),
+
+    @SerialName("typescript")
+    TypeScript("TypeScript", "main.ts"),
     ;
 
-    /** Core's `PROGRAM_TIME_LIMIT_MS`, which the sandbox page stops a run at. */
-    val timeLimitSeconds: Int
+    /** Core's id for it (`java`), which the API reads and a code fence names. */
+    val id: String get() = CodeLanguage.serializer().descriptor.getElementName(ordinal)
+
+    /**
+     * Core's `PROGRAM_TIME_LIMIT_MS`, where the device's sandbox page stops a run; null on our servers, which stop a build and
+     * a run at different limits.
+     */
+    val timeLimitSeconds: Int?
         get() =
             when (this) {
                 JavaScript, Sql -> 3
                 Python -> 5
+                else -> null
             }
 }
 
+/** [runId] names a run on our servers, whose output the step's check reads from the server rather than the answer. */
 @Serializable
 data class ProgramRun(
     val error: ProgramError?,
     val errorOutput: String,
     val output: String,
     val stop: ProgramStop,
+    val runId: String? = null,
 ) {
     companion object {
         val Unavailable = ProgramRun(error = null, errorOutput = "", output = "", stop = ProgramStop.Unavailable)

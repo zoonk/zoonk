@@ -40,7 +40,9 @@ import com.zoonk.android.data.shownLocale
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.PlayIntegrity
+import com.zoonk.android.feature.activities.code.CodeRuns
 import com.zoonk.android.feature.activities.code.CodeSandbox
+import com.zoonk.android.feature.activities.code.LiveCodeRuns
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
@@ -292,6 +294,7 @@ class AppContainer private constructor(
 
     // Activities (L5).
     val codeSandbox = CodeSandbox(context, scope)
+    val codeRuns: CodeRuns = LiveCodeRuns(api, cache)
 
     // Today and the session (lane L3).
     private val timeZone = {

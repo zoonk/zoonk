@@ -85,6 +85,7 @@ import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.model.canvasOwnsAnswer
 import com.zoonk.android.feature.player.revealPart
 import com.zoonk.android.feature.questions.decimalEntryRule
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
@@ -165,6 +166,7 @@ internal fun ActivityView(
     result: StepResult?,
     state: LessonPlayerState,
     actions: StepActions,
+    navigator: AppNavigator,
     part: StepPart,
 ) {
     val frame = content.frame
@@ -215,6 +217,8 @@ internal fun ActivityView(
                 onAnswerChange(done)
                 if (!locked) actions.runPrimary()
             },
+            stepId = step.id,
+            navigator = navigator,
         )
 
     // On a spread, a canvas the question asks about sits under its prompt; an interaction's canvas is the answer, so it stays
@@ -389,6 +393,8 @@ internal fun NumericCheck.answerDigits(
 internal fun ExploredActivityCanvas(
     explore: ExploredActivity,
     cantListen: Boolean,
+    stepId: String,
+    navigator: AppNavigator,
 ) {
     val renderer = explore.frame.renderer ?: return
 
@@ -405,6 +411,8 @@ internal fun ExploredActivityCanvas(
                     onAnswerChange = {},
                     cantListen = cantListen,
                     baseMap = explore.baseMap,
+                    stepId = stepId,
+                    navigator = navigator,
                 ),
             )
         }

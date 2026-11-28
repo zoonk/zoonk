@@ -122,26 +122,13 @@ private fun ApiClients.openGenerationEvents(
         awaitClose { source.cancel() }
     }
 
-private fun streamFailure(
+/** Why a stream ([EventSourceListener.onFailure]) failed: the API's refusal, a dropped connection, or anything else. */
+internal fun streamFailure(
     t: Throwable?,
     response: Response?,
 ): ApiException =
     when {
-        response != null && !response.isSuccessful -> {
-            ApiException(
-                when (response.code) {
-                    401 -> ApiError.Unauthorized
-                    404 -> ApiError.NotFound
-                    else -> ApiError.Unavailable
-                },
-            )
-        }
-
-        t is IOException -> {
-            ApiException(ApiError.Network)
-        }
-
-        else -> {
-            ApiException(ApiError.Unavailable)
-        }
+        response != null && !response.isSuccessful -> apiRefusal(response.code) { response.body.string() }
+        t is IOException -> ApiException(ApiError.Network)
+        else -> ApiException(ApiError.Unavailable)
     }

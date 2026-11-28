@@ -7,6 +7,16 @@
     <string name="activities_code_run">Run</string>
     <string name="activities_code_run_again">Run again</string>
     <string name="activities_code_start_over">Start over</string>
+    <!-- Under Run while a program runs on Zoonk's servers, once it takes a moment: getting a machine ready for it. %1$s is a programming language's name, like Java or C++. -->
+    <string name="activities_code_phase_starting">Getting %1$s ready…</string>
+    <!-- Under Run while a program runs on Zoonk's servers: turning the learner's code into a program the computer can run. -->
+    <string name="activities_code_phase_compiling">Compiling your code…</string>
+    <!-- Under Run while a program runs on Zoonk's servers: the program itself is running. -->
+    <string name="activities_code_phase_running">Running your code…</string>
+    <!-- Running the code failed because the device is offline; a Try again button follows. %1$s is a programming language's name, like Java or C++. -->
+    <string name="activities_code_run_offline">Running %1$s code needs a connection. Check yours and try again.</string>
+    <!-- Zoonk's servers couldn't run the learner's code this time; a Try again button follows. -->
+    <string name="activities_code_run_failed">Your code didn\'t run. Try again.</string>
     <!-- The name of a block of program code, for TalkBack. -->
     <string name="activities_code_code">Code</string>
 
@@ -30,6 +40,8 @@
         <item quantity="one">Stopped after %d second. Is there a loop that never ends?</item>
         <item quantity="other">Stopped after %d seconds. Is there a loop that never ends?</item>
     </plurals>
+    <!-- A program Zoonk's servers ran was stopped at their time limit, which differs between building and running it. -->
+    <string name="activities_code_took_too_long">Stopped because it took too long. Is there a loop that never ends?</string>
     <string name="activities_code_too_much_output">Stopped because it printed too much. Is there a loop that never ends?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Not quite:</string>

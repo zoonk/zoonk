@@ -14,8 +14,8 @@ enum class LimitTier { Guest, Free, Plus }
 /** [Rolling30Days] counts the last 30 days: each use comes back 30 days after it was made. */
 enum class LimitPeriod { Day, Rolling30Days, Total }
 
-/** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip). */
-enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, Uploads, Questions }
+/** What ran out: [Help] is anything else the day's AI budget stops (a spoken answer's check, a clip); [Runs] are programs our servers run. */
+enum class LimitSubject { Help, Messages, Explanations, Lessons, MapLessons, MindMaps, Outlines, Calls, Uploads, Questions, Runs }
 
 sealed interface Limit {
     /** A short break of [retryAfterSeconds], over at [until]: the wait counted from when this device received it. */

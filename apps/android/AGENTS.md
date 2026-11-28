@@ -32,7 +32,7 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 - Preserve edge-to-edge and accessible system bars, consume scaffold padding once, and account for cutouts and the keyboard. Retain Android back behavior, 48dp touch targets, font scaling, TalkBack semantics, RTL, and keyboard/pointer access as relevant controls change.
 - Private pictures (the API's `/v1/files/`) load through `images.request(context, url, session)` with the session the screen shows. Never add the bearer through an interceptor that reads the current token.
 - Sound goes through the container's `speech` player, one sound at a time for the whole app: listen buttons use `rememberSpokenAudio` and `ListenButton`, and recorded answers `VoiceAnswerButton` in the bottom bar with `recordNote` as the bar's note, or a `VoiceRecorder` in the ViewModel with `rememberRecordTap`, `RecordButton` and `recordNote` when the screen's own state grades each take. Never create another `ExoPlayer` or `MediaRecorder`.
-- Learner code (JavaScript, Python, SQL, regexes) runs only through the container's `codeSandbox`; never another WebView, JavaScript engine or `java.util.regex` for it. Its page, `assets/sandbox/index.html`, is generated: run `pnpm --filter android sandbox` after main's sandbox changes.
+- Learner code (JavaScript, Python, SQL, regexes) runs only through the container's `codeSandbox`; never another WebView, JavaScript engine or `java.util.regex` for it. A language our servers run (`CodeLanguage.runsOnServer`) runs only through the container's `codeRuns`, held for the step by `CodeRunModel`. Its page, `assets/sandbox/index.html`, is generated: run `pnpm --filter android sandbox` after main's sandbox changes.
 
 ## Data loading and caching
 

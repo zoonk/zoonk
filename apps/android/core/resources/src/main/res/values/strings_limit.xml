@@ -40,6 +40,9 @@
     <string name="limit_questions_used">You\'ve used your questions</string>
     <string name="limit_uploads_day">No more material today</string>
     <string name="limit_questions_day">No more questions today</string>
+    <!-- A code runner's Run asks Zoonk's servers to run the learner's program; the learner ran out of those runs. -->
+    <string name="limit_runs_day">No more code runs today</string>
+    <string name="limit_runs_used">You\'ve used your code runs</string>
     <string name="limit_call_time_used">You\'ve used your call time</string>
     <!-- The title over "You can try again now." once a call the learner's call time stopped can be made again. -->
     <string name="limit_call_time_back">Your call time is back</string>

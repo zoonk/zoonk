@@ -371,6 +371,16 @@ private fun reachedTitle(
             }
         }
 
+        LimitSubject.Runs -> {
+            if (guest) {
+                R.string.limit_help_guest
+            } else if (used) {
+                R.string.limit_runs_used
+            } else {
+                R.string.limit_runs_day
+            }
+        }
+
         LimitSubject.Calls -> {
             when (limit.period) {
                 LimitPeriod.Rolling30Days -> R.string.limit_call_time_used
