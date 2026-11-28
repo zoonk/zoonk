@@ -666,6 +666,23 @@ describe("a qualifying first phase that retests the written phase's subjects", (
     );
   });
 
+  it("asks no objective subject on a day that has only written tests", () => {
+    const structure = cacdStructure();
+    const goalAreas = structure.subjects.map((subject) => subject.name);
+    const days = listMockOptions({ goalAreas, structure }).filter(
+      (option) => option.kind === "full",
+    );
+
+    expect(days.find((option) => option.day === 1)?.areas).toStrictEqual([
+      ...CACD_SHARED,
+      "História Mundial",
+    ]);
+
+    expect(days.filter((option) => option.day === 2).map((option) => option.areas)).toStrictEqual([
+      [],
+    ]);
+  });
+
   it("splits them the same when the written phase counts its tests", () => {
     expect(getSubjectShares(cacdStructure({ secondQuestions: 8 }))).toStrictEqual(
       getSubjectShares(cacdStructure()),
