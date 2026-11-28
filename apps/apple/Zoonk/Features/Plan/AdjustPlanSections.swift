@@ -136,9 +136,8 @@ private struct PlanFocusSection: View {
       let focused = Set(choices.filter(\.focused).map(\.name))
       let selection = picked ?? focused
 
-      // Main's two groups: the Focus test's marked row and the subjects don't share a label edge.
-      if let focusTest = plan.focusTest {
-        Section {
+      Section {
+        if let focusTest = plan.focusTest {
           Button {
             dismiss()
             router.open(.focusTest(goalId: goal.id))
@@ -153,32 +152,25 @@ private struct PlanFocusSection: View {
           }
           .buttonStyle(CardRowStyle())
           .cardRowInList()
-        } header: {
-          title
-        }
 
-        Section {
+          // Main's 20pt under the Focus test and 12pt over the first subject's card.
           Text(
             "Or choose them yourself", tableName: "Plan",
             comment: "Above the subjects to focus on, under the Focus test that suggests them"
           )
           .typeStyle(.note.weight(.medium))
           .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden, edges: .bottom)
+          .listRowInsets(.top, 16)
+          .listRowInsets(.bottom, 8)
+          .listRowSeparator(.hidden)
           .layoutSectionText()
+        }
 
-          picks(choices, focused: focused, selection: selection)
-        } footer: {
-          footer
-        }
-      } else {
-        Section {
-          picks(choices, focused: focused, selection: selection)
-        } header: {
-          title
-        } footer: {
-          footer
-        }
+        picks(choices, focused: focused, selection: selection)
+      } header: {
+        title
+      } footer: {
+        footer
       }
     }
   }
