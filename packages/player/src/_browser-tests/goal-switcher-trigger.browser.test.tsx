@@ -18,12 +18,12 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
 function goal(id: string, displayName: string, kind: "explain" | "learn") {
   return {
     dailyMinutes: 10,
+    daysLeft: null,
     displayName,
     id,
     kind,
     languageFlag: null,
     status: "active" as const,
-    targetDate: null,
     targetDateEstimated: false,
     targetLanguage: null,
     targetRegion: null,

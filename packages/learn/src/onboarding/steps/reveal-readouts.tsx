@@ -1,10 +1,9 @@
 "use client";
 
 import { BigQuantity } from "@zoonk/ui/components/big-quantity";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { getIsoDateParts } from "@zoonk/utils/date-format";
 import { useExtracted } from "next-intl";
-import { daysUntilIsoDate, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
+import { daysBetween, useFormatIsoDate, useIsoToday } from "../../_utils/iso-date";
 import { useAppLocale } from "../../_utils/locale";
 import { useFormatDuration } from "../../_utils/time-format";
 import { usePlanScreen } from "../../plan/plan-context";
@@ -73,12 +72,12 @@ function MonthYear({ isoDate }: { isoDate: string }) {
 function FinishReadout() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
-  const today = useMountTime();
+  const today = useIsoToday();
   const { goal, plan } = usePlanScreen();
   const { targetDate, targetDateEstimated } = plan.schedule;
 
   if (targetDate) {
-    const days = daysUntilIsoDate({ isoDate: targetDate, today });
+    const days = Math.max(0, daysBetween(today, targetDate));
 
     return (
       <Readout label={goal.kind === "exam" ? t("until the exam") : t("until your date")}>
