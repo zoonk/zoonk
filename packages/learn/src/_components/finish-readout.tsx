@@ -62,29 +62,23 @@ function useAimLabel() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
 
-  return ({ endDate, precision }: { endDate: string | null; precision: FinishPrecision }) =>
-    endDate
-      ? t({
-          description:
-            'Under the level a language plan reaches: when. In the month form, {date} is a month and year, like "Nov 2027"; in the year form, a year, like "2031".',
-          message: "{dateKind, select, year {by {date}} other {by {date}}}",
-          values: {
-            date: formatDate(endDate, precision === "year" ? "year" : "sentenceMonth", {
-              year: "always",
-            }),
-            dateKind: precision,
-          },
-        })
-      : t({
-          description:
-            "Under the level a language plan reaches, when reaching it takes more than ten years at the time picked.",
-          message: "in 10+ years",
-        });
+  return ({ endDate, precision }: { endDate: string; precision: FinishPrecision }) =>
+    t({
+      description:
+        'Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027", or a year alone, like "2031", when the finish is far.',
+      message: "by {month}",
+      values: {
+        month:
+          precision === "year"
+            ? formatDate(endDate, "year")
+            : formatDate(endDate, "sentenceMonth", { year: "always" }),
+      },
+    });
 }
 
 /**
  * When an undated plan finishes: its month near, its year far, and "10+ years" past the years a
- * plan lays out. No "~": the label already says it's an estimate. Nothing while there's no date to
+ * plan lays out, a language aim's too. No "~": the label already says it's an estimate. Nothing while there's no date to
  * show.
  */
 export function FinishReadout({
@@ -106,14 +100,6 @@ export function FinishReadout({
     return null;
   }
 
-  if (aim) {
-    return (
-      <Readout className={className} label={aimLabel({ endDate, precision })}>
-        {aim}
-      </Readout>
-    );
-  }
-
   if (!endDate) {
     return (
       <Readout className={className} label={t("to finish")}>
@@ -124,6 +110,14 @@ export function FinishReadout({
             message: "10+ years",
           })}
         </BigQuantity>
+      </Readout>
+    );
+  }
+
+  if (aim) {
+    return (
+      <Readout className={className} label={aimLabel({ endDate, precision })}>
+        {aim}
       </Readout>
     );
   }

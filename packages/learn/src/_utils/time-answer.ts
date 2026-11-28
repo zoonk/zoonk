@@ -70,10 +70,6 @@ function getFinishLine({
     return { kind: askFailed ? "askFailed" : "asking" };
   }
 
-  if (advice.finishReason === "noStudyDays") {
-    return { kind: "noDays" };
-  }
-
   const { endDate, finishReason, precision } = advice;
   return { forecast: { endDate, finishReason, precision }, kind: "finish" };
 }

@@ -81,13 +81,6 @@ describe(getTimeLine, () => {
       kind: "finish",
     });
   });
-
-  it("asks for a study day when the plan has none to finish on", () => {
-    const undated = { ...LINE, dated: false, found: null, minutes: 15 };
-    const noDays = adviceAt({ finishReason: "noStudyDays", precision: null });
-
-    expect(getTimeLine({ ...undated, advice: noDays })).toStrictEqual({ kind: "noDays" });
-  });
 });
 
 function lineAt(found: ReturnType<typeof foundTime>) {

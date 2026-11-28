@@ -4,7 +4,6 @@ import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { FactSegments } from "../_components/task-meta";
 import { getPhaseWeight } from "../plan/phase-weight";
 import { type JourneyPathLinks } from "./journey-links";
 import { PhaseWhen } from "./phase-when";
@@ -54,12 +53,7 @@ function RoadmapCompact({
           className="flex w-full items-center justify-between gap-2 text-xs"
           data-slot="plan-roadmap-line"
         >
-          <span className="text-muted-foreground min-w-0 text-balance">
-            <FactSegments
-              facts={[position.name]}
-              lead={<span className="text-foreground font-medium">{position.place}</span>}
-            />
-          </span>
+          <span className="min-w-0 font-medium">{position.place}</span>
           <span
             className="text-muted-foreground flex shrink-0 items-center gap-2"
             data-slot="plan-roadmap-when"

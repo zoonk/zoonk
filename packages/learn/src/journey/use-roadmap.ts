@@ -4,7 +4,6 @@ import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { getShareInPhase } from "../plan/phase-weight";
 import { usePlanScreen } from "../plan/plan-context";
-import { usePhaseName } from "../plan/use-phase-name";
 import {
   type PlanDate,
   getAxisDatedPhases,
@@ -70,11 +69,9 @@ export function useRoadmapOverrun(): { phaseIndex: number; share: number } | nul
   return phase && share !== null ? { phaseIndex: phase.index, share } : null;
 }
 
-/** The phase's place leads; its own name follows only when it has one. */
+/** Where the learner is: the row under it already names the phase. */
 export function useRoadmapPosition() {
   const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
   const { currentIndex, phases } = useRoadmapPhases();
   const current = phases[currentIndex];
 
@@ -82,10 +79,7 @@ export function useRoadmapPosition() {
     return null;
   }
 
-  const name = phaseName(current, { mocksRequirePlus: plan.access.mocksRequirePlus });
-
   return {
-    name: name === phaseName(current, { byPlace: true }) ? null : name,
     phase: current,
     place: t("Phase {number, number} of {total, number}", {
       number: currentIndex + 1,
