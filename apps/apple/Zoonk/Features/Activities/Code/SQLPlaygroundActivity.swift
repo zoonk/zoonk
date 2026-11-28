@@ -71,17 +71,17 @@ struct SQLPlaygroundFields: Decodable, Sendable {
   }
 
   /// Mirrors main's `sqlSnippets`. Keywords and tables add a space after themselves.
-  var snippets: [String] {
-    let words =
+  var snippets: [SnippetKey] {
+    let all =
       ["SELECT", "FROM", "WHERE", "AND", "OR", "ORDER BY", "DESC", "GROUP BY", "COUNT(*)"].map {
-        $0 + " "
+        SnippetKey(label: $0, before: $0 + " ")
       }
-      + tables.flatMap { [$0.name + " "] + $0.columns.map(\.name) }
-    return words.enumerated().filter { index, word in
-      words.firstIndex {
-        $0.trimmingCharacters(in: .whitespaces) == word.trimmingCharacters(in: .whitespaces)
+      + tables.flatMap {
+        [SnippetKey(label: $0.name, before: $0.name + " ")]
+          + $0.columns.map { SnippetKey(label: $0.name, before: $0.name) }
       }
-        == index
+    return all.enumerated().filter { index, snippet in
+      all.firstIndex { $0.label == snippet.label } == index
     }.map(\.element)
   }
 }
@@ -214,12 +214,16 @@ private struct SQLPlaygroundCanvas: View {
         .textInputAutocapitalization(.never)
         .autocorrectionDisabled()
         .keyboardType(.asciiCapable)
-        .toolbar {
-          // Above the keyboard, where they're needed: a phone keyboard then only types values.
-          ToolbarItem(placement: .keyboard) {
-            snippets
-          }
-        }
+      }
+
+      CodeSnippetBar(
+        snippets: fields.snippets,
+        label: Text(
+          "SQL words, tables and columns", tableName: "ActivitiesCode",
+          comment: "VoiceOver: buttons that type SQL"),
+        isEnabled: !isChecked
+      ) { snippet in
+        snippet.insert(into: &query, selection: &selection)
       }
 
       CodeRunBar(
@@ -232,27 +236,6 @@ private struct SQLPlaygroundCanvas: View {
 
   private var editorLabel: Text {
     Text("Query", tableName: "ActivitiesCode")
-  }
-
-  private var snippets: some View {
-    HorizontalScroll {
-      HStack(spacing: 6) {
-        ForEach(fields.snippets, id: \.self) { snippet in
-          Button {
-            insert(snippet)
-          } label: {
-            Text(verbatim: snippet.trimmingCharacters(in: .whitespaces))
-              .typeStyle(.data)
-          }
-          .buttonStyle(.outline)
-        }
-      }
-    }
-    .accessibilityElement(children: .contain)
-    .accessibilityLabel(
-      Text(
-        "SQL words, tables and columns", tableName: "ActivitiesCode",
-        comment: "VoiceOver: buttons that type SQL"))
   }
 
   @ViewBuilder
@@ -380,20 +363,6 @@ private struct SQLPlaygroundCanvas: View {
     return String(
       localized: "Your result: \(result.rows.count) rows", table: "ActivitiesCode",
       locale: .appLanguage, comment: "How many rows a query returned")
-  }
-
-  private func insert(_ snippet: String) {
-    var range = query.endIndex..<query.endIndex
-    if case .selection(let selected) = selection?.indices, selected.upperBound <= query.endIndex {
-      range = selected
-    }
-
-    let start = query.distance(from: query.startIndex, to: range.lowerBound)
-    let selected = query[range]
-    query.replaceSubrange(range, with: snippet + selected)
-    selection = TextSelection(
-      insertionPoint: query.index(
-        query.startIndex, offsetBy: start + snippet.count + selected.count))
   }
 
   private func runQuery() {
