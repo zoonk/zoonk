@@ -6,6 +6,7 @@ import { BUDGET_LESSON_SPECS } from "../lesson-writer/budget-lesson-specs";
 import { MOBILITY_LESSON } from "../lesson-writer/mobility-lesson-spec";
 import { SOURCED_LESSONS } from "../lesson-writer/sourced-lesson-specs";
 import { BROAD_SAMPLE_CASES } from "./broad-sample-cases";
+import { PRACTICE_TEST_CASES } from "./practice-test-cases";
 import { SECOND_TAKE_TEST_CASES } from "./second-take-test-cases";
 import { type LessonSpecExpected, VISUAL_TEST_CASES } from "./visual-test-cases";
 
@@ -815,6 +816,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, OptionalCountry<LessonSpec
   },
   ...VISUAL_TEST_CASES,
   ...BROAD_SAMPLE_CASES,
+  ...PRACTICE_TEST_CASES,
   ...SECOND_TAKE_TEST_CASES,
   {
     expectations: `
@@ -843,7 +845,7 @@ export const TEST_CASES: TestCase<LessonSpecExpected, OptionalCountry<LessonSpec
     expectations: `
       - MUST be in natural Korean in 해요체
       - Beginner lesson on writing a simple SQL query with WHERE for someone who builds reports at work, with Korean business examples (amounts in 원, Korean names and cities)
-      - Writing a query is a procedure, so it needs a worked example on a small table and then a similar task with less help
+      - Writing a query is a procedure, so it needs a worked example on a small table and then a similar task with less help: there, or in the application, the learner writes the query in sqlPlayground and the app checks the rows it returns, with a brief that names the table, what the WHERE keeps and the expected rows
       - Skill names and can-do lines end in ~ㄹ 수 있어요 (계산할 수 있어요, 읽을 수 있어요), never as an order (~하세요, ~해 보세요) or a bare noun
 
       ${SHARED_EXPECTATIONS}
