@@ -459,6 +459,23 @@ class LessonPlayerReducerTest {
     }
 
     @Test
+    fun turnBackOnPutsBackBothSpeakingSkipsMadeOnTheSameScreen() {
+        val steps = listOf(spokenStep("heard", heardInstead = true), spokenStep("say"), summaryStep("end"))
+        val unheard =
+            play(
+                steps,
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)),
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = true)),
+            )
+        assertEquals(listOf("end"), unheard.queue)
+
+        val restored = unheard.then(LessonAction.RestoreSkill)
+        assertEquals(listOf("heard", "say", "end"), restored.queue)
+        assertEquals("heard", restored.currentId)
+        assertEquals(emptyList<String>(), restored.unavailableStepIds)
+    }
+
+    @Test
     fun putsTheSpeakingBackWithTurnBackOnUntilTheLearnerMovesOn() {
         val steps = listOf(explanationStep("tip"), spokenStep("say"), summaryStep("end"))
         val skipped = play(steps, LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false), opening = true))

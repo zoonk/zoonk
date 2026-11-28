@@ -127,7 +127,8 @@ internal fun LessonPlayerState.revealAnswer(stepId: String): LessonPlayerState {
 /**
  * "Can't write now" or "I can't talk now" leaves out every screen ahead that needs the [skill], for the rest of the day, the one
  * in view too while it's being answered; "Turn back on" puts them back. [opening] when the lesson opens with the skill already
- * off, so a lesson left with nothing to do waits for its finish instead of saving it.
+ * off, so a lesson left with nothing to do waits for its finish instead of saving it. A second skip of the same skill while its
+ * notice shows keeps the first one's restore, so one "Turn back on" puts back both.
  */
 internal fun LessonPlayerState.skipSkill(
     skill: DaySkill,
@@ -150,7 +151,11 @@ internal fun LessonPlayerState.skipSkill(
 
     if (next.phase != LessonPhase.Playing || phase != LessonPhase.Playing || leftOut.isEmpty()) return next
 
-    return next.copy(notice = LessonNotice.SkillSkipped, skillRestore = SkillRestore(skill, position, queue, leftOut))
+    val earlier = skillRestore?.takeIf { notice == LessonNotice.SkillSkipped && it.skill::class == skill::class }
+    val restore =
+        earlier?.copy(skill = skill, leftOut = earlier.leftOut + leftOut) ?: SkillRestore(skill, position, queue, leftOut)
+
+    return next.copy(notice = LessonNotice.SkillSkipped, skillRestore = restore)
 }
 
 internal fun LessonPlayerState.restoreSkill(now: Long): LessonPlayerState {
