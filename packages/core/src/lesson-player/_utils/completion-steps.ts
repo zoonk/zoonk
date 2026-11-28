@@ -39,6 +39,8 @@ export async function recordSkippedWritingSteps({
 /**
  * Temporary writing skips are not permanent Plan preferences and add no verdict. A screen a fix
  * changed during the run is optional, since its answer may have been excused rather than saved.
+ * A dictation or a speaking screen is optional: a learner who can't listen or talk today goes on
+ * without it, and the server can't tell that from a learner who chose not to.
  */
 export async function loadCompletionSteps({
   lesson,
@@ -76,7 +78,9 @@ export async function loadCompletionSteps({
       ...getLatePictureStepIds({ rows: lesson.steps, runStartedAt }),
       ...fixedStepIds,
       ...skippedWritingStepIds,
-      ...steps.filter((step) => isDictation(step)).map((step) => step.id),
+      ...steps
+        .filter((step) => isDictation(step) || step.kind === "spokenAnswer")
+        .map((step) => step.id),
     ]),
     steps,
   };
