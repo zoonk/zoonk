@@ -169,43 +169,6 @@
         "expected": {
           "country": "BR",
           "domains": [
-            "inep.gov.br",
-            "gov.br"
-          ],
-          "language": "pt",
-          "nameIncludes": [
-            "enem"
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "goal": "quero passar no ENEM desse ano pra enfermagem"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "country": "BR",
-          "domains": [
             "cebraspe.org.br",
             "tc.df.gov.br"
           ],
@@ -371,6 +334,158 @@
         "language": "en",
         "userInput": {
           "goal": "Get a 1450 on the SAT in March 2027"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "CA",
+          "domains": [
+            "tc.canada.ca",
+            "tc.gc.ca",
+            "canada.ca"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "pilot"
+          ]
+        },
+        "id": "pilot-licence-with-the-learners-country-1",
+        "language": "en",
+        "userInput": {
+          "details": "{\"contentCountry\":\"CA\"}",
+          "goal": "Private pilot licence"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "CA",
+          "domains": [
+            "tc.canada.ca",
+            "tc.gc.ca",
+            "canada.ca"
+          ],
+          "language": "en",
+          "nameIncludes": [
+            "pilot"
+          ]
+        },
+        "id": "pilot-licence-with-the-learners-country-2",
+        "language": "en",
+        "userInput": {
+          "details": "{\"contentCountry\":\"CA\"}",
+          "goal": "Private pilot licence"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": [
+            "inep.gov.br",
+            "gov.br"
+          ],
+          "language": "pt",
+          "nameIncludes": [
+            "enem"
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "country": "BR",
+          "domains": [
+            "inep.gov.br",
+            "gov.br"
+          ],
+          "language": "pt",
+          "nameIncludes": [
+            "enem"
+          ]
+        },
+        "id": "enem-2026-2",
+        "language": "pt",
+        "userInput": {
+          "goal": "quero passar no ENEM desse ano pra enfermagem"
         }
       }
     }

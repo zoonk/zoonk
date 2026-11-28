@@ -210,6 +210,9 @@ export type OnboardingFirstLesson = {
 };
 
 export type OnboardingView = {
+  /** An exam each candidate books their own day for: its date is the day they booked, or none while they haven't booked it yet. */
+  bookedExam: boolean;
+  /** `defaultCountry` is null for an exam: only the learner's words or pick say whose exam it is. */
   contentCountry: {
     defaultCountry: { code: string; name: string } | null;
     suggested: SuggestedCountry[];

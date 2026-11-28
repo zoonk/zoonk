@@ -215,4 +215,78 @@ describe("content country question", () => {
       countryDependent: true,
     });
   });
+
+  it("never promotes the home country to an exam's: only the reading's or the learner's pick", async () => {
+    const user = await userFixture();
+    await learningProfileFixture({ homeCountry: "PT", userId: user.id });
+    const title = "Get a private pilot licence";
+
+    const card = await onboardingDraftFixture({
+      understanding: {
+        goals: [{ countryDependent: true, draft: { kind: "exam", title } }],
+        status: "goals",
+      },
+      userId: user.id,
+    });
+
+    const draft: GoalDraft = {
+      details: { onboardingId: card.id },
+      kind: "exam",
+      language: "en",
+      prompt: title,
+      title,
+    };
+
+    const resolve = (input: GoalDraft) =>
+      prisma.$transaction((tx) => resolveNewGoalCountry({ draft: input, tx, userId: user.id }));
+
+    await expect(resolve(draft)).resolves.toStrictEqual({
+      contentCountry: null,
+      countryDependent: true,
+      source: "default",
+    });
+
+    await expect(resolve({ ...draft, contentCountry: "CA" })).resolves.toStrictEqual({
+      contentCountry: "CA",
+      countryDependent: true,
+      source: "picked",
+    });
+
+    await prisma.onboardingDraft.update({
+      data: {
+        understanding: {
+          goals: [
+            {
+              contentCountry: { code: "CA", source: "said" },
+              countryDependent: true,
+              draft: { contentCountry: "CA", kind: "exam", title },
+            },
+          ],
+          status: "goals",
+        },
+      },
+      where: { id: card.id },
+    });
+
+    await expect(resolve(draft)).resolves.toStrictEqual({
+      contentCountry: "CA",
+      countryDependent: true,
+      source: "said",
+    });
+  });
+
+  it("asks an unplaced country-dependent exam for its country once, and never one the learner gave", () => {
+    const exam = { kind: "exam" as const, targetDate: null };
+
+    expect(getMissingQuestions({ ...exam, details: { countryDependent: true } })[0]).toBe(
+      "contentCountry",
+    );
+
+    expect(
+      getMissingQuestions({
+        ...exam,
+        details: { answered: ["contentCountry"], countryDependent: true },
+      }),
+    ).not.toContain("contentCountry");
+  });
 });
