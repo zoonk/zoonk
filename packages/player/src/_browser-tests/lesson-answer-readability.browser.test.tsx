@@ -212,7 +212,7 @@ describe("checked answer readability", () => {
       await option.click();
       const words = option.getByText(ANSWER, { exact: true }).element();
 
-      const row = words.closest("[data-slot='answer-option'] > span:last-child");
+      const row = words.closest("[data-slot='answer-option'] > span:not([data-slot])");
 
       if (!row) {
         throw new Error("The answer's words must sit in their row.");

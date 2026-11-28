@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -431,7 +432,13 @@ internal fun FirstQuestion(
             PickKeyOptions(screen.options.size, enabled = true, onPick = { answer(screen.options[it].id) }) {
                 AnswerOptionGroup {
                     screen.options.forEachIndexed { index, option ->
-                        AnswerOption(marker = index + 1, picked = false, result = null, onClick = { answer(option.id) }) {
+                        AnswerOption(
+                            marker = index + 1,
+                            picked = false,
+                            result = null,
+                            onClick = { answer(option.id) },
+                            role = Role.Button,
+                        ) {
                             RichInlineText(option.text, style = MaterialTheme.typography.bodyLarge)
                         }
                     }

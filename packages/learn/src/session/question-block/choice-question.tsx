@@ -58,8 +58,9 @@ export function ChoiceQuestion({
   const multi = isMultiPick(select);
   const shownPicks = result?.picked ?? picks;
 
+  // "Select all that apply" counts as answered after one pick, while the learner may still pick more.
   useFocusMainActionWhenComplete({
-    complete: multi && isCompletePick({ picks, select }),
+    complete: multi && select !== "all" && isCompletePick({ picks, select }),
     containerRef: groupRef,
   });
 

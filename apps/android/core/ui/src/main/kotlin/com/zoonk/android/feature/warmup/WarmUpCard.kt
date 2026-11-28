@@ -462,6 +462,7 @@ private fun Guess(
                     onClick = { onPick(option) },
                     modifier = if (index == 0) Modifier.focusRequester(firstAnswer) else Modifier,
                     enabled = picked == null,
+                    keepsEnter = true,
                     guessed = true,
                 ) { Text(option.text, style = MaterialTheme.typography.bodyLarge) }
             }

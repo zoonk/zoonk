@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -77,6 +78,7 @@ import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
 import com.zoonk.android.feature.questions.AnswerLine
+import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.feature.questions.ItemSupport
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.questions.Question
@@ -86,6 +88,7 @@ import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.WorkedSteps
 import com.zoonk.android.feature.questions.initialAnswer
+import com.zoonk.android.feature.questions.picks
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.navigation.AppNavigator
@@ -96,6 +99,9 @@ import com.zoonk.android.ui.characters.TricksterAct
 import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
+import com.zoonk.android.ui.components.AnswerOption
+import com.zoonk.android.ui.components.AnswerOptionGroup
+import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.CelebrationScope
@@ -952,22 +958,11 @@ private fun ReviewItem(
         }
         Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (question.format == QuestionFormat.MultipleChoice || question.format == QuestionFormat.TrueFalse) {
-                val choices = reviewChoices(question, duel.read.words)
-                QuestionAnswer(
-                    question = choices,
-                    words = duel.read.words,
-                    allowBlank = false,
+                ReviewedOptions(
+                    labels = reviewLabels(question, duel.read.words),
+                    right = correct?.asChoice().picks,
                     // An answer given before the screen opened again isn't known: a miss then shows only the right option.
-                    check =
-                        AnswerCheck(
-                            (given ?: if (answer.isCorrect && correct != null) correct else Answer.DontKnow).asChoice(),
-                            correct?.asChoice(),
-                            answer.isCorrect,
-                        ),
-                    draft = null,
-                    enabled = false,
-                    onAnswer = {},
-                    onSubmit = {},
+                    picked = (given ?: correct?.takeIf { answer.isCorrect })?.asChoice().picks,
                 )
             } else {
                 AnswerLine(
@@ -1001,15 +996,46 @@ private val ICON_BUTTON_INSET = 12.dp
 
 /** A statement's verdict reviews as main's two answer rows, without the statement's card under its own title. */
 @Composable
-private fun reviewChoices(
+private fun reviewLabels(
     question: Question,
     words: TrueFalseWords,
-): Question =
+): List<String> =
     if (question.format == QuestionFormat.TrueFalse) {
-        question.copy(format = QuestionFormat.MultipleChoice, options = listOf(trueFalseLabel(true, words), trueFalseLabel(false, words)))
+        listOf(trueFalseLabel(true, words), trueFalseLabel(false, words))
     } else {
-        question
+        question.options.orEmpty()
     }
+
+/**
+ * Main's reviewed options: the right ones and the learner's picks, each keyed by its ✓ or ✗. They're shown after the
+ * fact, so nothing is pressed or picked here, and a screen reader hears which was the learner's.
+ */
+@Composable
+private fun ReviewedOptions(
+    labels: List<String>,
+    right: List<Int>,
+    picked: List<Int>,
+) {
+    val yours = stringResource(R.string.answer_tag_your_answer)
+
+    AnswerOptionGroup {
+        labels.forEachIndexed { index, label ->
+            val isRight = index in right
+            val isPicked = index in picked
+            if (!isRight && !isPicked) return@forEachIndexed
+
+            AnswerOption(
+                marker = index + 1,
+                picked = isPicked,
+                result = if (isRight) AnswerResult.Right else AnswerResult.Wrong,
+                onClick = {},
+                modifier = if (isPicked) Modifier.semantics { stateDescription = yours } else Modifier,
+                role = null,
+                glyph = painterResource(if (isRight) R.drawable.ic_check else R.drawable.ic_close),
+            ) { ItemLine(label) }
+        }
+    }
+}
 
 private fun Answer.asChoice(): Answer = if (this is Answer.TrueFalse) Answer.Choice(if (isTrue) 0 else 1) else this
 

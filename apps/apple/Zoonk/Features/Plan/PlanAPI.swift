@@ -70,11 +70,12 @@ private struct PlanChangeRequest: Encodable {
 
 struct PlanChangeResult: Decodable {
   let change: AppliedPlanChange?
+  let reason: UnchangedReason?
   let status: String
 
   var outcome: PlanChangeOutcome {
     guard status == "applied" else {
-      return .unchanged
+      return .unchanged(reason)
     }
 
     guard let change else {

@@ -102,3 +102,8 @@ val MaterialTheme.zoonk: ZoonkColors
     @Composable
     @ReadOnlyComposable
     get() = LocalZoonkColors.current
+
+/** Material's disabled emphasis: words or marks that can't be used now, dimmed in their own color. */
+fun Color.disabledEmphasis(): Color = copy(alpha = alpha * DISABLED_EMPHASIS)
+
+private const val DISABLED_EMPHASIS = 0.38f

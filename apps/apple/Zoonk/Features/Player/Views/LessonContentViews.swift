@@ -228,13 +228,16 @@ struct LessonPictureView: View {
   var opens = false
   /// The shape pictures of this kind are drawn at, held while one draws.
   var drawnAspectRatio = LessonPicturePlaceholder.screenAspectRatio
+  var cornerRadius = Radius.xl
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
       picture(url: url, image: image)
     } else if let alt, isPending {
       LessonPicturePlaceholder(alt: asks ? alt : nil, saysItIsDrawing: true)
-        .pictureFrame(aspectRatio: drawnAspectRatio, maxHeight: maxHeight, alignment: alignment)
+        .pictureFrame(
+          aspectRatio: drawnAspectRatio, maxHeight: maxHeight, alignment: alignment,
+          cornerRadius: cornerRadius)
     } else if let alt, asks {
       Label {
         Text(alt)
@@ -283,7 +286,8 @@ struct LessonPictureView: View {
       }
     }
     .pictureFrame(
-      aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight, alignment: alignment
+      aspectRatio: aspectRatio ?? drawnAspectRatio, maxHeight: maxHeight, alignment: alignment,
+      cornerRadius: cornerRadius
     )
     .accessibilityElement()
     .accessibilityLabel(Text(alt ?? ""))
@@ -341,10 +345,11 @@ extension View {
   /// A picture's shape at the width it's offered, no taller than `maxHeight`; whatever holds its
   /// place gets the same frame.
   func pictureFrame(
-    aspectRatio: CGFloat, maxHeight: CGFloat = .infinity, alignment: Alignment = .center
+    aspectRatio: CGFloat, maxHeight: CGFloat = .infinity, alignment: Alignment = .center,
+    cornerRadius: CGFloat = Radius.xl
   ) -> some View {
     PictureFrameLayout(aspectRatio: aspectRatio, maxHeight: maxHeight) { self }
-      .clipShape(.rect(cornerRadius: Radius.xl, style: .continuous))
+      .clipShape(.rect(cornerRadius: cornerRadius, style: .continuous))
       .frame(maxWidth: .infinity, alignment: alignment)
   }
 }
