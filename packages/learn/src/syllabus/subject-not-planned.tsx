@@ -60,20 +60,8 @@ function RestoreButton({
 function useReasonLine(isModule: boolean) {
   const t = useExtracted();
 
-  return function reasonLine(reason: NotPlannedReason | "partTime" | null): string | null {
+  return function reasonLine(reason: NotPlannedReason | null): string | null {
     switch (reason) {
-      case "partTime":
-        return isModule
-          ? t({
-              description:
-                "On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.",
-              message: "Part of this module isn't in your plan. Other topics come first.",
-            })
-          : t({
-              description:
-                "On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan.",
-              message: "Part of this subject isn't in your plan. Other topics come first.",
-            });
       case "skipped":
         return isModule
           ? t({
@@ -125,7 +113,7 @@ export function NotPlannedCallout({
   subject: SyllabusSubject;
 }) {
   const t = useExtracted();
-  const reason = subject.notPlannedReason ?? (subject.leftOut.length > 0 ? "partTime" : null);
+  const reason = subject.notPlannedReason;
   const space = useSentenceSpace();
   const line = useReasonLine(isModule)(reason);
 
@@ -139,7 +127,7 @@ export function NotPlannedCallout({
       <div className="flex min-w-0 flex-1 flex-col gap-2.5">
         <p>
           {line}
-          {(reason === "time" || reason === "partTime") && (
+          {reason === "time" && (
             <>
               {space}
               <LearnLink className="font-medium underline underline-offset-2" href={adjustHref}>

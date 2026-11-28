@@ -15,6 +15,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { ChapterMark } from "../_components/chapter-mark";
+import {
+  LIST_ROW_INTERACTIVE_CLASS,
+  ListRowContent,
+  ListRowLeading,
+  ListRowTitle,
+} from "../_components/list-group";
 import { LearnLink } from "../learn-link";
 import { usePlanScreen } from "../plan/plan-context";
 import { useLeftOutTopicsLabel } from "../syllabus/left-out-topics";
@@ -195,21 +201,44 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
     : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
-/** The topics the plan's date leaves out of a phase, folded under one row that names them. */
-export function LeftOutTopicsRow({ names }: { names: readonly string[] }) {
-  const label = useLeftOutTopicsLabel();
+/**
+ * The topics the plan's date leaves out of a phase or a module, folded under one row that names
+ * them. `inList` draws the row as a list group's row, among a module's chapters.
+ */
+export function LeftOutTopicsRow({
+  inList = false,
+  names,
+}: {
+  inList?: boolean;
+  names: readonly string[];
+}) {
+  const label = useLeftOutTopicsLabel()(names.length);
+  const mark = <TopicMark mark={{ kind: "notPlanned" }} />;
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} data-slot="path-row">
-        <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
-          <TopicMark mark={{ kind: "notPlanned" }} />
-        </span>
-        <PathRowBody>
-          <span className="text-muted-foreground font-medium">{label(names.length)}</span>
-        </PathRowBody>
-        <FoldChevron />
-      </CollapsibleTrigger>
+      {inList ? (
+        <CollapsibleTrigger className={LIST_ROW_INTERACTIVE_CLASS}>
+          <ListRowLeading>{mark}</ListRowLeading>
+          <ListRowContent>
+            <ListRowTitle className="text-muted-foreground">{label}</ListRowTitle>
+          </ListRowContent>
+          <FoldChevron />
+        </CollapsibleTrigger>
+      ) : (
+        <CollapsibleTrigger
+          className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")}
+          data-slot="path-row"
+        >
+          <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
+            {mark}
+          </span>
+          <PathRowBody>
+            <span className="text-muted-foreground font-medium">{label}</span>
+          </PathRowBody>
+          <FoldChevron />
+        </CollapsibleTrigger>
+      )}
       <CollapsibleContent>
         <FoldedNames names={names} />
       </CollapsibleContent>
