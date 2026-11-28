@@ -255,6 +255,7 @@ describe("writing receipts and drafts", () => {
             }),
           },
           durationMs: 5000,
+          fromLesson: false,
           hour: 12,
           id: getWritingAttemptId({ admissionId, itemId: item.id }),
           isCorrect: true,

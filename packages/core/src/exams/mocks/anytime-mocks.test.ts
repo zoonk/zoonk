@@ -414,6 +414,7 @@ describe("mocks taken any time", () => {
           Array.from({ length: 20 }, () => ({
             answer: { selectedIndex: 0 },
             durationMs,
+            fromLesson: false,
             hour: 12,
             isCorrect: true,
             localDate: SESSION_NOW,

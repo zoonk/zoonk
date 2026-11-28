@@ -68,6 +68,7 @@ describe("GET /v1/essays/attempts/{attemptId}", () => {
         },
         answeredAt,
         durationMs: 300,
+        fromLesson: false,
         hour: 18,
         isCorrect: false,
         itemId: item.id,
