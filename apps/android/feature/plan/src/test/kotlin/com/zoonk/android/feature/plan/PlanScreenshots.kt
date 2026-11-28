@@ -807,6 +807,7 @@ class PlanScreenshots {
         val modulesFull = plan(EDITOR_CHOICES.replace(""""subjects":["Biología"]""", """"subjects":["Biología","Química"]"""))
         val examChoices = PlanPageState(exam.goals.first(), modulesFull, exam)
         val writingBack = mapOf(PlanPart.Activities to listOf<PlanOp>(PlanOp.RestoreActivities(listOf("writing"))))
+        val modulesSaving = mapOf(PlanPart.ExamChoices to listOf<PlanOp>(PlanOp.ExamChoice("Módulos", listOf("Biología", "Química"))))
 
         fun preview(
             operations: List<PlanOp>,
@@ -844,7 +845,9 @@ class PlanScreenshots {
                     ChooseFocusBody(goal, PlanEdits(pending = setOf(PlanPart.Focus)), onFocusTest = {}, onDone = {})
                 },
                 "plan-exam-choices" to { PlanExamChoices(examChoices, PlanEdits()) },
-                "plan-exam-choices-saving" to { PlanExamChoices(examChoices, PlanEdits(pending = setOf(PlanPart.ExamChoices))) },
+                "plan-exam-choices-saving" to {
+                    PlanExamChoices(examChoices, PlanEdits(pending = setOf(PlanPart.ExamChoices), asked = modulesSaving))
+                },
                 "plan-activities" to { PlanActivities(activities, PlanEdits()) },
                 "plan-activities-saving" to {
                     PlanActivities(activities, PlanEdits(pending = setOf(PlanPart.Activities), asked = writingBack))

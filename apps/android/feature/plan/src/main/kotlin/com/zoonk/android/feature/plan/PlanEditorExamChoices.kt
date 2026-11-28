@@ -55,19 +55,20 @@ private fun ExamChoiceOptions(
     edits: PlanEdits,
 ) {
     val pending = edits.isPending(PlanPart.ExamChoices)
+    val asked = edits.askedExamChoice(choice.group)
 
     if (choice.take > 1) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             SectionLabel(choice.group)
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = { edits.chooseExamOption(choice.group, it, null) })
+            ExamChoicePicks(
+                choice,
+                saving = asked != null,
+                enabled = !pending || asked != null,
+                onSave = { edits.chooseExamOption(choice.group, it, null) },
+            )
         }
     } else {
-        val shown =
-            edits
-                .asked(PlanPart.ExamChoices)
-                .filterIsInstance<PlanOp.ExamChoice>()
-                .firstOrNull { it.group == choice.group }
-                ?.subjects ?: choice.subjects
+        val shown = asked?.subjects ?: choice.subjects
         MenuSelect(
             label = choice.group,
             options = choice.options,
@@ -179,6 +180,7 @@ internal fun ExamChoiceSuggestion(
     layout: SuggestionLayout,
     failed: Boolean,
     pending: Boolean,
+    saving: Boolean,
     answer: SlotAnswer?,
     onChoose: (subjects: List<String>) -> Unit,
     modifier: Modifier = Modifier,
@@ -203,7 +205,7 @@ internal fun ExamChoiceSuggestion(
         }
         SuggestionDescription(stringResource(R.string.exam_choice_left_out))
         if (choice.take > 1) {
-            ExamChoicePicks(choice, saving = false, enabled = !pending, onSave = onChoose)
+            ExamChoicePicks(choice, saving, onChoose, enabled = !pending || saving)
         } else {
             SuggestionActions {
                 choice.options.forEach { option ->
