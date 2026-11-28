@@ -331,7 +331,7 @@ private fun SqlRowsTable(
         val tableWidth = maxOf(natural, maxWidth)
         val widths = naturalWidths.map { it * (tableWidth / natural) }
         Column(Modifier.fadingHorizontalScroll(scroll).arrowKeyScroll(scroll) { focused = it }) {
-            Row(Modifier.background(colors.surfaceContainer)) {
+            Row(Modifier.background(tableHeaderColor())) {
                 columns.forEachIndexed { index, name ->
                     Text(
                         name,

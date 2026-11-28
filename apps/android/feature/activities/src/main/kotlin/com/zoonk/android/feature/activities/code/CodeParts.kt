@@ -24,11 +24,16 @@ import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.insert
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,8 +41,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -72,7 +79,9 @@ import com.zoonk.android.ui.code.styledCodeLine
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.SecondaryButton
 import com.zoonk.android.ui.components.fadingHorizontalScroll
+import com.zoonk.android.ui.components.focusRing
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.LocalMoreContrast
 import com.zoonk.android.ui.theme.ZoonkRadius
@@ -174,15 +183,9 @@ internal fun CodeEditor(
     modifier: Modifier = Modifier,
 ) {
     val colors = MaterialTheme.colorScheme
-    val shape = RoundedCornerShape(ZoonkRadius.xl)
     val style = MaterialTheme.zoonkType.codeField.copy(color = colors.onSurface)
-    Box(
-        modifier
-            .fillMaxWidth()
-            .clip(shape)
-            .background(colors.surface)
-            .border(1.dp, colors.outlineVariant, shape),
-    ) {
+    var focused by remember { mutableStateOf(false) }
+    Box(modifier.fillMaxWidth().codeField(colors, focused)) {
         BasicTextField(
             state = state,
             modifier =
@@ -191,6 +194,7 @@ internal fun CodeEditor(
                     .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
                     .heightIn(min = 48.dp)
                     .focusRequester(focusRequester)
+                    .onFocusChanged { focused = it.isFocused }
                     .semantics { contentDescription = label }
                     .onPreviewKeyEvent { event ->
                         val submit = event.isEnter() && (event.isCtrlPressed || event.isMetaPressed)
@@ -251,10 +255,10 @@ internal fun SnippetBar(
             .fillMaxWidth()
             .semantics { contentDescription = label }
             .fadingHorizontalScroll(rememberScrollState()),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         snippets.forEach { snippet ->
-            OutlinedButton(
+            SecondaryButton(
                 onClick = { onInsert(snippet) },
                 modifier =
                     Modifier
@@ -268,7 +272,6 @@ internal fun SnippetBar(
                             },
                         ),
                 enabled = enabled,
-                shape = RoundedCornerShape(ZoonkRadius.option),
                 contentPadding = PaddingValues(horizontal = 12.dp),
             ) {
                 Text(snippet.label, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = GeistMono))
@@ -341,6 +344,23 @@ internal fun SandboxRunBar(
     }
 }
 
+/** Main's code field: a box on the page's background, its line in ink with a ring outside while it has focus. */
+internal fun Modifier.codeField(
+    colors: ColorScheme,
+    focused: Boolean,
+): Modifier {
+    val shape = RoundedCornerShape(ZoonkRadius.xl)
+    return focusRing(shape, colors.primary) { focused }
+        .clip(shape)
+        .background(colors.surface)
+        .border(1.dp, if (focused) colors.primary else colors.outlineVariant, shape)
+}
+
+/** Main's `bg-muted/60` behind a table's column names. */
+@Composable
+internal fun tableHeaderColor(): Color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = TABLE_HEADER_ALPHA)
+
 internal const val SOFT_ALPHA = 0.12f
+private const val TABLE_HEADER_ALPHA = 0.6f
 internal const val STALE_ALPHA = 0.6f
 private val EDITOR_PADDING = 12.dp
