@@ -13102,7 +13102,7 @@ msgstr "Cai muito"
 #: src/syllabus/left-out-topics.tsx
 msgctxt "JUUl4s"
 msgid "{count, plural, one {# topic not in your plan} other {# topics not in your plan}}"
-msgstr "{count, plural, one {# tópico não está no seu plano} other {# tópicos não estão no seu plano}}"
+msgstr "{count, plural, one {# tópico fora do seu plano} other {# tópicos fora do seu plano}}"
 
 #. On one exam's plan. {exams} names the learner's other exams that test some of the same topics.
 #: src/syllabus/shared-exams.tsx
