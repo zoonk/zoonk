@@ -231,6 +231,7 @@ export async function loadGoalCurriculumInputs(
 
   return {
     blueprintReference: blueprint,
+    classTest: goal.kind === "exam" && isClassTest(details),
     examIdentity: goal.kind === "exam" ? toExamIdentity({ details, exams }) : null,
     exams,
     goal: {
@@ -261,7 +262,6 @@ export async function loadGoalCurriculumInputs(
       targetLanguage: goal.targetLanguage ?? undefined,
     },
     hasMaterial: material.length > 0,
-    classTest: goal.kind === "exam" && isClassTest(details),
     hasPlanGraph: parsePlanGraph(goal.plan?.graph).skills.length > 0,
     isGuest: goal.user.isAnonymous,
     knownSubjects: getKnownSubjects(goal),
