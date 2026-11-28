@@ -6,6 +6,7 @@ import {
   repairNoticePlanStep,
 } from "../goals/steps/notice-steps";
 import { type ResearchAnalytics } from "./_utils/research-analytics";
+import { readDomainSharesStep } from "./steps/domain-shares-step";
 import { extractBlueprint } from "./steps/extract-blueprint-step";
 import { findNoticeReadingStep } from "./steps/is-notice-read-step";
 import { refreshFollowerSummariesStep } from "./steps/link-goal-step";
@@ -129,13 +130,16 @@ export async function readExamBlueprint({
     return null;
   }
 
+  // Shares only refine the plan, so a reading whose share read fails is saved without them.
+  const withShares = await readDomainSharesStep({ ...read, reading }).catch(() => reading);
+
   const saved = await saveBlueprintStep({
     analytics,
     board,
     check: shared && reading.problems ? { problems: reading.problems } : null,
     identity,
     notDownloaded,
-    reading,
+    reading: withShares,
     reread: force,
     sourceId: noticeId,
   });

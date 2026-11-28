@@ -5,6 +5,7 @@ import {
   type BlueprintExtraction,
   extractExamBlueprint,
 } from "@zoonk/ai/tasks/research/extract-exam-blueprint";
+import { findDomainShares } from "@zoonk/ai/tasks/research/find-domain-shares";
 import { toBlueprintContent } from "@zoonk/core/library/exams/blueprint-content";
 import {
   examEditionSchema,
@@ -84,6 +85,49 @@ function reading(choiceGroup: string | null): BlueprintExtraction {
     testedLanguage: null,
     topicFrequency: [],
   } as unknown as BlueprintExtraction;
+}
+
+const SAT_DOMAINS = [
+  { heading: "Algebra", percent: 35, topic: "Linear equations in one variable" },
+  { heading: "Advanced Math", percent: 35, topic: "Nonlinear functions" },
+  {
+    heading: "Problem-Solving and Data Analysis",
+    percent: 15,
+    topic: "Ratios, rates, proportional relationships, and units",
+  },
+  { heading: "Geometry and Trigonometry", percent: 15, topic: "Area and volume" },
+];
+
+function domainLine(domain: (typeof SAT_DOMAINS)[number]): string {
+  return `${domain.heading} ≈${domain.percent}%`;
+}
+
+const SAT_NOTICE = [
+  "The Math section has 44 questions.",
+  ...SAT_DOMAINS.flatMap((domain) => [domainLine(domain), domain.topic]),
+].join("\n");
+
+function satReading(): BlueprintExtraction {
+  return {
+    ...reading(null),
+    edition: { passages: [], questionCount: null, year: 2026 },
+    subjects: [
+      {
+        ...discipline({
+          choiceGroup: null,
+          line: "The Math section has 44 questions.",
+          name: "Math",
+        }),
+        questions: 44,
+        shortName: "Math",
+        topicHeadings: SAT_DOMAINS.map((domain) => ({
+          firstTopic: domain.topic,
+          name: domain.heading,
+        })),
+        topics: SAT_DOMAINS.map((domain) => domain.topic),
+      },
+    ],
+  } as BlueprintExtraction;
 }
 
 async function storedExam({ extraction = reading("Discipline"), notice = NOTICE } = {}) {
@@ -211,5 +255,63 @@ describe("a reading whose subjects each hold the whole exam", () => {
     expect(extractExamBlueprint).toHaveBeenCalledTimes(2);
     expect(stored.row.noticeRereadSource).toBe(source.contentHash);
     expect(stored.edition.setAside).toBeUndefined();
+  });
+});
+
+describe("a reading whose subjects have headings", () => {
+  beforeEach(() => {
+    vi.mocked(checkExamReading).mockResolvedValue({
+      ...TASK,
+      data: { missingSubjects: [], statedCounts: [] },
+    });
+
+    vi.mocked(checkCitedFacts).mockImplementation(async ({ facts }) => ({
+      ...TASK,
+      data: { supportedIds: facts.map((fact) => fact.id) },
+    }));
+  });
+
+  it("saves each heading's official share of its subject, with the passage that states it", async () => {
+    const { blueprint } = await storedExam({ extraction: satReading(), notice: SAT_NOTICE });
+    vi.mocked(extractExamBlueprint).mockResolvedValue({ ...TASK, data: satReading() });
+
+    vi.mocked(findDomainShares).mockResolvedValue({
+      ...TASK,
+      data: SAT_DOMAINS.map((domain) => ({
+        basis: "questions" as const,
+        document: 1,
+        heading: domain.heading,
+        passage: domainLine(domain),
+        percent: { max: domain.percent, min: domain.percent },
+        questions: null,
+        subject: 1,
+      })),
+    });
+
+    await readNoticeAgainWorkflow({ examBlueprintId: blueprint.id });
+
+    expect(findDomainShares).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subjects: [
+          {
+            headings: [
+              "Algebra",
+              "Advanced Math",
+              "Problem-Solving and Data Analysis",
+              "Geometry and Trigonometry",
+            ],
+            name: "Math",
+          },
+        ],
+      }),
+    );
+
+    const { structure } = await readStored(blueprint.id);
+
+    expect(structure.subjects[0]?.topicGroups?.map((group) => group.share)).toStrictEqual([
+      0.35, 0.35, 0.15, 0.15,
+    ]);
+
+    expect(structure.subjects[0]?.topicGroups?.[0]?.citation?.passage).toBe("Algebra ≈35%");
   });
 });

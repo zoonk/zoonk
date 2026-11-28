@@ -356,6 +356,7 @@
     "./library/exams/blueprint-passages": "./src/library/exams/blueprint-passages.ts",
     "./library/exams/blueprint-reading": "./src/library/exams/blueprint-reading.ts",
     "./library/exams/check-freshness": "./src/library/exams/check-freshness.ts",
+    "./library/exams/domain-shares": "./src/library/exams/domain-shares.ts",
     "./library/exams/find-same-exam": "./src/library/exams/find-same-exam.ts",
     "./library/exams/marking-penalty": "./src/library/exams/marking-penalty.ts",
     "./library/exams/format-shares": "./src/library/exams/format-shares.ts",
