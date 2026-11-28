@@ -16,7 +16,10 @@ import {
 } from "../../certificates/_utils/load-certificate-units";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { finishChallengesFixture } from "../../plans/_test-utils/finish-challenges";
+import { decidePlanChange } from "../../plans/decide-plan-change";
+import { getGoalPlan } from "../../plans/get-goal-plan";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
+import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
 import { dueSkillFixture } from "../../sessions/_test-utils/session-goal";
 import { planSignals } from "../../sessions/_utils/living-plan-session";
 import { completeLessonPlanItems } from "../../sessions/_utils/plan-items";
@@ -95,12 +98,88 @@ async function prepareCoursePractice(dailyMinutes: number) {
 }
 
 describe("course placement after completion", () => {
+  it.each([0, 1])(
+    "keeps the saved stops through a start and Undo with %i graph phases",
+    async (count) => {
+      const { finish, goalId, plan, planItems, user } = await setup([3, 2]);
+      const layout = await layOutPlanFixture(plan.id);
+      const { phases, ...graph } = parsePlanGraph(layout.plan.graph);
+
+      await prisma.plan.update({
+        data: { graph: count ? { ...graph, phases: phases.slice(0, count) } : graph },
+        where: { id: plan.id },
+      });
+
+      const items = () =>
+        prisma.planItem.findMany({
+          orderBy: { position: "asc" },
+          select: { id: true, phase: true, status: true },
+          where: { planId: plan.id },
+        });
+
+      const before = await items();
+      const finished = await finish();
+
+      if (finished.status !== "ready" || !finished.completion.changeId) {
+        throw new Error("Expected an applied start");
+      }
+
+      const stops = phases.map(({ name }) => ({ name }));
+
+      const result = {
+        chapter: phases[1]!.name,
+        course: {
+          chapters: [
+            { lessons: 3, skipped: 3, start: false },
+            { lessons: 2, skipped: 1, start: true },
+          ],
+          lessons: 5,
+        },
+        nextLesson: { id: planItems[4]!.lessonId },
+      };
+
+      expect(finished.completion.result).toMatchObject(result);
+      await refreshTestedOutPlan({ goalId, userId: user.id });
+
+      await expect(getGoalPlan(goalId)).resolves.toMatchObject({
+        plan: { currentPhase: 1, phases: stops },
+      });
+
+      await expect(getGoalPlacement({ goalId })).resolves.toMatchObject({ placement: { result } });
+
+      const after = await items();
+
+      for (const item of planItems) {
+        expect(after).toContainEqual(expect.objectContaining({ id: item.id, phase: item.phase }));
+      }
+
+      await decidePlanChange({
+        changeId: finished.completion.changeId,
+        goalId,
+        input: { status: "undone" },
+      });
+
+      await expect(items()).resolves.toStrictEqual(before);
+
+      await expect(getGoalPlan(goalId)).resolves.toMatchObject({
+        plan: { currentPhase: 0, phases: stops },
+      });
+    },
+  );
+
   it("returns the lessons on the first practice miss", async () => {
     const { finish, goalId, plan, planItems, skills, user } = await setup([2, 3]);
     const { bosses } = await layOutPlanFixture(plan.id);
+
     const checkpoint = () => prisma.planItem.findUniqueOrThrow({ where: { id: bosses[0]!.id } });
     await finish();
     await expect(checkpoint()).resolves.toMatchObject({ status: "testedOut" });
+
+    await prisma.plan.update({
+      data: { graph: { skills: parsePlanGraph(plan.graph).skills } },
+      where: { id: plan.id },
+    });
+
     const skillId = skills[0]!.id;
     const where = { kind: "lesson" as const, planId: plan.id, skillId };
 
