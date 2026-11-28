@@ -8,7 +8,7 @@ vi.mock("server-only", () => ({}));
 
 vi.mock("./check-sentence-orders.prompt.md", () => ({
   default:
-    "Review.\n{{#bilingual}}\nTranslations too.\n{{/bilingual}}\n{{#sameLanguage}}\nOne language.\n{{/sameLanguage}}\n",
+    "Review {{TARGET_LANGUAGE}}.\n{{#bilingual}}\nTranslations in {{LEARNER_LANGUAGE}} too.\n{{/bilingual}}\n{{#sameLanguage}}\nOne language.\n{{/sameLanguage}}\n",
 }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -55,11 +55,15 @@ describe(checkSentenceOrders, () => {
       targetLanguage: "en",
     });
 
-    expect(sameLanguage.systemPrompt).toBe("Review.\nOne language.\n");
+    expect(sameLanguage.systemPrompt).toBe("Review US English.\nOne language.\n");
     expect(sameLanguage.data).toStrictEqual(sameLanguageVerdicts);
     expect(sameLanguage.userPrompt).toContain('sentenceCandidates: ["In many places plants grow"]');
     expect(sameLanguage.userPrompt).not.toContain("translation");
-    expect(bilingual.systemPrompt).toBe("Review.\nTranslations too.\n");
+
+    expect(bilingual.systemPrompt).toBe(
+      "Review US English.\nTranslations in Português Brasileiro too.\n",
+    );
+
     expect(bilingual.data).toStrictEqual(bilingualVerdicts);
 
     expect(bilingual.userPrompt).toContain(
