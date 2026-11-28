@@ -1,0 +1,11 @@
+# Generated or bulky files that agent searches (ripgrep and the tools built on it) skip by default.
+# `rg --no-ignore` still reaches them.
+apps/evals/eval-results/
+apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json
+apps/android/api/openapi.json
+pnpm-lock.yaml
+apps/*/messages/*.po
+packages/*/messages/*.po
+!apps/*/messages/en.po
+!packages/*/messages/en.po
+apps/android/core/resources/src/main/res/values-??/strings*.xml
