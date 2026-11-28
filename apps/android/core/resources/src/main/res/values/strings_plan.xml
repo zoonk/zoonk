@@ -67,7 +67,7 @@
     </plurals>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
-    <!-- In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date. -->
+    <!-- Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings. -->
     <string name="plan_roadmap_you_finish">You finish</string>
     <!-- In the roadmap's legend, beside the mark of each phase's end-of-phase questions (the Trickster, before the learner has met him). -->
     <string name="plan_legend_phase_questions">Phase questions</string>

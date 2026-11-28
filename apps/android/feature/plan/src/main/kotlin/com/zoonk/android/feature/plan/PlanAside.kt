@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -108,7 +109,7 @@ internal fun PlanProperties(
         SectionHeader(stringResource(R.string.plan_your_plan))
         Column {
             PropertyRow(
-                label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline),
+                label = stringResource(goalDateLabel(page)),
                 value = goalDateValue(page),
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
                 onClickLabel = adjust,
@@ -263,6 +264,19 @@ private fun PropertyRow(
     }
 }
 
+/** The finish the plan works out, which the date setting holds while the learner set no date. */
+private val PlanPageState.workedOutFinish: PlanEnd?
+    get() = finish?.takeIf { plan.schedule.targetDate == null && !isExam && it.estimate }
+
+/** Main's `useGoalDateLabel`: the setting is the goal's date; while it holds the finish the plan works out, it's named as that. */
+@StringRes
+private fun goalDateLabel(page: PlanPageState): Int =
+    when {
+        page.workedOutFinish != null -> R.string.plan_roadmap_you_finish
+        page.isExam -> R.string.plan_exam_date
+        else -> R.string.plan_deadline
+    }
+
 /** Main's `GoalDateValue`: the date the learner set, or with none the timeline's estimated finish; never the day a finished plan was done. */
 @Composable
 private fun goalDateValue(page: PlanPageState): AnnotatedString {
@@ -270,8 +284,7 @@ private fun goalDateValue(page: PlanPageState): AnnotatedString {
     schedule.targetDate?.toJavaLocalDate()?.let { target ->
         return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
     }
-    val finish = page.finish?.takeIf { !page.isExam && it.estimate }
-    return finish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month, year = it.year).text) }
+    return page.workedOutFinish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month, year = it.year).text) }
         ?: AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
 }
 
