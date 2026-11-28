@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -25,7 +24,6 @@ import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
-import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.Plan
 import java.time.LocalDate
 
@@ -68,8 +66,7 @@ fun FinishReadout(
         val label =
             when {
                 forecast is PlanForecast.Beyond -> {
-                    val years = formatNumber(BEYOND_YEARS.toDouble(), locale)
-                    Readout(pluralStringResource(R.plurals.plan_finish_years_plus, BEYOND_YEARS, years), textAlign = align)
+                    Readout(stringResource(R.string.plan_finish_years_plus), textAlign = align)
                     stringResource(R.string.plan_finish_to_finish)
                 }
 
@@ -92,9 +89,6 @@ fun FinishReadout(
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall, textAlign = align)
     }
 }
-
-/** The ten years a plan lays out, past which its finish has no date. */
-private const val BEYOND_YEARS = 10
 
 /**
  * The time a day with when the plan finishes at it beside it, as the time question and Adjust plan show them; under it

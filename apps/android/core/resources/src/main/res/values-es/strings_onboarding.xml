@@ -9,7 +9,6 @@
   "onboarding_aim_by_month": "9e3be8baf653b7a880d817be86f6468bc33f3fdd9b104280b73c3b2cbb3dd0a2",
   "onboarding_aim_change": "13c5eb7915a156cdbbadfa4b54d18a5970f24f33652a506f1024abd7e714b00a",
   "onboarding_aim_description": "a4ab1cdbdeb0272ebb06dc35e2b74c39eb6df3b260a5d8a55c1790041234d1d0",
-  "onboarding_aim_finish": "912cd220020465c9bf6deb713a35bedc33ab8ac4ec5b8074a21fad37533e5a80",
   "onboarding_aim_fluent": "55d71850c514f48ffb49e796bd77a52eff0436325fc459b96a134859f951a746",
   "onboarding_aim_from_advanced": "d36808f5cc742ec4e0a96281f1bca266b8ef63c31400bd85245ba6726f0c74ed",
   "onboarding_aim_from_basic": "f24a7ce7f25e7a3b046aeef704f5aad69af6083fe226458630d1c1c60373bc41",
@@ -182,16 +181,15 @@
   "onboarding_position_label": "4c0d05fe494c58f7dd0e61c218568be876e06df088746c12d26b57cfc94e84a6",
   "onboarding_position_title": "cfa0d251d3b85d7292b174d37b06bf9492c9388ca5c0901ae399c93747db3647",
   "onboarding_purpose_career_change": "c387982641071b93cf6d4063de92fece79d887f27faf423f99b92c80cde6e771",
-  "onboarding_purpose_career_change_description": "474b023b137159b3e27d58ae1e32f7dd02d4d81d96b0faba564275cfbdd0449d",
-  "onboarding_purpose_deep": "1d3fa426f4afb3aa882d14ba620ae615678b4ef5fe1b4572058cac82d22bee27",
-  "onboarding_purpose_deep_description": "68f54d0f7e5dd1e0f13765c20a8011ff67f5c989347b14708767cb70f4d9ec69",
-  "onboarding_purpose_description": "74496eb0ccd269810ca355036f4da5bbcf9ff8949353b0ec2da4d2df2f55da49",
+  "onboarding_purpose_career_change_description": "1d99391d10975ade2f66f89c24ba9e7e742a5be9b7e29703687159367f88ac2b",
+  "onboarding_purpose_deep": "1919f50463b853968cc2e7e412a30a45173e85a864306dbbd921329fe8b708e0",
+  "onboarding_purpose_deep_description": "2f0ad09d760a4d92212ade179d5b777942095c2fa4015b2c703e1f8c681f0ed5",
   "onboarding_purpose_label": "9bacbe8c8b143913195e5eaaba46c4c4a3b84309562625a0b28ac94e81612412",
   "onboarding_purpose_other": "6579d0f80ae3cf338c89cdc3dd44c2093ae1608945dc80e69e2db21087ffa1e4",
   "onboarding_purpose_overview": "ac899783ca659f471cdf6537502bf9543bd0255a4fa7531ef7265d54bcc1f21d",
-  "onboarding_purpose_overview_description": "2a9526ea90418bc2a549243a800ae0b66e6996a683105cba27690efa34ddb342",
+  "onboarding_purpose_overview_description": "08bc178e942fc105bc817881d6967c6f43257904b8ebcffbf6c24ea7f955c14e",
   "onboarding_purpose_refresh": "94af33a7c13cc6ca004a4ff84faf66077e197066bf99288211e412b5052bae7b",
-  "onboarding_purpose_refresh_description": "7590b5412c0def87602624ea11f19a8e997f4339a743eacd6be13cb278c8c43f",
+  "onboarding_purpose_refresh_description": "2e4d929a3107ec87bf10e9ffe109eef04bdbf7c31a2b1e6d7ae72a23bbc2684d",
   "onboarding_purpose_title": "a14d71f03c20f5c927458f58ae5e8db3878a111625ed8444c4d9f2b50f901f22",
   "onboarding_purpose_work": "590aae04d2701a2f5610927b093549661ed3f4154e1c61352409bb92e52be849",
   "onboarding_question_failed": "2cf1bce7491e62ffdcc3830d21c7754fc0501a3df623674483ff2dbda9167a45",
@@ -632,17 +630,16 @@
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_skip">Saltar</string>
     <string name="onboarding_purpose_title">¿Qué esperas lograr?</string>
-    <string name="onboarding_purpose_description">Define cuánto profundiza tu curso y, por eso, cuánto dura.</string>
     <string name="onboarding_purpose_label">Lo que esperas lograr</string>
     <string name="onboarding_purpose_overview">Tener un panorama general</string>
-    <string name="onboarding_purpose_overview_description">Un curso breve: las ideas principales, sin fórmulas</string>
-    <string name="onboarding_purpose_deep">Entenderlo a fondo</string>
-    <string name="onboarding_purpose_deep_description">El recorrido completo, de lo básico a lo avanzado</string>
+    <string name="onboarding_purpose_overview_description">Quiero echar un vistazo rápido a las ideas principales</string>
+    <string name="onboarding_purpose_deep">Entenderlo bien</string>
+    <string name="onboarding_purpose_deep_description">Quiero profundizar, nivel por nivel</string>
     <string name="onboarding_purpose_work">Usarlo en el trabajo</string>
     <string name="onboarding_purpose_career_change">Cambiar de profesión</string>
-    <string name="onboarding_purpose_career_change_description">Lo que necesitas para el nuevo puesto, con portafolio incluido</string>
+    <string name="onboarding_purpose_career_change_description">Quiero aprender lo que necesito para un nuevo puesto y crear un portafolio</string>
     <string name="onboarding_purpose_refresh">Repasar lo que estudié</string>
-    <string name="onboarding_purpose_refresh_description">Volver al nivel que tenía, después de una prueba corta</string>
+    <string name="onboarding_purpose_refresh_description">Quiero recuperar el nivel que tenía</string>
     <string name="onboarding_purpose_other">Otra cosa</string>
     <string name="onboarding_level_title">¿Cuánto sabes ya?</string>
     <string name="onboarding_level_description">Solo cambia dónde empieza tu plan.</string>
@@ -804,7 +801,6 @@
     <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
     <string name="onboarding_aim_hours_month">Aproximadamente %1$s más · alrededor de %2$s</string>
     <string name="onboarding_aim_by_month">para %1$s</string>
-    <string name="onboarding_aim_finish">Con %1$s al día, llegas a %2$s hacia %3$s.</string>
     <string name="onboarding_reason_travel">Viajar</string>
     <string name="onboarding_reason_travel_description">Desenvolverte al viajar: pedir comida, preguntar cómo llegar y conversar un poco</string>
     <string name="onboarding_reason_talk">Hablar con otras personas</string>
