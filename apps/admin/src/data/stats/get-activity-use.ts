@@ -37,21 +37,22 @@ const EMPTY_ROW: ActivityUseRow = {
  */
 export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
   const rows = await prisma.$queryRaw<ActivityUseSqlRow[]>(sql`
-    WITH current_screens AS (
-      SELECT lesson_id, kind, content->>'template' AS template, generated_at
+    WITH dated AS (
+      SELECT
+        lesson_id,
+        COUNT(*)::int AS screens,
+        (COUNT(*) FILTER (WHERE kind = 'activity'))::int AS activity_screens
       FROM library_steps
       WHERE retired_at IS NULL AND staged = false
+      GROUP BY lesson_id
+      HAVING MIN(generated_at) >= ${start} AND MIN(generated_at) <= ${end}
     ),
     written AS (
-      SELECT
-        screens.lesson_id,
-        COUNT(*)::int AS screens,
-        (COUNT(*) FILTER (WHERE screens.kind = 'activity'))::int AS activity_screens
-      FROM current_screens screens
-      JOIN library_lessons lessons ON lessons.id = screens.lesson_id
+      SELECT dated.*, chapters.home_course_id AS course_id
+      FROM dated
+      JOIN library_lessons lessons ON lessons.id = dated.lesson_id
+      LEFT JOIN library_chapters chapters ON chapters.id = lessons.home_chapter_id
       WHERE lessons.target_language IS NULL AND jsonb_typeof(lessons.spec->'screens') = 'array'
-      GROUP BY screens.lesson_id
-      HAVING MIN(screens.generated_at) >= ${start} AND MIN(screens.generated_at) <= ${end}
     ),
     planned AS (
       SELECT written.lesson_id, screen->>'activityTemplate' AS template, COUNT(*)::int AS planned
@@ -63,11 +64,11 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
       GROUP BY written.lesson_id, screen->>'activityTemplate'
     ),
     published AS (
-      SELECT screens.lesson_id, screens.template, COUNT(*)::int AS published
-      FROM current_screens screens
-      JOIN written ON written.lesson_id = screens.lesson_id
-      WHERE screens.kind = 'activity'
-      GROUP BY screens.lesson_id, screens.template
+      SELECT steps.lesson_id, steps.content->>'template' AS template, COUNT(*)::int AS published
+      FROM library_steps steps
+      JOIN written ON written.lesson_id = steps.lesson_id
+      WHERE steps.retired_at IS NULL AND steps.staged = false AND steps.kind = 'activity'
+      GROUP BY steps.lesson_id, steps.content->>'template'
     ),
     kept AS (
       SELECT
@@ -83,12 +84,10 @@ export const getActivityUse = cacheAdminData(async (start: Date, end: Date) => {
       SELECT
         written.screens,
         written.activity_screens,
+        written.course_id,
         COALESCE(kept.planned, 0) AS planned,
-        COALESCE(kept.kept, 0) AS kept,
-        chapters.home_course_id AS course_id
+        COALESCE(kept.kept, 0) AS kept
       FROM written
-      JOIN library_lessons lesson ON lesson.id = written.lesson_id
-      LEFT JOIN library_chapters chapters ON chapters.id = lesson.home_chapter_id
       LEFT JOIN kept ON kept.lesson_id = written.lesson_id
     )
     SELECT
