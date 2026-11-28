@@ -115,7 +115,14 @@ class PlanFinishScreenshots {
             }
         }
         compose.waitUntilAtLeastOneExists(hasText("In 10+ years"))
-        write("aim-picker-$name", compose.onAllNodes(isRoot()).onLast().captureRender().asAndroidBitmap())
+        write(
+            "aim-picker-$name",
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender()
+                .asAndroidBitmap(),
+        )
     }
 
     @Test

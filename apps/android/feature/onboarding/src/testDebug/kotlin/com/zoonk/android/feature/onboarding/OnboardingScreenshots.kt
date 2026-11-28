@@ -1378,7 +1378,8 @@ class OnboardingScreenshots {
             }
         }
 
-        private fun learnGoal() = examGoal().copy(kind = com.zoonk.api.models.Goal.Kind.LEARN, title = "Learn Python", displayName = "Learn Python")
+        private fun learnGoal() =
+            examGoal().copy(kind = com.zoonk.api.models.Goal.Kind.LEARN, title = "Learn Python", displayName = "Learn Python")
 
         @Composable
         private fun UndatedSchedule(
@@ -1436,7 +1437,12 @@ class OnboardingScreenshots {
                 },
                 "reveal-beyond" to {
                     val today = LocalDate.now()
-                    val ends = listOf(today.plusDays(60) to PlanFinishPrecision.MONTH, today.plusYears(4) to PlanFinishPrecision.YEAR, null to null)
+                    val ends =
+                        listOf(
+                            today.plusDays(60) to PlanFinishPrecision.MONTH,
+                            today.plusYears(4) to PlanFinishPrecision.YEAR,
+                            null to null,
+                        )
                     Reveal(
                         setupPlanApi().apply { shownPlan = undatedPlan(null, reason = PlanFinishReason.BEYOND_HORIZON, ends = ends) },
                         goal = learnGoal(),
