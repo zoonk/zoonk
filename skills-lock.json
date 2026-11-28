@@ -43,12 +43,6 @@
       "skillPath": "skills/next-bundle-optimizer/SKILL.md",
       "computedHash": "3ceb8190e0a6f273f0c6466627acfcf743ea582dd79ba111534dd0fb16d841c3"
     },
-    "next-cache-components-adoption": {
-      "source": "vercel/next.js",
-      "sourceType": "github",
-      "skillPath": "skills/next-cache-components-adoption/SKILL.md",
-      "computedHash": "825774334f00624aac9836ec4f29b8d62f1a6d5e31f81133bde0b4db17a3fa67"
-    },
     "next-cache-components-optimizer": {
       "source": "vercel/next.js",
       "sourceType": "github",
@@ -60,12 +54,6 @@
       "sourceType": "github",
       "skillPath": "skills/next-dev-loop/SKILL.md",
       "computedHash": "8ea79dc762e3915e411a33ab3ec74ee25fdce52bc458be4dbfc43cf9616542da"
-    },
-    "next-partial-prefetching-adoption": {
-      "source": "vercel/next.js",
-      "sourceType": "github",
-      "skillPath": "skills/next-partial-prefetching-adoption/SKILL.md",
-      "computedHash": "6aa8c96d816dcbf061be6dcf58b7f49686c74be09be436ed4b06251bd74fabf3"
     },
     "next-partial-prefetching-optimizer": {
       "source": "vercel/next.js",
