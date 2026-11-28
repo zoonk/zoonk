@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getRoadmapPlace } from "./use-roadmap";
+import { getRoadmapPlace } from "./roadmap-place";
 
 describe(getRoadmapPlace, () => {
   it("names the phase under way by its place among the phases", () => {
