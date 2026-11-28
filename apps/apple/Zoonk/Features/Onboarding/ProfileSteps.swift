@@ -652,6 +652,7 @@ struct ProfileStep: View {
         canContinue: hasAnswer,
         skipLabel: question.id == .addressForm
           ? ProfileCopy.decline(question.id, .ratherNotSay) : nil,
+        skipIcon: .skip,
         onContinue: continueWithAnswer
       ) {
         if question.id == .conditions {

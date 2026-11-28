@@ -186,7 +186,7 @@ enum UnderstoodRows {
     let isExam = country.kind == .exam
     let badge: LocalizedStringResource? =
       switch country.source {
-      case .said where !isExam:
+      case .said:
         LocalizedStringResource(
           "you said", table: "Onboarding",
           comment: "Marks a level row as the learner's own words")
@@ -212,7 +212,7 @@ enum UnderstoodRows {
       value: country.name,
       badge: badge,
       note: country.lessonVariety.map(lessonLanguageLine),
-      field: country.editable && !isExam ? .contentCountry : nil)
+      field: country.editable ? .contentCountry : nil)
   }
 
   static func scheduleRow(
@@ -527,7 +527,8 @@ enum UnderstoodRows {
         field: .targetDate, editValue: targetDate, suggestedDate: suggested?.date)
     }
 
-    guard facts.kind == "exam" else {
+    // A booked exam's day is the learner's own booking, which the date question asks.
+    guard facts.kind == "exam", facts.details?.examDay != "booked" else {
       return nil
     }
 
@@ -536,7 +537,6 @@ enum UnderstoodRows {
         id: "targetDate", label: examDateLabel,
         value: toBeConfirmed(month: month, year: year),
         note: unknownDateNote(
-          booked: facts.details?.examDay == "booked",
           named: facts.details?.examName?.isEmpty == false, isGuide: isGuide),
         field: .targetDate, editValue: "")
     }
@@ -633,15 +633,7 @@ enum UnderstoodRows {
       field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
   }
 
-  private static func unknownDateNote(booked: Bool, named: Bool, isGuide: Bool) -> String {
-    if booked {
-      return String(
-        localized: LocalizedStringResource(
-          "You pick this test's day when you book it. Booked already? Set it here.",
-          table: "Onboarding",
-          comment: "Under the date of a test each candidate books a day for, such as the GRE"))
-    }
-
+  private static func unknownDateNote(named: Bool, isGuide: Bool) -> String {
     if !named {
       return String(
         localized: LocalizedStringResource(
