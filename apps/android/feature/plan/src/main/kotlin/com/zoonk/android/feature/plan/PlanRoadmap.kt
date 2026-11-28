@@ -724,7 +724,12 @@ private fun PhaseBand(
         ) {
             Text(
                 text = name.text,
-                modifier = Modifier.padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y).align(Alignment.CenterStart),
+                // The band's description already says its name, as main's band's label does.
+                modifier =
+                    Modifier
+                        .padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y)
+                        .align(Alignment.CenterStart)
+                        .clearAndSetSemantics {},
                 style = bandStyle(name.hyphenates),
                 onTextLayout = { nameSize = it.size },
                 inlineContent =
