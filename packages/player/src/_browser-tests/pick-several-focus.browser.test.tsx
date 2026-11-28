@@ -80,6 +80,9 @@ function detail(select: OptionSelect): Detail {
 }
 
 function openQuestion(select: OptionSelect) {
+  // Pending, so the screen stays on the question it just sent.
+  const answer = vi.fn(() => new Promise<never>(() => {}));
+
   render(
     <LearnProvider
       adapters={{
@@ -101,7 +104,7 @@ function openQuestion(select: OptionSelect) {
     >
       <QuestionBlock
         actions={{
-          answer: vi.fn(),
+          answer,
           continueSession: vi.fn(),
           finish: vi.fn(),
           refresh: vi.fn(),
@@ -113,6 +116,8 @@ function openQuestion(select: OptionSelect) {
       />
     </LearnProvider>,
   );
+
+  return { answer };
 }
 
 describe("a question that takes several answers", () => {
@@ -146,5 +151,19 @@ describe("a question that takes several answers", () => {
     await userEvent.keyboard(" ");
 
     await expect.element(page.getByRole("button", { name: /Check/u })).toHaveFocus();
+  });
+
+  it("checks the answer on Enter while a picked option keeps the keyboard", async () => {
+    const { answer } = openQuestion("all");
+
+    const paris = page.getByRole("checkbox", { name: "Paris" });
+    await expect.element(paris).toBeVisible();
+
+    paris.element().focus();
+    await userEvent.keyboard(" ");
+    await userEvent.keyboard("{Enter}");
+
+    await expect.element(paris).toBeChecked();
+    await expect.poll(() => answer.mock.calls.length).toBe(1);
   });
 });

@@ -29,8 +29,11 @@ export function ignoreHeldEnter(event: ReactKeyboardEvent) {
   }
 }
 
+/** Spread on a control whose Enter runs the screen's main action, as a checkbox's does in a form. */
+export const SCREEN_ENTER = { [SCREEN_ENTER_ATTRIBUTE]: "" } as const;
+
 const AUDIO_BUTTON = {
-  [SCREEN_ENTER_ATTRIBUTE]: "",
+  ...SCREEN_ENTER,
   "aria-keyshortcuts": shortcutKeys("audio"),
   onKeyDown: ignoreHeldEnter,
 } as const;

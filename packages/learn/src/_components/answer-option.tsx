@@ -2,7 +2,7 @@
 
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { SCREEN_ENTER, ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
@@ -182,6 +182,28 @@ export function OptionMarker({
   );
 }
 
+function answerToneClass({
+  picked,
+  result,
+}: {
+  picked: boolean;
+  result: AnswerOptionResult | null;
+}): string | undefined {
+  if (result === "guess") {
+    return ANSWER_TONE.guess;
+  }
+
+  if (result === "right") {
+    return cn(ANSWER_TONE.right, "enabled:hover:bg-success/9");
+  }
+
+  if (result === "wrong") {
+    return cn(ANSWER_TONE.wrong, "enabled:hover:bg-destructive/9");
+  }
+
+  return picked ? cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint") : undefined;
+}
+
 export function AnswerOption({
   children,
   className,
@@ -218,12 +240,8 @@ export function AnswerOption({
         "focus-visible:outline-ring/50 enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
         ANSWER_HELD_TONE,
-        layout === "row" && "flex-wrap",
-        layout === "stacked" && "flex-col items-stretch p-2",
-        picked && !result && cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
-        result === "guess" && ANSWER_TONE.guess,
-        result === "right" && cn(ANSWER_TONE.right, "enabled:hover:bg-success/9"),
-        result === "wrong" && cn(ANSWER_TONE.wrong, "enabled:hover:bg-destructive/9"),
+        layout === "row" ? "flex-wrap" : "flex-col items-stretch p-2",
+        answerToneClass({ picked, result }),
         className,
       )}
       data-result={result ?? undefined}
@@ -233,6 +251,7 @@ export function AnswerOption({
         onKeyDown?.(event);
       }}
       role={picks ? "radio" : undefined}
+      {...(mark === "check" ? SCREEN_ENTER : {})}
       // A press made before the page hydrates marks it held, drawn as picked.
       suppressHydrationWarning
       type={picks ? "button" : "submit"}
