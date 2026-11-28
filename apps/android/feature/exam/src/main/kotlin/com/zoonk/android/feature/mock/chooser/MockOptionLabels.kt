@@ -85,7 +85,8 @@ internal fun mockOptionDetail(
     val parts = option.covers ?: (subjects + option.written).distinct()
     return when {
         parts.isNotEmpty() -> formatList(parts, currentLocale())
-        option.objectiveOnly -> stringResource(R.string.mock_chooser_no_written_part)
+        option.objectiveOnly && option.kind != MockOption.Kind.AREA ->
+            stringResource(R.string.mock_chooser_no_written_part)
         else -> null
     }
 }

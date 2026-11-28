@@ -438,7 +438,7 @@ private struct MockChooser: View {
       return parts.formatted(.list(type: .and))
     }
 
-    return option.objectiveOnly
+    return option.objectiveOnly && option.kind != .area
       ? String(
         localized: "No written part", table: "Mock",
         comment: "A mock exam with only the exam's objective questions, without its essay")

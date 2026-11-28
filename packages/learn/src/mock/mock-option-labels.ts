@@ -93,7 +93,7 @@ export function useMockOptionDetail() {
       return format.list(parts, { type: "conjunction" });
     }
 
-    return option.objectiveOnly ? t("No written part") : "";
+    return option.objectiveOnly && option.kind !== "area" ? t("No written part") : "";
   };
 }
 
