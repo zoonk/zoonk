@@ -58,8 +58,7 @@ private struct RevealPhaseRow: View {
 
   var body: some View {
     let chapters = phase.chapters.filter { !$0.isWritingAhead }
-    let label = PlanPhaseLabel(
-      context: context, phase: phase, description: phase.milestone.map { Text($0) })
+    let label = PlanPhaseLabel(context: context, phase: phase)
 
     if chapters.isEmpty {
       label

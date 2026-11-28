@@ -54,13 +54,13 @@ extension View {
   /// lay the plan out (`read`, nil without a date). Asked again when `key` changes and only while
   /// the choices show, since each ask plans the goal again.
   func readsAimEnds(
-    _ ends: Binding<[String: String]>, aims: [String], key: some Equatable,
-    read: @escaping @MainActor @Sendable (String) async -> String?
+    _ ends: Binding<[String: PlanForecast]>, aims: [String], key: some Equatable,
+    read: @escaping @MainActor @Sendable (String) async -> PlanForecast?
   ) -> some View {
     task(id: key) {
       ends.wrappedValue = [:]
 
-      await withTaskGroup(of: (String, String?).self) { group in
+      await withTaskGroup(of: (String, PlanForecast?).self) { group in
         for aim in aims {
           group.addTask { (aim, await read(aim)) }
         }
@@ -74,13 +74,31 @@ extension View {
 }
 
 /// Under an aim to pick: when it's reached at the learner's time, once that's known.
-func aimChoiceDetail(end: String?) -> String? {
-  end.map {
+func aimChoiceDetail(end: PlanForecast?) -> String? {
+  switch end {
+  case .month(let isoDate):
     String(
-      localized: "Around \(PlanDate.longText($0, month: true))", table: "Onboarding",
+      localized: "Around \(PlanDate.longText(isoDate, month: true))", table: "Onboarding",
       comment:
         "Under a language level to aim for: when the learner reaches it; the argument is a month and year, like 'Nov 2027'"
     )
+  case .year(let isoDate):
+    String(
+      localized: LocalizedStringResource(
+        "aimAroundYear",
+        defaultValue: "Around \(PlanDate.text(isoDate, today: isoDate, grain: .year))",
+        table: "Onboarding",
+        comment:
+          "Under a language level to aim for: when the learner reaches it, years away; the argument is a year, like '2031'"
+      ))
+  case .beyond:
+    String(
+      localized: "In 10+ years", table: "Onboarding",
+      comment:
+        "Under a language level to aim for, when reaching it takes more than ten years at the learner's time"
+    )
+  case nil:
+    nil
   }
 }
 
@@ -160,16 +178,16 @@ struct AimName: View {
 struct AimChoicesSheet: View {
   let languageAim: LanguageAimView
   /// When the current aim is reached, as its screen says.
-  var currentEnd: String?
+  var currentEnd: PlanForecast?
   /// When another aim would be reached, as picking it would lay the plan out.
-  let readEnd: @MainActor @Sendable (String) async -> String?
+  let readEnd: @MainActor @Sendable (String) async -> PlanForecast?
   /// False when it couldn't be saved.
   let pick: (String) async -> Bool
 
   @Environment(\.dismiss) private var dismiss
   @State private var picking: String?
   @State private var failed = false
-  @State private var ends: [String: String] = [:]
+  @State private var ends: [String: PlanForecast] = [:]
 
   var body: some View {
     NavigationStack {

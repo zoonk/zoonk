@@ -32,8 +32,15 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   struct Estimate: Decodable, Equatable, Sendable {
     /// When the plan ends at this pace; nil while it can't tell.
     let endDate: String?
+    /// Why a plan without a date has no `endDate`.
+    let finishReason: PlanForecast.Reason?
     /// When studying everything would end, for an exam plan that stops at the exam.
     let fullCourseEndDate: String?
+    let precision: PlanForecast.Precision?
+
+    var forecast: PlanForecast? {
+      PlanForecast(date: endDate, precision: precision, reason: finishReason)
+    }
   }
 
   struct ExamChoice: Decodable, Hashable, Identifiable, Sendable {
@@ -474,6 +481,8 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   let endDate: String?
   let index: Int
   let kind: Kind
+  /// Some of its work has no day in the plan yet: it has no dates, and comes later.
+  let later: Bool?
   let lessonsDone: Int
   let lessonsTotal: Int
   /// What the learner can do once the phase is done, as a new plan's path names it.
@@ -481,6 +490,8 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
   let mocks: Mocks
   /// Exam phases come without a name; see `PlanPhase.title`.
   let name: String?
+  /// How finely its end is known: a phase years away names only its year.
+  let precision: PlanForecast.Precision?
   let startDate: String?
   let state: State
 
@@ -983,9 +994,18 @@ enum PlanDate {
   static func text(
     _ isoDate: String, today: String, month: Bool = false, weekday: Bool = false
   ) -> String {
-    month
-      ? format(isoDate, .rowMonth, today: today, year: .always)
-      : format(isoDate, .row, today: today, weekday: weekday)
+    text(isoDate, today: today, grain: month ? .month : .day, weekday: weekday)
+  }
+
+  /// "Nov 20", "Nov 2027" or "2031": an estimate names only what it can tell.
+  static func text(
+    _ isoDate: String, today: String, grain: DateGrain, weekday: Bool = false
+  ) -> String {
+    switch grain {
+    case .day: format(isoDate, .row, today: today, weekday: weekday)
+    case .month: format(isoDate, .rowMonth, today: today, year: .always)
+    case .year: format(isoDate, .year, today: today, year: .never)
+    }
   }
 
   /// Main's "long" date: "May 5", with the year when it isn't this year's.
@@ -1188,6 +1208,8 @@ enum DateRole {
   case sentenceMonth
   /// A weekday's name: "Friday".
   case weekday
+  /// A year alone: "2031".
+  case year
 
   /// A calendar day is read in UTC, so it never moves with the device's zone; an instant in the
   /// learner's.
@@ -1208,8 +1230,17 @@ enum DateRole {
       return style.month(.wide)
     case .weekday:
       return style.weekday(.wide)
+    case .year:
+      return style.year()
     }
   }
+}
+
+/// How finely a date is said: an estimate far away names its month, or only its year.
+enum DateGrain {
+  case day
+  case month
+  case year
 }
 
 /// Whether a date names its year: by default only in another year than today's (main's rule).

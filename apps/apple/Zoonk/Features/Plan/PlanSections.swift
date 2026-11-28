@@ -109,14 +109,11 @@ struct RoadmapPhaseRow: View {
   let end: PhaseEnd?
 
   var body: some View {
-    ListRow(Text(phase.title)) {
+    ListRow(Text(phase.label)) {
       StatusMark(status: phase.mark)
     } trailing: {
-      if let end {
-        PlanWhen.date(Text(verbatim: end.shown))
-          .foregroundStyle(.mutedForeground)
-          .accessibilityLabel(Text(verbatim: end.spoken))
-      }
+      end?.when
+        .foregroundStyle(.mutedForeground)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(
@@ -210,16 +207,40 @@ private struct RoadmapCompact: View {
   }
 }
 
-/// Where a phase ends: at the end of its row, in a column of dates, "Dec 12", "~Dec 12" or "~Mar";
-/// under the roadmap's bar, on its own, "Ends Dec 12" or "Ends ~Dec 12".
+/// Where a phase ends: at the end of its row, in a column of dates, "Dec 12", "~Dec 12", "~Mar" or
+/// "~2030"; under the roadmap's bar, on its own, "Ends Dec 12" or "Ends ~Dec 12". A phase whose work
+/// has no day yet comes "Later".
 struct PhaseEnd: Equatable {
   let shown: String
   let line: String
   let spoken: String
+  var isDate = true
 
-  init(_ isoDate: String, estimate: Bool, month: Bool, today: String) {
+  static let later = PhaseEnd(
+    shown: String(
+      localized: "Later", table: "Plan",
+      comment: "At the end of a phase's row: its work has no day in the plan yet"),
+    line: endsLater, spoken: endsLater, isDate: false)
+
+  private static var endsLater: String {
+    String(
+      localized: "Ends later", table: "Plan",
+      comment: "When a phase whose work has no day in the plan yet ends, under the phase bar")
+  }
+
+  private init(shown: String, line: String, spoken: String, isDate: Bool) {
+    self.shown = shown
+    self.line = line
+    self.spoken = spoken
+    self.isDate = isDate
+  }
+
+  init(_ isoDate: String, estimate: Bool, grain: DateGrain, today: String) {
+    // In a column of dates, a month names its year only when it isn't this year's.
     let date =
-      month ? PlanDate.monthText(isoDate, today: today) : PlanDate.text(isoDate, today: today)
+      grain == .month
+      ? PlanDate.monthText(isoDate, today: today)
+      : PlanDate.text(isoDate, today: today, grain: grain)
 
     guard estimate else {
       shown = date
@@ -235,7 +256,18 @@ struct PhaseEnd: Equatable {
     shown = String(
       localized: "~\(date)", table: "Plan", comment: "An estimated day or month, like '~Nov 20'")
 
-    if month {
+    switch grain {
+    case .day:
+      line = String(
+        localized: "Ends ~\(date)", table: "Plan",
+        comment:
+          "Under the plan's phase bar: when the current phase ends, about; the argument is a day like 'Dec 12'"
+      )
+      spoken = String(
+        localized: "Ends around \(date)", table: "Plan",
+        comment:
+          "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
+    case .month:
       line = String(
         localized: LocalizedStringResource(
           "endsAboutMonthShown", defaultValue: "Ends ~\(date)", table: "Plan",
@@ -248,17 +280,25 @@ struct PhaseEnd: Equatable {
           comment:
             "When a phase of the plan ends, about, read aloud; the argument is a month like 'Jan' or 'Jan 2028'"
         ))
-    } else {
+    case .year:
       line = String(
-        localized: "Ends ~\(date)", table: "Plan",
-        comment:
-          "Under the plan's phase bar: when the current phase ends, about; the argument is a day like 'Dec 12'"
-      )
+        localized: LocalizedStringResource(
+          "endsAboutYearShown", defaultValue: "Ends ~\(date)", table: "Plan",
+          comment:
+            "Under the plan's phase bar: when the current phase ends, about; the argument is a year like '2030'"
+        ))
       spoken = String(
-        localized: "Ends around \(date)", table: "Plan",
-        comment:
-          "When a phase of the plan ends, about, read aloud; the argument is a day like 'Dec 12'")
+        localized: LocalizedStringResource(
+          "endsAboutYear", defaultValue: "Ends around \(date)", table: "Plan",
+          comment:
+            "When a phase of the plan ends, about, read aloud; the argument is a year like '2030'"))
     }
+  }
+
+  /// At the end of a row: a date in the data face, "Later" in words.
+  var when: PlanWhen {
+    let text = Text(verbatim: shown).accessibilityLabel(Text(verbatim: spoken))
+    return isDate ? .date(text) : .words(text)
   }
 }
 
@@ -272,6 +312,10 @@ extension GoalPlan {
       return nil
     }
 
+    if phase.later == true {
+      return .later
+    }
+
     // A last phase without a day of its own ends with the plan.
     guard let lastDay = phase.untilDate else {
       guard phase.index == phases.last(where: { $0.kind != .afterExam })?.index,
@@ -280,7 +324,9 @@ extension GoalPlan {
         return nil
       }
 
-      return PhaseEnd(endDate, estimate: true, month: isFar(endDate), today: today)
+      return PhaseEnd(
+        endDate, estimate: true, grain: grain(endDate, precision: estimate.precision),
+        today: today)
     }
 
     let learns = phase.kind == .learn || phase.kind == .afterExam
@@ -291,33 +337,53 @@ extension GoalPlan {
       || (learns && (ahead || phase.checkpoint?.state == .upcoming))
 
     return PhaseEnd(
-      lastDay, estimate: isEstimate, month: isEstimate && ahead && isFar(lastDay), today: today)
+      lastDay, estimate: isEstimate,
+      grain: isEstimate && (ahead || phase.precision == .year)
+        ? grain(lastDay, precision: phase.precision) : .day,
+      today: today)
   }
 
   /// When the plan finished, or the goal's date or estimated end while it's under way.
-  func roadmapFinish(isExam: Bool) -> (isoDate: String, estimate: Bool, month: Bool)? {
+  func roadmapFinish(isExam: Bool) -> (isoDate: String, estimate: Bool, grain: DateGrain)? {
     if !isExam, let end {
-      return end.finishedOn.map { ($0, false, false) }
+      return end.finishedOn.map { ($0, false, .day) }
     }
 
     if let targetDate = schedule.targetDate {
-      return (targetDate, schedule.targetDateEstimated, schedule.targetDateNamedMonth)
+      return (
+        targetDate, schedule.targetDateEstimated, schedule.targetDateNamedMonth ? .month : .day
+      )
     }
 
     guard !isExam, let endDate = estimate.endDate else {
       return nil
     }
 
-    return (endDate, true, isFar(endDate))
+    return (endDate, true, grain(endDate, precision: estimate.precision))
   }
 
-  /// An estimate past six weeks from this week's start names only its month.
-  private func isFar(_ isoDate: String) -> Bool {
-    PlanDate.days(from: week.startDate, to: isoDate) > 42
+  /// A plan without a date whose work goes past the years it lays out: its path ends open.
+  var finishesLater: Bool {
+    end == nil && schedule.targetDate == nil && estimate.forecast == .beyond
+  }
+
+  /// An estimate past six weeks from this week's start names only its month, and one core says is
+  /// years away only its year.
+  private func grain(_ isoDate: String, precision: PlanForecast.Precision?) -> DateGrain {
+    if precision == .year {
+      return .year
+    }
+
+    return PlanDate.days(from: week.startDate, to: isoDate) > 42 ? .month : .day
   }
 }
 
 extension PlanPhase {
+  /// Its row on the path says what the learner can do once it's done, where the plan names that.
+  var label: String {
+    milestone ?? title
+  }
+
   /// A phase named "Phase 2" has no name of its own to say beside its number.
   var hasOwnName: Bool {
     kind != .learn || !(name ?? "").isEmpty
@@ -576,13 +642,13 @@ func planFinish(_ context: PlanContext) -> PlanWhen? {
   guard context.goal.status != .paused else { return nil }
 
   guard let finish = plan.roadmapFinish(isExam: context.goal.kind == .exam) else {
-    return nil
+    return plan.finishesLater ? PhaseEnd.later.when : nil
   }
 
   return .date(
     finish.estimate
-      ? PlanDate.estimateText(finish.isoDate, today: plan.today, month: finish.month)
-      : Text(PlanDate.text(finish.isoDate, today: plan.today, month: finish.month)))
+      ? PlanDate.estimateText(finish.isoDate, today: plan.today, grain: finish.grain)
+      : Text(PlanDate.text(finish.isoDate, today: plan.today, grain: finish.grain)))
 }
 
 /// The places a phone lists nowhere else: the lessons done, the mind maps and the exam's page.
@@ -792,7 +858,7 @@ struct PlanSettingsSection: View {
 
   /// The finish the plan works out when the learner set no date; a paused goal has no pace to
   /// estimate from.
-  private var estimatedFinish: (isoDate: String, month: Bool)? {
+  private var estimatedFinish: (isoDate: String, grain: DateGrain)? {
     let plan = context.plan
 
     guard !context.isPaused, context.goal.kind != .exam, plan.end == nil,
@@ -801,7 +867,7 @@ struct PlanSettingsSection: View {
       return nil
     }
 
-    return (finish.isoDate, finish.month)
+    return (finish.isoDate, finish.grain)
   }
 
   /// A time alone is a value, in the data face; with the weekend's words, the words' face.
@@ -820,7 +886,10 @@ struct PlanSettingsSection: View {
     let schedule = context.plan.schedule
     let value = PlanEndDateValue(
       target: schedule.targetDate.map {
-        (isoDate: $0, estimate: schedule.targetDateEstimated, month: schedule.targetDateNamedMonth)
+        (
+          isoDate: $0, estimate: schedule.targetDateEstimated,
+          grain: schedule.targetDateNamedMonth ? DateGrain.month : .day
+        )
       },
       finish: estimatedFinish, isExam: context.goal.kind == .exam, today: context.plan.today)
     return Text(verbatim: value.shown)

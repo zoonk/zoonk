@@ -140,7 +140,7 @@ private struct PlanPhaseRow: View {
         // the same; the current phase keeps its name, as main's does.
         header(
           next: false,
-          byPlace: isExpanded && phase.state != .current
+          byPlace: isExpanded && phase.state != .current && phase.milestone == nil
             && phase.chapters.contains { Self.isSameName($0.title, phase.title) })
       }
       .disclosureGroupStyle(.foldUnderLabel)
@@ -288,7 +288,8 @@ private struct PlanPhaseRow: View {
   }
 }
 
-/// A phase's row on the path: its mark, its name over a line, and when it ends.
+/// A phase's row on the path: its mark, what the learner can do once it's done (else its name)
+/// over a line, and when it ends.
 struct PlanPhaseLabel: View {
   @Environment(\.legibilityWeight) private var legibilityWeight
 
@@ -300,19 +301,15 @@ struct PlanPhaseLabel: View {
   var byPlace = false
 
   var body: some View {
-    let title = Text(byPlace ? phase.placeName : phase.title)
+    let title = Text(byPlace ? phase.placeName : phase.label)
       .typeWeight(.medium, legibility: legibilityWeight)
       .foregroundStyle(phase.state == .done ? Color.mutedForeground : Color(.foreground))
 
     ListRow(title, description: description) {
       StatusMark(status: next ? .next : phase.mark)
     } trailing: {
-      if let end {
-        Text(verbatim: end.shown)
-          .typeStyle(.data)
-          .layoutRole(.date)
-          .accessibilityHidden(true)
-      }
+      end?.when
+        .accessibilityHidden(true)
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(Text(verbatim: spokenState))
@@ -524,17 +521,31 @@ extension PlanDate {
   static func estimate(_ isoDate: String, today: String, month: Bool = false) -> (
     text: String, spoken: String
   ) {
-    let date = text(isoDate, today: today, month: month)
+    estimate(isoDate, today: today, grain: month ? .month : .day)
+  }
+
+  static func estimate(_ isoDate: String, today: String, grain: DateGrain) -> (
+    text: String, spoken: String
+  ) {
+    let date = text(isoDate, today: today, grain: grain)
 
     let spoken =
-      month
-      ? String(
-        localized: LocalizedStringResource(
-          "aboutMonth", defaultValue: "About \(date)", table: "Plan",
-          comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
-      : String(
-        localized: "About \(date)", table: "Plan",
-        comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+      switch grain {
+      case .day:
+        String(
+          localized: "About \(date)", table: "Plan",
+          comment: "An estimated day, read aloud; the argument is a day like 'Nov 20'")
+      case .month:
+        String(
+          localized: LocalizedStringResource(
+            "aboutMonth", defaultValue: "About \(date)", table: "Plan",
+            comment: "An estimated month, read aloud; the argument is a month like 'May 2027'"))
+      case .year:
+        String(
+          localized: LocalizedStringResource(
+            "aboutYear", defaultValue: "About \(date)", table: "Plan",
+            comment: "An estimated year, read aloud; the argument is a year like '2031'"))
+      }
 
     return (
       String(
@@ -544,7 +555,11 @@ extension PlanDate {
   }
 
   static func estimateText(_ isoDate: String, today: String, month: Bool = false) -> Text {
-    let date = estimate(isoDate, today: today, month: month)
+    estimateText(isoDate, today: today, grain: month ? .month : .day)
+  }
+
+  static func estimateText(_ isoDate: String, today: String, grain: DateGrain) -> Text {
+    let date = estimate(isoDate, today: today, grain: grain)
     return Text(verbatim: date.text).accessibilityLabel(Text(verbatim: date.spoken))
   }
 }

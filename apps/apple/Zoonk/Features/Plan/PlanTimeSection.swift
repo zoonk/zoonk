@@ -17,34 +17,25 @@ struct PlanTimeSection: View {
     let suggested = ScheduleTime.suggestedMinutes(found)
 
     Section {
-      Picker(
-        selection: Binding(
-          get: { current },
-          set: { minutes in
-            guard minutes != current else {
-              return
-            }
-
-            editor.run { await setMinutes(minutes) }
-          })
-      ) {
-        ForEach(
-          ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current, suggested),
-          id: \.self
+      DailyTimeRow(finish: finish, aim: plan.languageAim?.aimAhead, updating: editor.isSaving) {
+        DailyTimeMenu(
+          minutes: current,
+          times: ScheduleTime.dailyTimes(plan.schedule.dailyTimes, with: current, suggested),
+          suggested: suggested
         ) { minutes in
-          Text(TimeAnswer.choiceLabel(minutes, suggested: suggested))
-            .tag(minutes)
+          guard minutes != current else {
+            return
+          }
+
+          editor.run { await setMinutes(minutes) }
         }
-      } label: {
-        Text("Daily study time", tableName: "Plan")
       }
-      .font(.body)
       .loads(
-        plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true
-      )
-      .announcesStatus(editor.isSaving ? nil : finish?.spoken)
+        plan.schedule.targetDate == nil ? [] : [time], refreshable: false, retriesAFailure: true)
 
       timeLine(time: time, found: found, minutes: current)
+    } header: {
+      SectionTitle(Text("Daily study time", tableName: "Plan"))
     } footer: {
       SectionFooter {
         Text(
@@ -54,8 +45,7 @@ struct PlanTimeSection: View {
     }
   }
 
-  /// A plan with a date says the time it suggests, dimmed while a change saves; one without says
-  /// when it finishes.
+  /// A plan with a date says the time it suggests, dimmed while a change saves.
   @ViewBuilder
   private func timeLine(time: Resource<TimeToCover>, found: TimeToCover?, minutes: Int) -> some View
   {
@@ -83,11 +73,6 @@ struct PlanTimeSection: View {
       {
         moveDate(to: fittingDate)
       }
-    } else if let finish {
-      Text(verbatim: finish.shown)
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
-        .accessibilityLabel(Text(verbatim: finish.spoken))
     }
   }
 
@@ -99,23 +84,21 @@ struct PlanTimeSection: View {
     return false
   }
 
-  /// A plan without a date says when it finishes. The end is the saved schedule's last day, laid
-  /// out again only by a change, so once it has passed it no longer says that.
-  private var finish: PlanEndDateValue.Line? {
-    guard plan.feasibility?.deadline == nil || plan.schedule.targetDate == nil,
-      let end = plan.estimate.endDate, end >= plan.today, plan.end == nil
+  /// A plan without a date says when it finishes; a paused one has no pace to say it by. The end
+  /// is the saved schedule's last day, laid out again only by a change, so once it has passed it no
+  /// longer says that.
+  private var finish: PlanForecast? {
+    guard plan.schedule.targetDate == nil, plan.end == nil, goal.status != .paused,
+      let forecast = plan.estimate.forecast
     else {
       return nil
     }
 
-    guard !editor.isSaving else {
-      let working = String(
-        localized: "Working out when you'd finish…", table: "Plan",
-        comment: "While a change to the time saves, in place of when the plan finishes")
-      return .init(shown: working, spoken: working)
+    if let end = forecast.isoDate, end < plan.today {
+      return nil
     }
 
-    return PlanEndDateValue.estimatedFinish(end, today: plan.today, month: true)
+    return forecast
   }
 
   private func moveDate(to fittingDate: String) -> some View {

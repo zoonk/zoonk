@@ -8,13 +8,13 @@ enum ScheduleTime {
     case asking
     case askFailed
     case findFailed
-    case finish(endDate: String)
+    /// A goal without a date's line: when the time picked finishes it, which its readout says.
+    case finish(PlanForecast)
     case noDays
-    case noFinish
     case pastDate
     /// A dated goal's line: the time the plan suggests, whatever time is picked.
     case suggests(TimeToCover.Suggested)
-    /// A dated plan with no time to suggest says nothing.
+    /// A dated plan with no time to suggest, or a plan with nothing left, says nothing.
     case quiet
     case working
 
@@ -182,7 +182,11 @@ enum ScheduleTime {
         return askFailed ? .askFailed : .asking
       }
 
-      return advice.endDate.map { .finish(endDate: $0) } ?? .noFinish
+      if let forecast = advice.forecast {
+        return .finish(forecast)
+      }
+
+      return advice.finishReason == .noStudyDays ? .noDays : .quiet
     }
 
     if found?.pastDate == true {
