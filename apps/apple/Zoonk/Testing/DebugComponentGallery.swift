@@ -69,6 +69,11 @@
           GallerySection(id: "waits", title: "Waits") { Waits() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
+          GallerySection(id: "choices", title: "Choice list") { Choices() }
+          GallerySection(id: "checks", title: "Check list") { Choices(picks: .several) }
+          GallerySection(id: "checksSaving", title: "Check list saving") {
+            Choices(picks: .several).disabled(true)
+          }
           GallerySection(id: "match", title: "Match cards") { MatchCards() }
           GallerySection(id: "questionBar", title: "Question bar") { QuestionBar() }
           GallerySection(id: "code", title: "Code") { Code() }
@@ -1191,6 +1196,20 @@
           selectedId: "A green pear", isChecked: false, isLocked: false, select: { _ in })
       }
       .padding(.vertical, 8)
+    }
+  }
+
+  /// Main's `ChoiceList`, or its `CheckList`, with the first choice picked.
+  private struct Choices: View {
+    var picks: ChoiceMark.Kind = .one
+
+    var body: some View {
+      ChoiceRow(Text(verbatim: "Biology"), picks: picks, isPicked: true) {}
+      ChoiceRow(
+        Text(verbatim: "Law"), detail: Text(verbatim: "With a line about it"), picks: picks,
+        isPicked: false
+      ) {}
+      ChoiceRow(Text(verbatim: "Health sciences"), picks: picks, isPicked: false) {}
     }
   }
 
