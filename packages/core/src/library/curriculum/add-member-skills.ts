@@ -1,5 +1,5 @@
 import { type MemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
-import { insertGraphSkills, toFreeKeys } from "./add-coverage-skills";
+import { insertGraphSkills, toFreeKeys } from "./insert-graph-skills";
 import { placeUncoveredOf } from "./place-list-members";
 import { type GoalSkillGraph } from "./save-goal-skills";
 

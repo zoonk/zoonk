@@ -7,6 +7,7 @@ import {
 } from "@zoonk/ai/tasks/curriculum/exam-outline";
 import { matchNoticeAreas } from "../../exams/_utils/match-areas";
 import { type PlannedSkillGraph } from "./goal-plan-graph";
+import { insertGraphSkills, toFreeKeys } from "./insert-graph-skills";
 import { estimateTopicLessons, toTopicSkillName } from "./uncovered-topic-skill";
 
 type Coverage = Awaited<ReturnType<typeof checkCoverage>>["data"];
@@ -26,22 +27,6 @@ type MissingSkill = Pick<
 type GraphSkill = PlannedSkillGraph["skills"][number];
 
 const DEFAULT_TOPIC_WEIGHT = 3;
-
-export function toFreeKeys({
-  count,
-  graph,
-  prefix,
-}: {
-  count: number;
-  graph: PlannedSkillGraph;
-  prefix: string;
-}): string[] {
-  const taken = new Set(graph.skills.map((skill) => skill.key));
-
-  return Array.from({ length: graph.skills.length + count }, (_, index) => `${prefix}-${index + 1}`)
-    .filter((key) => !taken.has(key))
-    .slice(0, count);
-}
 
 function getTopicOrder({
   outline,
@@ -183,25 +168,6 @@ function isWrittenTestArea({
   const { named, parts } = matchNoticeAreas({ areas: [area], subjects: outline.subjects });
   const subject = outline.subjects[named.get(area) ?? -1];
   return parts.has(area) || Boolean(subject && isWrittenTestSubject(subject));
-}
-
-/** Each addition goes right after the graph position `after` (-1 is the start), in the given order. */
-export function insertGraphSkills({
-  additions,
-  graph,
-}: {
-  additions: readonly { after: number; skill: GraphSkill }[];
-  graph: PlannedSkillGraph;
-}): PlannedSkillGraph {
-  const skills = [
-    ...additions.filter((addition) => addition.after === -1).map((addition) => addition.skill),
-    ...graph.skills.flatMap((skill, index) => [
-      skill,
-      ...additions.filter((addition) => addition.after === index).map((addition) => addition.skill),
-    ]),
-  ];
-
-  return { ...graph, skills };
 }
 
 function addCoverageSkills({
