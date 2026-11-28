@@ -1,5 +1,8 @@
 type Language = { convention: string; fileName: string; name: string; runs: "device" | "sandbox" };
 
+/** The largest program, in UTF-8 bytes, that our servers run. */
+export const MAX_CODE_BYTES = 65_536;
+
 export const PROGRAM_LANGUAGES = {
   cpp: { convention: "Use int main().", fileName: "main.cpp", name: "C++", runs: "sandbox" },
   csharp: {

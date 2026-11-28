@@ -1,8 +1,6 @@
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { SANDBOX_LANGUAGE_IDS } from "./program-languages";
-
-const MAX_SOURCE_BYTES = 65_536;
+import { MAX_CODE_BYTES, SANDBOX_LANGUAGE_IDS } from "./program-languages";
 
 export const sandboxLanguageSchema = z.enum(SANDBOX_LANGUAGE_IDS);
 
@@ -10,9 +8,9 @@ export const codeRunInputSchema = z
   .object({
     code: z
       .string()
-      .max(MAX_SOURCE_BYTES)
+      .max(MAX_CODE_BYTES)
       .refine(
-        (code) => new TextEncoder().encode(code).length <= MAX_SOURCE_BYTES,
+        (code) => new TextEncoder().encode(code).length <= MAX_CODE_BYTES,
         "Source exceeds 64 KiB in UTF-8",
       ),
     language: sandboxLanguageSchema,
