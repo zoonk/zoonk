@@ -36,7 +36,8 @@ final class PlacementTestShots: XCTestCase {
         "Vai cancelar a viagem por causa da neve.",
       ],
       passage: "Oi, é o Dan.", question: "Qual é a principal mensagem de Dan?", skill: .listening,
-      audio: .init(url: URL(string: "https://api.zoonk.test/a.mp3")!, durationMs: 9000),
+      // The web's pictures use an 8 s clip: heard at the slower rate, both say 0:09.
+      audio: .init(url: URL(string: "https://api.zoonk.test/a.mp3")!, durationMs: 8000),
       audioPending: false)
     var pending = listening
     pending.audioPending = true
