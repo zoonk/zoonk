@@ -406,8 +406,15 @@ test.describe("Language practice in the plan", () => {
     await expect(leave).toHaveAttribute("aria-haspopup", "dialog");
     await expect(page.getByRole("button", { name: "Can't listen now" })).toBeVisible();
 
-    const clip = await routeSpeechClips(page);
+    // A message that doesn't play leaves one way to try it again: the button that plays it.
+    await page.route("**/v1/speech-clips", (route) => route.fulfill({ status: 503 }), { times: 1 });
     await page.getByRole("button", { name: "Play the message" }).click();
+    await expect(page.getByText("The audio didn't play.")).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Try again" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Skip this question" })).toBeVisible();
+
+    const clip = await routeSpeechClips(page);
+    await page.getByRole("button", { name: "Try the audio again" }).click();
     await expect(page.getByRole("button", { name: "Play the message again" })).toBeVisible();
 
     expect(clip.requests).toStrictEqual([

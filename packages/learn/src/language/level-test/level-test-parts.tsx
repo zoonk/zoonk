@@ -17,6 +17,7 @@ import { formatClock } from "../../_utils/clock";
 import {
   SpeechFailedNote,
   SpeechStatusIcon,
+  canRetrySpeech,
   useSpeechActionLabel,
   withoutFailure,
 } from "../../speech/speech-parts";
@@ -71,7 +72,9 @@ export function ListeningMessage({
   const t = useExtracted();
   const [played, setPlayed] = useState(false);
   const [time, setTime] = useState<PlaybackTime | null>(null);
-  const buttonState = withoutFailure(speech.state);
+  // A limit a retry can't lift leaves the button as play: pressing it again wouldn't help.
+  const canRetry = speech.state.status !== "failed" || canRetrySpeech(speech.state.limit);
+  const buttonState = canRetry ? speech.state : withoutFailure(speech.state);
   const { status } = buttonState;
   const playing = status === "playing";
 
@@ -131,8 +134,9 @@ export function ListeningMessage({
         )}
       </div>
 
+      {/* The row's button is the retry, so the note brings no second one. */}
       {speech.state.status === "failed" && (
-        <SpeechFailedNote language={language} limit={speech.state.limit} onRetry={play} />
+        <SpeechFailedNote language={language} limit={speech.state.limit} />
       )}
     </div>
   );
