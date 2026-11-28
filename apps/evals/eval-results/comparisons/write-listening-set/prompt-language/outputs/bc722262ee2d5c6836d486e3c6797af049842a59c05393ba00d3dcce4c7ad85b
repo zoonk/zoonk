@@ -1,0 +1,230 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "My group wants to study which flowers attract the most bees.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Why does Maya visit Trevor?",
+        "options": [
+          {
+            "text": "To ask about observing insects in the campus garden",
+            "isCorrect": true,
+            "reason": "Você ouve que Maya quer estudar quais flores atraem mais abelhas e precisa verificar se o grupo pode usar o jardim.",
+            "misconception": null
+          },
+          {
+            "text": "To reserve a plot for growing flowers",
+            "isCorrect": false,
+            "reason": "Trevor pergunta se Maya quer plantar, mas ela diz que observará as plantas que já estão no jardim.",
+            "misconception": "Confunde uma sugestão com o objetivo de Maya."
+          },
+          {
+            "text": "To join the campus gardening club",
+            "isCorrect": false,
+            "reason": "Você ouve sobre o clube de jardinagem depois, mas Maya está planejando um projeto de uma disciplina.",
+            "misconception": "Confunde um grupo mencionado com o objetivo da visita."
+          },
+          {
+            "text": "To request a field guide for her class",
+            "isCorrect": false,
+            "reason": "Maya menciona um guia de campo como alternativa a coletar flores, não como algo que veio pedir.",
+            "misconception": "Confunde uma ferramenta do projeto com o motivo da visita."
+          }
+        ]
+      },
+      {
+        "evidence": "What about Friday afternoons? It's usually pretty quiet.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "When does Trevor suggest that Maya's group visit the garden?",
+        "options": [
+          {
+            "text": "On Saturday mornings",
+            "isCorrect": false,
+            "reason": "Maya sugere esse horário, mas Trevor explica que o clube de jardinagem se reúne aos sábados.",
+            "misconception": "Escolhe a sugestão rejeitada."
+          },
+          {
+            "text": "On Friday afternoons",
+            "isCorrect": true,
+            "reason": "Depois de explicar que o sábado é movimentado, Trevor sugere as tardes de sexta-feira.",
+            "misconception": null
+          },
+          {
+            "text": "At the beginning of the semester",
+            "isCorrect": false,
+            "reason": "Trevor menciona esse período para a distribuição de canteiros, não para as visitas de observação.",
+            "misconception": "Confunde a distribuição de canteiros com o horário das visitas."
+          },
+          {
+            "text": "At the end of the semester",
+            "isCorrect": false,
+            "reason": "Maya menciona o fim do semestre como um possível momento para apresentar os resultados ao clube.",
+            "misconception": "Confunde a apresentação dos resultados com as visitas."
+          }
+        ]
+      },
+      {
+        "evidence": "Even a short study could help the club decide what to plant next year.",
+        "skill": 3,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What does Trevor imply about Maya's concern that her results may not be interesting?",
+        "options": [
+          {
+            "text": "He thinks the findings could be useful despite the short study period.",
+            "isCorrect": true,
+            "reason": "Você ouve Trevor dizer que mesmo um estudo curto poderia ajudar o clube a escolher o que plantar.",
+            "misconception": null
+          },
+          {
+            "text": "He thinks the group should observe the garden for a longer period.",
+            "isCorrect": false,
+            "reason": "Trevor não pede um estudo mais longo. Ele diz que o estudo curto ainda pode ser útil.",
+            "misconception": "Interpreta o comentário sobre a duração como uma crítica."
+          },
+          {
+            "text": "He thinks the gardening club has already chosen next year's plants.",
+            "isCorrect": false,
+            "reason": "Trevor diz que os resultados poderiam ajudar o clube a tomar essa decisão, não que ela já foi tomada.",
+            "misconception": "Supõe que uma decisão futura já foi tomada."
+          },
+          {
+            "text": "He thinks visitors would prefer information about growing food.",
+            "isCorrect": false,
+            "reason": "Trevor menciona perguntas dos visitantes sobre outros usos do jardim, mas incentiva Maya a compartilhar os resultados.",
+            "misconception": "Confunde uma pergunta dos visitantes com a opinião de Trevor sobre o estudo."
+          }
+        ]
+      },
+      {
+        "evidence": "On the form, list the dates you expect to visit and the names of your group members.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What does Trevor ask Maya to include in the request form?",
+        "options": [
+          {
+            "text": "The planned visit dates and the group members' names",
+            "isCorrect": true,
+            "reason": "Trevor pede que você observe que o formulário deve conter as datas previstas e os nomes dos integrantes.",
+            "misconception": null
+          },
+          {
+            "text": "The flowers observed and the number of bees counted",
+            "isCorrect": false,
+            "reason": "Esses dados fazem parte do estudo, mas Trevor pede informações práticas anteriores às visitas.",
+            "misconception": "Confunde os dados da pesquisa com as informações do formulário."
+          },
+          {
+            "text": "The professor's comments and the class proposal",
+            "isCorrect": false,
+            "reason": "Trevor diz que alguns alunos enviam a proposta da disciplina, mas ela não contém as informações práticas necessárias.",
+            "misconception": "Escolhe o documento que Trevor considera insuficiente."
+          },
+          {
+            "text": "The sign's wording and the club's planting plans",
+            "isCorrect": false,
+            "reason": "Eles discutem uma placa e os planos de plantio, mas Trevor não pede esses itens no formulário.",
+            "misconception": "Escolhe tópicos discutidos que não são requisitos do formulário."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "American English"
+      },
+      {
+        "name": "Trevor",
+        "gender": "male",
+        "accent": "American English"
+      }
+    ],
+    "title": "Planning a Campus Garden Project",
+    "turns": [
+      {
+        "speaker": "Maya",
+        "text": "Hi, Trevor. Do you have a minute? I'm working on a project for my environmental studies class, and I wanted to ask about using the campus garden."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Sure. Are you hoping to plant something there? We usually assign garden plots at the beginning of the semester."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Actually, no. My group wants to study which flowers attract the most bees. We'd just observe the plants that are already there and record what we see. Our professor said I should check with your office first."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Oh, that's fine in principle. We do have visitors who come to work in the garden, though, so we'd need to know when your group plans to be there."
+      },
+      {
+        "speaker": "Maya",
+        "text": "We were thinking of coming on Saturday mornings, when no one has class."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Saturday's our busiest day, I'm afraid. The gardening club meets then, and they need access to all the beds. What about Friday afternoons? It's usually pretty quiet."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Friday could work. There are four of us, but we don't all have to come at once. Would two people at a time be all right?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Yes, that's manageable. And you won't be taking any flowers or insects away, will you?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "No, we'll only take photographs. We thought about collecting a few flowers to identify them, but our professor suggested using a field guide instead."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Good. We've been trying to keep the garden open to research groups, but some visitors worry that projects might damage the plants. Being able to explain that you're only observing will help."
+      },
+      {
+        "speaker": "Maya",
+        "text": "I understand. We could put up a little sign explaining what we're doing. That might also stop people from wondering why we're standing around staring at flowers."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "A sign would be great. In fact, the more visitors know about student research, the better. People often ask us what the garden is used for besides growing food."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Then maybe we could share our results with the gardening club at the end of the semester. I don't know if they'll be interesting, though. We're only observing for three weeks."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Don't underestimate that. Even a short study could help the club decide what to plant next year. And they'd probably enjoy hearing what you found."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That's encouraging. So, is there anything I need to fill out before we start?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "I'll email you a short request form. Some students send me their class proposal instead, but it doesn't include the practical information we need. On the form, list the dates you expect to visit and the names of your group members."
+      },
+      {
+        "speaker": "Maya",
+        "text": "All right. I'll check the dates with my group tonight and send the form back tomorrow. Thanks for your help."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "You're welcome. Let me know if your schedule changes."
+      }
+    ]
+  }
+}

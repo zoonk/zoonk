@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-fr-delf-b2-monologue-at-level",
+  "challenger": {
+    "costUsd": 0.001269475,
+    "durationMs": 13908.519957999997,
+    "hash": "8cbd402302f5144fe5694f9ff81c7025c449231efb4dcf5236dcf2a73d6e055b",
+    "systemPromptHash": "390ad53f447a81fb879e0e28ada4d9a5cba8e42498a998715bfd58a21c96fa9a",
+    "userPromptHash": "62e8b72434233c74d0ae07b6fcc410a70fe51bbb0bb8b63c0686cff5ef01c46e"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.001155725,
+    "durationMs": 10498.022125000003,
+    "hash": "85d6736985dcacecbd87421782a7aaa75015bb5f9614eb7f6ba718bf440d9410",
+    "systemPromptHash": "8e76d38d4900fcc47aa56f516a1e6700265dab3bb7b9485e61ad408f650212df",
+    "userPromptHash": "62e8b72434233c74d0ae07b6fcc410a70fe51bbb0bb8b63c0686cff5ef01c46e"
+  },
+  "run": 1
+}

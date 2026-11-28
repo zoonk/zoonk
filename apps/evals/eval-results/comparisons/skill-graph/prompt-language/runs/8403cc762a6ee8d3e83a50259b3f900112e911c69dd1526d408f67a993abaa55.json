@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-language-english-moving-abroad",
+  "challenger": {
+    "costUsd": 0.042329000000000006,
+    "durationMs": 86356.97074999998,
+    "hash": "2871b5a54a24301b7968886db1340d081b8e5521940ec9f2cec6a15acc461627",
+    "systemPromptHash": "b2b232a53c18921fd32466657d8a87633ee4dff8762bea41fd52e25ddabd8f95",
+    "userPromptHash": "af7f2a475d4015c8a6318da3577653147d628053bc847924b4000a28a8c59abf"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.03881015,
+    "durationMs": 86773.585708,
+    "hash": "013dd3a90a6cdec4dc98c0e1f8e4be83d8d95b09681febf722d304b657aec449",
+    "systemPromptHash": "fec22d7736604dfc84fc0af28172436ff868318e7aa2216b8a453a7d709ceb8d",
+    "userPromptHash": "af7f2a475d4015c8a6318da3577653147d628053bc847924b4000a28a8c59abf"
+  },
+  "run": 1
+}

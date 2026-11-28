@@ -5,7 +5,7 @@ import { classifySkillLevels } from "./skill-levels";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./skill-levels.prompt.md", () => ({ default: "Place skills." }));
+vi.mock("./skill-levels.prompt.md", () => ({ default: "Place skills in {{TARGET_LANGUAGE}}." }));
 
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
@@ -37,7 +37,7 @@ describe(classifySkillLevels, () => {
       }),
     );
 
-    const { data, userPrompt } = await classifySkillLevels({
+    const { data, systemPrompt, userPrompt } = await classifySkillLevels({
       skills: SKILLS,
       targetLanguage: "en",
     });
@@ -47,6 +47,7 @@ describe(classifySkillLevels, () => {
       { id: "meeting", level: "B2" },
     ]);
 
+    expect(systemPrompt).toBe("Place skills in US English.");
     expect(userPrompt).toContain("TARGET_LANGUAGE: US English");
     expect(userPrompt).toContain("2. B1 or B2 | Meetings: Follow a meeting");
   });

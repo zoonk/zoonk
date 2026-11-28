@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Se alguém no México diz \"Estoy embarazada\", qual novidade está contando?",
+      "options": [
+        {
+          "text": "Está grávida",
+          "correct": true
+        },
+        {
+          "text": "Está envergonhada",
+          "correct": false
+        },
+        {
+          "text": "Está confusa",
+          "correct": false
+        }
+      ],
+      "reveal": "Está grávida. Apesar da semelhança com “embaraçada”, \"embarazada\" não descreve vergonha ou confusão."
+    },
+    {
+      "question": "Num formulário mexicano, a palavra \"apellido\" pede qual informação?",
+      "options": [
+        {
+          "text": "Sobrenome",
+          "correct": true
+        },
+        {
+          "text": "Apelido carinhoso",
+          "correct": false
+        },
+        {
+          "text": "Endereço residencial",
+          "correct": false
+        }
+      ],
+      "reveal": "Sobrenome. \"Apellido\" se parece com “apelido”, mas em espanhol essa palavra costuma indicar o nome de família."
+    },
+    {
+      "question": "Num cardápio mexicano, um prato descrito como \"exquisito\" provavelmente é…",
+      "options": [
+        {
+          "text": "Muito saboroso",
+          "correct": true
+        },
+        {
+          "text": "Estranho",
+          "correct": false
+        },
+        {
+          "text": "Sem tempero",
+          "correct": false
+        }
+      ],
+      "reveal": "Muito saboroso. Ao descrever comida, \"exquisito\" costuma ser um elogio, não uma indicação de que ela é esquisita."
+    },
+    {
+      "question": "Um mexicano descreve um caminho como \"largo\"; ele está falando de algo…",
+      "options": [
+        {
+          "text": "Comprido",
+          "correct": true
+        },
+        {
+          "text": "Largo de um lado ao outro",
+          "correct": false
+        },
+        {
+          "text": "Curto",
+          "correct": false
+        }
+      ],
+      "reveal": "Comprido. Em espanhol, \"largo\" geralmente indica comprimento; em português brasileiro, “largo” costuma indicar largura."
+    },
+    {
+      "question": "Num perfil, a palavra \"actualmente\" informa quando algo acontece…",
+      "options": [
+        {
+          "text": "No momento",
+          "correct": true
+        },
+        {
+          "text": "Em outra época",
+          "correct": false
+        },
+        {
+          "text": "Com frequência",
+          "correct": false
+        }
+      ],
+      "reveal": "No momento. \"Actualmente\" é um cognato de “atualmente” e costuma indicar o que ocorre agora."
+    },
+    {
+      "question": "Na hora de comprar algo no México, perguntar \"¿Cuánto cuesta?\" ajuda a saber…",
+      "options": [
+        {
+          "text": "O preço",
+          "correct": true
+        },
+        {
+          "text": "O endereço da loja",
+          "correct": false
+        },
+        {
+          "text": "O horário de funcionamento",
+          "correct": false
+        }
+      ],
+      "reveal": "O preço. Essa pergunta serve para descobrir quanto custa algo."
+    },
+    {
+      "question": "Você se perdeu numa cidade e pergunta \"¿Dónde está el baño?\"; quer descobrir…",
+      "options": [
+        {
+          "text": "Onde fica o banheiro",
+          "correct": true
+        },
+        {
+          "text": "Quanto custa a entrada",
+          "correct": false
+        },
+        {
+          "text": "Que horas são",
+          "correct": false
+        }
+      ],
+      "reveal": "Onde fica o banheiro. É uma pergunta útil para localizar o banheiro."
+    },
+    {
+      "question": "Depois de receber ajuda numa loja mexicana, dizer \"gracias\" comunica…",
+      "options": [
+        {
+          "text": "Agradecimento",
+          "correct": true
+        },
+        {
+          "text": "Um pedido de desculpas",
+          "correct": false
+        },
+        {
+          "text": "Uma despedida",
+          "correct": false
+        }
+      ],
+      "reveal": "Agradecimento. \"Gracias\" é uma forma comum de agradecer."
+    },
+    {
+      "question": "Qual forma está correta em espanhol para dizer que a água está fria?",
+      "options": [
+        {
+          "text": "\"el agua fría\"",
+          "correct": true
+        },
+        {
+          "text": "\"el agua frío\"",
+          "correct": false
+        },
+        {
+          "text": "\"la agua fría\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"El agua fría\". A palavra é feminina, então o adjetivo também fica no feminino; usa-se \"el\" antes dela por começar com “a” tônico."
+    },
+    {
+      "question": "Ao falar com um grupo de amigos no México, qual pronome plural informal você costuma usar?",
+      "options": [
+        {
+          "text": "\"ustedes\"",
+          "correct": true
+        },
+        {
+          "text": "\"vosotros\"",
+          "correct": false
+        },
+        {
+          "text": "\"ellos\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Ustedes\". No espanhol do México, ele é usado para falar com grupos tanto informalmente quanto formalmente; \"vosotros\" não é o pronome usual."
+    }
+  ]
+}

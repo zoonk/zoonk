@@ -1,0 +1,194 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00885699,
+  "failures": [],
+  "packetId": "fbaf29d769629ca2f641c93c1585c59f8232f1420a999f780d5faf29d5cd4073",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets use the same questions, options and keys, and the keys are right from the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two sets are the same DELE B2 monologue with five questions, so exam fit is identical.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A gives two reasons in Spanish, which the packet forbids and the learner cannot read; output B writes every reason in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Two reasons are written in Spanish although the packet requires every reason in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read why the option is wrong, so the feedback fails at the point where it should teach.",
+            "location": {
+              "detail": "Reason of the third option of the question about the criterion for receiving objects.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A second reason is written in Spanish, breaking the Brazilian Portuguese requirement for reasons.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner gets no usable explanation for this distractor and cannot learn from the mistake.",
+            "location": {
+              "detail": "Reason of the third option of the question about the criterion for receiving objects.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both sets have the same keys and questions, but B writes its reasons in Brazilian Portuguese, which the reader needs to understand each mistake."
+        },
+        "pairId": "441e0295-025d-46c1-b4c9-8e05c062ff7d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical in content, keys and format.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so exam fit is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so the script and reasons read the same.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A completion item (the street name) is set as multiple choice with three options, while its context asks the learner to write one word.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises choosing a spelling from a list instead of writing what they heard, which is the skill the real part tests.",
+            "location": {
+              "detail": "Question about the street name.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sample answer half past six is not among the accepted answers, which list only 6:30 and 6.30.",
+            "criterion": "keys",
+            "learnerCost": "A learner who writes the sample wording may be marked wrong.",
+            "location": {
+              "detail": "Photography group starting time question.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "A completion item (the street name) is set as multiple choice with three options, while its context asks the learner to write one word.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises choosing a spelling from a list instead of writing what they heard, which is the skill the real part tests.",
+            "location": {
+              "detail": "Question about the street name.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sample answer half past six is not among the accepted answers, which list only 6:30 and 6.30.",
+            "criterion": "keys",
+            "learnerCost": "A learner who writes the sample wording may be marked wrong.",
+            "location": {
+              "detail": "Photography group starting time question.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "98b2afd4-3873-4054-ab04-8f06706eb576"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both keys are correct from the script; both share one minor mismatch between sample answer and accepted answers.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "Output B uses completion items with a word or number limit, as IELTS Part 2 does, while output A turns a completion item into multiple choice.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English with self-corrections and everyday phrasing.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A completion item (the street name) is set as multiple choice with three options, while its context asks the learner to write one word.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises choosing a spelling from a list instead of writing what they heard, which is the skill the real part tests.",
+            "location": {
+              "detail": "Question about the street name.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sample answer half past six is not among the accepted answers, which list only 6:30 and 6.30.",
+            "criterion": "keys",
+            "learnerCost": "A learner who writes the sample wording may be marked wrong.",
+            "location": {
+              "detail": "Photography group starting time question.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The sample answer fourteen is not among the accepted answers, which list only 14.",
+            "criterion": "keys",
+            "learnerCost": "A learner who writes the number as a word may be marked wrong.",
+            "location": {
+              "detail": "Bus number question.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Output B uses completion items as the real part does and has fewer format mismatches, so it prepares the learner better for the exam."
+        },
+        "pairId": "f23a9df7-cf55-49a5-aa10-b7feda11c0b6"
+      }
+    ]
+  }
+}

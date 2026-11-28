@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but later changed or dropped small parts: you said “Club tables are set along the main hallway” instead of “set up,” and “The workshop that was planned for Friday” instead of “planned for Friday afternoon.” The changes preserve the main meaning, but they keep the longer sentences from being exact.",
+      "tip": "Listen for complete word groups, including small words and details: “planned for Friday afternoon / moved to the lecture hall next to the bookstore.”",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answer each question and add reasons or details, such as “we divided the tasks and in the end we got a good grade” and “you have to speak another language every day and you meet people from other cultures.” Your ideas are clear, though your answers do not develop examples in much depth.",
+      "tip": "Add one specific example to support a reason, such as, “Speaking another language every day would help me use it more confidently in real situations.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use past and future forms and build connected sentences, but there are a few errors, including “I learned that is important to communicate” and “different than see it on a screen.” These slips reduce accuracy even though your meaning remains clear.",
+      "tip": "After the preposition “from,” use a noun or an -ing form: change “different than see it on a screen” to “different from seeing it on a screen.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use relevant words and phrases such as “marketing plan for a local shop” and “people from other cultures.” Some descriptions stay general, as in “very useful” and “a good grade,” rather than specifying exactly what made the experience valuable or successful.",
+      "tip": "Replace a general phrase with a precise benefit: instead of “very useful,” try “valuable for building confidence in everyday conversations.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, and it has no clear signs of a breakdown in understanding. This wider estimate follows the generally coherent wording and sentence control shown in your other responses.",
+      "tip": "Make the contrast easy to follow by stressing the key words in “study online” and “need to travel.”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

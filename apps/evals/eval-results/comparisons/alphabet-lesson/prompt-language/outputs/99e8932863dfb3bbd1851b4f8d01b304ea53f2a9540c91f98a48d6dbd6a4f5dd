@@ -1,0 +1,198 @@
+{
+  "script": "escrita árabe",
+  "title": "Primeiras letras árabes",
+  "description": "Você já pode ler sílabas simples como بَتَ (bata) e نَمَ (nama), da direita para a esquerda.",
+  "canDo": "Leia e diga ا (ā), ب (b), ت (t), ن (n), م (m), ل (l) e ر (r), com fatḥa e formas ligadas.",
+  "intro": [
+    {
+      "title": "Leia da direita para a esquerda",
+      "text": "A leitura começa à direita e segue para a esquerda. As letras costumam se ligar; ا (ā) e ر (r), porém, não se ligam à próxima letra, que fica à esquerda."
+    },
+    {
+      "title": "As vogais podem ser marcas",
+      "text": "A fatḥa é a marquinha َ que indica um a curto, como em بَ (ba); em textos comuns, essas marcas muitas vezes não aparecem. Depois de uma letra com fatḥa, ا (ā) pode alongar o a, como em بَا (bā)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ا",
+      "readingAid": "ā",
+      "ipa": "/aː/",
+      "audioText": "بَا",
+      "pronunciation": "Você ouve بَا (bā): o ا alonga o a de “pá”; é um a sustentado, sem virar ditongo.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ا"
+        },
+        {
+          "label": "inicial",
+          "symbol": "ا"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـا"
+        },
+        {
+          "label": "final",
+          "symbol": "ـا"
+        }
+      ]
+    },
+    {
+      "symbol": "ب",
+      "readingAid": "b",
+      "ipa": "/b/",
+      "audioText": "بَ",
+      "pronunciation": "Você ouve بَ (ba): o b de “bala”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ب"
+        },
+        {
+          "label": "inicial",
+          "symbol": "بـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـبـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـب"
+        }
+      ]
+    },
+    {
+      "symbol": "ت",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "تَ",
+      "pronunciation": "Você ouve تَ (ta): o t de “tatu”, sem sopro extra.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ت"
+        },
+        {
+          "label": "inicial",
+          "symbol": "تـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـتـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـت"
+        }
+      ]
+    },
+    {
+      "symbol": "ن",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "نَ",
+      "pronunciation": "Você ouve نَ (na): o n de “nada”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ن"
+        },
+        {
+          "label": "inicial",
+          "symbol": "نـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـنـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـن"
+        }
+      ]
+    },
+    {
+      "symbol": "م",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "مَ",
+      "pronunciation": "Você ouve مَ (ma): o m de “mala”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "م"
+        },
+        {
+          "label": "inicial",
+          "symbol": "مـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـمـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـم"
+        }
+      ]
+    },
+    {
+      "symbol": "ل",
+      "readingAid": "l",
+      "ipa": "/l/",
+      "audioText": "لَ",
+      "pronunciation": "Você ouve لَ (la): o l de “lado”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ل"
+        },
+        {
+          "label": "inicial",
+          "symbol": "لـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـلـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـل"
+        }
+      ]
+    },
+    {
+      "symbol": "ر",
+      "readingAid": "r",
+      "ipa": "/r/",
+      "audioText": "رَ",
+      "pronunciation": "Você ouve رَ (ra): é parecido com o r de “caro”, mas pode vibrar mais; não é o r de “rua”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ر"
+        },
+        {
+          "label": "inicial",
+          "symbol": "ر"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـر"
+        },
+        {
+          "label": "final",
+          "symbol": "ـر"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    "Leia da direita para a esquerda e junte as letras quando as formas permitirem.",
+    "A fatḥa marca um a curto; ا (ā) pode alongar esse a depois de uma consoante.",
+    "As formas de ا (ā) e ر (r) não se ligam à letra seguinte na leitura."
+  ]
+}

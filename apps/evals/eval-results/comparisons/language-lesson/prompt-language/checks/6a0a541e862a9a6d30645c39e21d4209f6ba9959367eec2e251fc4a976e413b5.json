@@ -1,0 +1,13 @@
+{
+  "caseId": "en-en-a1-ielts-consonant-contrasts",
+  "costUsd": 0,
+  "criteria": [
+    "pairAwareness"
+  ],
+  "name": "code checks",
+  "passed": 4,
+  "problems": [],
+  "run": 1,
+  "side": "incumbent",
+  "total": 4
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Mantienes tus respuestas relacionadas con las preguntas y conectas ideas con expresiones como \"Also I play football on Sundays\" y \"I enjoyed it because the city is very beautiful\". Sin embargo, varias respuestas se quedan en ideas breves y no desarrollas mucho tus razones o ejemplos.",
+      "tip": "Después de dar una razón, agrega una consecuencia o un ejemplo: en vez de detenerte en \"I enjoyed it because the city is very beautiful\", podrías decir \"I enjoyed it because the city is beautiful, and exploring Alfama on foot made the trip feel especially memorable.\"",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario adecuado para hablar de viajes y turismo, como \"the old part of the city\" y \"the prices of the flats\". Algunas combinaciones de palabras son poco precisas o repetitivas, como \"very full of tourists\" y \"not expensive like other capitals\".",
+      "tip": "Cambia una descripción básica por una expresión más precisa: en lugar de \"very full of tourists\", prueba \"packed with tourists\".",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Se entiende lo que quieres decir, pero aparecen errores frecuentes en estructuras básicas, por ejemplo \"my parents was working a lot\", \"we eat a lot of fish\" y \"The government should to control it\". También hay errores al expresar propósito, como \"travel for know other cultures\".",
+      "tip": "Después de \"should\", usa el verbo en su forma base, sin \"to\": en vez de \"The government should to control it\", di \"The government should control it\".",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonó tu voz y no muestra señales indirectas claras de problemas de inteligibilidad; por eso esta es una estimación más amplia, centrada en el nivel que sugieren los demás criterios.",
+      "tip": "Al decir \"mountains\", \"tourists\" y \"government\", marca con claridad la sílaba tónica inicial para ayudar a que cada palabra se entienda.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0026369,
+  "failures": [],
+  "packetId": "6aeab274bacc2034d0272e038e8780451ef15a2cdfe66036f16038a676869e08",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both use very short English notices and messages with simple stated facts, matching the requested A1 task.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The keys match the passages, but both outputs include wrong options that are not other values of the same kind stated elsewhere in the text, contrary to the distractor requirement.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several wrong options are not other values of the same kind given elsewhere in the passage: for example, Thursday, the train station, Tuesday, 3:30, money, Sophia, and $14 are not stated values in their respective passages.",
+            "criterion": "answers",
+            "learnerCost": "Learners cannot use the intended comparison of stated values to distinguish careful reading from guessing, and the distractors do not meet the requested design.",
+            "location": {
+              "detail": "Wrong options across the four confirmations, including the options quoted in the claim.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Several wrong options are not other values of the same kind given elsewhere in the passage: for example, Thursday, the train station, Tuesday, 3:30, money, Sophia, and $14 are not stated values in their respective passages.",
+            "criterion": "answers",
+            "learnerCost": "Learners cannot use the intended comparison of stated values to distinguish careful reading from guessing, and the distractors do not meet the requested design.",
+            "location": {
+              "detail": "Wrong options across the four confirmations, including the options quoted in the claim.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so they serve the learner equally, including sharing the same distractor-design problem."
+        },
+        "pairId": "28aeec71-3219-4b05-9f61-a54e3845fda0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets use short, concrete A1 passages and ask about directly stated facts.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Both have correct keys, but A more often builds distractors from values or details actually present in the passage; B includes more unsupported alternatives, such as an unmentioned Thursday, train station, and $14 price.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Some wrong options are not other values of the same kind stated elsewhere in the passages, including the 4 p.m. appointment, three boxes, and front door.",
+            "criterion": "answers",
+            "learnerCost": "These distractors do not follow the requested design, making the intended comparison of stated values less consistent.",
+            "location": {
+              "detail": "Listening confirmations about the appointment and delivery.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Several wrong options are not other values of the same kind stated elsewhere in the passages, including Thursday, the train station, Tuesday, 3:30, money, Sophia, and $14.",
+            "criterion": "answers",
+            "learnerCost": "These distractors do not follow the requested design, so learners cannot consistently use the passage's other stated values to assess them.",
+            "location": {
+              "detail": "Wrong options across the four confirmations, including the options quoted in the claim.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both sets have correct keys, but A's distractors are more often grounded in details from their passages, while B more often introduces unsupported values."
+        },
+        "pairId": "43633815-2921-402f-87de-5217d80b6e1f"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The message and options test a simple, direct A1 fact-reading task.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A selects the two statements supported by the message; B incorrectly includes the bus-at-nine statement and omits the cafe-next-to-the-shop statement.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English for the message and Brazilian Portuguese for the question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes option 2, but the bus leaves at ten, not nine; it omits option 3, which correctly says the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows the key would mark a false statement and miss a true one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A's key is correct, while B's key marks a false statement and leaves out a true one."
+        },
+        "pairId": "fcd4caad-8495-4f25-a774-baa79d945787"
+      }
+    ]
+  }
+}

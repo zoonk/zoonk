@@ -1,0 +1,12 @@
+{
+  "caseId": "en-first-aid",
+  "costUsd": 0.032256,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"It affects several body systems\",\"kind\":\"factualError\",\"workedAnswer\":\"Several systems can be affected, but multisystem involvement is not required. For example, sudden hypotension after exposure to a known allergen can establish anaphylaxis even without skin or respiratory symptoms.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 10
+}

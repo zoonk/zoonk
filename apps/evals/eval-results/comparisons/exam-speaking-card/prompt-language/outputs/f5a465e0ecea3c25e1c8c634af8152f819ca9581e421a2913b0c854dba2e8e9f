@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía durante unos tres minutos.",
+    "Puede utilizar las siguientes preguntas como ayuda."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas de la fotografía?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o qué van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adults in their twenties and sixties planting small plants together in a sunny public garden in Spain. They wear casual clothes and light gardening gloves. One person holds a small watering can while the others kneel beside a flower bed. They look relaxed and engaged. Soft morning light, natural colors, no text, signs, logos or screens.",
+      "alt": "Três adultos plantam mudas juntos em um jardim ensolarado."
+    }
+  ],
+  "summary": "Você vai descrever uma fotografia e falar sobre o que imagina que acontece na cena. O examinador vai ouvir sua descrição sem interromper.",
+  "character": {
+    "name": "Javier",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction, then listen without interrupting while the candidate describes the photograph for about three minutes. Do not ask follow-up questions, correct, praise or grade. Opening: «Describa la fotografía. Puede utilizar las preguntas como ayuda. Tiene unos tres minutos. Puede empezar cuando quiera».",
+  "openingLine": "Describa la fotografía. Puede utilizar las preguntas como ayuda. Tiene unos tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía veo a unas personas.",
+    "Creo que están en un lugar.",
+    "Me parece que se conocen.",
+    "Pienso que están contentos porque...",
+    "Antes han... y después van a..."
+  ]
+}

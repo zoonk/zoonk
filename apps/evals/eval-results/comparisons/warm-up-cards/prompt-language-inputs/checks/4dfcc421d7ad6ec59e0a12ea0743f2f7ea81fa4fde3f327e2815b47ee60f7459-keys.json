@@ -1,0 +1,13 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.027104,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"Stronger-than-classical correlations\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“No relationship” is also possible because the stem does not specify the measurements. For an entangled spin singlet measured along perpendicular axes, all four outcome pairs are equally likely: the results are independent. Other choices of axes can demonstrate stronger-than-classical correlations.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"The limits are built into quantum states\",\"kind\":\"factualError\",\"workedAnswer\":\"The selected option is correct, but the reveal overstates the trade-off. The uncertainty relation ΔxΔp ≥ ℏ/2 means that reducing Δx raises the minimum allowed Δp. It need not increase the actual Δp if the original state was above the bound.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

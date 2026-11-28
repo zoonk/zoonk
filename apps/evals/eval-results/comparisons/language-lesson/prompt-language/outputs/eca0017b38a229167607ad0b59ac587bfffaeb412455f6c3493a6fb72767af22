@@ -1,0 +1,200 @@
+{
+  "words": [
+    {
+      "word": "work on",
+      "translation": "trabajar en",
+      "pronunciation": "UÉRK ON",
+      "romanization": null,
+      "tip": "Para la r de work, curva la lengua hacia atrás sin tocar el paladar; no la hagas vibrar como en español.",
+      "note": null,
+      "distractors": [
+        "work for",
+        "depend on",
+        "look at"
+      ]
+    },
+    {
+      "word": "at the office",
+      "translation": "en la oficina",
+      "pronunciation": "AT THI Ó-fis",
+      "romanization": null,
+      "tip": "En the, coloca la lengua entre los dientes y deja pasar la voz, sin decir una d española.",
+      "note": null,
+      "distractors": [
+        "at home",
+        "at school",
+        "at the store"
+      ]
+    },
+    {
+      "word": "start work",
+      "translation": "empezar a trabajar",
+      "pronunciation": "START UÉRK",
+      "romanization": null,
+      "tip": "Di start sin agregar una e antes de la s, y curva la lengua hacia atrás para las dos r sin hacerlas vibrar.",
+      "note": null,
+      "distractors": [
+        "leave work",
+        "take a break",
+        "leave home"
+      ]
+    },
+    {
+      "word": "finish work",
+      "translation": "terminar de trabajar",
+      "pronunciation": "FÍ-nish UÉRK",
+      "romanization": null,
+      "tip": "Para la r de work, curva la lengua hacia atrás sin tocar el paladar ni hacerla vibrar.",
+      "note": null,
+      "distractors": [
+        "go to work",
+        "take a break",
+        "leave home"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work on different tasks",
+      "translation": "Trabajo en diferentes tareas",
+      "explanation": "Usa `work on` para decir en qué tareas trabajas. A diferencia del español, en inglés necesitas decir `I`.",
+      "romanization": null,
+      "distractors": [
+        "works",
+        "working",
+        "task"
+      ],
+      "translationDistractors": [
+        "trabajan",
+        "escuela",
+        "horario"
+      ],
+      "speakingPrompt": "Cuenta en qué trabajas sin dar detalles específicos."
+    },
+    {
+      "sentence": "I work at the office",
+      "translation": "Trabajo en la oficina",
+      "explanation": "Para decir que trabajas en la oficina, usa `at the office` después de `work`.",
+      "romanization": null,
+      "distractors": [
+        "works",
+        "on",
+        "an"
+      ],
+      "translationDistractors": [
+        "desde",
+        "casa",
+        "horario"
+      ],
+      "speakingPrompt": "Di que trabajas en la oficina."
+    },
+    {
+      "sentence": "What time do you start work?",
+      "translation": "¿A qué hora empiezas a trabajar?",
+      "explanation": "Para preguntar la hora, empieza con `What time` y coloca `do` antes de `you`. El verbo `start` no cambia de forma.",
+      "romanization": null,
+      "distractors": [
+        "does",
+        "starts",
+        "is"
+      ],
+      "translationDistractors": [
+        "terminas",
+        "dónde",
+        "trabajo"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I finish work at five",
+      "translation": "Termino de trabajar a las cinco",
+      "explanation": "En inglés se usa `at` antes de una hora, mientras que en español decimos «a las cinco».",
+      "romanization": null,
+      "distractors": [
+        "finishes",
+        "in",
+        "on"
+      ],
+      "translationDistractors": [
+        "empiezo",
+        "nueve",
+        "desde"
+      ],
+      "speakingPrompt": "Dile a tu compañero a qué hora terminas de trabajar."
+    }
+  ],
+  "tip": {
+    "title": "Usa at para decir la hora",
+    "text": "Para decir a qué hora empiezas o terminas de trabajar, pon `at` antes de la hora. Por ejemplo: `I start work at nine` significa «Empiezo a trabajar a las nueve»; `I finish work at five` significa «Termino de trabajar a las cinco». No uses `in` ni `on` para indicar una hora específica.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Elige la palabra para completar la hora.",
+      "template": "I start work [BLANK] nine",
+      "answer": "at",
+      "distractors": [
+        "in",
+        "on",
+        "to"
+      ],
+      "feedback": "Usa `at` antes de una hora específica, como `nine`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Tu compañero pregunta a qué hora empiezas. ¿Qué le dices?",
+    "scene": "En la oficina, con un compañero",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "I work at the office",
+        "translation": "Trabajo en la oficina"
+      },
+      {
+        "speaker": "them",
+        "text": "What time do you start work?",
+        "translation": "¿A qué hora empiezas a trabajar?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I start work at nine",
+        "translation": "Empiezo a trabajar a las nueve",
+        "isBest": true,
+        "why": "Esta respuesta dice claramente a qué hora empiezas."
+      },
+      {
+        "text": "I start work in nine",
+        "translation": "Empiezo a trabajar en nueve",
+        "isBest": false,
+        "why": "Para una hora específica no se usa `in`."
+      },
+      {
+        "text": "I starts work at nine",
+        "translation": "Yo empieza a trabajar a las nueve",
+        "isBest": false,
+        "why": "Después de `I`, el verbo es `start`, sin s."
+      }
+    ],
+    "explanation": "Antes de una hora específica, recuerda usar `at`."
+  },
+  "writing": {
+    "prompt": "Escribe a un compañero: «Empiezo a trabajar a las nueve y termino a las cinco».",
+    "answers": [
+      "I start work at nine and finish at five.",
+      "I start work at 9 and finish at 5.",
+      "I start work at nine and finish work at five.",
+      "I start work at 9 and finish work at 5."
+    ],
+    "keyPoints": [
+      "Usa `start work` para decir cuándo empiezas y `finish` para decir cuándo terminas.",
+      "Usa `at` antes de cada hora."
+    ]
+  },
+  "summary": [
+    "“I work on different tasks” dice que trabajas en diferentes tareas.",
+    "“I work at the office” dice dónde trabajas.",
+    "“I start work at nine” y “I finish work at five” expresan tu horario."
+  ]
+}

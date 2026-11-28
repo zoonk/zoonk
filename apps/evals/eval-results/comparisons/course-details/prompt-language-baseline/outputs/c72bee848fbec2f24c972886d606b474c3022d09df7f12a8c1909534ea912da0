@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "health",
+    "science"
+  ],
+  "description": "Farmacologia estuda como os remédios agem e são processados pelo corpo. Você vai ver como doses e formas de uso mudam seus efeitos, quando remédios podem interagir e por que o uso inadequado de antibióticos favorece bactérias resistentes. Esse conhecimento ajuda a conversar com mais segurança sobre medicamentos nos estudos e no cuidado cotidiano.",
+  "landingPage": {
+    "audience": [
+      "Estudantes de cursos da saúde",
+      "Profissionais que lidam com medicamentos",
+      "Curiosos sobre como remédios agem"
+    ],
+    "outcomes": [
+      "Explicar como um remédio age no corpo",
+      "Comparar efeitos de um remédio por diferentes vias",
+      "Perceber quando remédios podem interagir",
+      "Explicar como o uso errado favorece bactérias resistentes"
+    ],
+    "valueProposition": "Explicar por que um remédio pode agir de forma diferente conforme a dose e a via de uso"
+  }
+}

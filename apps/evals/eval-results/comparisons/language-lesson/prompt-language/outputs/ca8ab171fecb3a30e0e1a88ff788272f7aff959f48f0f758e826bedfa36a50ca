@@ -1,0 +1,220 @@
+{
+  "words": [
+    {
+      "word": "la renta",
+      "translation": "the rent",
+      "pronunciation": "lah RREHN-tah",
+      "romanization": null,
+      "tip": "Roll the initial r by letting the tip of your tongue vibrate against the ridge behind your upper teeth.",
+      "note": null,
+      "distractors": [
+        "la venta",
+        "la compra",
+        "la deuda"
+      ]
+    },
+    {
+      "word": "el depósito",
+      "translation": "the deposit",
+      "pronunciation": "ehl deh-POH-see-toh",
+      "romanization": null,
+      "tip": "Stress the second syllable of depósito, not the third as in English “deposit.”",
+      "note": null,
+      "distractors": [
+        "el descuento",
+        "el recibo",
+        "el precio"
+      ]
+    },
+    {
+      "word": "los servicios",
+      "translation": "the utilities",
+      "pronunciation": "lohs sehr-VEE-syohs",
+      "romanization": null,
+      "tip": null,
+      "note": "In a rental, servicios can refer to utilities such as water and electricity.",
+      "distractors": [
+        "los muebles",
+        "los vecinos",
+        "los impuestos"
+      ]
+    },
+    {
+      "word": "¿cuánto cuestan?",
+      "translation": "how much do they cost?",
+      "pronunciation": "KWAHN-toh KWEHS-tahn",
+      "romanization": null,
+      "tip": "Keep the vowel sounds in each syllable together: cuánto has two syllables, not three.",
+      "note": "Use this plural question when asking about more than one thing.",
+      "distractors": [
+        "¿cuánto falta?",
+        "¿dónde están?",
+        "¿cuándo llegan?"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Cuánto es la renta?",
+      "translation": "How much is the rent?",
+      "explanation": "Use cuánto es to ask for the amount of the rent. Spanish puts the question phrase before la renta, just as English puts “how much is” before “the rent.”",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "eres",
+        "somos"
+      ],
+      "translationDistractors": [
+        "many",
+        "are",
+        "deposit"
+      ],
+      "speakingPrompt": "Ask how much the rent is."
+    },
+    {
+      "sentence": "¿Cuánto es el depósito?",
+      "translation": "How much is the deposit?",
+      "explanation": "El depósito comes after cuánto es, just as “the deposit” comes after “how much is” in English.",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "eres",
+        "somos"
+      ],
+      "translationDistractors": [
+        "many",
+        "are",
+        "rent"
+      ],
+      "speakingPrompt": "Ask how much the deposit is."
+    },
+    {
+      "sentence": "¿Los servicios están incluidos?",
+      "translation": "Are the utilities included?",
+      "explanation": "Los servicios means “the utilities.” Están incluidos means “are included,” and incluidos matches the plural servicios.",
+      "romanization": null,
+      "distractors": [
+        "está",
+        "incluida",
+        "soy"
+      ],
+      "translationDistractors": [
+        "is",
+        "deposit",
+        "was"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "La renta es de ocho mil pesos",
+      "translation": "The rent is eight thousand pesos",
+      "explanation": "Spanish commonly uses es de before an amount; English simply uses “is.”",
+      "romanization": null,
+      "distractors": [
+        "son",
+        "eres",
+        "somos"
+      ],
+      "translationDistractors": [
+        "deposit",
+        "hundred",
+        "dollars"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ask for an amount with cuánto es",
+    "text": "Use `¿Cuánto es ...?` to ask for the amount of a singular cost, such as `la renta` or `el depósito`. Put the cost after `es`: `¿Cuánto es la renta?` means “How much is the rent?” Don’t use `son` with these singular nouns.",
+    "examples": [
+      {
+        "sentence": "¿Cuánto es la renta?",
+        "translation": "How much is the rent?"
+      },
+      {
+        "sentence": "¿Cuánto es el depósito?",
+        "translation": "How much is the deposit?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the question.",
+      "template": "¿Cuánto [BLANK] la renta de la casa?",
+      "answer": "es",
+      "distractors": [
+        "son",
+        "eres",
+        "somos"
+      ],
+      "feedback": "Use es with the singular cost la renta."
+    },
+    {
+      "question": null,
+      "template": "¿Cuánto [BLANK] el depósito de la casa?",
+      "answer": "es",
+      "distractors": [
+        "son",
+        "eres",
+        "somos"
+      ],
+      "feedback": "El depósito is singular, so use es."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord says utilities are separate. Ask how much they cost.",
+    "scene": "An apartment viewing in Mexico City",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "¿Los servicios están incluidos?",
+        "translation": "Are the utilities included?"
+      },
+      {
+        "speaker": "them",
+        "text": "No, se pagan aparte. ¿Qué desea saber?",
+        "translation": "No, they’re paid separately. What would you like to know?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "¿Cuánto cuestan los servicios?",
+        "translation": "How much do the utilities cost?",
+        "isBest": true,
+        "why": "This asks for the cost of the utilities using the plural form cuestan."
+      },
+      {
+        "text": "¿Cuánto cuesta los servicios?",
+        "translation": "How much do the utilities cost?",
+        "isBest": false,
+        "why": "Cuesta is singular, but los servicios is plural."
+      },
+      {
+        "text": "¿Cuánto cuestamos los servicios?",
+        "translation": "How much do we cost the utilities?",
+        "isBest": false,
+        "why": "Cuestamos is the form for “we,” not for los servicios."
+      }
+    ],
+    "explanation": "When asking about several costs, use cuestan with a plural noun."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is the deposit?”",
+    "answers": [
+      "¿Cuánto es el depósito?",
+      "¿Cuánto cuesta el depósito?",
+      "¿De cuánto es el depósito?"
+    ],
+    "keyPoints": [
+      "Ask for the amount of the deposit.",
+      "Use el depósito for “the deposit.”"
+    ]
+  },
+  "summary": [
+    "“¿Cuánto es la renta?” asks how much the rent is.",
+    "“¿Cuánto es el depósito?” asks for the deposit amount.",
+    "“¿Los servicios están incluidos?” asks whether utilities are included.",
+    "“¿Cuánto cuestan los servicios?” asks how much the utilities cost."
+  ]
+}

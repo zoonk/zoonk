@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import taskPrompt from "./generate-items.prompt.md";
@@ -167,14 +167,18 @@ export async function generateItems(params: GenerateItemsParams) {
     },
   });
 
-  const systemPrompt = withItemRules(instructions, {
-    field: Boolean(params.field),
-    formats: [format],
-    languageGoal: Boolean(params.targetLanguage),
-    mock,
-    numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
-    severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
-    usedSituations,
+  const systemPrompt = fillPromptLanguages({
+    learnerLanguage: params.language,
+    targetLanguage: params.targetLanguage ?? undefined,
+    template: withItemRules(instructions, {
+      field: Boolean(params.field),
+      formats: [format],
+      languageGoal: Boolean(params.targetLanguage),
+      mock,
+      numericEntry: format === "numeric" && describeEntry(params.examFormat?.entry) !== null,
+      severalPicks: format === "multipleChoice" && picksSeveral(params.examFormat),
+      usedSituations,
+    }),
   });
 
   const schema = z.object({ items: z.array(GENERATED_ITEM_SCHEMAS[format]) });

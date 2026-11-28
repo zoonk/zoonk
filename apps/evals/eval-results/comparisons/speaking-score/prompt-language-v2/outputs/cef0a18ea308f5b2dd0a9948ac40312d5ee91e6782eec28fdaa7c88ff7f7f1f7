@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você organiza as ideias com clareza e usa contrastes e explicações, como em “But on the other hand, my job is here” e “because banning it completely is not realistic nowadays”. As respostas são coerentes, embora algumas ideias pudessem ser desenvolvidas com mais detalhes para sustentar uma faixa mais alta.",
+      "tip": "Depois de apresentar uma opinião, acrescente uma consequência ou um exemplo concreto. Por exemplo, depois de “everybody is looking at the phone instead of talking”, explique com “As a result, people may miss opportunities to have meaningful conversations.”",
+      "bandHigh": 7,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado para falar de tecnologia e vida urbana, incluindo expressões como “getting more expensive” e “a responsible way”. Algumas combinações de palavras soam pouco naturais, como “use it more in my day”, o que limita a precisão do vocabulário.",
+      "tip": "Para descrever o uso frequente do celular com mais precisão, troque “the thing I use more in my day” por “the device I rely on most throughout the day”.",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e complexas, por exemplo, “which is a big advantage” e “I would need to carry money”. Porém, há erros em construções frequentes, como “I use it since I wake up” e “use it for pay things”.",
+      "tip": "Para hábitos diários, use o presente simples; depois de “use something for”, use um substantivo ou um verbo com “-ing”. Assim, “I use it since I wake up” e “I use it for pay things” ficam “I use it from the moment I wake up” e “I use it for paying for things”.",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, guiada pelas outras faixas. Não há no texto sinais claros de palavras entendidas de forma errada ou de pedidos para repetir.",
+      "tip": "Para ajudar o ouvinte a reconhecer a palavra com facilidade, dê destaque à sílaba tônica de “responsible”: reSPONsible.",
+      "bandHigh": 7,
+      "bandLow": 6
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

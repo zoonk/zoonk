@@ -1,0 +1,334 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Ryan Kendal. That's K-E-N-D-A-L, just one L at the end.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course booking\nSurname: ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The surname Kendal, spelled with one final L."
+        ],
+        "acceptedAnswers": [
+          "Kendal"
+        ],
+        "sampleAnswer": "Kendal"
+      },
+      {
+        "evidence": "It's oh seven seven double oh, nine hundred, four eight two.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nContact number: ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The phone number 07700 900 482."
+        ],
+        "acceptedAnswers": [
+          "07700 900 482",
+          "07700900482"
+        ],
+        "sampleAnswer": "oh seven seven double oh, nine hundred, four eight two"
+      },
+      {
+        "evidence": "No, sorry, I've just remembered I work late on Tuesdays. I'll take the Thursday group.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nDay of class: ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "Thursday."
+        ],
+        "acceptedAnswers": [
+          "Thursday"
+        ],
+        "sampleAnswer": "Thursday"
+      },
+      {
+        "evidence": "The Tuesday group begins on the sixteenth of September, and your first session will be on the eighteenth of September.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nFirst session: ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "18 September."
+        ],
+        "acceptedAnswers": [
+          "18 September",
+          "18th September",
+          "September 18",
+          "September 18th"
+        ],
+        "sampleAnswer": "the eighteenth of September"
+      },
+      {
+        "evidence": "The centre opens at ten, but the class itself starts at quarter past ten.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nClass starts at: ______ a.m.\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "10:15."
+        ],
+        "acceptedAnswers": [
+          "10:15",
+          "10.15"
+        ],
+        "sampleAnswer": "quarter past ten"
+      },
+      {
+        "evidence": "the standard course fee is forty-eight pounds",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Pottery course booking\nStandard fee: £______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "48 pounds."
+        ],
+        "acceptedAnswers": [
+          "48",
+          "forty-eight"
+        ],
+        "sampleAnswer": "forty-eight pounds"
+      },
+      {
+        "evidence": "I first saw a poster at the library.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Pottery course booking\nWhere Ryan first heard about the course: the ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The library."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      },
+      {
+        "evidence": "But please bring an apron if you have one.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course booking\nWhat to bring: an ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "An apron."
+        ],
+        "acceptedAnswers": [
+          "apron"
+        ],
+        "sampleAnswer": "apron"
+      },
+      {
+        "evidence": "The door on the street is closed in the mornings, so go in through the garden.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Pottery course booking\nAccess to the pottery room: through the ______\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The garden."
+        ],
+        "acceptedAnswers": [
+          "garden"
+        ],
+        "sampleAnswer": "garden"
+      },
+      {
+        "evidence": "Once they're ready, we'll put your finished pieces on the shelf near reception.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course booking\nCollect finished work from the ______ near reception.\nWrite ONE WORD AND/OR A NUMBER.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The shelf."
+        ],
+        "acceptedAnswers": [
+          "shelf"
+        ],
+        "sampleAnswer": "shelf"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lucy",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Ryan",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a pottery course",
+    "turns": [
+      {
+        "speaker": "Lucy",
+        "text": "Good morning, Westbrook Arts Centre. Lucy speaking. How can I help?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Oh, hello. I'm interested in the beginners' pottery course. I saw some information about it, but I wasn't sure if there were still places."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Let me have a look. Yes, there are a few left. Would you like me to put your name down?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Yes, please. I've never worked with clay before, so I hope that's all right."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Absolutely. It's designed for complete beginners. Can I take your name first?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "It's Ryan Kendal. That's K-E-N-D-A-L, just one L at the end."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Thanks. And could I have a contact number? We usually send a text if there's a change to a class."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Sure. It's oh seven seven double oh, nine hundred, four eight two. I don't always answer calls during the day, but I'll see a text."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "That's fine. Now, there are two groups. One meets on Tuesday evenings and the other meets on Thursday mornings. Which would you prefer?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Tuesday would be good. No, sorry, I've just remembered I work late on Tuesdays. I'll take the Thursday group."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "No problem. Both groups run for six weeks. The Tuesday group begins on the sixteenth of September, and your first session will be on the eighteenth of September."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Right, I'll put that in my diary. Is it an early start?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "The centre opens at ten, but the class itself starts at quarter past ten. It finishes at twelve, with a short break in the middle."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "That gives me plenty of time to get there. And how much is the course? I saw a price online, but I wasn't sure whether it included materials."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "It does. The student rate is thirty-six pounds, but the standard course fee is forty-eight pounds. That covers the clay and the use of all the tools."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "I'll pay the standard fee, then. Can I pay when I come in for the first class?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Yes, by card or cash. Just come to the desk a little early so we can take payment before the class starts."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Will do. By the way, I noticed there were pictures of the students' work on your website. Some of it was really impressive."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Oh, good. Did you find out about the course on the website?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Actually, I first saw a poster at the library. Then I looked at your website to check the details."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "I'll make a note of that. It helps us decide where to advertise. Now, as for what to wear, old clothes are a good idea because clay can be messy."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Should I buy any equipment beforehand?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "No, we've got all the equipment here. But please bring an apron if you have one. We used to lend them out, but we don't have enough now."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "I've got one I use for cooking, so that'll be fine. Is the pottery room inside the main building?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "It's at the back. The door on the street is closed in the mornings, so go in through the garden. There's a path from the car park, and you'll see a sign for the pottery room."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Good, I know where the car park is. And do we take our pots home at the end of each class?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Not straight away. They need to dry, and then we heat them in the kiln. Once they're ready, we'll put your finished pieces on the shelf near reception. You can collect them from there."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Great. I'm looking forward to trying it. Thanks for your help."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "You're welcome, Ryan. We'll see you in September. Goodbye."
+      }
+    ]
+  }
+}

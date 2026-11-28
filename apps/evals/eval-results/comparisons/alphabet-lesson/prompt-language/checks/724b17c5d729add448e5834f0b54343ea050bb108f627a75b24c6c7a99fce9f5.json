@@ -1,0 +1,16 @@
+{
+  "blockingProblems": [],
+  "caseId": "pt-ru-cyrillic",
+  "costUsd": 0,
+  "criteria": [
+    "accuracy"
+  ],
+  "name": "code checks",
+  "passed": 7,
+  "problems": [
+    "A card plays a syllable its sound cue never shows."
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 8
+}

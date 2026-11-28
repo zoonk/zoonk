@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "Economia trata de como pessoas, empresas e governos usam recursos e tomam decisões. Aqui, ela passa por escolhas, mercados, produção, dinheiro, bancos, juros, inflação, empregos, comércio e políticas públicas, temas que ajudam a entender o que mexe com o bolso e com o país.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem cuida do orçamento da casa",
+      "Curiosos sobre preços e decisões do governo"
+    ],
+    "outcomes": [
+      "Escolher entre gastar agora e guardar para depois",
+      "Explicar por que os preços sobem ou caem",
+      "Explicar como inflação e juros afetam seu bolso",
+      "Explicar efeitos de impostos e gastos do governo"
+    ],
+    "valueProposition": "Tomar decisões melhores com dinheiro quando preços e juros mudam"
+  }
+}

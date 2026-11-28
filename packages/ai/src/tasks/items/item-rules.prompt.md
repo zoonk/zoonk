@@ -13,7 +13,7 @@
 - Fit `LEVEL`: overview and beginner questions use everyday words and one step; intermediate combine two ideas; advanced ones need judgment or several steps. For an exam, its own difficulty comes first (see "Exam style").
 {{/practice}}
 - Be correct. If a fact depends on a country, a date or an edition, name it in the question. Never invent statistics, laws or quotes.
-- All learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}. Speak to the learner as "you" in reasons and feedback.
+- All learner-facing text is in {{LEARNER_LANGUAGE}}{{LANGUAGE_GOAL_EXCEPTION}}. Speak to the learner as "you" in reasons and feedback.
 - Situations use the money and everyday life in `LOCAL_CONTEXT`, the country these skills are set in, unless `EXAM` or the skill sets another place (SAT questions stay American even in Portuguese). {{#mock}}Name people and towns only where the exam's own questions do; then they come{{/mock}}{{#practice}}People and towns come{{/practice}} from `CAST`, in its order: each question of a set has its own person and, when its situation needs a town, its own town, never the same name or city twice. Other questions are written at the same time with other casts, so never swap in the names every writer reaches for. A real person, company or city stays when the skill is about it.
 
 {{LANGUAGE_GOALS}}
@@ -44,4 +44,4 @@ A question whose words point at something to see shows it, and never describes i
 
 # Final check
 
-Before answering, make sure every question has exactly one defensible correct answer{{#severalPicks}} (or set of correct options, when the learner picks several){{/severalPicks}}, the answers are right, no option shows the computed result or the reasoning that picks it, no two questions test the same thing in the same way, and all learner-facing text is in `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.
+Before answering, make sure every question has exactly one defensible correct answer{{#severalPicks}} (or set of correct options, when the learner picks several){{/severalPicks}}, the answers are right, no option shows the computed result or the reasoning that picks it, no two questions test the same thing in the same way, and all learner-facing text is in {{LEARNER_LANGUAGE}}{{LANGUAGE_GOAL_CHECK}}.

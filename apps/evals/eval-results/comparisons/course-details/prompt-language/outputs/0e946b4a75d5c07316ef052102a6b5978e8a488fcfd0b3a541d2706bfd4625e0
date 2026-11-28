@@ -1,0 +1,15 @@
+
+      - MUST be in natural Polish, "ty" wherever the copy speaks to the visitor (never "Pan", "Pani" or "Państwo")
+      - The promise and the outcomes start with the infinitive, imperfective for a skill ("Liczyć…", "Rozpoznawać…"), never an imperative ("Policz…", "Sprawdź…")
+      - Uses Polish labor law and work situations: the Kodeks pracy, umowa o pracę versus umowa zlecenie, urlop, L4, the świadectwo pracy, the PIP. Penalize US at-will employment, dollars or Brazilian defaults (CLT, FGTS)
+      - Regulated profession: frames the course as understanding one's rights and duties at work and knowing when to ask a radca prawny, an adwokat or the PIP; nothing says or implies giving legal advice, representing anyone in court or replacing a lawyer or law school
+      - Audience examples like people on their first job, small business owners hiring their first employee, HR and payroll staff (kadry i płace) or law students fit
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

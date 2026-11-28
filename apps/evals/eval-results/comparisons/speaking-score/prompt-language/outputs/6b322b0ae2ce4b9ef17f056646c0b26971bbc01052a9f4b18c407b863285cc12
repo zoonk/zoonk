@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você apresenta o tema e a pergunta central, anuncia um plano, compara vantagens e desvantagens e conclui com uma posição: “La question que je me pose est la suivante : est-ce que le télétravail améliore vraiment la qualité de vie des salariés ?” e “Pour conclure, je pense que le télétravail améliore la qualité de vie, à condition qu'il soit bien organisé.” Os exemplos ajudam, mas os argumentos poderiam ser mais desenvolvidos e ligados ao documento de partida.",
+      "tip": "Desenvolva um argumento explicando também sua consequência para os trabalhadores. Por exemplo: “En réduisant les trajets, le télétravail permet aux salariés de consacrer davantage de temps à leur famille.”",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “la limite entre la vie professionnelle et la vie privée” e “le travail hybride”. A escolha é clara, mas o repertório permanece relativamente comum e pouco variado para aprofundar os argumentos.",
+      "tip": "Acrescente expressões que permitam qualificar os efeitos do teletrabalho, como “un meilleur équilibre entre vie professionnelle et vie personnelle”, para tornar sua argumentação mais precisa.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas, inclusive “à condition qu'il soit bien organisé”, mas há problemas de construção em “Les gens qui travaillent à la maison ils sont souvent plus isolés” e “Malgré que l'entreprise économise de l'argent”.",
+      "tip": "Quando o sujeito já aparece antes da oração relativa, não o repita com “ils”: diga “Les gens qui travaillent à la maison sont souvent plus isolés”, em vez de “Les gens qui travaillent à la maison ils sont souvent plus isolés”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, orientada pelo nível mostrado nas outras áreas. O texto não fornece sinais suficientes para determinar a clareza da pronúncia.",
+      "tip": "Ao falar, articule com clareza as sílabas de palavras importantes para o tema, como “télétravail”, “hybride” e “professionnelle”, para que sua argumentação seja fácil de acompanhar.",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

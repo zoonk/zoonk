@@ -1,0 +1,109 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00230994,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "a9dbccf084b52006d2f48848aa97772ae6531ec95404b39cfb999a2314e0b13b",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "All accepted answers are stated in the transcripts and fit grammatically into their gaps.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use a single-speaker monologue and six ordered sentence-completion questions, with scripts that appear to fit the requested length.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as clear spoken presentations, and the questions are in English as required.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Neither set serves the learner noticeably better: both have fair keys and comparable exam-style monologues and questions."
+        },
+        "pairId": "73cea9c8-2124-458d-8e47-7b826679d977"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The accepted answers in both copies match the transcript and complete their sentences grammatically.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both copies use the same single-speaker monologue, length, and six ordered completion questions.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The scripts and questions are identical and read as spoken English.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "822c4b89-4ac5-4348-a710-cfa9652583cd"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Each question has a defensible answer supported by the Spanish script, and the distractors do not appear to create a second correct option.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same Spanish monologue and five ordered multiple-choice questions with three options each.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B keeps the explanations in Brazilian Portuguese throughout; A includes a Spanish word in one explanation.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "This explanation starts with the Spanish word “Oyes” rather than Portuguese “Você ouve”; the rest of the explanation is in Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner can likely understand it from context, but the unexpected Spanish word makes the explanation less consistent and slightly harder to read.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B fixes the isolated Spanish word in A's Portuguese explanations; otherwise the sets are equivalent."
+        },
+        "pairId": "e28b1883-b599-47fb-8ca5-27ab4a9eded6"
+      }
+    ]
+  }
+}

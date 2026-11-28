@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Vous êtes dans un musée à Rennes. Vous souhaitez réserver un atelier de peinture.",
+    "Vous demandez des informations à la personne à l’accueil, puis vous réservez. Vous jouez la scène avec l’examinateur.",
+    "Vous avez environ 4 minutes."
+  ],
+  "prompts": [
+    "Vous demandez les horaires et la durée de l’atelier.",
+    "Vous demandez le prix et le matériel nécessaire.",
+    "Vous choisissez un horaire et vous réservez."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "You will speak with the examiner, who plays a museum receptionist. Ask for information and make a reservation, using greetings and polite expressions.",
+  "character": {
+    "name": "Juliette",
+    "role": "museum receptionist",
+    "place": "Accueil du musée à Rennes"
+  },
+  "characterBrief": "Play Juliette, the museum receptionist. Begin with the opening line, then let the candidate start the conversation. Stay in role and respond naturally in French. The painting workshop takes place this Saturday at 10 a.m. and 2 p.m. Each session lasts an hour and a half and costs 8 euros. All materials are provided. There are places available at both times. Payment is at the museum reception on the day. Give details when asked, rather than all at once. If the candidate needs support, say: « Qu’est-ce que vous voulez savoir ? » When they are ready to book, ask: « Vous préférez quelle heure ? » and « Quel est votre nom, s’il vous plaît ? » Confirm with: « C’est noté. Votre réservation est pour samedi à [heure]. » If the answer is unclear, say: « Vous pouvez répéter, s’il vous plaît ? » Finish with: « Merci et à samedi. Au revoir ! » Allow time for the candidate to ask questions and close the conversation. Do not correct, praise, or grade.",
+  "openingLine": "Vous souhaitez réserver un atelier de peinture au musée. Je suis la personne à l’accueil. Vous pouvez commencer.",
+  "hints": [
+    "Bonjour, je voudrais avoir des informations, s’il vous plaît.",
+    "Est-ce que vous pouvez me dire à quelle heure ça commence ?",
+    "Combien de temps est-ce que ça dure ?",
+    "Je préfère cet horaire, s’il vous plaît.",
+    "Merci beaucoup. Au revoir !"
+  ]
+}

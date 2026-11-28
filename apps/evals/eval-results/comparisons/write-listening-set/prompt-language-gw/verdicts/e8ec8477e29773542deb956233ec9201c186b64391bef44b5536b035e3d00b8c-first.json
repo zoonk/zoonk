@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00237874,
+  "failures": [],
+  "packetId": "e8ec8477e29773542deb956233ec9201c186b64391bef44b5536b035e3d00b8c",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As seis respostas de cada conjunto estão apoiadas no roteiro, e as frases ficam gramaticais com as respostas aceitas.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos usam um monólogo de uma só falante, com seis lacunas e roteiros de extensão plausível; nenhum se destaca claramente em relação ao formato pedido.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois roteiros soam como falas coerentes e têm aberturas e fechamentos naturais, sem uma vantagem clara de um sobre o outro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os conjuntos são igualmente corretos e adequados ao formato solicitado, sem diferença clara na experiência do aprendiz."
+        },
+        "pairId": "15634790-2573-4075-b8ed-ccf1e1ac2ed1"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs são idênticos, e todas as respostas aceitas constam no roteiro e completam as frases gramaticalmente.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs são idênticos e usam o mesmo monólogo e formato de conclusão de frases.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois outputs são idênticos; o roteiro tem uma fala coerente e linguagem adequada a um monólogo oral.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os outputs são idênticos e igualmente adequados."
+        },
+        "pairId": "4a76135b-1598-4fef-afe9-03f5cb0b8444"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas estão sustentadas pelo roteiro, e os distratores correspondem a detalhes mencionados ou possibilidades rejeitadas.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos apresentam um monólogo em espanhol seguido de questões de múltipla escolha; não há diferença relevante de formato entre eles.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém todas as razões e concepções equivocadas em português brasileiro; B deixa trechos em espanhol, contrariando a expectativa de idioma.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Na questão 2, a razão de uma alternativa e a razão da resposta correta estão em espanhol, embora as razões e concepções equivocadas devam estar em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O aprendiz pode ter dificuldade para entender a explicação e não recebe feedback no idioma esperado.",
+            "location": {
+              "detail": "\"Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.\" e \"Oyes que aceptaron objetos en buen estado o que solo necesitaran un arreglo sencillo.\"",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As perguntas e o roteiro são equivalentes, mas A cumpre a exigência de manter as razões em português brasileiro, enquanto B inclui explicações em espanhol."
+        },
+        "pairId": "784ddf19-59f4-4765-a6df-4366694dee81"
+      }
+    ]
+  }
+}

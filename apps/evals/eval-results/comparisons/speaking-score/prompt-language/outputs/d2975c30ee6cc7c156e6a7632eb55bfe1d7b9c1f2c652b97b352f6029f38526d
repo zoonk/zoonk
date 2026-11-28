@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Mantienes las respuestas relacionadas con cada pregunta y enlazas ideas con expresiones como “Also” y “For example”. Sin embargo, algunas respuestas se desarrollan poco y dependes de conectores básicos, como en “I enjoyed it because the city is very beautiful”.",
+      "tip": "Amplía cada respuesta con una causa o un contraste antes de pasar a otra idea. Por ejemplo: “Although the tram was crowded, I enjoyed exploring Alfama because its streets felt full of history.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario pertinente para hablar de viajes y turismo, como “the old part of the city, Alfama” y “the prices of the flats”. Aun así, varias descripciones son generales, por ejemplo “very beautiful” y “very kind”, y hay poca variedad de expresiones.",
+      "tip": "Cambia adjetivos generales por descripciones más específicas. En vez de “the city is very beautiful”, prueba “Alfama has a charming, historic atmosphere.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Comunicas tus ideas con estructuras sencillas y algunas oraciones más largas, pero hay errores frecuentes de tiempo verbal y concordancia, como “we eat a lot of fish” y “the people was very kind”.",
+      "tip": "Para narrar un viaje que ya terminó, usa el pasado simple en los verbos de las acciones: “we eat a lot of fish” → “we ate a lot of fish.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonaste ni muestra señales claras de que no se entendieran tus palabras, así que este rango es una estimación más amplia.",
+      "tip": "Para que se entiendan con claridad, marca las sílabas tónicas de “mountains” y “tourists”: “MOUN-tains” y “TOUR-ists”.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

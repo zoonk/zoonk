@@ -1,0 +1,15 @@
+{
+  "caseId": "pt-career-change-ux",
+  "costUsd": 0,
+  "criteria": [
+    "orderAndPrerequisites"
+  ],
+  "name": "code checks",
+  "passed": 7,
+  "problems": [
+    "\"Participar de entrevistas para UX\" sits at the end of a chain of 14 prerequisites; list only what a skill can't be learned without (at most 12 deep)."
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 8
+}

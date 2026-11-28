@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobre bem as cinco partes: apresenta o tema e a estrutura, fala da própria experiência e do Brasil, compara vantagens e desvantagens, dá sua opinião e encerra com agradecimento. Isso aparece, por exemplo, em “Ein großer Vorteil ist, dass man flexibel ist und Geld spart” e “Meiner Meinung nach ist eine Mischung am besten”.",
+      "tip": "Acrescente um exemplo concreto à situação no Brasil, como “Zum Beispiel können Menschen in abgelegenen Regionen online an einem Deutschkurs teilnehmen”.",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação segue uma linha fácil de acompanhar, com etapas explicitadas por “Zuerst”, “danach”, “anschließend” e “zum Schluss”. Você também conecta ideias por causa e consequência, como em “Viele Leute wohnen weit weg von großen Städten, deshalb ist das Internet für sie oft die einzige Möglichkeit”.",
+      "tip": "Retome sua ideia principal ao concluir para deixar o encerramento ainda mais ligado ao tema: “Deshalb halte ich eine Mischung aus Online-Lernen und Präsenzkursen für die beste Lösung”.",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema, como “Vollzeit”, “flexibel” e “sich selbst motivieren”, e expressa as ideias com clareza. A escolha lexical é, porém, bastante direta e há poucas expressões mais específicas para desenvolver as comparações.",
+      "tip": "Troque uma descrição geral por uma expressão mais precisa: em vez de “weit weg von großen Städten”, você pode dizer “in ländlichen Regionen, die weit von Großstädten entfernt liegen”.",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você controla bem estruturas variadas, incluindo orações com “weil” e “damit”, além de uma oração relativa em “in einem Kurs, in dem der Lehrer einen direkt korrigiert”. As frases estão bem formadas e ajudam a explicar causas, objetivos e contrastes.",
+      "tip": "Para acrescentar uma estrutura de concessão, use “obwohl”, que coloca o verbo no fim da oração subordinada. Por exemplo, transforme “Ein Nachteil ist jedoch, dass man sich selbst motivieren muss” em “Obwohl man flexibel lernt, muss man sich selbst motivieren”.",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, alinhada às outras evidências do seu desempenho. Não há no registro sinais indiretos claros de que palavras tenham ficado difíceis de entender.",
+      "tip": "Ao apresentar, articule com clareza as sílabas de “Möglichkeit” e “motivieren” para que essas palavras sejam facilmente compreendidas.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

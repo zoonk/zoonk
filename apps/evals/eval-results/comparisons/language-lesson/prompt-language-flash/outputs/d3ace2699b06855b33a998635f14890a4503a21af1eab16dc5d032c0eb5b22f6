@@ -1,0 +1,229 @@
+{
+  "words": [
+    {
+      "word": "la renta",
+      "translation": "the rent",
+      "pronunciation": "lah RREHN-tah",
+      "romanization": null,
+      "tip": "The initial 'r' is strongly trilled: curl the tip of your tongue near the ridge behind your upper teeth and let it vibrate.",
+      "note": "In Mexico, 'la renta' is standard; 'el alquiler' is rarely used.",
+      "distractors": [
+        "la venta",
+        "la cuenta",
+        "la receta"
+      ]
+    },
+    {
+      "word": "el depósito",
+      "translation": "the deposit",
+      "pronunciation": "ehl deh-POH-see-toh",
+      "romanization": null,
+      "tip": "Stress falls on the 'pó' syllable, exactly where the written accent is.",
+      "note": null,
+      "distractors": [
+        "el descuento",
+        "el descanso",
+        "el documento"
+      ]
+    },
+    {
+      "word": "los servicios",
+      "translation": "the utilities",
+      "pronunciation": "lohs sehr-BEE-syohs",
+      "romanization": null,
+      "tip": "In Mexican Spanish, the 'c' before 'i' makes an 's' sound, never a 'th'.",
+      "note": "In Mexico, 'los servicios' covers household bills like electricity, gas, and water.",
+      "distractors": [
+        "los socios",
+        "los secretos",
+        "los sueldos"
+      ]
+    },
+    {
+      "word": "el mantenimiento",
+      "translation": "the maintenance fee",
+      "pronunciation": "ehl mahn-teh-nee-MYEHN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": "In Mexico City apartment buildings, 'el mantenimiento' covers building security, cleaning, and common areas.",
+      "distractors": [
+        "el medicamento",
+        "el matrimonio",
+        "el monumento"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Cuánto es de renta al mes?",
+      "translation": "How much is the rent per month?",
+      "explanation": "Mexican Spanish commonly uses '¿Cuánto es de...?' rather than a literal 'How much is the...'. 'Al mes' expresses 'per month'.",
+      "romanization": null,
+      "distractors": [
+        "por",
+        "para",
+        "son"
+      ],
+      "translationDistractors": [
+        "year",
+        "week",
+        "deposit"
+      ],
+      "speakingPrompt": "Ask the landlord how much the monthly rent is"
+    },
+    {
+      "sentence": "¿Pide un mes de depósito?",
+      "translation": "Do you require one month's deposit?",
+      "explanation": "The verb 'pedir' (in the polite 'usted' form, 'pide') is standard in Mexico when asking what a landlord requires.",
+      "romanization": null,
+      "distractors": [
+        "paga",
+        "pone",
+        "pasa"
+      ],
+      "translationDistractors": [
+        "rent",
+        "contract",
+        "fee"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "¿Los servicios están incluidos en la renta?",
+      "translation": "Are the utilities included in the rent?",
+      "explanation": "'Están incluidos' matches 'los servicios' in masculine plural. Use 'en la renta' for 'in the rent'.",
+      "romanization": null,
+      "distractors": [
+        "incluido",
+        "incluida",
+        "es"
+      ],
+      "translationDistractors": [
+        "excluded",
+        "cheap",
+        "furniture"
+      ],
+      "speakingPrompt": "Ask if utilities are included in the rent"
+    },
+    {
+      "sentence": "El mantenimiento cuesta mil pesos extras",
+      "translation": "The maintenance fee costs an extra one thousand pesos",
+      "explanation": "In Mexican currency amounts, 'pesos' follows the number directly, and 'extras' specifies an additional fee.",
+      "romanization": null,
+      "distractors": [
+        "cuestan",
+        "pesa",
+        "de"
+      ],
+      "translationDistractors": [
+        "dollars",
+        "discount",
+        "free"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Asking costs with ¿Cuánto es de...?",
+    "text": "In Mexico, when inquiring about fees, bills, or rent amounts, speakers naturally use `¿Cuánto es de...?` followed by the noun. It means 'How much is it for...?' or 'How much is the...?'. Avoid translating English word-for-word as `¿Cuánto es la renta?`.",
+    "examples": [
+      {
+        "sentence": "¿Cuánto es de renta?",
+        "translation": "How much is the rent?"
+      },
+      {
+        "sentence": "¿Cuánto es de depósito?",
+        "translation": "How much is the deposit?"
+      },
+      {
+        "sentence": "¿Cuánto es de servicios?",
+        "translation": "How much are the utilities?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Fill in the word that follows ¿Cuánto es to ask about the deposit.",
+      "template": "¿Cuánto es [BLANK] depósito?",
+      "answer": "de",
+      "distractors": [
+        "a",
+        "en",
+        "por"
+      ],
+      "feedback": "Use 'de' after '¿Cuánto es' to specify which fee or cost you are asking about."
+    },
+    {
+      "question": "Choose the form that agrees with los servicios.",
+      "template": "¿Los servicios están [BLANK] en la renta?",
+      "answer": "incluidos",
+      "distractors": [
+        "incluido",
+        "incluida",
+        "incluidas"
+      ],
+      "feedback": "'Incluidos' must agree in gender (masculine) and number (plural) with 'los servicios'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord asks if you have questions about the costs. What do you say?",
+    "scene": "A phone call with a landlord in Mexico City",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenas tardes, el departamento en la colonia Roma sigue disponible",
+        "translation": "Good afternoon, the apartment in Colonia Roma is still available"
+      },
+      {
+        "speaker": "you",
+        "text": "Buenas tardes, me interesa mucho",
+        "translation": "Good afternoon, I am very interested"
+      },
+      {
+        "speaker": "them",
+        "text": "Perfecto, ¿tiene alguna pregunta sobre los costos?",
+        "translation": "Perfect, do you have any questions about the costs?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "¿Cuánto es de renta y depósito?",
+        "translation": "How much is the rent and deposit?",
+        "isBest": true,
+        "why": "This uses the natural Mexican structure '¿Cuánto es de...?' to ask about both core costs."
+      },
+      {
+        "text": "¿Cuánto es de fianza?",
+        "translation": "How much is the deposit?",
+        "isBest": false,
+        "why": "'Fianza' is European Spanish; in Mexico, people say 'depósito'."
+      },
+      {
+        "text": "¿Cuánto cuesta de servicios incluidos?",
+        "translation": "How much does included utilities cost?",
+        "isBest": false,
+        "why": "Do not mix 'cuesta' with 'de' in this phrase; ask '¿Están incluidos?' instead."
+      }
+    ],
+    "explanation": "Remember to use 'depósito' in Mexico for a security deposit and '¿Cuánto es de...?' when asking about costs."
+  },
+  "writing": {
+    "prompt": "Write a message asking the landlord: 'Are utilities included in the rent?'",
+    "answers": [
+      "¿Los servicios están incluidos en la renta?",
+      "¿Están incluidos los servicios en la renta?",
+      "¿Los servicios van incluidos en la renta?"
+    ],
+    "keyPoints": [
+      "Uses 'los servicios' for utilities",
+      "Uses the masculine plural form 'incluidos'",
+      "Uses 'en la renta' for in the rent"
+    ]
+  },
+  "summary": [
+    "'¿Cuánto es de renta al mes?' asks how much the monthly rent is.",
+    "'¿Pide un mes de depósito?' asks if one month's deposit is required.",
+    "'¿Los servicios están incluidos en la renta?' asks whether utilities are part of the rent price."
+  ]
+}

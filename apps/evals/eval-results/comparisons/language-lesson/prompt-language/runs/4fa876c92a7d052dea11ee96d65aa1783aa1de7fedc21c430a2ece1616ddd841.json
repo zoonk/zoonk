@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-it-a2-past-weather",
+  "challenger": {
+    "costUsd": 0.0215225,
+    "durationMs": 34602.0309159999,
+    "hash": "fa2caea3f034a6ee9c84e19c693d4c2f440cd55a211a1e72027d8c8626c39244",
+    "systemPromptHash": "a09e450ec802b292fe9ff6cffe641a0e75a5beb4c821ef32ad3188a822576185",
+    "userPromptHash": "7b5059515101d5d8692d904ffd016c8f94ca7635d4251e3d131231e01da40420"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.018697500000000002,
+    "durationMs": 27797.842458000057,
+    "hash": "9c6ebe983d6bd095fd839c1ddf953ef824e961cf6f2eb1640fdb89b8a1df0c89",
+    "systemPromptHash": "335a2e0d8ad137b3925a26f82221f2130fb4a397c8b5554aa12f48cc9ce862ca",
+    "userPromptHash": "7b5059515101d5d8692d904ffd016c8f94ca7635d4251e3d131231e01da40420"
+  },
+  "run": 1
+}

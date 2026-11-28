@@ -1,0 +1,225 @@
+{
+  "words": [
+    {
+      "word": "Thanks for having me",
+      "translation": "obrigado por me receber",
+      "pronunciation": "THÉNGKS fór RRE-vin mi",
+      "romanization": null,
+      "tip": "Em \"thanks\", inicie com o som de \"th\" colocando a ponta da língua suavemente entre os dentes da frente sem vibrar as cordas vocais.",
+      "note": null,
+      "distractors": [
+        "Thanks for taking me",
+        "Thanks to have me",
+        "Thanks for getting me"
+      ]
+    },
+    {
+      "word": "to walk you through",
+      "translation": "guiar você por",
+      "pronunciation": "tu UÓK iu THRU",
+      "romanization": null,
+      "tip": "Na palavra \"walk\", a letra \"l\" é completamente muda; pronuncie diretamente o som de \"uók\".",
+      "note": "Use esta expressão acompanhada de substantivos como \"my background\" ou \"my resume\" para indicar uma explicação passo a passo.",
+      "distractors": [
+        "to run you through",
+        "to talk you out",
+        "to walk you over"
+      ]
+    },
+    {
+      "word": "a background in",
+      "translation": "uma bagagem em",
+      "pronunciation": "ei BÉK-graund in",
+      "romanization": null,
+      "tip": "No \"r\" de \"background\", curve a ponta da língua para trás sem encostar no céu da boca, evitando o som aspirado do \"r\" inicial em português.",
+      "note": "Em inglês profissional, usamos \"background\" no singular acompanhado da preposição \"in\" para indicar formação ou histórico de atuação.",
+      "distractors": [
+        "a baggage in",
+        "a history on",
+        "a past with"
+      ]
+    },
+    {
+      "word": "to kick things off",
+      "translation": "para dar início",
+      "pronunciation": "tu KIK THINGZ ÓF",
+      "romanization": null,
+      "tip": "Em \"kick\", termine a palavra interrompendo o som do \"k\" abruptamente, sem adicionar nenhuma vogal após a consoante final.",
+      "note": "Expressão idiomática corporativa muito comum nos Estados Unidos para começar reuniões ou entrevistas de forma fluida.",
+      "distractors": [
+        "to push things off",
+        "to start things up",
+        "to pass things on"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me, Diego",
+      "translation": "Obrigado por me receber, Diego",
+      "explanation": "Nos Estados Unidos, iniciar a entrevista com 'Thanks for having me' demonstra polidez imediata. Note que preposições como 'for' exigem que o verbo seguinte receba '-ing'.",
+      "romanization": null,
+      "distractors": [
+        "have",
+        "to",
+        "holding"
+      ],
+      "translationDistractors": [
+        "chamar",
+        "tempo",
+        "agradecer"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por receber você na entrevista"
+    },
+    {
+      "sentence": "I have a solid background in project coordination",
+      "translation": "Eu tenho uma bagagem sólida em coordenação de projetos",
+      "explanation": "Combinar 'a background in' com um adjetivo como 'solid' resume sua qualificação geral antes de detalhar cargos específicos.",
+      "romanization": null,
+      "distractors": [
+        "baggage",
+        "on",
+        "at"
+      ],
+      "translationDistractors": [
+        "histórico",
+        "começo",
+        "currículo"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I can walk you through my recent work",
+      "translation": "Posso guiar você pelos meus trabalhos recentes",
+      "explanation": "A expressão 'walk you through' projeta segurança ao propor que você vai explicar suas experiências ponto a ponto de maneira organizada.",
+      "romanization": null,
+      "distractors": [
+        "across",
+        "talk",
+        "along"
+      ],
+      "translationDistractors": [
+        "mostrar",
+        "passar",
+        "estudos"
+      ],
+      "speakingPrompt": "Diga que pode guiar o entrevistador pelas suas experiências de trabalho recentes"
+    },
+    {
+      "sentence": "To kick things off, I'd like to share a brief overview",
+      "translation": "Para dar início, gostaria de compartilhar uma breve visão geral",
+      "explanation": "'To kick things off' serve como uma transição inicial elegante antes de você apresentar o panorama do seu perfil profissional.",
+      "romanization": null,
+      "distractors": [
+        "starting",
+        "out",
+        "bring"
+      ],
+      "translationDistractors": [
+        "apenas",
+        "relatório",
+        "começar"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Verbos com -ing após a preposição for",
+    "text": "Em inglês, qualquer verbo que venha logo após uma preposição precisa assumir a terminação `-ing`. O erro mais frequente de falantes de português é manter o infinitivo como se faz na nossa língua. Em vez de dizer `Thanks for invite me`, diga `Thanks for having me` ou `Thanks for taking the time`.",
+    "examples": [
+      {
+        "sentence": "Thanks for having me today",
+        "translation": "Obrigado por me receber hoje"
+      },
+      {
+        "sentence": "Thanks for taking the time to meet with me",
+        "translation": "Obrigado por disponibilizar esse tempo para falar comigo"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Selecione a forma correta do verbo após a preposição.",
+      "template": "Thanks for [BLANK] the time to speak with me today.",
+      "answer": "taking",
+      "distractors": [
+        "take",
+        "to take",
+        "took"
+      ],
+      "feedback": "Após a preposição 'for', qualquer verbo deve receber a terminação '-ing'."
+    },
+    {
+      "question": "Complete a frase de abertura da entrevista.",
+      "template": "Thank you for [BLANK] me to this interview.",
+      "answer": "inviting",
+      "distractors": [
+        "invite",
+        "invited",
+        "to invite"
+      ],
+      "feedback": "O verbo 'invite' precisa da terminação '-ing' por vir imediatamente depois de 'for'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador acabou de convidar você a começar a apresentação pessoal. Como você responde?",
+    "scene": "Uma sala de entrevista de emprego em Chicago com o recrutador Liam",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Good morning! Thanks for coming in today.",
+        "translation": "Bom dia! Obrigado por vir hoje."
+      },
+      {
+        "speaker": "you",
+        "text": "Good morning! Thanks for having me, Liam.",
+        "translation": "Bom dia! Obrigado por me receber, Liam."
+      },
+      {
+        "speaker": "them",
+        "text": "To kick things off, could you tell me a little about yourself?",
+        "translation": "Para dar início, você poderia me contar um pouco sobre você?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Sure, I have a solid background in operations, and I can walk you through my recent work.",
+        "translation": "Claro, tenho uma bagagem sólida em operações e posso guiar você pelos meus trabalhos recentes.",
+        "isBest": true,
+        "why": "Esta resposta abre a fala com segurança, resume a área de atuação com 'background in' e oferece um roteiro claro com 'walk you through'."
+      },
+      {
+        "text": "Sure, thanks for have me, I have a baggage in operations.",
+        "translation": "Claro, obrigado por me ter, eu tenho uma bagagem em operações.",
+        "isBest": false,
+        "why": "'Thanks for have me' erra a forma verbal após preposição, e 'baggage' significa malas físicas de viagem, sendo um falso amigo para histórico profissional."
+      },
+      {
+        "text": "I can walk you across my project because I am very nervous.",
+        "translation": "Posso caminhar através do meu projeto porque estou muito nervoso.",
+        "isBest": false,
+        "why": "A preposição correta na expressão é 'through', não 'across', e expressar nervosismo logo na abertura prejudica a firmeza da resposta."
+      }
+    ],
+    "explanation": "Na clássica pergunta 'tell me about yourself', responda oferecendo um panorama geral da sua área e proponha conduzir os tópicos com 'walk you through'."
+  },
+  "writing": {
+    "prompt": "Escreva uma mensagem de agradecimento ao entrevistador logo no início do contato: 'Obrigado por me receber hoje, Liam.'",
+    "answers": [
+      "Thanks for having me today, Liam.",
+      "Thanks for having me today Liam.",
+      "Thank you for having me today, Liam.",
+      "Thank you for having me today Liam."
+    ],
+    "keyPoints": [
+      "Usa 'having' com a terminação '-ing' após a preposição 'for'",
+      "Inicia com a expressão 'Thanks for' ou 'Thank you for'"
+    ]
+  },
+  "summary": [
+    "'Thanks for having me' agradece o convite para a entrevista de maneira profissional",
+    "'I have a background in...' introduz a sua área de atuação ou especialidade",
+    "'I can walk you through...' propõe guiar o interlocutor pelos seus projetos passo a passo"
+  ]
+}

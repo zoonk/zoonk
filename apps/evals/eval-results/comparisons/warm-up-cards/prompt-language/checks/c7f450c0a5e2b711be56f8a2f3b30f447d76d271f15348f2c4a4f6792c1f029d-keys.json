@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-enem",
+  "costUsd": 0.027504,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"Energia disponível\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Available energy decreases at each trophic transfer, but “matéria dos organismos” can mean biomass. In a grass → rabbit → fox chain, biomass also tends to decrease at higher levels. The stem asks for a tendency, so both answers fit; matter cycling does not imply equal biomass at each level.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 10
+}

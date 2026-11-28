@@ -1,0 +1,14 @@
+{
+  "wentWell": [
+    "¿Cuánto es la renta?",
+    "Quiero ver el departamento el sábado, ¿podés?",
+    "Perfecto, el sábado a las cinco me viene bien."
+  ],
+  "improve": {
+    "said": "¿Vos sabés si el departamento es disponible?",
+    "better": "¿Vos sabés si el departamento está disponible?",
+    "why": "En español se usa 'estar' para hablar de cosas que pueden cambiar o para la disponibilidad actual."
+  },
+  "pronunciation": [],
+  "encouragement": "Lograste preguntar por el precio y coordinar una visita para el sábado."
+}

@@ -1,0 +1,115 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00678139,
+  "failures": [],
+  "packetId": "30f43beccc25d6a8c2c7abc58f9d778dc4190efe4e822976a652f67224e57d9a",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same correct keys and the same distractors, and each key is supported by the recording.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets are identical in format, length, question order and difficulty, so neither looks more like the DELE listening task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output A writes its reasons and misconceptions in Brazilian Portuguese, as the expectations require. Output B writes several of them in Spanish, which the Brazilian learner cannot read.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reason for a wrong option is written in Spanish, though the expectations require reasons in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read why the option is wrong and cannot learn from the feedback on that item.",
+            "location": {
+              "detail": "Question 2, first option reason.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The misconception note is written in Spanish, not Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation of the error they might have made, so the item gives no useful feedback.",
+            "location": {
+              "detail": "Question 2, first option misconception.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The keys and the set are the same in both, but B's reasons and misconceptions are in Spanish, so its feedback is unreadable for the Brazilian learner."
+        },
+        "pairId": "323f2f7c-99e1-4e0b-9464-b43a2713efd0"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same set, and every accepted answer is in the transcript and fits its gap grammatically.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are the same set in the same format, and each has six questions with the right kind of distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same script and the same natural British speech.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "4050b574-5c8b-48d7-8012-a10becab1fd7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have accepted answers that are in the transcript, grammatical in their gaps, and fair, with distractors that the recording rejects.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are six-item sentence completion sets on a British monologue, matching the Cambridge B2 First Part 2 format.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like natural spoken British English, with contractions and no stage directions.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both sets are fair, accurate and realistic for the exam task, so neither serves the learner noticeably better."
+        },
+        "pairId": "b2410a14-6423-4a62-a017-63bd26892fa3"
+      }
+    ]
+  }
+}

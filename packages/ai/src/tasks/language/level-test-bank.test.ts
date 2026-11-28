@@ -18,7 +18,9 @@ vi.mock("./level-test-confirmations.prompt.md", () => ({
 
 vi.mock("./level-test-ladder.prompt.md", () => ({ default: "# Levels\n" }));
 
-vi.mock("./level-test-language-rules.prompt.md", () => ({ default: "# Language rules\n" }));
+vi.mock("./level-test-language-rules.prompt.md", () => ({
+  default: "{{TARGET_LANGUAGE}} texts, {{LEARNER_LANGUAGE}} questions.\n",
+}));
 
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
@@ -133,6 +135,7 @@ describe(generateLevelTestBankPart, () => {
 
     for (const [options] of vi.mocked(generateText).mock.calls) {
       expect(options.model).toBe(MODEL);
+      expect(options.instructions).toContain("US English texts, Português Brasileiro questions.");
 
       const fallbacks = promptOf(options).includes("READING_WORDS")
         ? ["openai/gpt-6.1-terra"]

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-es-dele-a2-role-play-continues-photo",
+  "challenger": {
+    "costUsd": 0.0036086,
+    "durationMs": 9903.462417000002,
+    "hash": "db06eceeb03dc1fa671359a65be7aca135db5de45041b39a8862e45ffbda3c7a",
+    "systemPromptHash": "f5fffede3bc2b10327e59448b3a821aadee8eddb51991763870b5c2a5d598147",
+    "userPromptHash": "1a2883da6dc55d0f779879df8d87c32b919b793e497f0244374925901c6f502e"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

@@ -1,0 +1,198 @@
+{
+  "cards": [
+    {
+      "question": "Em uma campanha, “Vacine-se: proteja quem você ama” busca principalmente…",
+      "options": [
+        {
+          "text": "Convencer o leitor",
+          "correct": true
+        },
+        {
+          "text": "Relatar um acontecimento",
+          "correct": false
+        },
+        {
+          "text": "Explicar uma palavra",
+          "correct": false
+        }
+      ],
+      "reveal": "Convencer o leitor. A frase tenta influenciar uma atitude, destacando um motivo para agir."
+    },
+    {
+      "question": "Na frase “Queria sair, mas começou a chover”, “mas” indica uma relação de…",
+      "options": [
+        {
+          "text": "Contraste entre ideias",
+          "correct": true
+        },
+        {
+          "text": "Sequência temporal",
+          "correct": false
+        },
+        {
+          "text": "Relação de causa",
+          "correct": false
+        }
+      ],
+      "reveal": "Contraste entre ideias. O “mas” mostra que a chuva contraria a expectativa de sair."
+    },
+    {
+      "question": "No Sudeste brasileiro do século XIX, a construção de ferrovias se expandiu ligada sobretudo ao escoamento de…",
+      "options": [
+        {
+          "text": "Café",
+          "correct": true
+        },
+        {
+          "text": "Petróleo",
+          "correct": false
+        },
+        {
+          "text": "Borracha amazônica",
+          "correct": false
+        }
+      ],
+      "reveal": "Café. As ferrovias ajudavam a levar a produção das áreas cafeeiras até os portos para exportação."
+    },
+    {
+      "question": "Quando uma criança aprende regras de convivência observando a família e a escola, esse processo é chamado de…",
+      "options": [
+        {
+          "text": "Socialização",
+          "correct": true
+        },
+        {
+          "text": "Urbanização",
+          "correct": false
+        },
+        {
+          "text": "Divisão do trabalho",
+          "correct": false
+        }
+      ],
+      "reveal": "Socialização. Nas interações com outras pessoas, aprendemos normas, valores e formas de conviver."
+    },
+    {
+      "question": "Num bairro com muito asfalto e poucas árvores, o que tende a acontecer com a temperatura local?",
+      "options": [
+        {
+          "text": "Aumentar",
+          "correct": true
+        },
+        {
+          "text": "Diminuir",
+          "correct": false
+        },
+        {
+          "text": "Ficar sempre igual",
+          "correct": false
+        }
+      ],
+      "reveal": "Aumentar. O asfalto absorve e libera calor, enquanto a falta de árvores reduz a sombra e o resfriamento pela vegetação."
+    },
+    {
+      "question": "Insetos resistentes a um pesticida deixam mais descendentes; com o tempo, essa característica tende a…",
+      "options": [
+        {
+          "text": "Ficar mais comum",
+          "correct": true
+        },
+        {
+          "text": "Desaparecer da população",
+          "correct": false
+        },
+        {
+          "text": "Surgir em todos os indivíduos",
+          "correct": false
+        }
+      ],
+      "reveal": "Ficar mais comum. Como esses insetos deixam mais descendentes, a resistência pode se espalhar pela população ao longo das gerações."
+    },
+    {
+      "question": "Ao deixar uma colher metálica numa sopa quente, o cabo esquenta principalmente por…",
+      "options": [
+        {
+          "text": "Condução térmica",
+          "correct": true
+        },
+        {
+          "text": "Convecção",
+          "correct": false
+        },
+        {
+          "text": "Radiação",
+          "correct": false
+        }
+      ],
+      "reveal": "Condução térmica. A energia passa pelo metal de partícula para partícula, da parte mais quente em direção ao cabo."
+    },
+    {
+      "question": "Ao misturar sal de cozinha à água, o que acontece com as partículas do sal?",
+      "options": [
+        {
+          "text": "Se separam em íons",
+          "correct": true
+        },
+        {
+          "text": "Viraram átomos de sódio",
+          "correct": false
+        },
+        {
+          "text": "Formam novas moléculas",
+          "correct": false
+        }
+      ],
+      "reveal": "Se separam em íons. Na água, o sal se dissocia em íons sódio e cloreto, que ficam dispersos na solução."
+    },
+    {
+      "question": "Um produto de R$ 100,00 recebe desconto de 20%; qual é o preço depois do desconto?",
+      "options": [
+        {
+          "text": "R$ 80,00",
+          "correct": true
+        },
+        {
+          "text": "R$ 20,00",
+          "correct": false
+        },
+        {
+          "text": "R$ 120,00",
+          "correct": false
+        }
+      ],
+      "reveal": "R$ 80,00. Vinte por cento de R$ 100,00 são R$ 20,00; descontando esse valor, restam R$ 80,00."
+    },
+    {
+      "question": "Uma receita usa 2 xícaras de farinha para 4 porções; mantendo a proporção, quanto usa para 8?",
+      "options": [
+        {
+          "text": "4 xícaras",
+          "correct": true
+        },
+        {
+          "text": "2 xícaras",
+          "correct": false
+        },
+        {
+          "text": "8 xícaras",
+          "correct": false
+        }
+      ],
+      "reveal": "4 xícaras. Ao dobrar o número de porções, você dobra também a quantidade de cada ingrediente."
+    },
+    {
+      "question": "Uma caixa tem 3 bolas vermelhas e 1 azul. Ao tirar uma sem olhar, qual cor é mais provável?",
+      "options": [
+        {
+          "text": "Vermelha",
+          "correct": true
+        },
+        {
+          "text": "Azul",
+          "correct": false
+        }
+      ],
+      "reveal": "Vermelha. Há mais bolas vermelhas na caixa, então há mais chances de retirar uma delas."
+    }
+  ]
+}

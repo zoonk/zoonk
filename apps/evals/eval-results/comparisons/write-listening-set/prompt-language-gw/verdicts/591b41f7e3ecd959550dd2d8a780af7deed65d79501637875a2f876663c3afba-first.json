@@ -1,0 +1,115 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00582189,
+  "failures": [],
+  "packetId": "591b41f7e3ecd959550dd2d8a780af7deed65d79501637875a2f876663c3afba",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same keys, and each correct option matches the recording: the footbridge answer is not the car park, and the labour-saving option is not the rejected suggestion.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two sets are identical in format, difficulty, number of options and recording type, so neither matches the DELE B2 listening task better.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "Output A gives two reasons in Spanish, which the Brazilian Portuguese reader cannot read; Output B gives every reason in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Two feedback reasons for the same question are written in Spanish, not Brazilian Portuguese, so the learner cannot read why the option is wrong or right.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner gets no usable feedback on these two options and cannot learn from them.",
+            "location": {
+              "detail": "reason of the first option of the question about the acceptance criterion",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The reason for the correct option of the acceptance-criterion question is written in Spanish, not Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation of the correct answer, so they cannot check their understanding.",
+            "location": {
+              "detail": "reason of the third option of the acceptance-criterion question",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Keys and realism are equal, but Output A's feedback in Spanish leaves the Brazilian reader unable to read the explanation for some options."
+        },
+        "pairId": "4bc41b83-764d-443f-857a-1d5098e26cad"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have sentence-completion keys that match the transcript and produce grammatical sentences, and their distractors are comparable.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are Cambridge B2 First Part 2 sentence completions with a single British speaker and six questions, so neither is clearly closer to the real test.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts are natural British monologues with contractions and everyday speech, and neither is clearly more natural than the other.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are different but of similar quality, with accurate keys, comparable distractors and natural speech; neither gives the learner a clear advantage."
+        },
+        "pairId": "a6ab2c85-84c4-4a23-a5ab-5655271e5ad9"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, with the same keys.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they match the exam equally.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in their script and reasons.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "e2bfdb01-281a-48f7-af7e-7399ad0f0a62"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.02416,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"Abater parte do tributo devido\",\"kind\":\"factualError\",\"workedAnswer\":\"The stem confuses the amount taxed with the tax credit. If an eligible input costs R$100 before tax and carries R$10 in VAT, the seller can offset R$10 of output tax, not R$100.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Onde será consumida\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The stem asks which place can determine taxation without specifying the governing principle. “Onde será consumida” fits destination-based taxation, while “Onde foi produzida” fits origin-based taxation. Only the reveal specifies the destination principle.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

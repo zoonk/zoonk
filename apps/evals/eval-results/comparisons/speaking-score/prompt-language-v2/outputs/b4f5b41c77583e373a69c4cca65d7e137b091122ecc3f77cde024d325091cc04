@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza as propostas em sequência e apresenta contrastes com conectores como “Por un lado” e “Sin embargo”. A conversa também segue com respostas pertinentes, embora a comparação entre as opções pudesse ser retomada de forma mais explícita.",
+      "tip": "Ao defender sua escolha, faça uma comparação direta com outra proposta: “Aunque cerrar el centro los domingos puede ayudar, abaratar el transporte público tendría un efecto más duradero”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "Você encadeia as ideias e as respostas sem interrupções aparentes no texto, como em “Si se invirtiera más en transporte, el tráfico mejoraría mucho”. A transcrição não permite saber como você soou, então esta é uma estimativa mais ampla.",
+      "tip": "Para facilitar a compreensão, articule com clareza palavras importantes para o tema, como “propuestas” e “transporte público”, especialmente ao apresentar e comparar as opções.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa estruturas variadas corretamente, como “si fuera más segura” e “Si se invirtiera más en transporte”. Porém, há erros de concordância e de hipótese em “la gente están dispuesta” e “Si tendría más tiempo”.",
+      "tip": "Em hipóteses, use o imperfeito do subjuntivo depois de “si” e o condicional na consequência: “Si tendría más tiempo” → “Si tuviera más tiempo, explicaría también la de los aparcamientos en las afueras”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você dispõe de vocabulário suficiente para apresentar vantagens, desvantagens e opiniões, por exemplo, “perjudica a las personas que tienen menos dinero” e “el tráfico mejoraría mucho”. As estruturas e os argumentos são adequados, mas permanecem relativamente simples.",
+      "tip": "Acrescente expressões para avaliar a viabilidade e o impacto das propostas: em vez de apenas “es la más eficaz”, você poderia dizer “es la opción más viable a largo plazo”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você aborda quatro propostas, explica vantagens e desvantagens e escolhe uma opção, dizendo “Sin duda, abaratar el transporte público”. Também relaciona o tema à situação no Brasil, embora a argumentação e o desenvolvimento das ideias ainda sejam relativamente simples.",
+      "tip": "Para tornar sua defesa mais completa, explique como a proposta escolhida enfrenta o problema apresentado: “Abaratar el transporte público podría reducir el uso del coche y, así, disminuir los atascos y la contaminación”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

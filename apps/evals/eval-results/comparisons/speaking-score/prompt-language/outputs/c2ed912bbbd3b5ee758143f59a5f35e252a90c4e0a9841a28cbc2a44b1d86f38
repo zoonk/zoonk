@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but made small changes in the longer ones: “Club tables are set along the main hallway” omits “up,” and “Students who work part-time on campus should pick their schedules this week” omits “up” and “their.” You also shortened “Friday afternoon” to “Friday” and changed “next to” to “near,” while keeping the main meaning.",
+      "tip": "Listen for small words and endings, then hold a long sentence in chunks: “The workshop that was planned for Friday afternoon / has been moved / to the lecture hall next to the bookstore.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answered directly and supported your views with reasons, as in “you have to speak another language every day and you meet people from other cultures,” and you gave a brief example of solving a group-project challenge. Some answers stay general, such as “I think people will still want to go,” without explaining further why.",
+      "tip": "After giving a reason, add one concrete example or consequence; for instance, after saying “you meet people from other cultures,” add “For example, you might work on a project with classmates who have different perspectives.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You used a range of basic sentence patterns accurately, but there are a couple of errors: “I learned that is important to communicate” needs a subject after “that,” and “different than see it on a screen” needs a gerund form. These slips keep the grammar from being consistently controlled.",
+      "tip": "After “that,” include the subject of the next clause: “I learned that is important” becomes “I learned that it is important.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You used relevant vocabulary for familiar topics, including “business administration,” “marketing plan,” and “local shop.” Much of the wording is broad, though, such as “very useful” and “a good grade,” rather than more precise descriptions.",
+      "tip": "Replace broad evaluations with a more specific benefit: instead of “very useful,” try “valuable for building everyday language skills.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can’t show how you sounded, so this is a wider estimate; it follows the range suggested by the clarity of your wording and sentence control. The transcript alone cannot confirm your pronunciation, rhythm, or intonation.",
+      "tip": "For clarity, keep the consonants distinct in “part-time on campus” and “lecture hall next to the bookstore,” so listeners can pick out the key words easily.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

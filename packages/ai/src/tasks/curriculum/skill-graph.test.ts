@@ -8,7 +8,7 @@ import type * as Ai from "ai";
 
 /** The version an exam's graph records: the exam instructions', however its calls are split. */
 const SKILL_GRAPH_PROMPT_VERSION = getPromptVersion({
-  systemPrompt: buildSkillGraphSystemPrompt({ goalKind: "exam" }),
+  systemPrompt: buildSkillGraphSystemPrompt({ goalKind: "exam", language: "pt" }),
 });
 
 vi.mock("server-only", () => ({}));
@@ -18,7 +18,7 @@ vi.mock("./skill-graph.prompt.md", () => ({
     "Write the skill graph.",
     "{{#exam}}\nExam rules.\n{{/exam}}",
     "{{#learn}}\nLearn rules.\n{{/learn}}",
-    "{{#language}}\nLanguage rules.\n{{/language}}",
+    "{{#language}}\nLanguage rules for {{TARGET_LANGUAGE}} in {{LEARNER_LANGUAGE}}.\n{{/language}}",
     "{{#material}}\nMaterial rules.\n{{/material}}",
     "{{#budget}}\nBudget rules.\n{{/budget}}",
   ].join("\n"),
@@ -507,7 +507,10 @@ describe(generateSkillGraph, () => {
 
     const [sent] = sentPrompts();
 
-    expect(sent?.instructions).toBe("Write the skill graph.\nLanguage rules.\n");
+    expect(sent?.instructions).toBe(
+      "Write the skill graph.\nLanguage rules for US English in Português Brasileiro.\n",
+    );
+
     expect(sent?.prompt).toContain("TARGET_LANGUAGE:");
     expect(sent?.prompt).not.toContain("PURPOSE");
     expect(sent?.prompt).not.toContain("SECTION");

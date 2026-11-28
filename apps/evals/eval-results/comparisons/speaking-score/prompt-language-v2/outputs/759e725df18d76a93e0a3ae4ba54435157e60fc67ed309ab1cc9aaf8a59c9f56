@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas e apresenta uma causa em “Porque tienen el móvil.”, mas as ideias ficam muito pouco desenvolvidas e não há uma comparação clara entre os dados da pesquisa e sua opinião.",
+      "tip": "Ao comentar um resultado, ligue sua opinião a uma comparação e a uma justificativa: “Coincido con el resultado porque muchos jóvenes prefieren usar el móvil en su tiempo libre.”",
+      "bandHigh": 1,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "O transcript não permite avaliar como sua fala soou, então esta faixa é uma estimativa mais ampla. Há uma hesitação em “Eh...” e respostas muito curtas, como “No mucho. A veces.”, mas o transcript não mostra outros sinais claros sobre o ritmo ou a pronúncia.",
+      "tip": "Junte respostas curtas em uma frase mais contínua, por exemplo: “No leo mucho, aunque a veces leo en el móvil antes de dormir.”",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você usa estruturas básicas compreensíveis, como “Porque tienen el móvil”, mas aparecem erros em “El móvil es mucho importante” e “Yo no sabo”, além de uma expressão em português em “Eu acho que”.",
+      "tip": "Use “muy” antes de um adjetivo e memorize a forma irregular “sé” para falar de si: “El móvil es muy importante” e “Yo no sé los números”.",
+      "bandHigh": 1,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "O vocabulário é muito básico e se repete em frases como “los jóvenes no leen mucho” e “El móvil es mucho importante”; “Muito legal la pregunta” também recorre a uma expressão em português, em vez de ampliar seu vocabulário em espanhol.",
+      "tip": "Inclua expressões específicas sobre hábitos de leitura, como “leer en formato digital” e “dedicar tiempo a la lectura”, para explicar melhor sua opinião.",
+      "bandHigh": 1,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você acompanha as perguntas e dá uma opinião simples em “es normal” e “en Brasil también”, mas quase não desenvolve as respostas nem compara os resultados com detalhes, o que limita a comunicação nesta tarefa.",
+      "tip": "Em cada resposta, acrescente uma opinião, um dado da pesquisa e uma justificativa: “Me llama la atención que solo un veinte por ciento lea a diario; creo que ocurre porque muchos jóvenes pasan más tiempo con el móvil.”",
+      "bandHigh": 1,
+      "bandLow": 1
+    }
+  ],
+  "focus": "coherence",
+  "heard": true
+}

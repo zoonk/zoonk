@@ -6,7 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { getPromptLanguageName } from "../_utils/prompt-language";
-import systemPrompt from "./skill-levels.prompt.md";
+import promptTemplate from "./skill-levels.prompt.md";
 
 /**
  * On the skill-levels eval's 102 labeled skills, Luna placed 96% right, as Opus 5.5 did, at about a
@@ -84,7 +84,10 @@ export async function classifySkillLevels(params: SkillLevelsParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  const userPrompt = `TARGET_LANGUAGE: ${getPromptLanguageName({ language: params.targetLanguage })}
+  const targetLanguageName = getPromptLanguageName({ language: params.targetLanguage });
+  const systemPrompt = promptTemplate.replaceAll("{{TARGET_LANGUAGE}}", () => targetLanguageName);
+
+  const userPrompt = `TARGET_LANGUAGE: ${targetLanguageName}
 SKILLS:
 ${formatSkills(params.skills)}
 `;

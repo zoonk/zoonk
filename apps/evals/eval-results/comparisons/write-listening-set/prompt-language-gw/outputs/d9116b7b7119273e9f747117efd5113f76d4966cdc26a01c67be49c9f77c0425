@@ -1,0 +1,125 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "The A is the part that tells L S to include entries whose names begin with a dot.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "What does the A option add to the listing?",
+        "options": [
+          {
+            "text": "Entries with names that start with a dot",
+            "isCorrect": true,
+            "reason": "Leah explains that A includes entries whose names begin with a dot.",
+            "misconception": null
+          },
+          {
+            "text": "Details such as permissions and file size",
+            "isCorrect": false,
+            "reason": "Leah says L, not A, gives you the long listing with those details.",
+            "misconception": "Confuses the two command options"
+          },
+          {
+            "text": "Only the regular files in the directory",
+            "isCorrect": false,
+            "reason": "Leah says A includes dot names. You still have to distinguish files from directories in the output.",
+            "misconception": "Assumes the command filters out directories"
+          }
+        ]
+      },
+      {
+        "evidence": "The entries called dot and dot dot stand for the current directory and its parent, so don't count them as files.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "How should you treat the entries named dot and dot dot when counting regular files?",
+        "options": [
+          {
+            "text": "Leave them out of the count",
+            "isCorrect": true,
+            "reason": "Leah tells you that they represent directories, so they should not be counted as files.",
+            "misconception": null
+          },
+          {
+            "text": "Count them as two hidden files",
+            "isCorrect": false,
+            "reason": "Although their names contain dots, Leah tells you that they represent directories.",
+            "misconception": "Counts special directory entries as hidden files"
+          },
+          {
+            "text": "Count them as two ordinary files",
+            "isCorrect": false,
+            "reason": "Leah says you should leave these two directory entries out of the file count.",
+            "misconception": "Counts special directory entries as ordinary files"
+          }
+        ]
+      },
+      {
+        "evidence": "That makes eight regular files in total, and four out of eight are hidden.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "Which count shows that half of the regular files in Leah's example are hidden?",
+        "options": [
+          {
+            "text": "Four hidden files out of eight regular files",
+            "isCorrect": true,
+            "reason": "Leah counts four hidden regular files and eight regular files altogether, so exactly half are hidden.",
+            "misconception": null
+          },
+          {
+            "text": "Five hidden entries out of nine files and directories",
+            "isCorrect": false,
+            "reason": "You would get this count by including dot cache, but Leah says it is a directory, not a regular file.",
+            "misconception": "Includes the hidden directory in the file count"
+          },
+          {
+            "text": "Four hidden entries out of nine files and directories",
+            "isCorrect": false,
+            "reason": "You need to leave dot cache out of the total as well as the hidden file count because it is a directory.",
+            "misconception": "Includes the hidden directory only in the total"
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Leah",
+        "gender": "female",
+        "accent": "American English"
+      }
+    ],
+    "title": "Finding hidden files in a directory",
+    "turns": [
+      {
+        "speaker": "Leah",
+        "text": "Today we're going to use a terminal command to see whether half the files in a directory are hidden. First, make sure you're in the directory you want to examine. Then type L S, a space, a hyphen, L A, and press Enter. That's the command L S minus L A."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Now, you might think the L is what reveals hidden entries. Actually, L gives you the long listing, with information like permissions and file size. The A is the part that tells L S to include entries whose names begin with a dot. Those are normally hidden from a plain L S listing."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Let's look at the output. Each line starts with a group of characters describing the entry. For our example, look at the very first character on each line. A hyphen means it's a regular file, while a D means it's a directory. We'll count regular files only, not directories or other kinds of entries."
+      },
+      {
+        "speaker": "Leah",
+        "text": "You'll see two special lines near the top. The entries called dot and dot dot stand for the current directory and its parent, so don't count them as files. You may also see a directory with a name beginning with a dot. In our example, there's one called dot cache. It's hidden, but it's a directory, so we leave it out too."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Now count the remaining regular files. We have four with ordinary names and four whose names start with a dot. That makes eight regular files in total, and four out of eight are hidden. To check whether that's half, compare the hidden count with the total. Here, four is exactly half of eight, so the answer is yes."
+      },
+      {
+        "speaker": "Leah",
+        "text": "If you got a different answer, check whether you accidentally counted dot cache or one of those two special directory entries. And remember, a dot somewhere in the middle of a filename doesn't make it hidden. The dot has to be at the beginning. Try the same steps in another directory, and see what you find."
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-a1",
+  "challenger": {
+    "costUsd": 0.286878,
+    "durationMs": 53421.020792,
+    "hash": "c5cbca458fd994101547579ac8cef4bdb2867aaa1cbe8aaa3f3c00ffe1f75154",
+    "systemPromptHash": "0c7f9c5b354719d4ff959ab7a03bcdaa82065f4a462213955a9f8d3a4bdf9141",
+    "userPromptHash": "36c35d3c08725fc19587625f3df81146bcd86a4ac08d3a70f82442f6a16a12e5"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.349048,
+    "durationMs": 67590.757417,
+    "hash": "3fd54e7f878e129c1fc5853e4f1b213cc5fec6a6149d4600cd2b93e3e00b295c",
+    "systemPromptHash": "b0cb862bd0d979c4add407ec618c8f25c826076a72591b39d5e706b4e287bd94",
+    "userPromptHash": "36c35d3c08725fc19587625f3df81146bcd86a4ac08d3a70f82442f6a16a12e5"
+  },
+  "run": 1
+}

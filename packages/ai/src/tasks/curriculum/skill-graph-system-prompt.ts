@@ -1,3 +1,4 @@
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { writesExamExtras } from "./_utils/skill-graph-extras";
 import { hasWrittenOptions } from "./exam-outline";
@@ -29,24 +30,28 @@ export function buildSkillGraphSystemPrompt({
   firstSkill,
   goalKind,
   hasMaterial = false,
+  language,
   lessonBudget,
   librarySkills = false,
   ownLevel,
   product,
   purpose,
+  targetLanguage,
 }: Pick<
   SkillGraphParams,
   | "examBlueprint"
   | "firstSkill"
   | "goalKind"
   | "hasMaterial"
+  | "language"
   | "lessonBudget"
   | "librarySkills"
   | "ownLevel"
   | "product"
   | "purpose"
+  | "targetLanguage"
 >): string {
-  return selectPromptVariants({
+  const variants = selectPromptVariants({
     template,
     variants: {
       budget: Boolean(lessonBudget),
@@ -63,4 +68,10 @@ export function buildSkillGraphSystemPrompt({
       writtenOptions: hasWrittenOptions(examBlueprint),
     },
   });
+
+  return fillPromptLanguages({
+    learnerLanguage: language,
+    targetLanguage,
+    template: variants,
+  }).replaceAll("{{TARGET_LANGUAGE}}", "the language GOAL names");
 }

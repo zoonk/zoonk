@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but later said \"Club tables are set along the main hallway\" without \"up\" and \"You need your ID to use the gym on the lower level\" without \"You'll.\" In the longer items, \"pick their schedules\" omits \"up,\" and \"Friday\" omits \"afternoon\" while \"near the bookstore\" changes \"next to the bookstore.\"",
+      "tip": "Listen for small words and endings as well as the main meaning, and hold longer sentences in groups, such as \"The workshop that was planned for Friday afternoon / has been moved / to the lecture hall next to the bookstore.\"",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answer each interview question with relevant reasons or details, such as \"you have to speak another language every day and you meet people from other cultures,\" and you give a clear sequence in your group-project story. The project example ends with the general lesson \"I learned that is important to communicate,\" and your prediction could use a more specific example to develop it further.",
+      "tip": "After giving your main point, add one concrete example of what it would look like, such as: \"Online study could let students take classes with an overseas university, but they would miss daily conversations with local people.\"",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a range of clauses and time frames, as in \"Last semester we had to make a marketing plan\" and \"more students will study online.\" A couple of structures are incomplete or mismatched in \"I learned that is important to communicate\" and \"different than see it on a screen.\"",
+      "tip": "After \"learned that,\" include a subject; after \"different from,\" use a noun or an -ing form: \"I learned that it is important to communicate\" and \"different from seeing it on a screen.\"",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use some precise topic-related phrases, including \"business administration,\" \"marketing plan,\" and \"local shop.\" Other descriptions stay broad, such as \"very useful\" and \"a good grade,\" rather than specifying what made the experience valuable or successful.",
+      "tip": "Replace a broad phrase with a more specific one, for example, change \"very useful\" to \"valuable for building language skills and cultural awareness.\"",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on your coherent interview responses and repetition performance. It provides no clear sign of a communication breakdown.",
+      "tip": "Make the stress clear in \"administration\" (ad-min-is-TRA-tion) so the word is easy to recognize.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

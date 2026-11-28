@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "A forager returns and runs a waggling pattern on the comb. What can hive mates learn?",
+      "options": [
+        {
+          "text": "Food's direction and distance",
+          "correct": true
+        },
+        {
+          "text": "The hive's population",
+          "correct": false
+        },
+        {
+          "text": "The queen's age",
+          "correct": false
+        }
+      ],
+      "reveal": "Food's direction and distance. The pattern's angle points the way relative to the sun, and its duration gives an estimate of how far away the food is."
+    },
+    {
+      "question": "In a honey bee colony, what is the sex of the worker bees?",
+      "options": [
+        {
+          "text": "Female",
+          "correct": true
+        },
+        {
+          "text": "Male",
+          "correct": false
+        }
+      ],
+      "reveal": "Female. Workers develop from fertilized eggs, as do queens; male bees, called drones, develop from unfertilized eggs."
+    },
+    {
+      "question": "What does nectar mainly provide to adult honey bees?",
+      "options": [
+        {
+          "text": "Carbohydrate-rich energy",
+          "correct": true
+        },
+        {
+          "text": "Protein for raising young",
+          "correct": false
+        },
+        {
+          "text": "Resin for sealing gaps",
+          "correct": false
+        }
+      ],
+      "reveal": "Carbohydrate-rich energy. Bees turn nectar into a storable food by reducing its water content and adding enzymes."
+    },
+    {
+      "question": "What does collected pollen mainly contribute to a honey bee colony's food supply?",
+      "options": [
+        {
+          "text": "Protein for raising young",
+          "correct": true
+        },
+        {
+          "text": "Sugar for flight fuel",
+          "correct": false
+        },
+        {
+          "text": "Resin for sealing cracks",
+          "correct": false
+        }
+      ],
+      "reveal": "Protein for raising young. Pollen also supplies other nutrients, while sugary foods provide much of the bees' flight energy."
+    },
+    {
+      "question": "The thin flakes pressed into new comb are produced by what part of a worker bee?",
+      "options": [
+        {
+          "text": "Glands on its abdomen",
+          "correct": true
+        },
+        {
+          "text": "Pollen baskets on its legs",
+          "correct": false
+        },
+        {
+          "text": "Its mouthparts",
+          "correct": false
+        }
+      ],
+      "reveal": "Glands on its abdomen. Worker bees secrete tiny flakes that they chew and shape into the cells of the comb."
+    },
+    {
+      "question": "A comb cell holding concentrated nectar stores has been sealed. What does that cover usually signal?",
+      "options": [
+        {
+          "text": "The stores are ripe",
+          "correct": true
+        },
+        {
+          "text": "A larva is ready to hatch",
+          "correct": false
+        },
+        {
+          "text": "The cell needs cleaning",
+          "correct": false
+        }
+      ],
+      "reveal": "The stores are ripe. Bees usually seal these cells once the contents have lost enough water for storage."
+    },
+    {
+      "question": "Inside a winter cluster, how do honey bees generate much of their warmth?",
+      "options": [
+        {
+          "text": "By vibrating flight muscles",
+          "correct": true
+        },
+        {
+          "text": "By basking in sunlight",
+          "correct": false
+        },
+        {
+          "text": "By relying on the queen",
+          "correct": false
+        }
+      ],
+      "reveal": "By vibrating flight muscles. The bees can produce heat without flying, helping keep the cluster warm in cold weather."
+    },
+    {
+      "question": "In a healthy honey bee colony, what does a queen's departure with many workers usually mean?",
+      "options": [
+        {
+          "text": "The colony is swarming",
+          "correct": true
+        },
+        {
+          "text": "The colony is abandoning its brood",
+          "correct": false
+        },
+        {
+          "text": "The colony is storing winter food",
+          "correct": false
+        }
+      ],
+      "reveal": "The colony is swarming. This is a form of colony reproduction: the departing queen and workers can establish a new nest."
+    },
+    {
+      "question": "How can a queen fertilize eggs long after a mating flight?",
+      "options": [
+        {
+          "text": "She stores sperm internally",
+          "correct": true
+        },
+        {
+          "text": "She mates before each egg",
+          "correct": false
+        },
+        {
+          "text": "Workers pass sperm to her",
+          "correct": false
+        }
+      ],
+      "reveal": "She stores sperm internally. A queen can use that stored sperm to fertilize eggs over an extended period."
+    },
+    {
+      "question": "What do bees make from plant resins to plug small cracks in the hive?",
+      "options": [
+        {
+          "text": "Propolis",
+          "correct": true
+        },
+        {
+          "text": "Royal jelly",
+          "correct": false
+        },
+        {
+          "text": "Bee bread",
+          "correct": false
+        }
+      ],
+      "reveal": "Propolis. Bees collect sticky plant resins and use this material to seal small gaps and coat surfaces inside the hive."
+    }
+  ]
+}

@@ -6,7 +6,7 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { formatCast } from "../_utils/cast";
 import { draftAgainWhenFlawed } from "../_utils/draft-again";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { findListeningSetProblems, repairListeningSet } from "./listening-set-checks";
 import {
@@ -117,8 +117,15 @@ ${formatSkills(params.skills)}
   `;
 }
 
-function buildSystemPrompt(formats: readonly ListeningQuestionFormat[]): string {
-  return selectPromptVariants({
+/** The recording's language goes by its plain name, like `SCRIPT_LANGUAGE`: the accents name its variety. */
+function buildSystemPrompt({
+  formats,
+  params,
+}: {
+  formats: readonly ListeningQuestionFormat[];
+  params: WriteListeningSetParams;
+}): string {
+  const template = selectPromptVariants({
     template: taskPrompt,
     variants: {
       ...Object.fromEntries(
@@ -127,6 +134,11 @@ function buildSystemPrompt(formats: readonly ListeningQuestionFormat[]): string 
       exam: !formats.includes("order"),
     },
   });
+
+  return fillPromptLanguages({ learnerLanguage: params.language, template }).replaceAll(
+    "{{TARGET_LANGUAGE}}",
+    getScriptLanguageName(params.scriptLanguage),
+  );
 }
 
 /**
@@ -144,7 +156,7 @@ export async function writeListeningSet(params: WriteListeningSetParams, redraft
     skillCount: params.skills.length,
   };
 
-  const systemPrompt = buildSystemPrompt(formats);
+  const systemPrompt = buildSystemPrompt({ formats, params });
   const userPrompt = buildUserPrompt(params);
   const schema = buildListeningSetSchema({ accents: getAccents(params), formats });
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });

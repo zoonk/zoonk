@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-b1-doctor",
+  "challenger": {
+    "costUsd": 0.013683850000000001,
+    "durationMs": 30749.501583000005,
+    "hash": "47e34c3ad801136d9a0368eec185e810962d7be9927abe02526eba10ea8d10ab",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "e0cd6eb1ce765f079215f6a1c748fbdbaa1b180fa05becdd321a306bb287c043"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

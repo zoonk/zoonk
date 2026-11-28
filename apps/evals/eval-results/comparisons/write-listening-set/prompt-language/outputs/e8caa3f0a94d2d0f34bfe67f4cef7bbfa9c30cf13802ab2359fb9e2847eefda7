@@ -1,0 +1,234 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Hannah Norley. That's Norley, N-O-R-L-E-Y.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community garden application\nSurname: ______\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Complete the surname on the application.",
+        "keyPoints": [
+          "The surname is Norley."
+        ],
+        "acceptedAnswers": [
+          "Norley"
+        ],
+        "sampleAnswer": "Norley"
+      },
+      {
+        "evidence": "So a medium plot would be better.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Community garden application\nPlot size requested: ______\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Complete the requested plot size.",
+        "keyPoints": [
+          "Hannah requests a medium plot."
+        ],
+        "acceptedAnswers": [
+          "medium"
+        ],
+        "sampleAnswer": "medium"
+      },
+      {
+        "evidence": "Let's put you down for Thursday.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Community garden application\nIntroduction session, day: ______\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Complete the day of Hannah's introduction session.",
+        "keyPoints": [
+          "Hannah will attend on Thursday."
+        ],
+        "acceptedAnswers": [
+          "Thursday"
+        ],
+        "sampleAnswer": "Thursday"
+      },
+      {
+        "evidence": "But you should bring a watering can, because we don't have enough of those to lend out.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Community garden application\nItem to bring for the plot: a ______\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Complete the item Hannah needs to bring.",
+        "keyPoints": [
+          "She needs to bring a watering can."
+        ],
+        "acceptedAnswers": [
+          "watering can"
+        ],
+        "sampleAnswer": "watering can"
+      },
+      {
+        "evidence": "The current yearly fee for a medium plot is forty-eight pounds.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community garden application\nYearly fee: £______\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Complete the current yearly fee.",
+        "keyPoints": [
+          "The yearly fee is £48."
+        ],
+        "acceptedAnswers": [
+          "48",
+          "forty-eight"
+        ],
+        "sampleAnswer": "forty-eight pounds"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Kevin",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Joining a community garden",
+    "turns": [
+      {
+        "speaker": "Kevin",
+        "text": "Good morning, Riverside Community Garden. Kevin speaking. How can I help?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Hello. I've just moved into a flat nearby, and I was wondering if I could rent a space to grow vegetables."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Yes, we've got a few plots available. I can take your details now, if you like."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That would be great. I've never done much gardening, but I'd like to learn."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "You're very welcome, whatever your experience. Could I have your name first?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "It's Hannah Norley. That's Norley, N-O-R-L-E-Y."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Thanks. And have you seen the garden? It's behind the library, next to the car park."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I've walked past the gate, but I wasn't sure whether visitors could go in."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "You can come in whenever a member's there. We also have open mornings on the first Saturday of each month. Now, we have small and medium plots free at the moment."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I thought I'd only need a small one, but my sister wants to share it with me. So a medium plot would be better."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Fine. They're about twice the size of the small ones. The larger plots are all taken, I'm afraid."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's all right. We don't want to take on too much work. Does the plot already have anything growing on it?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "There are a few herbs along one side. You're welcome to keep them, or you can take them out. Before you start, though, we ask new members to come to a short introduction."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Is that at the weekend? I usually work on Saturdays."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "There is a Saturday session, but we also run one on Tuesday evenings and another on Thursday evenings."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Tuesday's difficult because I have a class. Thursday would suit me, though. My sister can come then too."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Perfect. Let's put you down for Thursday. It starts at six and takes about an hour. We'll show you where everything is and explain how we use the shared spaces."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Good. Is there somewhere to leave bicycles? Neither of us drives."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Yes, there are racks just inside the gate. If they're full, there's another set by the library entrance. Just don't leave bikes on the path, because people need to get wheelbarrows through."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Right. And what do we need to bring for the plot? I was going to buy a spade."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Don't buy one yet. We've got spades and other tools you can borrow from the shed. But you should bring a watering can, because we don't have enough of those to lend out."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Oh, I've already got one at home. Should I bring it to the introduction?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "There's no need that evening. You won't be doing any digging until you've had a chance to look at the plot. Wear comfortable shoes, though, because the paths can be muddy."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "I will. Now, could you tell me how much it costs? I saw an old notice online saying thirty-six pounds."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "That was the price a couple of years ago. The current yearly fee for a medium plot is forty-eight pounds. That includes water and use of the shed."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's fine. Can I pay when I come on Thursday?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Yes, you can pay by card then. I'll send you an email with the garden address and the details of the introduction."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Lovely. Thanks for your help, Kevin. See you on Thursday."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "You're welcome. See you then. Goodbye."
+      }
+    ]
+  }
+}

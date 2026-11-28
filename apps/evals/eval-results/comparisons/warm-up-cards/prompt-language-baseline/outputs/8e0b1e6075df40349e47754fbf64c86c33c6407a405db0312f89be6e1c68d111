@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "In a two-slit experiment, what happens to the fringe pattern when detectors reveal each particle’s path?",
+      "options": [
+        {
+          "text": "It vanishes",
+          "correct": true
+        },
+        {
+          "text": "It gets brighter",
+          "correct": false
+        },
+        {
+          "text": "It spreads farther apart",
+          "correct": false
+        }
+      ],
+      "reveal": "It vanishes. When the path is known, the two paths no longer produce the interference pattern seen when the paths remain unknown."
+    },
+    {
+      "question": "A particle meets a barrier higher than its energy; what can quantum physics still allow?",
+      "options": [
+        {
+          "text": "A chance to cross",
+          "correct": true
+        },
+        {
+          "text": "A guaranteed bounce",
+          "correct": false
+        },
+        {
+          "text": "A gradual energy gain",
+          "correct": false
+        }
+      ],
+      "reveal": "A chance to cross. Quantum tunneling lets a particle sometimes pass through a barrier even when classical physics says it lacks enough energy."
+    },
+    {
+      "question": "For a given metal, what happens if light below its threshold frequency is made brighter?",
+      "options": [
+        {
+          "text": "No electrons are emitted",
+          "correct": true
+        },
+        {
+          "text": "More electrons emerge",
+          "correct": false
+        },
+        {
+          "text": "Each electron gains energy",
+          "correct": false
+        }
+      ],
+      "reveal": "No electrons are emitted. In the photoelectric effect, brighter light below the threshold frequency still cannot eject electrons from that metal."
+    },
+    {
+      "question": "Why can an atom absorb only certain photon energies rather than any amount?",
+      "options": [
+        {
+          "text": "Its energy levels are discrete",
+          "correct": true
+        },
+        {
+          "text": "Its electrons have fixed paths",
+          "correct": false
+        },
+        {
+          "text": "Its nucleus filters light",
+          "correct": false
+        }
+      ],
+      "reveal": "Its energy levels are discrete. An electron can absorb a photon when its energy matches the gap between allowed levels."
+    },
+    {
+      "question": "For an electron prepared in a superposition of two spin states along one axis, measuring that axis gives…",
+      "options": [
+        {
+          "text": "One of two outcomes",
+          "correct": true
+        },
+        {
+          "text": "A blended half-spin",
+          "correct": false
+        },
+        {
+          "text": "A continuous value",
+          "correct": false
+        }
+      ],
+      "reveal": "One of two outcomes. A single measurement returns one spin value; the prepared state sets the probabilities of the possible results."
+    },
+    {
+      "question": "When a quantum state has a very narrow spread in position, its momentum spread must…",
+      "options": [
+        {
+          "text": "Be relatively broad",
+          "correct": true
+        },
+        {
+          "text": "Be exactly zero",
+          "correct": false
+        },
+        {
+          "text": "Stay unchanged",
+          "correct": false
+        }
+      ],
+      "reveal": "Be relatively broad. The uncertainty principle sets a limit on how sharply position and momentum can both be defined in the same state."
+    },
+    {
+      "question": "Two entangled particles are measured far apart; what can the pair show?",
+      "options": [
+        {
+          "text": "Correlated outcomes",
+          "correct": true
+        },
+        {
+          "text": "Instant messages",
+          "correct": false
+        },
+        {
+          "text": "Identical results every time",
+          "correct": false
+        }
+      ],
+      "reveal": "Correlated outcomes. Their results can be linked more strongly than classical theories allow, but entanglement cannot send a chosen message faster than light."
+    },
+    {
+      "question": "What keeps two electrons in an atom from occupying exactly the same quantum state?",
+      "options": [
+        {
+          "text": "A rule for identical fermions",
+          "correct": true
+        },
+        {
+          "text": "Electric repulsion alone",
+          "correct": false
+        },
+        {
+          "text": "Different nuclear attractions",
+          "correct": false
+        }
+      ],
+      "reveal": "A rule for identical fermions. The Pauli exclusion principle says that two electrons cannot share the same complete quantum state."
+    },
+    {
+      "question": "Which photon carries more energy: one with a higher frequency or one with a lower frequency?",
+      "options": [
+        {
+          "text": "Higher frequency",
+          "correct": true
+        },
+        {
+          "text": "Lower frequency",
+          "correct": false
+        }
+      ],
+      "reveal": "Higher frequency. A photon’s energy is proportional to its frequency, so doubling the frequency doubles the energy."
+    },
+    {
+      "question": "What does the squared magnitude of a particle’s wavefunction describe at a location?",
+      "options": [
+        {
+          "text": "Chance density for detection",
+          "correct": true
+        },
+        {
+          "text": "Its exact trajectory",
+          "correct": false
+        },
+        {
+          "text": "Its stored energy",
+          "correct": false
+        }
+      ],
+      "reveal": "Chance density for detection. Adding that density across a region gives the probability of finding the particle there."
+    }
+  ]
+}

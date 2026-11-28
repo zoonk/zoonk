@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Talk together about the question for about two minutes.",
+    "Then, for about one minute, decide which idea would make the biggest difference."
+  ],
+  "prompts": [
+    "How could people make a shared home a pleasant place to live?",
+    "Sharing household jobs",
+    "Having a quiet space",
+    "Spending time together",
+    "Decorating shared rooms",
+    "Setting some ground rules",
+    "Which idea would make the biggest difference?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Conversarás con otro candidato sobre cómo hacer agradable una vivienda compartida. Después, intentarán elegir la idea que tendría mayor impacto.",
+  "character": {
+    "name": "Leah",
+    "role": "compañera",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Discuss the five prompts in any order for about two minutes, then spend about one minute considering which idea would make the biggest difference. You do not have to discuss every prompt or reach agreement. Speak about half the time in turns of one to three sentences. Ask for the candidate's opinion and react to their ideas. Do not correct them. Your position is that clear ground rules may make the biggest difference, but remain open to other views. Use these ideas naturally, adapting them to the conversation: 'A quiet space might help people feel they can spend time alone without being unfriendly.' 'Decorating together could give everyone a sense that the place belongs to them.' 'Spending time together is useful, although I don't think everyone has to become close friends.' 'Ground rules might prevent small misunderstandings, but they should be flexible.' When it is time to decide, say, 'Which idea do you think would make the biggest difference?' Give your view and invite a response. If you disagree, compare the reasons without forcing a decision.",
+  "openingLine": "So, how do you think people could make a shared home a pleasant place to live?",
+  "hints": [
+    "Let me think about that for a moment.",
+    "I think this could be important because it affects everyone.",
+    "I see what you mean, but there might be another way to look at it.",
+    "What do you think about that?",
+    "Shall we compare the two ideas before we decide?"
+  ]
+}

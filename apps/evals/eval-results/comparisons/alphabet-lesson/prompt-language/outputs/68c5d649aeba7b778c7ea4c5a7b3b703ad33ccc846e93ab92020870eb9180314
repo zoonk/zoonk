@@ -1,0 +1,95 @@
+{
+  "script": "o alfabeto cirílico",
+  "title": "Suas primeiras letras cirílicas",
+  "description": "Junte letras em sílabas simples e reconheça sons que parecem familiares, mas não são.",
+  "canDo": "Leia e diga а, о, у, в, н, р, с, д e ж.",
+  "intro": [
+    {
+      "title": "Leia da esquerda para a direita",
+      "text": "As letras russas ficam lado a lado, sem se conectar. Algumas parecem letras latinas, mas têm outro som: в (v) lembra b, н (n) lembra h, р (r) lembra p, с (s) lembra c e у (u) lembra y."
+    },
+    {
+      "title": "Junte os sons",
+      "text": "Combine uma consoante com uma vogal para formar uma sílaba, como ва (va) ou ну (nu). O russo não distingue vogais curtas e longas; о (o) costuma soar mais fraco quando não está na sílaba tônica."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "в",
+      "readingAid": "v",
+      "ipa": "/v/",
+      "audioText": "ва",
+      "pronunciation": "No áudio, você ouvirá ва (va); o v é como em “vaca”. No fim de uma sílaba, pode ensurdecer e soar como f.",
+      "forms": []
+    },
+    {
+      "symbol": "н",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "на",
+      "pronunciation": "No áudio, você ouvirá на (na); o n é como em “nada”.",
+      "forms": []
+    },
+    {
+      "symbol": "р",
+      "readingAid": "r",
+      "ipa": "/r/",
+      "audioText": "ра",
+      "pronunciation": "No áudio, você ouvirá ра (ra); faça vibrar a ponta da língua. É mais vibrado que o r simples de “caro”.",
+      "forms": []
+    },
+    {
+      "symbol": "с",
+      "readingAid": "s",
+      "ipa": "/s/",
+      "audioText": "са",
+      "pronunciation": "No áudio, você ouvirá са (sa); o som é como o s de “sapo”. Antes de uma consoante sonora, pode soar como z.",
+      "forms": []
+    },
+    {
+      "symbol": "у",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "у",
+      "pronunciation": "Como o u de “lula”, sem deslizar para outra vogal.",
+      "forms": []
+    },
+    {
+      "symbol": "а",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "а",
+      "pronunciation": "Como o a de “pá”; diga sem alongar.",
+      "forms": []
+    },
+    {
+      "symbol": "о",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "о",
+      "pronunciation": "Quando está na sílaba tônica, como o ô de “avô”; sem tonicidade, costuma enfraquecer e soar mais como um a curto.",
+      "forms": []
+    },
+    {
+      "symbol": "д",
+      "readingAid": "d",
+      "ipa": "/d/",
+      "audioText": "да",
+      "pronunciation": "No áudio, você ouvirá да (da); o d é como em “dado”. Antes de certas vogais, fica mais suave, com a língua mais perto do céu da boca.",
+      "forms": []
+    },
+    {
+      "symbol": "ж",
+      "readingAid": "zh",
+      "ipa": "/ʐ/",
+      "audioText": "жа",
+      "pronunciation": "No áudio, você ouvirá жа (zha); é parecido com o j de “jogo”, mas com a língua mais recuada. No fim da sílaba, pode ensurdecer e soar como o x de “xadrez”.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Leia as letras da esquerda para a direita e combine consoantes com vogais para formar sílabas.",
+    "в, н, р, с e у lembram letras latinas, mas seus sons seguem a leitura russa.",
+    "а, о e у são vogais sem contraste entre curta e longa; о costuma enfraquecer fora da sílaba tônica."
+  ]
+}

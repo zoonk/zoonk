@@ -1,0 +1,19 @@
+{
+  "caseId": "en-star-wars-overview",
+  "challenger": {
+    "costUsd": 0.00066416,
+    "durationMs": 11178.160000000003,
+    "hash": "e288734c46f52a1134fb6a960ffa2b9736361e007b815ee83a81f45523ca9296",
+    "systemPromptHash": "6c650146bc77eba3fcaa07bd2138cf490fdea276cf402826c2abaafbfc13e373",
+    "userPromptHash": "a43434e1fe49a42e535a103c0ca23ae0312607c0276e90b5afa7be1b4d05a545"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00050513,
+    "durationMs": 7321.715416999999,
+    "hash": "494e02e378d978328bbc1911ea8a1319ce1bc983bc0efdf15dc7283ecc5aee88",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "a43434e1fe49a42e535a103c0ca23ae0312607c0276e90b5afa7be1b4d05a545"
+  },
+  "run": 2
+}

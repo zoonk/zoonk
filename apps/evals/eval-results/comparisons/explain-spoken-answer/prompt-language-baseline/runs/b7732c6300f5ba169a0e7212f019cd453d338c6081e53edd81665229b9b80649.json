@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pt-esta",
+  "challenger": {
+    "costUsd": 0.00015232,
+    "durationMs": 2945.3884579999976,
+    "hash": "70c736db83773f6c6cd42034842cc069df192dcba4d0907b88e36a2639bc02da",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "747d66eabf98e72e8b490b1fca9b8b8931fd63d742edec95344f99cb7a5f1f74"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

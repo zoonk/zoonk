@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "Uma cobrança estatal não pune uma infração; o que a distingue de uma multa?",
+      "options": [
+        {
+          "text": "Tributo",
+          "correct": true
+        },
+        {
+          "text": "Sanção por ilícito",
+          "correct": false
+        }
+      ],
+      "reveal": "Tributo. Pela definição do Código Tributário Nacional, ele não é punição por ato ilícito; a multa tem caráter sancionatório."
+    },
+    {
+      "question": "Se uma lei contraria a norma superior do país, no controle ela pode ser…",
+      "options": [
+        {
+          "text": "Declarada inconstitucional",
+          "correct": true
+        },
+        {
+          "text": "Revogada por costume",
+          "correct": false
+        },
+        {
+          "text": "Convertida em decreto",
+          "correct": false
+        }
+      ],
+      "reveal": "Declarada inconstitucional. No controle de constitucionalidade, verifica-se se uma norma é compatível com as normas superiores do país."
+    },
+    {
+      "question": "Uma conduta é reprovada socialmente, mas não há lei anterior que a defina como crime; pode haver pena?",
+      "options": [
+        {
+          "text": "Sim, por costume",
+          "correct": false
+        },
+        {
+          "text": "Sim, por analogia",
+          "correct": false
+        },
+        {
+          "text": "Não, sem lei anterior",
+          "correct": true
+        }
+      ],
+      "reveal": "Não, sem lei anterior. Pelo princípio da legalidade, uma conduta só pode ser punida como crime se uma lei anterior a definir como tal."
+    },
+    {
+      "question": "Em regra, quando começa a personalidade civil de uma pessoa natural no Brasil?",
+      "options": [
+        {
+          "text": "Na concepção",
+          "correct": false
+        },
+        {
+          "text": "No nascimento com vida",
+          "correct": true
+        },
+        {
+          "text": "Ao completar 18 anos",
+          "correct": false
+        }
+      ],
+      "reveal": "No nascimento com vida. A lei resguarda direitos do nascituro desde a concepção, mas a personalidade civil da pessoa natural começa com o nascimento com vida."
+    },
+    {
+      "question": "Quando a Administração desfaz um ato válido por conveniência e oportunidade, isso se chama…",
+      "options": [
+        {
+          "text": "Anulação",
+          "correct": false
+        },
+        {
+          "text": "Revogação",
+          "correct": true
+        },
+        {
+          "text": "Convalidação",
+          "correct": false
+        }
+      ],
+      "reveal": "Revogação. Ela extingue um ato válido por razões de conveniência e oportunidade; a anulação, em regra, desfaz um ato ilegal."
+    },
+    {
+      "question": "No emprego, qual elemento jurídico aparece quando o trabalho é dirigido pelo empregador?",
+      "options": [
+        {
+          "text": "Subordinação jurídica",
+          "correct": true
+        },
+        {
+          "text": "Autonomia técnica",
+          "correct": false
+        },
+        {
+          "text": "Eventualidade",
+          "correct": false
+        }
+      ],
+      "reveal": "Subordinação jurídica. No vínculo de emprego, o trabalhador se sujeita à direção do empregador na prestação do trabalho."
+    },
+    {
+      "question": "Como regra, informações recebidas no exercício da advocacia ficam protegidas por qual dever?",
+      "options": [
+        {
+          "text": "Sigilo profissional",
+          "correct": true
+        },
+        {
+          "text": "Publicidade dos atos",
+          "correct": false
+        },
+        {
+          "text": "Dever de testemunhar",
+          "correct": false
+        }
+      ],
+      "reveal": "Sigilo profissional. A confidencialidade protege a relação entre advogado e cliente e é um dever central da advocacia."
+    },
+    {
+      "question": "Em regra, quem prova o fato que fundamenta o direito alegado pelo autor no processo civil?",
+      "options": [
+        {
+          "text": "O autor",
+          "correct": true
+        },
+        {
+          "text": "O réu",
+          "correct": false
+        },
+        {
+          "text": "O juiz",
+          "correct": false
+        }
+      ],
+      "reveal": "O autor. Como regra geral, cabe a ele provar os fatos que dão base ao direito alegado; há exceções previstas na lei."
+    },
+    {
+      "question": "Uma ameaça ilegal de prisão põe em risco a liberdade de ir e vir; qual instrumento pode protegê-la?",
+      "options": [
+        {
+          "text": "Habeas corpus",
+          "correct": true
+        },
+        {
+          "text": "Habeas data",
+          "correct": false
+        },
+        {
+          "text": "Mandado de segurança",
+          "correct": false
+        }
+      ],
+      "reveal": "Habeas corpus. Esse instrumento protege a liberdade de locomoção diante de violência ou ameaça ilegal."
+    },
+    {
+      "question": "Quando o Legislativo fiscaliza atos do Executivo, que ideia da separação de Poderes aparece?",
+      "options": [
+        {
+          "text": "Freios e contrapesos",
+          "correct": true
+        },
+        {
+          "text": "Subordinação hierárquica",
+          "correct": false
+        },
+        {
+          "text": "Concentração de funções",
+          "correct": false
+        }
+      ],
+      "reveal": "Freios e contrapesos. Os Poderes são independentes, mas podem fiscalizar e limitar uns aos outros nos termos da Constituição."
+    }
+  ]
+}

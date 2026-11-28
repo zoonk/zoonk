@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pt-a1-restaurant",
+  "challenger": {
+    "costUsd": 0.012867,
+    "durationMs": 21853.654625000025,
+    "hash": "b435d916254c8868c2fc367e4884aa775c5043c0211153df62319976a5888291",
+    "systemPromptHash": "c7001b9d45f7cfdffa0d2234d52c0d368b6a22cdc18561a63eb2050b0030f5f7",
+    "userPromptHash": "e887405830800c321c9f77d48a6bd4a536dd7c98edebacc1b30a9661984554e5"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

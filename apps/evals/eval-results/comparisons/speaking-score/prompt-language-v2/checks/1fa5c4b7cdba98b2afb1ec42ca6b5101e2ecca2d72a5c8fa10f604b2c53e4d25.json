@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-de-goethe-b1-presentation-top-band",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 6,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 6
+}

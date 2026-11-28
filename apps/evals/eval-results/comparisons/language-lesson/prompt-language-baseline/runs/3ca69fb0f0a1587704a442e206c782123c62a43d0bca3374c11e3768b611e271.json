@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-b1-interview-opening",
+  "challenger": {
+    "costUsd": 0.013725850000000001,
+    "durationMs": 31327.470166999992,
+    "hash": "2885b68cc4b25794cc7b9575dd2c35ea0bacaf7c293578ff15e71216c5ab0a0d",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "9ddb19bf2ca82f96c0e21f501234a5ad006f0a6c4535de7cbf2cd16ef22ceaba"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

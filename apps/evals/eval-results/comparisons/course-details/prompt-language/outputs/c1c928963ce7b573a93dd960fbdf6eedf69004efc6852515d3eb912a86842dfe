@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "Almanca, günlük yaşamda, eğitimde ve işte iletişim kurmak için kullanılan bir dildir. Kurs; tanışma, kafe ve fırında sipariş verme, randevu ayarlama ve tren yolculuğuyla başlayıp alışveriş, sosyal ilişkiler, eğitim ve iş konuşmalarına, daha ayrıntılı anlatıma kadar ilerler. Seyahatte, eğitimde ve işte iletişimini sürdürmene yardımcı olur.",
+  "landingPage": {
+    "audience": [
+      "Almancaya sıfırdan başlayanlar",
+      "Almanca konuşulan yerlere seyahat edecekler",
+      "Almanca konuşulan ortamlarda çalışmak isteyenler"
+    ],
+    "outcomes": [
+      "Almanca kendini tanıtmak",
+      "Kafe ve fırında sipariş vermek",
+      "Almanca randevu ayarlamak",
+      "İş ve eğitim ortamlarında fikirlerini açıklamak"
+    ],
+    "valueProposition": "Almanca konuşulan yerlerde tanışıp günlük ihtiyaçlarını karşılamak"
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-computing-lecture-spoken-notation",
+        "claimId": "26ccb4667257a8d6",
+        "criterion": "keys",
+        "observationId": "ab351dab04469e557f83cc113388e109354d72be19d810a54b2fabcd5fc778c3.first.610f5a26-1028-4966-aecb-823188c89199.0",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-computing-lecture-spoken-notation",
+        "claimId": "c7730c98ea48d4b1",
+        "criterion": "keys",
+        "observationId": "ab351dab04469e557f83cc113388e109354d72be19d810a54b2fabcd5fc778c3.first.610f5a26-1028-4966-aecb-823188c89199.1",
+        "run": 2,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00225635,
+    "id": "28e6dd02a0244bdc294b1b297ca7e3d610fa6bf1c81fe971496e732e327304d5",
+    "packet": [
+      {
+        "A": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "199fb5f353ce450d",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "c3cd21451d3e68b4",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "a135ba4812c79f78651b7e3d53576a1fa46060b9f3f109cec81239fb44c1dc41",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e0b803a648bc02c56320c723020dbbe1358e24f062bbe9e4a59d28c1d4a7457e",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The script says a D marks a directory; in the ls listing, the directory marker is a lowercase d.",
+            "claimId": "26ccb4667257a8d6",
+            "criterion": "keys",
+            "location": {
+              "detail": "The explanation of the first character in the permissions field.",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The script says a D marks a directory; in the ls listing, the directory marker is a lowercase d.",
+            "claimId": "c7730c98ea48d4b1",
+            "criterion": "keys",
+            "location": {
+              "detail": "The explanation of the first character in the permissions field.",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "bcfff9e89de780c21ef1f8c47b9a72e2e2d372c90f422e7c3dc02ad3ed9d902e",
+          "format": "text"
+        },
+        "input": {
+          "blob": "84a0ab7c4d63e9c0e90fae7e662e77748c972a6c9825657b67d7abf2f9178994",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "199fb5f353ce450d",
+          "finding": "doesn't hold",
+          "reason": "Output B's questions and options are in Spanish, as the expectation requires (for example, '¿Qué motivó principalmente la creación de la biblioteca de objetos?'). Only the reasons and misconceptions are in Brazilian Portuguese, so the claim is false of B."
+        },
+        {
+          "claimId": "c3cd21451d3e68b4",
+          "finding": "holds",
+          "reason": "In output A, the reasons and misconceptions of the second question are in Spanish (for example, 'Oyes que aceptan objetos usados...' and 'Interpreta el requisito de buen estado...'), which breaks the expectation. In output B the same reasons are in Brazilian Portuguese, so the problem is in A only."
+        },
+        {
+          "claimId": "26ccb4667257a8d6",
+          "finding": "holds",
+          "reason": "Output A's script says 'A D means it's a directory', but in an ls -l listing the directory marker is a lowercase d, so the problem is in A. The claim is accurate about what the script says and about the listing."
+        },
+        {
+          "claimId": "c7730c98ea48d4b1",
+          "finding": "holds for both",
+          "reason": "Output B's script also says 'the letter D marks a directory', while ls -l shows a lowercase d for directories, so the same script-versus-listing mismatch appears in B. Output A has the same mismatch, so the problem is shared."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,208 @@
+{
+  "words": [
+    {
+      "word": "thanks for having me",
+      "translation": "obrigado por me receber",
+      "pronunciation": "THÊNKS fór RRE-ving mi",
+      "romanization": null,
+      "tip": "Para o 'th' de 'thanks', coloque a ponta da língua entre os dentes da frente e sopre o ar sem produzir som com as cordas vocais.",
+      "note": "Essa é a expressão padrão e mais natural para agradecer a oportunidade logo no início de uma entrevista de emprego nos EUA.",
+      "distractors": [
+        "thanks for inviting",
+        "thanks to see me",
+        "thank you for come"
+      ]
+    },
+    {
+      "word": "walk you through",
+      "translation": "apresentar em detalhes",
+      "pronunciation": "UÓK iu THRU",
+      "romanization": null,
+      "tip": "A letra 'l' em 'walk' não é pronunciada; diga apenas 'uók', rimando com 'lock'.",
+      "note": "Usado frequentemente no ambiente de trabalho para dizer que você vai explicar ou guiar alguém por um processo passo a passo.",
+      "distractors": [
+        "run you over",
+        "take you around",
+        "talk you out"
+      ]
+    },
+    {
+      "word": "background",
+      "translation": "trajetória profissional",
+      "pronunciation": "BÉK-graund",
+      "romanization": null,
+      "tip": "No 'r' de 'ground', puxe a ponta da língua para trás em direção ao céu da boca sem encostar nele.",
+      "note": "Em entrevistas nos Estados Unidos, 'background' se refere ao conjunto da sua formação acadêmica e histórico de trabalho anterior.",
+      "distractors": [
+        "backstage",
+        "groundwork",
+        "backdrop"
+      ]
+    },
+    {
+      "word": "current role",
+      "translation": "função atual",
+      "pronunciation": "CÊ-rrent ROUL",
+      "romanization": null,
+      "tip": "Curve a língua para trás no 'r' inicial de 'current' e de 'role', mantendo o som contínuo sem raspar a garganta.",
+      "note": "Atenção ao falso cognato: 'role' significa 'cargo' ou 'função', e nunca 'rolo'.",
+      "distractors": [
+        "actual role",
+        "current rule",
+        "present roll"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me today, it is great to connect with you",
+      "translation": "Obrigado por me receber hoje, é ótimo falar com você",
+      "explanation": "Expressão clássica de abertura que combina o agradecimento pelo convite com entusiasmo profissional em conhecer o entrevistador.",
+      "romanization": null,
+      "distractors": [
+        "take",
+        "meeting",
+        "from"
+      ],
+      "translationDistractors": [
+        "levar",
+        "ontem",
+        "partir"
+      ],
+      "speakingPrompt": "Cumprimente o entrevistador agradecendo pela oportunidade e dizendo que é ótimo conversar com ele"
+    },
+    {
+      "sentence": "I can walk you through my background and my most recent project",
+      "translation": "Posso apresentar em detalhes minha trajetória e meu projeto mais recente",
+      "explanation": "O phrasal verb 'walk through' serve para conduzir o ouvinte ponto a ponto pela sua história profissional de forma estruturada.",
+      "romanization": null,
+      "distractors": [
+        "across",
+        "past",
+        "into"
+      ],
+      "translationDistractors": [
+        "correr",
+        "antigo",
+        "resumir"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Would you like me to start with my current role?",
+      "translation": "Você gostaria que eu começasse pela minha função atual?",
+      "explanation": "Em inglês, 'Would you like me to...' é a fórmula educada para propor o ponto de partida da conversa sem soar impositivo.",
+      "romanization": null,
+      "distractors": [
+        "want",
+        "started",
+        "role's"
+      ],
+      "translationDistractors": [
+        "futuro",
+        "quiser",
+        "terminar"
+      ],
+      "speakingPrompt": "Pergunte educadamente se o entrevistador gostaria que você começasse pela sua função atual"
+    }
+  ],
+  "tip": {
+    "title": "Como oferecer um direcionamento com Would you like me to",
+    "text": "Para perguntar educadamente se o entrevistador deseja que você faça algo, use `Would you like me to` seguido do verbo na forma base. Falantes de português tendem a traduzir ao pé da letra com 'that I', mas construções como `Would you like that I start?` não existem em inglês natural. Lembre-se sempre de colocar o pronome `me` entre `like` e `to`.",
+    "examples": [
+      {
+        "sentence": "Would you like me to start with my background?",
+        "translation": "Você gostaria que eu começasse pela minha trajetória?"
+      },
+      {
+        "sentence": "Would you like me to walk you through the details?",
+        "translation": "Você gostaria que eu apresentasse os detalhes passo a passo?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete com a palavra correta para perguntar se o entrevistador quer que você faça um resumo.",
+      "template": "Would you like [BLANK] to give you a brief overview of my work?",
+      "answer": "me",
+      "distractors": [
+        "that I",
+        "mine",
+        "I"
+      ],
+      "feedback": "A estrutura requer o pronome objeto 'me' logo após 'Would you like' para indicar quem realizará a ação."
+    },
+    {
+      "question": "Escolha a preposição correta da expressão que significa guiar passo a passo.",
+      "template": "I would be glad to walk you [BLANK] my experience.",
+      "answer": "through",
+      "distractors": [
+        "along",
+        "across",
+        "over"
+      ],
+      "feedback": "A expressão fixa em inglês corporativo é 'walk someone through', indicando explicação detalhada."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador acabou de pedir que você se apresente brevemente. O que você diz para começar?",
+    "scene": "Uma chamada de vídeo para uma entrevista de emprego nos Estados Unidos",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Good morning! Thanks for joining us today.",
+        "translation": "Bom dia! Obrigado por se juntar a nós hoje."
+      },
+      {
+        "speaker": "you",
+        "text": "Good morning! Thanks for having me today, it is great to connect with you.",
+        "translation": "Bom dia! Obrigado por me receber hoje, é ótimo falar com você."
+      },
+      {
+        "speaker": "them",
+        "text": "To get started, could you briefly share a bit about yourself?",
+        "translation": "Para começarmos, você poderia compartilhar brevemente um pouco sobre você?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Certainly, I can walk you through my background and my current role.",
+        "translation": "Com certeza, posso apresentar minha trajetória e minha função atual em detalhes.",
+        "isBest": true,
+        "why": "Responde com segurança e profissionalismo, estruturando a resposta em torno do histórico e do papel atual."
+      },
+      {
+        "text": "I would like that I speak about all my personal life.",
+        "translation": "Eu gostaria que eu falasse sobre toda a minha vida pessoal.",
+        "isBest": false,
+        "why": "Usa a estrutura incorreta 'that I' e propõe falar da vida pessoal em vez da experiência profissional."
+      },
+      {
+        "text": "Yes, thanks to invite me for this job interview.",
+        "translation": "Sim, obrigado por me convidar para esta entrevista de emprego.",
+        "isBest": false,
+        "why": "Erra na preposição com 'thanks to invite' e não atende ao pedido de apresentação do entrevistador."
+      }
+    ],
+    "explanation": "Em entrevistas nos EUA, termos como 'Certainly' ou 'Sure' iniciam respostas diretas que definem o roteiro da sua apresentação."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês uma mensagem curta de abertura para o entrevistador: 'Obrigado por me receber hoje, é ótimo conhecê-lo.'",
+    "answers": [
+      "Thanks for having me today, it is great to meet you.",
+      "Thanks for having me today, it's great to meet you.",
+      "Thank you for having me today, it is great to meet you.",
+      "Thank you for having me today, it's great to meet you."
+    ],
+    "keyPoints": [
+      "Usa 'Thanks for having me' ou 'Thank you for having me' para agradecer o convite",
+      "Usa 'it is great to meet you' ou 'it's great to meet you' para saudar o entrevistador"
+    ]
+  },
+  "summary": [
+    "'Thanks for having me' demonstra polidez e gratidão logo no primeiro contato da entrevista.",
+    "'I can walk you through my background' introduz seu histórico profissional de forma fluida e organizada.",
+    "'Would you like me to start with my current role?' confere controle e cortesia ao alinhar o foco da conversa."
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "science"
+  ],
+  "description": "A física quântica descreve como a luz e a matéria se comportam em escala atômica. Você vai passar de átomos, luz e incerteza a ondas, probabilidades, partículas ligadas e computação quântica, usando a matemática necessária para acompanhar esses fenômenos. Isso ajuda a relacionar ideias abstratas a tecnologias como LEDs, lasers e chips.",
+  "landingPage": {
+    "audience": [
+      "Estudantes começando a estudar física",
+      "Curiosos sobre átomos e luz",
+      "Pessoas que gostam de tecnologia"
+    ],
+    "outcomes": [
+      "Explicar as cores emitidas pelos átomos",
+      "Usar gráficos para comparar ondas e energia",
+      "Prever resultados possíveis de medições em partículas",
+      "Descrever como computadores quânticos usam partículas ligadas"
+    ],
+    "valueProposition": "Explicar por que átomos emitem cores e onde a física quântica aparece no celular"
+  }
+}

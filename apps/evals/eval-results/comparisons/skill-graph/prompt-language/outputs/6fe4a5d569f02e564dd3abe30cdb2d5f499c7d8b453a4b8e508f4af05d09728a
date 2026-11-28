@@ -1,0 +1,1001 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "english",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Inglés"
+    }
+  ],
+  "estimatedHours": 155.4,
+  "phases": [
+    {
+      "estimatedHours": 34.4,
+      "milestone": "Presentarse, resolver necesidades cotidianas y pedir aclaraciones.",
+      "title": "Primeros intercambios"
+    },
+    {
+      "estimatedHours": 36.1,
+      "milestone": "Atender solicitudes habituales y completar la llegada y salida de huéspedes.",
+      "title": "Atención cotidiana"
+    },
+    {
+      "estimatedHours": 41.6,
+      "milestone": "Gestionar reservas, resolver incidencias y coordinarse con el equipo.",
+      "title": "Mayor autonomía"
+    },
+    {
+      "estimatedHours": 43.3,
+      "milestone": "Manejar conversaciones complejas con huéspedes y colegas con mayor soltura.",
+      "title": "Confianza en el trabajo"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Saludar, decir el nombre y explicar brevemente el puesto de trabajo.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "introduce-yourself",
+      "level": "beginner",
+      "name": "Presentarse en el trabajo",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Pedir que repitan, hablen más despacio o aclaren una palabra y comprobar lo entendido.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "ask-for-clarification",
+      "level": "beginner",
+      "name": "Pedir aclaraciones durante una conversación",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Deletrear y confirmar nombres, correos y códigos cuando se intercambian datos.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "spell-and-confirm",
+      "level": "beginner",
+      "name": "Deletrear y confirmar datos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender y confirmar fechas, horarios, cantidades y precios en conversaciones cotidianas.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "confirm-numbers-times",
+      "level": "beginner",
+      "name": "Confirmar fechas, horarios y cantidades",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Pedir comida y bebida, hacer preguntas sencillas y pagar la cuenta.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "order-food",
+      "level": "beginner",
+      "name": "Pedir comida y pagar",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Comprar artículos cotidianos, preguntar precios y entender indicaciones de pago.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "shop-essentials",
+      "level": "beginner",
+      "name": "Comprar artículos cotidianos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar cómo llegar y seguir indicaciones sencillas a pie.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "ask-directions",
+      "level": "beginner",
+      "name": "Pedir y seguir indicaciones",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar por rutas, horarios, paradas y boletos en el transporte público.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "use-public-transport",
+      "level": "beginner",
+      "name": "Usar el transporte público",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar por una habitación disponible, sus costos y condiciones básicas.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "ask-about-housing",
+      "level": "beginner",
+      "name": "Preguntar por alojamiento",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Describir una necesidad de salud sencilla y pedir ayuda en una farmacia o consulta.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "ask-for-health-help",
+      "level": "beginner",
+      "name": "Pedir ayuda por una molestia",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender instrucciones sencillas sobre tareas, horarios y lugares de trabajo.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "follow-work-instructions",
+      "level": "beginner",
+      "name": "Seguir instrucciones básicas de trabajo",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "ask-for-clarification"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar a colegas qué hacer y confirmar quién se encarga de una tarea.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "ask-colleagues-help",
+      "level": "beginner",
+      "name": "Pedir ayuda a colegas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "ask-for-clarification"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Saludar a huéspedes, ofrecer ayuda y responder a preguntas iniciales.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "welcome-guests",
+      "level": "beginner",
+      "name": "Dar la bienvenida a huéspedes",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "introduce-yourself"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Pedir con cortesía que alguien espere y explicar que se está buscando ayuda.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "ask-guests-to-wait",
+      "level": "beginner",
+      "name": "Pedir a huéspedes que esperen",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "welcome-guests"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Conversar brevemente sobre el día, el viaje o el clima con un huésped o colega.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "make-small-talk",
+      "level": "beginner",
+      "name": "Mantener una charla breve",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "introduce-yourself"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar el nombre y las fechas de estancia y confirmar los datos de una reserva.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "find-reservation",
+      "level": "beginner",
+      "name": "Localizar una reserva",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "spell-and-confirm",
+        "confirm-numbers-times",
+        "welcome-guests"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Solicitar los datos y documentos necesarios para registrar una llegada.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "collect-checkin-details",
+      "level": "beginner",
+      "name": "Solicitar datos para el registro",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "find-reservation"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entregar la llave y explicar cómo llegar a la habitación y entrar en ella.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "give-room-access",
+      "level": "beginner",
+      "name": "Entregar acceso a la habitación",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "collect-checkin-details"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Indicar dónde están los ascensores, baños, restaurante y otros espacios.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "direct-guests-inside",
+      "level": "beginner",
+      "name": "Orientar a huéspedes dentro del hotel",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ask-directions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar horarios, ubicación y opciones básicas del desayuno.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "explain-breakfast",
+      "level": "beginner",
+      "name": "Explicar el servicio de desayuno",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar cómo conectarse y responder preguntas frecuentes sobre el acceso.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "explain-wifi",
+      "level": "beginner",
+      "name": "Explicar el acceso a internet",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "spell-and-confirm"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar horarios y disponibilidad de servicios e instalaciones del hotel.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "describe-hotel-services",
+      "level": "beginner",
+      "name": "Describir servicios e instalaciones",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar dónde dejar equipaje y acordar cuándo recogerlo.",
+      "estimatedLessons": 22,
+      "examWeight": null,
+      "key": "handle-luggage",
+      "level": "beginner",
+      "name": "Atender solicitudes de equipaje",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender solicitudes de toallas, artículos de aseo u otros objetos y confirmar la entrega.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "handle-supply-requests",
+      "level": "beginner",
+      "name": "Atender solicitudes de artículos",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "welcome-guests"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar horarios de limpieza y comunicar una petición sencilla al personal correspondiente.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "arrange-housekeeping",
+      "level": "beginner",
+      "name": "Coordinar solicitudes de limpieza",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender el destino y ayudar a solicitar un taxi o preguntar por su llegada.",
+      "estimatedLessons": 23,
+      "examWeight": null,
+      "key": "arrange-taxi",
+      "level": "beginner",
+      "name": "Ayudar a solicitar un taxi",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times",
+        "ask-directions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Dar indicaciones a destinos cercanos y comprobar que el huésped las entendió.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "give-local-directions",
+      "level": "beginner",
+      "name": "Dar indicaciones a lugares cercanos",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ask-directions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Contestar con cortesía, identificar al interlocutor y tomar un mensaje breve.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "answer-hotel-phone",
+      "level": "beginner",
+      "name": "Contestar llamadas en recepción",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "spell-and-confirm",
+        "ask-for-clarification"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Revisar con el huésped el total, el método de pago y la entrega del recibo.",
+      "estimatedLessons": 26,
+      "examWeight": null,
+      "key": "take-payment",
+      "level": "beginner",
+      "name": "Cobrar una estancia",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "confirm-numbers-times"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Confirmar la salida, recibir la llave y despedirse de manera cordial.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "check-out-guest",
+      "level": "beginner",
+      "name": "Atender la salida de huéspedes",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "take-payment"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar fechas y necesidades, consultar disponibilidad y ofrecer una opción adecuada.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "handle-booking-inquiry",
+      "level": "intermediate",
+      "name": "Atender consultas de reserva",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "find-reservation",
+        "describe-hotel-services"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Comparar tipos de habitación y explicar qué incluye cada tarifa.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "compare-rooms-rates",
+      "level": "intermediate",
+      "name": "Comparar habitaciones y tarifas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "handle-booking-inquiry"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Aclarar las condiciones de pago, cambios y cancelación antes de confirmar una reserva.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "explain-booking-conditions",
+      "level": "intermediate",
+      "name": "Explicar condiciones de reserva",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "handle-booking-inquiry"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Tomar los datos necesarios, confirmar la opción elegida y resumir la reserva.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "make-reservation",
+      "level": "intermediate",
+      "name": "Crear y confirmar una reserva",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "handle-booking-inquiry",
+        "explain-booking-conditions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender cambios de fechas o habitación y confirmar su disponibilidad y costo.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "change-reservation",
+      "level": "intermediate",
+      "name": "Modificar una reserva",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "make-reservation"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar las opciones y condiciones al cancelar una reserva y confirmar el resultado.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "cancel-reservation",
+      "level": "intermediate",
+      "name": "Gestionar una cancelación",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "explain-booking-conditions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Consultar disponibilidad y explicar posibles cargos por llegar antes o salir más tarde.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "adjust-arrival-departure",
+      "level": "intermediate",
+      "name": "Ajustar horarios de llegada y salida",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "collect-checkin-details",
+        "check-out-guest"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar por necesidades de accesibilidad o alimentación y confirmar qué puede ofrecer el hotel.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "handle-accessibility-diet",
+      "level": "intermediate",
+      "name": "Atender necesidades de accesibilidad y alimentación",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "describe-hotel-services"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar conceptos de la cuenta y aclarar preguntas sobre cargos o depósitos.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "explain-bill",
+      "level": "intermediate",
+      "name": "Explicar cargos de una cuenta",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "take-payment"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Identificar un fallo de la llave o cerradura y explicar los pasos para recuperar el acceso.",
+      "estimatedLessons": 24,
+      "examWeight": null,
+      "key": "resolve-key-problem",
+      "level": "intermediate",
+      "name": "Resolver problemas de acceso",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "give-room-access"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Preguntar por una falla en la habitación y comunicar el problema al equipo adecuado.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "report-room-fault",
+      "level": "intermediate",
+      "name": "Reportar fallas de la habitación",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "ask-colleagues-help"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Registrar la descripción de un objeto y explicar cómo consultar su búsqueda o entrega.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "handle-lost-property",
+      "level": "intermediate",
+      "name": "Atender objetos perdidos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "spell-and-confirm"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Recomendar lugares o actividades según las preferencias y el tiempo disponible del huésped.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "recommend-local-options",
+      "level": "intermediate",
+      "name": "Recomendar lugares y actividades",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "give-local-directions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Dar información sobre rutas, transbordos y opciones para llegar a un destino.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "advise-on-transport",
+      "level": "intermediate",
+      "name": "Orientar sobre opciones de transporte",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "use-public-transport",
+        "give-local-directions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Compartir con el siguiente turno pendientes, incidencias y solicitudes de huéspedes.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "handover-shift",
+      "level": "intermediate",
+      "name": "Entregar pendientes entre turnos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "follow-work-instructions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Escuchar una queja, reconocer el problema y hacer preguntas sin interrumpir.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "receive-complaint",
+      "level": "intermediate",
+      "name": "Escuchar y aclarar una queja",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ask-for-clarification"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Disculparse, proponer una solución disponible y confirmar los siguientes pasos.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "resolve-complaint",
+      "level": "intermediate",
+      "name": "Proponer soluciones a una queja",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "receive-complaint"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Mantener un tono calmado, poner límites corteses y pedir apoyo cuando sea necesario.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "handle-upset-guest",
+      "level": "intermediate",
+      "name": "Atender a huéspedes molestos",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "receive-complaint"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar una incidencia al responsable y mantener informado al huésped sobre el seguimiento.",
+      "estimatedLessons": 27,
+      "examWeight": null,
+      "key": "escalate-issue",
+      "level": "intermediate",
+      "name": "Canalizar una incidencia",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "receive-complaint",
+        "ask-colleagues-help"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Comprobar los datos de una reserva no localizada y explicar las opciones disponibles.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "resolve-missing-booking",
+      "level": "intermediate",
+      "name": "Atender una reserva no localizada",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "find-reservation",
+        "resolve-complaint"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar con tacto la falta de disponibilidad y presentar alternativas confirmadas.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "handle-unavailable-room",
+      "level": "intermediate",
+      "name": "Ofrecer alternativas ante falta de habitación",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "compare-rooms-rates",
+        "resolve-complaint"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Escuchar una discrepancia de cobro, revisar los datos y explicar cómo se investigará.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "handle-billing-dispute",
+      "level": "intermediate",
+      "name": "Atender una discrepancia de cobro",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "explain-bill",
+        "receive-complaint"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Identificar la urgencia, pedir ayuda y dar indicaciones claras mientras llega apoyo.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "respond-to-medical-emergency",
+      "level": "intermediate",
+      "name": "Comunicarse ante una emergencia médica",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ask-for-health-help",
+        "ask-colleagues-help"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Comunicar una alerta, indicar rutas de salida y seguir las instrucciones del equipo responsable.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "communicate-evacuation",
+      "level": "intermediate",
+      "name": "Dar indicaciones durante una evacuación",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "direct-guests-inside",
+        "follow-work-instructions"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Confirmar la identidad o la autorización antes de compartir datos de una estancia.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "protect-guest-information",
+      "level": "intermediate",
+      "name": "Proteger información de huéspedes",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "collect-checkin-details"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Redactar respuestas claras sobre disponibilidad, condiciones y detalles de una reserva.",
+      "estimatedLessons": 29,
+      "examWeight": null,
+      "key": "write-booking-emails",
+      "level": "intermediate",
+      "name": "Responder correos sobre reservas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "make-reservation"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Describir por escrito lo ocurrido, las acciones tomadas y los asuntos pendientes.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "write-incident-note",
+      "level": "intermediate",
+      "name": "Redactar notas de incidencias",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "handover-shift",
+        "report-room-fault"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Entender solicitudes con distintas pronunciaciones y verificar detalles cuando haya ruido o dudas.",
+      "estimatedLessons": 32,
+      "examWeight": null,
+      "key": "handle-difficult-calls",
+      "level": "intermediate",
+      "name": "Atender llamadas difíciles de entender",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "answer-hotel-phone"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Explicar una norma o negar una solicitud con cortesía y ofrecer una alternativa cuando exista.",
+      "estimatedLessons": 28,
+      "examWeight": null,
+      "key": "explain-policy-limits",
+      "level": "intermediate",
+      "name": "Explicar límites y normas del hotel",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "describe-hotel-services"
+      ]
+    },
+    {
+      "area": "Inglés",
+      "topics": [],
+      "course": "english",
+      "description": "Coordinar prioridades y pedir actualizaciones a otros departamentos cuando coinciden varias solicitudes.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "coordinate-multiple-requests",
+      "level": "intermediate",
+      "name": "Coordinar varias solicitudes simultáneas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "arrange-housekeeping",
+        "report-room-fault"
+      ]
+    }
+  ],
+  "repaired": []
+}

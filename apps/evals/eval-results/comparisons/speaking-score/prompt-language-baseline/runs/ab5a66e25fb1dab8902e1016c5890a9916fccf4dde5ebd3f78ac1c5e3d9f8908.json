@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-toefl-a2-candidate",
+  "challenger": {
+    "costUsd": 0.00111394,
+    "durationMs": 14971.353457999998,
+    "hash": "ffd601feae7e2c947978a4ab18bf81be2a8af2e337d83122f7a2b161a117a92c",
+    "systemPromptHash": "c05d55c9f7ad3fa5b416426c4142a58736e269722f6aa6014b04865dd821ba70",
+    "userPromptHash": "74240597055199dedc4d59e60339fad5b7f5ab8d85f28b2fab4dd7c8556281a5"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

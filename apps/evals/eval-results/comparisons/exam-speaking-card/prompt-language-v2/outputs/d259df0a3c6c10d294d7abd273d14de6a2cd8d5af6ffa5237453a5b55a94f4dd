@@ -1,0 +1,55 @@
+{
+  "instructions": [
+    "Va a conversar con el examinador sobre los resultados de una encuesta.",
+    "Comente qué habría respondido usted y dé su opinión sobre los datos.",
+    "Dispone de unos 4 minutos."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted?",
+    "¿En qué coincide con los resultados y en qué se diferencia?",
+    "¿Qué datos le llaman la atención?",
+    "¿Cómo cree que pueden cambiar estas preferencias en el futuro?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Cuál es su principal fuente de información para aprender a cuidar plantas? Encuesta del Observatorio de Jardinería Urbana, España, 2024",
+    "columns": [
+      "Fuente de información",
+      "Porcentaje"
+    ],
+    "rows": [
+      [
+        "Vídeos y tutoriales en internet",
+        "30 %"
+      ],
+      [
+        "Consejos de familiares o amigos",
+        "27 %"
+      ],
+      [
+        "Personal de viveros o tiendas",
+        "23 %"
+      ],
+      [
+        "Libros y revistas",
+        "20 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Você conversará espontaneamente com a examinadora a partir dos resultados de uma pesquisa, explicando seu ponto de vista e reagindo às perguntas dela.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct an informal conversation for about four minutes. This task is not prepared. Begin with the opening line and let the candidate answer. Then ask, in order, adapting naturally to what has already been said: «¿En qué coincide su respuesta con los resultados y en qué se diferencia?», «¿Hay algún dato que le llame especialmente la atención? ¿Por qué?», «¿Qué ventajas e inconvenientes ve en las distintas formas de informarse?» and «¿Cree que estas preferencias cambiarán en el futuro? ¿Por qué?». If an answer is short, use one or two of these follow-ups: «¿Podría explicar un poco más su opinión?» and «¿Se le ocurre algún ejemplo?». If the candidate has no experience caring for plants, allow a hypothetical answer. Listen and respond naturally without correcting, praising or grading.",
+  "openingLine": "Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted?",
+  "hints": [
+    "Déjeme pensarlo un momento.",
+    "En mi caso, probablemente elegiría esta opción porque me parece más práctica.",
+    "Por una parte, entiendo ese resultado, pero por otra, esperaba algo diferente.",
+    "No estoy del todo de acuerdo, ya que existen otras posibilidades.",
+    "Creo que esto podría cambiar en el futuro, aunque es difícil saberlo."
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "words": [
+    {
+      "word": "Thanks for having me",
+      "translation": "Obrigado por me receber",
+      "pronunciation": "THÉNKS FÂR RRÉ-vin MI",
+      "romanization": null,
+      "tip": "Em `thanks`, coloque a ponta da língua levemente entre os dentes e solte o ar, sem usar o som de `f`.",
+      "note": "Essa frase agradece ao entrevistador pela oportunidade de participar da conversa.",
+      "distractors": [
+        "Sorry for keeping you",
+        "Thanks for calling me",
+        "Thanks for inviting her"
+      ]
+    },
+    {
+      "word": "I'm excited to be here",
+      "translation": "Estou animado por estar aqui",
+      "pronunciation": "ÁIM ik-SÁI-tid TÂ BI RRIR",
+      "romanization": null,
+      "tip": "Em `here`, comece com um sopro parecido com o `r` de `rato` e termine curvando a língua para trás, sem encostar no céu da boca.",
+      "note": null,
+      "distractors": [
+        "I'm nervous about being here",
+        "I'm ready to leave",
+        "I'm excited to meet you"
+      ]
+    },
+    {
+      "word": "my background",
+      "translation": "minha trajetória profissional",
+      "pronunciation": "MAI BÉK-graund",
+      "romanization": null,
+      "tip": null,
+      "note": "Em uma entrevista, `background` pode se referir à sua formação e experiência profissional.",
+      "distractors": [
+        "my schedule",
+        "my salary",
+        "my address"
+      ]
+    },
+    {
+      "word": "this role",
+      "translation": "esta vaga",
+      "pronunciation": "THIZ ROUL",
+      "romanization": null,
+      "tip": "Em `role`, curve a língua para trás sem encostar no céu da boca, em vez de usar o som do `r` de `rato`.",
+      "note": "Em uma entrevista, `role` se refere à função ou vaga em questão.",
+      "distractors": [
+        "this company",
+        "this interview",
+        "this office"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me today",
+      "translation": "Obrigado por me receber hoje",
+      "explanation": "Use `Thanks for having me` para agradecer pela oportunidade de estar na entrevista.",
+      "romanization": null,
+      "distractors": [
+        "have",
+        "has",
+        "at"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "convidar"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por receber você hoje."
+    },
+    {
+      "sentence": "I'm excited to be here and discuss this role",
+      "translation": "Estou animado por estar aqui e falar sobre esta vaga",
+      "explanation": "Depois de `excited`, use `to` antes do verbo. Aqui, `be` e `discuss` compartilham esse `to`.",
+      "romanization": null,
+      "distractors": [
+        "being",
+        "discussing",
+        "for"
+      ],
+      "translationDistractors": [
+        "ontem",
+        "empresa"
+      ],
+      "speakingPrompt": "Diga que está animado por estar na entrevista e falar sobre a vaga."
+    },
+    {
+      "sentence": "My background has prepared me for this role",
+      "translation": "Minha trajetória profissional me preparou para esta vaga",
+      "explanation": "`Has prepared me` expressa uma preparação que aconteceu antes e é relevante agora. Em português, podemos usar simplesmente `me preparou`.",
+      "romanization": null,
+      "distractors": [
+        "have",
+        "preparing",
+        "at"
+      ],
+      "translationDistractors": [
+        "formação",
+        "entrevista"
+      ],
+      "speakingPrompt": "Diga, de forma geral, que sua trajetória preparou você para a vaga."
+    },
+    {
+      "sentence": "Would you like to hear about my background?",
+      "translation": "Você gostaria de ouvir sobre minha trajetória profissional?",
+      "explanation": "`Would you like to` é uma forma educada de perguntar se a pessoa gostaria de fazer algo.",
+      "romanization": null,
+      "distractors": [
+        "hearing",
+        "does",
+        "at"
+      ],
+      "translationDistractors": [
+        "salário",
+        "equipe"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Diga o que você está animado para fazer",
+    "text": "Use `I'm excited to` antes de um verbo para demonstrar entusiasmo. Por exemplo, `I'm excited to discuss this role` significa que você está animado para falar sobre a vaga. Depois de `to`, use o verbo na forma básica: `discuss`, não `discussing`.",
+    "examples": [
+      {
+        "sentence": "I'm excited to be here",
+        "translation": "Estou animado por estar aqui"
+      },
+      {
+        "sentence": "I'm excited to discuss this role",
+        "translation": "Estou animado para falar sobre esta vaga"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase com a palavra adequada.",
+      "template": "I'm excited [BLANK] learn more about this role",
+      "answer": "to",
+      "distractors": [
+        "for",
+        "at",
+        "of"
+      ],
+      "feedback": "Use `to` antes do verbo `learn` para dizer o que você está animado para fazer."
+    },
+    {
+      "question": "Escolha a forma adequada do verbo.",
+      "template": "I'm excited to [BLANK] my background",
+      "answer": "discuss",
+      "distractors": [
+        "discussing",
+        "discusses",
+        "discussed"
+      ],
+      "feedback": "Depois de `excited to`, use o verbo na forma básica: `discuss`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador pede que você se apresente. O que você diz?",
+    "scene": "Início de uma entrevista de emprego",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome, and thanks for coming in.",
+        "translation": "Boas-vindas e obrigado por vir."
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks for having me.",
+        "translation": "Obrigado por me receber."
+      },
+      {
+        "speaker": "them",
+        "text": "Could you introduce yourself?",
+        "translation": "Você poderia se apresentar?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I'm excited to be here. My background has prepared me for this role.",
+        "translation": "Estou animado por estar aqui. Minha trajetória profissional me preparou para esta vaga.",
+        "isBest": true,
+        "why": "A resposta demonstra entusiasmo e começa a apresentação de modo profissional."
+      },
+      {
+        "text": "I'm excited to being here.",
+        "translation": "Estou animado por estar aqui.",
+        "isBest": false,
+        "why": "Depois de `excited to`, use `be`, não `being`."
+      },
+      {
+        "text": "I'm excited to leave now.",
+        "translation": "Estou animado para ir embora agora.",
+        "isBest": false,
+        "why": "Dizer que está animado para ir embora não responde ao pedido de apresentação."
+      }
+    ],
+    "explanation": "Você pode mencionar sua trajetória de forma geral antes de dar mais detalhes."
+  },
+  "writing": {
+    "prompt": "Escreva ao entrevistador: “Estou animado por estar aqui e falar sobre esta vaga.”",
+    "answers": [
+      "I'm excited to be here and discuss this role.",
+      "I am excited to be here and discuss this role.",
+      "I'm excited to be here and talk about this role.",
+      "I am excited to be here and talk about this role."
+    ],
+    "keyPoints": [
+      "Use `excited to` para expressar entusiasmo.",
+      "Mencione estar presente e falar sobre a vaga."
+    ]
+  },
+  "summary": [
+    "“Thanks for having me” agradece ao entrevistador por receber você.",
+    "“I'm excited to be here” demonstra entusiasmo no início da conversa.",
+    "“My background has prepared me for this role” apresenta sua trajetória de forma geral."
+  ]
+}

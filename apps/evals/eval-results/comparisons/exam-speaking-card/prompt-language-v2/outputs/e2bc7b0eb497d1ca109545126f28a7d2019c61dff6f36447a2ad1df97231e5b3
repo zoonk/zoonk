@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "En su municipio se quiere aumentar la participación de los vecinos en las actividades musicales.",
+    "Durante 3 o 4 minutos, valore las ventajas y los inconvenientes de al menos cuatro de las propuestas.",
+    "Después, converse con el examinador durante 2 o 3 minutos sobre las propuestas y el tema."
+  ],
+  "prompts": [
+    "Organizar conciertos gratuitos de músicos locales en las plazas.",
+    "Ofrecer talleres de instrumentos en los centros culturales.",
+    "Crear un coro abierto a personas de todas las edades.",
+    "Celebrar un festival anual con distintos estilos musicales.",
+    "Programar actuaciones musicales en las bibliotecas municipales.",
+    "Crear una aplicación para informar sobre las actividades musicales."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai avaliar propostas para incentivar a participação em atividades musicais e depois conversar com a examinadora sobre o tema.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE B2 examiner. Begin with the opening line and listen without interrupting while the candidate weighs at least four proposals for about 3 to 4 minutes. Then conduct a conversation for about 2 to 3 minutes. Ask in order, allowing the candidate to answer each question: «De las propuestas que ha valorado, ¿cuál le parece la más adecuada? ¿Por qué?», «¿Cómo es la oferta de actividades musicales en su país?», «En su opinión, ¿qué se podría hacer para que más personas participaran en actividades musicales?». If an answer is short, use one or two follow-ups as needed: «¿Podría explicar un poco más su opinión?» and «¿Podría poner algún ejemplo?». Do not correct, praise or grade the candidate.",
+  "openingLine": "Valore las ventajas y los inconvenientes de al menos cuatro de las propuestas durante tres o cuatro minutos. Después hablaremos sobre ellas. Puede empezar cuando quiera.",
+  "hints": [
+    "Para empezar, me gustaría considerar varias posibilidades.",
+    "Una de las ventajas sería que, sin embargo, también habría que tener en cuenta sus inconvenientes.",
+    "Desde mi punto de vista, esta opción podría ser más adecuada porque ofrece varias posibilidades.",
+    "Por otra parte, creo que sería importante tener en cuenta otros factores.",
+    "No estoy del todo de acuerdo, ya que se podría considerar desde otra perspectiva."
+  ]
+}

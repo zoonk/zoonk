@@ -1,0 +1,139 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00298274,
+  "failures": [],
+  "packetId": "774475148cef5c2ce1718fd638edd556286ae60a89cc3ab02be69640955a64e7",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "B",
+            "reason": "In A, question 3 could also be answered with “food supply,” which the speaker says the observations can reveal; B’s keys are unambiguous.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "Both are single-speaker monologues with six sentence-completion questions, but B uses more nearby alternatives and rejected suggestions as listening distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like natural British English spoken by one person, with conversational phrasing and no stage directions.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Question 3 accepts only “insect numbers,” but “food supply” also fits the gap and is supported by the speaker’s statement that a change in local food supply can be revealed by the observations.",
+            "criterion": "keys",
+            "learnerCost": "A learner who gives another answer supported by the recording could be marked wrong.",
+            "location": {
+              "detail": "Question 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A has an ambiguous answer key for question 3; B avoids that problem and also offers stronger nearby distractors."
+        },
+        "pairId": "0ed8657f-9521-422f-bade-940d29fd44de"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, including the ambiguity in question 3’s answer key.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and both use a single-speaker monologue with six sentence-completion questions.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The scripts are identical and sound like natural spoken British English.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Question 3 accepts only “insect numbers,” but “food supply” also fits the gap and is supported by the speaker’s statement that a change in local food supply can be revealed by the observations.",
+            "criterion": "keys",
+            "learnerCost": "A learner who gives another answer supported by the recording could be marked wrong.",
+            "location": {
+              "detail": "Question 3",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Question 3 accepts only “insect numbers,” but “food supply” also fits the gap and is supported by the speaker’s statement that a change in local food supply can be revealed by the observations.",
+            "criterion": "keys",
+            "learnerCost": "A learner who gives another answer supported by the recording could be marked wrong.",
+            "location": {
+              "detail": "Question 3",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better; both have the same ambiguous answer key in question 3."
+        },
+        "pairId": "4b53db37-806b-4144-b087-9337b2fe9ff6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions have the same questions and keys, which match the information in the Spanish recording.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both present a Spanish monologue with Spanish questions and multiple-choice options.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B keeps the reasons and misconceptions in Brazilian Portuguese; A switches to Spanish in the reasons and misconceptions for question 2.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "In question 2, the reasons and misconceptions for options 1 and 2 are in Spanish rather than Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian reader may not understand the explanations and misconceptions as easily as intended.",
+            "location": {
+              "detail": "Question 2, options 1 and 2 reasons and misconceptions",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B follows the requirement that every reason and misconception be in Brazilian Portuguese, while A leaves several in Spanish."
+        },
+        "pairId": "94020726-fc4d-4dee-ab67-6745eff39059"
+      }
+    ]
+  }
+}

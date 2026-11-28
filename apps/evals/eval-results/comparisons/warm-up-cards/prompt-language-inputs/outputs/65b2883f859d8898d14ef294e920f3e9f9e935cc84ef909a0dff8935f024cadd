@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Si alguien dice \"Actually, I'm tired\", ¿qué expresa \"Actually\"?",
+      "options": [
+        {
+          "text": "En realidad",
+          "correct": true
+        },
+        {
+          "text": "Actualmente",
+          "correct": false
+        },
+        {
+          "text": "Tal vez",
+          "correct": false
+        }
+      ],
+      "reveal": "En realidad. Aunque se parece a \"actualmente\", \"actually\" suele servir para aclarar o corregir algo."
+    },
+    {
+      "question": "Si Sofía dice \"I'm embarrassed\" al llegar tarde, ¿qué siente?",
+      "options": [
+        {
+          "text": "Vergüenza",
+          "correct": true
+        },
+        {
+          "text": "Embarazo",
+          "correct": false
+        },
+        {
+          "text": "Alivio",
+          "correct": false
+        }
+      ],
+      "reveal": "Vergüenza. \"Embarrassed\" no significa \"embarazada\"; expresa pena o incomodidad."
+    },
+    {
+      "question": "Al buscar un lugar para pedir prestados libros, ¿qué significa \"library\" en un letrero?",
+      "options": [
+        {
+          "text": "Biblioteca",
+          "correct": true
+        },
+        {
+          "text": "Librería",
+          "correct": false
+        },
+        {
+          "text": "Papelería",
+          "correct": false
+        }
+      ],
+      "reveal": "Biblioteca. Aunque \"library\" se parece a \"librería\", normalmente se refiere al lugar donde puedes consultar o pedir libros prestados."
+    },
+    {
+      "question": "Si una compañera pregunta \"Can you assist me?\", ¿qué te está pidiendo?",
+      "options": [
+        {
+          "text": "Que la ayudes",
+          "correct": true
+        },
+        {
+          "text": "Que vayas a su clase",
+          "correct": false
+        },
+        {
+          "text": "Que la esperes",
+          "correct": false
+        }
+      ],
+      "reveal": "Que la ayudes. \"Assist\" significa ayudar, no asistir a un evento o una clase."
+    },
+    {
+      "question": "En un letrero de museo que dice \"Information\", ¿qué contenido anuncia?",
+      "options": [
+        {
+          "text": "Información",
+          "correct": true
+        },
+        {
+          "text": "Formación",
+          "correct": false
+        },
+        {
+          "text": "Identificación",
+          "correct": false
+        }
+      ],
+      "reveal": "Información. \"Information\" se parece mucho a \"información\" y tiene prácticamente el mismo significado."
+    },
+    {
+      "question": "Al saludar a alguien por la mañana, ¿qué frase cotidiana en inglés de EE. UU. corresponde a \"buenos días\"?",
+      "options": [
+        {
+          "text": "\"Good morning\"",
+          "correct": true
+        },
+        {
+          "text": "\"Good night\"",
+          "correct": false
+        },
+        {
+          "text": "\"Good afternoon\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Good morning\". Es el saludo habitual por la mañana; \"good night\" se usa al despedirse o irse a dormir."
+    },
+    {
+      "question": "Si te pierdes en un centro comercial, ¿qué significa preguntar \"Where is the bathroom?\"?",
+      "options": [
+        {
+          "text": "¿Dónde está el baño?",
+          "correct": true
+        },
+        {
+          "text": "¿Dónde está la salida?",
+          "correct": false
+        },
+        {
+          "text": "¿Dónde está la tienda?",
+          "correct": false
+        }
+      ],
+      "reveal": "¿Dónde está el baño? En inglés de EE. UU., \"bathroom\" es una forma común de referirse al baño."
+    },
+    {
+      "question": "Para completar \"I ___ 20 years old\", ¿qué forma expresa la edad de manera natural en inglés?",
+      "options": [
+        {
+          "text": "\"am\"",
+          "correct": true
+        },
+        {
+          "text": "\"have\"",
+          "correct": false
+        },
+        {
+          "text": "\"do\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Am\". En inglés se usa el verbo \"be\" para expresar la edad, mientras que en español decimos que tenemos cierta edad."
+    },
+    {
+      "question": "Al hablar con una persona y luego con un grupo, ¿qué pronombre común puede servir en ambos casos?",
+      "options": [
+        {
+          "text": "\"you\"",
+          "correct": true
+        },
+        {
+          "text": "\"they\"",
+          "correct": false
+        },
+        {
+          "text": "\"we\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"You\". En inglés de EE. UU. se usa tanto para hablarle a una persona como a varias."
+    },
+    {
+      "question": "En una tienda, ¿qué significa preguntar \"How much is this?\" mientras señalas una taza?",
+      "options": [
+        {
+          "text": "¿Cuánto cuesta esto?",
+          "correct": true
+        },
+        {
+          "text": "¿Dónde está esto?",
+          "correct": false
+        },
+        {
+          "text": "¿Puedo llevar esto?",
+          "correct": false
+        }
+      ],
+      "reveal": "¿Cuánto cuesta esto? Es una manera cotidiana de preguntar el precio de un objeto."
+    }
+  ]
+}

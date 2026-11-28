@@ -1,0 +1,9 @@
+{
+  "model": "openai/gpt-6-luna",
+  "pipeline": [
+    "openai/gpt-6-luna"
+  ],
+  "reasoning": "provider-default",
+  "settingsHash": "c1ba28ec725ce9e8d7f3916a34412d083af7e5b9498e7b03c710b398774a232b",
+  "systemPromptHash": "174ac931ed0ab1ee4debb166b7826bbedb331451071645b4029e2256b6eeb36e"
+}

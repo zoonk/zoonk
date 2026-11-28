@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first six sentences exactly and retained nearly all of the final one, but changed “who'd” to “who would” and said “before the appointment” instead of “before their appointment.” That small change to the longest sentence keeps this just below the highest range.",
+      "tip": "Hold on to small words by grouping the final phrase together: “at least two days / before their appointment.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with reasons and concrete details, as in “people were worried about noise, about losing parking, about their small shops.” Your forecast is thoughtful, but stays mostly at the level of broad predictions rather than grounding them in a specific example.",
+      "tip": "Make one prediction concrete by adding an example, such as “For example, a graduate might use data to redesign a bus route and explain the trade-offs to residents.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use varied, complex structures, including “Seeing planners balance all of that, and actually change the design because of what residents said, is what convinced me this was the field for me.” A couple of quantity phrases are inaccurate: “the most of graduates” and “less opportunities.”",
+      "tip": "Use “fewer” with countable plural nouns: “less opportunities” → “fewer opportunities.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use precise topic language and natural expressions such as “public transport projects,” “a double-edged sword,” and “a foot in the door.” Some phrasing, including “higher demand than ever,” is broad rather than very specific, which keeps the range below the top.",
+      "tip": "Make “people who can combine technical skills with judgment and communication” more specific: “people who can turn technical analysis into clear recommendations for communities.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "Your sustained answers and connected phrasing, including “I suspect entry-level roles will shrink as routine tasks get automated,” support this estimate. The transcript can't show how you sounded, so this is a wider estimate based on your otherwise fluent language.",
+      "tip": "Use a brief pause and clear stress around “On the other hand” and “rather than” so the contrast in your long forecast is easy to follow.",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

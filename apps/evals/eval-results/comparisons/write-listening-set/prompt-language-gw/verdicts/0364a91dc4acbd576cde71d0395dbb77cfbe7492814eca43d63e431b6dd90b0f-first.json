@@ -1,0 +1,149 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0067440899999999995,
+  "failures": [],
+  "packetId": "0364a91dc4acbd576cde71d0395dbb77cfbe7492814eca43d63e431b6dd90b0f",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have correct keys that follow the script, and each question needs the recording to answer.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "Both sets are plausible C1 placement tests, but A's venue set includes a Raleigh setting that does not fit a British community event, so B fits the exam slightly better.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English with contractions, reactions and corrections.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The script names Raleigh, a US city, for a British English community event, which does not match the setting.",
+            "criterion": "examRealism",
+            "learnerCost": "A learner may be briefly confused by an odd location that does not fit the British setting.",
+            "location": {
+              "detail": "the Raleigh community event",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both sets test the same skill with correct keys, but A's unexplained Raleigh setting is a small flaw that B does not have."
+        },
+        "pairId": "67339a0a-02ca-4f15-99bb-f1b925c68c7c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so the keys are the same.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so exam realism is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so natural speech is the same.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "71e34ed3-4f2d-47ae-bdae-3615de383434"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same correct keys, and each answer follows from the monologue.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both sets use the same five questions and the same format for a DELE B2 listening task.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "B gives reasons and misconceptions in Spanish, which a Brazilian Portuguese reader cannot read, while A keeps them in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reason for the option about accepting only new items is in Spanish, but the case requires Brazilian Portuguese reasons.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation of why this option is wrong, so they cannot learn from the feedback.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The reason for the option about collecting all offered items is in Spanish, but the case requires Brazilian Portuguese reasons.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read why this rejected proposal is wrong, so the feedback fails them.",
+            "location": {
+              "detail": "Nerea menciona esa propuesta, pero explica que la rechazaron porque no podían arreglarlo todo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The reason for the correct option about selecting items usable without major repairs is in Spanish, but the case requires Brazilian Portuguese reasons.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the confirmation that this answer is right, which weakens the feedback they need.",
+            "location": {
+              "detail": "Oyes que aceptaron objetos en buen estado o que solo necesitaran un arreglo sencillo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The misconception labels for the options about accepting only new items and collecting all items are in Spanish, but the case requires Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The learner cannot read the explanation of the error they made, so the misconception feedback is lost.",
+            "location": {
+              "detail": "Interpreta el requisito de buen estado como exigencia de producto nuevo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both sets have the same correct keys and realistic questions, but B's Spanish reasons and misconceptions fail the Brazilian Portuguese reader."
+        },
+        "pairId": "7be1a824-9e96-4474-94c5-414e4902e9fe"
+      }
+    ]
+  }
+}

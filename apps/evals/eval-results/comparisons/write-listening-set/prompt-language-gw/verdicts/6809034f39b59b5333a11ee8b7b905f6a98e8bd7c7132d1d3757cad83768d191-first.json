@@ -1,0 +1,183 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00455174,
+  "failures": [],
+  "packetId": "6809034f39b59b5333a11ee8b7b905f6a98e8bd7c7132d1d3757cad83768d191",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm as mesmas cinco perguntas, e as respostas corretas são sustentadas pelo monólogo sem depender apenas do senso comum.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas usam um monólogo em espanhol, com cinco perguntas de múltipla escolha na ordem do áudio; não há diferença relevante entre elas nesse aspecto.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém os motivos e as explicações em português brasileiro. B mistura espanhol em várias explicações da segunda questão, contrariando a língua esperada para o leitor.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Várias explicações e concepções equivocadas da questão 2 estão em espanhol, embora devam estar em português brasileiro; por exemplo, a justificativa citada.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode não entender as explicações sobre por que as alternativas estão erradas.",
+            "location": {
+              "detail": "Oyes que aceptan objetos usados e incluso algunos que necesitan un pequeño arreglo.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As perguntas e o roteiro são essencialmente iguais, mas A mantém as explicações em português brasileiro, enquanto B inclui explicações em espanhol que podem impedir o leitor de entender o feedback."
+        },
+        "pairId": "1b9a476e-7e1c-4361-a0ca-7496ebba83cc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas principais estão apoiadas pelo diálogo, mas os dois conjuntos incluem respostas-modelo em palavras que não respeitam o limite de resposta numérica indicado.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A cobre uma data específica corrigida pelo falante, além dos outros detalhes de reserva; B não inclui uma data específica entre os itens avaliados.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A apresenta os pontos-chave em português brasileiro. B os apresenta em inglês, apesar de o público-alvo ser brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 3, 4, 5, 7 e 10.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode imitar uma resposta que excede o limite ou não segue o formato de resposta exigido.",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 3, 4, 5, 7 e 10.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender as explicações das respostas no idioma esperado para o exercício.",
+            "location": {
+              "detail": "Campo keyPoints das dez questões.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 2, 4 e 8.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode imitar uma resposta que excede o limite ou não segue o formato de resposta exigido.",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 2, 4 e 8.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A inclui uma data específica após uma correção e mantém os pontos-chave em português brasileiro. As duas versões têm respostas-modelo que descumprem o limite de número em algumas questões, mas B também deixa de avaliar uma data específica e apresenta os pontos-chave em inglês."
+        },
+        "pairId": "24e767ca-a823-4a02-9c71-8ecdd323539b"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas: ambas têm respostas principais apoiadas pelo diálogo e respostas-modelo por extenso que não respeitam o limite “ONE NUMBER” em algumas questões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões têm o mesmo diálogo de reserva e as mesmas dez perguntas; portanto, qualquer diferença de adequação ao formato se aplica igualmente às duas.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas versões são idênticas e apresentam os pontos-chave em inglês, não em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 2, 4 e 8.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode imitar uma resposta que excede o limite ou não segue o formato de resposta exigido.",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 2, 4 e 8.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode não entender as explicações das respostas no idioma esperado para o exercício.",
+            "location": {
+              "detail": "Campo keyPoints das dez questões.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "As respostas-modelo de perguntas com a instrução “ONE NUMBER” estão escritas por extenso, em vez de usar números como dígitos; isso afeta as questões 2, 4 e 8.",
+            "criterion": "keys",
+            "learnerCost": "O aluno pode imitar uma resposta que excede o limite ou não segue o formato de resposta exigido.",
+            "location": {
+              "detail": "Campos sampleAnswer das questões 2, 4 e 8.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Os pontos-chave estão em inglês, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode não entender as explicações das respostas no idioma esperado para o exercício.",
+            "location": {
+              "detail": "Campo keyPoints das dez questões.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As versões são idênticas e têm os mesmos problemas: respostas-modelo em palavras para itens que exigem número e pontos-chave em inglês para um leitor brasileiro."
+        },
+        "pairId": "68219463-e184-4b5a-8fc4-cdd33a5c5084"
+      }
+    ]
+  }
+}

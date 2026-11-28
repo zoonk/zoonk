@@ -1,0 +1,19 @@
+{
+  "caseId": "en-en-a1-ielts-consonant-contrasts",
+  "challenger": {
+    "costUsd": 0.0119259,
+    "durationMs": 26911.92658300011,
+    "hash": "dede8d13d52f00830c158dc074cd3512c7e447f8b026fb6db79d414259532c53",
+    "systemPromptHash": "ab839f3558e6f11c377f439c0bac9a050f062c9c83510a10a54af85c121be02d",
+    "userPromptHash": "540eef05e097ac5980caa0f31bf1bb98c71e0d039e0fb31fabca3976b9f662a2"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0124517,
+    "durationMs": 29046.02112499997,
+    "hash": "c8a868a943a38f16d2e105def452174c3441fdbbda8016dd4b3c48dd3f89e4b3",
+    "systemPromptHash": "3674b7807585fb23d18f9ca87354a40a63e538e4bb509b23edb001fb6477a357",
+    "userPromptHash": "540eef05e097ac5980caa0f31bf1bb98c71e0d039e0fb31fabca3976b9f662a2"
+  },
+  "run": 2
+}

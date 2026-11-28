@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.025320000000000002,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"Abater parte do tributo devido\",\"kind\":\"factualError\",\"workedAnswer\":\"The stem confuses the amount taxed with the tax credit. If a R$100 input carries R$10 of creditable tax, the seller can deduct R$10 from the tax due on its sale, not the R$100 that was taxed.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Onde será consumida\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The place of consumption is correct under the destination principle, but the stem asks which place can guide taxation without specifying that principle. The place of production is also defensible under an origin rule.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

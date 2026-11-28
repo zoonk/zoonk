@@ -1,0 +1,15 @@
+
+      - MUST be in natural Korean: sentences in the description use 해요체, never 반말 or stiff 하십시오체 copy
+      - The promise and the outcomes read as abilities the learner will have, ending in ～할 수 있어요 or ～할 수 있다 (～하기 also fits a list item), never a command (～하세요, ～해 보세요, ～하자)
+      - Exam preparation: the promise opens with what the candidate will do on the 한국사능력검정시험's own questions (사료나 사진 자료를 보고 시대와 사건 찾기, 사건을 시대 순서로 놓기), framed as preparation. Never promises a 급수, 합격 or a 공무원 시험 benefit
+      - CHAPTERS are only the first band (선사 시대 to 고려): the copy covers the whole exam, from 선사 시대 through 조선, 근대, 일제 강점기 and 현대사
+      - Categories don't matter for exam courses: don't judge them
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

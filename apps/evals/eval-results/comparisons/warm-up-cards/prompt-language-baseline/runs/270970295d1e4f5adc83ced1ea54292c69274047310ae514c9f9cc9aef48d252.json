@@ -1,0 +1,13 @@
+{
+  "caseId": "en-python",
+  "challenger": {
+    "costUsd": 0.00134762,
+    "durationMs": 19401.791874999995,
+    "hash": "ae8ca1555df0bb3e2bedaabd9d659808c566a66ce6588ff067b74e24ddeac9d4",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "baffd163e9314260d6ce4314fc181a51581659af8908ff4a5e5a24f1f59eca43"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu corretamente várias frases, inclusive “Any chemicals you don't use should go back to the storage room.” Nas duas últimas, porém, disse “before you try to clean it” em vez de “before you try to clean it up” e “until they finished it” em vez de “until they finish it”, com perda de uma palavra e mudança no tempo verbal.",
+      "tip": "Nas frases longas, agrupe as palavras para guardar também o final: “If something spills / tell the lab assistant / before you try to clean it up.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você desenvolveu respostas com razões e exemplos, como em “because printing everything would be expensive and not very sustainable” e na explicação sobre avaliações orais e projetos. As respostas são coerentes, embora algumas ideias pudessem ser mais aprofundadas ou ilustradas com exemplos específicos.",
+      "tip": "Depois de explicar uma opinião, acrescente um exemplo concreto: “For example, an AI tutor could explain a difficult reaction using a diagram and then check my understanding with a question.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usou estruturas variadas para explicar hábitos e opiniões, como “until you get it” e “how they evaluate us”. Alguns erros reduzem a precisão, como “I use my laptop since the first semester”, “more easy” e “discuss about clear rules”.",
+      "tip": "Use o presente perfeito com “since” para uma situação que começou no passado e continua: troque “I use my laptop since the first semester” por “I've used my laptop since the first semester.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usou vocabulário pertinente e relativamente variado, incluindo “sustainable”, “distracting” e “oral exams and projects”. Algumas escolhas são menos precisas, como “more easy” e “discuss about”, e você poderia explorar expressões mais específicas ao desenvolver as ideias.",
+      "tip": "Para descrever o efeito dos celulares com mais precisão, troque “phones are really distracting” por “phones can seriously disrupt concentration.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta é uma estimativa mais ampla, baseada na clareza e no desenvolvimento das respostas escritas e no desempenho nas repetições.",
+      "tip": "Ao ensaiar, deixe bem audíveis as sílabas tônicas de “chemistry” e “sustainable” para que esses termos importantes sejam compreendidos com facilidade.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

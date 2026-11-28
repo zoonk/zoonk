@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-spoke-own-language",
+  "challenger": {
+    "costUsd": 0.00008481999999999999,
+    "durationMs": 1801.0148750000008,
+    "hash": "12e1721931d9b442a765f2e9c0340c8a5f4ad5c42de58c7a404d142520fe90fc",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "3923db8ad734cb49f71a32901e28d56825dcf811b90fe512c793e22bf241d793"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

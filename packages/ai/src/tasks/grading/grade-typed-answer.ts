@@ -6,7 +6,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { decodeHtmlEntities } from "../_utils/html-entities";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import languagePracticePrompt from "./grade-typed-answer-language-practice.prompt.md";
 import basePrompt from "./grade-typed-answer.prompt.md";
@@ -174,6 +174,14 @@ function formatKeyPoints(keyPoints: string[]): string {
   return keyPoints.map((keyPoint, index) => `${index + 1}. ${keyPoint}`).join("\n");
 }
 
+function buildSystemPrompt({ language, practicedLanguage }: GradeTypedAnswerParams): string {
+  return fillPromptLanguages({
+    learnerLanguage: language,
+    targetLanguage: practicedLanguage ?? undefined,
+    template: practicedLanguage ? languagePracticeSystemPrompt : basePrompt,
+  });
+}
+
 function buildUserPrompt(params: GradeTypedAnswerParams): string {
   const answerBlock = formatUntrustedInput({ LEARNER_ANSWER: params.answer });
 
@@ -217,7 +225,7 @@ function getCodeMethod({
  */
 export async function gradeTypedAnswer(params: GradeTypedAnswerParams) {
   const { analytics, keyPoints, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = params.practicedLanguage ? languagePracticeSystemPrompt : basePrompt;
+  const systemPrompt = buildSystemPrompt(params);
   const userPrompt = buildUserPrompt(params);
 
   const match = matchTypedAnswer({

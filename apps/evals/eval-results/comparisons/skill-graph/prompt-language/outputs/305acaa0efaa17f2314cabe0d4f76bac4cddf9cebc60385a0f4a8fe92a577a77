@@ -1,0 +1,1605 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "biologia-celular",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Biologia celular"
+    },
+    {
+      "countrySpecific": false,
+      "key": "bioquimica",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Bioquímica"
+    },
+    {
+      "countrySpecific": false,
+      "key": "genetica",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Genética"
+    },
+    {
+      "countrySpecific": false,
+      "key": "evolucao",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Evolução biológica"
+    },
+    {
+      "countrySpecific": false,
+      "key": "microbiologia",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Microbiologia"
+    },
+    {
+      "countrySpecific": false,
+      "key": "botanica",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Botânica"
+    },
+    {
+      "countrySpecific": false,
+      "key": "zoologia",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Zoologia"
+    },
+    {
+      "countrySpecific": false,
+      "key": "fisiologia",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Fisiologia animal"
+    },
+    {
+      "countrySpecific": false,
+      "key": "desenvolvimento",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Biologia do desenvolvimento"
+    },
+    {
+      "countrySpecific": false,
+      "key": "ecologia",
+      "levels": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
+      "title": "Ecologia"
+    },
+    {
+      "countrySpecific": false,
+      "key": "quimica",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Química"
+    },
+    {
+      "countrySpecific": false,
+      "key": "estatistica",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Estatística"
+    }
+  ],
+  "estimatedHours": 326.7,
+  "phases": [
+    {
+      "estimatedHours": 20.7,
+      "milestone": "Reconhecer seres vivos, células e relações ecológicas em exemplos concretos.",
+      "title": "Primeiros referenciais"
+    },
+    {
+      "estimatedHours": 54.5,
+      "milestone": "Explicar como células obtêm energia, armazenam informação e se reproduzem.",
+      "title": "Fundamentos em funcionamento"
+    },
+    {
+      "estimatedHours": 57.5,
+      "milestone": "Relacionar hereditariedade, evolução e diversidade microscópica.",
+      "title": "Conexões e diversidade"
+    },
+    {
+      "estimatedHours": 66.5,
+      "milestone": "Explicar como plantas e animais se desenvolvem e mantêm suas funções.",
+      "title": "Organismos em ação"
+    },
+    {
+      "estimatedHours": 60.5,
+      "milestone": "Interpretar a diversidade dos organismos e sua interação nos ecossistemas.",
+      "title": "Integração em escala ampla"
+    },
+    {
+      "estimatedHours": 67,
+      "milestone": "Analisar mecanismos biológicos complexos e aplicar métodos modernos de investigação.",
+      "title": "Aprofundamento e investigação"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Distingue organismos de objetos não vivos por organização celular, metabolismo e reprodução, reconhecendo os limites desses critérios.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "caracteristicas-vida",
+      "level": "beginner",
+      "name": "Reconhecer características dos seres vivos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Identifica a célula como unidade viva e compara organismos unicelulares e multicelulares.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "celulas-organismos",
+      "level": "beginner",
+      "name": "Relacionar células e organismos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "caracteristicas-vida"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Compara bactérias, arqueias e eucariontes e reconhece que vírus não possuem organização celular.",
+      "estimatedLessons": 16,
+      "examWeight": null,
+      "key": "diversidade-inicial",
+      "level": "beginner",
+      "name": "Distinguir grandes grupos de seres vivos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "celulas-organismos"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Distingue organismos, populações, comunidades e ecossistemas em situações concretas.",
+      "estimatedLessons": 15,
+      "examWeight": null,
+      "key": "niveis-ecologicos",
+      "level": "beginner",
+      "name": "Distinguir níveis de organização ecológica",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "caracteristicas-vida"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Relaciona produtores, consumidores e decompositores em cadeias e teias alimentares.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "teias-alimentares",
+      "level": "beginner",
+      "name": "Interpretar relações alimentares",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "niveis-ecologicos"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Compara estruturas básicas de células procarióticas e eucarióticas e suas funções.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "estrutura-celular",
+      "level": "beginner",
+      "name": "Comparar estruturas celulares básicas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "celulas-organismos"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Explica como diferenças hereditárias e sucesso reprodutivo podem mudar populações ao longo de gerações.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "selecao-conceito",
+      "level": "beginner",
+      "name": "Explicar seleção natural em exemplos",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "caracteristicas-vida"
+      ]
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "quimica",
+      "description": "Relaciona átomos, elementos, moléculas e íons à composição da matéria viva.",
+      "estimatedLessons": 18,
+      "examWeight": null,
+      "key": "atomos-moleculas",
+      "level": "beginner",
+      "name": "Relacionar átomos, moléculas e íons",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "quimica",
+      "description": "Distingue ligações covalentes e iônicas e interações intermoleculares relevantes para a água e biomoléculas.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "ligacoes-quimicas",
+      "level": "beginner",
+      "name": "Explicar ligações e interações químicas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "atomos-moleculas"
+      ]
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "quimica",
+      "description": "Interpreta soluções, concentração, equilíbrio ácido-base e pH em contextos biológicos.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "solucoes-ph",
+      "level": "beginner",
+      "name": "Interpretar soluções e pH",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "ligacoes-quimicas"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Relaciona a polaridade da água, interações moleculares e propriedades de meios biológicos.",
+      "estimatedLessons": 18,
+      "examWeight": null,
+      "key": "agua-biologica",
+      "level": "beginner",
+      "name": "Explicar propriedades biológicas da água",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "solucoes-ph"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Reconhece estruturas e funções de carboidratos, lipídios, proteínas e ácidos nucleicos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "biomoleculas",
+      "level": "beginner",
+      "name": "Relacionar biomoléculas às suas funções",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ligacoes-quimicas"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Explica como a bicamada lipídica e suas proteínas controlam trocas celulares.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "membranas-transporte",
+      "level": "intermediate",
+      "name": "Explicar membranas e transporte celular",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "estrutura-celular",
+        "biomoleculas",
+        "agua-biologica"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Explica especificidade, catálise e regulação enzimática em reações biológicas.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "enzimas",
+      "level": "intermediate",
+      "name": "Explicar ação e regulação enzimática",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "biomoleculas"
+      ]
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "quimica",
+      "description": "Relaciona energia livre, equilíbrio e reações de oxidação e redução às transformações químicas.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "energia-redox",
+      "level": "intermediate",
+      "name": "Interpretar energia e reações redox",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ligacoes-quimicas"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Relaciona ATP, acoplamento energético e gradientes à realização de trabalho celular.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "energia-celular",
+      "level": "intermediate",
+      "name": "Explicar transferência de energia celular",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "energia-redox",
+        "enzimas",
+        "membranas-transporte"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Relaciona glicólise, ciclo do ácido cítrico, cadeia respiratória e fermentação à obtenção de energia.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "respiracao-fermentacao",
+      "level": "intermediate",
+      "name": "Explicar respiração celular e fermentação",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "energia-celular"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Relaciona captação de luz, transporte de elétrons e fixação de carbono na fotossíntese.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "fotossintese",
+      "level": "intermediate",
+      "name": "Explicar etapas da fotossíntese",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "energia-celular"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Explica como organelas, tráfego de membranas e citoesqueleto organizam as funções celulares.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "organizacao-eucariotica",
+      "level": "intermediate",
+      "name": "Explicar organização de células eucarióticas",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "membranas-transporte"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Relaciona receptores, mensageiros e respostas celulares à comunicação entre células.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "sinalizacao-celular",
+      "level": "intermediate",
+      "name": "Explicar sinalização celular",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "membranas-transporte",
+        "enzimas"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Relaciona a estrutura do DNA ao armazenamento e à cópia da informação genética.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "dna-replicacao",
+      "level": "intermediate",
+      "name": "Explicar estrutura e replicação do DNA",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "biomoleculas"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Explica transcrição, processamento de RNA e tradução na produção de moléculas funcionais.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "expressao-genica",
+      "level": "intermediate",
+      "name": "Explicar expressão da informação genética",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "dna-replicacao"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Relaciona cromossomos, ciclo celular, mitose e citocinese à formação de células.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "ciclo-mitose",
+      "level": "intermediate",
+      "name": "Explicar ciclo celular e mitose",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "dna-replicacao",
+        "organizacao-eucariotica"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Explica a formação de gametas e a recombinação cromossômica durante a meiose.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "meiose",
+      "level": "intermediate",
+      "name": "Explicar meiose e recombinação",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "ciclo-mitose"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Prevê padrões simples de herança usando segregação de alelos e cruzamentos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "heranca-mendeliana",
+      "level": "intermediate",
+      "name": "Analisar herança mendeliana",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "meiose"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Relaciona alterações no DNA, reparo e efeitos sobre genes e fenótipos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "mutacao-reparo",
+      "level": "intermediate",
+      "name": "Explicar mutação e reparo do DNA",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "dna-replicacao",
+        "expressao-genica"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Interpreta dominância incompleta, codominância, ligação ao sexo e interação entre genes.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "heranca-complexa",
+      "level": "intermediate",
+      "name": "Analisar padrões complexos de herança",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "heranca-mendeliana"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Usa frequência de recombinação para interpretar ligação gênica e mapas cromossômicos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "ligacao-mapeamento",
+      "level": "intermediate",
+      "name": "Mapear genes por recombinação",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "heranca-mendeliana",
+        "meiose"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Relaciona regulação transcricional, cromatina e mecanismos epigenéticos à expressão dos genes.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "regulacao-genica",
+      "level": "intermediate",
+      "name": "Explicar regulação da expressão gênica",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "expressao-genica",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Interpreta evidências evolutivas provenientes de fósseis, anatomia, biogeografia e moléculas.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "evidencias-evolucao",
+      "level": "intermediate",
+      "name": "Analisar evidências de evolução",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "selecao-conceito"
+      ]
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "estatistica",
+      "description": "Resume medidas biológicas com distribuições, médias, dispersão e gráficos adequados.",
+      "estimatedLessons": 20,
+      "examWeight": null,
+      "key": "dados-biologicos",
+      "level": "beginner",
+      "name": "Resumir dados biológicos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": []
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "estatistica",
+      "description": "Aplica probabilidade e amostragem para interpretar variação e incerteza em dados biológicos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "probabilidade-amostragem",
+      "level": "intermediate",
+      "name": "Aplicar probabilidade e amostragem",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "dados-biologicos"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Analisa frequências alélicas e os efeitos de seleção, deriva, mutação e fluxo gênico.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "genetica-populacoes",
+      "level": "intermediate",
+      "name": "Analisar evolução em populações",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "heranca-mendeliana",
+        "mutacao-reparo",
+        "selecao-conceito",
+        "probabilidade-amostragem"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Explica como isolamento reprodutivo e divergência de populações podem originar espécies.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "especiacao",
+      "level": "intermediate",
+      "name": "Explicar formação de espécies",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "genetica-populacoes"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Interpreta árvores evolutivas, ancestralidade comum e classificação baseada em parentesco.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "filogenias",
+      "level": "intermediate",
+      "name": "Interpretar árvores filogenéticas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "evidencias-evolucao"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Compara estruturas, metabolismo e reprodução de bactérias e arqueias.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "bacterias-arqueias",
+      "level": "intermediate",
+      "name": "Comparar bactérias e arqueias",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "estrutura-celular",
+        "respiracao-fermentacao"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Explica como microrganismos crescem, trocam material genético e respondem ao ambiente.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "crescimento-microbiano",
+      "level": "intermediate",
+      "name": "Explicar crescimento e genética microbianos",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "bacterias-arqueias",
+        "mutacao-reparo"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Relaciona estrutura viral, entrada na célula e estratégias de replicação.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "virus-replicacao",
+      "level": "intermediate",
+      "name": "Explicar estrutura e replicação viral",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "expressao-genica",
+        "organizacao-eucariotica"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Compara diversidade, nutrição e ciclos de vida de fungos e protistas.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "fungos-protistas",
+      "level": "intermediate",
+      "name": "Comparar fungos e protistas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "organizacao-eucariotica",
+        "filogenias"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Relaciona transmissão, virulência e interações com hospedeiros ao desenvolvimento de infecções.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "patogenese",
+      "level": "intermediate",
+      "name": "Explicar transmissão e patogênese microbianas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "crescimento-microbiano",
+        "virus-replicacao"
+      ]
+    },
+    {
+      "area": "Desenvolvimento e reprodução",
+      "topics": [],
+      "course": "desenvolvimento",
+      "description": "Compara reprodução sexuada e assexuada, fecundação e alternância de fases dos ciclos de vida.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "ciclos-reprodutivos",
+      "level": "intermediate",
+      "name": "Comparar ciclos de reprodução",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "meiose"
+      ]
+    },
+    {
+      "area": "Desenvolvimento e reprodução",
+      "topics": [],
+      "course": "desenvolvimento",
+      "description": "Relaciona divisões, diferenciação e formação de tecidos às etapas iniciais do desenvolvimento animal.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "desenvolvimento-embrionario",
+      "level": "intermediate",
+      "name": "Explicar desenvolvimento embrionário animal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ciclos-reprodutivos",
+        "regulacao-genica"
+      ]
+    },
+    {
+      "area": "Desenvolvimento e reprodução",
+      "topics": [],
+      "course": "desenvolvimento",
+      "description": "Explica como células se especializam e se organizam em tecidos e órgãos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "diferenciacao-tecidos",
+      "level": "intermediate",
+      "name": "Explicar diferenciação celular e tecidos",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "desenvolvimento-embrionario",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Explica como mecanismos de retroalimentação regulam condições internas dos animais.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "homeostase",
+      "level": "intermediate",
+      "name": "Explicar mecanismos de homeostase",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "sinalizacao-celular",
+        "diferenciacao-tecidos"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona digestão, absorção e aproveitamento de nutrientes às necessidades do organismo.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "digestao-nutricao",
+      "level": "intermediate",
+      "name": "Explicar digestão e nutrição animal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase",
+        "enzimas"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Compara superfícies respiratórias e explica transporte e troca de gases.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "respiracao-animal",
+      "level": "intermediate",
+      "name": "Explicar trocas gasosas nos animais",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase",
+        "membranas-transporte"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona coração, vasos e fluidos circulatórios ao transporte de substâncias.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "circulacao",
+      "level": "intermediate",
+      "name": "Explicar circulação e transporte interno",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Explica excreção de resíduos e regulação de água, sais e pH em animais.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "excrecao-osmorregulacao",
+      "level": "intermediate",
+      "name": "Explicar excreção e osmorregulação",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase",
+        "membranas-transporte"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona potenciais elétricos, sinapses e circuitos à comunicação nervosa.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "sistema-nervoso",
+      "level": "intermediate",
+      "name": "Explicar comunicação do sistema nervoso",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase",
+        "membranas-transporte"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona hormônios, receptores e circuitos de retroalimentação à regulação do organismo.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "sistema-endocrino",
+      "level": "intermediate",
+      "name": "Explicar regulação hormonal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "homeostase",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Explica como receptores sensoriais transformam estímulos em sinais nervosos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "sistemas-sensoriais",
+      "level": "intermediate",
+      "name": "Explicar recepção e processamento sensorial",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "sistema-nervoso"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona contração muscular e estruturas de sustentação ao movimento animal.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "movimento-animal",
+      "level": "intermediate",
+      "name": "Explicar movimento e sustentação animal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "sistema-nervoso",
+        "energia-celular"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Compara defesas inatas e adaptativas e explica memória imunológica e vacinação.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "imunidade",
+      "level": "intermediate",
+      "name": "Explicar respostas imunológicas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "sinalizacao-celular",
+        "patogenese"
+      ]
+    },
+    {
+      "area": "Desenvolvimento e reprodução",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Relaciona gametogênese, hormônios e fecundação à reprodução animal.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "reproducao-animal",
+      "level": "intermediate",
+      "name": "Explicar fisiologia da reprodução animal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ciclos-reprodutivos",
+        "sistema-endocrino"
+      ]
+    },
+    {
+      "area": "Biologia vegetal",
+      "topics": [],
+      "course": "botanica",
+      "description": "Relaciona raízes, caules, folhas e tecidos vegetais às suas funções.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "anatomia-vegetal",
+      "level": "intermediate",
+      "name": "Relacionar estruturas e funções vegetais",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "organizacao-eucariotica"
+      ]
+    },
+    {
+      "area": "Biologia vegetal",
+      "topics": [],
+      "course": "botanica",
+      "description": "Explica absorção, transporte de água e minerais e distribuição de açúcares nas plantas.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "transporte-vegetal",
+      "level": "intermediate",
+      "name": "Explicar transporte e nutrição vegetal",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "anatomia-vegetal",
+        "membranas-transporte",
+        "fotossintese"
+      ]
+    },
+    {
+      "area": "Biologia vegetal",
+      "topics": [],
+      "course": "botanica",
+      "description": "Relaciona hormônios e sinais ambientais ao crescimento, desenvolvimento e respostas vegetais.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "crescimento-vegetal",
+      "level": "intermediate",
+      "name": "Explicar crescimento e respostas vegetais",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "anatomia-vegetal",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Biologia vegetal",
+      "topics": [],
+      "course": "botanica",
+      "description": "Compara ciclos reprodutivos de plantas e explica polinização, sementes e frutos.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "reproducao-vegetal",
+      "level": "intermediate",
+      "name": "Explicar reprodução e ciclos vegetais",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "anatomia-vegetal",
+        "ciclos-reprodutivos"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "botanica",
+      "description": "Compara linhagens vegetais e relaciona suas características à evolução em ambientes terrestres.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "diversidade-plantas",
+      "level": "intermediate",
+      "name": "Comparar diversidade das plantas",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "reproducao-vegetal",
+        "filogenias"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "zoologia",
+      "description": "Compara planos corporais, simetria e desenvolvimento entre linhagens animais.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "planos-corporais",
+      "level": "intermediate",
+      "name": "Comparar planos corporais animais",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "desenvolvimento-embrionario",
+        "filogenias"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "zoologia",
+      "description": "Compara diversidade, anatomia e modos de vida das principais linhagens de invertebrados.",
+      "estimatedLessons": 55,
+      "examWeight": null,
+      "key": "invertebrados",
+      "level": "intermediate",
+      "name": "Comparar linhagens de invertebrados",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "planos-corporais"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "zoologia",
+      "description": "Compara características e adaptações das principais linhagens de cordados e vertebrados.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "vertebrados",
+      "level": "intermediate",
+      "name": "Comparar linhagens de vertebrados",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "planos-corporais"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "zoologia",
+      "description": "Relaciona comportamento animal a mecanismos fisiológicos, desenvolvimento e evolução.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "comportamento-animal",
+      "level": "intermediate",
+      "name": "Explicar comportamento animal",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "sistema-nervoso",
+        "selecao-conceito"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Analisa crescimento, regulação e dinâmica de populações em diferentes ambientes.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "ecologia-populacoes",
+      "level": "intermediate",
+      "name": "Analisar dinâmica de populações",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "niveis-ecologicos",
+        "dados-biologicos"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Explica competição, predação, parasitismo e mutualismo e seus efeitos sobre espécies.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "interacoes-especies",
+      "level": "intermediate",
+      "name": "Analisar interações entre espécies",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "ecologia-populacoes"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Relaciona interações, perturbações e sucessão à estrutura das comunidades.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "comunidades-sucessao",
+      "level": "intermediate",
+      "name": "Analisar comunidades e sucessão ecológica",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "interacoes-especies"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Explica fluxo de energia, produtividade e ciclos de carbono, nitrogênio e outros elementos.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "ciclos-ecossistemas",
+      "level": "intermediate",
+      "name": "Explicar fluxos e ciclos nos ecossistemas",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "teias-alimentares",
+        "fotossintese",
+        "respiracao-fermentacao"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Relaciona clima, história evolutiva e dispersão à distribuição de espécies e biomas.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "biogeografia",
+      "level": "intermediate",
+      "name": "Explicar distribuição de espécies e biomas",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "especiacao",
+        "comunidades-sucessao"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Analisa perda de habitat, mudanças climáticas, invasões e outras ameaças à biodiversidade.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "ameacas-biodiversidade",
+      "level": "intermediate",
+      "name": "Analisar ameaças à biodiversidade",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "biogeografia",
+        "ciclos-ecossistemas"
+      ]
+    },
+    {
+      "area": "Ecologia e conservação",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Compara estratégias de proteção, manejo e restauração com base em evidências ecológicas.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "conservacao-restauracao",
+      "level": "intermediate",
+      "name": "Avaliar conservação e restauração ecológica",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "ameacas-biodiversidade",
+        "ecologia-populacoes"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Analisa relações entre microbiomas, hospedeiros e ambientes sem presumir causalidade.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "microbiomas",
+      "level": "intermediate",
+      "name": "Analisar microbiomas e seus hospedeiros",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "crescimento-microbiano",
+        "interacoes-especies"
+      ]
+    },
+    {
+      "area": "Microrganismos e vírus",
+      "topics": [],
+      "course": "microbiologia",
+      "description": "Explica seleção de resistência e compara medidas de controle de microrganismos.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "resistencia-controle",
+      "level": "intermediate",
+      "name": "Explicar resistência e controle microbiano",
+      "outcome": false,
+      "phase": 5,
+      "prerequisites": [
+        "crescimento-microbiano",
+        "genetica-populacoes"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Relaciona múltiplos genes e ambiente à variação de características quantitativas.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "genetica-quantitativa",
+      "level": "advanced",
+      "name": "Analisar características genéticas quantitativas",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "heranca-complexa",
+        "probabilidade-amostragem"
+      ]
+    },
+    {
+      "area": "Hereditariedade e genomas",
+      "topics": [],
+      "course": "genetica",
+      "description": "Analisa organização, variação e evolução de genomas e elementos móveis.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "organizacao-genomas",
+      "level": "advanced",
+      "name": "Analisar organização e evolução de genomas",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "regulacao-genica",
+        "mutacao-reparo",
+        "genetica-populacoes"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "bioquimica",
+      "description": "Integra vias metabólicas e explica sua regulação em diferentes condições fisiológicas.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "integracao-metabolica",
+      "level": "advanced",
+      "name": "Integrar vias e regulação metabólicas",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "respiracao-fermentacao",
+        "fotossintese",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Células e moléculas",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Relaciona pontos de controle, morte celular e falhas de regulação ao câncer.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "controle-cancer",
+      "level": "advanced",
+      "name": "Explicar controle celular e câncer",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "ciclo-mitose",
+        "regulacao-genica",
+        "sinalizacao-celular"
+      ]
+    },
+    {
+      "area": "Desenvolvimento e reprodução",
+      "topics": [],
+      "course": "desenvolvimento",
+      "description": "Explica como redes gênicas, sinais e padrões espaciais orientam a formação do corpo.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "mecanismos-desenvolvimento",
+      "level": "advanced",
+      "name": "Analisar mecanismos do desenvolvimento",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "diferenciacao-tecidos",
+        "regulacao-genica"
+      ]
+    },
+    {
+      "area": "Diversidade e evolução",
+      "topics": [],
+      "course": "evolucao",
+      "description": "Relaciona mudanças em mecanismos de desenvolvimento à evolução de formas corporais.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "evolucao-desenvolvimento",
+      "level": "advanced",
+      "name": "Relacionar evolução e desenvolvimento",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "mecanismos-desenvolvimento",
+        "filogenias"
+      ]
+    },
+    {
+      "area": "Fisiologia animal",
+      "topics": [],
+      "course": "fisiologia",
+      "description": "Integra respostas nervosas, hormonais, circulatórias e metabólicas diante de mudanças ambientais.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "integracao-fisiologica",
+      "level": "advanced",
+      "name": "Integrar respostas fisiológicas animais",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "sistema-nervoso",
+        "sistema-endocrino",
+        "circulacao",
+        "integracao-metabolica"
+      ]
+    },
+    {
+      "area": "Biologia vegetal",
+      "topics": [],
+      "course": "botanica",
+      "description": "Integra respostas hídricas, metabólicas e hormonais das plantas a estresses ambientais.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "estresse-vegetal",
+      "level": "advanced",
+      "name": "Analisar respostas vegetais ao estresse",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "transporte-vegetal",
+        "crescimento-vegetal"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Compara microscopia e técnicas de marcação para investigar estruturas e processos celulares.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "microscopia",
+      "level": "advanced",
+      "name": "Aplicar métodos de observação celular",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "organizacao-eucariotica"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "genetica",
+      "description": "Explica princípios e limitações de PCR, sequenciamento e análise de expressão gênica.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "metodos-moleculares",
+      "level": "advanced",
+      "name": "Interpretar métodos de biologia molecular",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "expressao-genica",
+        "organizacao-genomas"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "genetica",
+      "description": "Compara edição gênica e outras biotecnologias, considerando riscos, limites e implicações éticas.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "biotecnologia-edicao",
+      "level": "advanced",
+      "name": "Avaliar biotecnologia e edição genética",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "metodos-moleculares"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "genetica",
+      "description": "Interpreta comparações de sequências e dados genômicos, incluindo suas fontes de erro.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "bioinformatica",
+      "level": "advanced",
+      "name": "Analisar dados de sequências biológicas",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "metodos-moleculares",
+        "filogenias"
+      ]
+    },
+    {
+      "area": "Ferramentas para biologia",
+      "topics": [],
+      "course": "estatistica",
+      "description": "Interpreta intervalos de confiança, testes e modelos considerando incerteza e limitações.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "inferencia-estatistica",
+      "level": "intermediate",
+      "name": "Interpretar inferência estatística",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "probabilidade-amostragem"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "ecologia",
+      "description": "Avalia amostragem, controles, resultados e limites de estudos experimentais e de campo em biologia.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "estudos-biologicos",
+      "level": "advanced",
+      "name": "Avaliar estudos experimentais e de campo",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "inferencia-estatistica",
+        "ecologia-populacoes"
+      ]
+    },
+    {
+      "area": "Investigação biológica",
+      "topics": [],
+      "course": "biologia-celular",
+      "description": "Integra dados moleculares e celulares para interpretar redes biológicas e suas limitações.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "biologia-sistemas",
+      "level": "advanced",
+      "name": "Interpretar redes em biologia de sistemas",
+      "outcome": false,
+      "phase": 6,
+      "prerequisites": [
+        "integracao-metabolica",
+        "metodos-moleculares",
+        "inferencia-estatistica"
+      ]
+    }
+  ],
+  "repaired": []
+}

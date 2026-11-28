@@ -5,21 +5,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All three keyed answers are uniquely supported: the comparison includes waiting within the transport experience; the central argument integrates waiting conditions into transport planning; and passenger accounts complement technical analysis. Every evidence passage is copied verbatim. However, questions[1] and questions[2] can be answered through common-sense elimination because only their correct options present balanced, reasonable proposals. The cap of 7 for several questions answerable without the stimulus applies.",
+          "reasoning": "The first option is uniquely supported in each item: digital circulation can reinforce libraries’ wider role; access alone does not ensure effective use; and guidance can help a user act independently later. Each evidence field quotes the passage exactly. Stimulus dependence is weaker in the first two items: the broad digital-literacy question is answerable from common sense, and the thesis can be picked out by rejecting four extreme alternatives.",
           "score": 7,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The short opinion text, contextualized formal Portuguese, clear commands, and five-option questions fit the requested ENEM-style set. The questions cover language effect, central idea, and an inference/application. Distractors represent recognizable mistakes such as literal interpretation, unsupported comparison, and confusing supplementation with replacement. Nevertheless, several are too obviously extreme, and the final question mostly restates an explicit recommendation rather than requiring substantial inference.",
+          "reasoning": "The short opinion piece, formal commands, five choices per item, and progression from thesis to inference to figurative effect fit the requested ENEM set. Some distractors reflect recognizable misreadings, notably interpreting a loan literally. Others, such as requiring advanced computer maintenance, are remote from the argument and offer little competition to the key.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The stimulus is a coherent, natural Brazilian Portuguese opinion piece about an everyday public-service experience. It has no real-source attribution, fabricated statistics, identifiable factual inventions, or em dashes. The Portuguese explanations and misconceptions consistently connect the options to the text. No concrete stimulus defect or applicable cap is present.",
+          "reasoning": "The unattributed opinion piece reads naturally in Brazilian Portuguese. Its examples connect the claim about library use to a specific final image: lending time to learn rather than merely lending books. It makes no invented factual claims about real entities, uses no em dashes, and grounds its Portuguese feedback in the passage.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -34,29 +34,29 @@
       ],
       "itemsScored": 3,
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
-          "cacheReadTokens": 1121,
+          "cacheReadTokens": 1271,
           "cacheWriteTokens": 0,
-          "inputTokens": 3538,
-          "outputTokens": 864,
-          "reasoningTokens": 298
+          "inputTokens": 3639,
+          "outputTokens": 562,
+          "reasoningTokens": 0
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Questions[1] and questions[2] have weak stimulus dependence: their correct answers are the only broadly reasonable, integrative proposals, while the alternatives recommend substitution, neglect, or indiscriminate standardization. A learner can select both through common-sense elimination without establishing what this particular text argues.",
+          "conclusion": "The inference item can be answered without reading the passage. Evaluating information and carrying out tasks is the only plausible general requirement for digital participation among the five choices. In the main-idea item, the contrast between one qualified answer and four sweeping claims creates a similar shortcut. All three keys are nevertheless supported by the text.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The final question offers limited inferential demand despite its 'hard' label: using passenger reports to guide technical analysis closely paraphrases the final sentence. Several distractors are also conspicuously categorical, reducing the set's challenge and discrimination.",
+          "conclusion": "The inference item mostly asks learners to restate the examples of recognizing reliable information and completing a form. The language-effect item targets a distinct skill, but distractors about financial debt and an exclusive measure of quality make it easier than its hard label suggests.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Make the distractors plausible competing readings rather than obviously poor transport policies. For the inference question, introduce a concrete planning situation whose resolution requires combining the text's points about user routines, technical data, and complementary improvements.",
+          "conclusion": "Use true but partial details, such as the provision of quiet study space, as competing summaries in the main-idea item. For the inference item, ask what an equipment-access measure would miss, and offer plausible answers that require distinguishing access, guidance, and independent use.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -92,22 +92,22 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "Independent resolution gives Certo, Errado, Certo, Errado, matching every key. An illegal license is generally annulled with retroactive effects; withdrawal of a valid precarious permission for public-interest reasons is revocation with prospective effects; the presumption of legitimacy admits contrary evidence; and forced collection of a fine does not permit unilateral bank-account seizure. However, several statements are answerable without reading the stimulus, triggering the explicit maximum of 7.",
+          "reasoning": "All four judgments are sound: the competence defect concerns legality, the valid route decision can be revoked prospectively, the legally authorized emergency intervention needs no prior judicial order, and the presumption does not exclude contrary proof. Items 2 and 3 use decisive facts from the case, but items 1 and 4 can be answered without it, triggering the cap of 7.",
           "score": 7,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The formal Portuguese, four binary judgments, balanced true/false distribution, reversal of annulment and revocation effects, and overstatement of autoexecutoriedade are credible Cebraspe features. The set would not look out of place in that exam. Its weaker task fit is the collection of four largely independent mini-cases without an identified public servant; it also leaves imperatividade untested.",
-          "score": 8,
+          "reasoning": "Four concise Certo/Errado statements share one plausible administrative-law case, with two true and two false. The concept swap in item 1 and the claim in item 3 that judicial authorization is indispensable are credible Cebraspe traps. The items test distinct judgments about legality, temporal effects, direct execution and proof.",
+          "score": 10,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The municipality is expressly fictional, and no real source or invented factual claim about a real entity is presented. The stimulus is clear, natural Brazilian Portuguese, with no em dashes. The explanations and misconceptions use the learner's language and accurately address the legal situations described.",
-          "score": 9,
+          "reasoning": "The fictional municipal event naturally connects the permit, route change and emergency interdiction. The Portuguese is clear, the local competence rule is explicitly fictional, and the explanations accurately connect the legal distinctions to the facts without claiming a real source or using em dashes.",
+          "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
         },
@@ -121,31 +121,31 @@
       ],
       "itemsScored": 4,
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
-          "cacheReadTokens": 1126,
+          "cacheReadTokens": 1276,
           "cacheWriteTokens": 0,
-          "inputTokens": 2865,
-          "outputTokens": 834,
-          "reasoningTokens": 269
+          "inputTokens": 2980,
+          "outputTokens": 510,
+          "reasoningTokens": 0
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "Several items do not genuinely require the shared case. Questions[0], [2], and [3] state enough of the relevant legal proposition to be judged independently: annulment generally operates retroactively, the presumption of legitimacy is rebuttable, and a fine does not itself authorize direct bank-account seizure. All four keys are nevertheless legally correct.",
+          "conclusion": "Two of the four items do not require the case. Item 1 identifies the competence defect in its own wording, so a learner can reject revocation without knowing who signed the authorization. Item 4 asks only whether contrary evidence may be considered, which follows from the rebuttable nature of the presumption regardless of what Iara submitted.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "The requested public servant is not explicitly identified. The stimulus instead presents four citizens' separate interactions with a municipal secretariat. This remains plausible administrative-law material, but fits the requested single hypothetical case less closely.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Connect the events through an identified public servant and make the judgments turn on facts supplied only in the stimulus. Broaden attribute coverage to include imperatividade, and make the explanations explicitly connect each governing rule to the relevant case facts.",
+          "conclusion": "Make item 1 turn on whether the secretary could ratify the authorization: the reservation of exclusive competence would then be decisive. Make item 4 ask whether Iara's report challenges the factual basis for the interdiction or the municipality's legal authority to impose it. The learner would need to recall what the report disputes.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 9
         }
       ],
       "testCase": {
@@ -178,21 +178,21 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All four keys follow from the passage: light can trigger germination; seeds can survive the disappearance of their source plants; no comparison of germination times by soil depth is reported; and predictions require site conditions as well as seed-bank evidence. Each judgment is grounded in the stimulus, with no second defensible answer. The NOT GIVEN item correctly distinguishes an unreported finding from a contradiction.",
+          "reasoning": "The four judgments are unambiguous and grounded in the passage: common orientation reduced differences in sunlight exposure (TRUE); the preference did not persist under stable temperatures (FALSE); temperature measurements establish nothing about relative humidity (NOT GIVEN); and the passage explicitly allows entrance features to influence wild nest choice (TRUE). Each evidence excerpt is copied from the passage.",
           "score": 10,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The 215-word passage violates the requested 250–350-word range and makes the reading task noticeably abbreviated. The out-of-place-set cap of 7 applies; the explicit length shortfall warrants 6. Otherwise, four questions share the passage, all use exactly TRUE, FALSE, NOT GIVEN in that order with fixedOrder true, and the statements test a cause, a historical detail, an unsupported comparison, and a methodological conclusion.",
-          "score": 6,
+          "reasoning": "One academic passage supports four statements in passage order, each with the exact fixed TRUE, FALSE, NOT GIVEN options. The items cover experimental purpose, a conditional finding, an unreported measurement and a limit on generalization. The short passage, repeated directions and conspicuous missing variable make the set less convincing as advanced IELTS practice.",
+          "score": 7,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The passage is clear, natural academic English with no em dashes, claimed real source, or invented facts about named real entities. Its ecological explanations are sound. All evidence excerpts are copied directly from the passage, and the English reasons and misconceptions accurately explain the relevant textual distinctions.",
+          "reasoning": "The English reads naturally as an academic account and clearly distinguishes the measured heating rate from the proposed, untested benefit to offspring. It claims no identifiable real source, presents no invented figures about real entities and uses no em dashes. The feedback explains the judgments in English using specific passage distinctions.",
           "score": 10,
           "label": "Original, clear stimulus",
           "weight": 30
@@ -207,31 +207,31 @@
       ],
       "itemsScored": 4,
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
-          "cacheReadTokens": 1126,
+          "cacheReadTokens": 1276,
           "cacheWriteTokens": 0,
-          "inputTokens": 3291,
-          "outputTokens": 1168,
-          "reasoningTokens": 671
+          "inputTokens": 3449,
+          "outputTokens": 1000,
+          "reasoningTokens": 516
         }
       },
       "keyFlaws": [],
       "steps": [
         {
-          "conclusion": "The passage contains 215 words, below the explicitly required 250–350 words. This materially reduces the reading load and makes the set less representative of the requested IELTS Academic Reading practice.",
+          "conclusion": "The passage body is 235 words, 15 short of the explicit 250-word minimum. There is no corresponding answer-key error.",
           "kind": "majorErrors",
           "score": 6
         },
         {
-          "conclusion": "The full group instruction is repeated inside every question, adding unnecessary clutter rather than presenting each statement cleanly.",
+          "conclusion": "The group directions repeat before every statement rather than appearing once. The item labeled hard is also easy for an advanced reader: humidity is absent throughout, so recognizing the missing comparison requires little interpretation.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 8
         },
         {
-          "conclusion": "Develop the discussion of sampling limitations further to provide richer academic reading and inference opportunities for advanced learners, while preserving the unambiguous TRUE/FALSE/NOT GIVEN distinctions.",
+          "conclusion": "Extend the passage with a methodological detail that supports a more demanding NOT GIVEN item. For example, distinguish what researchers observed before a tube was occupied from what they could establish about how a bee assessed it.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -260,22 +260,22 @@
       "categoryScores": [
         {
           "categoryId": "keys",
-          "reasoning": "All three numerical keys are correct under the intended sliding motion. Friction is 4 N, the initial acceleration is 2.8 m/s², and the cutting speed is 5.6 m/s. The return time is 0.7(1 + √2) s. Tension is 21.6 N, giving a pulley load of 432√5/25 N. The upward stopping distance is 1.96 m, giving frictional dissipation of 392/25 J over both legs. Each question requires the stimulus, and no second numerical option is defensible under that motion. The remaining weakness is that the stimulus does not explicitly exclude static sticking, especially at the turning point.",
-          "score": 8,
+          "reasoning": "All three items need the passage. The first two keys check: A stops in 1 s after moving 2 m, returns in another √7/2 s, and the post-reversal tension is 4(10 − 16/7) = 216/7 N. The third key does not follow unambiguously from the stated brake location; the vertical-height reading gives no correct option.",
+          "score": 6,
           "label": "Right keys that need the stimulus",
           "weight": 35
         },
         {
           "categoryId": "examRealism",
-          "reasoning": "The concise mechanics paragraph, three single-answer questions, four options each, and physically motivated distractors fit the requested exam format. Each problem combines multiple ideas: coupled dynamics with piecewise kinematics, tension with vector addition, or dynamics with frictional work. However, the energy question substantially repeats the post-cut motion already analyzed in the kinematics question, weakening the requested distinct use of the shared setup.",
+          "reasoning": "The shared experiment, three four-option questions and calculable distractors fit the requested format. The reversal makes the time and energy questions genuinely multistage. The tension question is more routine, though it still requires identifying the friction direction and applying Newton’s law to the connected system and then to one block. The ambiguous brake location falls short of exam precision.",
           "score": 8,
           "label": "Exam realism",
           "weight": 35
         },
         {
           "categoryId": "stimulus",
-          "reasoning": "The setup is self-contained in its numerical data, naturally written in English, uses SI units, contains no em dashes, and makes no real-source attribution or invented claims about real entities. Explanations and misconceptions accurately reference the setup. Its principal clarity gap is the missing assurance that static friction cannot prevent the intended motion or restart; stating μ_s < 3/4 would resolve this.",
-          "score": 8,
+          "reasoning": "The setup is self-contained, in English and SI units, with no claimed outside source. Its friction reversal gives the learners’ error explanations a concrete basis. The main clarity defect is the failure to distinguish height from distance along the incline; the initial use of “rests” is a smaller wording issue.",
+          "score": 7,
           "label": "Original, clear stimulus",
           "weight": 30
         },
@@ -289,29 +289,36 @@
       ],
       "itemsScored": 3,
       "judge": {
-        "modelId": "openai/gpt-6-astra",
+        "modelId": "openai/gpt-6.2-astra",
         "usage": {
-          "cacheReadTokens": 1121,
+          "cacheReadTokens": 1271,
           "cacheWriteTokens": 0,
-          "inputTokens": 3712,
-          "outputTokens": 1640,
-          "reasoningTokens": 1034
+          "inputTokens": 3936,
+          "outputTokens": 851,
+          "reasoningTokens": 125
         }
       },
-      "keyFlaws": [],
+      "keyFlaws": [
+        {
+          "itemLocator": "questions[2]",
+          "keyedAnswer": "96 N",
+          "kind": "noCorrectOption",
+          "workedAnswer": "Reading “3 m above” as a height, the brake engages 3/sin θ = 5 m up the incline from the initial position. From the turning point 2 m below the start along the incline to the final stop, A travels 2 + 5 + 1 = 8 m upward. Both endpoints have zero kinetic energy, so the brake must offset (40 − 18 − 6) × 8 = 128 J over 1 m: 128 N, absent from the options. The keyed 96 N works only if the 3 m is an along-incline distance."
+        }
+      ],
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The brake location is ambiguous in a way that changes the answer. “3 m above its initial position” ordinarily denotes a vertical rise, but the 96 N key requires 3 m measured along the incline. With a 3 m vertical rise, the required force is 128 N, which is not offered.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "Only kinetic friction is specified, leaving the intended immediate sliding and restart after the turning point implicit. Explicitly ruling out sticking would make the setup rigorous. Also, questions[0] and questions[2] substantially reuse the same post-cut journey and stopping-distance calculation, rather than needing different parts of the setup as requested.",
+          "conclusion": "“Rests on a fixed rough incline” suggests that A is stationary, immediately before it is described as moving at 4 m/s. The explicit initial velocity resolves the calculation, but “is on a fixed rough incline” would avoid the conflicting cues.",
           "kind": "minorErrors",
-          "score": 8
+          "score": 9
         },
         {
-          "conclusion": "Specify that the coefficient of static friction is less than 3/4, ensuring both initial motion and downhill restart. Give the energy question a distinct subsequent stage or energy comparison so that it tests more than reusing the first question's stopping distance.",
+          "conclusion": "Specify that the brake engages “3 m up the incline from A’s initial position,” and that A then travels another 1 m along the incline. This preserves the intended key and all three energy distractors without changing the experiment.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -343,6 +350,100 @@
               "description": "Use work, kinetic and potential energy and power, and the work-energy theorem, in mechanics problems.",
               "level": "advanced",
               "name": "Work, energy and power"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "keys",
+          "reasoning": "All three questions need the plot. The first tested concentration above 9 g is 4 mg/L, and the B-to-D rate is (12 − 6)/(6 − 2) = 1.5 g per mg/L. Question 3 lacks a unique answer under its stated comparison, triggering the cap of 6.",
+          "score": 6,
+          "label": "Right keys that need the stimulus",
+          "weight": 35
+        },
+        {
+          "categoryId": "examRealism",
+          "reasoning": "The short experimental context and five-option format fit the requested style. The rate distractors represent specific calculation mistakes. The set is less effective as an exam exercise because Question 3 does not support single-answer selection, and Question 1 asks for a threshold comparison rather than providing a distinct, label-based point reading.",
+          "score": 7,
+          "label": "Exam realism",
+          "weight": 35
+        },
+        {
+          "categoryId": "stimulus",
+          "reasoning": "The fictional experiment is clearly identified, and the numeric axes, units, point labels and 9 g reference make the plot easy to interpret. The Brazilian Portuguese is natural and the feedback uses the plotted values accurately. The weakness is in Question 3's feedback: its comparison with A and B, while numerically true, does not address the C–D–E comparison the learner was asked to make.",
+          "score": 8,
+          "label": "Original, clear stimulus",
+          "weight": 30
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 4 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 0,
+          "inputTokens": 3797,
+          "outputTokens": 657,
+          "reasoningTokens": 0
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "questions[2]",
+          "keyedAnswer": "A maior massa média observada ocorreu em uma concentração intermediária.",
+          "kind": "twoDefensible",
+          "workedAnswer": "For C, D and E, the masses are 10, 12 and 10 g. D is the intermediate concentration and gives the maximum. E is the highest concentration and gives the minimum of these three masses, tied with C. The fourth option does not require a unique minimum."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "Question 3 has two defensible answers. Among C, D and E, D has the greatest mass, but E also ties C for the least mass. The reason for rejecting E relies on A and B, outside the comparison named in the stem. Question 1 also omits point labels from its stem despite the explicit requirement to use them.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Question 3 is marked hard, although its intended solution requires only recognizing the peak among three labeled points.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Make Question 1 the direct reading item by asking for the concentration at C; this uses its evidence label without changing the key. In Question 3, change the fourth option to say that E produced a mass strictly lower than both C and D, and explain that E equals C at 10 g.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "One ENEM Ciências da Natureza set in Brazilian Portuguese built on a chart stimulus: `kind` chart with a `visual` of kind `plot`, since both axes are measured numbers (for example a temperature or a concentration measured at uneven times, or one quantity against another), never a category chart that spaces uneven times evenly. 3 multiple-choice questions with 5 options each that need the plot: a reading, a rate or trend between two points, and a comparison or a limit. Every point a question turns on has a `label`, the question names it by that label (never \"the third point\"), and its `evidence` is exactly that label or a series name. Values asked for sit on round numbers or are printed in the label, so a learner can read them on a phone. Every key follows from the plotted data, and the text and reasons use the plot's numbers exactly.",
+        "id": "pt-enem-natureza-grafico-de-pontos-1",
+        "userInput": {
+          "examFormat": {
+            "name": "ENEM",
+            "optionCount": 5,
+            "style": "Texto-base curto com uma situação do cotidiano ou interdisciplinar, seguido de um comando claro; 5 alternativas (A a E) com apenas uma correta; distratores vêm de erros típicos; linguagem formal e contextualizada."
+          },
+          "format": "multipleChoice",
+          "language": "pt",
+          "questionCount": 3,
+          "skills": [
+            {
+              "description": "Ler e interpretar gráficos de dispersão que relacionam duas grandezas medidas em um experimento (como a concentração de um reagente e a velocidade da reação, ou a dose e a resposta), incluindo um valor de referência.",
+              "level": "intermediate",
+              "name": "Interpretar gráficos de dados experimentais"
+            },
+            {
+              "description": "Calcular uma taxa de variação entre dois pontos de um gráfico.",
+              "level": "intermediate",
+              "name": "Taxa de variação em um gráfico"
             }
           ]
         }

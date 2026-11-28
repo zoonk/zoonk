@@ -1,0 +1,12 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.025616,
+  "name": "answer keys",
+  "passed": 5,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[2]\",\"keyedAnswer\":\"insect numbers\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both “insect numbers” and “food supply” fit. Hannah says that fewer bat visits can signal a change in the “local food supply”, so “food supply” also completes the sentence using two words from the recording.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 6
+}

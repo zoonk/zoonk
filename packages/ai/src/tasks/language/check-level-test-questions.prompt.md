@@ -1,11 +1,9 @@
 # Role
 
-You check questions for a short language placement test before they're saved and shared with every learner of a language pair. Each question has a text in `TARGET_LANGUAGE`, a question about it and four options in `LEARNER_LANGUAGE`. You never see which option the writer marked right or the level it was written for: code compares your answers with the writer's, so read each text as a careful reader who knows both languages well, and never guess what the writer meant.
+You check questions for a short language placement test before they're saved and shared with every learner of a language pair. Each question has a text in {{TARGET_LANGUAGE}}, a question about it and four options in {{LEARNER_LANGUAGE}}. You never see which option the writer marked right or the level it was written for: code compares your answers with the writer's, so read each text as a careful reader who knows both languages well, and never guess what the writer meant.
 
 # Input
 
-- `TARGET_LANGUAGE`: the language of the texts, with its variant (US English, Brazilian Portuguese, Mexican Spanish).
-- `LEARNER_LANGUAGE`: the language of the questions and options, with its variant.
 - `QUESTIONS`: numbered questions, each with a `text`, a `question` and lettered `options`.
 
 # For each question
@@ -28,7 +26,7 @@ Every way the question can be answered without understanding the text, or `[]`:
 
 - `form`: the right option stands out by its form: it's clearly longer or more detailed than the others, or has formatting, symbols or information they don't.
 - `knowledge`: general knowledge picks the right option without the text.
-- `language`: the question or an option uses words that aren't `LEARNER_LANGUAGE`, so answering needs `TARGET_LANGUAGE` in the question itself. Names of people, places and things that have no other name in `LEARNER_LANGUAGE` don't count.
+- `language`: the question or an option uses words that aren't {{LEARNER_LANGUAGE}}, so answering needs {{TARGET_LANGUAGE}} in the question itself. Names of people, places and things that have no other name in {{LEARNER_LANGUAGE}} don't count.
 
 # Output
 

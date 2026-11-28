@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-a1-th-sounds",
+  "challenger": {
+    "costUsd": 0.014537750000000002,
+    "durationMs": 32147.298708000002,
+    "hash": "1be718affa8ed6d1829cb7b55131036040dea083436a1fc26a4e2b5bba056bca",
+    "systemPromptHash": "012cf90a6b84cb73d0048e0b6553ee7eaac58bd0cb1819b60dfd8ffc13bae5c9",
+    "userPromptHash": "96dee6599a22c4289b117e29767eec51cd665f9e70c5eb63578924c0b708c718"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.01108985,
+    "durationMs": 24247.468582999994,
+    "hash": "102943bd3fed55f9700f7e0c5389266be884feb957693b4f824ba8bc808186c2",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "96dee6599a22c4289b117e29767eec51cd665f9e70c5eb63578924c0b708c718"
+  },
+  "run": 2
+}

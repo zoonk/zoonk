@@ -1,0 +1,12 @@
+{
+  "caseId": "en-cambridge-accepted-article-regression",
+  "costUsd": 0.025056000000000002,
+  "name": "answer keys",
+  "passed": 5,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[5]\",\"keyedAnswer\":\"winter; the winter\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Accept only “winter”. Hannah says “in winter”, so “planned for winter” uses the word she said. “Planned for the winter” is grammatical, but “the winter” is not in the transcript.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 6
+}

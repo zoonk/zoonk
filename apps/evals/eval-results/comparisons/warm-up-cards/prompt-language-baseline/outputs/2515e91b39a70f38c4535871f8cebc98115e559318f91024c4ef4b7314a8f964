@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Sem violência ou grave ameaça, reparar voluntariamente todo o dano antes da acusação ser recebida…",
+      "options": [
+        {
+          "text": "Extingue sempre a punibilidade",
+          "correct": false
+        },
+        {
+          "text": "Pode reduzir a pena",
+          "correct": true
+        },
+        {
+          "text": "Transforma o fato em ilícito civil",
+          "correct": false
+        }
+      ],
+      "reveal": "Pode reduzir a pena. Em certas condições, a reparação voluntária antes de a acusação ser recebida diminui a pena, mas não apaga automaticamente o crime."
+    },
+    {
+      "question": "Uma conversa confidencial entre advogado e cliente é protegida principalmente para…",
+      "options": [
+        {
+          "text": "Preservar confidências profissionais",
+          "correct": true
+        },
+        {
+          "text": "Evitar qualquer processo",
+          "correct": false
+        },
+        {
+          "text": "Garantir vitória no caso",
+          "correct": false
+        }
+      ],
+      "reveal": "Preservar confidências profissionais. O dever de sigilo protege informações conhecidas no exercício da profissão e sustenta a confiança entre cliente e advogado; há exceções previstas nas normas."
+    },
+    {
+      "question": "Se uma lei contrariar a Constituição, qual ideia explica por que ela pode ser invalidada?",
+      "options": [
+        {
+          "text": "Supremacia constitucional",
+          "correct": true
+        },
+        {
+          "text": "Autonomia municipal",
+          "correct": false
+        },
+        {
+          "text": "Vontade da maioria",
+          "correct": false
+        }
+      ],
+      "reveal": "Supremacia constitucional. A Constituição ocupa o topo do ordenamento, por isso as normas inferiores precisam ser compatíveis com ela."
+    },
+    {
+      "question": "Num contrato, que padrão exige lealdade e cooperação mesmo sem cláusula expressa?",
+      "options": [
+        {
+          "text": "Boa-fé objetiva",
+          "correct": true
+        },
+        {
+          "text": "Liberdade irrestrita",
+          "correct": false
+        },
+        {
+          "text": "Vantagem unilateral",
+          "correct": false
+        }
+      ],
+      "reveal": "Boa-fé objetiva. Ela orienta a conduta das partes com lealdade e cooperação durante a relação contratual, não apenas o cumprimento literal das cláusulas."
+    },
+    {
+      "question": "Na atuação administrativa, o agente público deve agir principalmente…",
+      "options": [
+        {
+          "text": "Dentro das competências legais",
+          "correct": true
+        },
+        {
+          "text": "Como preferir",
+          "correct": false
+        },
+        {
+          "text": "Como um particular livre",
+          "correct": false
+        }
+      ],
+      "reveal": "Dentro das competências legais. A legalidade administrativa vincula a atuação às competências e aos limites do ordenamento; não equivale à liberdade geral do particular."
+    },
+    {
+      "question": "No vínculo de emprego, qual elemento indica que o trabalho é dirigido por outra pessoa?",
+      "options": [
+        {
+          "text": "Subordinação jurídica",
+          "correct": true
+        },
+        {
+          "text": "Autonomia técnica",
+          "correct": false
+        },
+        {
+          "text": "Propriedade dos instrumentos",
+          "correct": false
+        }
+      ],
+      "reveal": "Subordinação jurídica. Ela aparece quando o trabalhador está sujeito ao poder de direção do empregador e é um dos elementos que caracterizam o vínculo de emprego."
+    },
+    {
+      "question": "Uma cobrança estatal imposta como punição por uma infração é…",
+      "options": [
+        {
+          "text": "Tributo",
+          "correct": false
+        },
+        {
+          "text": "Sanção pecuniária",
+          "correct": true
+        },
+        {
+          "text": "Preço público",
+          "correct": false
+        }
+      ],
+      "reveal": "Sanção pecuniária. Tributo não é punição por ato ilícito; uma multa, por exemplo, tem natureza sancionatória."
+    },
+    {
+      "question": "Em uma ação, quem normalmente prova o fato que fundamenta o pedido?",
+      "options": [
+        {
+          "text": "Quem fez o pedido",
+          "correct": true
+        },
+        {
+          "text": "Quem contestou",
+          "correct": false
+        },
+        {
+          "text": "O juiz",
+          "correct": false
+        }
+      ],
+      "reveal": "Quem fez o pedido. Como regra, a parte autora prova os fatos que dão base à sua pretensão; a parte ré prova fatos que a impedem, modificam ou extinguem."
+    },
+    {
+      "question": "No Brasil, a personalidade civil da pessoa começa em que momento?",
+      "options": [
+        {
+          "text": "Na concepção",
+          "correct": false
+        },
+        {
+          "text": "No nascimento com vida",
+          "correct": true
+        },
+        {
+          "text": "No registro civil",
+          "correct": false
+        }
+      ],
+      "reveal": "No nascimento com vida. A lei, porém, resguarda desde a concepção os direitos do nascituro."
+    },
+    {
+      "question": "Como se distribuem, em regra, as funções de legislar, administrar e julgar?",
+      "options": [
+        {
+          "text": "Entre três Poderes",
+          "correct": true
+        },
+        {
+          "text": "Só no Legislativo",
+          "correct": false
+        },
+        {
+          "text": "Só no Judiciário",
+          "correct": false
+        }
+      ],
+      "reveal": "Entre três Poderes. Legislativo, Executivo e Judiciário têm funções principais distintas, embora existam controles recíprocos e algumas funções atípicas."
+    }
+  ]
+}

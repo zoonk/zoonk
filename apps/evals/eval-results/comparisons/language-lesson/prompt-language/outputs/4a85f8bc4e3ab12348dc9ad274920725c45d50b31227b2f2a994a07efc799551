@@ -1,0 +1,194 @@
+{
+  "words": [
+    {
+      "word": "plant",
+      "translation": "a living thing that usually grows in the ground and has leaves or stems",
+      "pronunciation": "PLANT",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "animal",
+        "rock",
+        "cloud"
+      ]
+    },
+    {
+      "word": "grow",
+      "translation": "to get bigger over time",
+      "pronunciation": "GROH",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "shrink",
+        "sleep",
+        "fall"
+      ]
+    },
+    {
+      "word": "sunlight",
+      "translation": "light from the sun",
+      "pronunciation": "SUN-lyt",
+      "romanization": null,
+      "tip": "Stress the first part: SUN-light.",
+      "note": null,
+      "distractors": [
+        "moonlight",
+        "rain",
+        "wind"
+      ]
+    },
+    {
+      "word": "leaf",
+      "translation": "a flat, usually green part of a plant",
+      "pronunciation": "LEEF",
+      "romanization": null,
+      "tip": null,
+      "note": "The plural of 'leaf' is 'leaves'.",
+      "distractors": [
+        "root",
+        "stem",
+        "flower"
+      ]
+    },
+    {
+      "word": "need",
+      "translation": "to have to have something to live or do something",
+      "pronunciation": "NEED",
+      "romanization": null,
+      "tip": null,
+      "note": "'Need' is stronger than 'want'.",
+      "distractors": [
+        "want",
+        "see",
+        "find"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Plants need sunlight to grow",
+      "translation": "Plants need sunlight to grow",
+      "explanation": "'Need sunlight' tells us what plants must have. 'To grow' tells us what they need it for.",
+      "romanization": null,
+      "distractors": [
+        "needs",
+        "grows",
+        "at"
+      ],
+      "translationDistractors": [
+        "needs",
+        "grows",
+        "at"
+      ],
+      "speakingPrompt": "Read aloud what plants need to grow."
+    },
+    {
+      "sentence": "Their leaves take in sunlight",
+      "translation": "Their leaves take in sunlight",
+      "explanation": "'Their' refers to the plants. 'Take in' means the leaves receive sunlight.",
+      "romanization": null,
+      "distractors": [
+        "leaf",
+        "takes",
+        "under"
+      ],
+      "translationDistractors": [
+        "leaf",
+        "takes",
+        "under"
+      ],
+      "speakingPrompt": "Read aloud what the leaves take in."
+    },
+    {
+      "sentence": "Water helps plants grow",
+      "translation": "Water helps plants grow",
+      "explanation": "After 'helps plants', use 'grow' to say what water helps them do.",
+      "romanization": null,
+      "distractors": [
+        "help",
+        "grows",
+        "plant"
+      ],
+      "translationDistractors": [
+        "help",
+        "grows",
+        "plant"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Many plants grow slowly in cold weather",
+      "translation": "Many plants grow slowly in cold weather",
+      "explanation": "'Slowly' tells us how the plants grow. 'In cold weather' tells us when this happens.",
+      "romanization": null,
+      "distractors": [
+        "grows",
+        "much",
+        "at"
+      ],
+      "translationDistractors": [
+        "grows",
+        "much",
+        "at"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Use 'need' to explain what helps something happen",
+    "text": "Use `need` to say what something must have. Add `to` and an action to say why: `Plants need sunlight to grow`. Use `grow`, not `grows`, after `to`.",
+    "examples": [
+      {
+        "sentence": "Plants need sunlight to grow",
+        "translation": "Plants need sunlight to grow"
+      },
+      {
+        "sentence": "Seeds need water to grow",
+        "translation": "Seeds need water to grow"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the sentence.",
+      "template": "Plants need water [BLANK] grow.",
+      "answer": "to",
+      "distractors": [
+        "for",
+        "at",
+        "with"
+      ],
+      "feedback": "Use 'to' before 'grow' to say what plants need water for."
+    },
+    {
+      "question": "Choose the correct form.",
+      "template": "Seeds need water to [BLANK].",
+      "answer": "grow",
+      "distractors": [
+        "grows",
+        "growing",
+        "grew"
+      ],
+      "feedback": "Use 'grow' after 'to', without an ending."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a sentence saying that plants must have sunlight in order to get bigger.",
+    "answers": [
+      "Plants need sunlight to grow."
+    ],
+    "keyPoints": [
+      "Uses 'need sunlight' to say what plants must have",
+      "Uses 'to grow' to say why they need it"
+    ]
+  },
+  "summary": [
+    "'Plants need sunlight to grow' tells you what plants must have to get bigger.",
+    "'Leaves take in sunlight' tells you what a part of a plant does.",
+    "'Grow slowly' tells you how plants get bigger."
+  ]
+}

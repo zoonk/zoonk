@@ -1,0 +1,159 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "it was actually old photographs that helped us understand how much its course had changed",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "Hannah's team learned how the river had changed by looking at ______.",
+        "keyPoints": [
+          "Old photographs."
+        ],
+        "acceptedAnswers": [
+          "old photographs",
+          "photographs"
+        ],
+        "sampleAnswer": "old photographs"
+      },
+      {
+        "evidence": "our team works mainly near a village called Bramley, that's B-R-A-M-L-E-Y.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "Most of the team's work is done close to the village of ______.",
+        "keyPoints": [
+          "Bramley."
+        ],
+        "acceptedAnswers": [
+          "Bramley"
+        ],
+        "sampleAnswer": "Bramley"
+      },
+      {
+        "evidence": "the first thing we record is the water temperature.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "When checking the river, Hannah's team begins by measuring the ______.",
+        "keyPoints": [
+          "Water temperature."
+        ],
+        "acceptedAnswers": [
+          "water temperature",
+          "temperature"
+        ],
+        "sampleAnswer": "water temperature"
+      },
+      {
+        "evidence": "the biggest surprise was the return of dragonflies.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "The team was particularly surprised to see ______ in the area again.",
+        "keyPoints": [
+          "Dragonflies."
+        ],
+        "acceptedAnswers": [
+          "dragonflies"
+        ],
+        "sampleAnswer": "dragonflies"
+      },
+      {
+        "evidence": "the volunteers built a small platform from recycled timber",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "The material used to make the viewing platform was ______.",
+        "keyPoints": [
+          "Recycled timber."
+        ],
+        "acceptedAnswers": [
+          "recycled timber",
+          "timber"
+        ],
+        "sampleAnswer": "recycled timber"
+      },
+      {
+        "evidence": "it was actually the schoolchildren who came up with the idea of a riverside celebration.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "The river project\nWrite NO MORE THAN TWO WORDS.",
+        "question": "The idea for a celebration beside the river came from the local ______.",
+        "keyPoints": [
+          "Schoolchildren."
+        ],
+        "acceptedAnswers": [
+          "schoolchildren",
+          "school children"
+        ],
+        "sampleAnswer": "schoolchildren"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Bringing a river back to life",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, everyone. I'm Hannah, and I'm here to tell you about a river project I've been volunteering on for the past two years. Our local river used to be a place people avoided. There was rubbish along the banks, and the water looked rather uninviting. I joined because I wanted to do something practical, but I didn't expect to learn so much about the area's history. I thought the maps in the town library would show us most about the river's past, but it was actually old photographs that helped us understand how much its course had changed. In some of them, people were even swimming there."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The project covers several miles of river, but our team works mainly near a village called Bramley, that's B-R-A-M-L-E-Y. It's a quiet place, just beyond the edge of town. There's a bridge there where we meet every other Saturday. At first I assumed we would spend all our time picking up litter. That's still important, of course, but the work is much more varied. Some volunteers plant trees, while others record what they see along the banks. Before anyone starts, an expert explains what needs doing and how to do it safely."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "My own job is to help check the condition of the river. I used to think its depth was the most useful thing to measure, but the first thing we record is the water temperature. We take a reading at the same spot each time, so we can compare the results. Then we collect small samples and look for signs of pollution. It's not difficult once you've been shown how, although you do need to be patient. If a result looks unusual, we take another sample rather than immediately assuming something's wrong."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We also keep notes on the wildlife. Last summer we were pleased to see more frogs near the water, but the biggest surprise was the return of dragonflies. We hadn't seen them in that part of the river for years. One volunteer, who's brilliant at recognising insects, pointed them out to me. At first I could hardly see them because they moved so quickly. Now I know where to look, and I get quite excited whenever I spot one."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We want local people to enjoy the river too, without damaging the plants growing beside it. So the volunteers built a small platform from recycled timber, where visitors can stand and look out over the water. We considered using stone, but it would have cost too much and been harder to move into place. It's become a popular stopping point for walkers, and there's a noticeboard nearby explaining what they might see. We change the information with the seasons, so there's usually something new to read."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The project has brought all sorts of people together. We expected local shopkeepers to take the lead in suggesting future activities, but it was actually the schoolchildren who came up with the idea of a riverside celebration. They're planning nature walks and an exhibition of their artwork. I think it's wonderful that they already feel the river belongs to them. If you're interested in joining us, you don't need any special knowledge, just clothes you don't mind getting muddy. Come and speak to me afterwards, and I'll tell you when we're meeting next. Thanks for listening."
+      }
+    ]
+  }
+}

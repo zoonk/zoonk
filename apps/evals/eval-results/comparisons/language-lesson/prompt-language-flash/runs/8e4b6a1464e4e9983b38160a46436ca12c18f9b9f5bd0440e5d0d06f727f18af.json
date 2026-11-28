@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-a2-doctor",
+  "challenger": {
+    "costUsd": 0.027072,
+    "durationMs": 55697.63391600002,
+    "hash": "3e90f4c4c6507846228b8355db00767c401e41d32c8c44007c561b8f9a675b9a",
+    "systemPromptHash": "84b563b4eb2c544c314fbfbba7f74707b7ec6a9ad17437759cb16a4633909a4e",
+    "userPromptHash": "60b655d8091ae56365579325f57ddcb8c00d3641bbc8cb4015411c7f3ee193c5"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0129645,
+    "durationMs": 23444.178333000047,
+    "hash": "4cf4205b0435560d849625380c7337195f823754b3ce0e1ffd9584cd6d09eb67",
+    "systemPromptHash": "5a26ca5e5d9f6c0a3afa7017d25dc77177eb782bd6d7df5a9d04d364b5579648",
+    "userPromptHash": "60b655d8091ae56365579325f57ddcb8c00d3641bbc8cb4015411c7f3ee193c5"
+  },
+  "run": 1
+}

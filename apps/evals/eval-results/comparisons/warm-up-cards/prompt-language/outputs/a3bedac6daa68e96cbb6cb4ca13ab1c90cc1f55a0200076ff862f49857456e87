@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Ao chamar de “pontual” alguém que chegou duas horas atrasado, o texto usa…",
+      "options": [
+        {
+          "text": "ironia verbal",
+          "correct": true
+        },
+        {
+          "text": "eufemismo",
+          "correct": false
+        },
+        {
+          "text": "comparação",
+          "correct": false
+        }
+      ],
+      "reveal": "Ironia verbal. O sentido pretendido contrasta com o sentido literal: a pessoa não foi pontual, e esse contraste pode criar humor ou crítica."
+    },
+    {
+      "question": "Uma personagem usa gírias regionais numa conversa; isso, por si só, indica…",
+      "options": [
+        {
+          "text": "variação linguística",
+          "correct": true
+        },
+        {
+          "text": "desvio de concordância",
+          "correct": false
+        },
+        {
+          "text": "linguagem figurada",
+          "correct": false
+        }
+      ],
+      "reveal": "Variação linguística. O jeito de falar pode mudar conforme a região, o grupo e a situação, sem ser por isso um erro."
+    },
+    {
+      "question": "Na frase “a cidade acordou cedo”, a cidade recebe uma característica própria de…",
+      "options": [
+        {
+          "text": "uma pessoa",
+          "correct": true
+        },
+        {
+          "text": "um objeto",
+          "correct": false
+        },
+        {
+          "text": "um número",
+          "correct": false
+        }
+      ],
+      "reveal": "Uma pessoa. A frase atribui à cidade uma ação humana; esse recurso é chamado de personificação."
+    },
+    {
+      "question": "Em revoluções liberais, constituições escritas ajudavam principalmente a…",
+      "options": [
+        {
+          "text": "limitar o poder do governo",
+          "correct": true
+        },
+        {
+          "text": "restaurar privilégios feudais",
+          "correct": false
+        },
+        {
+          "text": "substituir leis por costumes",
+          "correct": false
+        }
+      ],
+      "reveal": "Limitar o poder do governo. Constituições registram princípios e podem definir direitos e limites para a atuação dos governantes."
+    },
+    {
+      "question": "Uma mercadoria fabricada em um país e vendida em outro evidencia…",
+      "options": [
+        {
+          "text": "comércio internacional",
+          "correct": true
+        },
+        {
+          "text": "autarquia econômica",
+          "correct": false
+        },
+        {
+          "text": "economia de subsistência",
+          "correct": false
+        }
+      ],
+      "reveal": "Comércio internacional. A troca de bens entre países conecta mercados e pode envolver etapas de produção em diferentes lugares."
+    },
+    {
+      "question": "Uma planta recebe luz, água e gás carbônico; qual processo ajuda a produzir açúcares?",
+      "options": [
+        {
+          "text": "Fotossíntese",
+          "correct": true
+        },
+        {
+          "text": "Fermentação",
+          "correct": false
+        },
+        {
+          "text": "Respiração celular",
+          "correct": false
+        }
+      ],
+      "reveal": "Fotossíntese. Com energia luminosa, plantas usam água e gás carbônico para formar açúcares e liberar oxigênio."
+    },
+    {
+      "question": "Uma pitada de sal se dissolve por completo na água; o resultado é que tipo de mistura?",
+      "options": [
+        {
+          "text": "Homogênea",
+          "correct": true
+        },
+        {
+          "text": "Heterogênea",
+          "correct": false
+        },
+        {
+          "text": "Substância pura",
+          "correct": false
+        }
+      ],
+      "reveal": "Homogênea. O sal dissolvido fica distribuído pela água, formando uma única fase visível, embora a mistura tenha mais de uma substância."
+    },
+    {
+      "question": "Duas colheres, uma de metal e outra de madeira, ficam no mesmo cômodo; qual costuma parecer mais fria ao toque?",
+      "options": [
+        {
+          "text": "A de metal",
+          "correct": true
+        },
+        {
+          "text": "A de madeira",
+          "correct": false
+        },
+        {
+          "text": "As duas igualmente",
+          "correct": false
+        }
+      ],
+      "reveal": "A de metal. Em geral, o metal conduz calor melhor e retira energia da mão mais rapidamente; isso não significa que esteja a uma temperatura menor."
+    },
+    {
+      "question": "Quatro cadernos custam R$ 28,00; mantendo o mesmo preço por unidade, quanto custam sete?",
+      "options": [
+        {
+          "text": "R$ 49,00",
+          "correct": true
+        },
+        {
+          "text": "R$ 42,00",
+          "correct": false
+        },
+        {
+          "text": "R$ 56,00",
+          "correct": false
+        }
+      ],
+      "reveal": "R$ 49,00. Cada caderno custa R$ 7,00; multiplicando esse valor por sete, o total é R$ 49,00."
+    },
+    {
+      "question": "Uma sacola tem 3 bolas vermelhas e 2 azuis; ao tirar uma sem olhar, qual é a chance de sair vermelha?",
+      "options": [
+        {
+          "text": "3/5",
+          "correct": true
+        },
+        {
+          "text": "2/5",
+          "correct": false
+        },
+        {
+          "text": "1/2",
+          "correct": false
+        }
+      ],
+      "reveal": "3/5. Há 3 resultados favoráveis entre 5 bolas ao todo, e cada bola tem a mesma chance de ser escolhida."
+    }
+  ]
+}

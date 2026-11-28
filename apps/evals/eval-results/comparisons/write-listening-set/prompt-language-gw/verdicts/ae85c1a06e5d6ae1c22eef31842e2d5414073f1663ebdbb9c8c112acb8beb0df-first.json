@@ -1,0 +1,143 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0065217899999999995,
+  "failureCodes": [
+    "failed_controls"
+  ],
+  "failures": [
+    "Missed the control bank defect."
+  ],
+  "packetId": "ae85c1a06e5d6ae1c22eef31842e2d5414073f1663ebdbb9c8c112acb8beb0df",
+  "passed": false,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, so neither gives the learner a more accurate or fairer key.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and fit the lecture format equally well.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts are identical and read naturally aloud, with spoken forms such as 'lowercase L S' and 'one half'.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The question asks what the listener should exclude when counting files, and the option 'Directories and the special dot entries' is answerable from the question's own words and common sense without listening, so the item does not test listening.",
+            "criterion": "keys",
+            "learnerCost": "The learner gets a question right without needing the recording, so it does not practise listening for the detail.",
+            "location": {
+              "detail": "question 2 of the set",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The question asks what the listener should exclude when counting files, and the option 'Directories and the special dot entries' is answerable from the question's own words and common sense without listening, so the item does not test listening.",
+            "criterion": "keys",
+            "learnerCost": "The learner gets a question right without needing the recording, so it does not practise listening for the detail.",
+            "location": {
+              "detail": "question 2 of the set",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, with the same answerable-without-listening weakness in question 2 in each."
+        },
+        "pairId": "232786c5-b964-4fa9-b5cb-f574be31ef20"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical, with the same correct keys and the same listening-based options.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical and match the DELE B2 monologue format equally well.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs are identical; the misconception notes are in Spanish in both, which fails the same language requirement.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The misconception notes are written in Spanish (for example 'Confunde un problema mencionado con la motivación principal.'), but the packet requires reasons and misconceptions in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read the misconception notes that explain why each wrong option is wrong.",
+            "location": {
+              "detail": "misconception fields of all five questions",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The misconception notes are written in Spanish (for example 'Confunde un problema mencionado con la motivación principal.'), but the packet requires reasons and misconceptions in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner cannot read the misconception notes that explain why each wrong option is wrong.",
+            "location": {
+              "detail": "misconception fields of all five questions",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so both carry the same language fault in their misconception notes."
+        },
+        "pairId": "4e701bee-d931-425b-8f90-978e92b13b16"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A's questions depend on what the lecturer says, such as the four-of-eight count and the rejected suggestion to count dot entries as hidden, while B's question 2 can be answered from its own wording.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A includes a suggestion the lecturer rejects as a distractor and asks about details in lecture order, which is closer to the listening part of an exam.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read naturally aloud with similar spoken phrasing and no stage directions.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "A",
+          "reason": "A's items test what the learner hears more fully, and it has no major problem, while B's question 2 can be answered without listening."
+        },
+        "pairId": "5e5f9134-1c7e-47a9-bae5-78a8d8a05fad"
+      }
+    ]
+  }
+}

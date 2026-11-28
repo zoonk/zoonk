@@ -1,0 +1,12 @@
+{
+  "caseId": "en-es-a2-renting",
+  "costUsd": 0.037616,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"LOHS sehr-VEE-syohs\",\"kind\":\"factualError\",\"workedAnswer\":\"“VEE” cues an English /v/. In Mexican Spanish, the v in servicios normally has a soft b-like sound [β̞], made by bringing the lips close together rather than touching the upper teeth to the lower lip. The stress on that syllable is correct.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

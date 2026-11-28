@@ -1,0 +1,205 @@
+{
+  "words": [
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NIGH-chah",
+      "romanization": "naai5 caa4",
+      "tip": "Start the first syllable with an open 'n' like in 'night', and end the second syllable on an open, relaxed 'ah' without adding an 'r' sound.",
+      "note": "Hong Kong milk tea is made with evaporated milk and strong black tea, and it is a staple of cha chaan teng culture.",
+      "distractors": [
+        "咖啡",
+        "凍水",
+        "檸茶"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "pineapple bun",
+      "pronunciation": "BOH-loh-bow",
+      "romanization": "bo1 lo4 baau1",
+      "tip": "Keep the lips rounded for 'boh' and 'loh', and pronounce 'bow' like the English word 'bough' (rhyming with 'cow').",
+      "note": "A pineapple bun contains no pineapple; it gets its name purely from the checkered golden crust that looks like pineapple skin.",
+      "distractors": [
+        "蛋撻",
+        "叉燒包",
+        "多士"
+      ]
+    },
+    {
+      "word": "唔該",
+      "translation": "please / excuse me",
+      "pronunciation": "mm-GOY",
+      "romanization": "m4 goi1",
+      "tip": "The first syllable is just an 'm' sound made with closed lips humming in the throat, without any vowel before or after.",
+      "note": "Use 唔該 when asking for a service or minor favor, like ordering food or thanking a waiter.",
+      "distractors": [
+        "多謝",
+        "早晨",
+        "再見"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much",
+      "pronunciation": "GAY-doh-cheen",
+      "romanization": "gei2 do1 cin2",
+      "tip": "Make sure 'cheen' starts with an aspirated 'ch' sound and ends with a crisp 'n', not an 'ng'.",
+      "note": "This is the universal phrase for asking the price of an item in everyday Cantonese.",
+      "distractors": [
+        "幾時",
+        "邊度",
+        "幾多個"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該，一杯奶茶",
+      "translation": "One cup of milk tea, please",
+      "explanation": "In Cantonese, you place polite 唔該 at the start, followed directly by the quantity, the classifier 杯 for cup, and the drink.",
+      "romanization": "m4 goi1, jat1 bui1 naai5 caa4",
+      "distractors": [
+        "件",
+        "個",
+        "支"
+      ],
+      "translationDistractors": [
+        "bottle",
+        "two",
+        "thank"
+      ],
+      "speakingPrompt": "Order a cup of milk tea politely at a cafe"
+    },
+    {
+      "sentence": "唔該，一個菠蘿包",
+      "translation": "One pineapple bun, please",
+      "explanation": "Here 個 acts as the general classifier between the number 一 and the noun 菠蘿包.",
+      "romanization": "m4 goi1, jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "杯",
+        "碗",
+        "本"
+      ],
+      "translationDistractors": [
+        "slice",
+        "three",
+        "cold"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "呢個幾多錢？",
+      "translation": "How much is this?",
+      "explanation": "In Cantonese, the subject 呢個 comes first, and the question phrase 幾多錢 goes directly at the end without needing a verb like 'is'.",
+      "romanization": "ni1 go3 gei2 do1 cin2?",
+      "distractors": [
+        "點樣",
+        "邊個",
+        "邊度"
+      ],
+      "translationDistractors": [
+        "where",
+        "when",
+        "that"
+      ],
+      "speakingPrompt": "Ask the server how much this item costs"
+    }
+  ],
+  "tip": {
+    "title": "Using classifiers to order items",
+    "text": "In Cantonese, you never put a number straight before a noun. You must place a matching counter word, called a classifier, between the number and the item: use `杯` for drinks in a cup and `個` for individual bakery goods. The basic formula is number + classifier + item.",
+    "examples": [
+      {
+        "sentence": "一杯奶茶",
+        "translation": "One cup of milk tea"
+      },
+      {
+        "sentence": "一個菠蘿包",
+        "translation": "One pineapple bun"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct classifier for ordering a cup of milk tea.",
+      "template": "唔該，一[BLANK]奶茶",
+      "answer": "杯",
+      "distractors": [
+        "個",
+        "隻"
+      ],
+      "feedback": "Use 杯 as the classifier for drinks served in cups or glasses."
+    },
+    {
+      "question": "Complete the phrase to ask for the price.",
+      "template": "呢個[BLANK]？",
+      "answer": "幾多錢",
+      "distractors": [
+        "幾多日",
+        "幾多個"
+      ],
+      "feedback": "幾多錢 literally means 'how much money' and is the standard phrase to ask a price."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The cafe waiter comes over to take your order. Order your food and ask the price.",
+    "scene": "A bustling cha chaan teng in Mong Kok",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "想飲咩呀？",
+        "translation": "What would you like to drink?"
+      },
+      {
+        "speaker": "you",
+        "text": "唔該，一杯奶茶",
+        "translation": "One cup of milk tea, please"
+      },
+      {
+        "speaker": "them",
+        "text": "重有冇其他？",
+        "translation": "Anything else?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "一個菠蘿包，呢個幾多錢？",
+        "translation": "One pineapple bun, how much is this?",
+        "isBest": true,
+        "why": "It correctly orders the food with the proper classifier and asks the price."
+      },
+      {
+        "text": "一杯菠蘿包，呢個幾時？",
+        "translation": "A cup of pineapple bun, when is this?",
+        "isBest": false,
+        "why": "A bun is counted with 個, not 杯, and 幾時 asks 'when', not 'how much'."
+      },
+      {
+        "text": "多謝，一個幾多錢",
+        "translation": "Thank you, one how much",
+        "isBest": false,
+        "why": "This omits the item you want to order and uses 多謝 instead of ordering politely."
+      }
+    ],
+    "explanation": "Remember to use 唔該 when ordering or requesting attention, and attach the right classifier like 個 or 杯 to every counted noun."
+  },
+  "writing": {
+    "prompt": "Write a note asking for one cup of milk tea and asking how much it costs: 'One cup of milk tea, please. How much is this?'",
+    "answers": [
+      "唔該，一杯奶茶。呢個幾多錢？",
+      "唔該一杯奶茶，呢個幾多錢？"
+    ],
+    "keyPoints": [
+      "Uses 唔該 to politely request the order",
+      "Uses the classifier 杯 for milk tea",
+      "Ends with 幾多錢 to ask the price"
+    ]
+  },
+  "summary": [
+    "Use '唔該' to catch a server's attention or say please",
+    "Order food and drinks using number + classifier + noun, like '一杯奶茶' and '一個菠蘿包'",
+    "Ask '呢個幾多錢？' to find out how much something costs"
+  ]
+}

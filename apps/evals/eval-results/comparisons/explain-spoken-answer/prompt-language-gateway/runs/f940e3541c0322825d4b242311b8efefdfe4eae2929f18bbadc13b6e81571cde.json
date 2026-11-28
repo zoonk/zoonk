@@ -1,0 +1,19 @@
+{
+  "caseId": "en-pt-esta",
+  "challenger": {
+    "costUsd": 0.00013998,
+    "durationMs": 3238.5829169999997,
+    "hash": "94d0ee01631c0fb12e75d41fdc328d95c1be2cfc03ce4b69c265f2a186568993",
+    "systemPromptHash": "1d4a3b3f3244846d3d6ad74446f1298a040d53608787298b4682795f451f9db7",
+    "userPromptHash": "747d66eabf98e72e8b490b1fca9b8b8931fd63d742edec95344f99cb7a5f1f74"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00015032,
+    "durationMs": 3219.2212500000023,
+    "hash": "e12d028983187454b6dd0dbfa22ef0e1a635c5bb9f295fec0f2e4f10b939e18b",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "747d66eabf98e72e8b490b1fca9b8b8931fd63d742edec95344f99cb7a5f1f74"
+  },
+  "run": 2
+}

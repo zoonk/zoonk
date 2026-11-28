@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Se alguém no México diz que está “embarazada”, o que você entende sobre essa pessoa?",
+      "options": [
+        {
+          "text": "Está grávida",
+          "correct": true
+        },
+        {
+          "text": "Está envergonhada",
+          "correct": false
+        },
+        {
+          "text": "Está cansada",
+          "correct": false
+        }
+      ],
+      "reveal": "Grávida. Em espanhol, “embarazada” não quer dizer envergonhada; a semelhança com “embaraçada” engana."
+    },
+    {
+      "question": "Ao preencher um cadastro em espanhol, “apellido” pede qual parte do nome?",
+      "options": [
+        {
+          "text": "O sobrenome",
+          "correct": true
+        },
+        {
+          "text": "O apelido",
+          "correct": false
+        },
+        {
+          "text": "O primeiro nome",
+          "correct": false
+        }
+      ],
+      "reveal": "O sobrenome. “Apellido” é o sobrenome; “apelido” em português costuma ser um nome informal."
+    },
+    {
+      "question": "No México, “oficina” num anúncio de emprego costuma indicar que tipo de local?",
+      "options": [
+        {
+          "text": "Um escritório",
+          "correct": true
+        },
+        {
+          "text": "Uma oficina mecânica",
+          "correct": false
+        },
+        {
+          "text": "Uma loja",
+          "correct": false
+        }
+      ],
+      "reveal": "Um escritório. No espanhol do México, “oficina” normalmente é um local de trabalho administrativo; para oficina mecânica, é comum dizer “taller”."
+    },
+    {
+      "question": "Quando um caminho é “largo” em espanhol, qual dimensão essa palavra destaca?",
+      "options": [
+        {
+          "text": "O comprimento",
+          "correct": true
+        },
+        {
+          "text": "A largura",
+          "correct": false
+        },
+        {
+          "text": "A altura",
+          "correct": false
+        }
+      ],
+      "reveal": "O comprimento. Em espanhol, “largo” significa comprido; para dizer que algo é largo, usa-se “ancho”."
+    },
+    {
+      "question": "Se alguém chama uma sobremesa de “exquisita”, que avaliação está fazendo?",
+      "options": [
+        {
+          "text": "Que está deliciosa",
+          "correct": true
+        },
+        {
+          "text": "Que está estranha",
+          "correct": false
+        },
+        {
+          "text": "Que está sem graça",
+          "correct": false
+        }
+      ],
+      "reveal": "Que está deliciosa. Em espanhol, “exquisito” costuma elogiar o sabor; não significa “esquisito” no sentido de estranho."
+    },
+    {
+      "question": "Comparando “familia” e “família”, qual detalhe da escrita muda em espanhol?",
+      "options": [
+        {
+          "text": "“Familia” não leva acento",
+          "correct": true
+        },
+        {
+          "text": "As duas levam acento",
+          "correct": false
+        },
+        {
+          "text": "“Família” não leva acento",
+          "correct": false
+        }
+      ],
+      "reveal": "“Familia” não leva acento em espanhol. Em português, “família” leva acento; a pronúncia e as regras de acentuação explicam a diferença."
+    },
+    {
+      "question": "Ao ouvir “¿Qué tal?” como cumprimento, que resposta em português combina melhor?",
+      "options": [
+        {
+          "text": "Como vai?",
+          "correct": true
+        },
+        {
+          "text": "Qual é o seu nome?",
+          "correct": false
+        },
+        {
+          "text": "Onde fica?",
+          "correct": false
+        }
+      ],
+      "reveal": "Como vai? “¿Qué tal?” é um cumprimento informal usado para perguntar como alguém está."
+    },
+    {
+      "question": "Em “el problema”, apesar do final da palavra, como fica o artigo em espanhol?",
+      "options": [
+        {
+          "text": "Masculino",
+          "correct": true
+        },
+        {
+          "text": "Feminino",
+          "correct": false
+        },
+        {
+          "text": "Pode ser dos dois",
+          "correct": false
+        }
+      ],
+      "reveal": "Masculino. “Problema” termina em -a, mas é um substantivo masculino em espanhol: dizemos “el problema”."
+    },
+    {
+      "question": "Na frase “La estación está cerca”, o que o verbo indica sobre a estação?",
+      "options": [
+        {
+          "text": "A localização",
+          "correct": true
+        },
+        {
+          "text": "A profissão",
+          "correct": false
+        },
+        {
+          "text": "A origem",
+          "correct": false
+        }
+      ],
+      "reveal": "A localização. “Estar” costuma aparecer para indicar onde algo ou alguém está; “ser” tem outros usos, como indicar identidade."
+    },
+    {
+      "question": "Em uma conversa cotidiana no México, “ustedes” se refere normalmente a quem?",
+      "options": [
+        {
+          "text": "Várias pessoas",
+          "correct": true
+        },
+        {
+          "text": "Uma pessoa próxima",
+          "correct": false
+        },
+        {
+          "text": "Uma pessoa formal",
+          "correct": false
+        }
+      ],
+      "reveal": "Várias pessoas. No México, “ustedes” é usado tanto em situações informais quanto formais; “vosotros” não é comum no uso mexicano."
+    }
+  ]
+}

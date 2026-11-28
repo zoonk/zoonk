@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A returning forager moves across the comb; what can its pattern tell other bees?",
+      "options": [
+        {
+          "text": "Food direction and distance",
+          "correct": true
+        },
+        {
+          "text": "The weather tomorrow",
+          "correct": false
+        },
+        {
+          "text": "Which flowers are poisonous",
+          "correct": false
+        }
+      ],
+      "reveal": "Food direction and distance. The angle and duration of a honey bee’s waggle dance encode where a food source lies relative to the sun and how far away it is."
+    },
+    {
+      "question": "A honey bee egg develops into a male when it…",
+      "options": [
+        {
+          "text": "Remains unfertilized",
+          "correct": true
+        },
+        {
+          "text": "Is laid in a large cell",
+          "correct": false
+        },
+        {
+          "text": "Gets extra food",
+          "correct": false
+        }
+      ],
+      "reveal": "Remains unfertilized. In honey bees, unfertilized eggs develop into males, while fertilized eggs develop into females."
+    },
+    {
+      "question": "In a growing honey bee larva’s diet, what does pollen mainly supply?",
+      "options": [
+        {
+          "text": "Protein",
+          "correct": true
+        },
+        {
+          "text": "Water",
+          "correct": false
+        },
+        {
+          "text": "Building wax",
+          "correct": false
+        }
+      ],
+      "reveal": "Protein. Pollen is a key source of protein for developing bees, while nectar mainly supplies energy."
+    },
+    {
+      "question": "What special feeding keeps a developing queen on a different path from worker larvae?",
+      "options": [
+        {
+          "text": "Royal jelly throughout development",
+          "correct": true
+        },
+        {
+          "text": "Extra pollen only",
+          "correct": false
+        },
+        {
+          "text": "Stored honey only",
+          "correct": false
+        }
+      ],
+      "reveal": "Royal jelly throughout development. All young larvae receive it at first, but a queen larva keeps getting it as it grows."
+    },
+    {
+      "question": "As winter closes in, how does a honey bee colony keep its center warm?",
+      "options": [
+        {
+          "text": "Workers vibrate flight muscles",
+          "correct": true
+        },
+        {
+          "text": "The queen builds a wax blanket",
+          "correct": false
+        },
+        {
+          "text": "The colony hibernates underground",
+          "correct": false
+        }
+      ],
+      "reveal": "Workers vibrate flight muscles. Bees gather in a cluster and generate heat this way, keeping the center warmer than the surrounding air."
+    },
+    {
+      "question": "What sticky substance do honey bees use to seal small gaps in their hive?",
+      "options": [
+        {
+          "text": "Plant-resin propolis",
+          "correct": true
+        },
+        {
+          "text": "Pollen paste",
+          "correct": false
+        },
+        {
+          "text": "Liquid nectar",
+          "correct": false
+        }
+      ],
+      "reveal": "Plant-resin propolis. Bees collect resin from plants and mix it with other materials to seal cracks and coat parts of the hive."
+    },
+    {
+      "question": "Why can ripe honey in a sealed jar resist spoilage for a long time?",
+      "options": [
+        {
+          "text": "Very little available water",
+          "correct": true
+        },
+        {
+          "text": "No natural sugars",
+          "correct": false
+        },
+        {
+          "text": "A layer of trapped air",
+          "correct": false
+        }
+      ],
+      "reveal": "Very little available water. Ripe honey’s low water content and acidity make it difficult for many microbes to grow, especially when it is sealed."
+    },
+    {
+      "question": "Which feature sets male honey bees apart from female workers?",
+      "options": [
+        {
+          "text": "They lack stingers",
+          "correct": true
+        },
+        {
+          "text": "They collect pollen",
+          "correct": false
+        },
+        {
+          "text": "They build wax comb",
+          "correct": false
+        }
+      ],
+      "reveal": "They lack stingers. Male honey bees, called drones, have no stinger; workers and queens are female."
+    },
+    {
+      "question": "Where does the wax for a honey bee’s comb come from?",
+      "options": [
+        {
+          "text": "Glands on worker abdomens",
+          "correct": true
+        },
+        {
+          "text": "Resin scraped from trees",
+          "correct": false
+        },
+        {
+          "text": "Petals gathered from flowers",
+          "correct": false
+        }
+      ],
+      "reveal": "Glands on worker abdomens. Worker bees secrete tiny wax scales and shape them into comb."
+    },
+    {
+      "question": "Some flowers have markings you can’t see; what kind of light can honey bees detect?",
+      "options": [
+        {
+          "text": "Ultraviolet light",
+          "correct": true
+        },
+        {
+          "text": "Infrared light",
+          "correct": false
+        },
+        {
+          "text": "X-ray light",
+          "correct": false
+        }
+      ],
+      "reveal": "Ultraviolet light. Many flowers have UV patterns invisible to human eyes that can help guide bees toward food."
+    }
+  ]
+}

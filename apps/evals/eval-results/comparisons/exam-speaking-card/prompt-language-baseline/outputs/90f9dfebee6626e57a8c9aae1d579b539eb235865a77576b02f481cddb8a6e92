@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Compare the two photographs and answer the question.",
+    "You have one minute to speak."
+  ],
+  "prompts": [
+    "How might the people be feeling about these celebrations?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of a birthday celebration in a British back garden. A woman in her thirties wearing a casual blue dress smiles as she brings a birthday cake to a table of friends of similar age in everyday summer clothes. Colourful decorations hang nearby. It is a bright afternoon with soft sunlight. No text, signs, logos or visible writing.",
+      "alt": "Uma mulher leva um bolo de aniversário para amigos reunidos em um jardim."
+    },
+    {
+      "scene": "A realistic photograph of a community festival on a British high street. Adults and children in casual clothes watch a small group of musicians playing drums and brass instruments. Some people are clapping and smiling, while a child watches from an adult's shoulders. Colourful bunting hangs across the street in warm afternoon light. No text, signs, logos or visible writing.",
+      "alt": "Pessoas assistem a músicos em um festival de rua."
+    }
+  ],
+  "summary": "Você vai comparar duas fotos e responder a uma pergunta, falando por um minuto sem interrupções. Depois, a examinadora fará uma pergunta breve sobre as fotos.",
+  "character": {
+    "name": "Naomi",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction, then listen without interrupting for up to one minute. When the candidate finishes, say: 'Thank you. Which of these celebrations would you prefer to take part in?' Listen to the short answer. If necessary, ask: 'Why would you choose that one?' Then say: 'Thank you.' Do not correct, praise or grade the candidate.",
+  "openingLine": "I'd like you to compare the two photographs and say how the people might be feeling about these celebrations. You have about a minute. Please begin.",
+  "hints": [
+    "Let me think about that for a moment.",
+    "Both photographs show people who seem to be enjoying themselves.",
+    "One difference is that the people in the first photograph seem to be more relaxed.",
+    "I imagine they might feel this way because of the atmosphere.",
+    "Personally, I would prefer that one because it appeals to me more."
+  ]
+}

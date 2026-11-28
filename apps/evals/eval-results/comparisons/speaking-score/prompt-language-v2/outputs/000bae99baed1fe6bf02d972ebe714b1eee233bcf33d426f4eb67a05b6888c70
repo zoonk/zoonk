@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Your answers are organized and stay on topic, with clear sequencing in “She showed me step by step, and then I watched videos in the evening.” You connect ideas with phrases such as “On the other hand,” though some discussion answers are brief and rely on simple links.",
+      "tip": "Develop one discussion point with a reason and an example. After “schools already have a lot of subjects,” you could add: “For example, a short weekly lesson on budgeting could give students skills they can use immediately.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some precise and natural expressions, including “a steep learning curve” and “overwhelming.” Some wording remains general, such as “more choice” and “useful for everybody.”",
+      "tip": "Make general phrases more specific: instead of “more choice,” try “a wider range of tutorials” when discussing learning online.",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use some longer structures, as in “I wanted to learn it because I think sharing food is a way to understand another culture,” but several grammar forms are inaccurate, including “I am doing this job since two years” and “I am agree with that.”",
+      "tip": "Use “for” with a length of time and “since” with a starting point: “I am doing this job since two years” becomes “I have been doing this job for two years.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, and it contains no clear signs of words being misheard or requests to repeat, so this is a wider estimate centered on your other criteria.",
+      "tip": "To make key words easy to catch, give the stressed syllables clear prominence in “overWHELMing” and “CONfident.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

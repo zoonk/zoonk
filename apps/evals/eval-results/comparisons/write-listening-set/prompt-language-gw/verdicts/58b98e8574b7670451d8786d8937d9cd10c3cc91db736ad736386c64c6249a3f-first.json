@@ -1,0 +1,150 @@
+{
+  "attempt": "first",
+  "costUsd": 0.007932789999999999,
+  "failures": [],
+  "packetId": "58b98e8574b7670451d8786d8937d9cd10c3cc91db736ad736386c64c6249a3f",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have correct keys that match the recording, and no wrong option is defensible from the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "The garden set has two answers that come right after a speaker's self-correction (Tuesday to Thursday, café to library), as the expectation asks. The pottery set has only one such answer.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts read as natural spoken English with contractions, reactions and natural openings and closings.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises only one accent and meets an unfamiliar accent in the real test without warning.",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises only one accent and meets an unfamiliar accent in the real test without warning.",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both sets are accurate and share the same accent gap, but the garden set includes two self-correction answers as the expectation asks and reads slightly more naturally."
+        },
+        "pairId": "90a058d4-a6fa-49b2-8614-d99f6ff2460d"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their keys are the same.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their exam fit is the same.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so their natural speech is the same.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises only one accent and meets an unfamiliar accent in the real test without warning.",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Both speakers use British English only. The expectation requires a mix of the listed British and Australian accents, and no Australian speaker appears.",
+            "criterion": "examRealism",
+            "learnerCost": "The learner practises only one accent and meets an unfamiliar accent in the real test without warning.",
+            "location": {
+              "detail": "speakers list: both speakers British English",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves its reader better."
+        },
+        "pairId": "cc7f66de-16d5-4dab-a181-7db42ec3fe6e"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same five questions and the same keys, and each key matches the monologue.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both outputs have the same format, length, question types and distractors.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "Output B writes the reasons and misconceptions for question 2 in Spanish, which the Brazilian reader cannot read. Output A writes them in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The reasons and misconceptions for question 2 are written in Spanish. The expectation requires every reason and misconception to be in Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The Brazilian learner cannot read why the wrong options are wrong, so the explanations give no help with question 2.",
+            "location": {
+              "detail": "question 2 options, first option reason",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The two monologues share identical keys and questions, but output B gives question 2's reasons and misconceptions in Spanish, which this Brazilian reader cannot use."
+        },
+        "pairId": "d1c6f5e3-3373-42ab-be01-30812e90521d"
+      }
+    ]
+  }
+}

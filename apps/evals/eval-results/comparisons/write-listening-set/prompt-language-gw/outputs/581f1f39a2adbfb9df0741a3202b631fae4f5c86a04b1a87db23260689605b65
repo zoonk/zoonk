@@ -1,0 +1,157 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "the project I actually joined was beside an old railway line",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Maya's project took place next to a disused ______.",
+        "keyPoints": [
+          "Uma antiga linha ferroviária."
+        ],
+        "acceptedAnswers": [
+          "railway line"
+        ],
+        "sampleAnswer": "railway line"
+      },
+      {
+        "evidence": "she handed me a kitchen sieve instead",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Maya used a ______ to collect small creatures from the pond.",
+        "keyPoints": [
+          "Uma peneira de cozinha."
+        ],
+        "acceptedAnswers": [
+          "kitchen sieve"
+        ],
+        "sampleAnswer": "kitchen sieve"
+      },
+      {
+        "evidence": "the early morning was the best time to observe the pond",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group usually observed the pond in the ______.",
+        "keyPoints": [
+          "O começo da manhã."
+        ],
+        "acceptedAnswers": [
+          "early morning"
+        ],
+        "sampleAnswer": "early morning"
+      },
+      {
+        "evidence": "What surprised me most was finding a water beetle.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Maya was particularly surprised to find a ______ in the pond.",
+        "keyPoints": [
+          "Um besouro aquático."
+        ],
+        "acceptedAnswers": [
+          "water beetle"
+        ],
+        "sampleAnswer": "water beetle"
+      },
+      {
+        "evidence": "we planted wild flowers around the pond",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "The group planted ______ near the water to help wildlife.",
+        "keyPoints": [
+          "Flores silvestres."
+        ],
+        "acceptedAnswers": [
+          "wild flowers",
+          "wildflowers",
+          "flowers"
+        ],
+        "sampleAnswer": "wild flowers"
+      },
+      {
+        "evidence": "The biggest benefit for me was improving my public speaking.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.",
+        "question": "Maya says the project helped her most by developing her ______ skills.",
+        "keyPoints": [
+          "A habilidade de falar em público."
+        ],
+        "acceptedAnswers": [
+          "public speaking"
+        ],
+        "sampleAnswer": "public speaking"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A community wildlife project",
+    "turns": [
+      {
+        "speaker": "Maya",
+        "text": "Hello, I'm Maya, and I'm going to tell you about a wildlife project I joined last spring. I'd been looking for something practical to do at weekends, and a friend suggested a group that was working near the canal. I went along to their meeting, but the project I actually joined was beside an old railway line, a little further out of town. Trains hadn't used it for years, and nature had gradually taken over. The group wanted to find out which animals were living there before the council began work on a new walking route."
+      },
+      {
+        "speaker": "Maya",
+        "text": "On my first day, we explored a small pond near the path. Our leader showed us how to collect tiny creatures without harming them. I'd expected to use a fishing net, but she handed me a kitchen sieve instead. It was shallow enough to let us see what we'd caught, and the holes were small enough to stop things escaping. We put everything back in the water as soon as we'd looked at it. It felt a bit strange using something you'd normally find next to the cooker, but it worked brilliantly."
+      },
+      {
+        "speaker": "Maya",
+        "text": "We had to visit regularly, because a single visit wouldn't tell us much. At first, I thought we'd go after lunch, when more volunteers were free. But the leader explained that the early morning was the best time to observe the pond, before people walking their dogs arrived. So that's when we usually went. Getting up was the hardest part for me, especially on a Saturday, but once I was there, I loved how quiet it was."
+      },
+      {
+        "speaker": "Maya",
+        "text": "We kept notes about everything we found and took photographs where we could. I was hoping we'd see a frog, because I'd spotted one there as a child, but none appeared on our visits. What surprised me most was finding a water beetle. I'd assumed the pond was too polluted for anything like that. Our leader said its presence didn't prove that the water was completely clean, but it was an encouraging sign. We sent our records to a local environmental organisation, which added them to its survey of the area."
+      },
+      {
+        "speaker": "Maya",
+        "text": "The project wasn't just about counting wildlife, though. We also thought about how to make the place better for it. Someone suggested planting fruit trees, but there wasn't enough room beside the path. Instead, we planted wild flowers around the pond, using varieties that already grew locally. They brought in insects, and by the summer the whole area looked much more colourful. The council even agreed to leave that section alone when cutting the grass."
+      },
+      {
+        "speaker": "Maya",
+        "text": "At the end of the project, we gave a short presentation at the library. I offered to take the pictures because I was nervous about standing in front of an audience. In the end, everyone had to say something, and I found I actually enjoyed it. The biggest benefit for me was improving my public speaking. Of course, I learned a lot about wildlife too, but I can use that new confidence in all sorts of situations. If there's a similar project near you, I'd definitely recommend giving it a try."
+      }
+    ]
+  }
+}

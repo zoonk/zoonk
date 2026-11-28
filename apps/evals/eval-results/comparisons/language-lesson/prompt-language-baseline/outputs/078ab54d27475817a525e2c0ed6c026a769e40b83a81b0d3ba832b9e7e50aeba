@@ -1,0 +1,216 @@
+{
+  "words": [
+    {
+      "word": "the bathroom",
+      "translation": "o banheiro",
+      "pronunciation": "DHÂ BÉTH-rum",
+      "romanization": null,
+      "tip": "Em bathroom, coloque a ponta da língua entre os dentes e solte o ar para fazer o som de “th”.",
+      "note": null,
+      "distractors": [
+        "the garage",
+        "the garden",
+        "the hallway"
+      ]
+    },
+    {
+      "word": "the bedroom",
+      "translation": "o quarto",
+      "pronunciation": "DHÂ BÉD-rum",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "the office",
+        "the basement",
+        "the closet"
+      ]
+    },
+    {
+      "word": "the living room",
+      "translation": "a sala de estar",
+      "pronunciation": "DHÂ LÍ-ving RUM",
+      "romanization": null,
+      "tip": "Em room, curve a língua para trás sem encostar no céu da boca; não use o som do “r” de “rato”.",
+      "note": null,
+      "distractors": [
+        "the dining room",
+        "the laundry room",
+        "the garage"
+      ]
+    },
+    {
+      "word": "next to",
+      "translation": "ao lado de",
+      "pronunciation": "NÉKST TÂ",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "across from",
+        "far from",
+        "behind"
+      ]
+    },
+    {
+      "word": "upstairs",
+      "translation": "no andar de cima",
+      "pronunciation": "âp-STÉRZ",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "downstairs",
+        "outside",
+        "inside"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Where is the bathroom?",
+      "translation": "Onde fica o banheiro?",
+      "explanation": "Em inglês, use `is` depois de `Where` para perguntar onde fica algo.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "does",
+        "were"
+      ],
+      "translationDistractors": [
+        "quarto",
+        "como",
+        "estão"
+      ],
+      "speakingPrompt": "Pergunte onde fica o banheiro."
+    },
+    {
+      "sentence": "The bedroom is upstairs",
+      "translation": "O quarto fica no andar de cima",
+      "explanation": "`Upstairs` indica que o quarto fica no andar de cima, sem precisar de outra palavra antes dele.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "do",
+        "were"
+      ],
+      "translationDistractors": [
+        "banheiro",
+        "embaixo",
+        "estão"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "The living room is next to the kitchen",
+      "translation": "A sala de estar fica ao lado da cozinha",
+      "explanation": "Use `is next to` entre os dois cômodos para dizer que um fica ao lado do outro.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "from",
+        "does"
+      ],
+      "translationDistractors": [
+        "quarto",
+        "longe",
+        "banheiro"
+      ],
+      "speakingPrompt": "Diga que a sala de estar fica ao lado da cozinha."
+    },
+    {
+      "sentence": "Is the bathroom upstairs?",
+      "translation": "O banheiro fica no andar de cima?",
+      "explanation": "Para fazer uma pergunta com resposta sim ou não, coloque `Is` antes de `the bathroom`.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "does",
+        "do"
+      ],
+      "translationDistractors": [
+        "quarto",
+        "embaixo",
+        "estão"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Como dizer que um cômodo fica ao lado de outro",
+    "text": "Use `next to` para dizer que um cômodo fica ao lado de outro. Coloque `is next to` entre os dois cômodos: `The bathroom is next to the kitchen` significa “O banheiro fica ao lado da cozinha”. Não omita `to` depois de `next`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Escolha a expressão que completa a frase.",
+      "template": "The living room is [BLANK] the bathroom",
+      "answer": "next to",
+      "distractors": [
+        "next",
+        "in front",
+        "close"
+      ],
+      "feedback": "Use `next to` antes de outro cômodo para dizer que ele fica ao lado."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "A pessoa pergunta se você tem alguma dúvida. Pergunte onde fica o banheiro.",
+    "scene": "Em uma casa, conversando com a pessoa que a está mostrando",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome to the house!",
+        "translation": "Bem-vindo à casa!"
+      },
+      {
+        "speaker": "you",
+        "text": "Thank you!",
+        "translation": "Obrigado!"
+      },
+      {
+        "speaker": "them",
+        "text": "Do you have a question?",
+        "translation": "Você tem alguma dúvida?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Where is the bathroom?",
+        "translation": "Onde fica o banheiro?",
+        "isBest": true,
+        "why": "A pergunta usa a ordem correta para perguntar onde fica o banheiro."
+      },
+      {
+        "text": "Where the bathroom is?",
+        "translation": "Onde fica o banheiro?",
+        "isBest": false,
+        "why": "Nessa pergunta direta, `is` deve vir antes de `the bathroom`."
+      },
+      {
+        "text": "Where are the bathroom?",
+        "translation": "Onde fica o banheiro?",
+        "isBest": false,
+        "why": "Use `is`, não `are`, para perguntar sobre um banheiro."
+      }
+    ],
+    "explanation": "Para perguntar onde fica um cômodo, comece com `Where is`."
+  },
+  "writing": {
+    "prompt": "Escreva uma mensagem perguntando: “Onde fica o banheiro?”",
+    "answers": [
+      "Where is the bathroom?",
+      "Where's the bathroom?"
+    ],
+    "keyPoints": [
+      "Use `Where is` ou `Where's` para perguntar onde fica.",
+      "Use `the bathroom` para falar do banheiro."
+    ]
+  },
+  "summary": [
+    "“Where is the bathroom?” pergunta onde fica o banheiro.",
+    "“The bedroom is upstairs” diz que o quarto fica no andar de cima.",
+    "“The living room is next to the kitchen” diz que a sala de estar fica ao lado da cozinha."
+  ]
+}

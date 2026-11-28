@@ -1,0 +1,76 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        1,
+        2,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "É um casaco azul.",
+        "É uma mochila azul.",
+        "Foi encontrado na biblioteca.",
+        "Foi encontrado na recepção.",
+        "Foi encontrado na sexta-feira.",
+        "Foi encontrado na segunda-feira."
+      ],
+      "passage": "FOUND: a blue backpack in the library on Monday. It is at the front desk until Friday. Ask for Emma.",
+      "question": "O que o bilhete diz sobre o objeto encontrado?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "No domingo, a piscina fica fechada.",
+        "No sábado, a piscina fecha às 9 da noite.",
+        "No sábado, a piscina abre às 8 da manhã.",
+        "A entrada para crianças custa 5 dólares.",
+        "Na segunda-feira, a piscina abre às 8 da manhã."
+      ],
+      "passage": "POOL HOURS\nMonday to Friday: 6:00 a.m. to 9:00 p.m.\nSaturday: 8:00 a.m. to 5:00 p.m.\nSunday: closed\nAdults $5, kids $3",
+      "question": "O que o quadro de horários diz sobre a piscina?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        2,
+        3,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "A consulta é às 4 da tarde.",
+        "A consulta é na sexta-feira.",
+        "A consulta é às 10 da manhã.",
+        "A consulta é na quinta-feira.",
+        "O consultório fica fechado na sexta-feira.",
+        "O consultório fica fechado na quinta-feira."
+      ],
+      "passage": "Hello, this is Doctor Lee's office. Your appointment is on Thursday at 10:00 a.m. We are closed on Friday. Thank you.",
+      "question": "O que a mensagem diz sobre a consulta e o consultório?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        0,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "O entregador tem duas caixas.",
+        "O entregador tem três caixas.",
+        "As caixas estão em cima da cadeira.",
+        "As caixas estão na porta da frente.",
+        "As caixas estão na porta dos fundos."
+      ],
+      "passage": "Hi, delivery for Noah! I have two boxes. They are at the back door, next to the chair. Have a good day!",
+      "question": "O que o entregador diz sobre a entrega?",
+      "skill": "listening"
+    }
+  ]
+}

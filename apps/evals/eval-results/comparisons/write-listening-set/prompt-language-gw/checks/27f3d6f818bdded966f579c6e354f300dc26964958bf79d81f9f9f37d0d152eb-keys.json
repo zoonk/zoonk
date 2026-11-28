@@ -1,0 +1,14 @@
+{
+  "caseId": "en-cambridge-first-part-2-sentence-completion",
+  "costUsd": 0.038976,
+  "name": "answer keys",
+  "passed": 3,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[1]\",\"keyedAnswer\":\"stone bridge\",\"kind\":\"factualError\",\"workedAnswer\":\"The route does go past the stone bridge, but the volunteers meet outside the café near the station. Hannah describes the grassy area as the place where they leave their bags, not their meeting place.\"}",
+    "{\"itemLocator\":\"set.questions[4]\",\"keyedAnswer\":\"waterproof notebook\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Notebook” also identifies what Hannah uses, is heard in the recording and fits “uses a notebook to record her findings”. The stem does not ask which feature makes it practical.\"}",
+    "{\"itemLocator\":\"set.questions[5]\",\"keyedAnswer\":\"butterfly garden\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both “garden” and “butterfly garden” are heard and correctly complete “select plants for a ___”. The stem does not require the learner to specify the type of garden.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 6
+}

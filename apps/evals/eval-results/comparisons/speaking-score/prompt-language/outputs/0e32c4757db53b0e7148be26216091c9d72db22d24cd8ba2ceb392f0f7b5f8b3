@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você organiza as propostas com conectores como “Por un lado” e “Sin embargo” e mantém a conversa respondendo diretamente às perguntas. As ideias são claras, mas algumas justificativas ficam pouco desenvolvidas, como a crítica à cobrança para entrar no centro.",
+      "tip": "Desenvolva cada opinião com uma consequência concreta, por exemplo: “Cobrar por entrar en el centro podría reducir el tráfico, aunque afectaría más a quienes tienen menos ingresos”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "A fala avança de forma organizada entre as propostas e a conversa, como em “Sin duda, abaratar el transporte público”. A transcrição não permite avaliar como você soou; por isso, esta faixa é uma estimativa mais ampla, embora o encadeamento das respostas não mostre interrupções claras.",
+      "tip": "Ao revisar a clareza, confira se o ouvinte entende sem esforço expressões como “atascos de horas” e “se invirtiera más en transporte”; priorize a nitidez dessas palavras, não um sotaque específico.",
+      "bandHigh": 3,
+      "bandLow": 2
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Você controla bem algumas estruturas, como “si fuera más segura” e “Si se invirtiera más en transporte”. Porém, há desvios de concordância em “la gente están dispuesta” e de hipótese em “Si tendría más tiempo”, que reduzem a consistência gramatical.",
+      "tip": "Com sujeito coletivo singular, o verbo também fica no singular: troque “la gente están dispuesta” por “la gente está dispuesta”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário pertinente ao tema, como “carriles bici”, “transporte público” e “atascos de horas”, e consegue comparar vantagens e desvantagens. Ainda assim, as justificativas recorrem a formulações simples e repetem ideias gerais, sem ampliar muito as explicações.",
+      "tip": "Acrescente vocabulário para explicar impactos e contrapartidas, por exemplo: “La medida sería eficaz para reducir las emisiones, pero podría perjudicar a los comercios del centro”.",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você avalia quatro propostas, escolhe uma como a melhor e comenta a situação em sua cidade e em seu país, como em “En mi ciudad, en Brasil, el autobús es caro y muy lento”. A comunicação cumpre os pontos principais, mas a análise de algumas propostas e a conversa poderiam trazer mais desenvolvimento.",
+      "tip": "Na conversa, justifique a escolha comparando-a explicitamente com outra proposta, por exemplo: “Prefiero abaratar el transporte público porque beneficiaría a más personas que cerrar el centro solo los domingos”.",
+      "bandHigh": 2,
+      "bandLow": 2
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

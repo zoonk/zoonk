@@ -1,0 +1,19 @@
+{
+  "caseId": "ja-eiyogaku-beginner",
+  "challenger": {
+    "costUsd": 0.0008144599999999999,
+    "durationMs": 11092.136459000001,
+    "hash": "948bd1d93126d0b14b06f90520fac07d67b4d4ab9c481caf449487d1d8630be1",
+    "systemPromptHash": "dafe225a3ea1b0775b3477ea7428b153ed4129225ba33e9eb5bdfcf2ab89c1f4",
+    "userPromptHash": "d4ebb39c3f22a8d27f480f51fb356f4cf8770dbd956cb628a40e1d7b75ecb6d3"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0006039299999999999,
+    "durationMs": 6452.230916,
+    "hash": "b8c43c83a4fc7c63bf772486fc16e82545b11b048e10384e1448280a09ad8755",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "d4ebb39c3f22a8d27f480f51fb356f4cf8770dbd956cb628a40e1d7b75ecb6d3"
+  },
+  "run": 2
+}

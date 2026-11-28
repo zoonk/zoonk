@@ -1,0 +1,198 @@
+{
+  "words": [
+    {
+      "word": "the bathroom",
+      "translation": "o banheiro",
+      "pronunciation": "DHA BÉTH-rum",
+      "romanization": null,
+      "tip": "Para o som de 'th', coloque a ponta da língua entre os dentes e sopre o ar sem vibrar as cordas vocais.",
+      "note": "Nos Estados Unidos, 'bathroom' é a palavra usada para o banheiro de uma casa.",
+      "distractors": [
+        "the basement",
+        "the backyard",
+        "the balcony"
+      ]
+    },
+    {
+      "word": "the bedroom",
+      "translation": "o quarto",
+      "pronunciation": "DHA BÉD-rum",
+      "romanization": null,
+      "tip": "No 'r' de 'bedroom', curve a ponta da língua para trás sem tocar o céu da boca, sem som de 'rr'.",
+      "note": null,
+      "distractors": [
+        "the garage",
+        "the garden",
+        "the closet"
+      ]
+    },
+    {
+      "word": "on the left",
+      "translation": "à esquerda",
+      "pronunciation": "ON DHA LÉFT",
+      "romanization": null,
+      "tip": "Termine a palavra 'left' direto no som de 't', sem acrescentar um som de 'i' no final.",
+      "note": null,
+      "distractors": [
+        "straight ahead",
+        "upstairs",
+        "downstairs"
+      ]
+    },
+    {
+      "word": "on the right",
+      "translation": "à direita",
+      "pronunciation": "ON DHA RAIT",
+      "romanization": null,
+      "tip": "Comece 'right' curvando a língua para trás; não pronuncie como o 'r' forte de 'rato'.",
+      "note": null,
+      "distractors": [
+        "outside",
+        "around the corner",
+        "next door"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Where is the bathroom?",
+      "translation": "Onde fica o banheiro?",
+      "explanation": "Em inglês, 'Where is' serve tanto para 'onde está' quanto para 'onde fica'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "in"
+      ],
+      "translationDistractors": [
+        "quando",
+        "quem"
+      ],
+      "speakingPrompt": "Pergunte onde fica o banheiro"
+    },
+    {
+      "sentence": "The bathroom is on the left",
+      "translation": "O banheiro fica à esquerda",
+      "explanation": "Diferente do português, que usa a crase 'à esquerda', o inglês usa a preposição 'on'.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "in"
+      ],
+      "translationDistractors": [
+        "direita",
+        "frente"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "The bedroom is on the right",
+      "translation": "O quarto fica à direita",
+      "explanation": "A estrutura é idêntica à de 'on the left', apenas trocando o lado por 'right'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "under"
+      ],
+      "translationDistractors": [
+        "esquerda",
+        "cozinha"
+      ],
+      "speakingPrompt": "Diga que o quarto fica à direita"
+    }
+  ],
+  "tip": {
+    "title": "Usar on the left e on the right para direções",
+    "text": "Para indicar o lado onde fica um cômodo, use o verbo `is` seguido de `on the left` (à esquerda) ou `on the right` (à direita). Não traduza a preposição 'a' do português ao pé da letra: em inglês, a direção sempre leva `on`.",
+    "examples": [
+      {
+        "sentence": "The bathroom is on the left",
+        "translation": "O banheiro fica à esquerda"
+      },
+      {
+        "sentence": "The kitchen is on the right",
+        "translation": "A cozinha fica à direita"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete com a preposição correta para indicar a direção:",
+      "template": "The bathroom is [BLANK] the left",
+      "answer": "on",
+      "distractors": [
+        "in",
+        "at"
+      ],
+      "feedback": "Com 'the left' e 'the right', a preposição correta em inglês é sempre 'on'."
+    },
+    {
+      "question": "Escolha a forma certa do verbo para esta pergunta:",
+      "template": "Where [BLANK] the bedroom?",
+      "answer": "is",
+      "distractors": [
+        "are",
+        "am"
+      ],
+      "feedback": "Usamos 'is' porque 'the bedroom' é um sujeito singular."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Seu anfitrião acabou de dizer onde fica o banheiro. Como você responde?",
+    "scene": "Na casa de um amigo nos Estados Unidos",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome to my house!",
+        "translation": "Bem-vindo à minha casa!"
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks! Where is the bathroom?",
+        "translation": "Obrigado! Onde fica o banheiro?"
+      },
+      {
+        "speaker": "them",
+        "text": "The bathroom is on the left.",
+        "translation": "O banheiro fica à esquerda."
+      }
+    ],
+    "replies": [
+      {
+        "text": "Thank you so much!",
+        "translation": "Muito obrigado!",
+        "isBest": true,
+        "why": "Agradece a orientação de forma simpática e adequada para a situação."
+      },
+      {
+        "text": "Where is the house?",
+        "translation": "Onde fica a casa?",
+        "isBest": false,
+        "why": "Você já está dentro da casa, portanto a pergunta não faz sentido."
+      },
+      {
+        "text": "The bathroom is on.",
+        "translation": "O banheiro está ligado.",
+        "isBest": false,
+        "why": "Falta a palavra 'the left' ou 'the right'; 'on' sozinho não indica direção."
+      }
+    ],
+    "explanation": "Sempre que alguém lhe der uma direção, responda com um agradecimento simples como 'Thanks' ou 'Thank you'."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês: 'Onde fica o banheiro?'",
+    "answers": [
+      "Where is the bathroom?",
+      "Where's the bathroom?"
+    ],
+    "keyPoints": [
+      "Usa 'Where is' ou a forma contraída 'Where's'",
+      "Inclui o artigo e o cômodo 'the bathroom'"
+    ]
+  },
+  "summary": [
+    "'Where is the bathroom?' pergunta onde fica o banheiro",
+    "'on the left' indica que algo fica à esquerda",
+    "'on the right' indica que algo fica à direita"
+  ]
+}

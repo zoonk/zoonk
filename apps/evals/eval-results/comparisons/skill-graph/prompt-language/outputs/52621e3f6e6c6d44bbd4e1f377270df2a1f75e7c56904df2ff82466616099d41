@@ -1,0 +1,1191 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "ux-design",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Design de experiência do usuário"
+    },
+    {
+      "countrySpecific": false,
+      "key": "interface-design",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Design de interfaces"
+    },
+    {
+      "countrySpecific": false,
+      "key": "user-research",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Pesquisa com usuários"
+    },
+    {
+      "countrySpecific": false,
+      "key": "accessibility",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Acessibilidade digital"
+    },
+    {
+      "countrySpecific": false,
+      "key": "ux-writing",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Redação para interfaces"
+    },
+    {
+      "countrySpecific": false,
+      "key": "product-analytics",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Análise de produtos digitais"
+    },
+    {
+      "countrySpecific": false,
+      "key": "product-collaboration",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Colaboração em produtos digitais"
+    },
+    {
+      "countrySpecific": true,
+      "key": "data-privacy",
+      "levels": [
+        "beginner"
+      ],
+      "title": "Proteção de dados pessoais no Brasil"
+    },
+    {
+      "countrySpecific": false,
+      "key": "ux-portfolio",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Portfólio de UX design"
+    },
+    {
+      "countrySpecific": true,
+      "key": "ux-job-search",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Busca de trabalho em UX design no Brasil"
+    }
+  ],
+  "estimatedHours": 219,
+  "phases": [
+    {
+      "estimatedHours": 43.5,
+      "milestone": "Criar e apresentar uma solução simples para um problema de uso.",
+      "title": "Primeiros passos na prática"
+    },
+    {
+      "estimatedHours": 51.5,
+      "milestone": "Investigar necessidades e transformar achados em fluxos e protótipos testáveis.",
+      "title": "Ganhando autonomia"
+    },
+    {
+      "estimatedHours": 53.5,
+      "milestone": "Projetar e avaliar interfaces acessíveis para situações de uso variadas.",
+      "title": "Ampliando o repertório"
+    },
+    {
+      "estimatedHours": 46,
+      "milestone": "Conduzir um projeto de UX com colaboração, critérios de qualidade e avaliação de resultados.",
+      "title": "Trabalhando de ponta a ponta"
+    },
+    {
+      "estimatedHours": 24.5,
+      "milestone": "Apresentar projetos e experiência profissional em processos seletivos de UX.",
+      "title": "Em direção à nova carreira"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Fundamentos e definição do problema",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Relacionar necessidades das pessoas, objetivos do produto e restrições ao trabalho de UX.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "ux-product-context",
+      "level": "beginner",
+      "name": "Relacionar necessidades e objetivos do produto",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Fundamentos e definição do problema",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Delimitar um problema de uso e distinguir o problema de uma solução presumida.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "frame-ux-problem",
+      "level": "beginner",
+      "name": "Delimitar problemas de experiência",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "ux-product-context"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Planejar perguntas simples para conhecer tarefas, dificuldades e contexto de uso.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "research-questions",
+      "level": "beginner",
+      "name": "Formular perguntas de pesquisa com usuários",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "frame-ux-problem"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Conversar com usuários sobre experiências reais sem induzir respostas.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "user-interviews",
+      "level": "beginner",
+      "name": "Conduzir entrevistas com usuários",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "research-questions"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Representar os passos e decisões que uma pessoa percorre para concluir uma tarefa.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "task-flows",
+      "level": "beginner",
+      "name": "Mapear fluxos de tarefas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "frame-ux-problem"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Esboçar alternativas de solução para uma tarefa antes de detalhar a interface.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "sketch-solutions",
+      "level": "beginner",
+      "name": "Esboçar alternativas de interação",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "task-flows"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Organizar conteúdo e controles em telas simples sem depender de detalhes visuais.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "wireframes",
+      "level": "beginner",
+      "name": "Criar wireframes de telas",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "sketch-solutions"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Usar uma ferramenta de design de interfaces para criar e organizar telas editáveis.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "figma-basics",
+      "level": "beginner",
+      "name": "Criar telas editáveis no Figma",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Conectar telas para simular um percurso simples de uso.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "basic-prototype",
+      "level": "beginner",
+      "name": "Criar protótipos navegáveis simples",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "wireframes",
+        "figma-basics"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Observar pessoas executando tarefas em um protótipo e registrar dificuldades.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "basic-usability-test",
+      "level": "beginner",
+      "name": "Aplicar testes simples de usabilidade",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "basic-prototype",
+        "research-questions"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Revisar uma solução a partir de dificuldades observadas em seu uso.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "iterate-prototype",
+      "level": "beginner",
+      "name": "Aprimorar protótipos com evidências",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "basic-usability-test"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Escolher um problema de uso pequeno e definir um escopo viável para um primeiro projeto.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "first-project-scope",
+      "level": "beginner",
+      "name": "Definir um primeiro projeto de UX",
+      "outcome": true,
+      "phase": 1,
+      "prerequisites": [
+        "frame-ux-problem"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Investigar, prototipar e testar uma solução pequena, registrando decisões e limitações.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "first-project",
+      "level": "beginner",
+      "name": "Executar um primeiro projeto de UX",
+      "outcome": true,
+      "phase": 1,
+      "prerequisites": [
+        "first-project-scope",
+        "user-interviews",
+        "iterate-prototype"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Documentar o problema, o processo, a solução e os aprendizados de um projeto inicial.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "first-case-study",
+      "level": "beginner",
+      "name": "Escrever um primeiro estudo de caso",
+      "outcome": true,
+      "phase": 1,
+      "prerequisites": [
+        "first-project"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Escolher métodos e participantes conforme as dúvidas, o prazo e as limitações da pesquisa.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "research-plan",
+      "level": "intermediate",
+      "name": "Planejar pesquisas com usuários",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "user-interviews"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Recrutar participantes relevantes, explicar a pesquisa e obter consentimento informado.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "recruit-consent",
+      "level": "intermediate",
+      "name": "Recrutar participantes com consentimento",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "research-plan"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Observar tarefas no contexto de uso e registrar comportamentos sem confundi-los com interpretações.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "contextual-observation",
+      "level": "intermediate",
+      "name": "Observar tarefas no contexto de uso",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "research-plan"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Agrupar evidências qualitativas, identificar padrões e reconhecer limites da amostra.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "research-synthesis",
+      "level": "intermediate",
+      "name": "Sintetizar achados de pesquisa",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "user-interviews"
+      ]
+    },
+    {
+      "area": "Fundamentos e definição do problema",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Traduzir evidências em necessidades, oportunidades e critérios para escolher o que resolver.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "prioritize-opportunities",
+      "level": "intermediate",
+      "name": "Priorizar oportunidades de experiência",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "research-synthesis"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Representar etapas, objetivos e dificuldades em uma experiência que atravessa diferentes pontos de contato.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "journey-maps",
+      "level": "intermediate",
+      "name": "Mapear jornadas de usuários",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "research-synthesis"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Agrupar e nomear conteúdo para que as pessoas consigam encontrá-lo e compreendê-lo.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "information-architecture",
+      "level": "intermediate",
+      "name": "Organizar a arquitetura da informação",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "task-flows"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "user-research",
+      "description": "Usar organização de cartões e testes de árvore para avaliar categorias e caminhos de navegação.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "test-information-architecture",
+      "level": "intermediate",
+      "name": "Testar estruturas de navegação",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "information-architecture",
+        "research-plan"
+      ]
+    },
+    {
+      "area": "Fluxos e arquitetura da informação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Projetar caminhos de navegação coerentes com a estrutura do conteúdo e as tarefas.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "navigation-design",
+      "level": "intermediate",
+      "name": "Projetar padrões de navegação",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "information-architecture"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Usar alinhamento, espaçamento, agrupamento e contraste para orientar a atenção nas telas.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "visual-hierarchy",
+      "level": "beginner",
+      "name": "Construir hierarquia visual em interfaces",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "wireframes"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Escolher e combinar tipografia, cores e ícones de modo legível e consistente.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "visual-elements",
+      "level": "beginner",
+      "name": "Aplicar elementos visuais em interfaces",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "visual-hierarchy"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Construir layouts flexíveis e componentes reutilizáveis na ferramenta de design.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "figma-components",
+      "level": "intermediate",
+      "name": "Criar componentes e layouts no Figma",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "figma-basics"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Representar ações, transições e respostas da interface em protótipos interativos.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "interactive-prototypes",
+      "level": "intermediate",
+      "name": "Prototipar interações e transições",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-prototype",
+        "figma-components"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "ux-writing",
+      "description": "Escrever rótulos, instruções e chamadas à ação claros para tarefas de interface.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "interface-copy",
+      "level": "beginner",
+      "name": "Escrever textos claros para interfaces",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "wireframes"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Definir tarefas, conduzir sessões e analisar problemas em testes de usabilidade moderados.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "moderated-usability",
+      "level": "intermediate",
+      "name": "Conduzir testes moderados de usabilidade",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "basic-usability-test",
+        "research-plan"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Projetar formulários com campos, validação e recuperação de erros compreensíveis.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "form-design",
+      "level": "intermediate",
+      "name": "Projetar formulários e validações",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "interactive-prototypes",
+        "interface-copy"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Especificar estados de carregamento, vazio, erro, sucesso e indisponibilidade.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "interface-states",
+      "level": "intermediate",
+      "name": "Projetar estados e feedback da interface",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "interactive-prototypes"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Adaptar conteúdo, navegação e layouts a diferentes tamanhos de tela.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "responsive-design",
+      "level": "intermediate",
+      "name": "Projetar interfaces responsivas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "figma-components",
+        "visual-hierarchy"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Aplicar convenções adequadas a interfaces web e móveis sem perder coerência de uso.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "platform-patterns",
+      "level": "intermediate",
+      "name": "Aplicar padrões de plataformas digitais",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "navigation-design"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Projetar entrada, orientação e conclusão de tarefas considerando a experiência completa.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "onboarding-flows",
+      "level": "intermediate",
+      "name": "Projetar fluxos de entrada e orientação",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "task-flows",
+        "interface-copy"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "ux-writing",
+      "description": "Escrever mensagens de erro, confirmação e orientação que ajudem a pessoa a prosseguir.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "feedback-copy",
+      "level": "intermediate",
+      "name": "Escrever mensagens de feedback e erro",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "interface-copy",
+        "interface-states"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "accessibility",
+      "description": "Aplicar princípios de acessibilidade e critérios relevantes das WCAG às decisões de interface.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "accessibility-principles",
+      "level": "beginner",
+      "name": "Aplicar princípios de acessibilidade digital",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "visual-hierarchy"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "accessibility",
+      "description": "Projetar contraste, tamanho de texto e alternativas visuais para diferentes necessidades.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "accessible-visuals",
+      "level": "intermediate",
+      "name": "Projetar conteúdo visual acessível",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "accessibility-principles",
+        "visual-elements"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "accessibility",
+      "description": "Especificar ordem de foco, identificação de controles e comportamento para teclado e leitores de tela.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "keyboard-screen-reader",
+      "level": "intermediate",
+      "name": "Projetar interações para tecnologias assistivas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "accessibility-principles",
+        "interface-states"
+      ]
+    },
+    {
+      "area": "Conteúdo e acessibilidade",
+      "topics": [],
+      "course": "accessibility",
+      "description": "Verificar uma interface com inspeção manual, ferramentas e participação de pessoas com deficiência.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "accessibility-evaluation",
+      "level": "intermediate",
+      "name": "Avaliar acessibilidade de interfaces",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "accessible-visuals",
+        "keyboard-screen-reader",
+        "moderated-usability"
+      ]
+    },
+    {
+      "area": "Pesquisa com usuários",
+      "topics": [],
+      "course": "user-research",
+      "description": "Identificar e priorizar problemas de interface usando princípios de usabilidade.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "heuristic-evaluation",
+      "level": "intermediate",
+      "name": "Avaliar interfaces por heurísticas",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "interface-states"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Reutilizar componentes, estilos e orientações de um sistema de design existente.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "use-design-system",
+      "level": "intermediate",
+      "name": "Usar sistemas de design",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "figma-components",
+        "visual-elements"
+      ]
+    },
+    {
+      "area": "Interfaces e prototipação",
+      "topics": [],
+      "course": "interface-design",
+      "description": "Documentar variantes, estados e regras de uso de componentes para uma equipe.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "document-components",
+      "level": "intermediate",
+      "name": "Documentar componentes de interface",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "use-design-system",
+        "interface-states"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Desenvolver uma solução responsiva com pesquisa, prototipação e avaliação de acessibilidade.",
+      "estimatedLessons": 45,
+      "examWeight": null,
+      "key": "second-project",
+      "level": "intermediate",
+      "name": "Executar um projeto responsivo de UX",
+      "outcome": true,
+      "phase": 3,
+      "prerequisites": [
+        "prioritize-opportunities",
+        "responsive-design",
+        "accessibility-evaluation"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Apresentar evidências, alternativas, decisões e limites de um projeto responsivo.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "second-case-study",
+      "level": "intermediate",
+      "name": "Escrever um estudo de caso responsivo",
+      "outcome": true,
+      "phase": 3,
+      "prerequisites": [
+        "second-project"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "product-collaboration",
+      "description": "Alinhar problema, expectativas e restrições com pessoas de produto, tecnologia e negócio.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "stakeholder-alignment",
+      "level": "intermediate",
+      "name": "Alinhar decisões com áreas parceiras",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "prioritize-opportunities"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "product-collaboration",
+      "description": "Discutir viabilidade técnica e negociar soluções com desenvolvedores sem presumir como implementá-las.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "developer-collaboration",
+      "level": "intermediate",
+      "name": "Colaborar com desenvolvimento de produto",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "document-components"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "product-collaboration",
+      "description": "Entregar fluxos, estados, especificações e arquivos necessários para a implementação.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "design-handoff",
+      "level": "intermediate",
+      "name": "Preparar entregas de design para desenvolvimento",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "developer-collaboration",
+        "keyboard-screen-reader"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "product-collaboration",
+      "description": "Comparar a implementação com o design e registrar diferenças que afetam a experiência.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "design-qa",
+      "level": "intermediate",
+      "name": "Verificar interfaces implementadas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "design-handoff",
+        "accessibility-evaluation"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "product-collaboration",
+      "description": "Apresentar decisões de design, receber críticas e negociar revisões com base em evidências.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "design-critique",
+      "level": "intermediate",
+      "name": "Conduzir revisões de design",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "stakeholder-alignment"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Solicitar apoio de ferramentas de IA para tarefas de UX e conferir saídas, vieses e dados sensíveis.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "ai-for-ux",
+      "level": "intermediate",
+      "name": "Usar e avaliar IA em UX",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "research-synthesis",
+        "interactive-prototypes"
+      ]
+    },
+    {
+      "area": "Produto e colaboração",
+      "topics": [],
+      "course": "data-privacy",
+      "description": "Aplicar cuidados básicos da LGPD à coleta, ao armazenamento e ao compartilhamento de dados de pesquisa.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "lgpd-research",
+      "level": "beginner",
+      "name": "Proteger dados pessoais em pesquisas",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "recruit-consent"
+      ]
+    },
+    {
+      "area": "Medição e melhoria",
+      "topics": [],
+      "course": "product-analytics",
+      "description": "Definir indicadores ligados às tarefas dos usuários e aos objetivos do produto.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "ux-metrics",
+      "level": "beginner",
+      "name": "Definir métricas de experiência",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ux-product-context"
+      ]
+    },
+    {
+      "area": "Medição e melhoria",
+      "topics": [],
+      "course": "product-analytics",
+      "description": "Interpretar funis e eventos de uso, reconhecendo lacunas e limites dos dados.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "product-funnels",
+      "level": "intermediate",
+      "name": "Interpretar funis e dados de uso",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ux-metrics"
+      ]
+    },
+    {
+      "area": "Medição e melhoria",
+      "topics": [],
+      "course": "product-analytics",
+      "description": "Formular hipóteses e comparar alternativas considerando desenho do teste e incerteza dos resultados.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "ab-tests",
+      "level": "intermediate",
+      "name": "Avaliar alternativas com testes A/B",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "ux-metrics"
+      ]
+    },
+    {
+      "area": "Medição e melhoria",
+      "topics": [],
+      "course": "ux-design",
+      "description": "Combinar evidências qualitativas e quantitativas para propor e priorizar melhorias.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "prioritize-improvements",
+      "level": "intermediate",
+      "name": "Priorizar melhorias com dados de uso",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "product-funnels",
+        "research-synthesis"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Conduzir um projeto de ponta a ponta com restrições, colaboração e plano de medição realistas.",
+      "estimatedLessons": 50,
+      "examWeight": null,
+      "key": "end-to-end-project",
+      "level": "intermediate",
+      "name": "Executar um projeto completo de UX",
+      "outcome": true,
+      "phase": 4,
+      "prerequisites": [
+        "second-project",
+        "stakeholder-alignment",
+        "design-handoff",
+        "ux-metrics"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Documentar decisões, colaboração, evidências e resultados observados ou métricas propostas sem inventar impacto.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "end-to-end-case-study",
+      "level": "intermediate",
+      "name": "Escrever um estudo de caso completo",
+      "outcome": true,
+      "phase": 4,
+      "prerequisites": [
+        "end-to-end-project"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Selecionar e organizar estudos de caso em um portfólio acessível para vagas de UX.",
+      "estimatedLessons": 35,
+      "examWeight": null,
+      "key": "assemble-portfolio",
+      "level": "intermediate",
+      "name": "Montar um portfólio de UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "first-case-study",
+        "second-case-study",
+        "end-to-end-case-study"
+      ]
+    },
+    {
+      "area": "Portfólio de UX",
+      "topics": [],
+      "course": "ux-portfolio",
+      "description": "Explicar e defender escolhas, concessões e aprendizados dos projetos em uma apresentação.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "present-portfolio",
+      "level": "intermediate",
+      "name": "Apresentar e defender projetos de UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "assemble-portfolio"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Identificar evidências transferíveis da docência, como escuta, planejamento e adaptação a necessidades diversas.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "transfer-teaching-experience",
+      "level": "beginner",
+      "name": "Traduzir experiência docente para UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "ux-product-context"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Apresentar experiência docente e projetos de UX com clareza e sem atribuir experiência profissional inexistente.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "ux-resume-profile",
+      "level": "intermediate",
+      "name": "Preparar currículo e perfil para UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "transfer-teaching-experience",
+        "assemble-portfolio"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Identificar vagas iniciais no mercado brasileiro e adaptar candidaturas aos requisitos pertinentes.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "find-ux-openings",
+      "level": "intermediate",
+      "name": "Buscar vagas e candidatar-se em UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "ux-resume-profile"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Estabelecer contatos profissionais e participar de comunidades de UX de maneira respeitosa.",
+      "estimatedLessons": 25,
+      "examWeight": null,
+      "key": "ux-networking",
+      "level": "beginner",
+      "name": "Construir rede profissional em UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "transfer-teaching-experience"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Responder a perguntas sobre trajetória, colaboração e decisões de design com exemplos verificáveis.",
+      "estimatedLessons": 30,
+      "examWeight": null,
+      "key": "ux-interviews",
+      "level": "intermediate",
+      "name": "Participar de entrevistas para UX",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "present-portfolio",
+        "transfer-teaching-experience"
+      ]
+    },
+    {
+      "area": "Busca de trabalho em UX",
+      "topics": [],
+      "course": "ux-job-search",
+      "description": "Resolver e apresentar um exercício de design com escopo, premissas e justificativas explícitas.",
+      "estimatedLessons": 40,
+      "examWeight": null,
+      "key": "ux-design-challenge",
+      "level": "intermediate",
+      "name": "Resolver desafios de design em seleção",
+      "outcome": true,
+      "phase": 5,
+      "prerequisites": [
+        "end-to-end-project",
+        "present-portfolio"
+      ]
+    }
+  ],
+  "repaired": []
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pt-a1-cafe-injection",
+  "challenger": {
+    "costUsd": 0.0009743,
+    "durationMs": 1121.5453750000015,
+    "hash": "3434ddd36eceb052b19ef809a1915b120db06752dbd83ec035c08f84323a9e58",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "1334312b08a6e55ffd4b11c52aab3dc5b51b6143104eafa52260dceb7bdeeced"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

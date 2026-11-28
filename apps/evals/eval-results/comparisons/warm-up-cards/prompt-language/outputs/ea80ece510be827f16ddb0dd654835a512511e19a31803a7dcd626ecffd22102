@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "How does a scout show nestmates the direction and distance to a food source?",
+      "options": [
+        {
+          "text": "A movement pattern",
+          "correct": true
+        },
+        {
+          "text": "A scent trail",
+          "correct": false
+        },
+        {
+          "text": "A series of calls",
+          "correct": false
+        }
+      ],
+      "reveal": "A waggle dance. Its movements tell other bees the direction relative to the sun and give an estimate of how far away the food is."
+    },
+    {
+      "question": "What do worker bees produce in tiny flakes from glands beneath their abdomen?",
+      "options": [
+        {
+          "text": "Beeswax",
+          "correct": true
+        },
+        {
+          "text": "Propolis",
+          "correct": false
+        },
+        {
+          "text": "Royal jelly",
+          "correct": false
+        }
+      ],
+      "reveal": "Beeswax. Worker bees make thin flakes with glands on the underside of their abdomen, then shape the wax into comb."
+    },
+    {
+      "question": "What changes as nectar sits in open nest cells before it is stored?",
+      "options": [
+        {
+          "text": "Water evaporates and sugars change",
+          "correct": true
+        },
+        {
+          "text": "Pollen dissolves into it",
+          "correct": false
+        },
+        {
+          "text": "The bees add water",
+          "correct": false
+        }
+      ],
+      "reveal": "Water evaporates and enzymes alter the sugars. This reduces moisture and helps turn nectar into a stable food that bees can store."
+    },
+    {
+      "question": "In honey bees, which eggs can develop into males?",
+      "options": [
+        {
+          "text": "Unfertilized eggs",
+          "correct": true
+        },
+        {
+          "text": "Eggs fed less food",
+          "correct": false
+        },
+        {
+          "text": "Eggs laid in larger cells",
+          "correct": false
+        }
+      ],
+      "reveal": "Unfertilized eggs. In honey bees, these usually develop into males, while fertilized eggs develop into females."
+    },
+    {
+      "question": "A worker bee's job often changes as she ages; what task usually comes later?",
+      "options": [
+        {
+          "text": "Foraging outside",
+          "correct": true
+        },
+        {
+          "text": "Cleaning empty cells",
+          "correct": false
+        },
+        {
+          "text": "Feeding young larvae",
+          "correct": false
+        }
+      ],
+      "reveal": "Foraging outside. Workers often move from tasks inside the nest to gathering food, though the colony's needs can shift the timing."
+    },
+    {
+      "question": "How does a honey bee cluster generate warmth through a cold winter night?",
+      "options": [
+        {
+          "text": "Bees vibrate flight muscles",
+          "correct": true
+        },
+        {
+          "text": "The queen gives off heat",
+          "correct": false
+        },
+        {
+          "text": "The wax releases stored warmth",
+          "correct": false
+        }
+      ],
+      "reveal": "Bees vibrate their flight muscles without taking off. Their muscle activity generates heat, and the bees cluster around the warm center."
+    },
+    {
+      "question": "When a colony splits to reproduce, which group usually leaves with the old queen?",
+      "options": [
+        {
+          "text": "A large group of workers",
+          "correct": true
+        },
+        {
+          "text": "Most of the drones",
+          "correct": false
+        },
+        {
+          "text": "The newly emerged queens",
+          "correct": false
+        }
+      ],
+      "reveal": "A large group of workers. In a swarm, the old queen leaves with many workers to start a new colony, while the original nest remains behind."
+    },
+    {
+      "question": "A forager returns with pollen packed on her legs; what does it mainly provide?",
+      "options": [
+        {
+          "text": "Protein and other nutrients",
+          "correct": true
+        },
+        {
+          "text": "A quick source of energy",
+          "correct": false
+        },
+        {
+          "text": "Water for cooling",
+          "correct": false
+        }
+      ],
+      "reveal": "Protein and other nutrients. Pollen helps support the growth of young bees; nectar is the colony's main carbohydrate-rich energy source."
+    },
+    {
+      "question": "How can a queen keep laying fertilized eggs long after her mating flights end?",
+      "options": [
+        {
+          "text": "She stores sperm in her body",
+          "correct": true
+        },
+        {
+          "text": "She mates inside the hive each day",
+          "correct": false
+        },
+        {
+          "text": "Workers fertilize eggs for her",
+          "correct": false
+        }
+      ],
+      "reveal": "She stores sperm in her body. A queen can use sperm collected during mating flights to fertilize eggs over an extended period."
+    },
+    {
+      "question": "Why do honey bee cells lean slightly upward from their openings?",
+      "options": [
+        {
+          "text": "To help retain liquid honey",
+          "correct": true
+        },
+        {
+          "text": "To drain rainwater from the comb",
+          "correct": false
+        },
+        {
+          "text": "To give developing bees more air",
+          "correct": false
+        }
+      ],
+      "reveal": "A slight upward tilt helps keep liquid honey from flowing out of open cells. Bees also cap ripe honey for storage."
+    }
+  ]
+}

@@ -12,7 +12,10 @@ vi.mock("./write-item-set.prompt.md", () => ({
 }));
 
 vi.mock("./item-rules", () => ({
-  withItemRules: vi.fn((taskPrompt: string) => `${taskPrompt}\n# Rules`),
+  withItemRules: vi.fn(
+    (taskPrompt: string) =>
+      `${taskPrompt}\n# Rules in {{LEARNER_LANGUAGE}} for {{TARGET_LANGUAGE}}`,
+  ),
   withPlotRule: vi.fn((taskPrompt: string) => taskPrompt),
 }));
 
@@ -92,7 +95,7 @@ describe(writeItemSet, () => {
   });
 
   it("writes a language exam's set in its language and where it is spoken", async () => {
-    const { userPrompt } = await writeItemSet({
+    const { systemPrompt, userPrompt } = await writeItemSet({
       country: null,
       examFormat: { name: "CELI 2", style: "Comprensione della lettura" },
       format: "multipleChoice",
@@ -106,6 +109,8 @@ describe(writeItemSet, () => {
       "# Set",
       expect.objectContaining({ languageGoal: true }),
     );
+
+    expect(systemPrompt).toContain("# Rules in Português Brasileiro for Italiano");
 
     expect(userPrompt).toMatch(/TARGET_LANGUAGE: \S/u);
     expect(userPrompt).toContain("- Place: Italy");

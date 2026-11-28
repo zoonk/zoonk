@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-b1-interview-repeat",
+  "challenger": {
+    "costUsd": 0.013491000000000001,
+    "durationMs": 25839.140000000014,
+    "hash": "043effad65a1b56509f553743cdad27b06ac6641d00f2db9e6f1119cf24a897a",
+    "systemPromptHash": "012cf90a6b84cb73d0048e0b6553ee7eaac58bd0cb1819b60dfd8ffc13bae5c9",
+    "userPromptHash": "025187033fc11f3d0c5b5cb15602524aca747f479bad86821a6fd9eeb0d9a472"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.012167250000000001,
+    "durationMs": 23058.069791000016,
+    "hash": "6dc8511c0f89c2c614949682aaa913f9429922215791c1ea04f8ae6a0f7f47a7",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "025187033fc11f3d0c5b5cb15602524aca747f479bad86821a6fd9eeb0d9a472"
+  },
+  "run": 1
+}

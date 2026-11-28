@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00268954,
+  "failures": [],
+  "packetId": "2f5a5ad4babae0985d3387e253b39ca9ed3a85f6f5667476cd939236baecb3e5",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As seis respostas estão no roteiro e completam as frases corretamente; nenhuma alternativa aceita é indicada como resposta.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos usam um monólogo em inglês britânico, com seis lacunas e informações em ordem; nenhum se destaca claramente na adequação ao formato pedido.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois roteiros soam como relatos falados, com contrações, tom pessoal e aberturas e encerramentos naturais.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Os dois conjuntos são igualmente corretos e adequados ao leitor; não há diferença perceptível que favoreça um deles."
+        },
+        "pairId": "271f7e71-9c77-4157-9cdd-9b72a8f465c5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas indicadas correspondem ao que Nerea diz, e as alternativas incorretas são contraditas ou diferenciadas pelo roteiro.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambos apresentam um monólogo em espanhol com questões de múltipla escolha sobre informações do roteiro.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "O roteiro e as perguntas em espanhol são iguais, mas B mantém todas as explicações e concepções equivocadas em português brasileiro; A deixa trechos em espanhol nas explicações da questão 2.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Nas explicações e concepções equivocadas da questão 2, há trechos em espanhol, como “Oyes que aceptan objetos usados” e “Interpreta el requisito de buen estado como exigencia de producto nuevo”, apesar da exigência de que todo o feedback esteja em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor pode não entender o feedback com a mesma facilidade, pois precisa alternar entre português e espanhol.",
+            "location": {
+              "detail": "Explicações e concepções equivocadas das opções 1 e 2 da questão 2",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B cumpre a exigência de manter todo o feedback em português brasileiro. A inclui trechos em espanhol nas explicações da questão 2, o que pode dificultar a compreensão do aprendiz."
+        },
+        "pairId": "a03edfd5-9ee9-429c-bd67-49a4340b8e2c"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As duas saídas são idênticas e as respostas aceitas estão corretas e completam gramaticalmente as lacunas.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas saídas são idênticas e apresentam o mesmo formato de monólogo e de questões.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "As duas saídas são idênticas; o roteiro usa inglês britânico natural e tom de fala.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "As saídas são idênticas, portanto nenhuma serve melhor ao aprendiz."
+        },
+        "pairId": "f8df804a-522e-4cf8-8350-252bcc7c7375"
+      }
+    ]
+  }
+}

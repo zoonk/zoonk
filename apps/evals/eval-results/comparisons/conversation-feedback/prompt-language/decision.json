@@ -1,0 +1,333 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-en-a2-renting-mistakes",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-a2-barely-spoke",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-a2-one-typed-line",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-b2-strong-call",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-a2-ser-estar",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-ar-a2-voseo-kept",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-pt-a1-cafe-injection",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "A pricier challenger needs owner judgment.",
+  "rows": [
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "en": 3
+      },
+      "costPer1000": 1.0017785714285714,
+      "date": "2026-11-28T13:24:14.392Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 1.0046375,
+          "p50": 1.1352321669999983,
+          "p95": 1.4503947499999994,
+          "successful": 8
+        },
+        "en": {
+          "costPer1000": 0.9979666666666668,
+          "p50": 1.1215453750000015,
+          "p95": 1.1861545000000004,
+          "successful": 6
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 1.1352321669999983,
+      "p95": 1.4503947499999994,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fix",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "tone",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fix",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "tone",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 7,
+      "weightedMajorsByLanguage": {
+        "pt": 0,
+        "en": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 14,
+      "casesByLanguage": {
+        "pt": 4,
+        "en": 3
+      },
+      "costPer1000": 1.0085428571428572,
+      "date": "2026-11-28T13:24:14.392Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 1.0337375,
+          "p50": 1.105021334000001,
+          "p95": 1.6202647499999994,
+          "successful": 8
+        },
+        "en": {
+          "costPer1000": 0.9749499999999999,
+          "p50": 1.0070664999999972,
+          "p95": 1.1755831660000005,
+          "successful": 6
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 1.0929217919999992,
+      "p95": 1.6202647499999994,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fix",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "tone",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "pt",
+          "weight": null
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "fix",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "honesty",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "tone",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "learnerInstructions",
+          "language": "en",
+          "weight": null
+        }
+      ],
+      "side": "challenger",
+      "status": "dominated",
+      "succeeded": 14,
+      "ties": 0,
+      "unresolved": 7,
+      "weightedMajorsByLanguage": {
+        "pt": 0,
+        "en": 0
+      },
+      "wins": 0
+    }
+  ]
+}

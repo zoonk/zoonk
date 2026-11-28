@@ -1,0 +1,233 @@
+{
+  "words": [
+    {
+      "word": "sprzątam",
+      "translation": "I clean",
+      "pronunciation": "SPRSHON-tahm",
+      "romanization": null,
+      "tip": "Start with the consonants together, without adding a vowel before or between them.",
+      "note": null,
+      "distractors": [
+        "gotuję",
+        "pracuję",
+        "odpoczywam"
+      ]
+    },
+    {
+      "word": "piorę",
+      "translation": "I do laundry",
+      "pronunciation": "PYO-reh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "prasuję",
+        "szyję",
+        "zmywam"
+      ]
+    },
+    {
+      "word": "odkurzam",
+      "translation": "I vacuum",
+      "pronunciation": "ot-KOO-zham",
+      "romanization": null,
+      "tip": "Say the middle syllable more strongly than the first and last.",
+      "note": null,
+      "distractors": [
+        "zamiatam",
+        "myję",
+        "wietrzę"
+      ]
+    },
+    {
+      "word": "raz w tygodniu",
+      "translation": "once a week",
+      "pronunciation": "RAHS F tih-GOD-nyoo",
+      "romanization": null,
+      "tip": "Say the short word 'w' like an English 'f', without adding a vowel.",
+      "note": null,
+      "distractors": [
+        "raz w miesiącu",
+        "dwa razy w tygodniu",
+        "co dwa tygodnie"
+      ]
+    },
+    {
+      "word": "codziennie",
+      "translation": "every day",
+      "pronunciation": "tso-JEN-nyeh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "czasami",
+        "nigdy",
+        "corocznie"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Sprzątam mieszkanie raz w tygodniu",
+      "translation": "I clean the apartment once a week",
+      "explanation": "The ending of `sprzątam` already means “I,” so you don't need a separate word for it.",
+      "romanization": null,
+      "distractors": [
+        "sprzątasz",
+        "tydzień",
+        "do"
+      ],
+      "translationDistractors": [
+        "month",
+        "you",
+        "twice"
+      ],
+      "speakingPrompt": "Say that you clean the apartment once a week."
+    },
+    {
+      "sentence": "Piorę ubrania w sobotę",
+      "translation": "I do laundry on Saturday",
+      "explanation": "`Piorę ubrania` literally means “I wash clothes.” Polish uses `w sobotę` for “on Saturday.”",
+      "romanization": null,
+      "distractors": [
+        "pierzesz",
+        "sobota",
+        "na"
+      ],
+      "translationDistractors": [
+        "Sunday",
+        "you",
+        "vacuum"
+      ],
+      "speakingPrompt": "Say that you do laundry on Saturday."
+    },
+    {
+      "sentence": "Codziennie odkurzam pokój",
+      "translation": "I vacuum the room every day",
+      "explanation": "`Codziennie` can come before the verb, even though “every day” usually comes later in the English sentence.",
+      "romanization": null,
+      "distractors": [
+        "odkurzasz",
+        "pokoju",
+        "nie"
+      ],
+      "translationDistractors": [
+        "weekly",
+        "kitchen",
+        "you"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Czy codziennie robisz pranie?",
+      "translation": "Do you do laundry every day?",
+      "explanation": "`Czy` introduces a yes-or-no question. The ending of `robisz` shows that you're asking one person you know.",
+      "romanization": null,
+      "distractors": [
+        "robię",
+        "praniem",
+        "kto"
+      ],
+      "translationDistractors": [
+        "week",
+        "cleaning",
+        "who"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Say how often you do chores",
+    "text": "Use `codziennie` for “every day” and `raz w tygodniu` for “once a week.” You can put either phrase before or after the action. Keep `w tygodniu` together: don't use `tydzień` after `w` in this phrase.",
+    "examples": [
+      {
+        "sentence": "Codziennie odkurzam pokój",
+        "translation": "I vacuum the room every day"
+      },
+      {
+        "sentence": "Sprzątam mieszkanie raz w tygodniu",
+        "translation": "I clean the apartment once a week"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete the phrase meaning “once a week.”",
+      "template": "Piorę ubrania raz w [BLANK].",
+      "answer": "tygodniu",
+      "distractors": [
+        "tydzień",
+        "tygodnia",
+        "tygodniem"
+      ],
+      "feedback": "The fixed phrase for “once a week” is `raz w tygodniu`."
+    },
+    {
+      "question": "Complete the phrase meaning “once a week.”",
+      "template": "Odkurzam pokój [BLANK] w tygodniu.",
+      "answer": "raz",
+      "distractors": [
+        "dwa",
+        "jeden",
+        "jedna"
+      ],
+      "feedback": "Use `raz` before `w tygodniu` to say “once a week.”"
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your friend asks how often you clean the apartment. What do you say?",
+    "scene": "At home with a friend",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Jak często sprzątasz mieszkanie?",
+        "translation": "How often do you clean the apartment?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Sprzątam mieszkanie raz w tygodniu",
+        "translation": "I clean the apartment once a week",
+        "isBest": true,
+        "why": "This naturally says how often you clean."
+      },
+      {
+        "text": "Sprzątam mieszkanie raz w tydzień",
+        "translation": "I clean the apartment once a week",
+        "isBest": false,
+        "why": "The phrase needs `tygodniu`, not `tydzień`."
+      },
+      {
+        "text": "Sprzątasz mieszkanie raz w tygodniu",
+        "translation": "You clean the apartment once a week",
+        "isBest": false,
+        "why": "This describes your friend's routine, not yours."
+      },
+      {
+        "text": "Piorę mieszkanie raz w tygodniu",
+        "translation": "I launder the apartment once a week",
+        "isBest": false,
+        "why": "`Piorę` is for washing laundry, not cleaning an apartment."
+      }
+    ],
+    "explanation": "Use `sprzątam` when you are talking about cleaning yourself."
+  },
+  "writing": {
+    "prompt": "Write: “I clean the apartment once a week.”",
+    "answers": [
+      "Sprzątam mieszkanie raz w tygodniu.",
+      "Raz w tygodniu sprzątam mieszkanie.",
+      "Ja sprzątam mieszkanie raz w tygodniu."
+    ],
+    "keyPoints": [
+      "Use `sprzątam` to say you clean.",
+      "Use `raz w tygodniu` to say once a week."
+    ]
+  },
+  "summary": [
+    "“Sprzątam mieszkanie raz w tygodniu” says you clean the apartment once a week.",
+    "“Piorę ubrania” says you do laundry.",
+    "“Codziennie odkurzam pokój” says you vacuum the room every day."
+  ]
+}

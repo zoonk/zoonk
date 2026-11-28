@@ -1,5 +1,6 @@
 import "server-only";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
@@ -11,7 +12,8 @@ import {
   addressFormTemplate,
   getAddressFormPrompt,
 } from "../_utils/address-form";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type ConversationTurn,
@@ -95,7 +97,15 @@ ${formatUntrustedInput({ TRANSCRIPT: transcript })}
  */
 export async function writeConversationFeedback(params: WriteConversationFeedbackParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`;
+
+  const systemPrompt = fillPromptLanguages({
+    ...params,
+    template: selectPromptVariants({
+      template: `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`,
+      variants: { bilingual: !isSameLanguage(params) },
+    }),
+  });
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 

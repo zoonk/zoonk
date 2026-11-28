@@ -1,0 +1,217 @@
+{
+  "words": [
+    {
+      "word": "work on",
+      "translation": "trabajar en",
+      "pronunciation": "UÉRK ON",
+      "romanization": null,
+      "tip": null,
+      "note": "Usa esta frase para decir en qué tarea o proyecto trabajas, no para decir dónde trabajas.",
+      "distractors": [
+        "work for",
+        "work with",
+        "work from"
+      ]
+    },
+    {
+      "word": "projects",
+      "translation": "proyectos",
+      "pronunciation": "PRÁ-yekts",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "meetings",
+        "schedules",
+        "offices"
+      ]
+    },
+    {
+      "word": "work at",
+      "translation": "trabajar en un lugar",
+      "pronunciation": "UÉRK AT",
+      "romanization": null,
+      "tip": null,
+      "note": "Usa esta frase para indicar el lugar donde trabajas.",
+      "distractors": [
+        "work on",
+        "work with",
+        "work for"
+      ]
+    },
+    {
+      "word": "office",
+      "translation": "oficina",
+      "pronunciation": "Ó-fis",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "store",
+        "factory",
+        "school"
+      ]
+    },
+    {
+      "word": "from nine to five",
+      "translation": "de nueve a cinco",
+      "pronunciation": "FRAM NÁIN TA FÁIV",
+      "romanization": null,
+      "tip": "Para la «v» de «five», apoya los dientes superiores en el labio inferior y deja pasar el aire con vibración.",
+      "note": null,
+      "distractors": [
+        "from eight to four",
+        "until nine",
+        "after five"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work on projects",
+      "translation": "Trabajo en proyectos",
+      "explanation": "Usa «work on» para decir en qué tareas trabajas. En inglés debes incluir «I», aunque en español puedes omitir «yo».",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "to",
+        "works"
+      ],
+      "translationDistractors": [
+        "oficina",
+        "desde",
+        "horario"
+      ],
+      "speakingPrompt": "Di que trabajas en proyectos."
+    },
+    {
+      "sentence": "I work at this office",
+      "translation": "Trabajo en esta oficina",
+      "explanation": "Usa «at» para indicar el lugar de trabajo. «This office» significa «esta oficina».",
+      "romanization": null,
+      "distractors": [
+        "of",
+        "works",
+        "these"
+      ],
+      "translationDistractors": [
+        "proyectos",
+        "aquella",
+        "con"
+      ],
+      "speakingPrompt": "Di que trabajas en esta oficina."
+    },
+    {
+      "sentence": "I work from nine to five",
+      "translation": "Trabajo de nueve a cinco",
+      "explanation": "Para indicar el inicio y el final de un horario, usa «from» y «to», como «de» y «a» en español.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "until",
+        "works"
+      ],
+      "translationDistractors": [
+        "hasta",
+        "ocho",
+        "seis"
+      ],
+      "speakingPrompt": "Di que trabajas de nueve a cinco."
+    },
+    {
+      "sentence": "What do you work on?",
+      "translation": "¿En qué trabajas?",
+      "explanation": "En esta pregunta, «do» ayuda a formar la pregunta y «on» queda al final. En español, «en» va al principio.",
+      "romanization": null,
+      "distractors": [
+        "does",
+        "to",
+        "is"
+      ],
+      "translationDistractors": [
+        "dónde",
+        "cuándo",
+        "quién"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Habla de tareas y lugares",
+    "text": "Usa `work on` para decir en qué tarea trabajas: `I work on projects`. Usa `work at` para decir dónde trabajas: `I work at this office`. Aunque en español puedes usar «en» en ambos casos, en inglés la palabra cambia.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Elige la palabra para decir en qué proyecto trabajas.",
+      "template": "I work [BLANK] this project every day",
+      "answer": "on",
+      "distractors": [
+        "to",
+        "of",
+        "into"
+      ],
+      "feedback": "Usa «work on» para hablar de la tarea o el proyecto en el que trabajas."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Tu compañero te pregunta en qué trabajas. ¿Qué respondes?",
+    "scene": "Una oficina en Estados Unidos; un compañero nuevo",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hi, welcome to the office",
+        "translation": "Hola, te doy la bienvenida a la oficina"
+      },
+      {
+        "speaker": "you",
+        "text": "Thank you",
+        "translation": "Gracias"
+      },
+      {
+        "speaker": "them",
+        "text": "What do you work on?",
+        "translation": "¿En qué trabajas?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I work on projects",
+        "translation": "Trabajo en proyectos",
+        "isBest": true,
+        "why": "Responde qué tipo de trabajo haces y usa «work on» correctamente."
+      },
+      {
+        "text": "I work to projects",
+        "translation": "Trabajo hacia proyectos",
+        "isBest": false,
+        "why": "«Work to projects» no es la forma correcta de hablar de las tareas que haces."
+      },
+      {
+        "text": "I work at this office",
+        "translation": "Trabajo en esta oficina",
+        "isBest": false,
+        "why": "Esta respuesta dice dónde trabajas, no en qué trabajas."
+      }
+    ],
+    "explanation": "Para hablar del lugar de trabajo, usa «work at»."
+  },
+  "writing": {
+    "prompt": "Escribe en inglés un mensaje que diga: «Trabajo de nueve a cinco».",
+    "answers": [
+      "I work from nine to five.",
+      "I work from 9 to 5.",
+      "I work from 9:00 to 5:00."
+    ],
+    "keyPoints": [
+      "Usa «I work» para decir «trabajo».",
+      "Usa «from» para el inicio del horario y «to» para el final."
+    ]
+  },
+  "summary": [
+    "«I work on projects» dice que trabajas en proyectos.",
+    "«I work at this office» dice dónde trabajas.",
+    "«I work from nine to five» indica tu horario."
+  ]
+}

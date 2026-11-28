@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-es-dele-b2-proposals-at-level",
+  "challenger": {
+    "costUsd": 0.00118717,
+    "durationMs": 16561.789084,
+    "hash": "0e32c4757db53b0e7148be26216091c9d72db22d24cd8ba2ceb392f0f7b5f8b3",
+    "systemPromptHash": "8f7f5b098bfdb95b0eb5bf0d4d3fa09e293357f3305285bf5598d8464f6e52fb",
+    "userPromptHash": "87521eb67914753131723232d71e57d8b7af67b5ec4ce7c0d97d0f366deee14d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00114992,
+    "durationMs": 15914.982542000002,
+    "hash": "f3816fdfbe6f03c9ce9ecfc6f140a4ae9a0f77edbafad37e26e09c93b2bbaeb9",
+    "systemPromptHash": "02d820935dcdb62d6249b65a70980ca34d02f7e8a21246a91256df9510d01e48",
+    "userPromptHash": "87521eb67914753131723232d71e57d8b7af67b5ec4ce7c0d97d0f366deee14d"
+  },
+  "run": 2
+}

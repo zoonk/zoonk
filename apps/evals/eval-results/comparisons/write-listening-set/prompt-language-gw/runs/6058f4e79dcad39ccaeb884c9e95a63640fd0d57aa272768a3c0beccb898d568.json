@@ -1,0 +1,19 @@
+{
+  "caseId": "en-ielts-part-1-form-completion",
+  "challenger": {
+    "costUsd": 0.01233095,
+    "durationMs": 28248.61425,
+    "hash": "e8caa3f0a94d2d0f34bfe67f4cef7bbfa9c30cf13802ab2359fb9e2847eefda7",
+    "systemPromptHash": "162f20daf02572a7ad49967b9607a281e61de7a65764841726cbc40ee84eca25",
+    "userPromptHash": "8129a30b25518fe08ac0b251b04f73ac5c110cbfa678b1d344c5c9b88fe1913e"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.012431000000000001,
+    "durationMs": 29426.596332999994,
+    "hash": "03e29c32ced91b55fea4bfb23f6bcb01285214136d46cc4cde53717cf11c8a96",
+    "systemPromptHash": "117d340fe2a1c62be76cebf960837203150f79679cc827feba15a86d2c8d6849",
+    "userPromptHash": "8129a30b25518fe08ac0b251b04f73ac5c110cbfa678b1d344c5c9b88fe1913e"
+  },
+  "run": 2
+}

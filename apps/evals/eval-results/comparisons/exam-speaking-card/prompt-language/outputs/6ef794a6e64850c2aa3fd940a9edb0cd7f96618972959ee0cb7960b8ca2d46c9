@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Dégagez le problème soulevé par le document et présentez votre opinion sous la forme d’un exposé construit et argumenté.",
+    "Vous disposez de 7 minutes pour votre exposé."
+  ],
+  "prompts": [
+    "Formulez la question soulevée par le document.",
+    "Annoncez le plan de votre exposé.",
+    "Développez votre point de vue avec des arguments et des exemples.",
+    "Terminez par une conclusion."
+  ],
+  "text": {
+    "title": "Des activités pour profiter de chaque saison",
+    "body": "À Annecy, une association de quartier propose depuis deux ans des activités en plein air tout au long de l’année. Au programme, promenades au printemps, lectures dans les parcs en été, ateliers de photographie en automne et découverte des oiseaux en hiver. L’objectif est d’encourager les habitants à utiliser les espaces publics même quand les journées sont plus courtes ou plus fraîches.\n\nSelon les organisateurs, ces rendez-vous permettent de rencontrer ses voisins et de découvrir la ville autrement. Ils attirent des personnes de différents âges, notamment le week-end. Pour faciliter la participation, la plupart des activités sont gratuites et ne demandent pas de matériel particulier. En cas de forte pluie, elles sont reportées ou organisées dans une salle municipale.\n\nCette initiative fait toutefois débat. Certains habitants estiment que les collectivités devraient développer davantage ce type de programme, afin de rendre les quartiers plus vivants en toute saison. D’autres pensent que les activités extérieures doivent rester spontanées et qu’il vaut mieux laisser les habitants s’organiser librement. Ils soulignent aussi que les équipements et les salles nécessitent du temps et des moyens.\n\nL’association prépare maintenant son prochain calendrier et invite les habitants à proposer des idées."
+  },
+  "table": null,
+  "photos": [],
+  "summary": "A partir do texto, apresente o problema e defenda seu ponto de vista de forma organizada, com argumentos e exemplos. Você falará sem interrupções para a examinadora.",
+  "character": {
+    "name": "Pauline",
+    "role": "examinadora",
+    "place": "Salle d’examen"
+  },
+  "characterBrief": "You are the DELF B2 examiner. Give the instruction once: « Dégagez le problème soulevé par le document, puis présentez votre point de vue de façon construite et argumentée. Vous disposez de sept minutes. Vous pouvez commencer. » Listen without interrupting throughout the candidate’s presentation. Do not ask questions, correct, praise or grade. End the task after the presentation.",
+  "openingLine": "Dégagez le problème soulevé par le document, puis présentez votre point de vue de façon construite et argumentée. Vous disposez de sept minutes. Vous pouvez commencer.",
+  "hints": [
+    "Je vais d’abord présenter la question, puis développer mon point de vue.",
+    "Il me semble que cette question mérite d’être examinée sous plusieurs aspects.",
+    "À mon avis, il est important de prendre en compte plusieurs éléments.",
+    "On pourrait objecter que ce n’est pas toujours le cas.",
+    "Pour conclure, je dirais que les avantages et les limites doivent être considérés ensemble."
+  ]
+}

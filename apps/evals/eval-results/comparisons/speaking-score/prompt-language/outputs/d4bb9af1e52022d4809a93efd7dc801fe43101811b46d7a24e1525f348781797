@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema e formas para expressar opinião, como “I partly agree” e “I'd say doing exercise”. Alguns erros de comparação e regência, como “more easy” e “depends of your routine”, reduzem a precisão.",
+      "tip": "Para comparar facilidade, use o comparativo irregular “easier” em vez de “more easy”: “doing exercise is easier to fit into a busy day”.",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza as ideias com conectores e apresenta uma conclusão clara, por exemplo, “On the other hand” e “because without it nothing else works”. As justificativas são pertinentes, mas você poderia desenvolvê-las mais com exemplos ou consequências.",
+      "tip": "Depois de dar uma razão, acrescente uma consequência concreta: “because without it nothing else works; for example, students who sleep well can concentrate better in class”.",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, e não há sinais indiretos de dificuldade de compreensão, como pedidos de repetição ou palavras claramente mal interpretadas. Esta é uma estimativa mais ampla, baseada nos outros aspectos da sua produção.",
+      "tip": "Para ajudar o ouvinte a reconhecer as palavras com facilidade, pratique o acento tônico em “exercise” e “concentrate”, mantendo a sílaba tônica bem marcada.",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde às ideias da outra pessoa, pede a opinião dela com “What do you think about sleep?” e contribui para encaminhar a decisão com “Shall we decide? I'd go for sleep”. Para avançar mais, poderia retomar com mais detalhe algum ponto mencionado pela outra pessoa.",
+      "tip": "Retome uma ideia da outra pessoa antes de acrescentar a sua: “You said lots of students don't get enough sleep; do you think schools should teach them how to improve their sleep routine?”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você se comunica de forma relevante e coerente sobre o tema, apresentando uma posição e uma justificativa em “Eating well is essential, but I'd say doing exercise is more easy to fit into a busy day”. Alguns erros de forma e o desenvolvimento breve das razões limitam a precisão e a elaboração.",
+      "tip": "Ao apresentar uma opinião, desenvolva-a com uma razão e um exemplo: “I'd say doing exercise is easier to fit into a busy day because you can take a short walk during a break”.",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

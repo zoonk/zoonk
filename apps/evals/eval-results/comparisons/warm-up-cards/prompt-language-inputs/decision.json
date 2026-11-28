@@ -1,0 +1,517 @@
+{
+  "cases": [
+    {
+      "caseId": "en-beekeeping",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-espanhol",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-enem",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-python",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-quantum-physics",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-oab",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "es-english",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-japanese",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-first-aid",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-reforma-tributaria",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-antique-clocks",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "In pt, the challenger adds 37.5 weighted major-affected runs per 100 matched. The trade allows 0.",
+  "rows": [
+    {
+      "attempted": 22,
+      "casesByLanguage": {
+        "en": 6,
+        "pt": 4,
+        "es": 1
+      },
+      "costPer1000": 1.591940227272727,
+      "date": "2026-11-28T14:35:58.059Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 1.4209533333333333,
+          "p50": 22.263567959000007,
+          "p95": 42.46936141700001,
+          "successful": 12
+        },
+        "pt": {
+          "costPer1000": 1.8002231249999998,
+          "p50": 23.443213459000006,
+          "p95": 37.06820391600003,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 1.7847299999999997,
+          "p50": 18.807177999999958,
+          "p95": 31.405237374999967,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 23.171511374999994,
+      "p95": 37.06820391600003,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-quantum-physics",
+              "run": 2
+            },
+            {
+              "caseId": "en-quantum-physics",
+              "run": 1
+            },
+            {
+              "caseId": "en-antique-clocks",
+              "run": 2
+            },
+            {
+              "caseId": "en-beekeeping",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-quantum-physics",
+              "run": 2
+            },
+            {
+              "caseId": "en-quantum-physics",
+              "run": 1
+            },
+            {
+              "caseId": "en-beekeeping",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-reforma-tributaria",
+              "run": 1
+            },
+            {
+              "caseId": "pt-espanhol",
+              "run": 2
+            },
+            {
+              "caseId": "pt-enem",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-reforma-tributaria",
+              "run": 1
+            },
+            {
+              "caseId": "pt-espanhol",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "es",
+          "weight": 1
+        }
+      ],
+      "side": "incumbent",
+      "status": "eligible",
+      "succeeded": 22,
+      "ties": 0,
+      "unresolved": 11,
+      "weightedMajorsByLanguage": {
+        "en": 12,
+        "pt": 9,
+        "es": 0
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 22,
+      "casesByLanguage": {
+        "en": 6,
+        "pt": 4,
+        "es": 1
+      },
+      "costPer1000": 1.7536997727272732,
+      "date": "2026-11-28T14:35:58.059Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 1.6818541666666667,
+          "p50": 21.844061333,
+          "p95": 41.419694791999994,
+          "successful": 12
+        },
+        "pt": {
+          "costPer1000": 1.8391962499999999,
+          "p50": 23.065712667000014,
+          "p95": 40.152060958,
+          "successful": 8
+        },
+        "es": {
+          "costPer1000": 1.8427875,
+          "p50": 21.833503333,
+          "p95": 29.33932141700003,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 22.951152332999975,
+      "p95": 40.152060958,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-beekeeping",
+              "run": 2
+            },
+            {
+              "caseId": "en-quantum-physics",
+              "run": 2
+            },
+            {
+              "caseId": "en-quantum-physics",
+              "run": 1
+            },
+            {
+              "caseId": "en-beekeeping",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-quantum-physics",
+              "run": 2
+            },
+            {
+              "caseId": "en-quantum-physics",
+              "run": 1
+            },
+            {
+              "caseId": "en-beekeeping",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-reforma-tributaria",
+              "run": 2
+            },
+            {
+              "caseId": "pt-espanhol",
+              "run": 2
+            },
+            {
+              "caseId": "pt-reforma-tributaria",
+              "run": 1
+            },
+            {
+              "caseId": "pt-oab",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-espanhol",
+              "run": 2
+            },
+            {
+              "caseId": "pt-reforma-tributaria",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pretest",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "format",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "es",
+          "weight": 1
+        }
+      ],
+      "side": "challenger",
+      "status": "dominated",
+      "succeeded": 22,
+      "ties": 0,
+      "unresolved": 11,
+      "weightedMajorsByLanguage": {
+        "en": 12,
+        "pt": 12,
+        "es": 0
+      },
+      "wins": 0
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "caseId": "en-es-a2-ser-estar",
+  "costUsd": 0,
+  "criteria": [],
+  "name": "code checks",
+  "passed": 4,
+  "problems": [],
+  "run": 2,
+  "side": "incumbent",
+  "total": 4
+}

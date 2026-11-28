@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "economics"
+  ],
+  "description": "La finanza personale riguarda le scelte quotidiane su entrate, spese, debiti, tasse, risparmi e investimenti. Dalla busta paga e dal 730 fino alla pianificazione degli obiettivi futuri, i temi del corso aiutano a prendere decisioni più informate con il proprio denaro.",
+  "landingPage": {
+    "audience": [
+      "Chi ha appena iniziato a lavorare",
+      "Famiglie che vogliono gestire il budget",
+      "Chi vuole fare scelte finanziarie consapevoli"
+    ],
+    "outcomes": [
+      "Calcolare quanto stipendio arriva sul conto",
+      "Organizzare spese mensili e fondo per gli imprevisti",
+      "Confrontare prestiti e rate prima di firmare",
+      "Pianificare risparmi e investimenti per obiettivi futuri"
+    ],
+    "valueProposition": "Gestire lo stipendio, far quadrare le spese e prepararsi agli imprevisti"
+  }
+}

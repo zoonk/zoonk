@@ -1,0 +1,200 @@
+{
+  "words": [
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NIGH-chah",
+      "romanization": "naai5 caa4",
+      "tip": "For 'caa', make a clean 'ch' sound without puffing out too much air, keeping your lips relaxed.",
+      "note": null,
+      "distractors": [
+        "凍茶",
+        "熱水",
+        "咖啡"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "pineapple bun",
+      "pronunciation": "BOH-loh-BOW",
+      "romanization": "bo1 lo4 baau1",
+      "tip": null,
+      "note": "Despite its name, this classic pastry contains no pineapple; it is named after the crumbly golden top resembling pineapple skin.",
+      "distractors": [
+        "蛋撻",
+        "多士",
+        "包子"
+      ]
+    },
+    {
+      "word": "唔該",
+      "translation": "please",
+      "pronunciation": "mm-GOY",
+      "romanization": "m4 goi1",
+      "tip": "The first syllable has no vowel at all; simply hum a low 'm' with your lips together.",
+      "note": "In Hong Kong, '唔該' serves as both 'please' when ordering and 'thank you' for routine services.",
+      "distractors": [
+        "多謝",
+        "對唔住",
+        "得閒"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much money",
+      "pronunciation": "GAY-doh-CHEEN",
+      "romanization": "gei2 do1 cin2",
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "幾點鐘",
+        "幾多個",
+        "邊度"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "唔該一杯奶茶",
+      "translation": "A cup of milk tea, please",
+      "explanation": "Put '唔該' (please) at the very start of the sentence to place your order politely.",
+      "romanization": "m4 goi1 jat1 bui1 naai5 caa4",
+      "distractors": [
+        "食",
+        "買"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "bottle"
+      ],
+      "speakingPrompt": "Order a cup of milk tea politely"
+    },
+    {
+      "sentence": "唔該一個菠蘿包",
+      "translation": "A pineapple bun, please",
+      "explanation": "Cantonese always uses a counter word between a number and a noun; here, '個' (go3) counts round individual foods like buns.",
+      "romanization": "m4 goi1 jat1 go3 bo1 lo4 baau1",
+      "distractors": [
+        "隻",
+        "碗"
+      ],
+      "translationDistractors": [
+        "two",
+        "cake"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "菠蘿包幾多錢?",
+      "translation": "How much is the pineapple bun?",
+      "explanation": "In Cantonese, place the item first and add '幾多錢' (how much money) directly at the end without any linking verb like 'is'.",
+      "romanization": "bo1 lo4 baau1 gei2 do1 cin2?",
+      "distractors": [
+        "邊個",
+        "邊度"
+      ],
+      "translationDistractors": [
+        "when",
+        "who"
+      ],
+      "speakingPrompt": "Ask how much the pineapple bun costs"
+    }
+  ],
+  "tip": {
+    "title": "Asking prices with 幾多錢",
+    "text": "In English, you begin questions with 'How much is...'. In Cantonese, you name the item first and add `幾多錢` (gei2 do1 cin2, literally 'how much money') at the end. You never need a connecting verb like 'to be'.",
+    "examples": [
+      {
+        "sentence": "奶茶幾多錢?",
+        "translation": "How much is the milk tea?"
+      },
+      {
+        "sentence": "一個菠蘿包幾多錢?",
+        "translation": "How much is one pineapple bun?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete the question asking the price of the milk tea",
+      "template": "奶茶 [BLANK]?",
+      "answer": "幾多錢",
+      "distractors": [
+        "幾多個",
+        "點樣",
+        "邊度"
+      ],
+      "feedback": "'幾多錢' literally means 'how much money' and sits at the end of the question."
+    },
+    {
+      "question": "Complete the polite request for a pineapple bun",
+      "template": "[BLANK] 一個菠蘿包",
+      "answer": "唔該",
+      "distractors": [
+        "多謝",
+        "你好",
+        "得喇"
+      ],
+      "feedback": "'唔該' is placed right at the beginning of an order to mean 'please'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The waiter asks if you want anything to eat. Order a pineapple bun and ask how much it is.",
+    "scene": "A bustling cha chaan teng in Hong Kong",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "想飲咩呀?",
+        "translation": "What would you like to drink?"
+      },
+      {
+        "speaker": "you",
+        "text": "唔該一杯奶茶",
+        "translation": "A cup of milk tea, please"
+      },
+      {
+        "speaker": "them",
+        "text": "仲要唔要食嘢呀?",
+        "translation": "Do you want anything to eat as well?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "唔該一個菠蘿包，幾多錢?",
+        "translation": "A pineapple bun please, how much is it?",
+        "isBest": true,
+        "why": "This politely requests the bun with '唔該' and places '幾多錢' at the end to check the price."
+      },
+      {
+        "text": "幾多錢一個菠蘿包?",
+        "translation": "How much a pineapple bun?",
+        "isBest": false,
+        "why": "Placing '幾多錢' in front copies English word order and is unnatural in Cantonese."
+      },
+      {
+        "text": "唔該一杯菠蘿包，幾多錢?",
+        "translation": "A cup of pineapple bun please, how much is it?",
+        "isBest": false,
+        "why": "'杯' is the measure word for drinks in cups, not for bakery items."
+      }
+    ],
+    "explanation": "Always state the item first and place '幾多錢' at the end when asking how much something costs."
+  },
+  "writing": {
+    "prompt": "Write 'A pineapple bun, please' in Cantonese characters.",
+    "answers": [
+      "唔該一個菠蘿包",
+      "一個菠蘿包，唔該"
+    ],
+    "keyPoints": [
+      "Uses '唔該' for please",
+      "Includes the measure word '個' between '一' and '菠蘿包'"
+    ]
+  },
+  "summary": [
+    "Start orders with '唔該' to say 'please' politely",
+    "Name drinks and food with counters, such as '一杯奶茶' and '一個菠蘿包'",
+    "Place '幾多錢?' at the end of an item to ask how much it costs"
+  ]
+}

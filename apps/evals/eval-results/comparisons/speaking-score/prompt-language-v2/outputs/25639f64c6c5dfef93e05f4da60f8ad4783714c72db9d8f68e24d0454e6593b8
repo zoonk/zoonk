@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas e liga uma ideia à outra com «Porque tienen el móvil», mas as respostas ficam muito curtas e não desenvolvem a comparação com os resultados nem a opinião.",
+      "tip": "Depois de dar sua opinião, acrescente uma comparação e uma justificativa, por exemplo: «En Brasil ocurre algo parecido, aunque creo que los jóvenes leen menos porque pasan mucho tiempo con el móvil».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "A transcrição não mostra como você soou, por isso esta é uma estimativa mais ampla; no texto, «Eh... los jóvenes no leen mucho» e «No mucho. A veces» são trechos curtos, com pouca continuidade.",
+      "tip": "Para manter o ritmo, conecte sua resposta curta a um motivo com «porque» ou «aunque», por exemplo: «No mucho, aunque intento leer cuando tengo tiempo».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "As ideias principais são compreensíveis, mas há erros em estruturas básicas, como «El móvil es mucho importante» e «Yo no sabo los números».",
+      "tip": "Em espanhol, use «muy» antes de um adjetivo para dizer “muito”; troque «El móvil es mucho importante» por «El móvil es muy importante».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa palavras simples e adequadas ao tema, como «los jóvenes no leen mucho» e «tienen el móvil», mas há pouca variedade e também aparecem trechos em português, como «Muito legal la pregunta».",
+      "tip": "Amplie o vocabulário para comentar os dados com mais precisão: em vez de apenas dizer que os jovens não leem muito, experimente «Me llama la atención que solo un veinte por ciento lea todos los días».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você responde a perguntas sobre os dados e sobre o Brasil, por exemplo «Sí, en Brasil también», mas a interação oferece poucas explicações e não desenvolve sua própria opinião sobre os resultados.",
+      "tip": "Inclua sua própria resposta à pesquisa e compare-a explicitamente com os dados, por exemplo: «Yo habría respondido que leo varias veces a la semana, así que coincido en parte con los resultados».",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "coherence",
+  "heard": true
+}

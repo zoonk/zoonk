@@ -1,0 +1,13 @@
+{
+  "caseId": "en-es-dele-b1-photo",
+  "challenger": {
+    "costUsd": 0.00073272,
+    "durationMs": 11465.189040999976,
+    "hash": "be40af015b2130f900ede69962e23690fb204a59d61ad6b060a02f9b4f91d61a",
+    "systemPromptHash": "02d820935dcdb62d6249b65a70980ca34d02f7e8a21246a91256df9510d01e48",
+    "userPromptHash": "b9c0ad8564f37aefb67b1d888a7e165ef715a8dded15a20948c770d021b5343f"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

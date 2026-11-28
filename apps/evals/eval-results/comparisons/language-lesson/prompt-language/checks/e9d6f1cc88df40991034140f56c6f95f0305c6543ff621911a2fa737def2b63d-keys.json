@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pl-a1-household-chores",
+  "costUsd": 0.031472,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[1]\",\"keyedAnswer\":\"W sobotę piorę ubrania → I wash clothes on Saturdays\",\"kind\":\"wrongKey\",\"workedAnswer\":\"“W sobotę” means “on Saturday.” A routine context can suggest repetition, but the Polish does not specify it. To match the prompt’s “on Saturdays,” use “W soboty piorę ubrania.”\"}",
+    "{\"itemLocator\":\"sentences[2]\",\"keyedAnswer\":\"W niedzielę odkurzam pokój → I vacuum the room on Sundays\",\"kind\":\"wrongKey\",\"workedAnswer\":\"“W niedzielę” means “on Sunday.” To express the recurring “on Sundays” in the key, use “W niedziele odkurzam pokój,” with plural “niedziele” rather than singular “niedzielę.”\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 12
+}

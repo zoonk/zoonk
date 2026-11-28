@@ -1,0 +1,13 @@
+{
+  "caseId": "en-advanced-music-theory",
+  "challenger": {
+    "costUsd": 0.00048472999999999995,
+    "durationMs": 6494.194292,
+    "hash": "6fee92af4529d1a5794c0ca80929cf8a9d10e7f2dd8f6313fdb8dd7074be6764",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "be1f7313240d066fed5c4049247b36f9dafc2dcf3d4de61fb7646cdab43f83b6"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

@@ -1,0 +1,108 @@
+{
+  "pairs": [
+    {
+      "input": {
+        "learnerLanguage": "pt",
+        "spokenSeconds": 200,
+        "turns": [
+          {
+            "speaker": "character",
+            "text": "Bitte stellen Sie jetzt Ihr Thema vor."
+          },
+          {
+            "speaker": "learner",
+            "text": "Mein Thema ist: Soziale Medien für Jugendliche. Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland, und am Ende sage ich meine Meinung."
+          },
+          {
+            "speaker": "learner",
+            "text": "Ich benutze jeden Tag Instagram, weil ich habe viele Freunde in anderen Städten. Ich finde es gut, dass man so in Kontakt bleiben kann. Aber manchmal verliere ich zu viel Zeit damit."
+          },
+          {
+            "speaker": "learner",
+            "text": "In Brasilien benutzen fast alle Jugendlichen soziale Medien. Viele Kinder haben schon mit zehn Jahren ein Handy und nehmen es auch in die Schule mit. Das ist ein Problem, weil sie im Unterricht nicht aufpassen."
+          },
+          {
+            "speaker": "learner",
+            "text": "Die Vorteile sind: Man kann schnell Informationen finden und neue Leute kennenlernen. Die Nachteile sind: Man schläft weniger und vergleicht sich mit anderen. Meiner Meinung nach sollten Jugendliche soziale Medien benutzen, aber nicht mehr als zwei Stunden pro Tag. Vielen Dank für Ihre Aufmerksamkeit."
+          }
+        ],
+        "criteria": [
+          {
+            "display": "letter",
+            "halfBands": false,
+            "levelBand": null,
+            "maxBand": 4,
+            "scope": "task",
+            "key": "taskCompletion",
+            "name": "Erfüllung",
+            "sound": false,
+            "voiceOnly": false
+          },
+          {
+            "display": "letter",
+            "halfBands": false,
+            "levelBand": null,
+            "maxBand": 4,
+            "scope": "task",
+            "key": "coherence",
+            "name": "Kohärenz",
+            "sound": false,
+            "voiceOnly": false
+          },
+          {
+            "display": "letter",
+            "halfBands": false,
+            "levelBand": null,
+            "maxBand": 4,
+            "scope": "task",
+            "key": "vocabulary",
+            "name": "Wortschatz",
+            "sound": false,
+            "voiceOnly": false
+          },
+          {
+            "display": "letter",
+            "halfBands": false,
+            "levelBand": null,
+            "maxBand": 4,
+            "scope": "task",
+            "key": "grammar",
+            "name": "Strukturen",
+            "sound": false,
+            "voiceOnly": false
+          },
+          {
+            "display": "letter",
+            "halfBands": false,
+            "levelBand": null,
+            "maxBand": 4,
+            "scope": "test",
+            "key": "pronunciation",
+            "name": "Aussprache",
+            "sound": true,
+            "voiceOnly": true
+          }
+        ],
+        "exam": "goethe",
+        "level": "B1",
+        "task": {
+          "brief": "A presentation on a topic chosen from two, structured by five slides: introduce the topic and the structure, the candidate's own experience, the situation in their home country, pros and cons with their opinion, then close and thank the listeners. The examiner does not interrupt.",
+          "minutes": {
+            "max": 4,
+            "min": 3
+          },
+          "name": "Teil 2: Ein Thema präsentieren",
+          "role": "examiner"
+        },
+        "title": "Goethe-Zertifikat B1"
+      },
+      "expectations": "A Goethe-Zertifikat B1 candidate around the level (bands C to B, 2 to 3 on the 0 to 4 scale; task fulfilment B to A, since every slide's point is covered): a structured presentation on social media for young people with an introduction, own experience, the situation in Brazil, pros and cons and a conclusion, with typical B1 errors (\"weil ich habe\", \"in die Schule\"). Evidence and tips in Brazilian Portuguese quoting the German word for word (a reworded quote, such as \"sich mit anderen vergleichen\" for \"vergleicht sich mit anderen\", is an invented quote).",
+      "clean": "{\n  \"brief\": false,\n  \"criteria\": [\n    {\n      \"criterion\": \"taskCompletion\",\n      \"evidence\": \"Você apresenta os cinco pontos pedidos: introduz o tema, fala de sua experiência e do Brasil, apresenta vantagens, desvantagens e opinião, e encerra agradecendo: “Vielen Dank für Ihre Aufmerksamkeit.” Os tópicos são pertinentes, mas vários recebem pouca explicação ou desenvolvimento.\",\n      \"tip\": \"Acrescente uma explicação ou um exemplo concreto a cada ponto. Por exemplo, desenvolva “Viele Kinder haben schon mit zehn Jahren ein Handy” com uma consequência: “Viele Kinder haben schon mit zehn Jahren ein Handy, deshalb lassen sie sich im Unterricht oft ablenken.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    },\n    {\n      \"criterion\": \"coherence\",\n      \"evidence\": \"A sequência é fácil de acompanhar, e você sinaliza a organização com “Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland”. As ideias seguem uma ordem clara, embora as transições entre os pontos sejam simples.\",\n      \"tip\": \"Use uma frase de transição para ligar a situação no Brasil à sua opinião, por exemplo: “Diese Situation zeigt, warum eine zeitliche Begrenzung sinnvoll sein kann.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 3\n    },\n    {\n      \"criterion\": \"vocabulary\",\n      \"evidence\": \"Você usa palavras pertinentes ao tema, como “Informationen finden und neue Leute kennenlernen” e “vergleicht sich mit anderen”. O vocabulário é claro, mas permanece relativamente simples e apresenta poucos detalhes mais específicos.\",\n      \"tip\": \"Substitua uma afirmação geral por uma consequência mais precisa, por exemplo: “Viele Jugendliche vergleichen sich ständig mit anderen, was ihr Selbstwertgefühl beeinträchtigen kann.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 3\n    },\n    {\n      \"criterion\": \"grammar\",\n      \"evidence\": \"Você usa estruturas variadas, como “Ich finde es gut, dass man so in Kontakt bleiben kann”, e a maior parte das frases é clara. Há um erro na posição do verbo após “weil”: “weil ich habe viele Freunde in anderen Städten”.\",\n      \"tip\": \"Depois de “weil”, o verbo conjugado vai para o fim da oração. Você disse “weil ich habe viele Freunde”; diga “weil ich viele Freunde habe”.\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    },\n    {\n      \"criterion\": \"pronunciation\",\n      \"evidence\": \"A transcrição não mostra como você soou, e não há sinais indiretos claros de dificuldade de compreensão. Por isso, esta é uma estimativa mais ampla, orientada pelos outros aspectos da sua produção.\",\n      \"tip\": \"Ao ensaiar, articule com clareza “Jugendliche”, “Informationen” e “Aufmerksamkeit”, para que essas palavras-chave sejam fáceis de reconhecer.\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    }\n  ],\n  \"focus\": \"taskCompletion\",\n  \"heard\": true\n}",
+      "flawed": "{\n  \"brief\": false,\n  \"criteria\": [\n    {\n      \"criterion\": \"taskCompletion\",\n      \"evidence\": \"Você apresenta os cinco pontos pedidos: introduz o tema, fala de sua experiência e do Brasil, apresenta vantagens, desvantagens e opinião, e encerra agradecendo: “Vielen Dank für Ihre Aufmerksamkeit.” Os tópicos são pertinentes, mas vários recebem pouca explicação ou desenvolvimento.\",\n      \"tip\": \"Acrescente uma explicação ou um exemplo concreto a cada ponto. Por exemplo, desenvolva “Viele Kinder haben schon mit zehn Jahren ein Handy” com uma consequência: “Viele Kinder haben schon mit zehn Jahren ein Handy, deshalb lassen sie sich im Unterricht oft ablenken.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    },\n    {\n      \"criterion\": \"coherence\",\n      \"evidence\": \"A sequência é fácil de acompanhar, e você sinaliza a organização com “Zuerst erzähle ich von meinen Erfahrungen, dann spreche ich über die Situation in meinem Heimatland”. As ideias seguem uma ordem clara, embora as transições entre os pontos sejam simples.\",\n      \"tip\": \"Use uma frase de transição para ligar a situação no Brasil à sua opinião, por exemplo: “Diese Situation zeigt, warum eine zeitliche Begrenzung sinnvoll sein kann.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 3\n    },\n    {\n      \"criterion\": \"vocabulary\",\n      \"evidence\": \"Você usa palavras pertinentes ao tema, como “Informationen finden und neue Leute kennenlernen” e “vergleicht sich mit anderen”. O vocabulário é claro, mas permanece relativamente simples e apresenta poucos detalhes mais específicos.\",\n      \"tip\": \"Substitua uma afirmação geral por uma consequência mais precisa, por exemplo: “Viele Jugendliche vergleichen sich ständig mit anderen, was ihr Selbstwertgefühl beeinträchtigen kann.”\",\n      \"bandHigh\": 3,\n      \"bandLow\": 3\n    },\n    {\n      \"criterion\": \"grammar\",\n      \"evidence\": \"Você usa estruturas variadas, como “Ich finde es gut, dass man so in Kontakt bleiben kann”, e a maior parte das frases é clara. Há um erro na posição do verbo após “weil”: “weil ich habe viele Freunde in anderen Städten”.\",\n      \"tip\": \"After \\\"weil\\\", the conjugated verb goes to the end of the clause. You said \\\"weil ich habe viele Freunde\\\"; say \\\"weil ich viele Freunde habe\\\".\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    },\n    {\n      \"criterion\": \"pronunciation\",\n      \"evidence\": \"A transcrição não mostra como você soou, e não há sinais indiretos claros de dificuldade de compreensão. Por isso, esta é uma estimativa mais ampla, orientada pelos outros aspectos da sua produção.\",\n      \"tip\": \"Ao ensaiar, articule com clareza “Jugendliche”, “Informationen” e “Aufmerksamkeit”, para que essas palavras-chave sejam fáceis de reconhecer.\",\n      \"bandHigh\": 3,\n      \"bandLow\": 2\n    }\n  ],\n  \"focus\": \"taskCompletion\",\n  \"heard\": true\n}",
+      "criterion": "honesty",
+      "defect": "The grammar tip for a Brazilian Portuguese reader is written in English instead of Portuguese.",
+      "falseAllegation": "The clean coherence evidence is written in German instead of Portuguese.",
+      "provenance": "Saved eval output for a synthetic eval case; the flawed side rewrites one learner-facing field in the wrong language by hand."
+    }
+  ]
+}

@@ -32,8 +32,6 @@ const fallbackModels = ["openai/gpt-6.1-terra"] as const;
 /** At five options, a blind guess at a select-all answer passes about 1 time in 32. */
 const MIN_OPTIONS = 5;
 
-const systemPrompt = withLevelTestRules(template);
-
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: what the options test comes first, then the text, its question, the misreading one level below, and the options. */
 function createConfirmationsSchema(level: TestLevel) {
   const confirmationSchema = z.object({
@@ -140,6 +138,7 @@ ${situations.join("\n")}${previous}
 /** The "select all that apply" questions that confirm a level before its lessons are skipped. */
 export async function generateLevelTestConfirmations(params: GenerateLevelTestConfirmationsParams) {
   const { analytics, level, model = defaultModel, reasoning, useFallback = true } = params;
+  const systemPrompt = withLevelTestRules({ ...params, template });
   const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({

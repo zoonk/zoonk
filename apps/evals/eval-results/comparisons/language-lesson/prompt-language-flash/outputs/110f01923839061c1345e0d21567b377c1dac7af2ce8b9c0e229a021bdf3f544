@@ -1,0 +1,256 @@
+{
+  "words": [
+    {
+      "word": "trabajar",
+      "translation": "to work",
+      "pronunciation": "trah-bah-HAHR",
+      "romanization": null,
+      "tip": "The Spanish 'j' sounds like an English 'h' produced deeper in the throat; emphasize the final syllable.",
+      "note": null,
+      "distractors": [
+        "viajar",
+        "manejar",
+        "bajar"
+      ]
+    },
+    {
+      "word": "estudiar",
+      "translation": "to study",
+      "pronunciation": "es-too-DYAHR",
+      "romanization": null,
+      "tip": "Start directly on the 'es' sound without adding an extra vowel before it.",
+      "note": null,
+      "distractors": [
+        "escuchar",
+        "esperar",
+        "ensayar"
+      ]
+    },
+    {
+      "word": "cocinar",
+      "translation": "to cook",
+      "pronunciation": "koh-see-NAHR",
+      "romanization": null,
+      "tip": "In Mexico, 'c' before 'i' is pronounced like an English 's'.",
+      "note": null,
+      "distractors": [
+        "caminar",
+        "cenar",
+        "comprar"
+      ]
+    },
+    {
+      "word": "entre semana",
+      "translation": "on weekdays",
+      "pronunciation": "EHN-treh seh-MAH-nah",
+      "romanization": null,
+      "tip": null,
+      "note": "English uses 'on weekdays', but Spanish literally says 'between week' ('entre semana').",
+      "distractors": [
+        "el fin de semana",
+        "cada semana",
+        "la próxima semana"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Yo trabajo en la casa el lunes",
+      "translation": "I work at home on Monday",
+      "explanation": "To say 'I work', drop the '-ar' from 'trabajar' and add '-o' to get 'trabajo'. Spanish uses 'el lunes' where English says 'on Monday'.",
+      "romanization": null,
+      "distractors": [
+        "trabajas",
+        "por"
+      ],
+      "translationDistractors": [
+        "cook",
+        "office"
+      ],
+      "speakingPrompt": "Say that you work at home on Monday"
+    },
+    {
+      "sentence": "¿Qué estudias entre semana?",
+      "translation": "What do you study on weekdays?",
+      "explanation": "When asking someone informally ('tú'), regular '-ar' verbs end in '-as'. Note the inverted question mark '¿' at the start.",
+      "romanization": null,
+      "distractors": [
+        "estudio",
+        "dónde"
+      ],
+      "translationDistractors": [
+        "work",
+        "weekend"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Mateo cocina en la casa",
+      "translation": "Mateo cooks at home",
+      "explanation": "For a third person (he/she), drop '-ar' and add '-a' to form 'cocina'.",
+      "romanization": null,
+      "distractors": [
+        "cocino",
+        "con"
+      ],
+      "translationDistractors": [
+        "cleans",
+        "studies"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Present tense of regular -ar verbs",
+    "text": "To say what someone does regularly, remove `-ar` from the verb stem and add the ending for the person. Use `-o` for `yo` (I), `-as` for `tú` (you), and `-a` for `él` or `ella` (he/she). Because the ending already signals who does the action, subject pronouns like `yo` and `tú` are often omitted.",
+    "examples": [
+      {
+        "sentence": "Yo trabajo en la oficina",
+        "translation": "I work in the office"
+      },
+      {
+        "sentence": "¿Cocinas en la casa?",
+        "translation": "Do you cook at home?"
+      },
+      {
+        "sentence": "Ella estudia mucho",
+        "translation": "She studies a lot"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct verb form for 'yo':",
+      "template": "Yo [BLANK] en la casa el lunes",
+      "answer": "trabajo",
+      "distractors": [
+        "trabajas",
+        "trabaja"
+      ],
+      "feedback": "With 'yo' (I), regular -ar verbs take the ending -o, making 'trabajo'."
+    },
+    {
+      "question": "Choose the correct verb form for Sofía (she):",
+      "template": "Sofía [BLANK] entre semana",
+      "answer": "estudia",
+      "distractors": [
+        "estudio",
+        "estudias"
+      ],
+      "feedback": "For a third person like Sofía, regular -ar verbs take the ending -a, making 'estudia'."
+    }
+  ],
+  "patternTable": {
+    "prompt": "Use the pattern from trabajar to finish cocinar",
+    "modelWord": "trabajar",
+    "modelMeaning": "to work",
+    "newWord": "cocinar",
+    "newMeaning": "to cook",
+    "rows": [
+      {
+        "label": "yo",
+        "labelMeaning": "I",
+        "model": "trabajo",
+        "answer": "cocino",
+        "blank": false
+      },
+      {
+        "label": "tú",
+        "labelMeaning": "you",
+        "model": "trabajas",
+        "answer": "cocinas",
+        "blank": true
+      },
+      {
+        "label": "él / ella",
+        "labelMeaning": "he / she",
+        "model": "trabaja",
+        "answer": "cocina",
+        "blank": false
+      },
+      {
+        "label": "nosotros",
+        "labelMeaning": "we",
+        "model": "trabajamos",
+        "answer": "cocinamos",
+        "blank": true
+      },
+      {
+        "label": "ellos / ustedes",
+        "labelMeaning": "they / you all",
+        "model": "trabajan",
+        "answer": "cocinan",
+        "blank": false
+      }
+    ],
+    "choices": [
+      "as",
+      "amos",
+      "an",
+      "es",
+      "emos"
+    ],
+    "explanation": "Because 'cocinar' is a regular -ar verb, it shares the exact same present-tense endings as 'trabajar'."
+  },
+  "dialogue": {
+    "prompt": "A coworker asks if you cook during the week. How do you respond?",
+    "scene": "A coffee shop in Mexico City during lunch break",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hola, ¿trabajas aquí cerca?",
+        "translation": "Hi, do you work near here?"
+      },
+      {
+        "speaker": "you",
+        "text": "Sí, trabajo en una oficina cerca del Metro",
+        "translation": "Yes, I work in an office near the Metro"
+      },
+      {
+        "speaker": "them",
+        "text": "¡Qué bien! ¿Y cocinas en la casa entre semana?",
+        "translation": "Nice! And do you cook at home on weekdays?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "No, no cocino entre semana",
+        "translation": "No, I do not cook on weekdays",
+        "isBest": true,
+        "why": "This correctly uses the 'yo' form 'cocino' to answer about your own routine."
+      },
+      {
+        "text": "No, no cocinas entre semana",
+        "translation": "No, you do not cook on weekdays",
+        "isBest": false,
+        "why": "'Cocinas' uses the ending for 'tú' (you), but you need to speak about yourself."
+      },
+      {
+        "text": "Sí, trabajo en la casa el lunes",
+        "translation": "Yes, I work at home on Monday",
+        "isBest": false,
+        "why": "This answers with 'trabajo' (work) instead of answering whether you cook."
+      }
+    ],
+    "explanation": "When someone asks a question ending in '-as' (tú), respond about yourself using the '-o' ending (yo)."
+  },
+  "writing": {
+    "prompt": "Write in Spanish: 'I work at home on weekdays'",
+    "answers": [
+      "Trabajo en la casa entre semana",
+      "Yo trabajo en la casa entre semana",
+      "Trabajo en casa entre semana",
+      "Yo trabajo en casa entre semana"
+    ],
+    "keyPoints": [
+      "Uses the 'yo' form 'trabajo' (with or without 'yo')",
+      "Uses 'en casa' or 'en la casa'",
+      "Uses 'entre semana' for on weekdays"
+    ]
+  },
+  "summary": [
+    "Say what you do using '-o', like 'yo trabajo' ('I work')",
+    "Ask what someone else does using '-as', like '¿cocinas entre semana?' ('do you cook on weekdays?')",
+    "Describe what another person does using '-a', like 'Mateo estudia' ('Mateo studies')"
+  ]
+}

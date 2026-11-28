@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "science",
+    "math"
+  ],
+  "description": "A física quântica descreve como luz e matéria se comportam em escala atômica. Você parte de medidas, gráficos, luz e átomos, passa por ondas, movimento e eletromagnetismo e chega a probabilidades, spin e emaranhamento. Essas ideias ajudam a explicar tecnologias como chips, LEDs e lasers.",
+  "landingPage": {
+    "audience": [
+      "Curiosos sobre o mundo microscópico",
+      "Estudantes começando a estudar física",
+      "Quem quer reforçar a matemática para física"
+    ],
+    "outcomes": [
+      "Usar potências de dez para comparar escalas microscópicas",
+      "Calcular energia e comprimento de onda da luz",
+      "Explicar cores emitidas e elétrons arrancados dos átomos",
+      "Prever probabilidades em medições de partículas"
+    ],
+    "valueProposition": "Calcular a energia da luz e explicar as cores emitidas pelos átomos"
+  }
+}

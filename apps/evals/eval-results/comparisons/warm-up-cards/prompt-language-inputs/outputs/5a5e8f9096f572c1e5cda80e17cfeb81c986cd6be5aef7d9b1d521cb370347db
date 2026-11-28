@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "When you call items.append(\"pear\"), what does the call itself give back?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "The updated list",
+          "correct": false
+        },
+        {
+          "text": "The item count",
+          "correct": false
+        }
+      ],
+      "reveal": "None. The method changes the list in place; it doesn't return the updated list."
+    },
+    {
+      "question": "In Python, what marks the lines that belong inside an if block?",
+      "options": [
+        {
+          "text": "Indentation",
+          "correct": true
+        },
+        {
+          "text": "Curly braces",
+          "correct": false
+        },
+        {
+          "text": "Line numbers",
+          "correct": false
+        }
+      ],
+      "reveal": "Indentation. Leading spaces show which lines belong to a block, so consistent spacing matters."
+    },
+    {
+      "question": "A list has three items; what index refers to its first item in Python?",
+      "options": [
+        {
+          "text": "0",
+          "correct": true
+        },
+        {
+          "text": "1",
+          "correct": false
+        },
+        {
+          "text": "-1",
+          "correct": false
+        }
+      ],
+      "reveal": "0. Python starts list indexes at zero, while -1 refers to the last item."
+    },
+    {
+      "question": "In a Python condition, which symbol checks whether two values match?",
+      "options": [
+        {
+          "text": "==",
+          "correct": true
+        },
+        {
+          "text": "=",
+          "correct": false
+        },
+        {
+          "text": "!=",
+          "correct": false
+        }
+      ],
+      "reveal": "==. A single equals sign assigns a value; a double equals sign compares values."
+    },
+    {
+      "question": "In Python, which values does range(4) hand to a loop?",
+      "options": [
+        {
+          "text": "0 through 3",
+          "correct": true
+        },
+        {
+          "text": "1 through 4",
+          "correct": false
+        },
+        {
+          "text": "0 through 4",
+          "correct": false
+        }
+      ],
+      "reveal": "0 through 3. The count begins at zero and stops just before the number inside the parentheses."
+    },
+    {
+      "question": "With positive operands, what does 7 // 2 evaluate to in Python?",
+      "options": [
+        {
+          "text": "3",
+          "correct": true
+        },
+        {
+          "text": "3.5",
+          "correct": false
+        },
+        {
+          "text": "4",
+          "correct": false
+        }
+      ],
+      "reveal": "3. The double slash does whole-number division, rounding down rather than keeping the fractional part."
+    },
+    {
+      "question": "After label = \"cat\", what happens if you try label[0] = \"b\"?",
+      "options": [
+        {
+          "text": "A TypeError is raised",
+          "correct": true
+        },
+        {
+          "text": "The string changes",
+          "correct": false
+        },
+        {
+          "text": "A new string is returned",
+          "correct": false
+        }
+      ],
+      "reveal": "A TypeError is raised. Strings can't be changed one character at a time; you can create a different string instead."
+    },
+    {
+      "question": "In a Python dictionary literal, what happens when a key appears twice?",
+      "options": [
+        {
+          "text": "The later value replaces it",
+          "correct": true
+        },
+        {
+          "text": "Both values are stored",
+          "correct": false
+        },
+        {
+          "text": "Python rejects the literal",
+          "correct": false
+        }
+      ],
+      "reveal": "The later value replaces it. A dictionary keeps one value per key, and the later entry wins in a literal."
+    },
+    {
+      "question": "In Python, do name and Name refer to the same variable?",
+      "options": [
+        {
+          "text": "Yes",
+          "correct": false
+        },
+        {
+          "text": "No",
+          "correct": true
+        }
+      ],
+      "reveal": "No. Python treats uppercase and lowercase letters as different, so those spellings are separate names."
+    },
+    {
+      "question": "When a Python function reaches its end without a return statement, what does its call produce?",
+      "options": [
+        {
+          "text": "None",
+          "correct": true
+        },
+        {
+          "text": "An empty string",
+          "correct": false
+        },
+        {
+          "text": "The last argument",
+          "correct": false
+        }
+      ],
+      "reveal": "None. A function with no return statement gives back this special value automatically."
+    }
+  ]
+}

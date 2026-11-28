@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você apresenta a questão central, anuncia um plano e organiza a fala em vantagens, desvantagens e opinião, concluindo com uma condição: «est-ce que le télétravail améliore vraiment la qualité de vie des salariés ?» e «à condition qu'il soit bien organisé». Os exemplos ajudam a sustentar o ponto de vista, mas os argumentos poderiam ser mais desenvolvidos e ponderados para alcançar uma faixa superior.",
+      "tip": "Desenvolva um argumento com uma consequência concreta e uma ressalva, por exemplo: «Le travail à distance réduit le temps de transport, mais il faut aussi prévoir des moments d’échange pour éviter l’isolement.»",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário pertinente ao tema, como «la limite entre la vie professionnelle et la vie privée» e «le travail hybride». A escolha lexical é clara, mas permanece bastante geral e pouco variada ao tratar de alguns argumentos.",
+      "tip": "Acrescente termos mais específicos para desenvolver suas ideias, por exemplo: «Le droit à la déconnexion protège les salariés contre les sollicitations en dehors des horaires de travail.»",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você demonstra estruturas variadas e usa corretamente o subjuntivo em «à condition qu'il soit bien organisé». Porém, há construções que precisam de mais controle, como «Les gens qui travaillent à la maison ils sont souvent plus isolés» e «Malgré que l'entreprise économise de l'argent».",
+      "tip": "Em francês, não repita o sujeito com um pronome depois de um sujeito já expresso. Em sua frase, passe de «Les gens qui travaillent à la maison ils sont souvent plus isolés» para «Les gens qui travaillent à la maison sont souvent plus isolés.»",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite saber como você soou; por isso, esta é uma estimativa mais ampla, centrada nas outras faixas. Não há no texto sinais claros de palavras mal compreendidas ou de pedidos de repetição.",
+      "tip": "Ao falar, articule com clareza «télétravail», «qualité de vie» e «hybride», para que suas ideias principais sejam fáceis de entender.",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

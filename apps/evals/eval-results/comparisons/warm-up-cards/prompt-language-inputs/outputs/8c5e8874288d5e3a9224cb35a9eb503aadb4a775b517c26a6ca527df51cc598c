@@ -1,0 +1,180 @@
+{
+  "cards": [
+    {
+      "question": "Si alguien dice “I’m embarrassed” tras equivocarse en clase, ¿cómo se siente?",
+      "options": [
+        {
+          "text": "Avergonzado",
+          "correct": true
+        },
+        {
+          "text": "Embarazado",
+          "correct": false
+        },
+        {
+          "text": "Enojado",
+          "correct": false
+        }
+      ],
+      "reveal": "Avergonzado o avergonzada. “Embarrassed” expresa vergüenza; no significa “embarazada”."
+    },
+    {
+      "question": "En “My parents live in Guadalajara”, ¿quiénes viven ahí?",
+      "options": [
+        {
+          "text": "Sus padres",
+          "correct": true
+        },
+        {
+          "text": "Sus parientes",
+          "correct": false
+        },
+        {
+          "text": "Su pareja",
+          "correct": false
+        }
+      ],
+      "reveal": "Sus padres. “Parents” significa padre y madre; “parientes” se dice “relatives”."
+    },
+    {
+      "question": "Al leer “Actually, I live in Puebla”, ¿qué comunica “actually” en ese contexto?",
+      "options": [
+        {
+          "text": "En realidad",
+          "correct": true
+        },
+        {
+          "text": "Actualmente",
+          "correct": false
+        },
+        {
+          "text": "Por ahora",
+          "correct": false
+        }
+      ],
+      "reveal": "En realidad. En este contexto, “actually” aclara o corrige una impresión; “actualmente” se traduce como “currently”."
+    },
+    {
+      "question": "Para pedir una novela prestada, ¿a dónde vas si el letrero dice “library”?",
+      "options": [
+        {
+          "text": "A la biblioteca",
+          "correct": true
+        },
+        {
+          "text": "A la librería",
+          "correct": false
+        },
+        {
+          "text": "A la papelería",
+          "correct": false
+        }
+      ],
+      "reveal": "A la biblioteca. Aunque “library” se parece a “librería”, una librería vende libros; una biblioteca permite consultarlos o pedirlos prestados."
+    },
+    {
+      "question": "En una señal de emergencia, ¿qué lugar indica la palabra “hospital”?",
+      "options": [
+        {
+          "text": "Hospital",
+          "correct": true
+        },
+        {
+          "text": "Hotel",
+          "correct": false
+        },
+        {
+          "text": "Hospicio",
+          "correct": false
+        }
+      ],
+      "reveal": "Hospital. Es un cognado: en inglés y en español se escribe igual y se refiere a un lugar donde se atiende a personas enfermas."
+    },
+    {
+      "question": "En una tienda, antes de hacer una pregunta, ¿para qué sirve decir “Excuse me”?",
+      "options": [
+        {
+          "text": "Llamar la atención con cortesía",
+          "correct": true
+        },
+        {
+          "text": "Disculparte por llegar tarde",
+          "correct": false
+        },
+        {
+          "text": "Despedirte al salir",
+          "correct": false
+        }
+      ],
+      "reveal": "Llamar la atención con cortesía. “Excuse me” también puede servir para disculparse, pero antes de una pregunta funciona como una forma amable de iniciar."
+    },
+    {
+      "question": "Cuando alguien te saluda con “How are you?”, ¿qué respuesta breve funciona?",
+      "options": [
+        {
+          "text": "“I’m fine, thanks”",
+          "correct": true
+        },
+        {
+          "text": "“My name is Sofía”",
+          "correct": false
+        },
+        {
+          "text": "“At five o’clock”",
+          "correct": false
+        }
+      ],
+      "reveal": "“I’m fine, thanks”. A menudo, “How are you?” funciona como saludo; no hace falta contar con detalle cómo te sientes."
+    },
+    {
+      "question": "En un aviso dirigido a toda una clase, ¿a quién puede referirse “you”?",
+      "options": [
+        {
+          "text": "A ustedes",
+          "correct": true
+        },
+        {
+          "text": "Solo a una persona",
+          "correct": false
+        },
+        {
+          "text": "A quienes no están presentes",
+          "correct": false
+        }
+      ],
+      "reveal": "A ustedes. En inglés, “you” sirve tanto para una persona como para varias; el contexto indica a quién se dirige."
+    },
+    {
+      "question": "Al decir tu edad en inglés, ¿qué verbo completa “I ___ 20 years old”?",
+      "options": [
+        {
+          "text": "“am”",
+          "correct": true
+        },
+        {
+          "text": "“have”",
+          "correct": false
+        },
+        {
+          "text": "“do”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Am”. En inglés se usa el verbo “be” para expresar la edad; en español, en cambio, decimos que tenemos cierta edad."
+    },
+    {
+      "question": "En inglés de EE. UU., “pants” suele concordar con verbo singular o plural?",
+      "options": [
+        {
+          "text": "Plural",
+          "correct": true
+        },
+        {
+          "text": "Singular",
+          "correct": false
+        }
+      ],
+      "reveal": "Plural. Se dice “These pants are comfortable” incluso al hablar de un solo pantalón."
+    }
+  ]
+}

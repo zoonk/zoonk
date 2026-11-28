@@ -1,0 +1,223 @@
+{
+  "words": [
+    {
+      "word": "repeat the question",
+      "translation": "repetir a pergunta",
+      "pronunciation": "ri-PIT THA CUÉS-tchan",
+      "romanization": null,
+      "tip": "Em `repeat`, curve a língua para trás sem tocar o céu da boca; em `the`, coloque a ponta da língua entre os dentes e faça a voz vibrar.",
+      "note": null,
+      "distractors": [
+        "answer the question",
+        "skip the question",
+        "change the subject"
+      ]
+    },
+    {
+      "word": "rephrase the question",
+      "translation": "reformular a pergunta",
+      "pronunciation": "ri-FREIZ THA CUÉS-tchan",
+      "romanization": null,
+      "tip": "Nos sons de `r` em `rephrase`, curve a língua para trás sem tocar o céu da boca, em vez de usar o som do `r` de «rato».",
+      "note": "Use `rephrase` para pedir a mesma ideia com outras palavras.",
+      "distractors": [
+        "answer the question",
+        "summarize the question",
+        "write down the question"
+      ]
+    },
+    {
+      "word": "speak more slowly",
+      "translation": "falar mais devagar",
+      "pronunciation": "SPIK MÓR SLOU-li",
+      "romanization": null,
+      "tip": "Comece `speak` e `slowly` diretamente com o som de `s`, sem acrescentar uma vogal antes.",
+      "note": null,
+      "distractors": [
+        "speak more loudly",
+        "speak more quickly",
+        "write more slowly"
+      ]
+    },
+    {
+      "word": "I didn't catch that",
+      "translation": "Não entendi isso",
+      "pronunciation": "AI DÍ-dant KÉTCH THÉT",
+      "romanization": null,
+      "tip": "Em `that`, coloque a ponta da língua entre os dentes e faça a voz vibrar.",
+      "note": "Essa frase pode indicar que você não ouviu ou não compreendeu o que foi dito.",
+      "distractors": [
+        "I didn't hear anything",
+        "I didn't ask that",
+        "I didn't answer that"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Could you repeat the question, please?",
+      "translation": "Você poderia repetir a pergunta, por favor?",
+      "explanation": "Use `Could you` antes do verbo para fazer um pedido educado. Depois, `please` acrescenta cortesia.",
+      "romanization": null,
+      "distractors": [
+        "repeats",
+        "repeated",
+        "repeating"
+      ],
+      "translationDistractors": [
+        "responder",
+        "escrever",
+        "resposta"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Could you rephrase the question, please?",
+      "translation": "Você poderia reformular a pergunta, por favor?",
+      "explanation": "`Rephrase` pede que a mesma pergunta seja feita com outras palavras. Depois de `Could you`, use o verbo sem `to`.",
+      "romanization": null,
+      "distractors": [
+        "rephrases",
+        "rephrased",
+        "rephrasing"
+      ],
+      "translationDistractors": [
+        "responder",
+        "traduzir",
+        "resposta"
+      ],
+      "speakingPrompt": "Peça ao entrevistador que reformule a pergunta."
+    },
+    {
+      "sentence": "Could you speak more slowly, please?",
+      "translation": "Você poderia falar mais devagar, por favor?",
+      "explanation": "`More slowly` indica que você quer que a pessoa fale em um ritmo mais lento. A expressão vem depois de `speak`.",
+      "romanization": null,
+      "distractors": [
+        "speaks",
+        "spoke",
+        "speaking"
+      ],
+      "translationDistractors": [
+        "alto",
+        "rápido",
+        "escrever"
+      ],
+      "speakingPrompt": "Peça ao entrevistador que fale mais devagar."
+    },
+    {
+      "sentence": "I didn't catch that",
+      "translation": "Não entendi isso",
+      "explanation": "Aqui, `catch` não significa pegar algo fisicamente: a expressão indica que você não ouviu ou não compreendeu o que foi dito.",
+      "romanization": null,
+      "distractors": [
+        "caught",
+        "catches",
+        "catching"
+      ],
+      "translationDistractors": [
+        "perguntei",
+        "respondi",
+        "ouviu"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Pedidos educados com Could you",
+    "text": "Para fazer um pedido educado, comece com `Could you` e acrescente o verbo, como em `Could you repeat the question, please?`. Use o verbo na forma básica, sem `to` e sem mudar sua terminação. Diferentemente de «poderia repetir» em português, só `could` indica essa ideia de possibilidade.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Complete o pedido para repetir a última parte.",
+      "template": "Could you [BLANK] the last part, please?",
+      "answer": "repeat",
+      "distractors": [
+        "repeats",
+        "repeated",
+        "repeating"
+      ],
+      "feedback": "Depois de `Could you`, use o verbo na forma básica: `repeat`."
+    },
+    {
+      "question": "Complete o pedido para a pessoa falar um pouco mais devagar.",
+      "template": "Could you [BLANK] a little more slowly, please?",
+      "answer": "speak",
+      "distractors": [
+        "speaks",
+        "spoke",
+        "speaking"
+      ],
+      "feedback": "Depois de `Could you`, use `speak` sem mudar sua forma."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Você não entendeu a pergunta. O entrevistador pergunta o que ajudaria. O que você diz?",
+    "scene": "Uma entrevista de emprego, com o entrevistador",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "How do you approach a new project?",
+        "translation": "Como você aborda um novo projeto?"
+      },
+      {
+        "speaker": "you",
+        "text": "I didn't catch that",
+        "translation": "Não entendi isso"
+      },
+      {
+        "speaker": "them",
+        "text": "Of course. What would help?",
+        "translation": "Claro. O que ajudaria?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Could you rephrase the question, please?",
+        "translation": "Você poderia reformular a pergunta, por favor?",
+        "isBest": true,
+        "why": "É um pedido educado para ouvir a pergunta com outras palavras."
+      },
+      {
+        "text": "Could you rephrasing the question, please?",
+        "translation": "Você poderia reformulando a pergunta, por favor?",
+        "isBest": false,
+        "why": "Depois de `Could you`, não use `rephrasing`."
+      },
+      {
+        "text": "Could you rephrased the question, please?",
+        "translation": "Você poderia reformulou a pergunta, por favor?",
+        "isBest": false,
+        "why": "Depois de `Could you`, não use a forma `rephrased`."
+      },
+      {
+        "text": "Could you rephrase to the question, please?",
+        "translation": "Você poderia reformular para a pergunta, por favor?",
+        "isBest": false,
+        "why": "`Rephrase` não precisa de `to` antes de `the question`."
+      }
+    ],
+    "explanation": "Depois de `Could you`, use o verbo na forma básica."
+  },
+  "writing": {
+    "prompt": "Escreva uma mensagem pedindo: «Você poderia falar mais devagar, por favor?»",
+    "answers": [
+      "Could you speak more slowly, please?",
+      "Could you please speak more slowly?",
+      "Could you speak more slowly please?",
+      "Could you speak slower, please?"
+    ],
+    "keyPoints": [
+      "Usa `Could you` para fazer o pedido.",
+      "Usa `speak` na forma básica e pede um ritmo mais lento."
+    ]
+  },
+  "summary": [
+    "“Could you repeat the question, please?” pede que o entrevistador repita a pergunta.",
+    "“Could you rephrase the question, please?” pede a pergunta com outras palavras.",
+    "“Could you speak more slowly, please?” pede que a pessoa fale mais devagar.",
+    "“I didn't catch that” indica que você não ouviu ou não entendeu."
+  ]
+}

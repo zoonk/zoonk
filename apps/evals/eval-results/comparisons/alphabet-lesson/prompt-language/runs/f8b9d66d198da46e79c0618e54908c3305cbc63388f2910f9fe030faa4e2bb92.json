@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-ru-cyrillic",
+  "challenger": {
+    "costUsd": 0.00222937,
+    "durationMs": 34313.823542,
+    "hash": "c25b6e41917750fdc847e0d0a609f61a47fcdc5926b502a9902daa0b5589c968",
+    "systemPromptHash": "c2763d4b948958a5f7f764cd957575ed7477fce36005d75583a78c5ccd3f0ab9",
+    "userPromptHash": "7c13f213e9db4fe417400e5eb6c333178e6ce0298669a311820cfa50de30f014"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00176386,
+    "durationMs": 24373.811833,
+    "hash": "9bb5e4f9987753edbdaccf389a571307e0fe4030b9b618f50c997c903669d2ca",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "7c13f213e9db4fe417400e5eb6c333178e6ce0298669a311820cfa50de30f014"
+  },
+  "run": 2
+}

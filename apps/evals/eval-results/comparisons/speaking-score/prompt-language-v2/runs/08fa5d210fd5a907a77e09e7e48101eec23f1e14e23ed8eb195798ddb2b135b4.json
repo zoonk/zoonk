@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-de-goethe-b1-presentation",
+  "challenger": {
+    "costUsd": 0.00083582,
+    "durationMs": 22717.324209,
+    "hash": "b7eca2e5c734c5dde42fa0e6be0d3a1331a9a0510a0bae25c1586e90e67fd89d",
+    "systemPromptHash": "a0fad043d49f64a2a81e342faee54b4c8eec2dbdd497a25e9ccee2e88709cb85",
+    "userPromptHash": "8bfce45f60c79484e8035ba2aa460bacad0ac3e4af623fbd572616a5fb3659b0"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00064004,
+    "durationMs": 9121.757457999993,
+    "hash": "5f98f48e46ad240cab2daa82793343aae7b54e186471616bec3254973117a3c6",
+    "systemPromptHash": "fbd0230f2dc766ffce7306bf1966289db5ad3d5172da54bccec75c559deddc6b",
+    "userPromptHash": "8bfce45f60c79484e8035ba2aa460bacad0ac3e4af623fbd572616a5fb3659b0"
+  },
+  "run": 2
+}

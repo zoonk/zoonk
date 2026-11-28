@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-a2-ser-estar",
+  "challenger": {
+    "costUsd": 0.0009684,
+    "durationMs": 940.3540829999984,
+    "hash": "7cb2fe69f0914b68df921e801f992cb97c23f87b60e1832fd9eb974a6c6f0f43",
+    "systemPromptHash": "65e06d10e3c167b6a470add255f37de8fbe6eab4f1a73e07aab7f9fceb4e62bc",
+    "userPromptHash": "2200a5be7f17aaf1ec5e6f914ed528b82434e043a3e641cc6c48dd0194c5a64e"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0010047,
+    "durationMs": 1047.448542000002,
+    "hash": "3e3e0f8ecda03c9a9716040e6471113fc6174bfb9d475f7a4120899d13e67733",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "2200a5be7f17aaf1ec5e6f914ed528b82434e043a3e641cc6c48dd0194c5a64e"
+  },
+  "run": 2
+}

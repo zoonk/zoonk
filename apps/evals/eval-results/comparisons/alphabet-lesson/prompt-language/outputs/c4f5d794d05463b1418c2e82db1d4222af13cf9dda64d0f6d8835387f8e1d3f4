@@ -1,0 +1,222 @@
+{
+  "script": "alfabeto árabe",
+  "title": "Suas primeiras letras árabes",
+  "description": "Você já consegue decifrar بَاب (bāb), “porta”, e reconhecer oito letras.",
+  "canDo": "Leia e pronuncie ا (ā), ب (b), ت (t), ث (th), ج (j), ح (ḥ), خ (kh) e د (d).",
+  "intro": [
+    {
+      "title": "Leia da direita para a esquerda",
+      "text": "Acompanhe a linha da direita para a esquerda. A maioria das letras se liga às vizinhas; ا (ā) e د (d) se ligam à letra anterior, mas não à próxima na direção da leitura."
+    },
+    {
+      "title": "Uma marca, uma vogal",
+      "text": "A fatḥa (a) é uma marca acima da consoante e indica um a curto. Antes de ا (ā), esse a fica longo: بَ (ba) + ا (ā) + ب (b) formam بَاب (bāb), “porta”."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ا",
+      "readingAid": "ā",
+      "ipa": "/aː/",
+      "audioText": "بَا",
+      "pronunciation": "Prolongue o a de بَا (bā), como o a de “pá”, só que longo. Aqui, ا estende a vogal que vem antes.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ا"
+        },
+        {
+          "label": "inicial",
+          "symbol": "ا"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـا"
+        },
+        {
+          "label": "final",
+          "symbol": "ـا"
+        }
+      ]
+    },
+    {
+      "symbol": "ب",
+      "readingAid": "b",
+      "ipa": "/b/",
+      "audioText": "بَ",
+      "pronunciation": "Você ouvirá بَ (ba); o b é como em “bola”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ب"
+        },
+        {
+          "label": "inicial",
+          "symbol": "بـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـبـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـب"
+        }
+      ]
+    },
+    {
+      "symbol": "ت",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "تَ",
+      "pronunciation": "Você ouvirá تَ (ta); o t é como no começo de “tatu”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ت"
+        },
+        {
+          "label": "inicial",
+          "symbol": "تـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـتـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـت"
+        }
+      ]
+    },
+    {
+      "symbol": "ث",
+      "readingAid": "th",
+      "ipa": "/θ/",
+      "audioText": "ثَ",
+      "pronunciation": "Você ouvirá ثَ (tha); não há esse som em português. Ponha a ponta da língua entre os dentes, como no th do inglês “think”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ث"
+        },
+        {
+          "label": "inicial",
+          "symbol": "ثـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـثـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـث"
+        }
+      ]
+    },
+    {
+      "symbol": "ج",
+      "readingAid": "j",
+      "ipa": "/d͡ʒ/",
+      "audioText": "جَ",
+      "pronunciation": "Você ouvirá جَ (ja); é o som de dj em “dia” em muitos sotaques brasileiros.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ج"
+        },
+        {
+          "label": "inicial",
+          "symbol": "جـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـجـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـج"
+        }
+      ]
+    },
+    {
+      "symbol": "ح",
+      "readingAid": "ḥ",
+      "ipa": "/ħ/",
+      "audioText": "حَ",
+      "pronunciation": "Você ouvirá حَ (ḥa); não existe esse som em português. Faça um h soprado bem no fundo da garganta, mais profundo que o r forte de “rua”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ح"
+        },
+        {
+          "label": "inicial",
+          "symbol": "حـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـحـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـح"
+        }
+      ]
+    },
+    {
+      "symbol": "خ",
+      "readingAid": "kh",
+      "ipa": "/x/",
+      "audioText": "خَ",
+      "pronunciation": "Você ouvirá خَ (kha); é parecido com o r forte de “rua” nos sotaques que usam esse som, mas sai mais atrás na boca.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "خ"
+        },
+        {
+          "label": "inicial",
+          "symbol": "خـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـخـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـخ"
+        }
+      ]
+    },
+    {
+      "symbol": "د",
+      "readingAid": "d",
+      "ipa": "/d/",
+      "audioText": "دَ",
+      "pronunciation": "Você ouvirá دَ (da); o d é como no começo de “dado”.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "د"
+        },
+        {
+          "label": "inicial",
+          "symbol": "د"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـد"
+        },
+        {
+          "label": "final",
+          "symbol": "ـد"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    "Leia da direita para a esquerda; muitas letras se ligam, mas ا e د não continuam a ligação para a próxima letra.",
+    "A fatḥa marca um a curto; com ا logo depois, você lê um ā longo."
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você cobriu as cinco partes da apresentação: apresentou o tema e a estrutura, falou da própria experiência e da situação no Brasil, comparou vantagens e desvantagens, expressou sua opinião e encerrou agradecendo. Por exemplo, você explicou que «Am Wochenende treffe ich mich aber mit einer Gruppe» e concluiu com «Damit bin ich am Ende meiner Präsentation. Vielen Dank fürs Zuhören.»",
+      "tip": "Torne a comparação mais concreta com um exemplo específico de cada lado, por exemplo: «Online spart man Fahrtkosten, während man im Kurs sofort Rückmeldung bekommt.»",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "coherence",
+      "evidence": "A apresentação tem uma sequência clara, sinalizada por «Zuerst», «danach», «anschließend» e «zum Schluss». Você também liga as ideias com relações compreensíveis, como em «Viele Leute wohnen weit weg von großen Städten, deshalb ist das Internet für sie oft die einzige Möglichkeit» e «Ein Nachteil ist jedoch»",
+      "tip": "Ao apresentar os dois lados, sinalize o contraste com uma estrutura paralela, por exemplo: «Einerseits spart man Zeit, andererseits muss man sich selbst motivieren.»",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema, como «Vollzeit arbeite», «flexibel» e «sich selbst motivieren». Ainda assim, várias ideias são apresentadas de forma geral, como «Ein großer Vorteil» e «Ein Nachteil ist jedoch», sem uma variedade maior de expressões para detalhar os pontos.",
+      "tip": "Substitua uma expressão geral por uma palavra mais específica e acrescente uma consequência: em vez de «Ein großer Vorteil ist, dass man flexibel ist», você poderia dizer «Ein großer Vorteil ist die zeitliche Flexibilität, weil man den Unterricht besser in den Alltag integrieren kann.»",
+      "bandHigh": 3,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você controla bem estruturas importantes, incluindo orações subordinadas com verbo no final, como «weil ich Vollzeit arbeite» e «damit ich auch mit echten Menschen sprechen kann». Também usa comparações e construções mais longas corretamente, como «weniger spricht als in einem Kurs, in dem der Lehrer einen direkt korrigiert».",
+      "tip": "Para variar as relações entre ideias, use «während» para introduzir um contraste e coloque o verbo no fim dessa oração. Você já diz «Ein Nachteil ist jedoch, dass man sich selbst motivieren muss»; pode ampliar assim: «Ein Nachteil ist jedoch, dass man sich selbst motivieren muss, während man im Kurs mehr Unterstützung bekommt.»",
+      "bandHigh": 4,
+      "bandLow": 4
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou; como não há indícios de palavras mal reconhecidas ou pedidos de repetição e as outras dimensões estão fortes, esta é uma estimativa mais ampla.",
+      "tip": "Para facilitar a compreensão, marque com clareza as partes das palavras longas «Möglichkeit» e «Präsentation» e faça uma breve pausa antes de cada uma.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "vocabulary",
+  "heard": true
+}

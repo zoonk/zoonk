@@ -1,0 +1,14 @@
+
+      - MUST be in US English
+      - The course that teaches the framework is titled exactly "Next.js"; JavaScript, React or web basics the learner lacks stay in supporting courses with their own canonical titles ("JavaScript", "React"), holding only what the Next.js skills build on, never folded into the Next.js course or renamed after it
+      - Next.js skills are tasks done with it (create an app, add pages and layouts, link between them, fetch data, handle forms, deploy), in the order a new user needs them, using the framework's current conventions (the App Router)
+      - The first phase reaches a page running in the learner's own app within the first few lessons
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

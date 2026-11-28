@@ -5,7 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import {
   type ConversationTurn,
@@ -116,9 +116,13 @@ export async function extractMemoryFacts({
 }: MemoryExtractionParams) {
   const isCall = params.source === "call";
 
-  const systemPrompt = selectPromptVariants({
-    template: promptTemplate,
-    variants: { call: isCall, written: !isCall },
+  const systemPrompt = fillPromptLanguages({
+    learnerLanguage: params.language,
+    targetLanguage: isCall ? params.targetLanguage : undefined,
+    template: selectPromptVariants({
+      template: promptTemplate,
+      variants: { call: isCall, written: !isCall },
+    }),
   });
 
   const userPrompt = buildUserPrompt(params);

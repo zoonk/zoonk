@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Si alguien dice \"I'm embarrassed\" en una fiesta, ¿qué siente?",
+      "options": [
+        {
+          "text": "Vergüenza",
+          "correct": true
+        },
+        {
+          "text": "Embarazo",
+          "correct": false
+        },
+        {
+          "text": "Sorpresa",
+          "correct": false
+        }
+      ],
+      "reveal": "Siente vergüenza o incomodidad. \"Embarrassed\" no significa embarazada; para eso se dice \"pregnant\"."
+    },
+    {
+      "question": "En una nota, si lees \"actually\", ¿qué quiere decir quien la escribió?",
+      "options": [
+        {
+          "text": "Actualmente",
+          "correct": false
+        },
+        {
+          "text": "De hecho",
+          "correct": true
+        },
+        {
+          "text": "Al final",
+          "correct": false
+        }
+      ],
+      "reveal": "De hecho. \"Actually\" suele introducir una corrección o un dato real; no significa \"actualmente\"."
+    },
+    {
+      "question": "En EE. UU., si buscas libros en una \"library\", ¿a qué lugar entras?",
+      "options": [
+        {
+          "text": "A una biblioteca",
+          "correct": true
+        },
+        {
+          "text": "A una librería",
+          "correct": false
+        },
+        {
+          "text": "A una papelería",
+          "correct": false
+        }
+      ],
+      "reveal": "A una biblioteca. En inglés de EE. UU., \"library\" es el lugar donde puedes consultar o pedir libros prestados."
+    },
+    {
+      "question": "Si una actriz \"pretends to be a doctor\", ¿qué está haciendo?",
+      "options": [
+        {
+          "text": "Finge ser doctora",
+          "correct": true
+        },
+        {
+          "text": "Quiere ser doctora",
+          "correct": false
+        },
+        {
+          "text": "Se prepara para ser doctora",
+          "correct": false
+        }
+      ],
+      "reveal": "Finge ser doctora. \"Pretend\" significa fingir; \"pretender\" en español tiene otros sentidos."
+    },
+    {
+      "question": "En una junta en inglés, ¿qué significa \"important\" en \"an important idea\"?",
+      "options": [
+        {
+          "text": "Importante",
+          "correct": true
+        },
+        {
+          "text": "Impresionante",
+          "correct": false
+        },
+        {
+          "text": "Imprudente",
+          "correct": false
+        }
+      ],
+      "reveal": "Importante. \"Important\" se parece mucho a \"importante\" y tiene el mismo significado."
+    },
+    {
+      "question": "En un concierto, ¿qué nombra la palabra \"music\"?",
+      "options": [
+        {
+          "text": "La música",
+          "correct": true
+        },
+        {
+          "text": "Al músico",
+          "correct": false
+        },
+        {
+          "text": "Al museo",
+          "correct": false
+        }
+      ],
+      "reveal": "La música. \"Music\" es un cognado de \"música\"; se refiere al arte o a los sonidos que escuchas en el concierto."
+    },
+    {
+      "question": "Al saludar a alguien al inicio de la mañana, ¿qué frase en inglés suele encajar?",
+      "options": [
+        {
+          "text": "\"Good morning\"",
+          "correct": true
+        },
+        {
+          "text": "\"Good evening\"",
+          "correct": false
+        },
+        {
+          "text": "\"Good night\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Good morning\". Es un saludo común por la mañana; \"good night\" suele usarse al despedirse por la noche."
+    },
+    {
+      "question": "Después de que alguien te ayuda, ¿qué frase breve en inglés expresa agradecimiento?",
+      "options": [
+        {
+          "text": "\"Thank you\"",
+          "correct": true
+        },
+        {
+          "text": "\"Excuse me\"",
+          "correct": false
+        },
+        {
+          "text": "\"See you\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Thank you\" significa \"gracias\". Es una forma común de agradecer en inglés."
+    },
+    {
+      "question": "Para preguntar si \"you work here\", ¿qué palabra suele ir al inicio de la pregunta?",
+      "options": [
+        {
+          "text": "\"Do\"",
+          "correct": true
+        },
+        {
+          "text": "\"Are\"",
+          "correct": false
+        },
+        {
+          "text": "\"Does\"",
+          "correct": false
+        }
+      ],
+      "reveal": "\"Do\". En presente simple, con \"you\", se usa para formar esta pregunta y el verbo principal queda en su forma base."
+    },
+    {
+      "question": "En una charla casual de EE. UU., ¿qué suele indicar el saludo \"How are you?\"?",
+      "options": [
+        {
+          "text": "Una invitación a responder brevemente",
+          "correct": true
+        },
+        {
+          "text": "Una solicitud de informe detallado",
+          "correct": false
+        },
+        {
+          "text": "Una pregunta sobre tu trabajo",
+          "correct": false
+        }
+      ],
+      "reveal": "Una invitación a responder brevemente. En una charla casual de EE. UU., \"How are you?\" suele funcionar como saludo y no exige contar todo."
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "attempt": "first",
+  "costUsd": 0.0029670399999999998,
+  "failures": [],
+  "packetId": "93c95acfffc3d0cb331ef3376e0975fd956b135754145166395e2d2c194e3522",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use six sentence-completion questions with correct, script-supported answers; nearby details provide plausible listening distractors.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide a single-speaker monologue of suitable length and six questions in the requested format, ordered to follow the recording.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The British English script sounds natural enough for a spoken monologue, and the questions are clear in English.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical and both serve the learner equally well."
+        },
+        "pairId": "5a92f7b7-f6bd-4c47-af6b-e1b56057f6a4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have the same questions and keys, and each correct answer is supported by the Spanish script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide the same monologue and multiple-choice questions, with no notable difference in exam fit.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A keeps all reasons and misconceptions in Brazilian Portuguese. B switches several explanations in the second question into Spanish.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Several reasons and misconceptions in question 2 are written in Spanish rather than Brazilian Portuguese, including phrases such as “Oyes que aceptan” and “Interpreta el requisito”.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "The intended Brazilian reader may not understand these explanations or misconceptions.",
+            "location": {
+              "detail": "Question 2, reasons and misconceptions across the options",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "The questions and keys are equivalent, but A follows the requirement that every reason and misconception be in Brazilian Portuguese; B does not."
+        },
+        "pairId": "8430595a-a927-4ab8-bdba-16fe6f45e677"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets have six questions with answers supported by the recording, and the nearby alternatives do not make another answer defensible.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both provide a suitable single-speaker monologue and six sentence-completion questions in the requested order and format.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like clear spoken British English and use appropriate language for the learner.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both are coherent, accurate listening sets that fit the requested format, with no clear advantage for the learner."
+        },
+        "pairId": "a07f20aa-99a3-484e-b58e-6b8d67a7ea05"
+      }
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "instructions": [
+    "Va a conversar con el examinador sobre los resultados de una encuesta acerca de la vida en el barrio.",
+    "Diga qué habría respondido usted, compare su respuesta con los resultados y dé su opinión.",
+    "Dispondrá de unos 4 minutos. No tiene tiempo de preparación."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted a la encuesta? ¿Por qué?",
+    "¿En qué coincide o discrepa su respuesta con los resultados?",
+    "¿Qué importancia tienen estos espacios para la vida del barrio?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Qué espacio de su barrio utiliza con más frecuencia en su tiempo libre? Encuesta vecinal ficticia, Valladolid, 2024",
+    "columns": [
+      "Respuesta",
+      "Porcentaje"
+    ],
+    "rows": [
+      [
+        "Parques y jardines",
+        "40 %"
+      ],
+      [
+        "Plazas",
+        "25 %"
+      ],
+      [
+        "Centros culturales",
+        "20 %"
+      ],
+      [
+        "Instalaciones deportivas",
+        "15 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Você vai conversar com o examinador sobre os resultados de uma pesquisa, comparando-os com sua própria resposta e dando sua opinião. Não há tempo de preparação.",
+  "character": {
+    "name": "Javier",
+    "role": "examinador",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct an informal, unprepared conversation lasting about four minutes. Give the opening instruction, then listen and ask the following questions in order, allowing the candidate time to develop each answer: «¿Qué habría respondido usted a esta encuesta y por qué?», «¿En qué coincide o discrepa su respuesta con los resultados?», «¿Le sorprende algún resultado? ¿Por qué?», «¿Qué importancia cree que tienen estos espacios para la vida del barrio?». If an answer is short, use one or two follow-ups as appropriate: «¿Puede explicarlo un poco más?» and «¿Puede darme algún ejemplo?». Respond naturally to the candidate's ideas without adding facts to the survey. Do not correct, praise or grade.",
+  "openingLine": "Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted y por qué?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi caso, diría que depende de varios factores.",
+    "Estoy de acuerdo en parte, aunque tengo una opinión algo diferente.",
+    "Desde mi punto de vista, esto es importante porque influye en la vida cotidiana."
+  ]
+}

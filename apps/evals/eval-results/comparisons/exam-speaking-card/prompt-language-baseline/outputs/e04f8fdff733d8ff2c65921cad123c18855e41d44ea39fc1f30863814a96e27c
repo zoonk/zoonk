@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "Las fiestas de su barrio atraen cada vez a menos vecinos y la asociación vecinal quiere aumentar la participación.",
+    "Valore las ventajas y los inconvenientes de al menos cuatro de las siguientes propuestas. Dispondrá de 3 a 4 minutos.",
+    "Después, converse con el examinador sobre las propuestas y el tema durante 2 o 3 minutos."
+  ],
+  "prompts": [
+    "Organizar talleres de música y baile abiertos a todos.",
+    "Pedir a los vecinos que propongan actividades para el programa.",
+    "Celebrar algunas actividades en distintas plazas del barrio.",
+    "Crear una página en internet con información sobre las fiestas.",
+    "Invitar a asociaciones locales a preparar actividades.",
+    "Ampliar el horario de las actividades durante el fin de semana."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai avaliar propostas para uma festa de bairro e depois conversar sobre o tema com a examinadora.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the DELE B2 examiner. Give the opening instruction, then listen without interrupting while the candidate evaluates at least four proposals for 3 to 4 minutes. Do not correct, praise or grade. After the candidate finishes, conduct a conversation for about 2 to 3 minutes. Ask in order: «De las propuestas que ha valorado, ¿cuál le parece la mejor para aumentar la participación? ¿Por qué?», «¿Cómo se celebran las fiestas de barrio o de la comunidad en su país?», «En su opinión, ¿qué pueden aportar estas celebraciones a los vecinos?», and «¿Cree que las formas de celebrar las fiestas están cambiando? ¿Por qué?». If an answer is short, use one or two of these follow-ups as appropriate: «¿Puede explicar un poco más su opinión?» and «¿Puede poner algún ejemplo?». Allow the candidate time to respond. End with «Gracias.».",
+  "openingLine": "Valore las ventajas y los inconvenientes de al menos cuatro propuestas para aumentar la participación en las fiestas del barrio. Tiene de 3 a 4 minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "Para empezar, me gustaría considerar varias posibilidades.",
+    "Una ventaja de esta propuesta es que puede resultar útil, aunque también tiene algún inconveniente.",
+    "Desde mi punto de vista, habría que tener en cuenta varios factores.",
+    "Si tuviera que elegir, optaría por esta propuesta porque me parece la más adecuada.",
+    "Depende de las circunstancias, pero en general estoy de acuerdo."
+  ]
+}

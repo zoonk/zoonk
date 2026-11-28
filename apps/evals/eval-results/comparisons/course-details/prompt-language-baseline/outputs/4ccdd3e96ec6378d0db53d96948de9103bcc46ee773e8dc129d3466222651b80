@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "Almanca, günlük yaşamda, eğitimde ve işte kullanılan bir dildir. Tanışma, alışveriş, randevu ve yolculuk konuşmalarından başlayıp sosyal sohbetlere, eğitim ve iş iletişimine; dinleme, okuma, yazma ve konuşmada daha doğal anlatıma uzanır. Seyahatte ve Almanca kullanılan ortamlarda kendini ifade etmene yardımcı olur.",
+  "landingPage": {
+    "audience": [
+      "Almancaya sıfırdan başlayanlar",
+      "Almanya’ya seyahat etmeyi planlayanlar",
+      "Almanca konuşanlarla iletişim kurmak isteyenler"
+    ],
+    "outcomes": [
+      "Almanca kendini tanıtmak",
+      "Kafede Almanca sipariş vermek",
+      "Yolculukta bilet ve peron hakkında soru sormak",
+      "Fikirlerini Almanca daha ayrıntılı anlatmak"
+    ],
+    "valueProposition": "Almanca günlük durumlarda kendini ifade edip sohbet etmek"
+  }
+}

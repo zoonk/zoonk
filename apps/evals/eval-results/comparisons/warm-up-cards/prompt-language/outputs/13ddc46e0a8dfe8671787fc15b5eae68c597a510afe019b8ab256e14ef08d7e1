@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "With the same metal, which property of light sets the energy carried by each photon?",
+      "options": [
+        {
+          "text": "Its frequency",
+          "correct": true
+        },
+        {
+          "text": "Its brightness",
+          "correct": false
+        },
+        {
+          "text": "Its beam width",
+          "correct": false
+        }
+      ],
+      "reveal": "Its frequency. A brighter beam usually contains more photons, but each photon’s energy depends on the light’s frequency."
+    },
+    {
+      "question": "With both slits open and no path detector, electrons sent one at a time eventually make…",
+      "options": [
+        {
+          "text": "An interference pattern",
+          "correct": true
+        },
+        {
+          "text": "Two bright stripes",
+          "correct": false
+        },
+        {
+          "text": "A uniform band",
+          "correct": false
+        }
+      ],
+      "reveal": "An interference pattern. Each electron arrives as a single detection, but many detections build up a pattern associated with wave-like behavior."
+    },
+    {
+      "question": "When a quantum particle meets a barrier it lacks enough energy to cross, what can happen?",
+      "options": [
+        {
+          "text": "It may appear beyond it",
+          "correct": true
+        },
+        {
+          "text": "It must bounce backward",
+          "correct": false
+        },
+        {
+          "text": "It gains the missing energy",
+          "correct": false
+        }
+      ],
+      "reveal": "It may appear beyond it. Quantum tunneling gives a particle some chance of passing through a barrier that would block it in classical physics."
+    },
+    {
+      "question": "If you know a quantum particle’s position more precisely, what happens to the limit on knowing its momentum?",
+      "options": [
+        {
+          "text": "Its minimum uncertainty grows",
+          "correct": true
+        },
+        {
+          "text": "Its mass becomes uncertain",
+          "correct": false
+        },
+        {
+          "text": "Its charge becomes uncertain",
+          "correct": false
+        }
+      ],
+      "reveal": "Its minimum uncertainty grows. The uncertainty principle links position and momentum: reducing uncertainty in one increases the minimum uncertainty in the other."
+    },
+    {
+      "question": "In an atom, why can an electron absorb only certain photon energies?",
+      "options": [
+        {
+          "text": "Allowed energies come in steps",
+          "correct": true
+        },
+        {
+          "text": "The nucleus filters colors",
+          "correct": false
+        },
+        {
+          "text": "The electron has fixed speed",
+          "correct": false
+        }
+      ],
+      "reveal": "Allowed electron energies come in discrete levels. A photon is absorbed only when its energy matches an allowed transition between levels."
+    },
+    {
+      "question": "What does “spin” mean for an electron in quantum physics?",
+      "options": [
+        {
+          "text": "An intrinsic quantum property",
+          "correct": true
+        },
+        {
+          "text": "A tiny rotating surface",
+          "correct": false
+        },
+        {
+          "text": "A path circling the nucleus",
+          "correct": false
+        }
+      ],
+      "reveal": "An intrinsic quantum property. Despite the name, electron spin is not a tiny ball physically rotating like a planet."
+    },
+    {
+      "question": "What prevents two electrons in one atom from sharing an identical full quantum state?",
+      "options": [
+        {
+          "text": "A quantum-state rule",
+          "correct": true
+        },
+        {
+          "text": "Electric repulsion alone",
+          "correct": false
+        },
+        {
+          "text": "Different orbital speeds",
+          "correct": false
+        }
+      ],
+      "reveal": "The Pauli exclusion principle. It forbids identical electrons from occupying the same complete quantum state, helping shape how electrons fill atoms."
+    },
+    {
+      "question": "When two particles are entangled, what can their measurements reveal?",
+      "options": [
+        {
+          "text": "Correlations between outcomes",
+          "correct": true
+        },
+        {
+          "text": "A faster-than-light message",
+          "correct": false
+        },
+        {
+          "text": "A shared physical path",
+          "correct": false
+        }
+      ],
+      "reveal": "Correlations between outcomes. These can link results across distance, but entanglement cannot be used to send a chosen message faster than light."
+    },
+    {
+      "question": "Before a measurement, how can a quantum system’s state be represented?",
+      "options": [
+        {
+          "text": "As a combination of states",
+          "correct": true
+        },
+        {
+          "text": "As one definite classical state",
+          "correct": false
+        },
+        {
+          "text": "As a classical mixture",
+          "correct": false
+        }
+      ],
+      "reveal": "As a combination of states. A superposition combines possible states mathematically; it is different from simply not knowing which classical state the system has."
+    },
+    {
+      "question": "What does an electron cloud picture around an atom mainly show?",
+      "options": [
+        {
+          "text": "Likely electron locations",
+          "correct": true
+        },
+        {
+          "text": "A fixed circular route",
+          "correct": false
+        },
+        {
+          "text": "The nucleus’s outer edge",
+          "correct": false
+        }
+      ],
+      "reveal": "Likely electron locations. The cloud represents the probability of detecting an electron in different places, not a fixed route around the nucleus."
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "I'm hoping to borrow some equipment to make digital copies of old photographs for our project.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "Why does Maya visit Trevor?",
+        "options": [
+          {
+            "text": "To get equipment for copying photographs",
+            "isCorrect": true,
+            "reason": "Você ouve Maya dizer que quer pegar equipamento emprestado para fazer cópias digitais das fotografias.",
+            "misconception": null
+          },
+          {
+            "text": "To reserve a studio for interviews",
+            "isCorrect": false,
+            "reason": "Trevor oferece um estúdio, mas Maya diz que o grupo já terminou as entrevistas.",
+            "misconception": "Confunde uma oferta recusada com o motivo da visita."
+          },
+          {
+            "text": "To find photographs in the university archives",
+            "isCorrect": false,
+            "reason": "Você ouve Maya explicar que as fotografias vieram de um grupo de moradores, não dos arquivos da universidade.",
+            "misconception": "Confunde uma pergunta de Trevor com o objetivo de Maya."
+          },
+          {
+            "text": "To ask for money to print an exhibit",
+            "isCorrect": false,
+            "reason": "Maya menciona o orçamento gasto com impressão, mas não pede dinheiro a Trevor.",
+            "misconception": "Confunde uma despesa mencionada com o pedido principal."
+          }
+        ]
+      },
+      {
+        "evidence": "Actually, a scanner isn't the best choice for loose photographs that are curling. Use the overhead camera instead.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What does Trevor recommend for copying the photographs?",
+        "options": [
+          {
+            "text": "A scanner in the media lab",
+            "isCorrect": false,
+            "reason": "Você ouve Trevor mencionar um scanner primeiro, mas ele corrige a sugestão por causa do estado das fotografias.",
+            "misconception": "Escolhe a primeira sugestão, antes da correção."
+          },
+          {
+            "text": "A camera that takes pictures from above",
+            "isCorrect": true,
+            "reason": "Você ouve Trevor recomendar a câmera que fotografa de cima, em vez do scanner.",
+            "misconception": null
+          },
+          {
+            "text": "A classmate's phone camera",
+            "isCorrect": false,
+            "reason": "Maya menciona o telefone de uma colega, mas não tem certeza de que as imagens seriam nítidas o suficiente.",
+            "misconception": "Confunde uma opção mencionada por Maya com a recomendação de Trevor."
+          },
+          {
+            "text": "An audio recorder from the studio",
+            "isCorrect": false,
+            "reason": "Trevor menciona um estúdio para entrevistas, mas recomenda uma câmera para copiar as fotografias.",
+            "misconception": "Confunde o equipamento de entrevista com o de reprodução de imagens."
+          }
+        ]
+      },
+      {
+        "evidence": "That makes me feel better. I was worried we'd have to leave some photographs out of the exhibit.",
+        "skill": 3,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "How does Maya feel after learning that she can use the equipment for free?",
+        "options": [
+          {
+            "text": "Relieved that more photographs can be included",
+            "isCorrect": true,
+            "reason": "Você ouve Maya dizer que se sente melhor porque receava ter de deixar fotografias de fora da exposição.",
+            "misconception": null
+          },
+          {
+            "text": "Disappointed that the group has already paid for printing",
+            "isCorrect": false,
+            "reason": "Maya menciona o gasto com impressão como uma preocupação anterior, mas diz que se sente melhor ao saber que o equipamento é gratuito.",
+            "misconception": "Confunde a preocupação anterior com a reação à notícia."
+          },
+          {
+            "text": "Concerned that the images will not be sharp enough",
+            "isCorrect": false,
+            "reason": "Você ouve a dúvida sobre a nitidez quando Maya fala do telefone, antes de Trevor explicar o uso da câmera.",
+            "misconception": "Atribui uma preocupação anterior à reação sobre o custo."
+          },
+          {
+            "text": "Annoyed that she must reserve the camera online",
+            "isCorrect": false,
+            "reason": "Trevor explica como fazer a reserva, mas Maya não demonstra irritação com esse procedimento.",
+            "misconception": "Interpreta uma exigência prática como motivo de irritação."
+          }
+        ]
+      },
+      {
+        "evidence": "She used to collect them by email, but this semester she asked students to upload their images to the class's shared folder.",
+        "skill": 2,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What should Maya do with the image files for her class?",
+        "options": [
+          {
+            "text": "Send them to the professor by email",
+            "isCorrect": false,
+            "reason": "Você ouve Trevor dizer que a professora recebia os arquivos por email antes, mas mudou o procedimento neste semestre.",
+            "misconception": "Escolhe o procedimento antigo, antes da mudança."
+          },
+          {
+            "text": "Place them in the class's shared folder",
+            "isCorrect": true,
+            "reason": "Você ouve Trevor explicar que, neste semestre, a professora pediu que os alunos carregassem as imagens na pasta compartilhada.",
+            "misconception": null
+          },
+          {
+            "text": "Leave them on the media lab camera",
+            "isCorrect": false,
+            "reason": "A câmera salva as imagens como arquivos, mas Trevor diz que elas devem ser carregadas na pasta da turma.",
+            "misconception": "Confunde o local onde os arquivos são criados com o destino solicitado."
+          },
+          {
+            "text": "Give them to the residents' group for approval",
+            "isCorrect": false,
+            "reason": "Você ouve Maya dizer que o grupo de moradores já deu permissão por escrito. Trevor orienta que as imagens sejam colocadas na pasta da turma.",
+            "misconception": "Confunde a permissão dos donos com o envio dos arquivos para a aula."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "American English"
+      },
+      {
+        "name": "Trevor",
+        "gender": "male",
+        "accent": "American English"
+      }
+    ],
+    "title": "Preparing a community history project",
+    "turns": [
+      {
+        "speaker": "Trevor",
+        "text": "Hi, can I help you with something?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "I hope so. I'm in Professor Allen's community history class, and my group is putting together an exhibit about a neighborhood near campus. I'm hoping to borrow some equipment to make digital copies of old photographs for our project."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Sure. You've come to the right place. Are the photographs from the university archives?"
+      },
+      {
+        "speaker": "Maya",
+        "text": "No, a local residents' group lent them to us. We also recorded a couple of interviews with people who grew up there. At first, we thought we'd just use the interviews, but the photos show how much the streets have changed."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "That sounds interesting. And do you need a room for recording more interviews? We have a small studio you can reserve."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Thanks, but we've finished those. What we need now is a way to copy the pictures without damaging them. Some are pretty old, and a few aren't completely flat."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "Well, you could borrow a scanner. Actually, a scanner isn't the best choice for loose photographs that are curling. Use the overhead camera instead. It takes a picture from above, so you don't have to press anything down."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Oh, good. One of my classmates was going to use her phone, but we weren't sure the images would come out clearly enough for the exhibit."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "The camera should give you a sharper image, and it has lights that help keep shadows off the photographs. It stays here in the media lab, though, so you'll need to bring the pictures in."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That's fine. I was worried that we'd have to pay to use the equipment. Our group has already spent most of its budget on printing."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "There's no charge for class projects. You just need to reserve a time on the library website and show your student ID when you arrive."
+      },
+      {
+        "speaker": "Maya",
+        "text": "That makes me feel better. I was worried we'd have to leave some photographs out of the exhibit."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "You should be able to copy plenty in one session. The camera saves each image as a separate file. Before you start, though, check that the residents' group has given you permission to display the pictures, not just copy them."
+      },
+      {
+        "speaker": "Maya",
+        "text": "We have their permission in writing. Our professor asked us to include the owner's name beside each photograph, too. After we finish, should I email the image files to her?"
+      },
+      {
+        "speaker": "Trevor",
+        "text": "She used to collect them by email, but this semester she asked students to upload their images to the class's shared folder. That way everyone in your group can work with the same files."
+      },
+      {
+        "speaker": "Maya",
+        "text": "Right, I remember her mentioning the folder. I'll reserve the camera for Friday and let my group know. Thanks for explaining everything."
+      },
+      {
+        "speaker": "Trevor",
+        "text": "You're welcome. If you have trouble with the camera, just ask someone at the desk."
+      }
+    ]
+  }
+}

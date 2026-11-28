@@ -1,0 +1,229 @@
+{
+  "words": [
+    {
+      "word": "work",
+      "translation": "trabajar",
+      "pronunciation": "UERK",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "rest",
+        "sleep",
+        "study"
+      ]
+    },
+    {
+      "word": "help with",
+      "translation": "ayudar con",
+      "pronunciation": "JELP WITH",
+      "romanization": null,
+      "tip": "Para decir `th` en `with`, coloca la lengua ligeramente entre los dientes y deja pasar el aire.",
+      "note": null,
+      "distractors": [
+        "talk about",
+        "wait for",
+        "look at"
+      ]
+    },
+    {
+      "word": "from home",
+      "translation": "desde casa",
+      "pronunciation": "FRAM JOUM",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "at school",
+        "at the office",
+        "at the store"
+      ]
+    },
+    {
+      "word": "from nine to five",
+      "translation": "de nueve a cinco",
+      "pronunciation": "FRAM NAIN TA FAIV",
+      "romanization": null,
+      "tip": "Para decir la `v` de `five`, coloca los dientes superiores sobre el labio inferior y deja salir el aire con voz.",
+      "note": null,
+      "distractors": [
+        "from eight to four",
+        "from ten to six",
+        "from seven to three"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I help with different tasks here",
+      "translation": "Aquí ayudo con diferentes tareas",
+      "explanation": "En inglés, `help with` expresa que ayudas con algo. `Here` indica dónde y puede ir al final.",
+      "romanization": null,
+      "distractors": [
+        "helps",
+        "helping",
+        "does"
+      ],
+      "translationDistractors": [
+        "esperan",
+        "oficina",
+        "horario"
+      ],
+      "speakingPrompt": "Explica qué haces aquí en el trabajo."
+    },
+    {
+      "sentence": "Do you work from home?",
+      "translation": "¿Trabajas desde casa?",
+      "explanation": "Para preguntar, coloca `do` antes de `you`. En español no necesitas una palabra equivalente a `do`.",
+      "romanization": null,
+      "distractors": [
+        "does",
+        "works",
+        "working"
+      ],
+      "translationDistractors": [
+        "trabajo",
+        "oficina",
+        "cuándo"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I work from home",
+      "translation": "Trabajo desde casa",
+      "explanation": "`From home` indica desde dónde trabajas, igual que «desde casa» en español.",
+      "romanization": null,
+      "distractors": [
+        "works",
+        "working",
+        "does"
+      ],
+      "translationDistractors": [
+        "trabajas",
+        "hacia",
+        "oficina"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I work from nine to five",
+      "translation": "Trabajo de nueve a cinco",
+      "explanation": "`From` marca el inicio del horario y `to` marca el final, como «de» y «a» en español.",
+      "romanization": null,
+      "distractors": [
+        "works",
+        "at",
+        "does"
+      ],
+      "translationDistractors": [
+        "hasta",
+        "ocho",
+        "trabajas"
+      ],
+      "speakingPrompt": "Di que trabajas de nueve a cinco."
+    }
+  ],
+  "tip": {
+    "title": "Di tu horario con from y to",
+    "text": "Para decir cuándo empieza y termina tu horario, usa `from` antes de la primera hora y `to` antes de la última. Por ejemplo, `I work from nine to five` significa «Trabajo de nueve a cinco». No omitas `from`, aunque en español a veces decimos «Trabajo nueve a cinco».",
+    "examples": [
+      {
+        "sentence": "I work from nine to five",
+        "translation": "Trabajo de nueve a cinco"
+      },
+      {
+        "sentence": "I work from eight to four",
+        "translation": "Trabajo de ocho a cuatro"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": null,
+      "template": "I work from eight [BLANK] four",
+      "answer": "to",
+      "distractors": [
+        "at",
+        "in",
+        "on"
+      ],
+      "feedback": "Usa `to` antes de la hora en que termina tu jornada."
+    },
+    {
+      "question": null,
+      "template": "I work [BLANK] nine to five",
+      "answer": "from",
+      "distractors": [
+        "at",
+        "in",
+        "on"
+      ],
+      "feedback": "Usa `from` antes de la hora en que empieza tu jornada."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Tu compañero te pregunta qué haces aquí. ¿Qué respondes?",
+    "scene": "En el trabajo, con un compañero",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Do you work here?",
+        "translation": "¿Trabajas aquí?"
+      },
+      {
+        "speaker": "you",
+        "text": "Yes, I work here",
+        "translation": "Sí, trabajo aquí"
+      },
+      {
+        "speaker": "them",
+        "text": "What do you do here?",
+        "translation": "¿Qué haces aquí?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I help with different tasks here",
+        "translation": "Aquí ayudo con diferentes tareas",
+        "isBest": true,
+        "why": "Esta respuesta explica de forma natural qué haces en el trabajo."
+      },
+      {
+        "text": "I help at different tasks here",
+        "translation": "Aquí ayudo en diferentes tareas",
+        "isBest": false,
+        "why": "En inglés se usa `help with` para decir que ayudas con tareas."
+      },
+      {
+        "text": "I help with different task here",
+        "translation": "Aquí ayudo con diferente tarea",
+        "isBest": false,
+        "why": "Después de `different` en esta frase necesitas el plural `tasks`."
+      },
+      {
+        "text": "I helping with different tasks here",
+        "translation": "Yo ayudando con diferentes tareas aquí",
+        "isBest": false,
+        "why": "Para hablar de lo que haces habitualmente, usa `I help`, no `I helping`."
+      }
+    ],
+    "explanation": "Para decir dónde haces esas tareas, puedes agregar `here` al final."
+  },
+  "writing": {
+    "prompt": "Escribe un mensaje en inglés: «Trabajo aquí de nueve a cinco».",
+    "answers": [
+      "I work here from nine to five.",
+      "I work here from 9 to 5."
+    ],
+    "keyPoints": [
+      "Usa `work here` para decir que trabajas aquí.",
+      "Usa `from` y `to` para indicar el inicio y el final del horario."
+    ]
+  },
+  "summary": [
+    "«I help with different tasks here» explica qué haces aquí en el trabajo.",
+    "«I work from home» dice que trabajas desde casa.",
+    "«I work from nine to five» indica tu horario."
+  ]
+}

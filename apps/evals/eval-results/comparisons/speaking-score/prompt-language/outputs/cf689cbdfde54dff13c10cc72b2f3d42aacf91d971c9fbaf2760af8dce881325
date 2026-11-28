@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você responde às perguntas e apresenta alguns motivos, como em “I like the beach and the food”, mas as respostas são curtas e há repetições e pausas que interrompem o desenvolvimento: “because... because”.",
+      "tip": "Depois de dar uma opinião, acrescente um motivo e um exemplo para desenvolvê-la: em vez de parar em “The people is very friendly”, experimente “The people are very friendly, so it’s easy to feel welcome when you move there.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário básico e pertinente ao tema, como em “He give me money for the books”, mas recorre a expressões simples e repetidas, sem muita variedade para desenvolver as ideias.",
+      "tip": "Troque uma expressão genérica por uma combinação mais precisa: em vez de “He is very good person”, diga “He was incredibly supportive when I started university.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você tenta falar sobre diferentes situações, mas há erros frequentes em estruturas básicas, como “He help me” e “The people is very friendly”; isso dificulta a precisão das frases.",
+      "tip": "Para uma hipótese sobre algo que não aconteceu no passado, use “wouldn’t have” antes do particípio: “without him I don't go to university” pode ser “Without him, I wouldn’t have gone to university.”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, alinhada às outras áreas; não há sinais claros no texto de palavras incompreendidas ou pedidos para repetir.",
+      "tip": "Para ajudar o ouvinte a reconhecer a palavra, pratique a sílaba tônica de “university”: dê destaque a VER, dizendo “u-ni-VER-si-ty”.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

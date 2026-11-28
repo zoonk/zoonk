@@ -1,0 +1,13 @@
+{
+  "caseId": "en-data-analyst-work",
+  "challenger": {
+    "costUsd": 0.022252,
+    "durationMs": 49342.50008299993,
+    "hash": "6c1449576ee55b73e76fff4c056ffd0266e7916eab33768b96c2141659bd3fdc",
+    "systemPromptHash": "3720e1cce5fce0b64673df0e1b8121ecbf4ddfe8d85ca9246e8cb1c930d8cbf2",
+    "userPromptHash": "43d1aa5dffaaaf5e29ff34aef595332490f86504da588de127a7264593b29b36"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

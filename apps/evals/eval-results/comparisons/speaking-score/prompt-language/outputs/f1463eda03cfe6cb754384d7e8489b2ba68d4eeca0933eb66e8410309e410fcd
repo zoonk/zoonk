@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu exatamente “The library opens at eight.”, mas depois omitiu ou alterou partes importantes: por exemplo, disse “You can borrow ten books.” sem “up to” nem “at a time”, e reduziu a frase sobre reservar uma sala a “Students who want a group room... reserve online... one day.”",
+      "tip": "Agrupe a frase em blocos e repita cada bloco na ordem, sem descartar palavras pequenas: “Students who want to book a group study room / should reserve it online / at least a day in advance.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você responde às perguntas e dá uma razão simples em “Because students don't have much money.”, mas as respostas ficam curtas e trazem poucos detalhes, como “Maybe more bicycle. Or electric car. I don't know.”",
+      "tip": "Depois da sua opinião, acrescente uma consequência concreta: “Yes, because free passes would reduce students’ costs and make it easier to get to campus.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa algumas estruturas básicas, como “I go by bus”, mas há erros frequentes nas frases: “Is about thirty minutes.” não tem sujeito, e “One day the bus is broken” usa presente para contar um acontecimento passado.",
+      "tip": "Ao contar um fato já concluído, use o passado nos verbos: “One day the bus is broken” → “One day the bus broke down.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa palavras pertinentes ao tema, como “bus”, “bicycle” e “electric car”, mas o vocabulário é limitado e algumas expressões ficam pouco precisas, como “I arrive late in the class.”",
+      "tip": "Use expressões mais específicas para explicar o problema da viagem: “The bus broke down, so I had to wait for an hour.”",
+      "bandHigh": 2.5,
+      "bandLow": 2
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não permite avaliar diretamente como você soou, então esta é uma estimativa mais ampla; interrupções como “If you need help... a book” e “Maybe more bicycle. Or electric car.” sugerem pausas ou trechos incompletos, mas não mostram sua pronúncia.",
+      "tip": "Para ajudar cada palavra a ser entendida, marque as terminações em “opens”, “rooms” e “books” ao falar, sem deixar que o som final desapareça.",
+      "bandHigh": 3,
+      "bandLow": 2
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

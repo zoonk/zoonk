@@ -1,0 +1,66 @@
+{
+  "instructions": [
+    "Sie und Ihre Partnerin möchten am Samstag zusammen eine Handyhülle kaufen. Sie brauchen dafür eine Stunde.",
+    "Finden Sie zusammen einen Termin. Sprechen Sie circa 5 Minuten."
+  ],
+  "prompts": [
+    "Wann haben Sie Zeit?",
+    "Machen Sie Vorschläge.",
+    "Reagieren Sie auf die Vorschläge Ihrer Partnerin.",
+    "Einigen Sie sich auf eine Uhrzeit."
+  ],
+  "text": null,
+  "table": {
+    "title": "Ihr Kalender für Samstag",
+    "columns": [
+      "Uhrzeit",
+      "Termin"
+    ],
+    "rows": [
+      [
+        "10–11 Uhr",
+        "Sport"
+      ],
+      [
+        "11–12 Uhr",
+        "frei"
+      ],
+      [
+        "12–13 Uhr",
+        "Mittagessen mit Familie"
+      ],
+      [
+        "13–15 Uhr",
+        "frei"
+      ],
+      [
+        "15–16 Uhr",
+        "Deutsch lernen"
+      ],
+      [
+        "16–17 Uhr",
+        "frei"
+      ],
+      [
+        "17–18 Uhr",
+        "Freundin treffen"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Plan a time to shop together with the other candidate. Compare your schedules, make suggestions, and agree on a time.",
+  "character": {
+    "name": "Lea",
+    "role": "other candidate",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Your private Saturday diary is: 10–12 Sportkurs, 12–13 frei, 13–14 Mittagessen, 14–15 frei, 15–16 Besuch bei einer Freundin, 16–17 frei, 17–18 Musikunterricht. Speak about half the time in turns of one or two sentences. Ask the learner's opinion and react naturally. Do not correct the learner. Use your diary consistently. Possible lines: 'Um zwölf habe ich Zeit. Passt dir das?' 'Um 13 Uhr esse ich zu Mittag. Geht es später?' 'Von 14 bis 15 Uhr bin ich frei. Wie ist es bei dir?' 'Um 16 Uhr hätte ich auch Zeit. Was meinst du?' If the learner suggests a time when you are busy, say so and offer another time. When you both find an hour that works, confirm it: 'Gut, dann treffen wir uns um 14 Uhr.' or 'Also, wir treffen uns um 16 Uhr.'",
+  "openingLine": "Wann hast du am Samstag Zeit? Ich könnte um zwölf Uhr.",
+  "hints": [
+    "Moment, ich muss kurz nachsehen.",
+    "Um diese Uhrzeit habe ich leider keine Zeit.",
+    "Wie wäre es eine Stunde später?",
+    "Ja, das passt mir gut.",
+    "Können wir uns dann um diese Uhrzeit treffen?"
+  ]
+}

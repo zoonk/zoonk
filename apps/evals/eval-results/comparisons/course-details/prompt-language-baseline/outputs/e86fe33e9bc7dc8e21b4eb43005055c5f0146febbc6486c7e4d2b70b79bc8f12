@@ -1,0 +1,13 @@
+
+      - MUST be in US English
+      - Level-appropriate, not dumbed down: the title names an advanced level and the chapters start at intermediate, so the visitor already plays and reads music. Terms that visitor uses (chords, keys, scales, seventh chords, modulation) are fine and shouldn't be replaced by vaguer words; the promise still opens with a concrete result (reharmonize a song, change key without a jolt, write richer chord progressions)
+      - Hobby and creative uses (playing, songwriting, arranging, playing in a band), never careers or jobs
+
+      
+  - The output is a course page: description (1 to 3 sentences), landingPage (valueProposition, 3 audience items and 4 outcomes, each a short phrase a visitor takes in at a glance) and 1 or 2 categories; code checks score the sentence and item counts and category validity, so don't judge them
+  - valueProposition is the course's promise, the first line a visitor from a search reads under the course's name; outcomes are the page's "What you'll be able to do" list
+  - CHAPTERS are only the first band written so far: the copy describes the whole course, not only those chapters
+  - The page is shared by every learner of the course, so nothing is tailored to one person
+  - Don't evaluate JSON formatting
+
+    

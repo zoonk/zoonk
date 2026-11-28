@@ -1,0 +1,200 @@
+{
+  "words": [
+    {
+      "word": "faceva freddo",
+      "translation": "fazia frio",
+      "pronunciation": "fa-TCHE-va FRED-do",
+      "romanization": null,
+      "tip": "Em italiano, 'ce' tem som de 'tche'; pronuncie o 'dd' duplo segurando um instante a mais antes de soltar o 'o'.",
+      "note": null,
+      "distractors": [
+        "ha fatto caldo",
+        "prendeva freddo",
+        "faceva fame"
+      ]
+    },
+    {
+      "word": "faceva caldo",
+      "translation": "fazia calor",
+      "pronunciation": "fa-TCHE-va CAL-do",
+      "romanization": null,
+      "tip": "O 'l' de 'caldo' é pronunciado com a ponta da língua no céu da boca, nunca com som de 'u' como no português brasileiro.",
+      "note": "Atenção: 'caldo' significa 'calor' ou 'quente', não 'caldo de sopa' (que se diz 'brodo').",
+      "distractors": [
+        "faceva tempo",
+        "aveva caldo",
+        "stava caldo"
+      ]
+    },
+    {
+      "word": "pioveva",
+      "translation": "chovia",
+      "pronunciation": "pio-VE-va",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "piangeva",
+        "piove",
+        "pioggia"
+      ]
+    },
+    {
+      "word": "la settimana scorsa",
+      "translation": "a semana passada",
+      "pronunciation": "la set-ti-MA-na SCOR-sa",
+      "romanization": null,
+      "tip": "No 'tt', segure a língua brevemente contra os dentes antes de soltar a sílaba.",
+      "note": null,
+      "distractors": [
+        "il mese scorso",
+        "la scorsa sera",
+        "la settimana prossima"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Ieri faceva molto freddo a Milano",
+      "translation": "Ontem fazia muito frio em Milão",
+      "explanation": "Usa-se o verbo fare no imperfetto ('faceva') para descrever a temperatura e o clima que duravam no passado.",
+      "romanization": null,
+      "distractors": [
+        "era",
+        "fatto",
+        "aveva"
+      ],
+      "translationDistractors": [
+        "estava",
+        "calor",
+        "hoje"
+      ],
+      "speakingPrompt": "Diga que ontem fazia muito frio em Milão"
+    },
+    {
+      "sentence": "La settimana scorsa pioveva spesso a Firenze",
+      "translation": "Na semana passada chovia frequentemente em Florença",
+      "explanation": "O verbo piovere no imperfetto ('pioveva') expressa uma ação contínua ou repetida de chover no passado.",
+      "romanization": null,
+      "distractors": [
+        "piove",
+        "pioggia",
+        "piovuto"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "raramente",
+        "neve"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Com'era il tempo ieri a Roma?",
+      "translation": "Como estava o tempo ontem em Roma?",
+      "explanation": "A contração 'com'era' une 'come' e 'era' para perguntar como o tempo se apresentava em um momento passado.",
+      "romanization": null,
+      "distractors": [
+        "chi",
+        "dove",
+        "quando"
+      ],
+      "translationDistractors": [
+        "qual",
+        "onde",
+        "por que"
+      ],
+      "speakingPrompt": "Pergunte a um conhecido como estava o tempo ontem em Roma"
+    }
+  ],
+  "tip": {
+    "title": "Descrever o tempo no passado com o imperfetto",
+    "text": "Para contar como o clima estava no passado, o italiano usa o tempo imperfetto na terceira pessoa. Usamos `faceva` para temperatura (`faceva freddo`, `faceva caldo`) e verbos meteorológicos diretos como `pioveva` (chovia). Em português costumamos dizer 'estava frio', mas em italiano o natural é usar `faceva`.",
+    "examples": [
+      {
+        "sentence": "Ieri faceva freddo",
+        "translation": "Ontem fazia frio"
+      },
+      {
+        "sentence": "La settimana scorsa pioveva",
+        "translation": "Na semana passada chovia"
+      },
+      {
+        "sentence": "Ieri c'era il sole ma faceva vento",
+        "translation": "Ontem estava sol, mas ventava"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase para dizer que fazia muito calor em Nápoles.",
+      "template": "La settimana scorsa [BLANK] molto caldo a Napoli",
+      "answer": "faceva",
+      "distractors": [
+        "stava",
+        "era",
+        "aveva"
+      ],
+      "feedback": "Para falar de calor ou frio como estado do tempo, o italiano usa o verbo fare: 'faceva caldo'."
+    },
+    {
+      "question": "Indique que chovia em Turim ontem.",
+      "template": "Ieri [BLANK] tutto il giorno a Torino",
+      "answer": "pioveva",
+      "distractors": [
+        "piove",
+        "piovuto",
+        "pioggia"
+      ],
+      "feedback": "'Pioveva' é a forma do imperfetto para descrever chuva contínua no passado."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Você está conversando com Matteo sobre a viagem dele a Roma. Ele pergunta sobre a sua semana em Bolonha.",
+    "scene": "Uma conversa informal em um café",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "A Roma c'era il sole, ma com'era il tempo a Bologna?",
+        "translation": "Em Roma estava sol, mas como estava o tempo em Bolonha?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "La settimana scorsa pioveva e faceva freddo",
+        "translation": "Na semana passada chovia e fazia frio",
+        "isBest": true,
+        "why": "Responde de forma exata e natural sobre as condições meteorológicas passadas."
+      },
+      {
+        "text": "Oggi piove e fa molto freddo",
+        "translation": "Hoje chove e faz muito frio",
+        "isBest": false,
+        "why": "Matteo perguntou sobre o tempo passado ('com'era'), mas esta resposta fala de hoje no presente."
+      },
+      {
+        "text": "La settimana scorsa era freddo",
+        "translation": "Na semana passada estava frio",
+        "isBest": false,
+        "why": "Em italiano diz-se 'faceva freddo', e não 'era freddo'."
+      }
+    ],
+    "explanation": "Lembre-se de combinar 'faceva' com temperaturas e 'pioveva' para relatar a chuva contínua no passado."
+  },
+  "writing": {
+    "prompt": "Escreva em italiano: 'Ontem fazia muito frio a Milão'.",
+    "answers": [
+      "Ieri faceva molto freddo a Milano.",
+      "Ieri faceva tanto freddo a Milano."
+    ],
+    "keyPoints": [
+      "Usa 'faceva' para indicar a temperatura no passado",
+      "Usa a preposição 'a' antes da cidade 'Milano'"
+    ]
+  },
+  "summary": [
+    "Diga 'faceva freddo' ou 'faceva caldo' para relatar a temperatura passada.",
+    "Use 'pioveva' para contar que estava chovendo em determinado dia.",
+    "Pergunte 'com'era il tempo?' para saber o clima de ontem ou de 'la settimana scorsa'."
+  ]
+}

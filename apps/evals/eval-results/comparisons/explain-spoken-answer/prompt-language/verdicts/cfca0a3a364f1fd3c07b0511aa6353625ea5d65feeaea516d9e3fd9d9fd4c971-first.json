@@ -1,0 +1,219 @@
+{
+  "attempt": "first",
+  "costUsd": 0,
+  "failures": [],
+  "packetId": "cfca0a3a364f1fd3c07b0511aa6353625ea5d65feeaea516d9e3fd9d9fd4c971",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "seat",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both give the correct stress tip (ess-TAH, stress on the final syllable) and hedge with \"may\" rather than claiming to know what went wrong.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "B",
+            "reason": "B names a cause from the learner's own language (English stress habits pulling emphasis to the first syllable). A describes the error but gives no cause.",
+            "criterion": "helpfulness"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both are in English, under 320 characters, warm, with target words in quotes and no IPA or lists.",
+            "criterion": "style"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use short, everyday sentences that a learner with no background can follow.",
+            "criterion": "plainLanguage"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither output follows or repeats any instruction from the input.",
+            "criterion": "learnerInstructions"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The output describes the stress error but does not say why an English speaker makes it, so the learner gets no cause to work on.",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner knows which syllable to change but not why they keep doing it, so the correction is less likely to stick.",
+            "location": {
+              "detail": "you may have stressed the first syllable instead of the final one in “está”",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "\"Esta\" is a real Portuguese word (\"this\"), and the output never says that the learner may have said a different word, nor shows the right form in context.",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner may think they only have a pronunciation issue and not realise they said a different word, so they may not fix the meaning error.",
+            "location": {
+              "detail": "entire explanation",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "\"Esta\" is a real Portuguese word (\"this\"), and the output never says that the learner may have said a different word, nor shows the right form in context.",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner may think they only have a pronunciation issue and not realise they said a different word, so they may not fix the meaning error.",
+            "location": {
+              "detail": "entire explanation",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "Both are accurate and equally clear, but B gives the learner a cause tied to English stress habits, which is the more useful explanation."
+        },
+        "pairId": "11d53f8c-6115-467b-bbf2-4af3dfbaccd4"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The facts about initial Brazilian r sounding like h and the English r tongue position are the same in both.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "A",
+            "reason": "A gives the same concrete mouth tip, but in Portuguese, the language the learner reads, so it can be acted on directly.",
+            "criterion": "helpfulness"
+          },
+          {
+            "preference": "A",
+            "reason": "A is written in Portuguese, as this learner requires. B is in English, which breaks the required output language.",
+            "criterion": "style"
+          },
+          {
+            "preference": "A",
+            "reason": "The Brazilian learner can read A without effort, while B's English would be harder for them to follow.",
+            "criterion": "plainLanguage"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither output follows or repeats any instruction from the input.",
+            "criterion": "learnerInstructions"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The learner's language is Portuguese, but the explanation is written entirely in English, which the case expectations do not allow.",
+            "criterion": "style",
+            "learnerCost": "A Brazilian learner reading in English may not follow the mouth instructions, so the explanation fails its reader.",
+            "location": {
+              "detail": "In “rent”, we heard “hent”; the strong Brazilian Portuguese r can sound like an h in English.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The whole explanation is in English for a Portuguese-speaking reader, so the reader cannot follow it as written.",
+            "criterion": "plainLanguage",
+            "learnerCost": "The learner may stop reading or misunderstand the tongue and lip instructions, and so not learn the correction.",
+            "location": {
+              "detail": "entire explanation",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "The output says \"o r forte\" generally, and does not say that the h-like sound applies to an r at the start of a word, as in \"rato\".",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner may not see that the rule depends on word position, so it is less clear when the same substitution happens.",
+            "location": {
+              "detail": "o r forte do português brasileiro pode soar como h em inglês",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A gives the same accurate tongue and lip tip in the learner's own language, while B is in English and breaks the output-language expectation."
+        },
+        "pairId": "1b2a7e78-1d88-40e1-b9cd-c7ea57bb77fb"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so they make the same claims with the same hedging.",
+            "criterion": "accuracy"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, so neither helps the learner more than the other.",
+            "criterion": "helpfulness"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in language, length, and tone.",
+            "criterion": "style"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical in wording and ease of reading.",
+            "criterion": "plainLanguage"
+          },
+          {
+            "preference": "tie",
+            "reason": "Neither output follows or repeats any instruction from the input.",
+            "criterion": "learnerInstructions"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "\"Esta\" is a real Portuguese word (\"this\"), and the output never says that the learner may have said a different word, nor shows the right form in context.",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner may think they only have a pronunciation issue and not realise they said a different word, so they may not fix the meaning error.",
+            "location": {
+              "detail": "entire explanation",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "\"Esta\" is a real Portuguese word (\"this\"), and the output never says that the learner may have said a different word, nor shows the right form in context.",
+            "criterion": "helpfulness",
+            "learnerCost": "The learner may think they only have a pronunciation issue and not realise they said a different word, so they may not fix the meaning error.",
+            "location": {
+              "detail": "entire explanation",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "8823b8a5-f265-4b5b-9851-477df4784717"
+      }
+    ]
+  },
+  "seatContext": {
+    "accountIdentity": "present",
+    "managedSettings": [
+      "channelsEnabled"
+    ]
+  }
+}

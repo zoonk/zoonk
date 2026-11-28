@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   fillPromptLanguages,
@@ -52,5 +54,29 @@ describe(fillPromptLanguages, () => {
     expect(
       fillPromptLanguages({ learnerLanguage: "pt", template: "Answer in {{LEARNER_LANGUAGE}}." }),
     ).toBe("Answer in Português Brasileiro.");
+  });
+});
+
+const TASKS_DIR = path.join(import.meta.dirname, "..");
+
+const SECOND_LANGUAGE =
+  /\{\{(?:TARGET|LEARNER)_LANGUAGE\}\}|`(?:TARGET|PRACTICED|SCRIPT|LEARNER|FEEDBACK)_LANGUAGE`/u;
+
+const LANGUAGE_INPUT = /`[A-Z_]*LANGUAGE[A-Z_]*`/u;
+
+function promptsPointingAtALanguageInput(): string[] {
+  return readdirSync(TASKS_DIR, { encoding: "utf8", recursive: true })
+    .filter((file) => file.endsWith(".prompt.md"))
+    .filter((file) => {
+      const prompt = readFileSync(path.join(TASKS_DIR, file), "utf8");
+      return SECOND_LANGUAGE.test(prompt) && LANGUAGE_INPUT.test(prompt);
+    })
+    .map((file) => file.split(path.sep).join("/"))
+    .toSorted();
+}
+
+describe("prompts with two languages", () => {
+  it("name each language instead of pointing at a language input", () => {
+    expect(promptsPointingAtALanguageInput()).toStrictEqual([]);
   });
 });

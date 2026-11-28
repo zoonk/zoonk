@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "math",
+    "science"
+  ],
+  "description": "A preparação percorre Matemática, Linguagens (português, língua estrangeira, literatura e artes), Ciências Humanas (história, geografia, filosofia e sociologia), Ciências da Natureza (biologia, física e química) e redação. Você vai praticar com questões que usam situações do cotidiano, textos, imagens, gráficos e dados, no formato da prova.",
+  "landingPage": {
+    "audience": [
+      "Estudantes do ensino médio",
+      "Quem vai prestar o ENEM",
+      "Quem busca uma vaga na faculdade"
+    ],
+    "outcomes": [
+      "Resolver questões de matemática com dados do cotidiano",
+      "Interpretar textos e imagens em diferentes contextos",
+      "Responder questões sobre natureza e sociedade",
+      "Escrever redação com tese e proposta de intervenção"
+    ],
+    "valueProposition": "Resolver questões do ENEM e defender seu ponto de vista na redação com uma proposta de intervenção"
+  }
+}

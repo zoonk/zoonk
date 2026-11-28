@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "At a Japanese bakery, what does the sign 「パン」 tell you is for sale?",
+      "options": [
+        {
+          "text": "Bread",
+          "correct": true
+        },
+        {
+          "text": "A frying pan",
+          "correct": false
+        },
+        {
+          "text": "Pasta",
+          "correct": false
+        }
+      ],
+      "reveal": "Bread. Japanese 「パン」 means bread, not the cooking tool that has the same sound in English."
+    },
+    {
+      "question": "At a Japanese hotel breakfast, what does 「バイキング」 usually describe?",
+      "options": [
+        {
+          "text": "A buffet-style meal",
+          "correct": true
+        },
+        {
+          "text": "A history exhibit",
+          "correct": false
+        },
+        {
+          "text": "A set menu",
+          "correct": false
+        }
+      ],
+      "reveal": "A buffet-style meal. In Japan, 「バイキング」 is commonly used for buffet-style dining, not just for Vikings."
+    },
+    {
+      "question": "An apartment listing in Japan says 「マンション」; what kind of place is it usually?",
+      "options": [
+        {
+          "text": "A condo or apartment building",
+          "correct": true
+        },
+        {
+          "text": "A detached mansion",
+          "correct": false
+        },
+        {
+          "text": "A hotel room",
+          "correct": false
+        }
+      ],
+      "reveal": "A condo or apartment building. Japanese 「マンション」 usually refers to this kind of housing, not a huge private home."
+    },
+    {
+      "question": "At a Japanese café, what drink does 「コーヒー」 name?",
+      "options": [
+        {
+          "text": "Coffee",
+          "correct": true
+        },
+        {
+          "text": "Hot chocolate",
+          "correct": false
+        },
+        {
+          "text": "Green tea",
+          "correct": false
+        }
+      ],
+      "reveal": "Coffee. This familiar-looking word is a close match in meaning, even though Japanese writes it in a different script."
+    },
+    {
+      "question": "You walk into a shop in the morning; what does 「おはようございます」 mean?",
+      "options": [
+        {
+          "text": "Good morning",
+          "correct": true
+        },
+        {
+          "text": "Good evening",
+          "correct": false
+        },
+        {
+          "text": "Welcome back",
+          "correct": false
+        }
+      ],
+      "reveal": "Good morning. 「ございます」 makes this greeting more polite than the shorter 「おはよう」."
+    },
+    {
+      "question": "At the end of a meal in Japan, what does 「ごちそうさまでした」 express?",
+      "options": [
+        {
+          "text": "Thanks for the meal",
+          "correct": true
+        },
+        {
+          "text": "Sorry for being late",
+          "correct": false
+        },
+        {
+          "text": "Pleased to meet you",
+          "correct": false
+        }
+      ],
+      "reveal": "Thanks for the meal. This set phrase acknowledges the meal after eating, rather than simply saying that the food tasted good."
+    },
+    {
+      "question": "In a conversation, when a Japanese listener says 「はい」, what can it signal besides agreement?",
+      "options": [
+        {
+          "text": "They’re following along",
+          "correct": true
+        },
+        {
+          "text": "They’re refusing",
+          "correct": false
+        },
+        {
+          "text": "They’re changing the subject",
+          "correct": false
+        }
+      ],
+      "reveal": "They’re following along. 「はい」 can acknowledge that someone is listening or understands, without necessarily meaning they agree."
+    },
+    {
+      "question": "In a basic Japanese sentence meaning “I eat sushi,” where does the verb usually go?",
+      "options": [
+        {
+          "text": "At the end",
+          "correct": true
+        },
+        {
+          "text": "At the beginning",
+          "correct": false
+        },
+        {
+          "text": "In the middle",
+          "correct": false
+        }
+      ],
+      "reveal": "At the end. Japanese sentences usually place the main verb after the other parts of the sentence."
+    },
+    {
+      "question": "In the sentence 「私は学生です」, what role does 「は」 play?",
+      "options": [
+        {
+          "text": "It marks the topic",
+          "correct": true
+        },
+        {
+          "text": "It marks past tense",
+          "correct": false
+        },
+        {
+          "text": "It marks a question",
+          "correct": false
+        }
+      ],
+      "reveal": "It marks the topic. Although written は, this particle is pronounced wa when it marks what the sentence is about."
+    },
+    {
+      "question": "When context already makes it clear who is speaking, what can a Japanese sentence often leave unstated?",
+      "options": [
+        {
+          "text": "The subject",
+          "correct": true
+        },
+        {
+          "text": "The verb",
+          "correct": false
+        },
+        {
+          "text": "The time expression",
+          "correct": false
+        }
+      ],
+      "reveal": "The subject. Japanese often leaves out pronouns such as “I” when the context makes them clear."
+    }
+  ]
+}

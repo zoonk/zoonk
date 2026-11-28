@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-de-goethe-b1-presentation-top-band",
+  "challenger": {
+    "costUsd": 0.0010832099999999998,
+    "durationMs": 15637.182042,
+    "hash": "dbfe0748fc16dcb07ed4d5fecbc26a642b4bf04f1fcb788fcf40063907b1f079",
+    "systemPromptHash": "e12c7eb560a6ce4cc82e891b7ec032de4f9a1cc16c14c79f88fac53b6b3856a7",
+    "userPromptHash": "9866701361e0411b62ca92205570c025198b055dabaaafaaf2e29d15d08960e5"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00114154,
+    "durationMs": 15383.207833000008,
+    "hash": "385440dd311080b19e7c7ce8da6094fbd8d8d3d967ceeff9ee8865492035f684",
+    "systemPromptHash": "fbd0230f2dc766ffce7306bf1966289db5ad3d5172da54bccec75c559deddc6b",
+    "userPromptHash": "9866701361e0411b62ca92205570c025198b055dabaaafaaf2e29d15d08960e5"
+  },
+  "run": 2
+}

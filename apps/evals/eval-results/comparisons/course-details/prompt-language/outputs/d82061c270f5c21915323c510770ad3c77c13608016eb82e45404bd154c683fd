@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "science",
+    "math"
+  ],
+  "description": "A física quântica descreve como a luz e a matéria se comportam em escalas microscópicas. O percurso reúne matemática, ondas e eletricidade com probabilidades, níveis de energia, medições e emaranhamento, para explicar aplicações em chips, LEDs, lasers e computação quântica.",
+  "landingPage": {
+    "audience": [
+      "Estudantes começando física",
+      "Curiosos sobre luz e átomos",
+      "Quem quer retomar a matemática"
+    ],
+    "outcomes": [
+      "Descrever fenômenos da luz e dos átomos",
+      "Fazer cálculos com escalas e gráficos",
+      "Explicar o que a medição revela sobre partículas",
+      "Explicar como probabilidades descrevem partículas e seu emaranhamento"
+    ],
+    "valueProposition": "Explicar o comportamento da luz e dos átomos e reconhecer efeitos quânticos em chips, LEDs e lasers"
+  }
+}

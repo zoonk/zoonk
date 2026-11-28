@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-fr-delf-b2-document",
+  "challenger": {
+    "costUsd": 0.00453895,
+    "durationMs": 11298.435834000004,
+    "hash": "6ef794a6e64850c2aa3fd940a9edb0cd7f96618972959ee0cb7960b8ca2d46c9",
+    "systemPromptHash": "b30badbe3191b1566d2e0c720a874f9ef7e33472a2a292cbe1cff7caee36b56b",
+    "userPromptHash": "eaa230ac13739d74a5ff248dd69ea7deead7073ac9027d8a2ab11ca4d37c5993"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

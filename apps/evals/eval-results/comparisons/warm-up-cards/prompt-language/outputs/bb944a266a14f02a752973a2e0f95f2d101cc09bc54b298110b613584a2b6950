@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Quando uma pessoa conta ao advogado um fato delicado do caso, qual dever protege essa conversa?",
+      "options": [
+        {
+          "text": "Transparência obrigatória",
+          "correct": false
+        },
+        {
+          "text": "Sigilo profissional",
+          "correct": true
+        },
+        {
+          "text": "Dever de depor",
+          "correct": false
+        }
+      ],
+      "reveal": "Sigilo profissional. Ele protege as confidências ligadas à atuação do advogado e é essencial à relação de confiança com o cliente."
+    },
+    {
+      "question": "Uma emenda tenta abolir a forma federativa do Brasil; que limite constitucional impede até sua deliberação?",
+      "options": [
+        {
+          "text": "Reserva de iniciativa",
+          "correct": false
+        },
+        {
+          "text": "Quórum qualificado",
+          "correct": false
+        },
+        {
+          "text": "Cláusula pétrea",
+          "correct": true
+        }
+      ],
+      "reveal": "Cláusula pétrea. A Constituição impede que uma proposta de emenda tendente a abolir a forma federativa seja sequer deliberada."
+    },
+    {
+      "question": "Uma pessoa sofre ameaça ilegal à liberdade de ir e vir; qual garantia constitucional pode protegê-la?",
+      "options": [
+        {
+          "text": "Habeas data",
+          "correct": false
+        },
+        {
+          "text": "Mandado de segurança",
+          "correct": false
+        },
+        {
+          "text": "Habeas corpus",
+          "correct": true
+        }
+      ],
+      "reveal": "Habeas corpus. Essa garantia protege a liberdade de locomoção contra ilegalidade ou abuso de poder."
+    },
+    {
+      "question": "Sem garantia pessoal nem abuso excepcional, uma dívida da empresa recai, em regra, sobre qual patrimônio?",
+      "options": [
+        {
+          "text": "Patrimônio dos sócios",
+          "correct": false
+        },
+        {
+          "text": "Patrimônio da sociedade",
+          "correct": true
+        },
+        {
+          "text": "Bens do credor",
+          "correct": false
+        }
+      ],
+      "reveal": "Patrimônio da sociedade. Em regra, a pessoa jurídica tem patrimônio próprio, separado do de seus sócios; há exceções previstas em lei."
+    },
+    {
+      "question": "Quando termina o prazo prescricional, qual efeito ocorre, em regra, sobre a pretensão de exigir um direito?",
+      "options": [
+        {
+          "text": "O contrato perde validade",
+          "correct": false
+        },
+        {
+          "text": "A pretensão se extingue",
+          "correct": true
+        },
+        {
+          "text": "A propriedade passa ao Estado",
+          "correct": false
+        }
+      ],
+      "reveal": "A pretensão se extingue. Na prescrição, perde-se a possibilidade de exigir judicialmente a prestação, o que não é o mesmo que invalidar o contrato."
+    },
+    {
+      "question": "Uma lei penal mais severa surge depois de um fato; ela pode alcançar esse fato anterior?",
+      "options": [
+        {
+          "text": "Sim, com autorização judicial",
+          "correct": false
+        },
+        {
+          "text": "Não, por ser mais severa",
+          "correct": true
+        },
+        {
+          "text": "Sim, se houver interesse público",
+          "correct": false
+        }
+      ],
+      "reveal": "Não, por ser mais severa. A lei penal mais grave não retroage; a Constituição permite retroatividade quando a lei beneficia a pessoa acusada ou condenada."
+    },
+    {
+      "question": "Qual princípio é contrariado quando a publicidade oficial promove pessoalmente um agente público?",
+      "options": [
+        {
+          "text": "Continuidade",
+          "correct": false
+        },
+        {
+          "text": "Publicidade",
+          "correct": false
+        },
+        {
+          "text": "Impessoalidade",
+          "correct": true
+        }
+      ],
+      "reveal": "Impessoalidade. A publicidade oficial deve servir a fins públicos, sem ser usada para destacar ou promover autoridades."
+    },
+    {
+      "question": "Uma pessoa trabalha de forma pessoal, remunerada, habitual e subordinada; que tipo de vínculo esses elementos indicam?",
+      "options": [
+        {
+          "text": "Trabalho autônomo",
+          "correct": false
+        },
+        {
+          "text": "Vínculo de emprego",
+          "correct": true
+        },
+        {
+          "text": "Parceria eventual",
+          "correct": false
+        }
+      ],
+      "reveal": "Vínculo de emprego. Pessoalidade, remuneração, não eventualidade e subordinação são elementos característicos da relação de emprego."
+    },
+    {
+      "question": "Qual tributo pode ser ligado ao exercício do poder de polícia ou a serviço específico e divisível?",
+      "options": [
+        {
+          "text": "Imposto",
+          "correct": false
+        },
+        {
+          "text": "Contribuição de melhoria",
+          "correct": false
+        },
+        {
+          "text": "Taxa",
+          "correct": true
+        }
+      ],
+      "reveal": "Taxa. Ela pode ter como fato gerador o exercício do poder de polícia ou a prestação de serviço público específico e divisível."
+    },
+    {
+      "question": "No processo civil, quem deve provar, em regra, os fatos constitutivos do direito que alega?",
+      "options": [
+        {
+          "text": "O réu",
+          "correct": false
+        },
+        {
+          "text": "O autor",
+          "correct": true
+        },
+        {
+          "text": "O juiz",
+          "correct": false
+        }
+      ],
+      "reveal": "O autor. Em regra, cabe a quem faz o pedido provar os fatos que constituem o direito alegado; o réu prova fatos que o impeçam, modifiquem ou extingam."
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "script": "alfabeto árabe",
+  "title": "Suas primeiras letras árabes",
+  "description": "Leia sua primeira palavra em árabe: باب (bāb), “porta”.",
+  "canDo": "Leia e diga ا (ā), ب (b), ت (t), ل (l), م (m) e ن (n).",
+  "intro": [
+    {
+      "title": "Leia da direita para a esquerda",
+      "text": "Comece pelo lado direito e avance para a esquerda. As letras costumam se ligar; ا (ā) não se liga à letra seguinte."
+    },
+    {
+      "title": "Vogais curtas podem sumir",
+      "text": "Em textos sem sinais vocálicos, as vogais curtas costumam ficar de fora. Aqui, ا (ā) marca um a longo: باب (bāb) lê-se bāb."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ا",
+      "readingAid": "ā",
+      "ipa": "/aː/",
+      "audioText": "بَا",
+      "pronunciation": "É como o a de “pá”, mantido por mais tempo; você ouvirá بَا (bā).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ا"
+        },
+        {
+          "label": "inicial",
+          "symbol": "ا"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـا"
+        },
+        {
+          "label": "final",
+          "symbol": "ـا"
+        }
+      ]
+    },
+    {
+      "symbol": "ب",
+      "readingAid": "b",
+      "ipa": "/b/",
+      "audioText": "بَ",
+      "pronunciation": "Como o b de “bola”; você ouvirá بَ (ba).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ب"
+        },
+        {
+          "label": "inicial",
+          "symbol": "بـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـبـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـب"
+        }
+      ]
+    },
+    {
+      "symbol": "ت",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "تَ",
+      "pronunciation": "Como o t de “tatu”, com a ponta da língua perto dos dentes de cima; você ouvirá تَ (ta).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ت"
+        },
+        {
+          "label": "inicial",
+          "symbol": "تـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـتـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـت"
+        }
+      ]
+    },
+    {
+      "symbol": "ل",
+      "readingAid": "l",
+      "ipa": "/l/",
+      "audioText": "لَ",
+      "pronunciation": "Como o l no começo de “lua”; você ouvirá لَ (la).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ل"
+        },
+        {
+          "label": "inicial",
+          "symbol": "لـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـلـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـل"
+        }
+      ]
+    },
+    {
+      "symbol": "م",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "مَ",
+      "pronunciation": "Como o m de “mala”; você ouvirá مَ (ma).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "م"
+        },
+        {
+          "label": "inicial",
+          "symbol": "مـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـمـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـم"
+        }
+      ]
+    },
+    {
+      "symbol": "ن",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "نَ",
+      "pronunciation": "Como o n de “nada”; você ouvirá نَ (na).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ن"
+        },
+        {
+          "label": "inicial",
+          "symbol": "نـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـنـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـن"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    "Leia as letras árabes da direita para a esquerda; muitas se ligam, mas ا não se liga à letra seguinte.",
+    "As vogais curtas podem não aparecer por escrito; ا pode indicar um a longo, como em باب (bāb)."
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "caseId": "en-pl-a1-household-chores",
+  "costUsd": 0.040776,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"practice[0]\",\"keyedAnswer\":\"co tydzień\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Co tydzień” is the usual modern phrase, but the less common “co tygodnia” also means “every week.” The question asks for the meaning, not the most common form.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

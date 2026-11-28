@@ -1,0 +1,15 @@
+
+      - MUST be in US English
+      - Work goal: target the learner's real tasks: SQL (joins, aggregation, window functions), spreadsheets, cleaning data, descriptive statistics, defining business metrics (conversion, retention, average order value), charts and dashboards, A/B testing (hypotheses, sample size, significance, common pitfalls such as peeking), and explaining results to non-technical people
+      - Must include using AI tools well for analysis: writing and checking queries with AI, spotting wrong AI analyses, not trusting unverified numbers
+      - Should not drift into deep machine learning theory or general career advice the learner didn't ask for
+      - Starts from basic knowledge, not from zero arithmetic
+
+      
+  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)
+  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them
+  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number
+  - Exam weights are 1 to 5 for exam goals and null otherwise
+  - Don't evaluate JSON formatting
+
+    

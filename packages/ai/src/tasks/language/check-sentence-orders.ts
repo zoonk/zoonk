@@ -5,7 +5,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./check-sentence-orders.prompt.md";
 
@@ -96,9 +96,12 @@ export async function checkSentenceOrders(params: CheckSentenceOrdersParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const sameLanguage = isSameLanguage(params);
 
-  const systemPrompt = selectPromptVariants({
-    template: basePrompt,
-    variants: { bilingual: !sameLanguage, sameLanguage },
+  const systemPrompt = fillPromptLanguages({
+    ...params,
+    template: selectPromptVariants({
+      template: basePrompt,
+      variants: { bilingual: !sameLanguage, sameLanguage },
+    }),
   });
 
   const userPrompt = buildUserPrompt({ params, sameLanguage });

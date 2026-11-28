@@ -1,0 +1,139 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-rent-hent",
+        "claimId": "eea4175ee1a98b72",
+        "criterion": "helpfulness",
+        "observationId": "a3901098c70c664187fa75d5974376813c95c7ee2893510f8bbaeac36a4bde9e.first.019e328d-9c2d-4e69-ab5d-179361670c12.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-rent-hent",
+        "claimId": "ddbb096ea46d488d",
+        "criterion": "helpfulness",
+        "observationId": "a336fcf3432da97dff781a6fe32cd48381e58b48dd68b44e74523e4a73514360.first.7cf3d111-e71f-4fea-a610-7b6e22b01c43.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.00081605,
+    "id": "ca4bd03c8729c047d391dba9c42efd92e3aa778f8b5e81dbb245f8c57ae69866",
+    "packet": [
+      {
+        "A": {
+          "blob": "282c4aae1af763691be0bc098965c8b2d08b778e52259a66f46a4e56105aa4b0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "927bb633d64e15a775cf86f74d48b8cc0dd5e2bf348291a19dabc1572cea0235",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The clean explanation is written in English instead of Portuguese.",
+            "claimId": "6a54a13d230b4f3f",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The explanation for a Brazilian Portuguese reader is written entirely in English instead of Portuguese.",
+            "claimId": "bd4a3460cf690938",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "833e8d3951a0c9fb90f7d6a8c3a6b4914744870aec6a25a2218229cbd6c27bc2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "358d42b869e5ee1ca77aaca31a78c9bc2574e72fe270b3b1ac9e7cad1dd72fb7",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "A orientação “recue a língua” não explica que ela deve ficar sem tocar no céu da boca, como pede a expectativa.",
+            "claimId": "eea4175ee1a98b72",
+            "criterion": "helpfulness",
+            "location": {
+              "detail": "“recue a língua”",
+              "kind": "quote"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "“Recue a língua” does not specify the required curled-back position or that the tongue should not touch the roof of the mouth.",
+            "claimId": "ddbb096ea46d488d",
+            "criterion": "helpfulness",
+            "location": {
+              "detail": "“Ouvimos “hent”; em português, o R no início costuma soar como “h”, então, em “rent”, recue a língua e faça o R inglês sem sopro, mantendo a vogal curta.”",
+              "kind": "quote"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "6a54a13d230b4f3f",
+          "finding": "doesn't hold",
+          "reason": "Output A is written in Portuguese, as the learner's language requires, so the claim that it is in English is false."
+        },
+        {
+          "claimId": "bd4a3460cf690938",
+          "finding": "holds",
+          "reason": "Output B is written entirely in English (\"In “rent”, we heard “hent”...\"), while the learner reads Portuguese, so the claim is true of B and not of A."
+        },
+        {
+          "claimId": "eea4175ee1a98b72",
+          "finding": "holds",
+          "reason": "Output B says only \"recue a língua\" and never says the tongue must not touch the roof of the mouth, which the expectation requires. Output A does say \"sem encostar no céu da boca\", so the omission is only in B."
+        },
+        {
+          "claimId": "ddbb096ea46d488d",
+          "finding": "holds",
+          "reason": "Output B's sentence says \"recue a língua e faça o R inglês sem sopro\" without describing the curled-back position or saying the tongue must not touch the roof of the mouth. Output A includes the no-contact instruction, so the gap is only in B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

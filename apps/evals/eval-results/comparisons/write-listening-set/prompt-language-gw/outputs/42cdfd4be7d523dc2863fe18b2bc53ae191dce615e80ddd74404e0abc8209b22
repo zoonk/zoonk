@@ -1,0 +1,243 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Leah Fenwick. That's Fenwick, F-E-N-W-I-C-K.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community garden enquiry\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nSurname: ______",
+        "question": "What is Leah's surname?",
+        "keyPoints": [
+          "The surname is Fenwick."
+        ],
+        "acceptedAnswers": [
+          "Fenwick"
+        ],
+        "sampleAnswer": "Fenwick"
+      },
+      {
+        "evidence": "Of course. I'll put you down for Thursday.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Community garden enquiry\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nDay of introductory session: ______",
+        "question": "Which day will Leah attend?",
+        "keyPoints": [
+          "The agreed day is Thursday."
+        ],
+        "acceptedAnswers": [
+          "Thursday"
+        ],
+        "sampleAnswer": "Thursday"
+      },
+      {
+        "evidence": "After that, it's thirty-six for the full year.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community garden enquiry\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nAnnual membership fee: £______",
+        "question": "How much is membership for one year?",
+        "keyPoints": [
+          "The annual fee is £36."
+        ],
+        "acceptedAnswers": [
+          "36",
+          "thirty-six"
+        ],
+        "sampleAnswer": "thirty-six"
+      },
+      {
+        "evidence": "Just bring some gloves, if you've got them, and wear shoes you don't mind getting muddy.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Community garden enquiry\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nItem to bring: ______",
+        "question": "What does Hannah suggest Leah bring to the session?",
+        "keyPoints": [
+          "Leah should bring gloves."
+        ],
+        "acceptedAnswers": [
+          "gloves",
+          "some gloves"
+        ],
+        "sampleAnswer": "gloves"
+      },
+      {
+        "evidence": "I'll leave your welcome pack at the library for you.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Community garden enquiry\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.\nCollect the welcome pack from the ______",
+        "question": "Where will Leah collect her welcome pack?",
+        "keyPoints": [
+          "The pack will be at the library."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Leah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Joining a community garden",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Hello, Greenbank Community Garden. Hannah speaking. How can I help?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "Hi. I saw a notice about joining the garden, and I wondered if there were still spaces. I've just moved into a flat nearby, and I really miss having somewhere to grow things."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Yes, there are a few spaces. I can take your details and put you down for an introductory session. Can I have your name?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "It's Leah Fenwick. That's Fenwick, F-E-N-W-I-C-K."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Thanks, Leah. Have you done much gardening before?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "A little. My dad used to grow tomatoes, and I helped him at weekends. But I've never grown much from seed myself."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "That's fine. Some members have been gardening for years, but others are complete beginners. We work together on most of the garden, rather than giving everyone their own separate area."
+      },
+      {
+        "speaker": "Leah",
+        "text": "That sounds good. I was a bit worried I'd be left to look after a whole plot by myself."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "No, there'll always be someone around to help. Now, the introductory session runs twice a week. Would Tuesday suit you?"
+      },
+      {
+        "speaker": "Leah",
+        "text": "I thought Tuesday would be fine, but I've just remembered I work late that evening. Could I come on Thursday instead?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course. I'll put you down for Thursday. We start at half past five and usually finish by seven, although you're welcome to leave earlier if you need to."
+      },
+      {
+        "speaker": "Leah",
+        "text": "That's perfect. I can come straight from work. Is the garden easy to find from the bus stop?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Yes. Walk past the swimming pool and take the first road on the left. The entrance is just beyond the little car park. It's a green gate, and there's a sign on it."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Right, I know the swimming pool, so I should be able to find it. What happens at the first session?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We'll show you around, introduce you to a few members and explain what we're growing this season. You can try a few simple jobs too, if you like. There's no pressure to decide about joining straight away."
+      },
+      {
+        "speaker": "Leah",
+        "text": "And if I do decide to join, how much does it cost?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The first visit is free. After that, it's thirty-six for the full year. Some people think that's a monthly charge, but it covers the whole twelve months."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Oh, that's less than I expected. Does the money pay for plants?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Yes, plants and seeds, and it also helps us maintain the paths and the shared tools. We sell some of the vegetables at a local market, but that money goes towards special projects, like our new rainwater tank."
+      },
+      {
+        "speaker": "Leah",
+        "text": "I like the idea of collecting rainwater. And do members get to take vegetables home?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "They do. We divide up whatever's ready to pick, so it changes through the year. At the moment there are plenty of beans, and the carrots should be ready soon."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Lovely. What should I bring on Thursday? I have a small spade, but it's quite old."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Don't worry about a spade. We have enough tools here. Just bring some gloves, if you've got them, and wear shoes you don't mind getting muddy."
+      },
+      {
+        "speaker": "Leah",
+        "text": "I've got some gloves at home. I'll put them in my bag tonight so I don't forget. What if it rains?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We usually carry on if it's only light rain. There's a covered area where we can do some jobs, and we can have a cup of tea there too. If the weather's really bad, I'll ring you before you set off."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Good to know. I saw something online about a welcome pack. Do I get one at the garden?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We're waiting for the new ones to be printed. You could collect yours from the café near the garden next week."
+      },
+      {
+        "speaker": "Leah",
+        "text": "I hardly ever go that way during the day. Would the library be possible? I'm there most Saturdays."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Yes, that's easier. I'll leave your welcome pack at the library for you. It'll be ready from Saturday morning."
+      },
+      {
+        "speaker": "Leah",
+        "text": "Brilliant. I'll pick it up then. Thanks for answering all my questions."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "You're welcome. We look forward to meeting you on Thursday. Bye for now."
+      }
+    ]
+  }
+}

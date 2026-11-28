@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "health",
+    "science"
+  ],
+  "description": "Farmacologia estuda como os medicamentos agem, circulam pelo corpo e produzem efeitos. O curso aborda doses e formas de uso, interações e reações indesejadas, diferentes grupos de medicamentos e resistência a antibióticos, ajudando você a ler informações sobre remédios e conversar melhor com profissionais de saúde.",
+  "landingPage": {
+    "audience": [
+      "Estudantes de cursos da saúde",
+      "Profissionais que lidam com medicamentos",
+      "Pessoas curiosas sobre como remédios agem"
+    ],
+    "outcomes": [
+      "Explicar como um remédio age no corpo",
+      "Comparar efeitos de doses e modos de uso",
+      "Perceber riscos ao combinar remédios e alimentos",
+      "Explicar como o uso errado favorece bactérias resistentes"
+    ],
+    "valueProposition": "Perceber riscos no uso de remédios e conversar com mais segurança com profissionais de saúde."
+  }
+}

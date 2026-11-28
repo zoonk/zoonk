@@ -1,0 +1,37 @@
+{
+  "instructions": [
+    "Describa la fotografía. Puede utilizar estas preguntas como ayuda.",
+    "Tiene aproximadamente 3 minutos."
+  ],
+  "prompts": [
+    "¿Quiénes son las personas de la fotografía?",
+    "¿Dónde están?",
+    "¿Qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿Cómo cree que se sienten?",
+    "¿Qué cree que han hecho antes o qué van a hacer después?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three adults at a pottery course in a bright community classroom. A woman in her thirties wearing a blue sweater and a man in his twenties wearing a grey shirt sit at a table shaping clay bowls. A woman in her fifties wearing a beige apron stands beside them, smiling and showing them how to shape the clay. The students look attentive and relaxed. Clay tools and unfinished pots are on the table. Soft afternoon daylight comes through a window. No text, signs, logos or screens.",
+      "alt": "Três adultos trabalham com argila em uma sala de aula iluminada."
+    }
+  ],
+  "summary": "Descreva a fotografia em voz alta, usando as perguntas como apoio. A examinadora vai ouvir sem interromper.",
+  "character": {
+    "name": "Andrea",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction exactly as written, then listen without interrupting while the candidate describes the photograph, for approximately three minutes. Do not ask follow-up questions, correct, praise or grade the candidate.",
+  "openingLine": "Ahora, describa la fotografía. Puede utilizar las preguntas como ayuda. Tiene aproximadamente tres minutos. Puede empezar cuando quiera.",
+  "hints": [
+    "En la fotografía veo a varias personas.",
+    "Creo que están en un lugar donde se puede aprender.",
+    "Parece que se sienten bien porque están sonriendo.",
+    "No estoy seguro, pero creo que se conocen.",
+    "Antes han hecho algo juntos y después van a continuar."
+  ]
+}

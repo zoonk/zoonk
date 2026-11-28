@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "law"
+  ],
+  "description": "Contract law covers how agreements are formed, what their terms mean, and what can happen when someone fails to follow them. The course ranges from offers and everyday clauses to defenses, disputes, and court-awarded remedies; it provides general legal education, not legal advice.",
+  "landingPage": {
+    "audience": [
+      "People reviewing everyday agreements",
+      "Small-business owners and freelancers",
+      "Students curious about U.S. law"
+    ],
+    "outcomes": [
+      "Tell when a promise may be enforceable",
+      "Spot terms that affect everyday agreements",
+      "Explain what can follow a broken contract",
+      "Compare rights and risks across common contracts"
+    ],
+    "valueProposition": "Spot contract terms that could affect your rights before you sign"
+  }
+}

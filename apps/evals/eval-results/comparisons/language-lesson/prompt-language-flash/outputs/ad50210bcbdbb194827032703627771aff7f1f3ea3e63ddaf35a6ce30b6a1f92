@@ -1,0 +1,197 @@
+{
+  "words": [
+    {
+      "word": "work as",
+      "translation": "trabajar como",
+      "pronunciation": "WERK-az",
+      "romanization": null,
+      "tip": "La 'r' en inglés se pronuncia doblando la punta de la lengua hacia atrás sin tocar el paladar, nunca como la 'r' fuerte de 'rosa'.",
+      "note": null,
+      "distractors": [
+        "work for",
+        "work out",
+        "work on"
+      ]
+    },
+    {
+      "word": "schedule",
+      "translation": "el horario",
+      "pronunciation": "SKED-yul",
+      "romanization": null,
+      "tip": "Empieza directo con el sonido de la 's' sin agregar una 'e' antes, no digas 'esked-yul'.",
+      "note": null,
+      "distractors": [
+        "school",
+        "scheme",
+        "scale"
+      ]
+    },
+    {
+      "word": "shift",
+      "translation": "el turno",
+      "pronunciation": "SHIFT",
+      "romanization": null,
+      "tip": "El sonido 'sh' es suave y continuo como cuando pides silencio, no lo confundas con la 'ch' de México.",
+      "note": null,
+      "distractors": [
+        "shirt",
+        "sheet",
+        "shaft"
+      ]
+    },
+    {
+      "word": "full-time",
+      "translation": "de tiempo completo",
+      "pronunciation": "FUL-TAIM",
+      "romanization": null,
+      "tip": null,
+      "note": "En Estados Unidos, un empleo 'full-time' suele ser de 40 horas por semana.",
+      "distractors": [
+        "first-time",
+        "free-time",
+        "fast-time"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work as a cashier",
+      "translation": "Trabajo como cajero",
+      "explanation": "En inglés siempre debes poner 'a' o 'an' antes de una profesión u oficio.",
+      "romanization": null,
+      "distractors": [
+        "for",
+        "cash",
+        "working"
+      ],
+      "translationDistractors": [
+        "mesero",
+        "estudio",
+        "gerente"
+      ],
+      "speakingPrompt": "Di a qué te dedicas en la tienda"
+    },
+    {
+      "sentence": "I have a full-time schedule",
+      "translation": "Tengo un horario de tiempo completo",
+      "explanation": "El adjetivo 'full-time' va antes del sustantivo 'schedule', al revés del orden en español.",
+      "romanization": null,
+      "distractors": [
+        "has",
+        "at",
+        "shiftly"
+      ],
+      "translationDistractors": [
+        "medio",
+        "tarde",
+        "pago"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "My shift is from 9 a.m. to 5 p.m.",
+      "translation": "Mi turno es de 9 a.m. a 5 p.m.",
+      "explanation": "Usa 'from... to...' para indicar el inicio y el fin de un horario.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "since",
+        "until"
+      ],
+      "translationDistractors": [
+        "hacia",
+        "hasta",
+        "durante"
+      ],
+      "speakingPrompt": "Explica de qué hora a qué hora es tu turno"
+    }
+  ],
+  "tip": {
+    "title": "Decir tu horario con from y to",
+    "text": "Para decir de qué hora a qué hora trabajas, usa la estructura `from [hora] to [hora]`. No uses `of` ni `at` para los rangos de tiempo. Recuerda que en Estados Unidos casi siempre se usa el reloj de 12 horas acompañado de `a.m.` o `p.m.`.",
+    "examples": [
+      {
+        "sentence": "I work from 8 a.m. to 4 p.m.",
+        "translation": "Trabajo de 8 a.m. a 4 p.m."
+      },
+      {
+        "sentence": "My shift is from Monday to Friday",
+        "translation": "Mi turno es de lunes a viernes"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Completa la frase para indicar el horario de trabajo.",
+      "template": "I work [BLANK] 7 a.m. to 3 p.m.",
+      "answer": "from",
+      "distractors": [
+        "at",
+        "of",
+        "since"
+      ],
+      "feedback": "Se usa 'from' para marcar la hora de inicio cuando va acompañado de 'to'."
+    },
+    {
+      "question": "Elige la palabra adecuada para decir qué puesto ocupas.",
+      "template": "I work [BLANK] a server at a diner",
+      "answer": "as",
+      "distractors": [
+        "like",
+        "of",
+        "to"
+      ],
+      "feedback": "La combinación fija es 'work as' para decir en calidad de qué trabajas."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Tu supervisor te pregunta sobre tu puesto y horario para confirmar tu registro. ¿Qué le respondes?",
+    "scene": "La sala de empleados de una tienda en Chicago",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hi, what is your role and your schedule here?",
+        "translation": "Hola, ¿cuál es tu puesto y tu horario aquí?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I work as a cashier, and my shift is from 9 a.m. to 5 p.m.",
+        "translation": "Trabajo como cajero y mi turno es de 9 a.m. a 5 p.m.",
+        "isBest": true,
+        "why": "Responde directamente ambas preguntas de forma natural usando las frases correctas para puesto y horario."
+      },
+      {
+        "text": "I am work like cashier, and my schedule is of 9 a.m. to 5 p.m.",
+        "translation": "Yo soy trabajo como cajero, y mi horario es de 9 a.m. a 5 p.m.",
+        "isBest": false,
+        "why": "'I am work' es incorrecto; se dice 'I work', y los rangos llevan 'from... to...', no 'of'."
+      },
+      {
+        "text": "I work at cashier, and my shift starts from Monday",
+        "translation": "Trabajo en cajero, y mi turno empieza desde lunes",
+        "isBest": false,
+        "why": "Para decir tu profesión debes usar 'as a cashier', no 'at cashier'."
+      }
+    ],
+    "explanation": "Cuando hables de tu puesto usa siempre 'work as a' seguido del oficio en singular."
+  },
+  "writing": {
+    "prompt": "Escribe en inglés: 'Trabajo como asistente de tiempo completo.'",
+    "answers": [
+      "I work as a full-time assistant.",
+      "I work as an assistant full-time."
+    ],
+    "keyPoints": [
+      "Usa la expresión 'work as'",
+      "Incluye el artículo 'a' o 'an' antes de la profesión",
+      "Usa 'full-time' para referirte al tiempo completo"
+    ]
+  },
+  "summary": [
+    "Usa 'I work as a...' para decir tu puesto o profesión.",
+    "Describe tu jornada con 'full-time schedule' o 'part-time schedule'.",
+    "Expresa tu turno con 'My shift is from... to...' indicando las horas de inicio y fin."
+  ]
+}

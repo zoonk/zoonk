@@ -1,0 +1,209 @@
+{
+  "words": [
+    {
+      "word": "faceva freddo",
+      "translation": "fazia frio",
+      "pronunciation": "fa-TCHE-va FRED-do",
+      "romanization": null,
+      "tip": "A sílaba 'ce' em italiano soa sempre como 'tche' em português; feche bem o 'e' sem transformar em 'i'",
+      "note": "Em italiano usa-se o verbo fare (faceva freddo), nunca essere (era freddo)",
+      "distractors": [
+        "faceva caldo",
+        "era freddo",
+        "fa freddo"
+      ]
+    },
+    {
+      "word": "c'era il sole",
+      "translation": "fazia sol",
+      "pronunciation": "TCHÉ-ra il SO-le",
+      "romanization": null,
+      "tip": "A contração de 'ci' com 'era' soa junta como 'tché-ra'",
+      "note": null,
+      "distractors": [
+        "c'era la pioggia",
+        "era il sole",
+        "fa sole"
+      ]
+    },
+    {
+      "word": "ha piovuto",
+      "translation": "choveu",
+      "pronunciation": "a pio-VU-to",
+      "romanization": null,
+      "tip": "A letra 'h' inicial é sempre muda; pronuncie diretamente o som da vogal 'a'",
+      "note": null,
+      "distractors": [
+        "ha nevicato",
+        "sta piovendo",
+        "ha pianto"
+      ]
+    },
+    {
+      "word": "il vento",
+      "translation": "o vento",
+      "pronunciation": "il VEN-to",
+      "romanization": null,
+      "tip": "Mantenha a letra 'o' final fechada e clara, sem pronunciar como 'u'",
+      "note": null,
+      "distractors": [
+        "il vanto",
+        "la pioggia",
+        "il tempo"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Ieri faceva freddo a Milano",
+      "translation": "Ontem fazia frio em Milão",
+      "explanation": "Para falar sobre temperaturas no passado, usa-se o verbo fare no imperfeito (faceva), exatamente como o português 'fazia'.",
+      "romanization": null,
+      "distractors": [
+        "facevo",
+        "era",
+        "nel"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "calor",
+        "estará"
+      ],
+      "speakingPrompt": "Diga que ontem fazia frio em Milão"
+    },
+    {
+      "sentence": "Domenica scorsa ha piovuto molto",
+      "translation": "No domingo passado choveu muito",
+      "explanation": "Usa-se ha piovuto para relatar que choveu em um período ou momento determinado do passado.",
+      "romanization": null,
+      "distractors": [
+        "piove",
+        "fatto",
+        "hanno"
+      ],
+      "translationDistractors": [
+        "choverá",
+        "pouco",
+        "amanhã"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Ieri c'era il sole ma tirava vento",
+      "translation": "Ontem fazia sol mas ventava",
+      "explanation": "C'era il sole expressa a presença de sol no passado, enquanto a expressão tirare vento equivale a ventar.",
+      "romanization": null,
+      "distractors": [
+        "stava",
+        "era",
+        "soleva"
+      ],
+      "translationDistractors": [
+        "hoje",
+        "neve",
+        "chovia"
+      ],
+      "speakingPrompt": "Diga que ontem fazia sol mas ventava"
+    }
+  ],
+  "tip": {
+    "title": "Como falar do clima no passado com faceva e c'era",
+    "text": "Para falar sobre o tempo que fez em dias anteriores, usamos o tempo imperfeito para condições contínuas. Para sensação térmica, usamos `faceva` (`faceva freddo`, `faceva caldo`). Para elementos visíveis da natureza como sol ou vento, usamos `c'era` (`c'era il sole`, `c'era vento`). Evite traduzir 'estava frio' ao pé da letra por `era freddo`.",
+    "examples": [
+      {
+        "sentence": "Ieri faceva davvero freddo",
+        "translation": "Ontem fazia frio de verdade"
+      },
+      {
+        "sentence": "Sabato c'era il sole",
+        "translation": "Sábado fazia sol"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete com o verbo adequado para expressar temperatura no passado.",
+      "template": "Ieri a Torino [BLANK] molto freddo",
+      "answer": "faceva",
+      "distractors": [
+        "era",
+        "facevo",
+        "stava"
+      ],
+      "feedback": "Usa-se a 3ª pessoa do imperfeito do verbo fare ('faceva') para indicar frio no passado."
+    },
+    {
+      "question": "Complete a frase para indicar a presença de sol no fim de semana passado.",
+      "template": "Domenica scorsa [BLANK] il sole tutto il giorno",
+      "answer": "c'era",
+      "distractors": [
+        "faceva",
+        "era",
+        "aveva"
+      ],
+      "feedback": "Diz-se 'c'era il sole' para dizer que havia ou fazia sol no passado."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Seu amigo quer saber se o tempo melhorou no domingo durante a sua viagem. O que você responde?",
+    "scene": "Em uma cafeteria em Roma, conversando com um amigo sobre o fim de semana",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Com'era il tempo a Firenze lo scorso fine settimana?",
+        "translation": "Como estava o tempo em Florença no último fim de semana?"
+      },
+      {
+        "speaker": "you",
+        "text": "Sabato faceva freddo e ha piovuto",
+        "translation": "Sábado fazia frio e choveu"
+      },
+      {
+        "speaker": "them",
+        "text": "Che peccato, e domenica è migliorato?",
+        "translation": "Que pena, e domingo melhorou?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Sì, domenica c'era il sole e non c'era vento",
+        "translation": "Sim, domingo fez sol e não ventava",
+        "isBest": true,
+        "why": "Responde de maneira natural usando 'c'era il sole' e 'non c'era vento' para descrever o tempo no passado."
+      },
+      {
+        "text": "Sì, domenica era sole e caldo",
+        "translation": "Sim, domingo era sol e calor",
+        "isBest": false,
+        "why": "Em italiano não se usa 'era sole'; deve-se usar 'c'era il sole' e 'faceva caldo'."
+      },
+      {
+        "text": "No, ieri fa freddo a Roma",
+        "translation": "Não, ontem faz frio em Roma",
+        "isBest": false,
+        "why": "Usa o verbo no presente ('fa') para falar do passado e troca a cidade de Florença por Roma."
+      }
+    ],
+    "explanation": "Para relatar as condições meteorológicas de um dia anterior, use 'c'era il sole' para o sol e 'faceva' com temperaturas."
+  },
+  "writing": {
+    "prompt": "Escreva em italiano a seguinte frase sobre o dia de ontem: 'Ontem choveu e fazia frio.'",
+    "answers": [
+      "Ieri ha piovuto e faceva freddo.",
+      "Ieri faceva freddo e ha piovuto.",
+      "Ieri pioveva e faceva freddo.",
+      "Ieri faceva freddo e pioveva."
+    ],
+    "keyPoints": [
+      "Usa 'ha piovuto' ou 'pioveva' para traduzir a chuva no passado",
+      "Usa 'faceva freddo' para expressar 'fazia frio'",
+      "Inicia com a palavra 'Ieri' para indicar ontem"
+    ]
+  },
+  "summary": [
+    "'Faceva freddo' ou 'faceva caldo' indicam a temperatura de um dia que já passou",
+    "'C'era il sole' expressa que fez sol ou estava ensolarado",
+    "'Ha piovuto' relata que choveu em uma ocasião passada específica"
+  ]
+}

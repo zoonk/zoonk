@@ -1,0 +1,14 @@
+{
+  "pairs": [
+    {
+      "input": { "learnerLanguage": "pt", "targetLanguage": "en" },
+      "expectations": "Questions and options are in the learner's language, Brazilian Portuguese; the passage and its evidence are in US English.",
+      "clean": "Level A2, reading. Passage: Hi Sam! The museum is closed on Monday, so let's go on Tuesday at ten. I can drive. Question: Quando eles vão ao museu? Evidence: \"let's go on Tuesday at ten\". Options: (1) Na terça-feira às dez. (2) Na segunda-feira às dez. (3) Na terça-feira à noite. (4) No domingo de manhã. Key: 1.",
+      "flawed": "Level A2, reading. Passage: Hi Sam! The museum is closed on Monday, so let's go on Tuesday at ten. I can drive. Question: When are they going to the museum? Evidence: \"let's go on Tuesday at ten\". Options: (1) On Tuesday at ten. (2) On Monday at ten. (3) On Tuesday evening. (4) On Sunday morning. Key: 1.",
+      "criterion": "language",
+      "defect": "The question and all four options for a Brazilian Portuguese reader are written in English, the language being tested, so the learner reads the answer in the target language.",
+      "falseAllegation": "The clean answer's question and options are written in English instead of Portuguese.",
+      "provenance": "Handwritten synthetic passage, with Portuguese question and options written and checked by hand."
+    }
+  ]
+}

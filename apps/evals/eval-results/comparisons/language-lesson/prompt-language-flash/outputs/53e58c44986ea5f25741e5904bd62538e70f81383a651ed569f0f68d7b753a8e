@@ -1,0 +1,207 @@
+{
+  "words": [
+    {
+      "word": "the bathroom",
+      "translation": "o banheiro",
+      "pronunciation": "the BÉTH-rum",
+      "romanization": null,
+      "tip": "No som de 'th', coloque a ponta da língua entre os dentes e sopre de leve, sem fazer som de 'f'.",
+      "note": null,
+      "distractors": [
+        "the bedroom",
+        "the kitchen",
+        "the house"
+      ]
+    },
+    {
+      "word": "the bedroom",
+      "translation": "o quarto",
+      "pronunciation": "the BÉD-rum",
+      "romanization": null,
+      "tip": "Não adicione um som de 'i' após o 'd'; termine a primeira sílaba com a língua travada no dente: 'BÉD'.",
+      "note": "Cuidado para não confundir 'bedroom' (quarto) com 'bathroom' (banheiro).",
+      "distractors": [
+        "the bathroom",
+        "the door",
+        "the garden"
+      ]
+    },
+    {
+      "word": "upstairs",
+      "translation": "no andar de cima",
+      "pronunciation": "ap-STÉRZ",
+      "romanization": null,
+      "tip": "Comece a segunda sílaba direto no som de 's', sem colocar 'i' antes: diga 'ap-STÉRZ'.",
+      "note": null,
+      "distractors": [
+        "downstairs",
+        "outside",
+        "inside"
+      ]
+    },
+    {
+      "word": "downstairs",
+      "translation": "no andar de baixo",
+      "pronunciation": "daun-STÉRZ",
+      "romanization": null,
+      "tip": "Assim como em 'upstairs', passe direto do som de 'n' para o 's', sem criar um som de 'i'.",
+      "note": null,
+      "distractors": [
+        "upstairs",
+        "downtown",
+        "doorstep"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Where is the bathroom?",
+      "translation": "Onde fica o banheiro?",
+      "explanation": "Em inglês, 'Where is' equivale tanto a 'onde é' quanto a 'onde fica'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "what",
+        "in"
+      ],
+      "translationDistractors": [
+        "quarto",
+        "quando",
+        "cozinha"
+      ],
+      "speakingPrompt": "Pergunte onde fica o banheiro"
+    },
+    {
+      "sentence": "The bathroom is upstairs",
+      "translation": "O banheiro fica no andar de cima",
+      "explanation": "O verbo 'is' liga o cômodo diretamente a 'upstairs', sem precisar de preposição como 'em' ou 'no'.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "on",
+        "are"
+      ],
+      "translationDistractors": [
+        "baixo",
+        "quarto",
+        "fora"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "The bedroom is downstairs",
+      "translation": "O quarto fica no andar de baixo",
+      "explanation": "Basta colocar 'downstairs' depois de 'is' para indicar que o cômodo está no piso inferior.",
+      "romanization": null,
+      "distractors": [
+        "to",
+        "in",
+        "where"
+      ],
+      "translationDistractors": [
+        "cima",
+        "banheiro",
+        "sala"
+      ],
+      "speakingPrompt": "Diga que o quarto fica no andar de baixo"
+    }
+  ],
+  "tip": {
+    "title": "Dizer onde fica com upstairs e downstairs",
+    "text": "Em inglês, palavras como `upstairs` (no andar de cima) e `downstairs` (no andar de baixo) já incluem a ideia de lugar. Você não precisa usar preposições como `in` ou `at` antes delas. Basta dizer o sujeito seguido de `is` e a palavra de posição.",
+    "examples": [
+      {
+        "sentence": "The kitchen is downstairs",
+        "translation": "A cozinha fica no andar de baixo"
+      },
+      {
+        "sentence": "The bedroom is upstairs",
+        "translation": "O quarto fica no andar de cima"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase para dizer que o banheiro fica no andar de cima.",
+      "template": "The bathroom [BLANK] upstairs",
+      "answer": "is",
+      "distractors": [
+        "are",
+        "in",
+        "at"
+      ],
+      "feedback": "Usamos 'is' com sujeitos no singular como 'the bathroom'."
+    },
+    {
+      "question": "Escolha a palavra correta para dizer que a cozinha fica no andar de baixo.",
+      "template": "The kitchen is [BLANK]",
+      "answer": "downstairs",
+      "distractors": [
+        "down the stairs",
+        "under",
+        "down"
+      ],
+      "feedback": "'Downstairs' é a palavra exata para 'no andar de baixo'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Você acabou de chegar à casa de Liam e precisa lavar as mãos. O que você pergunta?",
+    "scene": "Na casa nova de um amigo americano",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome to my house! Make yourself at home",
+        "translation": "Bem-vindo à minha casa! Sinta-se em casa"
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks! Where is the bathroom?",
+        "translation": "Obrigado! Onde fica o banheiro?"
+      },
+      {
+        "speaker": "them",
+        "text": "The bathroom is upstairs",
+        "translation": "O banheiro fica no andar de cima"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Thank you!",
+        "translation": "Obrigado!",
+        "isBest": true,
+        "why": "Agradece a informação de forma natural e educada."
+      },
+      {
+        "text": "Where is the house?",
+        "translation": "Onde fica a casa?",
+        "isBest": false,
+        "why": "Você já está dentro da casa, então essa pergunta não faz sentido."
+      },
+      {
+        "text": "The bedroom is downstairs",
+        "translation": "O quarto fica no andar de baixo",
+        "isBest": false,
+        "why": "Essa frase não responde à indicação que Liam acabou de dar."
+      }
+    ],
+    "explanation": "Depois que alguém responde a uma pergunta de localização, um simples 'Thank you!' encerra a troca perfeitamente."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês: 'Onde fica o banheiro?'",
+    "answers": [
+      "Where is the bathroom?",
+      "Where's the bathroom?"
+    ],
+    "keyPoints": [
+      "Começa com 'Where is' ou a contração 'Where's'",
+      "Usa 'the bathroom' para o banheiro",
+      "Termina com ponto de interrogação"
+    ]
+  },
+  "summary": [
+    "Pergunte 'Where is the bathroom?' para saber onde fica o banheiro",
+    "Entenda ou diga 'The bathroom is upstairs' para indicar o andar de cima",
+    "Use 'downstairs' para dizer que um cômodo fica no andar de baixo"
+  ]
+}

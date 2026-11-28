@@ -1,0 +1,164 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "So we went from the museum courtyard to the school hall, then the library garden, and finally the riverside centre.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "medium",
+        "question": "In what order were the locations considered for the fair?",
+        "steps": [
+          "The museum courtyard",
+          "The school hall",
+          "The library garden",
+          "The riverside centre"
+        ],
+        "reason": "You hear Darius recap the four locations in the order the team considered them."
+      },
+      {
+        "evidence": "So we settled on four on Saturday afternoon.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "When did the colleagues finally agree to open the fair?",
+        "options": [
+          {
+            "text": "At ten on Saturday morning",
+            "isCorrect": false,
+            "reason": "You hear Rosa mention ten as her original preference, but Malik couldn't deliver the equipment that early.",
+            "misconception": "Picks the original preference"
+          },
+          {
+            "text": "At noon on Sunday",
+            "isCorrect": false,
+            "reason": "You hear Darius suggest Sunday, but Rosa says the centre already had another booking.",
+            "misconception": "Picks a rejected suggestion"
+          },
+          {
+            "text": "At four on Saturday afternoon",
+            "isCorrect": true,
+            "reason": "You hear Rosa say they settled on four on Saturday after ruling out Sunday.",
+            "misconception": null
+          }
+        ]
+      },
+      {
+        "evidence": "So the plan went from printed leaflets to radio, then the community email, and finally shop-window cards.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "medium",
+        "question": "In what order did the team plan these ways of publicizing the fair?",
+        "steps": [
+          "Print leaflets",
+          "Make a radio announcement",
+          "Put a notice in the community email",
+          "Display cards in shop windows"
+        ],
+        "reason": "You hear Rosa summarize the publicity plans in sequence, beginning with the leaflets they couldn't afford."
+      },
+      {
+        "evidence": "We recruited drivers, moved equipment storage indoors, appointed the welcome team, and then shortened the music sets.",
+        "skill": 1,
+        "format": "order",
+        "difficulty": "hard",
+        "question": "In what order did the team make its preparations for possible rain?",
+        "steps": [
+          "Find people to provide transport",
+          "Change where the equipment would be stored",
+          "Choose people to greet visitors",
+          "Ask performers to reduce their playing time"
+        ],
+        "reason": "You hear Darius recap the decisions, from recruiting drivers through shortening the musicians' sets."
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Darius",
+        "gender": "male",
+        "accent": "British English"
+      },
+      {
+        "name": "Rosa",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "Reconstructing the community fair plans",
+    "turns": [
+      {
+        "speaker": "Darius",
+        "text": "Hi, Rosa. Kevin wants a record of how we got to the final plan for the community fair. Can we piece it together?"
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Sure. We changed the location so often that I had to check my notes. We started with the museum courtyard, didn't we?"
+      },
+      {
+        "speaker": "Darius",
+        "text": "Yes, but the museum couldn't guarantee access while the repairs were going on. Then Leah suggested the school hall. We even measured it."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "And decided it was too small for the stalls. The library garden looked promising after that, until we discovered there was no power supply outside."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Right. So we went from the museum courtyard to the school hall, then the library garden, and finally the riverside centre. At least the centre had space indoors and out."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "It did, though agreeing on the opening time took another week. I originally wanted ten on Saturday morning, because families would already be in town."
+      },
+      {
+        "speaker": "Darius",
+        "text": "But Malik couldn't get the equipment there that early. Didn't we then talk about noon on Sunday?"
+      },
+      {
+        "speaker": "Rosa",
+        "text": "We did, but the centre had another booking. So we settled on four on Saturday afternoon. That gave the volunteers time to set up without starting at dawn."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Now, what about getting the word out? I remember you were keen on leaflets."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "At first, yes. We planned to print them, but the quote was more than we'd budgeted. Then we arranged a short announcement on local radio."
+      },
+      {
+        "speaker": "Darius",
+        "text": "And after that, Fatima offered to put a notice in the community email. It reaches quite a few people who don't listen to the radio."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Exactly. Then we asked the shops to put cards in their windows. So the plan went from printed leaflets to radio, then the community email, and finally shop-window cards. We kept the radio slot as well."
+      },
+      {
+        "speaker": "Darius",
+        "text": "The other thing Kevin asked about was our response to the forecast. Everyone was worried the rain would keep people away."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "We couldn't control that, but we could make it easier to get there. First we recruited drivers to bring people from the estates."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Then we moved the equipment storage plan indoors, because the boxes couldn't be left outside. I think the welcome team came next?"
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Yes, we appointed people to meet visitors at the covered entrance. After that, we asked the musicians to shorten their sets, so everything could fit inside if necessary."
+      },
+      {
+        "speaker": "Darius",
+        "text": "Got it. We recruited drivers, moved equipment storage indoors, appointed the welcome team, and then shortened the music sets. I'll send Kevin a summary before lunch."
+      },
+      {
+        "speaker": "Rosa",
+        "text": "Thanks. I'm glad somebody's writing it down. See you later."
+      }
+    ]
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu literalmente várias frases, como “The emergency shower is next to the back door.” Nas últimas, omitiu “up” em “before you try to clean it” e mudou o tempo verbal em “until they finished it”.",
+      "tip": "Em frases longas, retenha grupos de palavras e confira o final antes de repetir: “Students who haven't completed the online safety course / won't be allowed to work in the lab / until they finish it”. Lembre também de preservar palavras finais pequenas, como “up”. ",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você responde às perguntas e desenvolve suas ideias com razões e consequências, como em “The risk is that students stop thinking by themselves, so universities will have to change how they evaluate us”. Para avançar, poderia acrescentar exemplos mais concretos às previsões e explicações.",
+      "tip": "Depois de uma previsão, inclua um exemplo específico que mostre como ela funcionaria: “For example, an AI tutor could give a student extra practice on the exact step they missed.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas para explicar hábitos, condições e consequências, como “because printing everything would be expensive” e “universities will have to change how they evaluate us”. Alguns erros aparecem em “I use my laptop since the first semester”, “more easy” e “discuss about clear rules”.",
+      "tip": "Para uma situação que começou no passado e continua, use o present perfect com “since”: troque “I use my laptop since the first semester” por “I've used my laptop since the first semester.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você emprega vocabulário variado e pertinente, como “sustainable”, “distracting” e “oral exams”, e explica ideias com precisão suficiente. Algumas escolhas ficam mais genéricas, como “a quick quiz” e “a tool”.",
+      "tip": "Para dar mais precisão à opinião sobre celulares, especifique o tipo de atividade: em vez de “a quick quiz”, experimente “a low-stakes quiz” para indicar uma atividade curta, sem grande impacto na nota.",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como sua fala soou, então esta é uma estimativa mais ampla, baseada na organização e na variedade das respostas, que apontam para uma comunicação eficaz.",
+      "tip": "Ao dizer “sustainable” e “evaluate”, destaque as sílabas tônicas para ajudar quem ouve a reconhecer as palavras: sus-TAIN-able e e-VAL-uate.",
+      "bandHigh": 5,
+      "bandLow": 4
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "culture",
+    "arts"
+  ],
+  "description": "Star Wars is a science-fiction saga told across films, shows, games, and books. Follow the Skywalker story and its mythic roots, galaxy of planets and species, and influence on movie effects and sound to place the wider franchise in context.",
+  "landingPage": {
+    "audience": [
+      "Star Wars fans filling in the gaps",
+      "Movie fans curious about visual effects",
+      "Readers and gamers following Star Wars stories"
+    ],
+    "outcomes": [
+      "Follow the Skywalker story across nine films",
+      "Spot mythic patterns in its heroes' journeys",
+      "Picture the planets and species across the galaxy",
+      "Track Star Wars across shows, games, and books"
+    ],
+    "valueProposition": "Follow the Skywalker story across nine films and place its heroes, worlds, and spin-offs in context."
+  }
+}

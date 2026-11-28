@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Uma colher de metal e outra de madeira ficam no mesmo ambiente, mas a de metal parece mais fria porque…",
+      "options": [
+        {
+          "text": "O metal conduz calor mais depressa",
+          "correct": true
+        },
+        {
+          "text": "A madeira produz calor",
+          "correct": false
+        },
+        {
+          "text": "O metal está sempre mais frio",
+          "correct": false
+        }
+      ],
+      "reveal": "O metal conduz calor mais depressa. Ele transfere energia térmica da sua mão com mais eficiência, mesmo que os dois objetos estejam à mesma temperatura."
+    },
+    {
+      "question": "Ao ouvir “Que pontualidade!”, quando alguém chega muito atrasado, como você entende a frase?",
+      "options": [
+        {
+          "text": "Como um elogio literal",
+          "correct": false
+        },
+        {
+          "text": "Como uma crítica indireta",
+          "correct": true
+        },
+        {
+          "text": "Como uma pergunta sincera",
+          "correct": false
+        }
+      ],
+      "reveal": "Como uma crítica indireta. O sentido se constrói pelo contraste entre as palavras de elogio e a situação de atraso."
+    },
+    {
+      "question": "Em uma folha iluminada, qual gás do ar a planta usa para produzir açúcares?",
+      "options": [
+        {
+          "text": "Gás carbônico",
+          "correct": true
+        },
+        {
+          "text": "Gás oxigênio",
+          "correct": false
+        },
+        {
+          "text": "Gás nitrogênio",
+          "correct": false
+        }
+      ],
+      "reveal": "Gás carbônico. Na fotossíntese, a planta usa esse gás e água para formar açúcares, com energia da luz."
+    },
+    {
+      "question": "Uma receita para 4 pessoas leva 300 g de farinha; mantendo a proporção, quanto vai para 8 pessoas?",
+      "options": [
+        {
+          "text": "450 g",
+          "correct": false
+        },
+        {
+          "text": "600 g",
+          "correct": true
+        },
+        {
+          "text": "900 g",
+          "correct": false
+        }
+      ],
+      "reveal": "600 g. Como o número de pessoas dobrou, a quantidade de farinha também precisa dobrar."
+    },
+    {
+      "question": "Dois relatos de uma greve divergem; que aspecto ajuda a entender por que cada autor a narra de um jeito?",
+      "options": [
+        {
+          "text": "A posição e os interesses do autor",
+          "correct": true
+        },
+        {
+          "text": "O tamanho das páginas",
+          "correct": false
+        },
+        {
+          "text": "A estação do ano",
+          "correct": false
+        }
+      ],
+      "reveal": "A posição e os interesses do autor. Fontes históricas são produzidas em contextos específicos e podem destacar aspectos diferentes do mesmo acontecimento."
+    },
+    {
+      "question": "Ao passar água barrenta por um filtro de papel, o que tende a ficar retido?",
+      "options": [
+        {
+          "text": "Grãos sólidos em suspensão",
+          "correct": true
+        },
+        {
+          "text": "A água líquida",
+          "correct": false
+        },
+        {
+          "text": "O sal dissolvido",
+          "correct": false
+        }
+      ],
+      "reveal": "Grãos sólidos em suspensão. Os poros do filtro retêm partículas maiores, mas substâncias dissolvidas podem atravessá-lo junto com a água."
+    },
+    {
+      "question": "Em uma rua muito asfaltada, qual mudança tende a diminuir o aquecimento durante o dia?",
+      "options": [
+        {
+          "text": "Ampliar a cobertura vegetal",
+          "correct": true
+        },
+        {
+          "text": "Escurecer o asfalto",
+          "correct": false
+        },
+        {
+          "text": "Remover a sombra das calçadas",
+          "correct": false
+        }
+      ],
+      "reveal": "Ampliar a cobertura vegetal. Árvores oferecem sombra e a água liberada pelas plantas pode ajudar a resfriar o entorno."
+    },
+    {
+      "question": "Uma sacola tem 3 bolas vermelhas e 1 azul; sem olhar, qual é a chance de tirar a azul?",
+      "options": [
+        {
+          "text": "1 em 4",
+          "correct": true
+        },
+        {
+          "text": "1 em 3",
+          "correct": false
+        },
+        {
+          "text": "3 em 4",
+          "correct": false
+        }
+      ],
+      "reveal": "1 em 4. Há 4 bolas ao todo e apenas 1 delas é azul, então esse é o resultado favorável entre as possibilidades."
+    },
+    {
+      "question": "Em um artigo de opinião, o que costuma dar sustentação a uma tese?",
+      "options": [
+        {
+          "text": "Exemplos pertinentes",
+          "correct": true
+        },
+        {
+          "text": "Letras em tamanho maior",
+          "correct": false
+        },
+        {
+          "text": "Parágrafos mais longos",
+          "correct": false
+        }
+      ],
+      "reveal": "Exemplos pertinentes. Eles ajudam a justificar a ideia defendida, especialmente quando se conectam à tese e são explicados."
+    },
+    {
+      "question": "Num mapa na escala 1:100.000, dois pontos separados por 3 cm ficam a que distância real?",
+      "options": [
+        {
+          "text": "300 m",
+          "correct": false
+        },
+        {
+          "text": "3 km",
+          "correct": true
+        },
+        {
+          "text": "30 km",
+          "correct": false
+        }
+      ],
+      "reveal": "3 km. Nessa escala, cada centímetro no mapa representa 100.000 cm, ou 1 km, na realidade."
+    }
+  ]
+}

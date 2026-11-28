@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "What does Japanese \"マンション\" usually refer to in a real-estate listing?",
+      "options": [
+        {
+          "text": "An apartment or condo building",
+          "correct": true
+        },
+        {
+          "text": "A large detached house",
+          "correct": false
+        },
+        {
+          "text": "A furnished hotel room",
+          "correct": false
+        }
+      ],
+      "reveal": "An apartment or condo building. In Japanese, \"マンション\" usually refers to a multi-unit residence, not a grand detached house like an English mansion."
+    },
+    {
+      "question": "On a wall near a café table, what does a label reading \"コンセント\" identify?",
+      "options": [
+        {
+          "text": "An electrical outlet",
+          "correct": true
+        },
+        {
+          "text": "A light switch",
+          "correct": false
+        },
+        {
+          "text": "A doorbell",
+          "correct": false
+        }
+      ],
+      "reveal": "An electrical outlet. The similar-looking English word “consent” has a different meaning; Japanese \"コンセント\" names the socket you plug into."
+    },
+    {
+      "question": "On a Japanese street sign, what kind of vehicle does \"バス\" point to?",
+      "options": [
+        {
+          "text": "A bus",
+          "correct": true
+        },
+        {
+          "text": "A taxi",
+          "correct": false
+        },
+        {
+          "text": "A train",
+          "correct": false
+        }
+      ],
+      "reveal": "A bus. Japanese \"バス\" is a common borrowed word for the vehicle, so the street or transit context helps make its meaning clear."
+    },
+    {
+      "question": "What are you expressing with \"ありがとう\" after someone holds a door for you?",
+      "options": [
+        {
+          "text": "Thanks",
+          "correct": true
+        },
+        {
+          "text": "An apology",
+          "correct": false
+        },
+        {
+          "text": "A greeting",
+          "correct": false
+        }
+      ],
+      "reveal": "Thanks. It’s a common way to express gratitude; adding \"ございます\" makes it more polite, as in \"ありがとうございます.\""
+    },
+    {
+      "question": "In a Japanese café, what can you say politely to get a server's attention: \"すみません\"?",
+      "options": [
+        {
+          "text": "Excuse me",
+          "correct": true
+        },
+        {
+          "text": "See you later",
+          "correct": false
+        },
+        {
+          "text": "Good morning",
+          "correct": false
+        }
+      ],
+      "reveal": "Excuse me. \"すみません\" can politely get someone’s attention, and it can also express an apology, depending on the situation."
+    },
+    {
+      "question": "When greeting someone during the day, what does \"こんにちは\" usually mean?",
+      "options": [
+        {
+          "text": "Hello",
+          "correct": true
+        },
+        {
+          "text": "Good night",
+          "correct": false
+        },
+        {
+          "text": "Thank you",
+          "correct": false
+        }
+      ],
+      "reveal": "Hello. \"こんにちは\" is a standard daytime greeting; Japanese greetings often vary with the time of day."
+    },
+    {
+      "question": "In a simple Japanese sentence, where does the main verb usually appear?",
+      "options": [
+        {
+          "text": "At the end",
+          "correct": true
+        },
+        {
+          "text": "Right after the subject",
+          "correct": false
+        },
+        {
+          "text": "Before the object",
+          "correct": false
+        }
+      ],
+      "reveal": "Usually at the end. Japanese commonly uses subject–object–verb order, so a basic sentence places its main verb after the object."
+    },
+    {
+      "question": "In \"私は学生です,\" what role does the particle \"は\" usually signal?",
+      "options": [
+        {
+          "text": "The topic",
+          "correct": true
+        },
+        {
+          "text": "The past tense",
+          "correct": false
+        },
+        {
+          "text": "A question",
+          "correct": false
+        }
+      ],
+      "reveal": "The topic. \"は\" marks what the sentence is about; it’s written は but pronounced “wa” when used as this particle."
+    },
+    {
+      "question": "When Emma is already clear from context, what can Japanese often leave out of a sentence?",
+      "options": [
+        {
+          "text": "The subject pronoun",
+          "correct": true
+        },
+        {
+          "text": "The main verb",
+          "correct": false
+        },
+        {
+          "text": "The object marker",
+          "correct": false
+        }
+      ],
+      "reveal": "The subject pronoun. Japanese often omits a subject such as “I” or “she” when context makes it clear, rather than repeating it in every sentence."
+    },
+    {
+      "question": "Which three writing systems commonly appear together in everyday Japanese text?",
+      "options": [
+        {
+          "text": "Hiragana, katakana, and kanji",
+          "correct": true
+        },
+        {
+          "text": "Hiragana and romaji",
+          "correct": false
+        },
+        {
+          "text": "Katakana and kanji",
+          "correct": false
+        }
+      ],
+      "reveal": "Hiragana, katakana, and kanji. Japanese text commonly mixes all three; hiragana and katakana are syllabaries, while kanji are characters borrowed historically from Chinese."
+    }
+  ]
+}

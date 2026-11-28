@@ -27,174 +27,6 @@
         "expected": {
           "goals": [
             {
-              "displayName": {},
-              "kind": "exam"
-            },
-            {
-              "displayName": {},
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-display-names-distinguish-public-exams-1",
-        "userInput": {
-          "goal": "Quero passar no concurso do IBAMA e no concurso do Banco Central",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "displayName": {},
-              "kind": "language"
-            },
-            {
-              "displayName": {},
-              "kind": "language"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-display-names-distinguish-language-purpose-1",
-        "userInput": {
-          "goal": "I want to learn German for work and Japanese for travel",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "learn",
-              "title": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-learn-named-version-kept-1",
-        "userInput": {
-          "goal": "I'm on Docker Desktop 4.20 at work and want to use it better",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "learn",
-              "title": {}
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-learn-named-model-kept-1",
-        "userInput": {
-          "goal": "tenho um iPhone 13 e quero aprender a tirar fotos melhores com ele",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
               "kind": "learn",
               "title": {}
             }
@@ -284,46 +116,6 @@
         "id": "en-learn-no-model-invented-1",
         "userInput": {
           "goal": "help me take better photos with my iPhone",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "hasTargetDate": false,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-learn-quantum-1",
-        "userInput": {
-          "goal": "i want to understand quantum physics",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -15194,91 +14986,9 @@
           ],
           "route": "goals"
         },
-        "id": "pt-personal-finance-depends-on-a-country-not-named-1",
-        "userInput": {
-          "goal": "Organizar as finanças pessoais",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": true,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "pt-personal-finance-depends-on-a-country-not-named-2",
         "userInput": {
           "goal": "Organizar as finanças pessoais",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": false,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-statistics-is-the-same-everywhere-1",
-        "userInput": {
-          "goal": "Estatística",
           "language": "pt",
           "today": "2026-09-26"
         }
@@ -15440,91 +15150,9 @@
           ],
           "route": "goals"
         },
-        "id": "en-nationality-on-a-general-subject-1",
-        "userInput": {
-          "goal": "I'm Nigerian and I want to learn Python for data analysis",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": false,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "en-nationality-on-a-general-subject-2",
         "userInput": {
           "goal": "I'm Nigerian and I want to learn Python for data analysis",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": true,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-pilot-licence-without-a-country-waits-for-one-1",
-        "userInput": {
-          "goal": "I want to get my private pilot licence this year",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -15687,90 +15315,9 @@
           ],
           "route": "goals"
         },
-        "id": "en-faa-certificate-is-never-the-nationalitys-1",
-        "userInput": {
-          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountryNot": "CA",
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "en-faa-certificate-is-never-the-nationalitys-2",
         "userInput": {
           "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examName": {},
-              "examOption": null,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-fe-discipline-with-a-hedge-is-not-settled-1",
-        "userInput": {
-          "goal": "Pass the FE exam, maybe mechanical",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -15933,93 +15480,9 @@
           ],
           "route": "goals"
         },
-        "id": "en-booked-test-not-booked-yet-1",
-        "userInput": {
-          "goal": "Prepare for the GRE, I haven't booked a test date yet",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examDay": "booked",
-              "examNotBooked": true,
-              "hasTargetDate": false,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "en-booked-test-not-booked-yet-2",
         "userInput": {
           "goal": "Prepare for the GRE, I haven't booked a test date yet",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examDay": "booked",
-              "examNotBooked": false,
-              "hasTargetDate": true,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-booked-test-with-its-day-1",
-        "userInput": {
-          "goal": "My TOEFL is booked for December 12",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -16063,47 +15526,6 @@
         "userInput": {
           "goal": "My TOEFL is booked for December 12",
           "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": "DE",
-              "countryDependent": true,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-taxes-in-germany-names-the-country-1",
-        "userInput": {
-          "goal": "Quero entender como funcionam os impostos na Alemanha",
-          "language": "pt",
           "today": "2026-09-26"
         }
       }
@@ -16185,47 +15607,6 @@
         "id": "pt-taxes-in-germany-names-the-country-3",
         "userInput": {
           "goal": "Quero entender como funcionam os impostos na Alemanha",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": "PT",
-              "countryDependent": true,
-              "kind": "learn"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-where-they-live-names-the-country-1",
-        "userInput": {
-          "goal": "Moro em Lisboa e quero organizar as minhas finanças",
           "language": "pt",
           "today": "2026-09-26"
         }
@@ -16346,47 +15727,6 @@
           ],
           "route": "goals"
         },
-        "id": "en-exam-named-with-its-country-1",
-        "userInput": {
-          "goal": "Pass the UK driving theory test",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": "GB",
-              "countryDependent": true,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "en-exam-named-with-its-country-2",
         "userInput": {
           "goal": "Pass the UK driving theory test",
@@ -16431,47 +15771,6 @@
         "id": "en-exam-named-with-its-country-3",
         "userInput": {
           "goal": "Pass the UK driving theory test",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": "CA",
-              "countryDependent": true,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-pilot-licence-names-its-country-1",
-        "userInput": {
-          "goal": "Get my private pilot licence in Canada",
           "language": "en",
           "today": "2026-09-26"
         }
@@ -16715,47 +16014,6 @@
           ],
           "route": "goals"
         },
-        "id": "pt-nationality-is-not-an-exams-country-1",
-        "userInput": {
-          "goal": "Sou português e quero passar no exame de condução",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "content country \"PT\"",
-          "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "content country \"PT\"",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "content country \"PT\"",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": true,
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
         "id": "pt-nationality-is-not-an-exams-country-2",
         "userInput": {
           "goal": "Sou português e quero passar no exame de condução",
@@ -16801,48 +16059,6 @@
         "userInput": {
           "goal": "Sou português e quero passar no exame de condução",
           "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "contentCountry": null,
-              "countryDependent": false,
-              "examName": {},
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-sat-in-another-country-keeps-no-country-1",
-        "userInput": {
-          "goal": "I'm taking the SAT in Kenya in March",
-          "language": "en",
           "today": "2026-09-26"
         }
       }
@@ -17004,10 +16220,461 @@
           ],
           "route": "goals"
         },
-        "id": "en-fe-discipline-stated-as-theirs-1",
+        "id": "en-fe-discipline-stated-as-theirs-2",
         "userInput": {
           "goal": "Pass the FE Mechanical exam",
           "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-personal-finance-depends-on-a-country-not-named-1",
+        "userInput": {
+          "goal": "Organizar as finanças pessoais",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "DE",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-taxes-in-germany-names-the-country-1",
+        "userInput": {
+          "goal": "Quero entender como funcionam os impostos na Alemanha",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "PT",
+              "countryDependent": true,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-where-they-live-names-the-country-1",
+        "userInput": {
+          "goal": "Moro em Lisboa e quero organizar as minhas finanças",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-statistics-is-the-same-everywhere-1",
+        "userInput": {
+          "goal": "Estatística",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-nationality-on-a-general-subject-1",
+        "userInput": {
+          "goal": "I'm Nigerian and I want to learn Python for data analysis",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "GB",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-exam-named-with-its-country-1",
+        "userInput": {
+          "goal": "Pass the UK driving theory test",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": "CA",
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-names-its-country-1",
+        "userInput": {
+          "goal": "Get my private pilot licence in Canada",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-pilot-licence-without-a-country-waits-for-one-1",
+        "userInput": {
+          "goal": "I want to get my private pilot licence this year",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": false,
+              "examName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-sat-in-another-country-keeps-no-country-1",
+        "userInput": {
+          "goal": "I'm taking the SAT in Kenya in March",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountryNot": "CA",
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-faa-certificate-is-never-the-nationalitys-1",
+        "userInput": {
+          "goal": "I'm Canadian and I want to get an FAA private pilot certificate",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "content country \"PT\"",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "content country \"PT\"",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "content country \"PT\"",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "contentCountry": null,
+              "countryDependent": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-nationality-is-not-an-exams-country-1",
+        "userInput": {
+          "goal": "Sou português e quero passar no exame de condução",
+          "language": "pt",
           "today": "2026-09-26"
         }
       }
@@ -17045,9 +16712,342 @@
           ],
           "route": "goals"
         },
-        "id": "en-fe-discipline-stated-as-theirs-2",
+        "id": "en-fe-discipline-stated-as-theirs-1",
         "userInput": {
           "goal": "Pass the FE Mechanical exam",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": {},
+              "examOption": null,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-fe-discipline-with-a-hedge-is-not-settled-1",
+        "userInput": {
+          "goal": "Pass the FE exam, maybe mechanical",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": true,
+              "hasTargetDate": false,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-not-booked-yet-1",
+        "userInput": {
+          "goal": "Prepare for the GRE, I haven't booked a test date yet",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examDay": "booked",
+              "examNotBooked": false,
+              "hasTargetDate": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-booked-test-with-its-day-1",
+        "userInput": {
+          "goal": "My TOEFL is booked for December 12",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "displayName": {},
+              "kind": "exam"
+            },
+            {
+              "displayName": {},
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-display-names-distinguish-public-exams-1",
+        "userInput": {
+          "goal": "Quero passar no concurso do IBAMA e no concurso do Banco Central",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "displayName": {},
+              "kind": "language"
+            },
+            {
+              "displayName": {},
+              "kind": "language"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-display-names-distinguish-language-purpose-1",
+        "userInput": {
+          "goal": "I want to learn German for work and Japanese for travel",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-learn-named-version-kept-1",
+        "userInput": {
+          "goal": "I'm on Docker Desktop 4.20 at work and want to use it better",
+          "language": "en",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "learn",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-learn-named-model-kept-1",
+        "userInput": {
+          "goal": "tenho um iPhone 13 e quero aprender a tirar fotos melhores com ele",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "hasTargetDate": false,
+              "kind": "learn"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-learn-quantum-1",
+        "userInput": {
+          "goal": "i want to understand quantum physics",
           "language": "en",
           "today": "2026-09-26"
         }

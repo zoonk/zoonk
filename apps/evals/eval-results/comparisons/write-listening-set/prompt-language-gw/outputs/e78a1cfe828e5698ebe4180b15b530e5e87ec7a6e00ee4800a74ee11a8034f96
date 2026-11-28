@@ -1,0 +1,168 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Am Sonntag geht es bei mir nicht. Lass uns am Samstag aufräumen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Clara und Niklas wollen am Sonntag im Garten arbeiten.",
+        "isTrue": false,
+        "reason": "Você ouve que Niklas não pode no domingo e sugere o sábado.",
+        "misconception": "Clara sugere primeiro o domingo, mas Niklas não pode nesse dia."
+      },
+      {
+        "evidence": "Der Hausmeister schließt den Garten erst um zwei Uhr auf.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Die Nachbarn können erst ab 14 Uhr in den Garten.",
+        "isTrue": true,
+        "reason": "Você ouve que o zelador só abre o jardim às duas da tarde.",
+        "misconception": null
+      },
+      {
+        "evidence": "Wasser und Saft besorge ich. Die Geräte bringt Herr Berger mit.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Niklas bringt die Gartengeräte mit.",
+        "isTrue": false,
+        "reason": "Você ouve que Niklas vai buscar água e suco, enquanto o senhor Berger levará as ferramentas.",
+        "misconception": "Clara sugere que Niklas pergunte sobre as ferramentas, mas ele explica que o senhor Berger vai levá-las."
+      },
+      {
+        "evidence": "Die Kinder könnten doch Schilder für die Beete bemalen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "easy",
+        "context": null,
+        "statement": "Die Kinder können Schilder für den Garten gestalten.",
+        "isTrue": true,
+        "reason": "Você ouve Clara sugerir que as crianças pintem placas para os canteiros.",
+        "misconception": null
+      },
+      {
+        "evidence": "Bei Regen können wir den Gemeinschaftsraum im Erdgeschoss benutzen.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "hard",
+        "context": null,
+        "statement": "Wenn es regnet, treffen sich die Nachbarn im Café.",
+        "isTrue": false,
+        "reason": "Você ouve Niklas dizer que, se chover, eles poderão usar a sala comunitária no térreo.",
+        "misconception": "Clara sugere o café, mas Niklas propõe a sala comunitária."
+      },
+      {
+        "evidence": "Ich schreibe heute Abend einen Aushang und hänge ihn unten an die Tür.",
+        "skill": 1,
+        "format": "trueFalse",
+        "difficulty": "medium",
+        "context": null,
+        "statement": "Niklas will die Nachbarn mit einem Aushang informieren.",
+        "isTrue": true,
+        "reason": "Você ouve Niklas dizer que vai escrever um aviso e colocá-lo na porta.",
+        "misconception": null
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Clara",
+        "gender": "female",
+        "accent": "Standard German"
+      },
+      {
+        "name": "Niklas",
+        "gender": "male",
+        "accent": "Standard German"
+      }
+    ],
+    "title": "Ein gemeinsamer Gartentag",
+    "turns": [
+      {
+        "speaker": "Clara",
+        "text": "Hallo Niklas, hast du kurz Zeit? Ich wollte mit dir über den Garten hinter unserem Haus sprechen. Die Nachbarn finden, wir sollten dort mal zusammen aufräumen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Ja, das finde ich auch. Überall liegen noch alte Blätter, und die Beete sehen nicht besonders schön aus. Hast du schon einen Tag im Kopf?"
+      },
+      {
+        "speaker": "Clara",
+        "text": "Vielleicht am Sonntag? Da haben die meisten Leute frei. Oder hast du da schon etwas vor?"
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Am Sonntag geht es bei mir nicht. Lass uns am Samstag aufräumen. Da kann ich den ganzen Nachmittag helfen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Gut, dann frage ich die anderen wegen Samstag. Ich dachte, wir könnten gleich nach dem Mittagessen anfangen, so gegen eins."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Um eins ist leider noch zu früh. Der Hausmeister schließt den Garten erst um zwei Uhr auf. Er hat vorher einen Termin."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Ach so, dann schreiben wir zwei Uhr. Hoffentlich sind wir vor sechs fertig. Danach möchte ich nämlich noch meine Schwester besuchen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Das schaffen wir bestimmt, wenn genug Leute kommen. Sollen wir auch etwas zu trinken und ein paar Gartengeräte besorgen?"
+      },
+      {
+        "speaker": "Clara",
+        "text": "Ja, ich könnte mich um die Getränke kümmern. Und du fragst Herrn Berger nach den Geräten?"
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Ich habe ihn schon gefragt. Wasser und Saft besorge ich. Die Geräte bringt Herr Berger mit. Du könntest stattdessen ein paar Becher mitbringen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Klar, davon habe ich noch genug zu Hause. Und meine Nachbarin hat gesagt, sie backt vielleicht einen Kuchen. Dann können wir zwischendurch eine Pause machen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Gute Idee. Familie Winter möchte übrigens auch kommen, aber sie wissen nicht, was ihre beiden Kinder im Garten machen können."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Die Kinder könnten doch Schilder für die Beete bemalen. Dann weiß man später, wo die Tomaten und die Kräuter wachsen. Ich habe noch Farben zu Hause."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Das ist eine gute Idee. Ich sage Familie Winter Bescheid. Hoffentlich spielt das Wetter mit, gestern hat es ja den ganzen Tag geregnet."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt. Und was machen wir, wenn es am Samstag auch regnet? Vielleicht könnten wir uns dann im Café an der Ecke treffen."
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Ins Café müssen wir nicht. Bei Regen können wir den Gemeinschaftsraum im Erdgeschoss benutzen. Dort könnten wir schon mal besprechen, was wir im Garten pflanzen wollen."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Stimmt, das ist praktischer und kostet nichts. Jetzt müssen wir nur noch alle informieren. Soll ich eine E-Mail an die Nachbarn schicken?"
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Nicht alle lesen regelmäßig ihre E-Mails. Ich schreibe heute Abend einen Aushang und hänge ihn unten an die Tür. Dann sieht ihn jeder, der ins Haus kommt."
+      },
+      {
+        "speaker": "Clara",
+        "text": "Super. Schreib auch meine Telefonnummer dazu, falls jemand Fragen hat. Dann sehen wir uns spätestens am Samstag!"
+      },
+      {
+        "speaker": "Niklas",
+        "text": "Mache ich. Bis Samstag, Clara!"
+      }
+    ]
+  }
+}

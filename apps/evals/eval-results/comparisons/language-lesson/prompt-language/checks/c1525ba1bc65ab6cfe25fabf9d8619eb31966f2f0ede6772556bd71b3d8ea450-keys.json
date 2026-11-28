@@ -1,0 +1,13 @@
+{
+  "caseId": "es-en-a2-work",
+  "costUsd": 0.02912,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"Trabajo de nueve a cinco.\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Trabajo de nueve hasta cinco” also conveys the stated schedule. The distractor “hasta” can mark the end of the shift, so “a” is not the only defensible choice.\"}",
+    "{\"itemLocator\":\"writing\",\"keyedAnswer\":\"I work here from nine to five. / I work here from 9 to 5. The grading points require both “from” and “to.”\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“I work here nine to five” is also a natural US English translation of “Trabajo aquí de nueve a cinco.” The prompt asks for a translation, not specifically for the “from … to …” construction.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 11
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas com clareza e conecta as ideias de forma natural, por exemplo em “Looking back, I'm really proud I stuck with it, because it taught me to be patient with slow progress”. Suas respostas permanecem no tema e avançam com explicações, embora nem sempre desenvolvam as ideias com a mesma profundidade.",
+      "tip": "Para aprofundar ainda mais uma resposta, acrescente uma consequência concreta depois da ideia principal: “That experience taught me patience; more importantly, it changed how I approach setbacks at work.”",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário variado e preciso, como em “a messy dataset finally starts to make sense” e “the intonation is so unforgiving”, além de expressões naturais como “eat into the time”. Para chegar mais alto, poderia mostrar ainda mais flexibilidade e precisão lexical ao desenvolver algumas ideias.",
+      "tip": "Eleve a expressão “slow progress” com um modificador mais específico: “painstakingly slow progress”.",
+      "bandHigh": 8,
+      "bandLow": 7.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas simples e complexas com bom controle, como em “I decided I needed something that had nothing to do with screens”. Alguns deslizes pontuais aparecem em “I work as data analyst” e “A lot of them could easily have been an email”.",
+      "tip": "Use um artigo antes de uma profissão contável no singular: “I work as a data analyst.”",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, então não permite avaliar diretamente a pronúncia; como não há sinais indiretos claros de dificuldade de compreensão, esta estimativa mais ampla acompanha as outras habilidades.",
+      "tip": "Para facilitar a compreensão, pratique o acento tônico destas palavras que você usou: in-toh-NAY-shən em “intonation”, un-fer-GIV-ing em “unforgiving” e uh-LOW-uhns em “allowance”.",
+      "bandHigh": 8,
+      "bandLow": 7
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

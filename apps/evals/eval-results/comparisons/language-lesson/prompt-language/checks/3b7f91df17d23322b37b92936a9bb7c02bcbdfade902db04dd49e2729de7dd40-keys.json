@@ -1,0 +1,12 @@
+{
+  "caseId": "en-en-a1-ielts-consonant-contrasts",
+  "costUsd": 0.037136,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"practice[0]\",\"keyedAnswer\":\"bat\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"Both “bat” and “kick” fit. A bat names the tool he used; a kick describes how he struck the ball. The stem does not specify that he used a tool.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 11
+}

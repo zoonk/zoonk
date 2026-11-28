@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você organiza as respostas com clareza e mantém o foco, usando conexões como “But on the other hand” e “In my opinion”. Algumas ideias ficam pouco desenvolvidas, como a observação de que os amigos olham para o celular em vez de conversar, o que limita uma avaliação mais alta.",
+      "tip": "Para desenvolver um ponto, acrescente uma consequência ou exemplo: em vez de parar em “everybody is looking at the phone instead of talking”, explique o efeito, por exemplo: “As a result, conversations feel less personal, even when friends are sitting together.”",
+      "bandHigh": 7.5,
+      "bandLow": 7
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado para expressar opiniões, como “getting more expensive” e “in a responsible way”. Porém, algumas combinações de palavras são imprecisas, como “use it for pay things” e “relate with each other”.",
+      "tip": "Experimente uma expressão mais precisa para falar do trânsito: troque “the traffic is getting worse every year” por “traffic congestion is becoming increasingly severe.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina frases simples e estruturas mais complexas, como em “Without it, my life would be much more complicated, because I would need to carry money”. Alguns erros de estrutura aparecem em “I use it since I wake up until I go to sleep” e “I also use it for pay things”.",
+      "tip": "Para falar de uma rotina diária, use “from ... until”, não “since ... until”: “I use it from the moment I wake up until I go to sleep.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou. Como não há sinais de palavras mal compreendidas ou pedidos de repetição, esta é uma estimativa mais ampla, baseada nos outros aspectos da sua fala.",
+      "tip": "Para favorecer a compreensão, pratique a sílaba tônica em palavras que você usou: diga “COM-pli-ca-ted” e “tech-NOL-o-gy”, mantendo as sílabas finais audíveis.",
+      "bandHigh": 7.5,
+      "bandLow": 6.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

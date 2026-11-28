@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "la renta",
+      "translation": "the rent",
+      "pronunciation": "lah RREN-tah",
+      "romanization": null,
+      "tip": "Vibrate the tip of your tongue against the roof of your mouth behind your front teeth to roll the 'rr' sound.",
+      "note": "In Mexico, 'la renta' is universally used for rental price and leasing, rather than 'el alquiler'.",
+      "distractors": [
+        "la venta",
+        "la cuenta",
+        "la cuota"
+      ]
+    },
+    {
+      "word": "el depósito",
+      "translation": "the deposit",
+      "pronunciation": "ehl deh-POH-see-toh",
+      "romanization": null,
+      "tip": "Put the stress firmly on the second syllable 'POH', matching the written accent mark.",
+      "note": "In Mexican rentals, landlords usually ask for one month of rent as 'el depósito' (security deposit).",
+      "distractors": [
+        "el descuento",
+        "el recibo",
+        "el contrato"
+      ]
+    },
+    {
+      "word": "los servicios",
+      "translation": "the utilities",
+      "pronunciation": "lohs sehr-VEE-syohs",
+      "romanization": null,
+      "tip": null,
+      "note": "In Mexican housing, 'los servicios' covers utility bills like water, electricity, gas, and internet.",
+      "distractors": [
+        "los sueldos",
+        "los cuartos",
+        "los permisos"
+      ]
+    },
+    {
+      "word": "el mantenimiento",
+      "translation": "the maintenance fee",
+      "pronunciation": "ehl mahn-teh-nee-MYEHN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": "In apartment buildings across Mexico, this refers to the shared building fee (HOA) for security and cleaning.",
+      "distractors": [
+        "el estacionamiento",
+        "el equipamiento",
+        "el departamento"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Cuánto es de la renta al mes?",
+      "translation": "How much is the rent per month?",
+      "explanation": "Mexican Spanish frequently uses '¿Cuánto es de...?' followed by the item to ask what something costs or amounts to.",
+      "romanization": null,
+      "distractors": [
+        "por",
+        "para",
+        "del"
+      ],
+      "translationDistractors": [
+        "week",
+        "cost",
+        "yearly"
+      ],
+      "speakingPrompt": "Ask the landlord how much the monthly rent is"
+    },
+    {
+      "sentence": "¿Cuánto es de depósito?",
+      "translation": "How much is the deposit?",
+      "explanation": "Notice the preposition 'de' right after 'es', which is the standard way in Mexico to ask for a fee or required amount.",
+      "romanization": null,
+      "distractors": [
+        "con",
+        "en",
+        "al"
+      ],
+      "translationDistractors": [
+        "contract",
+        "discount",
+        "total"
+      ],
+      "speakingPrompt": "Ask how much the security deposit is"
+    },
+    {
+      "sentence": "¿La renta incluye los servicios y el mantenimiento?",
+      "translation": "Does the rent include utilities and the maintenance fee?",
+      "explanation": "Spanish turns a statement into a question simply with rising intonation and question marks, without adding an auxiliary like 'does'.",
+      "romanization": null,
+      "distractors": [
+        "incluyo",
+        "incluyen",
+        "costar"
+      ],
+      "translationDistractors": [
+        "require",
+        "exclude",
+        "pay"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Using '¿Cuánto es de...?' for costs and fees",
+    "text": "In Mexico, people rarely translate 'How much is the deposit?' literally. Instead, they say `¿Cuánto es de...?` followed by the noun, meaning 'How much does the deposit come to?' or 'How much do you ask for the deposit?' You will hear this everywhere for prices, bills, and fees.",
+    "examples": [
+      {
+        "sentence": "¿Cuánto es de renta?",
+        "translation": "How much is the rent?"
+      },
+      {
+        "sentence": "¿Cuánto es de mantenimiento?",
+        "translation": "How much is the maintenance fee?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the missing preposition to ask about the deposit amount in Mexico.",
+      "template": "¿Cuánto es [BLANK] depósito?",
+      "answer": "de",
+      "distractors": [
+        "a",
+        "en",
+        "por"
+      ],
+      "feedback": "Mexican Spanish uses '¿Cuánto es de...?' when inquiring about prices, fees, and required sums."
+    },
+    {
+      "question": "Complete the question asking if the monthly payment covers the building upkeep.",
+      "template": "¿La renta incluye el [BLANK]?",
+      "answer": "mantenimiento",
+      "distractors": [
+        "mantenimientos",
+        "mantenida"
+      ],
+      "feedback": "'El mantenimiento' is the masculine singular noun for the building maintenance fee."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord just confirmed the monthly rent. Ask if that price covers utilities and the maintenance fee.",
+    "scene": "A phone call with a landlord in Mexico City",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenas tardes, sí, el departamento en la Roma sigue disponible",
+        "translation": "Good afternoon, yes, the apartment in Roma is still available"
+      },
+      {
+        "speaker": "you",
+        "text": "¿Cuánto es de la renta al mes?",
+        "translation": "How much is the rent per month?"
+      },
+      {
+        "speaker": "them",
+        "text": "Son catorce mil pesos al mes",
+        "translation": "It is fourteen thousand pesos per month"
+      }
+    ],
+    "replies": [
+      {
+        "text": "¿La renta incluye los servicios y el mantenimiento?",
+        "translation": "Does the rent include utilities and the maintenance fee?",
+        "isBest": true,
+        "why": "This politely and naturally checks what extra costs come with the monthly rental price."
+      },
+      {
+        "text": "¿Cuánto cuesta la casa de mantenimiento?",
+        "translation": "How much does the house of maintenance cost?",
+        "isBest": false,
+        "why": "This phrasing is grammatically jumbled and makes no sense in this context."
+      },
+      {
+        "text": "¿El depósito incluye comprar la renta?",
+        "translation": "Does the deposit include buying the rent?",
+        "isBest": false,
+        "why": "This mixes up renting, deposits, and buying, and does not address monthly bills."
+      }
+    ],
+    "explanation": "When inquiring about apartments in Mexico City, always confirm whether utilities ('servicios') and HOA fees ('mantenimiento') are factored into the base rent."
+  },
+  "writing": {
+    "prompt": "Write in Spanish: 'How much is the deposit?'",
+    "answers": [
+      "¿Cuánto es de depósito?",
+      "¿Cuánto es el depósito?",
+      "¿Cuánto pide de depósito?"
+    ],
+    "keyPoints": [
+      "Uses '¿Cuánto es...' to ask how much",
+      "Includes 'depósito' for the security deposit"
+    ]
+  },
+  "summary": [
+    "Ask for the rental price with '¿Cuánto es de la renta al mes?'",
+    "Inquire about the security deposit using '¿Cuánto es de depósito?'",
+    "Check what is covered with '¿La renta incluye los servicios y el mantenimiento?'"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-career-change-ux",
+  "challenger": {
+    "costUsd": 0.049638,
+    "durationMs": 101330.334041,
+    "hash": "52621e3f6e6c6d44bbd4e1f377270df2a1f75e7c56904df2ff82466616099d41",
+    "systemPromptHash": "2bfc8e7c494dc411c7934b2ec60cc9e862481fb04fef41e775b2865b7621e61c",
+    "userPromptHash": "387770690c4939bd8362d525fa2bee2cd73550816cce19b77ad21f9bfa0752dd"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.052987000000000006,
+    "durationMs": 116987.16958300001,
+    "hash": "d62032a5f3a64ae62db4f0ddbf69ed1fe93d5e1f5a78b87a4ec803167cff4487",
+    "systemPromptHash": "3720e1cce5fce0b64673df0e1b8121ecbf4ddfe8d85ca9246e8cb1c930d8cbf2",
+    "userPromptHash": "387770690c4939bd8362d525fa2bee2cd73550816cce19b77ad21f9bfa0752dd"
+  },
+  "run": 1
+}

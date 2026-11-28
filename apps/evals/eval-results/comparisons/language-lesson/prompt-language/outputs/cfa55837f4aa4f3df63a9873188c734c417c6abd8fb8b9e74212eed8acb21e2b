@@ -1,0 +1,219 @@
+{
+  "words": [
+    {
+      "word": "sprzątam",
+      "translation": "I clean",
+      "pronunciation": "SPROHN-tahm",
+      "romanization": null,
+      "tip": "Before the t, the nasal vowel sounds like “on”; keep the initial consonants together without adding a vowel.",
+      "note": null,
+      "distractors": [
+        "gotuję",
+        "odpoczywam",
+        "pracuję"
+      ]
+    },
+    {
+      "word": "odkurzam",
+      "translation": "I vacuum",
+      "pronunciation": "ot-KOO-zham",
+      "romanization": null,
+      "tip": "The written d sounds like a t before k, and rz sounds like the s in “measure.”",
+      "note": null,
+      "distractors": [
+        "zamiatam",
+        "prasuję",
+        "zmywam"
+      ]
+    },
+    {
+      "word": "robię pranie",
+      "translation": "I do the laundry",
+      "pronunciation": "ROH-byeh PRAH-nyeh",
+      "romanization": null,
+      "tip": "In everyday speech, the final ę in robię sounds much like a plain “eh.”",
+      "note": null,
+      "distractors": [
+        "robię zakupy",
+        "robię obiad",
+        "robię kawę"
+      ]
+    },
+    {
+      "word": "myję podłogę",
+      "translation": "I wash the floor",
+      "pronunciation": "MIH-yeh pod-WOH-geh",
+      "romanization": null,
+      "tip": "Say ł like the w in “water,” not like an English l.",
+      "note": null,
+      "distractors": [
+        "myję okno",
+        "myję samochód",
+        "myję ręce"
+      ]
+    },
+    {
+      "word": "co tydzień",
+      "translation": "every week",
+      "pronunciation": "TSOH TIH-dyen",
+      "romanization": null,
+      "tip": "Start co with a single “ts” sound, as at the end of English “cats.”",
+      "note": null,
+      "distractors": [
+        "co miesiąc",
+        "wczoraj",
+        "jutro"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Sprzątam co tydzień",
+      "translation": "I clean every week",
+      "explanation": "The ending of sprzątam already tells you who cleans, so Polish does not need a separate word for “I.”",
+      "romanization": null,
+      "distractors": [
+        "sprzątasz",
+        "tygodnia",
+        "jutro"
+      ],
+      "translationDistractors": [
+        "you",
+        "month",
+        "tomorrow"
+      ],
+      "speakingPrompt": "Say that you clean every week."
+    },
+    {
+      "sentence": "Czy robisz pranie co tydzień?",
+      "translation": "Do you do laundry every week?",
+      "explanation": "Czy marks a yes-or-no question; Polish does not need a separate word for “do” as English does.",
+      "romanization": null,
+      "distractors": [
+        "robię",
+        "tygodniu",
+        "nie"
+      ],
+      "translationDistractors": [
+        "month",
+        "never",
+        "he"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Odkurzam w sobotę",
+      "translation": "I vacuum on Saturday",
+      "explanation": "Polish uses w before sobotę to mean “on Saturday”; the verb ending includes the meaning “I.”",
+      "romanization": null,
+      "distractors": [
+        "odkurzasz",
+        "sobota",
+        "tygodniu"
+      ],
+      "translationDistractors": [
+        "you",
+        "Sunday",
+        "laundry"
+      ],
+      "speakingPrompt": "Say that you vacuum on Saturday."
+    },
+    {
+      "sentence": "Myję podłogę w sobotę",
+      "translation": "I wash the floor on Saturday",
+      "explanation": "Myję means “I wash,” and podłogę is the form of “floor” used as the thing being washed.",
+      "romanization": null,
+      "distractors": [
+        "myjesz",
+        "podłoga",
+        "niedziela"
+      ],
+      "translationDistractors": [
+        "you",
+        "window",
+        "Sunday"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Say how often with co tydzień",
+    "text": "Use `co tydzień` to say that a chore happens every week. Put it after the chore, as in `Sprzątam co tydzień` (“I clean every week”), or at the start: `Co tydzień robię pranie` (“I do laundry every week”). Unlike English, Polish does not use a separate word for “every” in this phrase: use `co` with `tydzień`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Complete the phrase meaning “every week.”",
+      "template": "Robię pranie co [BLANK]",
+      "answer": "tydzień",
+      "distractors": [
+        "tygodnia",
+        "tygodniu",
+        "tygodniem"
+      ],
+      "feedback": "The fixed phrase for “every week” is co tydzień."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your friend asks about your weekly chores. What do you say?",
+    "scene": "At home with a friend",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Sprzątam co tydzień",
+        "translation": "I clean every week"
+      },
+      {
+        "speaker": "them",
+        "text": "Co robisz w domu co tydzień?",
+        "translation": "What do you do at home every week?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Odkurzam i robię pranie",
+        "translation": "I vacuum and do the laundry",
+        "isBest": true,
+        "why": "This naturally names two chores you do."
+      },
+      {
+        "text": "Odkurzam i robię prania",
+        "translation": "I vacuum and do the laundry",
+        "isBest": false,
+        "why": "After robię in this positive sentence, use pranie, not prania."
+      },
+      {
+        "text": "Odkurzam i robisz pranie",
+        "translation": "I vacuum and you do the laundry",
+        "isBest": false,
+        "why": "Robisz refers to your friend, but the question asks what you do."
+      },
+      {
+        "text": "Odkurzam co tygodniu",
+        "translation": "I vacuum every week",
+        "isBest": false,
+        "why": "The phrase is co tydzień, not co tygodniu."
+      }
+    ],
+    "explanation": "You can join two chores with i, meaning “and.”"
+  },
+  "writing": {
+    "prompt": "Write a message saying: “I do the laundry every week.”",
+    "answers": [
+      "Robię pranie co tydzień.",
+      "Co tydzień robię pranie.",
+      "Ja robię pranie co tydzień.",
+      "Co tydzień ja robię pranie."
+    ],
+    "keyPoints": [
+      "Use robię pranie to say you do the laundry.",
+      "Use co tydzień to say it happens every week."
+    ]
+  },
+  "summary": [
+    "“Sprzątam co tydzień” says you clean every week.",
+    "“Robię pranie” says you do the laundry.",
+    "“Odkurzam” says you vacuum, and “myję podłogę” says you wash the floor."
+  ]
+}

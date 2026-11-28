@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "Você repetiu corretamente a maioria das frases, inclusive as mais longas. Nas duas últimas, porém, disse “before you try to clean it”, omitindo “up”, e “until they finished it”, em vez de “until they finish it”.",
+      "tip": "Ao ouvir uma frase longa, guarde-a em grupos de palavras e confira as pequenas palavras no final: “Students who haven't completed the online safety course / won't be allowed to work in the lab / until they finish it.”",
+      "bandHigh": 4.5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "Você responde às perguntas com razões, exemplos e consequências, como em “because printing everything would be expensive and not very sustainable” e “universities will have to change how they evaluate us”. Em alguns momentos, sua conclusão fica mais geral, como “it depends on the teacher and on the class”, sem especificar quais diferenças entre as aulas orientariam a decisão.",
+      "tip": "Para aprofundar uma opinião, acrescente um critério concreto: depois de “it depends on the teacher and on the class”, você poderia dizer “It depends on whether the activity requires students to use their phones.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você usa estruturas variadas para explicar causas, contrastes e consequências, como “At first I thought it was more easy to just read my notes, but after a few weeks I realized I remembered much more”. Há alguns erros em construções comuns: “I use my laptop since the first semester”, “more easy” e “discuss about clear rules”.",
+      "tip": "Com “since” para indicar quando algo começou e ainda continua, use o present perfect: troque “I use my laptop since the first semester” por “I've used my laptop since the first semester.”",
+      "bandHigh": 4.5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário variado e adequado ao tema, incluindo “flashcard app”, “organic chemistry”, “sustainable” e “distracting”. Algumas avaliações ficam amplas, como “more personal”, sem especificar exatamente de que maneira a aprendizagem seria personalizada.",
+      "tip": "Para ser mais preciso, substitua “more personal” por uma descrição do que a ferramenta adapta: “tailored to each student's pace and learning gaps.”",
+      "bandHigh": 5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "A transcrição não mostra como você soou, então esta faixa é uma estimativa mais ampla, guiada pelos outros critérios. As respostas têm organização e vocabulário que apontam para uma comunicação eficaz, mas não há informação suficiente aqui para avaliar diretamente a pronúncia, o ritmo ou a entonação.",
+      "tip": "Para deixar palavras longas mais fáceis de entender, marque a sílaba tônica ao falar “sustainable”: sus-TAIN-a-ble.",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

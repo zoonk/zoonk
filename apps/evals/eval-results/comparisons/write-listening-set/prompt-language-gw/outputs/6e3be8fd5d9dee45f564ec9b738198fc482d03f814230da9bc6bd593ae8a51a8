@@ -1,0 +1,272 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's called the Larkwell Centre. That's Larkwell, L-A-R-K-W-E-L-L.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community centre information. Write ONE WORD ONLY.",
+        "question": "Name: the ______ Centre",
+        "keyPoints": [
+          "The centre is called Larkwell."
+        ],
+        "acceptedAnswers": [
+          "Larkwell"
+        ],
+        "sampleAnswer": "Larkwell"
+      },
+      {
+        "evidence": "It's the number 14 that stops outside now.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Getting to the centre. Write ONE NUMBER ONLY.",
+        "question": "Bus from the station: number ______",
+        "keyPoints": [
+          "The current bus route is number 14."
+        ],
+        "acceptedAnswers": [
+          "14"
+        ],
+        "sampleAnswer": "fourteen"
+      },
+      {
+        "evidence": "on Saturdays it's half past nine",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Opening hours. Write ONE NUMBER ONLY.",
+        "question": "Saturday opening time: ______",
+        "keyPoints": [
+          "The centre opens at 9:30 on Saturdays."
+        ],
+        "acceptedAnswers": [
+          "9:30",
+          "9.30"
+        ],
+        "sampleAnswer": "half past nine"
+      },
+      {
+        "evidence": "At the drop-in, a volunteer can help you choose the right equipment for a job.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What can visitors do at the free drop-in session?",
+        "options": [
+          {
+            "text": "Get advice on selecting tools",
+            "isCorrect": true,
+            "reason": "Hannah diz que um voluntário pode ajudar você a escolher o equipamento adequado para uma tarefa.",
+            "misconception": null
+          },
+          {
+            "text": "Learn how to repair tools",
+            "isCorrect": false,
+            "reason": "Hannah menciona aulas de conserto, mas explica que elas são oferecidas separadamente.",
+            "misconception": "Confunde o atendimento com uma aula separada."
+          },
+          {
+            "text": "Return tools they have borrowed",
+            "isCorrect": false,
+            "reason": "Hannah menciona uma prateleira para ferramentas devolvidas, mas não diz que essa é a função do atendimento gratuito.",
+            "misconception": "Confunde a devolução de ferramentas com o objetivo do atendimento."
+          }
+        ]
+      },
+      {
+        "evidence": "look for the blue shelves. That's where the items ready for collection are kept.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Tool library. Write ONE WORD ONLY.",
+        "question": "Tools ready to be picked up are on the ______ shelves.",
+        "keyPoints": [
+          "Items ready for collection are on the blue shelves."
+        ],
+        "acceptedAnswers": [
+          "blue"
+        ],
+        "sampleAnswer": "blue"
+      },
+      {
+        "evidence": "The reason is that the weather affects what we can do, so we decide on the day's activities at short notice.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "Why are gardening sessions not available to book in advance?",
+        "options": [
+          {
+            "text": "The activities depend on the weather.",
+            "isCorrect": true,
+            "reason": "Hannah explica que o tempo influencia o que pode ser feito, então as atividades são decididas pouco antes da sessão.",
+            "misconception": null
+          },
+          {
+            "text": "The sessions become full too quickly.",
+            "isCorrect": false,
+            "reason": "Hannah menciona essa possibilidade, mas diz que ela não é o motivo.",
+            "misconception": "Escolhe um motivo que a palestrante rejeita."
+          },
+          {
+            "text": "The session leader is often unknown.",
+            "isCorrect": false,
+            "reason": "Hannah diz que geralmente se sabe qual voluntário vai conduzir a sessão.",
+            "misconception": "Confunde uma possibilidade mencionada com o motivo real."
+          }
+        ]
+      },
+      {
+        "evidence": "please bring your own gloves.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Community garden. Write ONE WORD ONLY.",
+        "question": "Participants should bring their own ______.",
+        "keyPoints": [
+          "Participants should bring gloves."
+        ],
+        "acceptedAnswers": [
+          "gloves"
+        ],
+        "sampleAnswer": "gloves"
+      },
+      {
+        "evidence": "if you need step-free access, use the entrance beside the café.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Which entrance should visitors use to avoid steps?",
+        "options": [
+          {
+            "text": "The entrance next to the café",
+            "isCorrect": true,
+            "reason": "Hannah orienta você a usar a entrada ao lado do café para ter acesso sem degraus.",
+            "misconception": null
+          },
+          {
+            "text": "The entrance near the car park",
+            "isCorrect": false,
+            "reason": "Hannah menciona essa entrada, mas avisa que ela tem degraus.",
+            "misconception": "Escolhe uma entrada que a palestrante descarta."
+          },
+          {
+            "text": "The entrance at the front",
+            "isCorrect": false,
+            "reason": "Hannah diz que a porta principal continua aberta, mas o caminho até ela está em obras.",
+            "misconception": "Confunde uma entrada aberta com a rota recomendada sem degraus."
+          }
+        ]
+      },
+      {
+        "evidence": "the smaller one is twelve pounds an hour.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Room hire. Write ONE NUMBER ONLY.",
+        "question": "Cost of the smaller room per hour: £______",
+        "keyPoints": [
+          "The smaller room costs £12 per hour."
+        ],
+        "acceptedAnswers": [
+          "12"
+        ],
+        "sampleAnswer": "twelve"
+      },
+      {
+        "evidence": "We want visitors to see what the different local groups are working on.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What is the main purpose of the open day?",
+        "options": [
+          {
+            "text": "To show the work of local groups",
+            "isCorrect": true,
+            "reason": "Hannah diz que o objetivo é mostrar aos visitantes os projetos em que os grupos locais estão trabalhando.",
+            "misconception": null
+          },
+          {
+            "text": "To raise money for local groups",
+            "isCorrect": false,
+            "reason": "Hannah menciona que algumas pessoas pensam nisso, mas explica que o evento não é principalmente para arrecadar fundos.",
+            "misconception": "Escolhe uma finalidade que a palestrante rejeita."
+          },
+          {
+            "text": "To recruit members for local groups",
+            "isCorrect": false,
+            "reason": "Hannah diz que os grupos podem receber novos membros, mas que o recrutamento não é o objetivo principal.",
+            "misconception": "Confunde uma possibilidade secundária com o objetivo principal."
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Good morning, everyone. I'm Hannah, and I've come to tell you about a community centre that some of you may not have discovered yet. It's called the Larkwell Centre. That's Larkwell, L-A-R-K-W-E-L-L. It used to be a small library, but it now offers activities and practical services for people of all ages. You don't have to be a member to come in, and most of the building is open to visitors throughout the week."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "First, getting there. There's a bus stop directly opposite the centre. You can take the number 40 from the station, no, sorry, that's the old route. It's the number 14 that stops outside now. If you're cycling, there are plenty of stands just inside the gate, although we ask people not to leave bikes against the front wall. The centre opens at nine on weekdays, but on Saturdays it's half past nine. We close at five on both weekdays and Saturdays, and we're closed all day Sunday."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "One popular service is our tool library. You can borrow things like drills and gardening tools instead of buying them. Before you borrow anything, you're welcome to come to a free drop-in session. It isn't a repair class, though we do run those separately. At the drop-in, a volunteer can help you choose the right equipment for a job. There's no need to book for that. Once you've chosen something, you'll find the tool collection point upstairs. Go past the meeting room and look for the blue shelves. That's where the items ready for collection are kept. The red shelves nearby are for things that have been returned and still need checking."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Now, if you like being outdoors, we have a community garden behind the building. You can join a gardening session on Wednesday afternoons. People sometimes ask why we don't take bookings for those sessions. It's not because they fill up too quickly, and we usually know which volunteer will lead them. The reason is that the weather affects what we can do, so we decide on the day's activities at short notice. Just turn up if you're free. We provide tools, and there's drinking water available, but please bring your own gloves. We used to lend those out too, but we found people preferred to have a pair that fitted properly."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "A quick word about getting around the building. The main doorway is still open, but the path leading to it is being resurfaced. So, if you need step-free access, use the entrance beside the café. There's another entrance by the car park, but that one has steps. Inside, there's a lift to all floors, and staff at reception will be happy to show you where it is."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We also have rooms that local groups can hire. The larger room costs fifteen pounds an hour, while the smaller one is twelve pounds an hour. Both have tables and chairs included, and you can make tea and coffee in the kitchen next door. Groups often ask about evening bookings. These are possible on Thursdays, provided the booking is made at least a week in advance."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Finally, next month we're holding an open day. Some people think it's mainly a fundraising event, but there won't be any charge to enter. And although groups may welcome new members, recruitment isn't the main aim either. We want visitors to see what the different local groups are working on. There'll be displays, short demonstrations and plenty of people to talk to. You can pick up a programme at reception from Monday. Well, that's everything from me. I hope you'll come and have a look around."
+      }
+    ]
+  }
+}

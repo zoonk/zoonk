@@ -1,0 +1,276 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "You'll find us on Bexley Street. That's B-E-X-L-E-Y.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Riverside Community Centre\nWrite ONE WORD ONLY.",
+        "question": "Address: _____ Street",
+        "keyPoints": [
+          "O nome da rua é Bexley."
+        ],
+        "acceptedAnswers": [
+          "Bexley"
+        ],
+        "sampleAnswer": "Bexley"
+      },
+      {
+        "evidence": "If you're coming on foot, use the entrance next to the library.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Riverside Community Centre\nWrite ONE WORD ONLY.",
+        "question": "The entrance for pedestrians is beside the _____.",
+        "keyPoints": [
+          "A entrada para pedestres fica ao lado da biblioteca."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      },
+      {
+        "evidence": "That used to be Tuesday, but from this month it's Thursday, when you can come in until nine at night.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Riverside Community Centre\nWrite ONE WORD ONLY.",
+        "question": "Late opening is now on _____.",
+        "keyPoints": [
+          "O centro fica aberto até mais tarde na quinta-feira."
+        ],
+        "acceptedAnswers": [
+          "Thursday"
+        ],
+        "sampleAnswer": "Thursday"
+      },
+      {
+        "evidence": "The card costs four pounds for a whole year.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Riverside Community Centre\nWrite ONE NUMBER ONLY.",
+        "question": "Annual membership card fee for adults: £_____",
+        "keyPoints": [
+          "A taxa anual é de quatro libras."
+        ],
+        "acceptedAnswers": [
+          "4"
+        ],
+        "sampleAnswer": "four pounds"
+      },
+      {
+        "evidence": "the main aim is to let you see the rooms while activities are actually happening.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "What is the main purpose of the introductory tour?",
+        "options": [
+          {
+            "text": "To observe activities taking place",
+            "isCorrect": true,
+            "reason": "Você ouve que o objetivo principal é mostrar as salas enquanto as atividades estão acontecendo.",
+            "misconception": null
+          },
+          {
+            "text": "To meet the centre's volunteers",
+            "isCorrect": false,
+            "reason": "Você ouve que pode encontrar voluntários durante a visita, mas esse não é o objetivo principal.",
+            "misconception": "Confunde uma possibilidade durante a visita com o objetivo principal."
+          },
+          {
+            "text": "To complete a membership form",
+            "isCorrect": false,
+            "reason": "Você ouve que pode preencher o formulário ao final, mas não há obrigação de fazê-lo.",
+            "misconception": "Confunde uma atividade opcional com o objetivo principal."
+          }
+        ]
+      },
+      {
+        "evidence": "The photography group, on the other hand, still has places, and it's a good choice for beginners because the centre lends you a camera.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "Why does Hannah recommend the photography group to beginners?",
+        "options": [
+          {
+            "text": "They can borrow the equipment they need.",
+            "isCorrect": true,
+            "reason": "Você ouve que o centro empresta uma câmera, por isso iniciantes não precisam comprar uma.",
+            "misconception": null
+          },
+          {
+            "text": "They can join without registering.",
+            "isCorrect": false,
+            "reason": "Você ouve que há vagas no grupo, mas Hannah diz que é necessário registrar-se para participar de atividades.",
+            "misconception": "Confunde a existência de vagas com a ausência de registro."
+          },
+          {
+            "text": "They can avoid going outdoors.",
+            "isCorrect": false,
+            "reason": "Você ouve que os integrantes frequentemente saem para praticar no parque.",
+            "misconception": "Interpreta incorretamente a informação sobre a prática no parque."
+          }
+        ]
+      },
+      {
+        "evidence": "We have a quiet room on the second floor, overlooking the river.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Riverside Community Centre\nWrite ONE WORD ONLY.",
+        "question": "The quiet room is on the _____ floor.",
+        "keyPoints": [
+          "A sala silenciosa fica no segundo andar."
+        ],
+        "acceptedAnswers": [
+          "second",
+          "2nd"
+        ],
+        "sampleAnswer": "second"
+      },
+      {
+        "evidence": "You should bring your own gloves, though, as we don't have enough pairs for everyone.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Community garden\nWrite ONE WORD ONLY.",
+        "question": "Visitors should take their own _____.",
+        "keyPoints": [
+          "Os visitantes devem levar suas próprias luvas."
+        ],
+        "acceptedAnswers": [
+          "gloves"
+        ],
+        "sampleAnswer": "gloves"
+      },
+      {
+        "evidence": "Now the easiest way to send us an idea is through the form on our website.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "How does Hannah suggest visitors send ideas to the centre?",
+        "options": [
+          {
+            "text": "By filling in an online form",
+            "isCorrect": true,
+            "reason": "Você ouve que a maneira mais fácil de enviar uma ideia agora é preencher o formulário no site.",
+            "misconception": null
+          },
+          {
+            "text": "By using the box at reception",
+            "isCorrect": false,
+            "reason": "Você ouve que havia uma caixa de sugestões, mas quase ninguém a usava.",
+            "misconception": "Escolhe um meio usado anteriormente."
+          },
+          {
+            "text": "By emailing the reception team",
+            "isCorrect": false,
+            "reason": "Você ouve que o e-mail ainda pode ser usado para perguntas sobre a inscrição, não como a forma mais fácil de enviar ideias.",
+            "misconception": "Confunde o canal para dúvidas sobre inscrição com o canal sugerido para ideias."
+          }
+        ]
+      },
+      {
+        "evidence": "What we are planning to do next is keep the café open later, so that people attending evening classes can get something to eat.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What change is the centre planning to make next?",
+        "options": [
+          {
+            "text": "Provide more classrooms",
+            "isCorrect": false,
+            "reason": "Você ouve que alguns membros pediram mais salas, mas o centro ainda não pode prometer isso.",
+            "misconception": "Confunde um pedido dos membros com um plano confirmado."
+          },
+          {
+            "text": "Add weekend activities",
+            "isCorrect": false,
+            "reason": "Você ouve que outras pessoas gostariam de mais atividades no fim de semana, mas isso ainda não está prometido.",
+            "misconception": "Confunde uma sugestão com o próximo plano."
+          },
+          {
+            "text": "Extend the café's opening hours",
+            "isCorrect": true,
+            "reason": "Você ouve que o próximo plano é manter o café aberto até mais tarde para atender quem faz aulas à noite.",
+            "misconception": null
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A visit to the Riverside Community Centre",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Good morning, everyone. I'm Hannah, and I'm here to tell you about the Riverside Community Centre and what you can do there. We're a fairly new centre, but we've already got a busy programme for people of all ages. You'll find us on Bexley Street. That's B-E-X-L-E-Y. The building's easy to recognise because it's got a bright blue roof. If you're coming on foot, use the entrance next to the library. There's another gate beside the canal, but that's for deliveries, and it's usually locked."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The centre is open every weekday, and most activities begin after nine. We also stay open late one evening a week. That used to be Tuesday, but from this month it's Thursday, when you can come in until nine at night. You're welcome to look around without paying anything. If you'd like to join an activity, though, you'll need a membership card. The card costs four pounds for a whole year. Children under sixteen don't pay for one, although they still need to register."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "If you're not sure where to start, come along to one of our introductory tours. They take about half an hour, and you don't have to book. You might meet some of our volunteers on the way round, but the main aim is to let you see the rooms while activities are actually happening. That way, you can get a feel for the atmosphere before deciding what to join. You can fill in a membership form at the end, but there's no pressure to do that."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We offer a wide range of classes, from pottery to photography. The pottery class is popular, so there's a waiting list at the moment. The photography group, on the other hand, still has places, and it's a good choice for beginners because the centre lends you a camera. You don't need to buy one before you come. The group meets on Saturday mornings, and members often go out together to practise in the park."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Of course, you don't have to attend a class. Some people just want somewhere peaceful to work or read. We have a quiet room on the second floor, overlooking the river. There are desks and comfortable chairs, and you can use the internet there free of charge. The ground-floor café also has internet access, but it can get quite noisy around lunchtime. There's a lift if you'd rather not use the stairs."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Outside, we've started a community garden. Members meet there every other Sunday to grow vegetables and flowers. We provide all the tools you'll need, and there's a tap for washing your hands afterwards. You should bring your own gloves, though, as we don't have enough pairs for everyone. Some people like to wear an apron too, but that's entirely up to you. Any vegetables we don't use in the café are given to a local food project."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We're always interested in hearing what visitors think. We used to have a suggestion box near reception, but hardly anybody used it. Now the easiest way to send us an idea is through the form on our website. It goes straight to the centre manager, who reads the comments every Friday. You can still email us if you have a question about your membership, and the reception team will usually reply within two working days."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Finally, a quick word about our plans. Some members have asked for more classrooms, and others would like extra weekend activities. We can't promise either of those just yet. What we are planning to do next is keep the café open later, so that people attending evening classes can get something to eat. We'll put the new hours on the noticeboard as soon as they're confirmed. Thanks for listening, and I hope to see you at the centre soon."
+      }
+    ]
+  }
+}

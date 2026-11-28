@@ -1,0 +1,200 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "oo kar-DAH-pyoo",
+      "romanization": null,
+      "tip": "Stress the syllable with the accent mark: 'DAH'. The final 'o' sounds like a quick English 'oo'.",
+      "note": null,
+      "distractors": [
+        "o prato",
+        "o garçom",
+        "o copo"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "ah KOHN-tah",
+      "romanization": null,
+      "tip": "The 'on' sound is nasal; let the air flow through your nose rather than finishing a hard 'n' with your tongue.",
+      "note": null,
+      "distractors": [
+        "a mesa",
+        "a comida",
+        "a água"
+      ]
+    },
+    {
+      "word": "eu quero",
+      "translation": "I want",
+      "pronunciation": "eh-oo KEH-roo",
+      "romanization": null,
+      "tip": "The 'qu' before 'e' sounds like a simple English 'k', never 'kw'.",
+      "note": "In Brazilian Portuguese, saying 'eu quero' with 'por favor' is polite and standard when ordering food.",
+      "distractors": [
+        "eu posso",
+        "eu tenho",
+        "eu pago"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "poor fah-VOHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "de nada",
+        "com licença",
+        "até logo"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "O cardápio, por favor",
+      "translation": "The menu, please",
+      "explanation": "In everyday Brazilian Portuguese, you can simply name what you need followed by 'por favor'.",
+      "romanization": null,
+      "distractors": [
+        "conta",
+        "mesa"
+      ],
+      "translationDistractors": [
+        "bill",
+        "table"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Eu quero um prato, por favor",
+      "translation": "I want a dish, please",
+      "explanation": "Brazilians use 'eu quero' to order food naturally without sounding rude, especially when paired with 'por favor'.",
+      "romanization": null,
+      "distractors": [
+        "pago",
+        "conta"
+      ],
+      "translationDistractors": [
+        "pay",
+        "bill"
+      ],
+      "speakingPrompt": "Tell the server that you want a dish, please"
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "When you are done eating, simply ask for 'a conta' with 'por favor' to request the check.",
+      "romanization": null,
+      "distractors": [
+        "cardápio",
+        "garçom"
+      ],
+      "translationDistractors": [
+        "menu",
+        "waiter"
+      ],
+      "speakingPrompt": "Ask the server for the bill, please"
+    }
+  ],
+  "tip": {
+    "title": "Ordering politely in Brazil",
+    "text": "In English, saying 'I want' to a server can sound demanding, but in Brazilian Portuguese, `eu quero` is the standard and polite way to order. To make any request courteous, simply place `por favor` at the end of the phrase.",
+    "examples": [
+      {
+        "sentence": "Eu quero água, por favor",
+        "translation": "I want water, please"
+      },
+      {
+        "sentence": "A conta, por favor",
+        "translation": "The bill, please"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word to ask for the menu politely.",
+      "template": "O [BLANK], por favor",
+      "answer": "cardápio",
+      "distractors": [
+        "conta",
+        "obrigado"
+      ],
+      "feedback": "'Cardápio' is the menu, which fits the masculine article 'o'."
+    },
+    {
+      "question": "Complete the request for the bill at the end of the meal.",
+      "template": "A [BLANK], por favor",
+      "answer": "conta",
+      "distractors": [
+        "cardápio",
+        "prato"
+      ],
+      "feedback": "'Conta' means bill, and it takes the feminine article 'a'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You are finished with your meal and the server comes by your table. What do you say?",
+    "scene": "A casual restaurant in São Paulo",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Olá! Tudo bem?",
+        "translation": "Hello! Everything good?"
+      },
+      {
+        "speaker": "you",
+        "text": "Olá! Tudo bem, obrigado",
+        "translation": "Hello! Everything is good, thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "Deseja mais alguma coisa?",
+        "translation": "Would you like anything else?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "A conta, por favor",
+        "translation": "The bill, please",
+        "isBest": true,
+        "why": "This politely asks for the check using the vocabulary from the lesson."
+      },
+      {
+        "text": "O cardápio, por favor",
+        "translation": "The menu, please",
+        "isBest": false,
+        "why": "You are already done eating, so asking for the menu doesn't make sense."
+      },
+      {
+        "text": "Eu quero de nada",
+        "translation": "I want you're welcome",
+        "isBest": false,
+        "why": "'De nada' means 'you're welcome', which cannot follow 'eu quero'."
+      }
+    ],
+    "explanation": "To finish your meal at a restaurant in Brazil, asking for 'A conta, por favor' is the standard way to request your total."
+  },
+  "writing": {
+    "prompt": "Write a message asking for the bill, please.",
+    "answers": [
+      "A conta, por favor.",
+      "A conta, por favor",
+      "Eu quero a conta, por favor.",
+      "Eu quero a conta, por favor"
+    ],
+    "keyPoints": [
+      "Uses 'a conta' for the bill",
+      "Includes 'por favor' for politeness"
+    ]
+  },
+  "summary": [
+    "'Eu quero' means 'I want' and is the standard way to order food in Brazil",
+    "'O cardápio' is the menu and 'a conta' is the bill",
+    "Add 'por favor' to any request to make it polite"
+  ]
+}

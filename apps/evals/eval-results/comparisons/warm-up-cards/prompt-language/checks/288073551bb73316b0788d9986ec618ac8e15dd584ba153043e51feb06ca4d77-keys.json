@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-reforma-tributaria",
+  "costUsd": 0.020248,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"cards[5]\",\"keyedAnswer\":\"Incidência econômica\",\"kind\":\"noCorrectOption\",\"workedAnswer\":\"Legal incidence identifies who must remit the tax; economic incidence identifies who ultimately bears its cost. Economic incidence is not the name for the difference between the two, and neither other option names that difference.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 10
+}

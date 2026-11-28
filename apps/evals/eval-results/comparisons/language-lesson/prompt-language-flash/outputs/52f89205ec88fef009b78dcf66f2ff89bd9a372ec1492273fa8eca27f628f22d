@@ -1,0 +1,203 @@
+{
+  "words": [
+    {
+      "word": "thanks for having me",
+      "translation": "obrigado por me receber",
+      "pronunciation": "THÊNKS fór RRÉ-ving mi",
+      "romanization": null,
+      "tip": "No 'th' de 'thanks', coloque a ponta da língua levemente entre os dentes e solte o ar; o 'h' de 'having' tem som de 'rr' suave aspirado.",
+      "note": "É a frase padrão e educada para agradecer ao entrevistador pelo convite logo no início da conversa.",
+      "distractors": [
+        "thanks for taking me",
+        "thanks for inviting me to",
+        "good to have you"
+      ]
+    },
+    {
+      "word": "an overview",
+      "translation": "uma visão geral",
+      "pronunciation": "en OU-ver-viu",
+      "romanization": null,
+      "tip": "No 'r' de 'overview', curve a língua para trás sem encostar no céu da boca, com som bem aberto.",
+      "note": null,
+      "distractors": [
+        "an overtake",
+        "a review",
+        "an overlook"
+      ]
+    },
+    {
+      "word": "to walk through",
+      "translation": "explicar passo a passo",
+      "pronunciation": "tu UÓK THRU",
+      "romanization": null,
+      "tip": "O 'l' de 'walk' é totalmente mudo; pronuncie apenas 'uók'.",
+      "note": "No contexto profissional americano, 'walk someone through' significa guiar alguém por detalhes ou etapas de uma história ou currículo.",
+      "distractors": [
+        "to step through",
+        "to run over",
+        "to walk around"
+      ]
+    },
+    {
+      "word": "background",
+      "translation": "a trajetória profissional",
+      "pronunciation": "BÉK-graund",
+      "romanization": null,
+      "tip": "Feche os lábios no final de 'ground' para soar o 'd', sem acrescentar um som de 'i' no final.",
+      "note": "Em entrevistas, 'background' refere-se ao histórico de formação e experiência de trabalho, não ao fundo de uma imagem.",
+      "distractors": [
+        "backyard",
+        "backstage",
+        "backdrop"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me today",
+      "translation": "Obrigado por me receber hoje",
+      "explanation": "Em inglês, preposições como 'for' exigem o verbo seguinte com terminação '-ing' ('having'), ao contrário do português, que usa o infinitivo.",
+      "romanization": null,
+      "distractors": [
+        "have",
+        "to",
+        "reception"
+      ],
+      "translationDistractors": [
+        "ter",
+        "ontem",
+        "convidado"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por ter recebido você hoje"
+    },
+    {
+      "sentence": "I can walk you through my background",
+      "translation": "Posso apresentar minha trajetória profissional em detalhes",
+      "explanation": "A expressão 'walk you through' coloca quem ouve entre 'walk' e 'through', indicando que você vai conduzir a pessoa ponto a ponto pela sua experiência.",
+      "romanization": null,
+      "distractors": [
+        "stepping",
+        "along",
+        "across"
+      ],
+      "translationDistractors": [
+        "andar",
+        "fundo",
+        "escrever"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I'd like to give you a brief overview of my recent role",
+      "translation": "Gostaria de lhe dar uma breve visão geral da minha função recente",
+      "explanation": "'I'd like to' é a contração polida de 'I would like to', ideal para propor o rumo da sua resposta com segurança.",
+      "romanization": null,
+      "distractors": [
+        "would",
+        "look",
+        "during"
+      ],
+      "translationDistractors": [
+        "regra",
+        "fazer",
+        "longa"
+      ],
+      "speakingPrompt": "Diga que gostaria de dar uma breve visão geral da sua função recente"
+    }
+  ],
+  "tip": {
+    "title": "Verbo com -ing depois de preposições",
+    "text": "Em inglês, qualquer verbo que venha logo após uma preposição (como `for`, `about`, `before`, `after`) precisa terminar em `-ing`. Falantes de português tendem a usar o infinitivo com `to` por influência de 'por me receber' ou 'sobre falar'. Diga sempre `thanks for having me`, nunca `thanks for have me`.",
+    "examples": [
+      {
+        "sentence": "Thank you for taking the time to speak with me",
+        "translation": "Obrigado por dedicar este tempo para falar comigo"
+      },
+      {
+        "sentence": "I look forward to discussing my experience",
+        "translation": "Fico na expectativa de discutir minha experiência"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete com a forma correta do verbo após a preposição.",
+      "template": "Thank you for [BLANK] with me this morning.",
+      "answer": "meeting",
+      "distractors": [
+        "meet",
+        "to meet",
+        "met"
+      ],
+      "feedback": "Após a preposição 'for', o verbo deve obrigatoriamente levar a terminação '-ing'."
+    },
+    {
+      "question": "Escolha o conector correto para iniciar a explicação passo a passo.",
+      "template": "I'm ready to walk you [BLANK] my experience.",
+      "answer": "through",
+      "distractors": [
+        "over",
+        "about",
+        "across"
+      ],
+      "feedback": "A expressão fixa em inglês profissional é 'to walk someone through', que significa conduzir alguém ponto a ponto."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador acabou de cumprimentá-lo e deu início à conversa. O que você responde para abrir a entrevista com segurança?",
+    "scene": "Uma sala de reunião em Chicago para uma entrevista de emprego presencial",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Good morning. Welcome to our office, please have a seat.",
+        "translation": "Bom dia. Bem-vindo ao nosso escritório, por favor tome um assento."
+      },
+      {
+        "speaker": "them",
+        "text": "Thanks for coming in today. How are you doing?",
+        "translation": "Obrigado por ter vindo hoje. Como você está?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I'm doing great, thank you. Thanks for having me today.",
+        "translation": "Estou muito bem, obrigado. Obrigado por me receber hoje.",
+        "isBest": true,
+        "why": "É uma resposta cordial, confiante e no nível de polidez exato para começar a entrevista."
+      },
+      {
+        "text": "I'm doing great. Thanks for have me today.",
+        "translation": "Estou ótimo. Obrigado por me receber hoje.",
+        "isBest": false,
+        "why": "O verbo após a preposição 'for' precisa estar com '-ing': 'having', não 'have'."
+      },
+      {
+        "text": "Fine. Can you give me an overview about the money?",
+        "translation": "Bem. Você pode me dar uma visão geral sobre o dinheiro?",
+        "isBest": false,
+        "why": "É informal demais e inadequado perguntar sobre salário logo no primeiro cumprimento da entrevista."
+      }
+    ],
+    "explanation": "No início da entrevista, responda brevemente à saudação e sempre agradeça pela oportunidade com 'Thanks for having me'."
+  },
+  "writing": {
+    "prompt": "Escreva uma mensagem ou abertura formal dizendo: 'Obrigado por me receber hoje, estou animado para falar sobre minha trajetória profissional.'",
+    "answers": [
+      "Thanks for having me today, I'm excited to talk about my background.",
+      "Thank you for having me today, I'm excited to talk about my background.",
+      "Thanks for having me today, I am excited to talk about my background.",
+      "Thank you for having me today, I am excited to discuss my background."
+    ],
+    "keyPoints": [
+      "Usa 'having me' após 'thanks for' ou 'thank you for'",
+      "Usa 'background' para indicar trajetória profissional"
+    ]
+  },
+  "summary": [
+    "'Thanks for having me' agradece educadamente o convite do entrevistador logo no início",
+    "'To walk you through' serve para conduzir o entrevistador ponto a ponto pelas suas experiências",
+    "'An overview' resume sua trajetória ('background') antes de entrar em detalhes específicos"
+  ]
+}

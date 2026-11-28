@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Conectas y desarrollas algunas ideas con expresiones como “because I like very much the nature” y “I enjoyed it because the city is very beautiful”. Sin embargo, varias respuestas se quedan breves y algunas ideas se enlazan con estructuras repetidas como “Also” y “But”.",
+      "tip": "En tu relato, enlaza una dificultad con su contraste para que la historia avance con más fluidez: en vez de “but it was very full of tourists”, prueba “Although the tram was crowded, I enjoyed seeing the city from it.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Usas vocabulario pertinente para hablar de viajes y turismo, como “the old part of the city” y “the prices of the flats”. Para expresar algunas ideas recurres a combinaciones poco precisas, como “I like very much the nature” y “for relax”.",
+      "tip": "Elige colocaciones más precisas para describir lo que disfrutas: cambia “I like very much the nature” por “I really enjoy being surrounded by nature.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Combinas oraciones sencillas con algunas estructuras más largas, por ejemplo “When I was a child I lived in the city centre”. Los errores en formas verbales y concordancia, como “we eat a lot of fish” y “my parents was working a lot”, limitan la precisión.",
+      "tip": "Al narrar un viaje pasado, usa el pasado en todos los verbos de la secuencia: cambia “we eat a lot of fish” por “we ate a lot of fish.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "La transcripción no permite saber cómo sonaste ni qué tan fácil fue entenderte, así que esta es una estimación más amplia, orientada por el nivel de tus otras respuestas.",
+      "tip": "Para que se entienda con claridad el lugar y la actividad, practica el acento de estas palabras: “MOUNtains” y “TOURists”.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

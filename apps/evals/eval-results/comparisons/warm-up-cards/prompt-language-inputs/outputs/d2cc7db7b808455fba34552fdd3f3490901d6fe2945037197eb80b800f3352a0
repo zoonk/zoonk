@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Ao ouvir “embarazada” numa conversa no México, qual situação você deve imaginar?",
+      "options": [
+        {
+          "text": "A pessoa está grávida",
+          "correct": true
+        },
+        {
+          "text": "A pessoa está constrangida",
+          "correct": false
+        },
+        {
+          "text": "A pessoa está cansada",
+          "correct": false
+        }
+      ],
+      "reveal": "A pessoa está grávida. No espanhol do México, “embarazada” significa estar grávida; a semelhança sonora pode levar quem fala português a pensar em constrangimento."
+    },
+    {
+      "question": "Num cardápio mexicano, “exquisito” descreve melhor um prato...",
+      "options": [
+        {
+          "text": "Muito saboroso",
+          "correct": true
+        },
+        {
+          "text": "Estranho",
+          "correct": false
+        },
+        {
+          "text": "Sem tempero",
+          "correct": false
+        }
+      ],
+      "reveal": "Muito saboroso. Em espanhol, “exquisito” costuma elogiar o sabor ou a qualidade de algo; não quer dizer “esquisito” nesse contexto."
+    },
+    {
+      "question": "Na recepção de uma loja, “¿Cuánto cuesta?” ajuda você a descobrir...",
+      "options": [
+        {
+          "text": "O preço",
+          "correct": true
+        },
+        {
+          "text": "O horário de fechamento",
+          "correct": false
+        },
+        {
+          "text": "A forma de pagamento",
+          "correct": false
+        }
+      ],
+      "reveal": "O preço. A expressão pergunta quanto algo custa; você pode usá-la ao ver um produto numa loja."
+    },
+    {
+      "question": "Se alguém no México pede seu “apellido”, qual dado espera ouvir?",
+      "options": [
+        {
+          "text": "Seu sobrenome",
+          "correct": true
+        },
+        {
+          "text": "Seu apelido carinhoso",
+          "correct": false
+        },
+        {
+          "text": "Seu nome do meio",
+          "correct": false
+        }
+      ],
+      "reveal": "Seu sobrenome. “Apellido” é o nome de família; no Brasil, “apelido” costuma ser um nome informal, então a semelhança confunde."
+    },
+    {
+      "question": "Ao dizer “Voy a la oficina” no México, para onde a pessoa está indo?",
+      "options": [
+        {
+          "text": "Ao escritório",
+          "correct": true
+        },
+        {
+          "text": "À oficina mecânica",
+          "correct": false
+        },
+        {
+          "text": "À sala de aula",
+          "correct": false
+        }
+      ],
+      "reveal": "Ao escritório. Em espanhol do México, “oficina” costuma ser um local de trabalho administrativo, não uma oficina mecânica."
+    },
+    {
+      "question": "Ao procurar um banheiro numa cidade mexicana, “¿Dónde está el baño?” pergunta...",
+      "options": [
+        {
+          "text": "Onde fica o banheiro",
+          "correct": true
+        },
+        {
+          "text": "Quanto custa o banheiro",
+          "correct": false
+        },
+        {
+          "text": "Quando o banheiro abre",
+          "correct": false
+        }
+      ],
+      "reveal": "Onde fica o banheiro. A estrutura pergunta pela localização de um lugar, e “baño” é a palavra usada para banheiro."
+    },
+    {
+      "question": "Em “Te espero un rato”, o que “rato” indica sobre a espera?",
+      "options": [
+        {
+          "text": "Um tempinho",
+          "correct": true
+        },
+        {
+          "text": "Um camundongo",
+          "correct": false
+        },
+        {
+          "text": "Uma hora exata",
+          "correct": false
+        }
+      ],
+      "reveal": "Um tempinho. Em espanhol, “rato” é um período curto ou indeterminado de tempo, não o animal chamado rato em português."
+    },
+    {
+      "question": "Numa descrição, “un camino largo” fala de um caminho que é...",
+      "options": [
+        {
+          "text": "Comprido",
+          "correct": true
+        },
+        {
+          "text": "Largo de largura",
+          "correct": false
+        },
+        {
+          "text": "Curto",
+          "correct": false
+        }
+      ],
+      "reveal": "Comprido. Em espanhol, “largo” indica extensão no comprimento; a palavra portuguesa “largo” costuma remeter à largura ou a um espaço aberto."
+    },
+    {
+      "question": "Em “Me gusta el café”, qual elemento é apresentado como agradável?",
+      "options": [
+        {
+          "text": "O café",
+          "correct": true
+        },
+        {
+          "text": "Quem está falando",
+          "correct": false
+        },
+        {
+          "text": "Uma terceira pessoa",
+          "correct": false
+        }
+      ],
+      "reveal": "O café. Em espanhol, “gustar” concorda com o que agrada; “me” marca a pessoa que sente esse agrado."
+    },
+    {
+      "question": "Ao tratar uma pessoa com respeito e formalidade no México, qual pronome é comum?",
+      "options": [
+        {
+          "text": "“usted”",
+          "correct": true
+        },
+        {
+          "text": "“tú”",
+          "correct": false
+        },
+        {
+          "text": "“ustedes”",
+          "correct": false
+        }
+      ],
+      "reveal": "“Usted”. No México, é comum usar essa forma para tratar uma pessoa com formalidade; “tú” aparece mais em relações informais, embora o contexto varie."
+    }
+  ]
+}

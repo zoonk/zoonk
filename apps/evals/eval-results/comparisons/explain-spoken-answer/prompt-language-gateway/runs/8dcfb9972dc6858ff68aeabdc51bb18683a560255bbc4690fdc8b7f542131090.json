@@ -1,0 +1,19 @@
+{
+  "caseId": "es-en-ship-sheep",
+  "challenger": {
+    "costUsd": 0.00015993,
+    "durationMs": 3120.944499999998,
+    "hash": "aa4f39a1d04a1fdfe4f324af1acbe5a7a9ec52ebbbb83ec91c1f4c174b4480b9",
+    "systemPromptHash": "815224b3208ad50e4d8e099de64ca676426c3405a4d5a1ec1ded3734c2ab4c6c",
+    "userPromptHash": "c84954cba24949b4dc63a9c48af1d62d74b9734dfcab4e12fe81b75d7481001a"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00017472,
+    "durationMs": 3372.9093749999993,
+    "hash": "e4abe69744bf2d26db940ec7ba64b94c478b68939001e8adecfcdd18ca1ddc1b",
+    "systemPromptHash": "c1648f39e7a60ae9b93cd92822c385dc403be619aacb56af32feb314cb89fd84",
+    "userPromptHash": "c84954cba24949b4dc63a9c48af1d62d74b9734dfcab4e12fe81b75d7481001a"
+  },
+  "run": 2
+}

@@ -1,0 +1,14 @@
+{
+  "blockingProblems": [],
+  "caseId": "en-ja-hiragana",
+  "costUsd": 0,
+  "criteria": [
+    "accuracy"
+  ],
+  "name": "code checks",
+  "passed": 8,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 8
+}

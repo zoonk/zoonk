@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "taskCompletion",
+      "evidence": "Você apresenta a questão central, anuncia um plano, dá exemplos e conclui com uma posição clara, como em « La question que je me pose est la suivante : est-ce que le télétravail améliore vraiment la qualité de vie des salariés ? ». A organização atende ao nível esperado, embora as ideias e os exemplos ligados ao documento pudessem ser desenvolvidos com mais profundidade.",
+      "tip": "Aprofunde um argumento mostrando uma condição concreta que pode mudar o efeito do teletrabalho, por exemplo: « Toutefois, ces bénéfices dépendent de conditions de travail adaptées, notamment d’un espace calme et d’horaires définis. »",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Você usa vocabulário adequado ao tema, incluindo « la limite entre la vie professionnelle et la vie privée » e « le travail hybride ». A escolha das palavras é clara, mas algumas formulações permanecem gerais, como « beaucoup de personnes ».",
+      "tip": "Troque uma expressão ampla por uma mais específica quando apresentar um exemplo: em vez de « beaucoup de personnes », você poderia dizer « de nombreux usagers des transports en commun ».",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina estruturas variadas e compreensíveis, como « à condition qu'il soit bien organisé », mas também aparecem construções menos controladas, como « Les gens qui travaillent à la maison ils sont souvent plus isolés » e « Malgré que l'entreprise économise de l'argent ».",
+      "tip": "Quando introduzir uma oração com verbo depois de uma ideia de concessão, use « bien que » com subjuntivo; « Malgré que l'entreprise économise de l'argent » fica « Bien que l'entreprise économise de l'argent ».",
+      "bandHigh": 2,
+      "bandLow": 2
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou; como não há sinais transcritos de palavras incompreensíveis ou pedidos de repetição, esta é uma estimativa mais ampla, orientada pelas demais evidências.",
+      "tip": "Ao falar, dê atenção à articulação de « télétravail », « salariés » e « qualité de vie », para que esses termos centrais sejam facilmente entendidos.",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

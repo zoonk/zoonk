@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated six sentences exactly. In the last one, the examiner said “Students who'd like feedback on their cover letters should upload them at least two days before their appointment”; you said “Students who would like feedback on their cover letters should upload them at least two days before the appointment,” changing the contraction and leaving out “their.”",
+      "tip": "Keep small words in the final chunk of a long sentence: “at least two days / before their appointment.”",
+      "bandHigh": 5.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with clear reasons and relevant detail, for example, “Seeing planners balance all of that, and actually change the design because of what residents said, is what convinced me this was the field for me.” Your prediction is also balanced, though a specific example could make the final point even more vivid.",
+      "tip": "After a general prediction, add a concrete example, such as: “For instance, graduates might use data to improve a bus network while explaining the trade-offs to residents.”",
+      "bandHigh": 5.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use a wide range of structures accurately, including “If a company benefits from your work, it should pay for it.” A few errors remain, including “the most of graduates” and “less opportunities,” and the final answer has a lengthy, loosely connected clause.",
+      "tip": "Use “fewer” with plural countable nouns: change “less opportunities” to “fewer opportunities.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "Your vocabulary is varied and precise, with effective phrases such as “a double-edged sword,” “shuts out,” and “arrive fully formed.” You could make the prediction about automation more precise by naming the kinds of roles or tasks affected.",
+      "tip": "Make the automation point more specific: instead of “routine tasks get automated,” try “routine administrative tasks are increasingly automated.”",
+      "bandHigh": 5.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on the strong structure and language in your responses. There are no clear signs in the transcript of words being misunderstood or of communication breaking down.",
+      "tip": "Make the key syllables clear in “consultation” and “neighborhood” so listeners can follow these important words easily.",
+      "bandHigh": 6,
+      "bandLow": 5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

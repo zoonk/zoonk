@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "A clock runs slow after its pendulum is lengthened; what changed?",
+      "options": [
+        {
+          "text": "It swings more slowly",
+          "correct": true
+        },
+        {
+          "text": "It swings more quickly",
+          "correct": false
+        },
+        {
+          "text": "The bob gets heavier",
+          "correct": false
+        }
+      ],
+      "reveal": "It swings more slowly. A longer pendulum takes more time to complete each swing, so the clock typically loses time."
+    },
+    {
+      "question": "With the same length and small swings, what happens if a pendulum bob is heavier?",
+      "options": [
+        {
+          "text": "Its rate stays about the same",
+          "correct": true
+        },
+        {
+          "text": "It swings faster",
+          "correct": false
+        },
+        {
+          "text": "It swings slower",
+          "correct": false
+        }
+      ],
+      "reveal": "Its rate stays about the same. For small swings, a simple pendulum’s timing depends mainly on its length and gravity, not the bob’s mass."
+    },
+    {
+      "question": "As a pendulum clock runs, what keeps its gears from unwinding all at once?",
+      "options": [
+        {
+          "text": "An escapement meters motion",
+          "correct": true
+        },
+        {
+          "text": "A friction brake",
+          "correct": false
+        },
+        {
+          "text": "A heavier pendulum",
+          "correct": false
+        }
+      ],
+      "reveal": "An escapement meters motion. It releases the gear train in small steps and gives the pendulum a push to keep it swinging."
+    },
+    {
+      "question": "When you wind a spring-driven clock, where is the energy mainly stored?",
+      "options": [
+        {
+          "text": "A tightened spring",
+          "correct": true
+        },
+        {
+          "text": "A raised weight",
+          "correct": false
+        },
+        {
+          "text": "The clock hands",
+          "correct": false
+        }
+      ],
+      "reveal": "A tightened spring. Winding stores energy in the coiled spring, which gradually unwinds to drive the clock."
+    },
+    {
+      "question": "As a weight-driven clock runs between windings, what supplies its driving energy?",
+      "options": [
+        {
+          "text": "A descending weight",
+          "correct": true
+        },
+        {
+          "text": "A tightening spring",
+          "correct": false
+        },
+        {
+          "text": "A battery-powered motor",
+          "correct": false
+        }
+      ],
+      "reveal": "A descending weight. As it falls, gravity’s stored energy drives the clock’s gear train; winding lifts it again."
+    },
+    {
+      "question": "On a typical 12-hour clock, how many times does the hour hand circle as the minute hand makes 12 turns?",
+      "options": [
+        {
+          "text": "Once",
+          "correct": true
+        },
+        {
+          "text": "Twice",
+          "correct": false
+        },
+        {
+          "text": "12 times",
+          "correct": false
+        }
+      ],
+      "reveal": "Once. The minute hand makes one full turn each hour, while the hour hand needs 12 hours to complete one turn."
+    },
+    {
+      "question": "In a small mechanical clock without a pendulum, what rocks back and forth to regulate its pace?",
+      "options": [
+        {
+          "text": "A balance wheel",
+          "correct": true
+        },
+        {
+          "text": "A winding key",
+          "correct": false
+        },
+        {
+          "text": "A toothed gear",
+          "correct": false
+        }
+      ],
+      "reveal": "A balance wheel. Its repeated oscillations, guided by a small spring, provide the regular motion that an escapement uses to pace the clock."
+    },
+    {
+      "question": "In many chiming clocks, what does a second gear system operate?",
+      "options": [
+        {
+          "text": "The sound mechanism",
+          "correct": true
+        },
+        {
+          "text": "The time display",
+          "correct": false
+        },
+        {
+          "text": "The winding key",
+          "correct": false
+        }
+      ],
+      "reveal": "The sound mechanism. Many clocks have one gear train for timekeeping and another that triggers strikes or chimes."
+    },
+    {
+      "question": "A rotating shaft wobbles in an enlarged plate hole; what repair restores a snug bearing?",
+      "options": [
+        {
+          "text": "Fit a bushing",
+          "correct": true
+        },
+        {
+          "text": "Add a washer",
+          "correct": false
+        },
+        {
+          "text": "File the shaft thinner",
+          "correct": false
+        }
+      ],
+      "reveal": "Fit a bushing. A properly fitted sleeve restores a round bearing surface where wear has enlarged the hole."
+    },
+    {
+      "question": "Why can old lubricant make a clock run poorly even if its gears look intact?",
+      "options": [
+        {
+          "text": "It can hold abrasive dirt",
+          "correct": true
+        },
+        {
+          "text": "It changes the gear ratio",
+          "correct": false
+        },
+        {
+          "text": "It stiffens the pendulum",
+          "correct": false
+        }
+      ],
+      "reveal": "It can hold abrasive dirt. Aged or contaminated lubricant can leave sticky residue and grit that increase friction and wear."
+    }
+  ]
+}

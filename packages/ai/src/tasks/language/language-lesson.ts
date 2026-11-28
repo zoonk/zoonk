@@ -38,22 +38,28 @@ const RESPELLING_RULES: Partial<Record<string, string>> = {
 
 /**
  * A learner who reads the app in the language they're learning gets definitions instead of
- * translations, and nothing compared with another language.
+ * translations, and nothing compared with another language. A fix appends its rules to the
+ * writer's.
  */
 function getSystemPrompt({
+  fixing = false,
   learnerLanguage,
   targetLanguage,
-}: Pick<LanguageLessonParams, "learnerLanguage" | "targetLanguage">): string {
+}: Pick<LanguageLessonParams, "learnerLanguage" | "targetLanguage"> & {
+  fixing?: boolean;
+}): string {
   const respelling = RESPELLING_RULES[learnerLanguage] ?? "";
   const sameLanguage = isSameLanguage({ learnerLanguage, targetLanguage });
+
+  const writerPrompt = selectPromptVariants({
+    template: basePrompt,
+    variants: { bilingual: !sameLanguage, sameLanguage },
+  }).replace("{{READER_RESPELLING}}\n", () => respelling);
 
   return fillPromptLanguages({
     learnerLanguage,
     targetLanguage,
-    template: selectPromptVariants({
-      template: basePrompt,
-      variants: { bilingual: !sameLanguage, sameLanguage },
-    }).replace("{{READER_RESPELLING}}\n", () => respelling),
+    template: fixing ? `${writerPrompt}\n${fixPrompt}` : writerPrompt,
   });
 }
 
@@ -296,7 +302,7 @@ ${formatLessonProblems(params.problems)}
 `;
 
   return runLanguageLessonTask({
-    instructions: `${getSystemPrompt(params)}\n${fixPrompt}`,
+    instructions: getSystemPrompt({ ...params, fixing: true }),
     params,
     task: "language-lesson-fix",
     userPrompt,

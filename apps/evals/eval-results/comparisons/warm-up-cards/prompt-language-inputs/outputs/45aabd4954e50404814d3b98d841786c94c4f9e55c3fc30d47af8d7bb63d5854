@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Uma árvore engrossa o tronco ao longo dos anos; a maior parte do carbono novo vem de…",
+      "options": [
+        {
+          "text": "Minerais do solo",
+          "correct": false
+        },
+        {
+          "text": "Gás carbônico do ar",
+          "correct": true
+        },
+        {
+          "text": "Água da chuva",
+          "correct": false
+        }
+      ],
+      "reveal": "Gás carbônico do ar. Na fotossíntese, a planta incorpora o carbono do CO₂ para formar açúcares e outros compostos que compõem seu corpo."
+    },
+    {
+      "question": "Num texto, o conectivo “embora” costuma indicar que a ideia seguinte…",
+      "options": [
+        {
+          "text": "Apresenta uma concessão",
+          "correct": true
+        },
+        {
+          "text": "Explica uma consequência",
+          "correct": false
+        },
+        {
+          "text": "Soma uma informação",
+          "correct": false
+        }
+      ],
+      "reveal": "Apresenta uma concessão. A ideia que vem depois cria um contraste, mas não impede que a ideia principal aconteça."
+    },
+    {
+      "question": "Em uma rua alagada, alguém diz: “Que dia perfeito para sair”. Que efeito essa fala pode ter?",
+      "options": [
+        {
+          "text": "Elogio literal",
+          "correct": false
+        },
+        {
+          "text": "Crítica indireta",
+          "correct": true
+        },
+        {
+          "text": "Pedido de informação",
+          "correct": false
+        }
+      ],
+      "reveal": "Crítica indireta. O contraste entre a situação difícil e o elogio aparente dá à fala um sentido diferente do literal."
+    },
+    {
+      "question": "Nos engenhos de açúcar do período colonial, a produção era organizada sobretudo para…",
+      "options": [
+        {
+          "text": "Abastecer mercados externos",
+          "correct": true
+        },
+        {
+          "text": "Atender só ao consumo local",
+          "correct": false
+        },
+        {
+          "text": "Trocar açúcar por minério",
+          "correct": false
+        }
+      ],
+      "reveal": "Abastecer mercados externos. A produção açucareira colonial se integrou ao comércio atlântico, com o açúcar destinado principalmente à exportação."
+    },
+    {
+      "question": "Em geral, por que áreas muito construídas podem ficar mais quentes que áreas arborizadas próximas?",
+      "options": [
+        {
+          "text": "Asfalto e concreto retêm calor",
+          "correct": true
+        },
+        {
+          "text": "A cidade fica mais alta",
+          "correct": false
+        },
+        {
+          "text": "O ar tem menos oxigênio",
+          "correct": false
+        }
+      ],
+      "reveal": "Asfalto e concreto retêm calor. A pouca vegetação também reduz a sombra e o resfriamento causado pela evaporação da água."
+    },
+    {
+      "question": "Como uma criança aprende regras de convivência que variam entre grupos e culturas?",
+      "options": [
+        {
+          "text": "Na interação com outras pessoas",
+          "correct": true
+        },
+        {
+          "text": "Pela herança genética",
+          "correct": false
+        },
+        {
+          "text": "Só pela escola formal",
+          "correct": false
+        }
+      ],
+      "reveal": "Na interação com outras pessoas. Família, escola e outros grupos participam da socialização, pela qual normas e valores são aprendidos."
+    },
+    {
+      "question": "Num circuito simples com lâmpadas em série, o que ocorre se uma delas queimar?",
+      "options": [
+        {
+          "text": "As outras ficam mais fortes",
+          "correct": false
+        },
+        {
+          "text": "Todas se apagam",
+          "correct": true
+        },
+        {
+          "text": "Só a bateria desliga",
+          "correct": false
+        }
+      ],
+      "reveal": "Todas se apagam. Em série, a corrente percorre um único caminho; se uma lâmpada interrompe esse caminho, a corrente para no circuito todo."
+    },
+    {
+      "question": "Quando um antibiótico elimina bactérias sensíveis, por que as resistentes podem se tornar mais comuns?",
+      "options": [
+        {
+          "text": "Elas sobrevivem e se reproduzem",
+          "correct": true
+        },
+        {
+          "text": "Cada bactéria escolhe mudar",
+          "correct": false
+        },
+        {
+          "text": "O remédio cria resistência em todas",
+          "correct": false
+        }
+      ],
+      "reveal": "Elas sobrevivem e se reproduzem. A resistência pode surgir por variação herdável; o antibiótico favorece as bactérias resistentes em relação às sensíveis."
+    },
+    {
+      "question": "Se uma receita para 4 pessoas é dobrada sem mudar as proporções, para quantas pessoas ela serve?",
+      "options": [
+        {
+          "text": "6 pessoas",
+          "correct": false
+        },
+        {
+          "text": "8 pessoas",
+          "correct": true
+        },
+        {
+          "text": "12 pessoas",
+          "correct": false
+        }
+      ],
+      "reveal": "8 pessoas. Ao dobrar todas as quantidades na mesma proporção, a receita rende o dobro de porções."
+    },
+    {
+      "question": "Se o lado de um quadrado dobra de comprimento, como fica a área em relação à original?",
+      "options": [
+        {
+          "text": "Dobra",
+          "correct": false
+        },
+        {
+          "text": "Triplica",
+          "correct": false
+        },
+        {
+          "text": "Quadruplica",
+          "correct": true
+        }
+      ],
+      "reveal": "Quadruplica. A área depende do lado multiplicado por ele mesmo; dobrar cada fator multiplica a área por quatro."
+    }
+  ]
+}

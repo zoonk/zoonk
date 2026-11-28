@@ -1,0 +1,14 @@
+{
+  "caseId": "en-quantum-physics",
+  "costUsd": 0.037296,
+  "name": "answer keys",
+  "passed": 7,
+  "problems": [
+    "{\"itemLocator\":\"cards[2]\",\"keyedAnswer\":\"No electrons are emitted\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"In the single-photon regime, each photon has less energy than the metal’s work function, so making the light brighter does not cause emission. At sufficiently high intensity, an electron can absorb multiple photons whose combined energy exceeds the work function. In that regime, “More electrons emerge” is also defensible.\"}",
+    "{\"itemLocator\":\"cards[3]\",\"keyedAnswer\":\"Its energy levels are discrete\",\"kind\":\"factualError\",\"workedAnswer\":\"Discrete bound levels explain atomic absorption lines: for a bound-to-bound transition, the photon energy must match the level spacing. But an atom can also absorb a continuous range of photon energies above its ionization threshold, with the excess energy becoming kinetic energy. The stem needs to specify that the electron remains bound.\"}",
+    "{\"itemLocator\":\"cards[6]\",\"keyedAnswer\":\"Correlated outcomes\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The stem asks what the pair can show, not what entanglement guarantees. For example, two particles in the state (|00⟩ + |11⟩)/√2, both measured in the 0/1 basis, give either 00 or 11. Each local result is random, but the two results match on every trial, so “Identical results every time” is a possible correlation.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

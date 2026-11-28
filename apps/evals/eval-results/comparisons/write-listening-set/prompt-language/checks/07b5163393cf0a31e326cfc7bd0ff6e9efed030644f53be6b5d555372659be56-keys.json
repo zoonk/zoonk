@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-ielts-part-1-from-notice",
+  "costUsd": 0.038976000000000004,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"set.questions[6]\",\"keyedAnswer\":\"48; forty-eight (sample: forty-eight)\",\"kind\":\"wrongKey\",\"workedAnswer\":\"Ryan corrects the total from £45 to £48. The gap already includes £, so it should accept “48” only. “Forty-eight” meets the word limit but produces the incorrectly written amount “£forty-eight”.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

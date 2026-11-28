@@ -1,0 +1,35 @@
+{
+  "instructions": [
+    "Describa la fotografía durante uno o dos minutos, sin preparación previa.",
+    "Después, converse con el examinador sobre sus experiencias. La tarea dura unos tres minutos."
+  ],
+  "prompts": [
+    "¿Cómo son las personas y dónde están?",
+    "¿Qué objetos hay y qué están haciendo?",
+    "¿Qué relación cree que tienen?",
+    "¿De qué cree que están hablando?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of an everyday moment in a community ceramics class in Spain. Three adults in their twenties to fifties, wearing casual clothes and clay-stained aprons, sit around a worktable shaping small clay bowls. One woman gestures towards another person's bowl while the others look at it and smile. Clay tools, unfinished pots and shelves of pottery are visible. Soft afternoon daylight enters through a window. No text, signs, logos or screens.",
+      "alt": "Three adults work on clay bowls together in a ceramics class."
+    }
+  ],
+  "summary": "Describe a photo without preparation, then talk with the examiner about your own experiences.",
+  "character": {
+    "name": "Rosa",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Start with the opening line. Listen without interrupting while the candidate describes the photo for one to two minutes. Then say: «Ahora vamos a hablar de usted». Ask these questions in order, allowing time for answers: «¿Ha hecho usted algún curso fuera de sus estudios o de su trabajo? ¿Cómo fue?», «¿Qué le gustaría aprender en un curso en el futuro? ¿Por qué?» and «¿Prefiere aprender en grupo o por su cuenta? ¿Por qué?». For a short answer, use one or two of these backups as appropriate: «¿Puede contarme un poco más?» and «¿Cómo fue esa experiencia?». Keep the whole task to about three minutes. Do not correct, praise or grade the candidate.",
+  "openingLine": "Describa esta fotografía. Tiene entre uno y dos minutos. Después hablaremos de sus experiencias. Puede empezar cuando quiera.",
+  "hints": [
+    "A primera vista, parece que...",
+    "No estoy seguro, pero creo que...",
+    "En mi experiencia, lo más interesante es...",
+    "Prefiero esta opción porque...",
+    "Déjeme pensar un momento."
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "en-ja-hiragana",
+  "challenger": {
+    "costUsd": 0.0016009999999999998,
+    "durationMs": 21983.95,
+    "hash": "b2781d74a7e0fd3485b2df30a5aa64ad16e0d0fddca0d7f4c6d14175fbb7a73b",
+    "systemPromptHash": "6c47761979e5682daf55d38e68bf58a26ba40bc3e6a31926fdafad2f6508c85d",
+    "userPromptHash": "b770c0ffcc9cfd6e56e645a5d7609b82859b365466886fcb95621f146132d634"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.001508,
+    "durationMs": 19033.055792,
+    "hash": "3d238234535f8fa87f21c776a1cef3ce18cf1012598d2b8fb4df66594dc931cd",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "b770c0ffcc9cfd6e56e645a5d7609b82859b365466886fcb95621f146132d634"
+  },
+  "run": 1
+}

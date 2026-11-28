@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você desenvolve as respostas e conecta ideias com clareza, por exemplo: “But on the other hand, my job is here, so it's a difficult decision.” A organização é consistente, embora algumas respostas pudessem explorar as ideias com mais profundidade para sustentar uma faixa mais alta.",
+      "tip": "Ao apresentar uma opinião, acrescente uma consequência ou um exemplo específico. Depois de “I think it's affecting the way we relate with each other”, você poderia completar com “For instance, people may miss out on meaningful conversations with friends.”",
+      "bandHigh": 7,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário adequado para falar de tecnologia e vida cotidiana, como “carry money” e “a responsible way”. Algumas escolhas de palavras e combinações soam pouco precisas, como “use more in my day” e “use it for pay things”, o que limita uma faixa mais alta.",
+      "tip": "Troque “use it for pay things” por uma combinação mais precisa: “I use it to make everyday payments through Pix.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você combina frases simples e complexas, como “I live in an apartment in Curitiba, it's not very big but it's quite comfortable and it's close to my office, so I can walk to work”. Há erros de estrutura em “I use it since I wake up” e “I also use it for pay things”, que limitam a faixa.",
+      "tip": "Para falar de uma rotina, use o presente simples e “from...until” para indicar o período: em vez de “I use it since I wake up until I go to sleep”, diga “I use it from the moment I wake up until I go to sleep.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite saber como você soou, e não há sinais claros de palavras incompreensíveis ou pedidos para repetir; por isso, esta é uma estimativa mais ampla, guiada pelas outras faixas.",
+      "tip": "Ao falar, deixe bem nítidos os sons finais em “phones”, “friends” e “schools”, para que essas palavras sejam fáceis de distinguir.",
+      "bandHigh": 7,
+      "bandLow": 6
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

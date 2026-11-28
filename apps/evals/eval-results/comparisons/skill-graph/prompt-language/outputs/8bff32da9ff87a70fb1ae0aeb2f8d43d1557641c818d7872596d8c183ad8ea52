@@ -1,0 +1,592 @@
+{
+  "courses": [
+    {
+      "countrySpecific": false,
+      "key": "ecommerce-analytics",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "E-commerce Analytics"
+    },
+    {
+      "countrySpecific": false,
+      "key": "sql",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "SQL"
+    },
+    {
+      "countrySpecific": false,
+      "key": "sheets",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Google Sheets"
+    },
+    {
+      "countrySpecific": false,
+      "key": "experimentation",
+      "levels": [
+        "beginner",
+        "intermediate"
+      ],
+      "title": "Statistical Experimentation"
+    },
+    {
+      "countrySpecific": false,
+      "key": "data-communication",
+      "levels": [
+        "intermediate"
+      ],
+      "title": "Data Communication"
+    }
+  ],
+  "estimatedHours": 33,
+  "phases": [
+    {
+      "estimatedHours": 8.3,
+      "milestone": "Build a reliable weekly sales report from defined metrics and checked data.",
+      "title": "Establishing a reliable baseline"
+    },
+    {
+      "estimatedHours": 8.7,
+      "milestone": "Investigate sales changes and communicate supported findings.",
+      "title": "Moving beyond the report"
+    },
+    {
+      "estimatedHours": 8.2,
+      "milestone": "Design an A/B test with clear metrics, assignment, and a practical sample plan.",
+      "title": "Preparing to experiment"
+    },
+    {
+      "estimatedHours": 7.8,
+      "milestone": "Analyze an A/B test and explain a decision with its uncertainty and limitations.",
+      "title": "Making decisions with evidence"
+    }
+  ],
+  "skills": [
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Define sales measures consistently, including gross sales, net sales, orders, returns, and discounts.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "define-sales-metrics",
+      "level": "beginner",
+      "name": "Define e-commerce sales metrics",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Identify the grain, identifiers, and relationships of common order, customer, product, and event tables.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "identify-data-grain",
+      "level": "beginner",
+      "name": "Identify e-commerce data grain",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "SQL analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Select, filter, and group records to produce sales totals at the requested grain.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "aggregate-sales-sql",
+      "level": "beginner",
+      "name": "Aggregate sales data with SQL",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "identify-data-grain",
+        "define-sales-metrics"
+      ]
+    },
+    {
+      "area": "SQL analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Join tables at compatible grains while avoiding lost records and duplicated sales.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "join-sales-data",
+      "level": "intermediate",
+      "name": "Join e-commerce tables safely",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "aggregate-sales-sql"
+      ]
+    },
+    {
+      "area": "SQL analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Use date boundaries, time zones, and comparable periods to report sales consistently.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "sql-reporting-periods",
+      "level": "intermediate",
+      "name": "Calculate SQL reporting periods",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "aggregate-sales-sql"
+      ]
+    },
+    {
+      "area": "Spreadsheet reporting",
+      "topics": [],
+      "course": "sheets",
+      "description": "Use references, conditional formulas, and lookups to transform and summarize reporting data.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "sheets-report-formulas",
+      "level": "beginner",
+      "name": "Build reporting formulas in Sheets",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": []
+    },
+    {
+      "area": "Spreadsheet reporting",
+      "topics": [],
+      "course": "sheets",
+      "description": "Summarize sales by period, product, or channel with pivot tables and appropriate totals.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "sheets-pivots",
+      "level": "beginner",
+      "name": "Summarize sales with pivot tables",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "define-sales-metrics"
+      ]
+    },
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Check completeness, duplicates, missing values, and reconciliations before publishing a report.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "validate-sales-data",
+      "level": "intermediate",
+      "name": "Validate sales reporting data",
+      "outcome": false,
+      "phase": 1,
+      "prerequisites": [
+        "identify-data-grain",
+        "define-sales-metrics"
+      ]
+    },
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Calculate conversion rate, average order value, and revenue per visitor with consistent denominators.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "calculate-commerce-rates",
+      "level": "intermediate",
+      "name": "Calculate e-commerce rates and averages",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "define-sales-metrics",
+        "identify-data-grain"
+      ]
+    },
+    {
+      "area": "SQL analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Use common table expressions to organize and check multistep analytical queries.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "structure-sql-analysis",
+      "level": "intermediate",
+      "name": "Structure SQL analysis with CTEs",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "join-sales-data"
+      ]
+    },
+    {
+      "area": "SQL analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Use window functions to compare periods, rank results, and calculate running measures.",
+      "estimatedLessons": 11,
+      "examWeight": null,
+      "key": "sql-window-functions",
+      "level": "intermediate",
+      "name": "Analyze trends with SQL windows",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "aggregate-sales-sql",
+        "sql-reporting-periods"
+      ]
+    },
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Break down changes in sales by relevant products, channels, and customer groups without confusing composition with performance.",
+      "estimatedLessons": 11,
+      "examWeight": null,
+      "key": "investigate-sales-changes",
+      "level": "intermediate",
+      "name": "Investigate changes in sales",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "calculate-commerce-rates"
+      ]
+    },
+    {
+      "area": "Sales metrics and data",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Interpret period comparisons in light of seasonality, promotions, and other business changes.",
+      "estimatedLessons": 8,
+      "examWeight": null,
+      "key": "interpret-sales-comparisons",
+      "level": "intermediate",
+      "name": "Interpret sales period comparisons",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "define-sales-metrics"
+      ]
+    },
+    {
+      "area": "Spreadsheet reporting",
+      "topics": [],
+      "course": "sheets",
+      "description": "Design a maintainable weekly report with separated inputs, calculations, checks, and outputs.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "maintain-weekly-report",
+      "level": "intermediate",
+      "name": "Maintain a weekly sales report",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "sheets-report-formulas",
+        "sheets-pivots",
+        "validate-sales-data"
+      ]
+    },
+    {
+      "area": "Communication and AI",
+      "topics": [],
+      "course": "data-communication",
+      "description": "Choose clear charts and annotations that accurately show comparisons and trends.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "visualize-sales-results",
+      "level": "intermediate",
+      "name": "Visualize sales results clearly",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "define-sales-metrics"
+      ]
+    },
+    {
+      "area": "Communication and AI",
+      "topics": [],
+      "course": "data-communication",
+      "description": "Summarize the finding, business context, limitations, and recommended follow-up for a manager.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "communicate-analysis",
+      "level": "intermediate",
+      "name": "Communicate analytical findings",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": []
+    },
+    {
+      "area": "Communication and AI",
+      "topics": [],
+      "course": "ecommerce-analytics",
+      "description": "Give ChatGPT an analytical task with appropriate context, protect company data, and independently verify generated SQL, formulas, and claims.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "use-ai-analysis",
+      "level": "intermediate",
+      "name": "Use AI for analytical work",
+      "outcome": false,
+      "phase": 2,
+      "prerequisites": [
+        "aggregate-sales-sql",
+        "sheets-report-formulas"
+      ]
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Frame a business change as a testable comparison between a control and a treatment.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "frame-ab-hypothesis",
+      "level": "beginner",
+      "name": "Frame an A/B test hypothesis",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": []
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Choose an assignment unit and randomization approach that reduce bias and avoid treatment contamination.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "design-random-assignment",
+      "level": "intermediate",
+      "name": "Design random assignment",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "frame-ab-hypothesis"
+      ]
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Select a primary outcome, guardrails, and measurement windows that match the proposed business change.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "choose-test-metrics",
+      "level": "intermediate",
+      "name": "Choose A/B test metrics",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "frame-ab-hypothesis",
+        "calculate-commerce-rates"
+      ]
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Connect assignment, exposure, and outcome events using consistent identifiers and timestamps.",
+      "estimatedLessons": 11,
+      "examWeight": null,
+      "key": "plan-test-tracking",
+      "level": "intermediate",
+      "name": "Plan experiment tracking",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "design-random-assignment",
+        "identify-data-grain"
+      ]
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Estimate sample size and duration using baseline rates, minimum detectable effect, power, and expected traffic.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "plan-test-sample",
+      "level": "intermediate",
+      "name": "Plan experiment sample size",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "choose-test-metrics"
+      ]
+    },
+    {
+      "area": "Experiment design",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Specify the analysis, stopping rule, and practical decision criteria before inspecting results.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "write-test-plan",
+      "level": "intermediate",
+      "name": "Write an experiment analysis plan",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "plan-test-sample",
+        "plan-test-tracking"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Explain sampling variation and how confidence intervals express uncertainty about an effect.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "interpret-confidence-intervals",
+      "level": "intermediate",
+      "name": "Interpret confidence intervals",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": []
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Interpret a p-value and statistical significance without treating either as the size or importance of an effect.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "interpret-p-values",
+      "level": "intermediate",
+      "name": "Interpret A/B test p-values",
+      "outcome": false,
+      "phase": 3,
+      "prerequisites": [
+        "interpret-confidence-intervals"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Check allocation counts, event coverage, and tracking consistency before interpreting a test.",
+      "estimatedLessons": 11,
+      "examWeight": null,
+      "key": "validate-experiment-data",
+      "level": "intermediate",
+      "name": "Validate experiment data",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "plan-test-tracking",
+        "validate-sales-data"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "sql",
+      "description": "Build one analysis record per assignment unit and calculate treatment and control outcomes without join duplication.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "build-experiment-dataset",
+      "level": "intermediate",
+      "name": "Build an experiment dataset",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "plan-test-tracking",
+        "structure-sql-analysis"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Estimate absolute and relative effects on conversion and revenue metrics using the assigned groups.",
+      "estimatedLessons": 12,
+      "examWeight": null,
+      "key": "estimate-test-effects",
+      "level": "intermediate",
+      "name": "Estimate A/B test effects",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "build-experiment-dataset",
+        "choose-test-metrics"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Select and check an appropriate test or interval for a conversion rate or revenue outcome.",
+      "estimatedLessons": 14,
+      "examWeight": null,
+      "key": "test-experiment-effects",
+      "level": "intermediate",
+      "name": "Test experiment effects statistically",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "estimate-test-effects",
+        "interpret-confidence-intervals",
+        "interpret-p-values"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Assess segment results cautiously, accounting for small samples and multiple comparisons.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "interpret-test-segments",
+      "level": "intermediate",
+      "name": "Interpret experiment segment results",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "test-experiment-effects"
+      ]
+    },
+    {
+      "area": "Experiment analysis",
+      "topics": [],
+      "course": "experimentation",
+      "description": "Compare estimated effects, uncertainty, guardrails, and implementation costs against the planned decision criteria.",
+      "estimatedLessons": 10,
+      "examWeight": null,
+      "key": "recommend-test-decision",
+      "level": "intermediate",
+      "name": "Recommend an experiment decision",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "test-experiment-effects",
+        "validate-experiment-data",
+        "write-test-plan"
+      ]
+    },
+    {
+      "area": "Communication and AI",
+      "topics": [],
+      "course": "data-communication",
+      "description": "Present the experiment design, effect, uncertainty, caveats, and recommendation in language a manager can act on.",
+      "estimatedLessons": 9,
+      "examWeight": null,
+      "key": "present-test-results",
+      "level": "intermediate",
+      "name": "Present A/B test results",
+      "outcome": false,
+      "phase": 4,
+      "prerequisites": [
+        "recommend-test-decision",
+        "communicate-analysis"
+      ]
+    }
+  ],
+  "repaired": []
+}

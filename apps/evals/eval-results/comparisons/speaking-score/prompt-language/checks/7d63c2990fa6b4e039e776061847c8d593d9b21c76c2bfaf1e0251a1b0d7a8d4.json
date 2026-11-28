@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-es-dele-b2-proposals-at-level",
+  "costUsd": 0,
+  "criteria": [
+    "evidence"
+  ],
+  "name": "code checks",
+  "passed": 7,
+  "problems": [],
+  "run": 2,
+  "side": "challenger",
+  "total": 7
+}

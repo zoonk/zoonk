@@ -1,0 +1,198 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "oo kahr-DAH-pyoo",
+      "romanization": null,
+      "tip": "The accent on the first 'a' marks where the stress falls, and the final 'o' sounds like a short 'oo'.",
+      "note": null,
+      "distractors": [
+        "o cartão",
+        "o garçom",
+        "o copo"
+      ]
+    },
+    {
+      "word": "o prato",
+      "translation": "the dish",
+      "pronunciation": "oo PRAH-too",
+      "romanization": null,
+      "tip": "Tap the 'r' quickly against the roof of your mouth just like the middle sound of the American English word 'water'.",
+      "note": "In Brazilian Portuguese, 'o prato' means both the actual plate and a food course or meal dish.",
+      "distractors": [
+        "o preço",
+        "o pato",
+        "o quarto"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "ah KOHN-tah",
+      "romanization": null,
+      "tip": "Keep the 'on' nasal by letting air flow through your nose without closing your lips into an 'm' or pressing your tongue for an 'n'.",
+      "note": null,
+      "distractors": [
+        "a comida",
+        "a mesa",
+        "a porta"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "pohr fah-VOHR",
+      "romanization": null,
+      "tip": "Stress the final syllable 'vor', lingering slightly on the 'oh' vowel.",
+      "note": null,
+      "distractors": [
+        "de nada",
+        "com licença",
+        "bom dia"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "O cardápio, por favor",
+      "translation": "The menu, please",
+      "explanation": "In Brazilian Portuguese, you can politely ask for something by naming the item followed by 'por favor'.",
+      "romanization": null,
+      "distractors": [
+        "no",
+        "com"
+      ],
+      "translationDistractors": [
+        "table",
+        "check"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Eu quero este prato, por favor",
+      "translation": "I want this dish, please",
+      "explanation": "'Eu quero' literally means 'I want', and pairing it with 'por favor' makes it completely polite and standard in Brazilian restaurants.",
+      "romanization": null,
+      "distractors": [
+        "ela",
+        "muito"
+      ],
+      "translationDistractors": [
+        "drink",
+        "bill"
+      ],
+      "speakingPrompt": "Order this dish politely from the server"
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "To ask for the bill at the end of a meal, Brazilians simply say 'A conta, por favor'.",
+      "romanization": null,
+      "distractors": [
+        "o",
+        "para"
+      ],
+      "translationDistractors": [
+        "menu",
+        "food"
+      ],
+      "speakingPrompt": "Ask the server for the bill"
+    }
+  ],
+  "tip": {
+    "title": "Choosing between o and a",
+    "text": "Every noun in Brazilian Portuguese has a gender. Use `o` before masculine singular nouns like `o cardápio` and `o prato`. Use `a` before feminine singular nouns like `a conta`. Most words ending in -o take `o`, while most words ending in -a take `a`.",
+    "examples": [
+      {
+        "sentence": "O prato é bom",
+        "translation": "The dish is good"
+      },
+      {
+        "sentence": "A conta está certa",
+        "translation": "The bill is right"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the right word to ask for the menu.",
+      "template": "[BLANK] cardápio, por favor",
+      "answer": "O",
+      "distractors": [
+        "A",
+        "Uma"
+      ],
+      "feedback": "'Cardápio' is a masculine noun ending in -o, so it takes the masculine article 'O'."
+    },
+    {
+      "question": "Choose the right word to ask for the check.",
+      "template": "[BLANK] conta, por favor",
+      "answer": "A",
+      "distractors": [
+        "O",
+        "Um"
+      ],
+      "feedback": "'Conta' is a feminine noun ending in -a, so it takes the feminine article 'A'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You are finished eating at a restaurant in São Paulo and want to pay. What do you say?",
+    "scene": "A restaurant in São Paulo with your waiter",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Tudo bem por aqui?",
+        "translation": "Everything all right here?"
+      },
+      {
+        "speaker": "you",
+        "text": "Sim, obrigado",
+        "translation": "Yes, thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "Deseja mais alguma coisa?",
+        "translation": "Would you like anything else?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "A conta, por favor",
+        "translation": "The bill, please",
+        "isBest": true,
+        "why": "This is the natural and polite way to let the waiter know you are ready to pay."
+      },
+      {
+        "text": "O conta, por favor",
+        "translation": "The bill, please",
+        "isBest": false,
+        "why": "'Conta' is a feminine noun and must be paired with 'a', not 'o'."
+      },
+      {
+        "text": "O cardápio, por favor",
+        "translation": "The menu, please",
+        "isBest": false,
+        "why": "Asking for the menu means you want to order more food, not pay."
+      }
+    ],
+    "explanation": "To settle up at the end of a meal in Brazil, simply say 'A conta, por favor'."
+  },
+  "writing": {
+    "prompt": "Write a polite sentence asking for the bill: 'The bill, please'",
+    "answers": [
+      "A conta, por favor.",
+      "A conta, por favor"
+    ],
+    "keyPoints": [
+      "Uses the feminine article 'A' with 'conta'",
+      "Includes 'por favor' for politeness"
+    ]
+  },
+  "summary": [
+    "'O cardápio, por favor' asks for the menu politely.",
+    "'Eu quero este prato, por favor' lets you order a dish.",
+    "'A conta, por favor' requests the bill when you are ready to pay."
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "Now we meet in the old library.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nThe repair café now meets in the ______.",
+        "question": "Where does the repair café meet now?",
+        "keyPoints": [
+          "The old library."
+        ],
+        "acceptedAnswers": [
+          "old library"
+        ],
+        "sampleAnswer": "old library"
+      },
+      {
+        "evidence": "screwdrivers are what we use most",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nThe tools used most often at the café are ______.",
+        "question": "Which tools are used most often?",
+        "keyPoints": [
+          "Screwdrivers."
+        ],
+        "acceptedAnswers": [
+          "screwdrivers"
+        ],
+        "sampleAnswer": "screwdrivers"
+      },
+      {
+        "evidence": "Now we use yellow stickers",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nVolunteers attach ______ to items when they arrive.",
+        "question": "What do volunteers now use to label items?",
+        "keyPoints": [
+          "Yellow stickers."
+        ],
+        "acceptedAnswers": [
+          "yellow stickers"
+        ],
+        "sampleAnswer": "yellow stickers"
+      },
+      {
+        "evidence": "before we remove anything, we take photographs.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nBefore taking an item apart, volunteers take ______ to help them put it back together.",
+        "question": "What do volunteers take before removing parts?",
+        "keyPoints": [
+          "Photographs."
+        ],
+        "acceptedAnswers": [
+          "photographs"
+        ],
+        "sampleAnswer": "photographs"
+      },
+      {
+        "evidence": "But I think patience is more important.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nMaya considers ______ more important than technical knowledge for a volunteer.",
+        "question": "What quality does Maya value most in a volunteer?",
+        "keyPoints": [
+          "Patience."
+        ],
+        "acceptedAnswers": [
+          "patience"
+        ],
+        "sampleAnswer": "patience"
+      },
+      {
+        "evidence": "we’re creating an online map showing repair groups across the area.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Write NO MORE THAN TWO WORDS.\n\nTo publicise local repair groups, the volunteers are creating an ______.",
+        "question": "What are the volunteers creating to help people find repair groups?",
+        "keyPoints": [
+          "An online map."
+        ],
+        "acceptedAnswers": [
+          "online map"
+        ],
+        "sampleAnswer": "online map"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Maya",
+        "gender": "female",
+        "accent": "British English"
+      }
+    ],
+    "title": "A community repair café",
+    "turns": [
+      {
+        "speaker": "Maya",
+        "text": "Hello everyone. I’m Maya, and I’d like to tell you about the repair café I help run in my town. It’s not actually a café in the usual sense, although we do serve tea. People bring along things that have stopped working, and volunteers help them try to fix them. We started in the town hall, but it was too expensive to hire every month. Now we meet in the old library. It’s smaller, but there’s plenty of light, and people can drop in easily."
+      },
+      {
+        "speaker": "Maya",
+        "text": "I joined about two years ago, after I took a broken lamp along. I expected someone to take it away and mend it for me. Instead, a volunteer showed me what was wrong and let me do most of the work myself. I enjoyed that so much that I offered to help at the next session. At first, I thought we’d need lots of hammers, but the organiser explained that most repairs involve opening small cases, so screwdrivers are what we use most. We keep a big selection because the screws in different machines aren’t all the same size."
+      },
+      {
+        "speaker": "Maya",
+        "text": "On a typical Saturday, people arrive with everything from radios to torn coats. We can’t promise to fix every item, of course. Some are unsafe, and others need parts that are no longer made. When someone comes in, a volunteer checks what they’ve brought and gives it a label. We used to write directly on pieces of paper and tie them on with string, but that took ages. Now we use yellow stickers, which are easy to spot and don’t damage the surface. The number on each one matches a form with the owner’s details."
+      },
+      {
+        "speaker": "Maya",
+        "text": "One thing I’ve learned is that taking something apart is often easier than putting it back together. A bicycle can look fairly simple until you have a pile of tiny pieces on the table. So, before we remove anything, we take photographs. That way, if we forget where a part belongs, we can check instead of guessing. We also put the smallest pieces in little containers. We once spent twenty minutes looking for a screw that had rolled under someone’s chair."
+      },
+      {
+        "speaker": "Maya",
+        "text": "People sometimes ask whether you need to be an engineer to volunteer. Technical knowledge certainly helps, and we have a few experienced engineers. But I think patience is more important. A repair can take a long time, and the owner might be learning something completely new. You have to give them space to try, even when you could probably do the job faster yourself. Some volunteers are great at welcoming visitors or making tea, too."
+      },
+      {
+        "speaker": "Maya",
+        "text": "We’ve recently been thinking about how to reach people who don’t know we exist. We considered printing a leaflet for every house, but that would cost too much. Instead, we’re creating an online map showing repair groups across the area. Each group can add its meeting times and the kinds of things it can help with. I hope that means fewer useful objects will end up in the bin. Anyway, if you’ve got something broken at home, perhaps you’ll look for a group near you. Thanks for listening."
+      }
+    ]
+  }
+}

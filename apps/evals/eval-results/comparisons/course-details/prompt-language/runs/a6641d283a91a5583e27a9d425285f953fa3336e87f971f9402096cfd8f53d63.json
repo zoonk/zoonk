@@ -1,0 +1,19 @@
+{
+  "caseId": "it-finanza-personale-beginner",
+  "challenger": {
+    "costUsd": 0.00068748,
+    "durationMs": 8435.35149999999,
+    "hash": "e953ebe6d4743263d3dfff7aedb1b6bc83165a91165a82552309f5d9a43a7982",
+    "systemPromptHash": "95672636251c2c7d35ad9a78001e5394aadb468b751980045d83e2b26317021c",
+    "userPromptHash": "2dfe643f660b4b3e7e276d47732f9a70b25a0ffe9b3dfac28173e02ccb8b070d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0006515299999999999,
+    "durationMs": 8085.956959000003,
+    "hash": "18b5c918734eac0cceedbda04bb47c8e68c27cbe421552bea8a49f4a4c83f3bf",
+    "systemPromptHash": "782cebffd04f74e4a27023e27678685d5ac6ee34a8481cb679d4f0909e3b41c8",
+    "userPromptHash": "2dfe643f660b4b3e7e276d47732f9a70b25a0ffe9b3dfac28173e02ccb8b070d"
+  },
+  "run": 2
+}

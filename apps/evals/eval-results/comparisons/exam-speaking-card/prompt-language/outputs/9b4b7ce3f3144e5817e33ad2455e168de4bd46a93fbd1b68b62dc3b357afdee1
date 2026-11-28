@@ -1,0 +1,54 @@
+{
+  "instructions": [
+    "Sie möchten am Samstag zusammen schwimmen gehen.",
+    "Finden Sie gemeinsam eine Zeit für eine Stunde. Sprechen Sie etwa fünf Minuten."
+  ],
+  "prompts": [
+    "Wann haben Sie Zeit?",
+    "Machen Sie Vorschläge.",
+    "Reagieren Sie auf die Vorschläge.",
+    "Einigen Sie sich auf eine Uhrzeit."
+  ],
+  "text": null,
+  "table": {
+    "title": "Ihr Kalender, Samstag. Von 9 bis 20 Uhr, freie Zeiten ohne Termin.",
+    "columns": [
+      "Uhrzeit",
+      "Termin"
+    ],
+    "rows": [
+      [
+        "9:00–10:30",
+        "Frühstück mit Freunden"
+      ],
+      [
+        "11:00–12:00",
+        "Deutsch lernen"
+      ],
+      [
+        "14:00–15:30",
+        "Familie besuchen"
+      ],
+      [
+        "17:00–18:30",
+        "Kochen"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Find a time to go swimming with your partner. Compare your schedules, make suggestions, and agree on a time.",
+  "character": {
+    "name": "Leonie",
+    "role": "other candidate",
+    "place": "Prüfungsraum"
+  },
+  "characterBrief": "You are the other candidate, not the examiner. Your Saturday diary has these appointments: 9:00–11:00 breakfast with your sister, 12:00–14:00 shopping, 16:30–18:00 a German course, and 18:30–19:00 a phone call. You are free at other times from 9:00 to 20:00. Swimming takes one hour. Possible shared times are 15:30–16:30 and 19:00–20:00. Do not see or reveal the learner's diary. Speak about half the time in turns of one or two sentences, ask for the learner's opinion, and react to their answers. Try to sustain the exchange for about five minutes without rushing. Use these ideas naturally: „Am Vormittag habe ich von neun bis elf einen Termin.“ „Um zwölf kann ich leider nicht. Da gehe ich einkaufen.“ „Ich möchte lieber am Nachmittag schwimmen. Wie wäre es um halb vier?“ „Um neunzehn Uhr habe ich auch Zeit. Passt dir das besser?“ If the learner suggests a time when you are busy, politely say so and ask for another suggestion. Check that a proposed time gives you both a full hour, then agree on a time. Never correct the learner or act as the examiner.",
+  "openingLine": "Hallo! Wann hast du am Samstag Zeit zum Schwimmen?",
+  "hints": [
+    "Einen Moment, ich sehe in meinen Kalender.",
+    "Um diese Uhrzeit habe ich leider keine Zeit.",
+    "Wie wäre es um drei Uhr?",
+    "Das passt mir gut.",
+    "Hast du auch später Zeit?"
+  ]
+}

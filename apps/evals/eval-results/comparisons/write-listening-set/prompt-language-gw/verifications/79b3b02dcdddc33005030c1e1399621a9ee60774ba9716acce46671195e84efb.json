@@ -1,0 +1,207 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "3bbdebe44901a3df",
+        "criterion": "examRealism",
+        "observationId": "a5918d3568ec54065473ebf101527872558acde8a471a9250c30e57cf9f30660.first.742a9ef0-9412-48ea-ad3a-93e42574c709.0",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "51acb6a35d9aad23",
+        "criterion": "keys",
+        "observationId": "a5918d3568ec54065473ebf101527872558acde8a471a9250c30e57cf9f30660.first.742a9ef0-9412-48ea-ad3a-93e42574c709.1",
+        "run": 2,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "08f1f1b83b7d1cc0",
+        "criterion": "examRealism",
+        "observationId": "a5918d3568ec54065473ebf101527872558acde8a471a9250c30e57cf9f30660.first.742a9ef0-9412-48ea-ad3a-93e42574c709.2",
+        "run": 2,
+        "side": "challenger"
+      },
+      {
+        "caseId": "en-ielts-part-1-form-completion",
+        "claimId": "7a32043ddf96b430",
+        "criterion": "examRealism",
+        "observationId": "a5918d3568ec54065473ebf101527872558acde8a471a9250c30e57cf9f30660.first.742a9ef0-9412-48ea-ad3a-93e42574c709.3",
+        "run": 2,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0017047,
+    "id": "79b3b02dcdddc33005030c1e1399621a9ee60774ba9716acce46671195e84efb",
+    "packet": [
+      {
+        "A": {
+          "blob": "03e29c32ced91b55fea4bfb23f6bcb01285214136d46cc4cde53717cf11c8a96",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e8caa3f0a94d2d0f34bfe67f4cef7bbfa9c30cf13802ab2359fb9e2847eefda7",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "claimId": "3bbdebe44901a3df",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: Leah (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The sampleAnswer 'the eighteenth of May' is four words, which breaks the instruction to write no more than two words and/or a number.",
+            "claimId": "51acb6a35d9aad23",
+            "criterion": "keys",
+            "location": {
+              "detail": "sampleAnswer of the date question",
+              "kind": "quote"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Both speakers are British English, but the expectation asks for a mix of British and Australian accents.",
+            "claimId": "08f1f1b83b7d1cc0",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "speakers list: Kevin (British English) and Hannah (British English); no Australian speaker",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "No speaker corrects themselves before any answer, but the expectation asks for one or two answers to follow a self-correction.",
+            "claimId": "7a32043ddf96b430",
+            "criterion": "examRealism",
+            "location": {
+              "detail": "whole script: no self-correction by any speaker",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "375790283f8ec2e244da558bed984bf743d9aba5f13ee7362250c7e85a47a5c6",
+          "format": "text"
+        },
+        "input": {
+          "blob": "6e4ca088993adb7c01b9f88386a8cfaa427f48e8eda7e4d8ae833e665884ecc1",
+          "format": "json"
+        },
+        "relatedObservations": [
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "output": "B"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "output": "B"
+          },
+          {
+            "claim": "The question gives away the answer by asking for an item “to protect her clothes,” making “apron” guessable from common sense without hearing the recording.",
+            "output": "A"
+          },
+          {
+            "claim": "The script is shorter than the required 600 words for an IELTS Part 1 recording of about four to five minutes.",
+            "output": "A"
+          },
+          {
+            "claim": "Both speakers are identified as having British English accents; the expectation requires a mix of British and Australian accents.",
+            "output": "A"
+          }
+        ]
+      },
+      {
+        "A": {
+          "blob": "d3b9359462f322946a931853d88087de4957f6aaff4d0046ab36e6a59e841030",
+          "format": "text"
+        },
+        "B": {
+          "blob": "e28a3cc207cb8b10ae277130dc394190bf4e98980b307e534ce367d7cbdd66dc",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The questions and options are written in Brazilian Portuguese instead of Spanish.",
+            "claimId": "d43f8aa9de1f982f",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "Every reason and misconception of the second question is written in Spanish instead of Brazilian Portuguese, so the learner gets the explanation of that answer in the language they are being tested on.",
+            "claimId": "e8a6b1a59700855a",
+            "criterion": "naturalSpeech",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "09803fc2d24b1de2ec9718d3917bc9d25aa51ccbce6f0146f303ab854bf1a987",
+          "format": "text"
+        },
+        "input": {
+          "blob": "d5c8e6c07ff797238a5ddb72546bb373e495f0b5e46b22bf3601b5b8892bcdc2",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "openai",
+      "model": "openai/gpt-6-luna"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "3bbdebe44901a3df",
+          "finding": "holds for both",
+          "reason": "Both outputs list both speakers as having British English accents, while the expectation requires a British and an Australian accent."
+        },
+        {
+          "claimId": "51acb6a35d9aad23",
+          "finding": "holds",
+          "reason": "The sample answer “the eighteenth of May” has four words, exceeding the two-word-and/or-number limit; output B’s comparable sample answer, “forty-eight pounds,” is within its limit."
+        },
+        {
+          "claimId": "08f1f1b83b7d1cc0",
+          "finding": "holds for both",
+          "reason": "Both outputs list both speakers as having British English accents, while the expectation requires a British and an Australian accent."
+        },
+        {
+          "claimId": "7a32043ddf96b430",
+          "finding": "holds",
+          "reason": "Output B has no speaker self-correction, despite the expectation that one or two answers follow one. Output A does include a correction: Leah first says the 11th, then corrects it to the 18th."
+        },
+        {
+          "claimId": "d43f8aa9de1f982f",
+          "finding": "doesn't hold",
+          "reason": "Output B’s questions and options are written in Spanish, not Brazilian Portuguese; its explanations are in Portuguese. Output A’s questions and options are also in Spanish."
+        },
+        {
+          "claimId": "e8a6b1a59700855a",
+          "finding": "holds",
+          "reason": "In output A’s second question, the non-null reasons and misconception texts are in Spanish, rather than the required Brazilian Portuguese. The corresponding explanations in output B are in Portuguese."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

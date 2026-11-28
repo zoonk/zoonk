@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você comunica suas opiniões com vocabulário adequado, por exemplo, “Eating well is essential” e “I can't concentrate at all”. Alguns deslizes de comparação e preposição, como “more easy” e “depends of”, reduzem a precisão.",
+      "tip": "Para comparar adjetivos curtos, geralmente acrescente -er em vez de usar “more”: troque “more easy to fit” por “easier to fit”.",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza as ideias de modo claro e usa conectores para mostrar contraste e consequência, como “On the other hand” e “So maybe it's less important than the others”. Poderia desenvolver mais algumas justificativas para sustentar suas opiniões.",
+      "tip": "Depois de dar uma opinião, acrescente uma consequência ou exemplo para ampliá-la, por exemplo: “Spending time outdoors can reduce stress, especially after a long day of studying.”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla, alinhada às outras evidências de comunicação clara e organizada.",
+      "tip": "Para tornar palavras importantes mais fáceis de entender, marque claramente a sílaba tônica em “exercise” e “concentrate”.",
+      "bandHigh": 4,
+      "bandLow": 3
+    },
+    {
+      "criterion": "interaction",
+      "evidence": "Você responde ao que a outra pessoa diz, acrescenta uma perspectiva própria e convida à participação com “What do you think about sleep?”. Também propõe uma conclusão com “Shall we decide?”, embora pudesse desenvolver mais as ideias em conjunto.",
+      "tip": "Depois de apresentar sua ideia, faça uma pergunta que incentive a outra pessoa a desenvolvê-la, por exemplo: “Do you think this is true for most students?”",
+      "bandHigh": 4,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você transmite opiniões relevantes e mantém a discussão coerente, por exemplo, “Eating well is essential” e “without it nothing else works”. A comunicação funciona bem, embora alguns erros gramaticais e o desenvolvimento breve das justificativas limitem a precisão e a profundidade.",
+      "tip": "Para dar mais profundidade às respostas, explique por que sua opinião importa e acrescente um exemplo, por exemplo: “Sleep is essential because it affects concentration; for example, students may struggle to focus after a poor night's sleep.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    }
+  ],
+  "focus": "grammarVocabulary",
+  "heard": true
+}

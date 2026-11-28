@@ -1,0 +1,28 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "grammarVocabulary",
+      "evidence": "Você usa estruturas corretas para comparar e justificar opiniões, como “because it's more personal and relaxed” e “I want to do something with my hands”. O vocabulário é adequado ao tema, mas as estruturas e os argumentos permanecem simples, sem muita variedade.",
+      "tip": "Amplie uma justificativa com uma oração relativa para explicar melhor a ideia: em vez de apenas “I want to do something with my hands”, experimente “I'd prefer pottery, which would give me a creative break from my computer-based routine.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "discourse",
+      "evidence": "Você organiza a comparação com clareza e usa conectores como “while” e “Also”, relacionando as formas de aprendizagem às possíveis motivações. Porém, desenvolve pouco cada ponto e não acrescenta detalhes que ampliem a comparação.",
+      "tip": "Depois de apresentar cada diferença, acrescente uma consequência ou exemplo: após “learning in a group can be more motivating”, você poderia dizer “because learners can share ideas and encourage each other when a task becomes difficult.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    },
+    {
+      "criterion": "global",
+      "evidence": "Você responde às perguntas de forma pertinente e comunica suas preferências com clareza, por exemplo: “I'd prefer pottery, because I spend all day in front of a computer”. A comunicação é coerente, mas as respostas trazem pouco desenvolvimento e poucas ideias além da justificativa principal.",
+      "tip": "Para desenvolver sua resposta pessoal, acrescente um benefício específico e uma razão para ele: “I'd prefer pottery because it would help me relax and create something useful away from my screen.”",
+      "bandHigh": 3.5,
+      "bandLow": 2.5
+    }
+  ],
+  "focus": "discourse",
+  "heard": false
+}

@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "science",
+    "math"
+  ],
+  "description": "Quantum physics describes how matter and light behave at atomic scales, including what measurements can reveal, uncertainty, and entanglement. Starting with basic math and experiment plots, the course builds toward changing quantum systems and the ideas behind chips, LEDs, and lasers.",
+  "landingPage": {
+    "audience": [
+      "High school science students",
+      "College students reviewing math and physics",
+      "Readers curious about atoms and technology"
+    ],
+    "outcomes": [
+      "Describe atoms and light at tiny scales",
+      "Explain what measurements reveal about quantum particles",
+      "Use graphs and calculations to track quantum changes",
+      "Explain quantum physics in chips, LEDs, and lasers"
+    ],
+    "valueProposition": "Explain why atoms hold together and how quantum physics shapes chips and lasers"
+  }
+}

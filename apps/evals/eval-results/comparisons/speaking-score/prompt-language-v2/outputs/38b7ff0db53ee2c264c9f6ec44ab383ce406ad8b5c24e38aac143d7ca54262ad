@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the sentences accurately, including the longer one about the employer fair. In the final sentence, you said “Students who would like feedback on their cover letters should upload them at least two days before the appointment,” changing “who’d” to “who would” and “their appointment” to “the appointment.”",
+      "tip": "For long sentences, listen for small words that carry meaning and group the sentence into chunks, such as “Students who’d like feedback on their cover letters / should upload them at least two days before / their appointment.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You develop your answers with clear reasoning and relevant details, as when you describe how planners “balance all of that” and explain why unpaid work “quietly shuts out the most of graduates from lower-income families.” Your final prediction is coherent, but it gives no specific example of a routine task that might be automated.",
+      "tip": "Add one concrete example to a prediction, such as naming a task: “For example, automated scheduling could reduce some entry-level office roles.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use complex structures accurately in phrases such as “which quietly shuts out the most of graduates from lower-income families” and “people who can combine technical skills with judgment and communication.” Errors in “the most of graduates” and “less opportunities” keep your accuracy from being consistently high.",
+      "tip": "Use “fewer” with countable plural nouns, and “less” with uncountable nouns: “less opportunities” becomes “fewer opportunities.”",
+      "bandHigh": 5,
+      "bandLow": 4.5
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use precise, varied language, including “reshape the way an entire neighborhood lives and works,” “a double-edged sword,” and “arrive fully formed.” Some phrasing, such as “higher demand than ever,” is broad rather than especially specific, so the range is not consistently at the very highest level.",
+      "tip": "Make a broad prediction more precise by naming the skill or role in demand, for example, “Demand will rise for graduates who can interpret data and explain its implications.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript cannot show how you sounded, so this is a wider estimate centered on the strong, coherent language in your answers; it cannot confirm your intelligibility, rhythm, or intonation.",
+      "tip": "To help listeners follow your key ideas, give clear stress to the main words in “urban planning” and “technical skills with judgment and communication.”",
+      "bandHigh": 5.5,
+      "bandLow": 4.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

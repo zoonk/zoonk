@@ -1,0 +1,33 @@
+{
+  "instructions": [
+    "À partir du document, dégagez le problème soulevé et présentez votre point de vue de manière argumentée.",
+    "Votre exposé dure environ 7 minutes. L’examinateur ne vous interrompt pas."
+  ],
+  "prompts": [
+    "Présentez le sujet et formulez la question à laquelle vous allez répondre.",
+    "Annoncez le plan de votre exposé.",
+    "Développez votre point de vue avec des arguments et des exemples.",
+    "Concluez votre présentation."
+  ],
+  "text": {
+    "title": "Des cours de cuisine pour tous à la bibliothèque ?",
+    "body": "Dans plusieurs villes françaises, les bibliothèques ne se limitent plus au prêt de livres. Certaines proposent aussi des ateliers pratiques, comme l’initiation à la couture, au jardinage ou à la cuisine. À Rennes, une bibliothèque de quartier envisage ainsi d’organiser chaque mois un atelier où les habitants prépareraient ensemble des recettes simples et de saison.\n\nPour les responsables du projet, ces rencontres seraient une occasion de découvrir de nouveaux aliments et d’échanger des savoir-faire. Elles pourraient aussi attirer des personnes qui ne fréquentent pas habituellement la bibliothèque. Les participants repartiraient avec les recettes et pourraient emprunter des ouvrages sur le sujet.\n\nL’idée ne fait pourtant pas l’unanimité. Certains usagers estiment que la bibliothèque doit avant tout rester un lieu calme, consacré à la lecture et à l’étude. D’autres se demandent si l’achat de matériel et l’aménagement d’un espace adapté ne risquent pas de réduire le budget disponible pour les livres.\n\nLes organisateurs réfléchissent donc à plusieurs solutions : utiliser une salle séparée, limiter le nombre de participants ou travailler avec une association locale. Ils souhaitent également consulter les habitants avant de prendre une décision. Pour eux, la question dépasse le seul atelier de cuisine : il s’agit de savoir quelles activités une bibliothèque publique peut proposer aujourd’hui et comment répondre aux attentes de publics différents."
+  },
+  "table": null,
+  "photos": [],
+  "summary": "Você fará uma apresentação individual a partir de um texto, defendendo seu ponto de vista. A examinadora ouvirá sem interromper.",
+  "character": {
+    "name": "Manon",
+    "role": "examinadora",
+    "place": "Salle d’examen"
+  },
+  "characterBrief": "You are the examiner. Give the opening instruction, then listen without interrupting while the candidate speaks for approximately seven minutes. Do not ask questions, correct, praise or grade the candidate. Your only spoken instruction is: « À partir de ce document, dégagez le problème soulevé et présentez votre point de vue de manière argumentée. Votre exposé dure environ sept minutes. Vous pouvez commencer quand vous voulez. »",
+  "openingLine": "À partir de ce document, dégagez le problème soulevé et présentez votre point de vue de manière argumentée. Votre exposé dure environ sept minutes. Vous pouvez commencer quand vous voulez.",
+  "hints": [
+    "La question que l’on peut se poser est la suivante.",
+    "Dans un premier temps, je vais examiner les avantages, puis je parlerai des limites.",
+    "À mon avis, cette question mérite d’être examinée sous plusieurs angles.",
+    "On pourrait certes penser le contraire, mais il me semble que cet argument a ses limites.",
+    "Pour conclure, je dirais qu’il est important de trouver un équilibre."
+  ]
+}

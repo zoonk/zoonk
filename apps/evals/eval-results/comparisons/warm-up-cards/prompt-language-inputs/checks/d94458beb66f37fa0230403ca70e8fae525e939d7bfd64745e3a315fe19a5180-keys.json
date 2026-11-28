@@ -1,0 +1,13 @@
+{
+  "caseId": "en-beekeeping",
+  "costUsd": 0.026576,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"cards[0]\",\"keyedAnswer\":\"A waggle dance\",\"kind\":\"factualError\",\"workedAnswer\":\"The selected dance is correct, but nestmates estimate distance from the duration of each waggle run, not the duration of the whole dance.\"}",
+    "{\"itemLocator\":\"cards[1]\",\"keyedAnswer\":\"Whether it is fertilized\",\"kind\":\"factualError\",\"workedAnswer\":\"The key is correct because the stem says “usually,” but the reveal drops that qualifier. A fertilized egg can develop into a diploid male if it inherits two identical alleles at the complementary sex-determination locus.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

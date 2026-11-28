@@ -1,0 +1,116 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "en-pt-b1",
+        "claimId": "051009492a9f6353",
+        "criterion": "answers",
+        "observationId": "72ccd0988b8eeaa5bdfe770e3b5ae4d3833fd928ff7b51a7ea1a27909b61a42a.first.6ccfcaae-56b9-430a-aa0e-cb994eb0e60f.0",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0010010599999999998,
+    "id": "e65c8e2bbcf4a1347527a45965a56997140b870a9b854c169b93a987c97a2cd9",
+    "packet": [
+      {
+        "A": {
+          "blob": "e0240e3b546015d8c1bee1a5bbee6229266cc8eab81e16279f13502b80df16a2",
+          "format": "text"
+        },
+        "B": {
+          "blob": "0772c5c3c53be7d5c3d939284d89498b54911c0ff8cc1d89ef0881ce55fe8439",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The passage says fifteen minutes of daily practice are enough, but the keyed option says “A few minutes”; that is not a clear equivalent, so the option is not unambiguously correct.",
+            "claimId": "051009492a9f6353",
+            "criterion": "answers",
+            "location": {
+              "detail": "A few minutes of daily practice are enough.",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "10b8ec94b91ffdcfdb497653caee20a05d038b5931e0caa050dd2bfb2d6e9d3f",
+          "format": "text"
+        },
+        "input": {
+          "blob": "f14f7541b195aa94e25f3ad707738479b1a8b13e84d7d46f3f7980efe6451a90",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The key incorrectly includes option 2, which says the bus leaves at nine although it leaves at ten, and omits option 3, which correctly places the cafe next to the shop.",
+            "claimId": "2e061139f09bfdb0",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "caae983ca56dcd6b",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "051009492a9f6353",
+          "finding": "doesn't hold",
+          "reason": "The passage says 'quinze minutos diários já bastam', and 'A few minutes of daily practice are enough' is a reasonable paraphrase of that, since fifteen minutes is a few minutes. The key's other option, 'Lessons with a teacher are worth the higher price', matches 'Embora seja mais caro, acho que vale a pena', so the keyed answer is sound."
+        },
+        {
+          "claimId": "2e061139f09bfdb0",
+          "finding": "holds",
+          "reason": "The message says the bus leaves at ten, so output A's key '1 and 2' wrongly includes option 2 ('O ônibus sai às nove'). It also omits option 3, 'O café fica ao lado da loja', which the message supports. Output B's key '1 and 3' is correct."
+        },
+        {
+          "claimId": "caae983ca56dcd6b",
+          "finding": "doesn't hold",
+          "reason": "Output B's key is '1 and 3', which does not include option 2, the false bus-at-nine statement. The claim is true of output A, not B."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

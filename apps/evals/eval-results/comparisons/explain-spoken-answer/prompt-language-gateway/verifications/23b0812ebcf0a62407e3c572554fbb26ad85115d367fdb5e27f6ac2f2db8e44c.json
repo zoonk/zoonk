@@ -1,0 +1,116 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-lived-live",
+        "claimId": "2a0f62fd70a619db",
+        "criterion": "accuracy",
+        "observationId": "da622a5a3ee763bf0d17aeb6c4460713e982509db63b725bba5083ae5eaad5fc.first.44dee581-b80b-4155-b7bb-b42f38bde9b0.0",
+        "run": 1,
+        "side": "incumbent"
+      }
+    ],
+    "costUsd": 0.0006092599999999999,
+    "id": "23b0812ebcf0a62407e3c572554fbb26ad85115d367fdb5e27f6ac2f2db8e44c",
+    "packet": [
+      {
+        "A": {
+          "blob": "c307c4502cf6fc35d3cfdeeca8c64c8ece0bdb64d6a9f0167005ea2c02c568f0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "ba4110f86b6b2a19d8798e3d43f3ca52590702433b929349b0b77cdb4c466cab",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "It suggests the missing sound may be a weak final “v” in “I've,” although the case calls for identifying the likely missing “have” and treating this as a form choice, not an accent issue.",
+            "claimId": "2a0f62fd70a619db",
+            "criterion": "accuracy",
+            "location": {
+              "detail": "“talvez o ‘v’ final tenha ficado fraco”",
+              "kind": "quote"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "56edcf253e568b92c2cd9187f091a886f2825f1b3f7484041b5da19869d7ff28",
+          "format": "text"
+        },
+        "input": {
+          "blob": "a321ac48b033cbdeae1ae014336fd022a0d6934d1f3decc3c815fa6cd4b75221",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "282c4aae1af763691be0bc098965c8b2d08b778e52259a66f46a4e56105aa4b0",
+          "format": "text"
+        },
+        "B": {
+          "blob": "927bb633d64e15a775cf86f74d48b8cc0dd5e2bf348291a19dabc1572cea0235",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The explanation for a Brazilian Portuguese reader is written entirely in English instead of Portuguese.",
+            "claimId": "36f906485ae7d0e6",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The clean explanation is written in English instead of Portuguese.",
+            "claimId": "4350eb35e07f10a6",
+            "criterion": "style",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "c38b4ce8cd180715590ec2db2f331df19c66730c7819369c0df4ed88e6c10788",
+          "format": "text"
+        },
+        "input": {
+          "blob": "3587679ed2a8ac007df352f9a96b11abc35ff50b2a0d6412e809f9e07a6057a9",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "2a0f62fd70a619db",
+          "finding": "holds",
+          "reason": "Output A quotes \"talvez o 'v' final tenha ficado fraco\" for the missing sound in \"I've\", which matches the claim. Output B instead identifies the omitted \"have\", so the weak-v suggestion is only in A."
+        },
+        {
+          "claimId": "36f906485ae7d0e6",
+          "finding": "holds",
+          "reason": "Output B is written entirely in English (\"In 'rent', we heard...\"), although the learner is a Brazilian Portuguese speaker. Output A is in Portuguese, so the problem is only in B."
+        },
+        {
+          "claimId": "4350eb35e07f10a6",
+          "finding": "doesn't hold",
+          "reason": "Output A is written in Portuguese (\"Em 'rent', ouvimos 'hent'...\"), not English, so the claim is false of A."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

@@ -1,0 +1,14 @@
+{
+  "blockingProblems": [],
+  "caseId": "es-english",
+  "costUsd": 0,
+  "criteria": [
+    "format"
+  ],
+  "name": "code checks",
+  "passed": 10,
+  "problems": [],
+  "run": 1,
+  "side": "incumbent",
+  "total": 10
+}

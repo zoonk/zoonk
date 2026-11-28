@@ -1,0 +1,30 @@
+{
+  "instructions": [
+    "Usted y una amiga van a dar un paseo en bicicleta por Sevilla.",
+    "Hable con ella para preparar el paseo durante unos cuatro minutos."
+  ],
+  "prompts": [
+    "Decidan cuándo y dónde van a quedar.",
+    "Elijan los lugares que quieren visitar.",
+    "Hablen de las bicicletas y de lo que necesitan llevar.",
+    "Decidan dónde pueden hacer una pausa."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Você vai conversar com uma amiga para planejar um passeio de bicicleta, usando a situação da foto da tarefa anterior.",
+  "character": {
+    "name": "Andrea",
+    "role": "amiga",
+    "place": "Sevilla"
+  },
+  "characterBrief": "Play Andrea, the candidate's friend. You are planning a bicycle ride in Seville together, linked to the previous photograph of two friends with a map and rental bicycles. Speak in simple Spanish and adapt to the candidate's answers. You are free on Saturday morning, know a bicycle rental shop near Plaza Nueva and would like to see the river. You can also meet elsewhere or choose another route. Take turns naturally for about four minutes. Start with the opening line. Then, as appropriate, ask in this order: «¿Dónde quedamos?», «¿Qué lugares quieres visitar?», «¿Alquilamos las bicicletas cerca de la plaza?», «¿Qué necesitamos llevar?», «¿Dónde podemos hacer una pausa?» and «Entonces, ¿qué vamos a hacer primero?». Respond to suggestions and make simple proposals when useful: «Podemos ir junto al río» and «También podemos parar en una cafetería». If an answer is short, use one or two of these follow-ups: «¿Por qué prefieres ese lugar?» or «¿A qué hora te viene bien?». Improvise briefly in response to the candidate without correcting, praising or grading.",
+  "openingLine": "Vamos a preparar un paseo en bicicleta por Sevilla. Hable conmigo para decidir los detalles. ¿Cuándo podemos ir?",
+  "hints": [
+    "Un momento, voy a pensarlo.",
+    "A mí me parece bien porque es más fácil.",
+    "Yo prefiero otra opción.",
+    "¿Qué te parece esta idea?",
+    "¿Podemos hacerlo de otra manera?"
+  ]
+}

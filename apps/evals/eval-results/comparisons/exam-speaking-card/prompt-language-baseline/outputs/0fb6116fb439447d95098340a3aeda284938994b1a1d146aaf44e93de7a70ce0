@@ -1,0 +1,32 @@
+{
+  "instructions": [
+    "Preséntese durante unos 2 minutos. Hable de los siguientes puntos."
+  ],
+  "prompts": [
+    "Nombre.",
+    "Edad.",
+    "Nacionalidad.",
+    "Lugar donde vive.",
+    "Profesión o estudios.",
+    "Personalidad.",
+    "Idiomas que habla."
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Introduce yourself for about two minutes. The examiner will listen without interrupting.",
+  "character": {
+    "name": "Daniela",
+    "role": "examiner",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "You are the examiner. Begin by saying: «Preséntese y hable de los puntos indicados. Puede empezar cuando quiera». Listen without interrupting for about two minutes. Do not ask questions, correct, praise or grade the candidate.",
+  "openingLine": "Preséntese y hable de los puntos indicados. Puede empezar cuando quiera.",
+  "hints": [
+    "Voy a presentarme.",
+    "Un momento, por favor.",
+    "Ahora voy a hablar de mí.",
+    "¿Puede repetir, por favor?",
+    "Eso es todo."
+  ]
+}

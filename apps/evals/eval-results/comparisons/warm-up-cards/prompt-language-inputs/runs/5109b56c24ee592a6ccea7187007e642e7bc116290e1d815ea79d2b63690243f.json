@@ -1,0 +1,19 @@
+{
+  "caseId": "en-japanese",
+  "challenger": {
+    "costUsd": 0.0016645749999999997,
+    "durationMs": 21964.55616700003,
+    "hash": "2c0387824af02c4c875e16c93adc0148ac0c73b9af9dec59ecbe192d7f08ff63",
+    "systemPromptHash": "a2e08ac85e19dfa44b267067345a28ce21fb4edfca6011125372372a31a3b739",
+    "userPromptHash": "4bc8bab2f0e71588497ae473fc814ac973a40c9e7aedc181e10f0e9acb36dbb4"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00189328,
+    "durationMs": 28508.031625000003,
+    "hash": "2920dcb2a38872a599385c6e7cd24230a80694f439378247850dd878c04ed326",
+    "systemPromptHash": "2e517ed55961682cecffcb1bc1c5ee87d2b417e7b858edf1580891312807cf10",
+    "userPromptHash": "4bc8bab2f0e71588497ae473fc814ac973a40c9e7aedc181e10f0e9acb36dbb4"
+  },
+  "run": 1
+}

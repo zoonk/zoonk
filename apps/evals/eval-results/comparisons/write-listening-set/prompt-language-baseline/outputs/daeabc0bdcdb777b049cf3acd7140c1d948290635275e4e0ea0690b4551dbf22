@@ -1,0 +1,322 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "That's Mercer, M-E-R-C-E-R.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Weekend trip booking\nWrite ONE WORD.\nCustomer's surname: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The surname must be Mercer."
+        ],
+        "acceptedAnswers": [
+          "Mercer"
+        ],
+        "sampleAnswer": "Mercer"
+      },
+      {
+        "evidence": "So, three places, please.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Weekend trip booking\nWrite ONE NUMBER.\nNumber of places required: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The booking is for 3 people."
+        ],
+        "acceptedAnswers": [
+          "3"
+        ],
+        "sampleAnswer": "three"
+      },
+      {
+        "evidence": "Let's make it the library.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Weekend trip booking\nWrite ONE WORD.\nCoach pick-up point: the ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The group will board at the library."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      },
+      {
+        "evidence": "The departure time is quarter past eight.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Weekend trip booking\nWrite ONE NUMBER.\nCoach departure: ______ a.m.",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The coach leaves at 8:15 a.m."
+        ],
+        "acceptedAnswers": [
+          "8:15",
+          "08:15"
+        ],
+        "sampleAnswer": "quarter past eight"
+      },
+      {
+        "evidence": "For this one, you'll travel home on Sunday",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Weekend trip booking\nWrite ONE WORD.\nDay of return: ______",
+        "question": "Complete the booking form.",
+        "keyPoints": [
+          "The group returns on Sunday."
+        ],
+        "acceptedAnswers": [
+          "Sunday"
+        ],
+        "sampleAnswer": "Sunday"
+      },
+      {
+        "evidence": "Could we have a twin room instead of the double?",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Accommodation\nWrite ONE WORD.\nRooms required: one single and one ______ room",
+        "question": "Complete the booking notes.",
+        "keyPoints": [
+          "The two friends need a twin room."
+        ],
+        "acceptedAnswers": [
+          "twin"
+        ],
+        "sampleAnswer": "twin"
+      },
+      {
+        "evidence": "One of my friends is vegetarian.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Meals\nWrite ONE WORD.\nOne traveller requires ______ food.",
+        "question": "Complete the booking notes.",
+        "keyPoints": [
+          "One traveller requires vegetarian food."
+        ],
+        "acceptedAnswers": [
+          "vegetarian"
+        ],
+        "sampleAnswer": "vegetarian"
+      },
+      {
+        "evidence": "the deposit comes to forty-eight pounds",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 0
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Payment\nWrite ONE NUMBER.\nTotal deposit for the group: £______",
+        "question": "Complete the booking notes.",
+        "keyPoints": [
+          "The total deposit is £48."
+        ],
+        "acceptedAnswers": [
+          "48"
+        ],
+        "sampleAnswer": "forty-eight pounds"
+      },
+      {
+        "evidence": "And please bring waterproofs.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "What to pack\nWrite ONE WORD.\nTravellers should bring ______ in case the weather changes.",
+        "question": "Complete the booking notes.",
+        "keyPoints": [
+          "Travellers should bring waterproofs."
+        ],
+        "acceptedAnswers": [
+          "waterproofs"
+        ],
+        "sampleAnswer": "waterproofs"
+      },
+      {
+        "evidence": "but it's quicker by email. Shall I send your confirmation that way?",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": false,
+          "words": 1
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Confirmation\nWrite ONE WORD.\nThe booking confirmation will be sent by ______.",
+        "question": "Complete the booking notes.",
+        "keyPoints": [
+          "The confirmation will be sent by email."
+        ],
+        "acceptedAnswers": [
+          "email",
+          "e-mail"
+        ],
+        "sampleAnswer": "email"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lucy",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Ryan",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a weekend trip",
+    "turns": [
+      {
+        "speaker": "Lucy",
+        "text": "Good morning, Riverside Travel. Lucy speaking. How can I help?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Hello. I'm calling about your weekend coach trip to Whitby next month. My friends and I saw the advert at the sports centre, and we'd like to book if there are still places."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Yes, there are a few left. It's a lovely time of year to go, although it can be rather busy. First, can I take your name?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "It's Ryan Mercer. That's Mercer, M-E-R-C-E-R."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Thanks. And how many places would you like altogether?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Well, there were going to be four of us, but one friend's just started a new job and can't get away. So, three places, please."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Fine. Now, the coach makes two stops in town. You can get on outside the station or by the library. Which is better for you?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "The station would be convenient for me, but the others live on the other side of town. Let's make it the library."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "No problem. We ask everyone to be there ten minutes before the coach leaves, so the driver has time to check the list. The departure time is quarter past eight."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Right. I was looking at another company's trip, and that one left at half past seven. A bit early for a Saturday morning!"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Yes, we try not to leave too early. There'll be a short break on the way, and we should arrive in Whitby around lunchtime. You have the afternoon free to explore."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Great. And when do we come back? I thought the advert said Monday."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "That's a different trip. For this one, you'll travel home on Sunday, after a visit to a nearby village. You should be back in town by about seven in the evening, depending on traffic."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "That's fine. We all need to be at work the next morning anyway. What about accommodation?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "The price includes one night at the Harbour Hotel. For a group of three, we usually book a double room and a single, unless you'd prefer something else."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Could we have a twin room instead of the double? The two friends I'm travelling with would rather have separate beds. I'll take the single."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Certainly, I'll put that down. Breakfast is included, and there's a group dinner at the hotel on Saturday. Do any of you have special dietary requirements?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "One of my friends is vegetarian. The rest of us eat everything."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "I'll let the hotel know. They usually offer a choice of dishes, but it's helpful for the kitchen to know in advance. Now, to hold the booking, we need a deposit."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Is that twenty pounds each?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "It used to be, but it's now sixteen pounds per person. So for the three of you, the deposit comes to forty-eight pounds. The remaining balance is due two weeks before departure."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "All right. I can pay that by card. Is there anything special we should pack?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Comfortable shoes are a good idea, especially if you want to walk around the harbour. And please bring waterproofs. The weather can change quite quickly near the coast."
+      },
+      {
+        "speaker": "Ryan",
+        "text": "I'll tell the others. Now, will you send the details by post?"
+      },
+      {
+        "speaker": "Lucy",
+        "text": "We can if you need a paper copy, but it's quicker by email. Shall I send your confirmation that way?"
+      },
+      {
+        "speaker": "Ryan",
+        "text": "Yes, please. I'll give you my address after I've paid."
+      },
+      {
+        "speaker": "Lucy",
+        "text": "Perfect. Let me just take your card details, then."
+      }
+    ]
+  }
+}

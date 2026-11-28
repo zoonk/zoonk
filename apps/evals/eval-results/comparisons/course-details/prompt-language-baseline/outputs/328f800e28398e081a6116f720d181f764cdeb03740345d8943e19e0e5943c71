@@ -1,0 +1,20 @@
+{
+  "categories": [
+    "communication"
+  ],
+  "description": "O inglês americano ajuda você a se comunicar em situações do dia a dia e a acompanhar conversas, textos e referências culturais. O curso começa com apresentações, viagens, restaurantes e rotina, e avança para conversas, leitura, escrita e expressões usadas nos estudos e no trabalho.",
+  "landingPage": {
+    "audience": [
+      "Quem está começando do zero",
+      "Quem quer viajar para países anglófonos",
+      "Quem quer usar inglês nos estudos"
+    ],
+    "outcomes": [
+      "Apresentar-se e falar da própria rotina",
+      "Resolver situações simples em viagens",
+      "Conversar sobre estudos, trabalho e planos",
+      "Expressar opiniões em conversas mais complexas"
+    ],
+    "valueProposition": "Conversar em inglês em viagens, restaurantes e situações do dia a dia"
+  }
+}

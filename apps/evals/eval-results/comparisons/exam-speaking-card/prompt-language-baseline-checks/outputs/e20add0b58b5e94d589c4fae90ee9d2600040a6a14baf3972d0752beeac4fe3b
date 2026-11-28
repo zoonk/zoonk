@@ -1,0 +1,34 @@
+{
+  "instructions": [
+    "Dégagez le problème soulevé par le document.",
+    "Présentez et défendez votre point de vue de manière argumentée, en l’illustrant par des exemples.",
+    "Votre exposé dure environ 7 minutes."
+  ],
+  "prompts": [
+    "Présentez le sujet et formulez la question à laquelle vous allez répondre.",
+    "Annoncez le plan de votre exposé.",
+    "Développez vos arguments et donnez des exemples.",
+    "Terminez par une conclusion."
+  ],
+  "text": {
+    "title": "Des bénévoles pour faire vivre la bibliothèque",
+    "body": "À Rennes, une bibliothèque de quartier a lancé un programme pour accueillir des bénévoles. Quelques heures par mois, ceux-ci peuvent participer à des lectures à voix haute, aider à organiser des rencontres ou accompagner les visiteurs dans la découverte du catalogue en ligne. Les activités sont préparées avec les bibliothécaires, qui continuent à gérer la bibliothèque et à accueillir le public.\n\nPour la responsable du lieu, ce programme permet de proposer davantage d’animations et de faire participer les habitants à la vie culturelle du quartier. Les bénévoles, eux, apprécient de rencontrer des personnes d’âges différents et de partager leurs compétences. Une courte formation leur est proposée avant leur première activité.\n\nCertains habitants se demandent toutefois si tout le monde peut vraiment participer. Les personnes qui travaillent ou qui ont de nombreuses obligations disposent parfois de peu de temps libre. D’autres pensent que les bénévoles ne devraient pas avoir à accomplir des tâches qui demandent une formation professionnelle.\n\nLa bibliothèque prévoit donc de proposer des activités à différents horaires et de préciser le rôle de chacun. Elle espère ainsi attirer de nouveaux participants tout en conservant la qualité de ses services."
+  },
+  "table": null,
+  "photos": [],
+  "summary": "Você fará uma exposição de cerca de sete minutos, apresentando e defendendo seu ponto de vista a partir de um texto. A examinadora ouvirá sem interromper.",
+  "character": {
+    "name": "Juliette",
+    "role": "examinadora",
+    "place": "Salle d’examen"
+  },
+  "characterBrief": "You are the examiner. Begin with: « Vous allez présenter le problème soulevé par le document et défendre votre point de vue en vous appuyant sur des arguments et des exemples. Votre exposé dure environ sept minutes. Vous pouvez commencer quand vous voulez. » Then listen without interrupting for the candidate’s monologue. Do not ask questions, correct, praise or grade.",
+  "openingLine": "Vous allez présenter le problème soulevé par le document et défendre votre point de vue en vous appuyant sur des arguments et des exemples. Votre exposé dure environ sept minutes. Vous pouvez commencer quand vous voulez.",
+  "hints": [
+    "La question que je voudrais examiner est la suivante.",
+    "Dans un premier temps, je vais présenter les différents aspects de ce sujet.",
+    "À mon avis, il faut avant tout tenir compte de plusieurs éléments.",
+    "On pourrait certes penser le contraire, mais il me semble que cette opinion a ses limites.",
+    "Pour conclure, je dirais que la situation mérite d’être examinée sous plusieurs angles."
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "script": "Hangul",
+  "title": "Your First Hangul: Vowels and Consonants",
+  "description": "Learn six vowels and four consonants, then read simple syllables and 나무 (namu), meaning “tree” or “wood.”",
+  "canDo": "Read and say ㅏ, ㅓ, ㅗ, ㅜ, ㅡ, ㅣ, ㄱ, ㄴ, ㅁ, and ㅇ.",
+  "intro": [
+    {
+      "title": "Read the blocks",
+      "text": "Hangul groups letters into syllable blocks, read left to right and then top to bottom. In 가 (ga), ㄱ (g) sits left of ㅏ (a); with ㅗ (o), the vowel goes underneath."
+    },
+    {
+      "title": "Put sounds together",
+      "text": "At the start of a block, ㅇ (ng) is silent, so it lets a vowel begin a syllable, as in 아 (a). Read each block in 나무 (namu) in turn: 나 (na), then 무 (mu)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ㅏ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "아",
+      "pronunciation": "You'll hear it as 아 (a); like the vowel in “father,” but with the tongue farther forward.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅓ",
+      "readingAid": "eo",
+      "ipa": "/ʌ/",
+      "audioText": "어",
+      "pronunciation": "You'll hear it as 어 (eo); like the vowel in “sun,” with relaxed lips.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅗ",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "오",
+      "pronunciation": "You'll hear it as 오 (o); close to the start of “go,” but hold one steady vowel instead of gliding.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅜ",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "우",
+      "pronunciation": "You'll hear it as 우 (u); like the vowel in “food,” held steady.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅡ",
+      "readingAid": "eu",
+      "ipa": "/ɯ/",
+      "audioText": "으",
+      "pronunciation": "You'll hear it as 으 (eu); English has no exact match—the vowel in “book” is close, but round your lips less and keep your tongue higher.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅣ",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "이",
+      "pronunciation": "You'll hear it as 이 (i); like the vowel in “see,” held steady.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄱ",
+      "readingAid": "g",
+      "ipa": "/k/",
+      "audioText": "가",
+      "pronunciation": "You'll hear it as 가 (ga); the first sound is between English k and g, and it can sound more like g between voiced sounds.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄴ",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "나",
+      "pronunciation": "You'll hear it as 나 (na); like the n in “no.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㅁ",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "마",
+      "pronunciation": "You'll hear it as 마 (ma); like the m in “mom.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㅇ",
+      "readingAid": "ng",
+      "ipa": "/ŋ/",
+      "audioText": "강",
+      "pronunciation": "You'll hear it at the end of 강 (gang), like the ng in “sing”; at the start of a block, ㅇ is silent.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Hangul letters join into blocks, with vertical vowels beside a consonant and horizontal vowels beneath it.",
+    "Read the blocks one at a time: 나무 (namu) is 나 (na) plus 무 (mu), and ㅇ (ng) is silent at the start of a block."
+  ]
+}

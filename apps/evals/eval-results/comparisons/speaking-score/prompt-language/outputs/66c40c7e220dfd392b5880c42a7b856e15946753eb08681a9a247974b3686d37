@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You organize the change in a clear before-and-after sequence: “Before I drove one hour every day to the office. Now I can sleep longer”. Basic links such as “because” and “But” connect your ideas, though you could develop your points more fully and use a wider range of links.",
+      "tip": "After giving a reason, add its effect to develop the idea further: “Working from home saves the company money, which is why I think more employers will offer it.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use relevant vocabulary for work and daily life, including “engineer” and “work from home”. Much of your wording is familiar and general, such as “the team is nice” and “a good decision”, rather than more precise or varied expressions.",
+      "tip": "Replace a general phrase with a more specific one: instead of “I have no time for sport”, try “I barely have time to fit in a workout.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use clear simple sentences and connect ideas with clauses such as “because it is cheaper for the companies”. There is a tense and time-expression error in “I am working here since three years”, and most of your sentences use simple structures.",
+      "tip": "For something that began in the past and continues now, use the present perfect with “for” plus a length of time: change “I am working here since three years” to “I have worked here for three years.”",
+      "bandHigh": 5.5,
+      "bandLow": 5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can’t show how you sounded, and it contains no clear signs of words being misunderstood or requests to repeat. This is a wider estimate, centered on the level suggested by your otherwise clear language.",
+      "tip": "To make key details easier to catch, give the important words a little extra emphasis, such as “I have MORE time for my FAMILY and for RUNNING in the FOREST.”",
+      "bandHigh": 6.5,
+      "bandLow": 5.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

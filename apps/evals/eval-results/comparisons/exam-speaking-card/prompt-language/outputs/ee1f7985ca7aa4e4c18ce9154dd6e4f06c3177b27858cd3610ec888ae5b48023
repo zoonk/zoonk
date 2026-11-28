@@ -1,0 +1,29 @@
+{
+  "instructions": [
+    "Converse con el examinador durante unos 4 minutos sobre el tema de su presentación.",
+    "Hable de sus opiniones y experiencias personales."
+  ],
+  "prompts": [
+    "¿Qué ventajas e inconvenientes tiene trabajar desde casa?",
+    "¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue su experiencia?",
+    "¿Cómo se puede mantener el contacto con los compañeros?",
+    "¿Qué forma de trabajar prefiere usted y por qué?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [],
+  "summary": "Converse com a examinadora sobre trabalhar em casa. Fale das suas opiniões e experiências pessoais.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct a conversation of about four minutes, building on the candidate's Task 1 presentation. Listen and allow the candidate time to answer. Ask the following questions in order, adapting references to what the candidate has said: «En su presentación ha hablado de trabajar desde casa. ¿Qué ventajas e inconvenientes cree que tiene?» «¿Ha trabajado o estudiado alguna vez desde casa? ¿Cómo fue su experiencia?» If the candidate has not done either, ask: «¿Le gustaría hacerlo? ¿Por qué?» Continue: «¿Cómo cree que se puede mantener el contacto con los compañeros cuando se trabaja desde casa?» «¿Qué forma de trabajar prefiere usted y por qué?» For brief answers, use up to two follow-up questions: «¿Puede contarme un poco más?» and «¿Por qué piensa eso?» Do not correct, praise or grade.",
+  "openingLine": "Ahora vamos a conversar sobre el tema de su presentación. ¿Qué ventajas e inconvenientes cree que tiene trabajar desde casa?",
+  "hints": [
+    "En mi opinión, depende de la situación.",
+    "Por una parte, entiendo esa idea, pero también hay otros aspectos.",
+    "Yo prefiero esta opción porque me parece más práctica.",
+    "No estoy del todo de acuerdo, ya que cada persona es diferente."
+  ]
+}

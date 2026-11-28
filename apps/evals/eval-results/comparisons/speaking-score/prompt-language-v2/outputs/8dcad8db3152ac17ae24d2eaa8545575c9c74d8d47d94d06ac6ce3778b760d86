@@ -1,0 +1,42 @@
+{
+  "brief": true,
+  "criteria": [
+    {
+      "criterion": "coherence",
+      "evidence": "Você responde às perguntas de forma compreensível, mas desenvolve pouco as ideias e quase não as conecta: «Porque tienen el móvil» e «No mucho. A veces». Também não explica em que concorda ou difere dos resultados.",
+      "tip": "Depois de responder, acrescente uma comparação e uma justificativa usando conectores, por exemplo: «Coincido en que muchos jóvenes leen poco, pero en mi caso leo más porque me gusta desconectar del móvil».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "fluency",
+      "evidence": "A transcrição não permite avaliar como você soou, então esta é uma estimativa mais ampla. As respostas registradas são curtas e há uma hesitação em «Eh... los jóvenes no leen mucho. Eu acho que... es normal», sem evidência suficiente para avaliar o ritmo da fala.",
+      "tip": "Para manter o fio da resposta enquanto organiza as ideias, use uma sequência simples: «A ver, en mi caso…, y esto coincide con los resultados porque…».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "accuracy",
+      "evidence": "Há controle de estruturas simples, como «Sí, en Brasil también», mas aparecem erros em formas básicas: «es mucho importante» e «Yo no sabo».",
+      "tip": "Antes de um adjetivo, use «muy» para dizer “muito”; para o verbo saber na primeira pessoa, use «sé»: «El móvil es mucho importante» → «El móvil es muy importante»; «Yo no sabo» → «Yo no sé».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "range",
+      "evidence": "Você usa vocabulário cotidiano, como «los jóvenes», «el móvil» e «no leen mucho», mas o repertório registrado é estreito e não inclui descrições mais específicas dos dados ou opiniões desenvolvidas.",
+      "tip": "Inclua vocabulário para interpretar os números, por exemplo: «Me llama la atención que solo una minoría lea a diario, mientras que la mayoría prefiere usar el móvil».",
+      "bandHigh": 2,
+      "bandLow": 1
+    },
+    {
+      "criterion": "holistic",
+      "evidence": "Você participa da conversa e responde a algumas perguntas, por exemplo «Sí, en Brasil también», mas oferece poucas justificativas e não desenvolve a comparação entre os resultados e sua própria opinião. As respostas registradas não mostram ainda comunicação consistente no nível B2.",
+      "tip": "Em cada resposta, inclua sua posição, uma comparação com os dados e uma razão, por exemplo: «Yo habría respondido que leo poco; coincido con la encuesta porque muchos jóvenes usamos el móvil en nuestro tiempo libre».",
+      "bandHigh": 2,
+      "bandLow": 1
+    }
+  ],
+  "focus": "accuracy",
+  "heard": true
+}

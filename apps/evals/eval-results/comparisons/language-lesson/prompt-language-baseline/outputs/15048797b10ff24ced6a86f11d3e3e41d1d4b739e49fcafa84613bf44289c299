@@ -1,0 +1,222 @@
+{
+  "words": [
+    {
+      "word": "die Wohnung",
+      "translation": "the apartment",
+      "pronunciation": "DEE VOH-noong",
+      "romanization": null,
+      "tip": "Pronounce the German w like the English v in “very.”",
+      "note": null,
+      "distractors": [
+        "die Küche",
+        "das Haus",
+        "das Zimmer"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "beh-ZICH-tih-guhn",
+      "romanization": null,
+      "tip": "For ch, raise the front of your tongue toward the roof of your mouth and let air flow through; don't pronounce it like ch in “church.”",
+      "note": "Use this verb for viewing an apartment or other property.",
+      "distractors": [
+        "mieten",
+        "verkaufen",
+        "renovieren"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "DAIR tair-MEEN",
+      "romanization": null,
+      "tip": "Stress the second syllable of “Termin,” not the first.",
+      "note": null,
+      "distractors": [
+        "der Vertrag",
+        "die Miete",
+        "die Uhrzeit"
+      ]
+    },
+    {
+      "word": "passen",
+      "translation": "to work for someone",
+      "pronunciation": "PAH-sen",
+      "romanization": null,
+      "tip": null,
+      "note": "For a time or appointment, “passen” means that it works for someone.",
+      "distractors": [
+        "kosten",
+        "dauern",
+        "wohnen"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "As in English, the verb comes before “I” in this question. The verb “besichtigen” goes at the end.",
+      "romanization": null,
+      "distractors": [
+        "kannst",
+        "Wohnungs",
+        "besichtige"
+      ],
+      "translationDistractors": [
+        "rent",
+        "they",
+        "yesterday"
+      ],
+      "speakingPrompt": "Ask if you can view the apartment."
+    },
+    {
+      "sentence": "Wann passt es Ihnen?",
+      "translation": "When does it work for you?",
+      "explanation": "“Ihnen” means “for you” here and is the polite form used with the landlord.",
+      "romanization": null,
+      "distractors": [
+        "Ihrem",
+        "passen",
+        "besichtigst"
+      ],
+      "translationDistractors": [
+        "where",
+        "me",
+        "apartment"
+      ],
+      "speakingPrompt": "Ask the landlord when it works for them."
+    },
+    {
+      "sentence": "Passt Ihnen Dienstag um 14 Uhr?",
+      "translation": "Does Tuesday at 2 p.m. work for you?",
+      "explanation": "“Passt Ihnen” means “does it work for you?” Use “um” before the time.",
+      "romanization": null,
+      "distractors": [
+        "Sie",
+        "passen",
+        "von"
+      ],
+      "translationDistractors": [
+        "Monday",
+        "morning",
+        "me"
+      ],
+      "speakingPrompt": "Suggest Tuesday at 2 p.m. to the landlord."
+    },
+    {
+      "sentence": "Ja, der Termin passt mir",
+      "translation": "Yes, the appointment works for me",
+      "explanation": "“Mir” means “for me” here. German uses “passt” with “der Termin,” a single appointment.",
+      "romanization": null,
+      "distractors": [
+        "mich",
+        "passen",
+        "meinen"
+      ],
+      "translationDistractors": [
+        "you",
+        "no",
+        "viewing"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Saying when a time works",
+    "text": "Use `Passt Ihnen` to ask politely whether a time works for someone: `Passt Ihnen Dienstag um 14 Uhr?` To say an appointment works for you, use `Der Termin passt mir`. Unlike English “for you” and “for me,” German uses the single words `Ihnen` and `mir` here.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the polite word for “you.”",
+      "template": "Passt [BLANK] Mittwoch um 15 Uhr?",
+      "answer": "Ihnen",
+      "distractors": [
+        "Sie",
+        "Ihrer",
+        "Ihres"
+      ],
+      "feedback": "Use “Ihnen” after “passt” to ask politely whether the time works for the other person."
+    },
+    {
+      "question": "Choose the word for “me.”",
+      "template": "Der Termin passt [BLANK] gut.",
+      "answer": "mir",
+      "distractors": [
+        "mich",
+        "mein",
+        "meine"
+      ],
+      "feedback": "Use “mir” with “passt” to say the appointment works for you."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord suggests a time that works for you. What do you say?",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Guten Tag, ich rufe wegen der Wohnung an",
+        "translation": "Hello, I'm calling about the apartment"
+      },
+      {
+        "speaker": "them",
+        "text": "Möchten Sie die Wohnung besichtigen?",
+        "translation": "Would you like to view the apartment?"
+      },
+      {
+        "speaker": "you",
+        "text": "Ja, gern",
+        "translation": "Yes, I'd like to"
+      },
+      {
+        "speaker": "them",
+        "text": "Passt Ihnen Dienstag um 14 Uhr?",
+        "translation": "Does Tuesday at 2 p.m. work for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ja, der Termin passt mir",
+        "translation": "Yes, the appointment works for me",
+        "isBest": true,
+        "why": "This naturally confirms that the suggested appointment works for you."
+      },
+      {
+        "text": "Ja, der Termin passt mich",
+        "translation": "Yes, the appointment works for me",
+        "isBest": false,
+        "why": "“Mich” is the wrong form here; use “mir” with “passt.”"
+      },
+      {
+        "text": "Ja, der Termin passen mir",
+        "translation": "Yes, the appointment works for me",
+        "isBest": false,
+        "why": "With the singular “der Termin,” use “passt,” not “passen.”"
+      }
+    ],
+    "explanation": "Use “um” before a clock time, as in “um 14 Uhr.”"
+  },
+  "writing": {
+    "prompt": "Write to the landlord: “Does Tuesday at 2 p.m. work for you?”",
+    "answers": [
+      "Passt Ihnen Dienstag um 14 Uhr?",
+      "Passt Ihnen Dienstag um 14:00 Uhr?",
+      "Passt es Ihnen am Dienstag um 14 Uhr?",
+      "Passt es Ihnen am Dienstag um 14:00 Uhr?"
+    ],
+    "keyPoints": [
+      "Use the polite form “Ihnen.”",
+      "Use “um” before the time."
+    ]
+  },
+  "summary": [
+    "“Kann ich die Wohnung besichtigen?” asks if you can view the apartment.",
+    "“Wann passt es Ihnen?” asks when a time works for the landlord.",
+    "“Passt Ihnen Dienstag um 14 Uhr?” suggests a day and time.",
+    "“Der Termin passt mir” confirms that the appointment works for you."
+  ]
+}

@@ -3,10 +3,11 @@ import { Output, generateText } from "ai";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import { getLessonCheckModels } from "../quality/lesson-check-models";
 import { lessonIssuesSchema, toLessonIssue } from "../quality/lesson-issues";
 import { type LanguageLessonInputs, formatLanguageLessonInputs } from "./language-lesson";
-import systemPrompt from "./language-lesson-check.prompt.md";
+import promptTemplate from "./language-lesson-check.prompt.md";
 
 export type CheckLanguageLessonParams = LanguageLessonInputs & {
   /** Every screen as learners see it, in order. */
@@ -29,6 +30,12 @@ export async function checkLanguageLesson(params: CheckLanguageLessonParams) {
     model,
     serviceTier,
     useFallback,
+  });
+
+  const systemPrompt = fillPromptLanguages({
+    learnerLanguage: params.learnerLanguage,
+    targetLanguage: params.targetLanguage,
+    template: promptTemplate,
   });
 
   const numbered = screens.map((screen, index) => ({ screen: index + 1, ...screen }));

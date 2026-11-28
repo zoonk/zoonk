@@ -1,0 +1,194 @@
+{
+  "words": [
+    {
+      "word": "schedule",
+      "translation": "el horario",
+      "pronunciation": "SKÉ-yul",
+      "romanization": null,
+      "tip": "Comienza directamente con el sonido de la 's' sin agregar una 'e' antes, como si fuera 'sk'.",
+      "note": null,
+      "distractors": [
+        "calendar",
+        "meeting",
+        "clock"
+      ]
+    },
+    {
+      "word": "shift",
+      "translation": "el turno",
+      "pronunciation": "SHIFT",
+      "romanization": null,
+      "tip": "El sonido 'sh' es suave como cuando pides silencio; no lo pronuncies como la 'ch' de 'chico'.",
+      "note": null,
+      "distractors": [
+        "break",
+        "task",
+        "desk"
+      ]
+    },
+    {
+      "word": "full-time",
+      "translation": "de tiempo completo",
+      "pronunciation": "FUL-taim",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "part-time",
+        "overtime",
+        "on time"
+      ]
+    },
+    {
+      "word": "work as",
+      "translation": "trabajar como",
+      "pronunciation": "WUERK AZ",
+      "romanization": null,
+      "tip": "Para el sonido de 'w', redondea los labios como al decir 'u' en español.",
+      "note": "En inglés siempre se usa 'a' o 'an' después de 'work as' antes de nombrar una profesión.",
+      "distractors": [
+        "apply for",
+        "train as",
+        "look for"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work full-time here",
+      "translation": "Trabajo de tiempo completo aquí",
+      "explanation": "En inglés 'full-time' se coloca después del verbo 'work' para indicar tu modalidad de trabajo",
+      "romanization": null,
+      "distractors": [
+        "working",
+        "job",
+        "time"
+      ],
+      "translationDistractors": [
+        "medio",
+        "ayer",
+        "horario"
+      ],
+      "speakingPrompt": "Di que trabajas de tiempo completo aquí"
+    },
+    {
+      "sentence": "What is your schedule?",
+      "translation": "¿Cuál es tu horario?",
+      "explanation": "Se usa 'what is' para preguntar de manera directa por el horario asignado a alguien",
+      "romanization": null,
+      "distractors": [
+        "how",
+        "who",
+        "which"
+      ],
+      "translationDistractors": [
+        "cuándo",
+        "dónde",
+        "cómo"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "My shift starts at 8 a.m.",
+      "translation": "Mi turno empieza a las 8 a.m.",
+      "explanation": "Para decir a qué hora inicia una actividad se usa la preposición 'at' antes de la hora",
+      "romanization": null,
+      "distractors": [
+        "on",
+        "in",
+        "to"
+      ],
+      "translationDistractors": [
+        "termina",
+        "cancela",
+        "durante"
+      ],
+      "speakingPrompt": "Di a qué hora comienza tu turno"
+    }
+  ],
+  "tip": {
+    "title": "Decir horarios con from y to",
+    "text": "Para decir tu horario de trabajo de principio a fin, usa `from` para la hora de inicio y `to` para la hora de salida. Equivale a decir 'de... a...' en español. Si solo mencionas una hora exacta de entrada o salida, usa la palabra `at`.",
+    "examples": [
+      {
+        "sentence": "I work from 9 a.m. to 5 p.m.",
+        "translation": "Trabajo de 9 a.m. a 5 p.m."
+      },
+      {
+        "sentence": "My shift is from Monday to Friday",
+        "translation": "Mi turno es de lunes a viernes"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Elige la palabra adecuada para indicar la hora de inicio de tu turno.",
+      "template": "My shift starts [BLANK] 7 a.m.",
+      "answer": "at",
+      "distractors": [
+        "on",
+        "in"
+      ],
+      "feedback": "En inglés siempre se utiliza 'at' antes de una hora específica."
+    },
+    {
+      "question": "Completa la frase para expresar tu rango de horario.",
+      "template": "I work [BLANK] 8 a.m. to 4 p.m.",
+      "answer": "from",
+      "distractors": [
+        "since",
+        "between"
+      ],
+      "feedback": "La estructura habitual para indicar un horario continuo es 'from... to...'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Un compañero de trabajo te pregunta por tus horas laborales. ¿Qué le respondes?",
+    "scene": "La sala de descanso de la empresa durante tu primera semana",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hi, welcome to the team! What is your schedule?",
+        "translation": "¡Hola, bienvenido al equipo! ¿Cuál es tu horario?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I work from 9 a.m. to 5 p.m.",
+        "translation": "Trabajo de 9 a.m. a 5 p.m.",
+        "isBest": true,
+        "why": "Responde con claridad a la pregunta sobre el horario usando la estructura correcta 'from... to...'."
+      },
+      {
+        "text": "I work full-time yesterday",
+        "translation": "Trabajo de tiempo completo ayer",
+        "isBest": false,
+        "why": "'Yesterday' se refiere al pasado y no responde cuál es tu horario habitual."
+      },
+      {
+        "text": "My shift is at 9 a.m. to 5 p.m.",
+        "translation": "Mi turno es a las 9 a.m. a 5 p.m.",
+        "isBest": false,
+        "why": "Para marcar un rango de inicio a fin se usa 'from', no 'at'."
+      }
+    ],
+    "explanation": "Al hablar de tu horario de trabajo, combina 'from' y 'to' para especificar tus horas de entrada y salida."
+  },
+  "writing": {
+    "prompt": "Escribe en inglés: 'Trabajo de 9 a.m. a 5 p.m.'",
+    "answers": [
+      "I work from 9 a.m. to 5 p.m.",
+      "I work from 9 to 5."
+    ],
+    "keyPoints": [
+      "Usa 'work' para el verbo trabajar",
+      "Incluye 'from' y 'to' para marcar el horario"
+    ]
+  },
+  "summary": [
+    "'What is your schedule?' sirve para preguntar por el horario de alguien",
+    "'I work full-time' expresa que tienes una jornada de tiempo completo",
+    "'My shift starts at...' indica a qué hora exacta comienza tu turno de trabajo"
+  ]
+}

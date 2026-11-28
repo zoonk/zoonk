@@ -5,7 +5,11 @@ import { checkLanguageLesson } from "./language-lesson-check";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./language-lesson-check.prompt.md", () => ({ default: "Find errors." }));
+
+vi.mock("./language-lesson-check.prompt.md", () => ({
+  default: "Find errors in {{TARGET_LANGUAGE}} for {{LEARNER_LANGUAGE}} readers.",
+}));
+
 vi.mock("./language-lesson.prompt.md", () => ({ default: "Write a lesson." }));
 vi.mock("./language-lesson-fix.prompt.md", () => ({ default: "Fix it." }));
 vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({ default: "" }));
@@ -53,5 +57,14 @@ describe(checkLanguageLesson, () => {
     });
 
     expect(data.issues.map((issue) => issue.screen)).toStrictEqual([1, null]);
+  });
+
+  it("names the practiced and the learner's language in the rules", async () => {
+    const { systemPrompt } = await checkLanguageLesson({
+      ...LESSON,
+      writerModel: "openai/gpt-6.1-terra",
+    });
+
+    expect(systemPrompt).toBe("Find errors in Italiano for Português Brasileiro readers.");
   });
 });

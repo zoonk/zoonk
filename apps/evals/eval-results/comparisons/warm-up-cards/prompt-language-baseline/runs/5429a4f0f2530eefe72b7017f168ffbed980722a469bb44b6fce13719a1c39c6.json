@@ -1,0 +1,13 @@
+{
+  "caseId": "en-first-aid",
+  "challenger": {
+    "costUsd": 0.00096362,
+    "durationMs": 16147.504084000015,
+    "hash": "9bc4a3ff996045f46ad21479f3f50db31ea9dd7c0afef25eecac087264df0731",
+    "systemPromptHash": "66b524fa4ef492c233d5d8767309a04a418e5133113dc0e5a4b8ce5af9758dd4",
+    "userPromptHash": "8077ff306025955f418e64c1088513cf4be4923b2ad6c0571a7e2ee10ff85275"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

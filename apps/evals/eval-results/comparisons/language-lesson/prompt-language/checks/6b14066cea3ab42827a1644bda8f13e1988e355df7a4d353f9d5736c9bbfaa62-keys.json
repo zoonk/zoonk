@@ -1,0 +1,14 @@
+{
+  "caseId": "pt-it-a2-past-weather",
+  "costUsd": 0.046408000000000005,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"pioveva → chovia; pronunciation: pio-VÉ-va; distractor: grand atava\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but “grand atava” is not an Italian form. The imperfect of grandinare is grandinava, written as one word. Also, pioveva has a closed stressed e: piovéva, not piovèva.\"}",
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"faceva freddo → fazia frio; pronunciation: fa-TCHÉ-va FRÉD-do\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but Portuguese É indicates an open vowel. Both stressed vowels are closed /e/ in standard Italian; “fa-TCHÊ-va FRÊD-do” is a closer guide.\"}",
+    "{\"itemLocator\":\"words[3]\",\"keyedAnswer\":\"la settimana scorsa → a semana passada; pronunciation: la set-ti-MA-na SCÓR-sa\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but scorsa meaning “last” has a closed stressed /o/ in standard Italian. For a Brazilian learner, “SCÔR-sa” represents it more accurately than “SCÓR-sa.”\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 11
+}

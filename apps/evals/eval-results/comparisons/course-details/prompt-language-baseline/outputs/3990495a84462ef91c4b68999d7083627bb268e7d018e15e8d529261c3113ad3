@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "economics",
+    "society"
+  ],
+  "description": "A economia ajuda a explicar como pessoas, empresas e governos tomam decisões diante de recursos limitados. Você vai ver como escolhas, preços, dinheiro, bancos, inflação, empregos, impostos e gastos públicos afetam o dia a dia e o país.",
+  "landingPage": {
+    "audience": [
+      "Quem quer cuidar melhor do próprio dinheiro",
+      "Estudantes do ensino médio",
+      "Curiosos sobre preços e decisões do governo"
+    ],
+    "outcomes": [
+      "Escolher compras considerando o que cabe no orçamento",
+      "Explicar por que um produto fica mais caro ou barato",
+      "Avaliar como juros e inflação afetam seu dinheiro",
+      "Comparar efeitos de impostos e gastos públicos na economia"
+    ],
+    "valueProposition": "Tomar decisões melhores com seu dinheiro e explicar por que preços, juros e empregos mudam."
+  }
+}

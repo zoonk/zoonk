@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Compare the two photographs and answer the question. You have one minute.",
+    "Then answer a short question about the photographs."
+  ],
+  "prompts": [
+    "Why might the people enjoy spending time together in these places?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of three neighbours, a woman in her twenties and two men in their forties, wearing casual clothes and gardening gloves. They are planting flowers together in a shared neighbourhood garden, smiling as they pass a small plant between them. Soft afternoon sunlight. No text, signs or logos.",
+      "alt": "Três vizinhos plantam flores juntos em uma horta comunitária."
+    },
+    {
+      "scene": "A realistic photograph of four neighbours of different ages, from their twenties to their sixties, wearing everyday clothes. They are making colourful paper decorations together at a table in a neighbourhood community hall. Two are laughing while another holds up a paper shape. Natural light comes through the windows. No text, signs or logos.",
+      "alt": "Quatro vizinhos fazem enfeites de papel em um centro comunitário."
+    }
+  ],
+  "summary": "Você vai comparar duas fotos e responder à pergunta por cerca de um minuto. Depois, responderá a uma pergunta breve da examinadora.",
+  "character": {
+    "name": "Hannah",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the examiner. Start with the opening line. Listen without interrupting for about one minute. If the candidate finishes early, allow a short pause. Then ask: 'Which of these activities would you prefer to do with your neighbours?' If the answer is very short, ask: 'Why would you choose that one?' After the response, end with: 'Thank you. That is the end of this part.' Do not correct, praise or grade the candidate.",
+  "openingLine": "I’d like you to compare the two photographs and say why the people might enjoy spending time together in these places. You have about a minute. Please begin.",
+  "hints": [
+    "Let me think about that for a moment.",
+    "Both photographs show people spending time together, but in different ways.",
+    "One difference is that the people might feel differently in each situation.",
+    "I’d probably choose that one because it would suit me better.",
+    "Could you repeat the question, please?"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "You develop the cue-card answer in a clear sequence, using links such as “At the beginning” and “step by step,” and your answers stay on topic. Your discussion answers are relevant but could be developed further, so the ideas are not consistently as fully extended as they could be.",
+      "tip": "Extend one discussion answer with a specific example and its result. After “skills like cooking or managing money are useful for everybody,” you could add, “For example, learning to budget can help students avoid debt when they start living independently.”",
+      "bandHigh": 6.5,
+      "bandLow": 6
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "You use some precise and natural expressions, including “a steep learning curve,” “overwhelming,” and “sharing food is a way to understand another culture.” Some wording remains general, such as “you have more choice,” which limits the range and precision of your vocabulary.",
+      "tip": "Make “you have more choice” more precise by saying, “With the internet, you have a wider range of options.”",
+      "bandHigh": 7,
+      "bandLow": 6.5
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use both simple and longer sentences, but several recurring errors appear in “I am doing this job since two years,” “I am agree with that,” and “It depends of the skill.” These tense, verb-form, and preposition errors keep your accuracy below the next band.",
+      "tip": "Use the present perfect continuous for an activity that began in the past and is still continuing, and use “for” with a duration: “I am doing this job since two years” becomes “I have been doing this job for two years.”",
+      "bandHigh": 6,
+      "bandLow": 5.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate based on your overall language performance rather than on how clean the text looks. It gives no clear signs of words being misunderstood, but it cannot confirm how easily listeners understood you.",
+      "tip": "Make the main stress clear in “overwhelming” (overWHELMing) and “practical” (PRACtical) so listeners can catch the key words easily.",
+      "bandHigh": 7,
+      "bandLow": 6
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

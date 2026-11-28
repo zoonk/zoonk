@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "O que deve acontecer, como regra, com informações que um advogado recebe durante o atendimento?",
+      "options": [
+        {
+          "text": "Manter reserva",
+          "correct": true
+        },
+        {
+          "text": "Divulgar em redes sociais",
+          "correct": false
+        },
+        {
+          "text": "Compartilhar com qualquer pessoa",
+          "correct": false
+        }
+      ],
+      "reveal": "Manter reserva. O sigilo protege a confiança entre cliente e advogado; há situações excepcionais previstas nas regras profissionais."
+    },
+    {
+      "question": "Numa democracia prevista pela Constituição, de quem emana o poder político?",
+      "options": [
+        {
+          "text": "Do povo",
+          "correct": true
+        },
+        {
+          "text": "Dos tribunais",
+          "correct": false
+        },
+        {
+          "text": "Do governo federal",
+          "correct": false
+        }
+      ],
+      "reveal": "Do povo. A Constituição afirma que o poder político tem origem popular e é exercido por representantes eleitos ou diretamente, nos termos constitucionais."
+    },
+    {
+      "question": "Uma pessoa sofre ameaça ilegal de perder a liberdade de ir e vir; qual instrumento constitucional protege esse direito?",
+      "options": [
+        {
+          "text": "Habeas corpus",
+          "correct": true
+        },
+        {
+          "text": "Mandado de segurança",
+          "correct": false
+        },
+        {
+          "text": "Ação popular",
+          "correct": false
+        }
+      ],
+      "reveal": "Habeas corpus. Esse instrumento protege a liberdade de locomoção diante de ilegalidade ou abuso de poder."
+    },
+    {
+      "question": "Em regra, quando uma sociedade contrai dívida própria, o que a separação patrimonial distingue?",
+      "options": [
+        {
+          "text": "Bens da sociedade e dos sócios",
+          "correct": true
+        },
+        {
+          "text": "Bens móveis e imóveis",
+          "correct": false
+        },
+        {
+          "text": "Bens públicos e particulares",
+          "correct": false
+        }
+      ],
+      "reveal": "Bens da sociedade e dos sócios. A pessoa jurídica tem patrimônio próprio, embora a lei admita situações específicas de desconsideração dessa separação."
+    },
+    {
+      "question": "Ao interpretar e cumprir um contrato, a boa-fé objetiva exige que as partes ajam com…",
+      "options": [
+        {
+          "text": "Lealdade e cooperação",
+          "correct": true
+        },
+        {
+          "text": "Vantagem a qualquer custo",
+          "correct": false
+        },
+        {
+          "text": "Desconfiança permanente",
+          "correct": false
+        }
+      ],
+      "reveal": "Lealdade e cooperação. A boa-fé objetiva funciona como padrão de conduta e orienta deveres de honestidade e colaboração entre as partes."
+    },
+    {
+      "question": "Quando a lei prevê a forma culposa, um resultado penalmente relevante decorre de…",
+      "options": [
+        {
+          "text": "Falta de cuidado",
+          "correct": true
+        },
+        {
+          "text": "Vontade direta de causar o resultado",
+          "correct": false
+        },
+        {
+          "text": "Aceitação consciente do resultado",
+          "correct": false
+        }
+      ],
+      "reveal": "Falta de cuidado. A culpa pode decorrer de imprudência, negligência ou imperícia; a forma culposa só é punível quando a lei a prevê."
+    },
+    {
+      "question": "Um agente público usa uma cerimônia oficial para promover a própria imagem; qual princípio é afetado?",
+      "options": [
+        {
+          "text": "Impessoalidade",
+          "correct": true
+        },
+        {
+          "text": "Continuidade",
+          "correct": false
+        },
+        {
+          "text": "Autotutela",
+          "correct": false
+        }
+      ],
+      "reveal": "Impessoalidade. A atuação pública deve servir ao interesse público, não à promoção pessoal de agentes."
+    },
+    {
+      "question": "No vínculo de emprego, qual elemento mostra que o trabalho é prestado sob direção alheia?",
+      "options": [
+        {
+          "text": "Subordinação jurídica",
+          "correct": true
+        },
+        {
+          "text": "Parentesco com o empregador",
+          "correct": false
+        },
+        {
+          "text": "Propriedade de ferramentas",
+          "correct": false
+        }
+      ],
+      "reveal": "Subordinação jurídica. Ela caracteriza a sujeição do trabalhador ao poder de direção do empregador na relação de emprego."
+    },
+    {
+      "question": "Qual espécie tributária não tem como fato gerador um serviço público específico nem o exercício do poder de polícia?",
+      "options": [
+        {
+          "text": "Imposto",
+          "correct": true
+        },
+        {
+          "text": "Taxa",
+          "correct": false
+        },
+        {
+          "text": "Contribuição de melhoria",
+          "correct": false
+        }
+      ],
+      "reveal": "Imposto. Diferentemente das taxas, ele não depende de uma atuação estatal específica dirigida ao contribuinte."
+    },
+    {
+      "question": "Para que o contraditório seja efetivo em um processo, cada parte precisa poder…",
+      "options": [
+        {
+          "text": "Conhecer e responder às alegações",
+          "correct": true
+        },
+        {
+          "text": "Escolher quem julga a causa",
+          "correct": false
+        },
+        {
+          "text": "Impedir qualquer prova contrária",
+          "correct": false
+        }
+      ],
+      "reveal": "Conhecer e responder às alegações. O contraditório permite que as partes participem do processo e possam influenciar a decisão."
+    }
+  ]
+}

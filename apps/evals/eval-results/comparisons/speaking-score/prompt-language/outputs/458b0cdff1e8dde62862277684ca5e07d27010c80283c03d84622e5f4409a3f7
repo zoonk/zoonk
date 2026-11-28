@@ -1,0 +1,35 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "fluencyCoherence",
+      "evidence": "Você responde sobre o tema, por exemplo, com “I like the beach and the food”, mas as respostas ficam curtas e há repetições como “because... because” e “more... more”, com poucas ideias desenvolvidas.",
+      "tip": "Depois de dar sua opinião, acrescente um motivo específico ou um exemplo. Em vez de parar em “The family is important for help”, desenvolva: “Families can support students by paying for books and encouraging them when their studies become difficult.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "lexicalResource",
+      "evidence": "Você usa vocabulário básico e relevante, como “the beach and the food” e “money for the books”, mas repete palavras gerais como “good” e “important” e não desenvolve muito as respostas.",
+      "tip": "Troque “He is very good person” por uma descrição mais precisa, como “He is a generous and supportive person.”",
+      "bandHigh": 5,
+      "bandLow": 4
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "Você consegue formar algumas frases simples, mas há erros frequentes de estrutura e concordância, como “The people is very friendly” e “He help me”.",
+      "tip": "No presente simples, acrescente -s ao verbo com he, she ou it; com um sujeito plural, use are. Por exemplo, corrija “He help me” para “He helps me” e “The people is” para “The people are.”",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    },
+    {
+      "criterion": "pronunciation",
+      "evidence": "A transcrição não mostra como você soou, e não há sinais claros de que alguém tenha pedido para você repetir; por isso, esta é uma estimativa mais ampla, alinhada às outras áreas.",
+      "tip": "Para favorecer a compreensão, pratique pronunciar claramente as consoantes finais em palavras que você usou, como “beach” e “books”.",
+      "bandHigh": 4.5,
+      "bandLow": 3.5
+    }
+  ],
+  "focus": "grammar",
+  "heard": true
+}

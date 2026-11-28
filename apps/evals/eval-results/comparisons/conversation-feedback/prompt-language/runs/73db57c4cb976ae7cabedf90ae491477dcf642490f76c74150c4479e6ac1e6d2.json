@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-a2-renting-mistakes",
+  "challenger": {
+    "costUsd": 0.0012177,
+    "durationMs": 1381.1859999999997,
+    "hash": "6c6234da16aa3ad56eccde2deb7de0aaee9b6e30b91074ce1a4482e468fbe50e",
+    "systemPromptHash": "48031088733b1fd4729d25a74061568b87b00edb0ad15d176d20db54a599c196",
+    "userPromptHash": "560dfabf5298851416aec179b8d539dae165e2c61c5619b13c3ed20ed873955b"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.0010260999999999998,
+    "durationMs": 1275.9625420000011,
+    "hash": "c2f451e041823d802e9d7c8b43fb1131b4197355aa0ed041bed94cb576ecc682",
+    "systemPromptHash": "602c1226f8619d26fa56a57bcefa3a0608aa8e32e3cbd6adc62b6ca0ff4e8e44",
+    "userPromptHash": "560dfabf5298851416aec179b8d539dae165e2c61c5619b13c3ed20ed873955b"
+  },
+  "run": 2
+}

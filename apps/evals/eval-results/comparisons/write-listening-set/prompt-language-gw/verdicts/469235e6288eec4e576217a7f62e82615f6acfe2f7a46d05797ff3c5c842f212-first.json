@@ -1,0 +1,183 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00423274,
+  "failures": [],
+  "packetId": "469235e6288eec4e576217a7f62e82615f6acfe2f7a46d05797ff3c5c842f212",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As mesmas dez respostas estão corretas e dependem de informações do áudio em ambas as versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "As versões são idênticas: ambas têm dez perguntas e um monólogo adequado, mas também repetem os mesmos problemas de formato e de metadados.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "O monólogo soa natural em inglês, e as razões e concepções equivocadas estão em português brasileiro nas duas versões.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A questão 2 está marcada como múltipla escolha, mas o contexto manda escrever uma palavra; esses formatos dão instruções incompatíveis.",
+            "criterion": "examRealism",
+            "learnerCost": "A pessoa pode ficar em dúvida sobre como responder, e a questão não reproduz com clareza o formato de prova indicado.",
+            "location": {
+              "detail": "Questão 2: contexto «Write ONE WORD ONLY. _____ Street» junto com formato multipleChoice.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A saída inclui um sotaque e níveis de dificuldade, embora a expectativa peça que nenhum dos dois seja listado.",
+            "criterion": "examRealism",
+            "learnerCost": "O material não segue as instruções de produção para esta parte do exame.",
+            "location": {
+              "detail": "Metadados: os campos accent aparecem no speaker e as perguntas têm difficulty.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A questão 2 está marcada como múltipla escolha, mas o contexto manda escrever uma palavra; esses formatos dão instruções incompatíveis.",
+            "criterion": "examRealism",
+            "learnerCost": "A pessoa pode ficar em dúvida sobre como responder, e a questão não reproduz com clareza o formato de prova indicado.",
+            "location": {
+              "detail": "Questão 2: contexto «Write ONE WORD ONLY. _____ Street» junto com formato multipleChoice.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A saída inclui um sotaque e níveis de dificuldade, embora a expectativa peça que nenhum dos dois seja listado.",
+            "criterion": "examRealism",
+            "learnerCost": "O material não segue as instruções de produção para esta parte do exame.",
+            "location": {
+              "detail": "Metadados: os campos accent aparecem no speaker e as perguntas têm difficulty.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "As duas saídas são idênticas: as respostas e o áudio funcionam, mas ambas têm os mesmos desvios de formato e metadados."
+        },
+        "pairId": "24bc2cc4-f22e-4075-86a9-b33f53f64ece"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As chaves das dez perguntas correspondem às informações do monólogo nas duas saídas.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém os formatos de resposta alinhados às instruções das perguntas; em B, a questão 2 pede uma palavra, mas está configurada como múltipla escolha. Ambas listam sotaque e dificuldade, apesar da instrução para omiti-los.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Os dois monólogos soam naturais em inglês, e as razões e concepções equivocadas estão em português brasileiro.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "A saída inclui um sotaque e níveis de dificuldade, embora a expectativa peça que nenhum dos dois seja listado.",
+            "criterion": "examRealism",
+            "learnerCost": "O material não segue as instruções de produção para esta parte do exame.",
+            "location": {
+              "detail": "Metadados: o campo accent aparece no speaker e as perguntas têm difficulty.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "A questão 2 está marcada como múltipla escolha, mas o contexto manda escrever uma palavra; esses formatos dão instruções incompatíveis.",
+            "criterion": "examRealism",
+            "learnerCost": "A pessoa pode ficar em dúvida sobre como responder, e a questão não reproduz com clareza o formato de prova indicado.",
+            "location": {
+              "detail": "Questão 2: contexto «Write ONE WORD ONLY. _____ Street» junto com formato multipleChoice.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "A saída inclui um sotaque e níveis de dificuldade, embora a expectativa peça que nenhum dos dois seja listado.",
+            "criterion": "examRealism",
+            "learnerCost": "O material não segue as instruções de produção para esta parte do exame.",
+            "location": {
+              "detail": "Metadados: o campo accent aparece no speaker e as perguntas têm difficulty.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As duas versões têm respostas corretas e problemas semelhantes de metadados, mas B cria instruções conflitantes na questão 2; A mantém os formatos coerentes."
+        },
+        "pairId": "693b29c2-7aa1-468d-9893-93b20dc84b54"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "As respostas corretas e os trechos de evidência são os mesmos nas duas versões.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "Ambas apresentam um monólogo e perguntas em espanhol; a diferença não está no formato do conjunto, mas no idioma de algumas justificativas de B.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "A",
+            "reason": "A mantém todas as razões e concepções equivocadas em português brasileiro. Em B, as justificativas da questão 2 estão em espanhol, contrariando a expectativa.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "As razões e concepções equivocadas da questão 2 estão em espanhol, não em português brasileiro.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "O leitor brasileiro pode não compreender as explicações sobre por que as alternativas estão certas ou erradas.",
+            "location": {
+              "detail": "Razões e concepções equivocadas das três alternativas da questão 2, incluindo «Oyes que aceptan objetos usados...» e «Toma una propuesta rechazada por la decisión final».",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "As duas versões têm as mesmas perguntas e respostas, mas B deixa em espanhol as explicações da questão 2; A atende ao idioma esperado para todas as justificativas."
+        },
+        "pairId": "de307e9a-1544-40e2-98fb-eff39a0d20a4"
+      }
+    ]
+  }
+}

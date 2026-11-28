@@ -1,0 +1,222 @@
+{
+  "words": [
+    {
+      "word": "It's a pleasure to meet you",
+      "translation": "É um prazer conhecer você",
+      "pronunciation": "ITS A PLÉ-jâr TU MIT IU",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "It's good to see you again",
+        "I'm sorry to hear that",
+        "It's time to leave"
+      ]
+    },
+    {
+      "word": "Thanks for having me",
+      "translation": "Obrigado por me receber",
+      "pronunciation": "THÉNKS FOR RRÉ-ving MI",
+      "romanization": null,
+      "tip": "Em `thanks`, coloque a ponta da língua entre os dentes e deixe o ar passar para fazer o som de `th`.",
+      "note": "Essa expressão agradece à pessoa por receber você, inclusive em uma entrevista.",
+      "distractors": [
+        "Thanks for letting me know",
+        "Thanks for calling me back",
+        "Thanks for your patience"
+      ]
+    },
+    {
+      "word": "Let me introduce myself",
+      "translation": "Deixe-me me apresentar",
+      "pronunciation": "LET MI in-trâ-DUS mai-SÉLF",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "Let me ask a question",
+        "Let me show you around",
+        "Let me check my schedule"
+      ]
+    },
+    {
+      "word": "I'm interested in this role",
+      "translation": "Tenho interesse nesta vaga",
+      "pronunciation": "AIM ÍN-tres-tid IN THIS ROUL",
+      "romanization": null,
+      "tip": "Em `role`, curve a língua para trás sem tocar o céu da boca, em vez de usar o som inicial de “rato”.",
+      "note": "Em uma entrevista, `role` se refere à função ou vaga.",
+      "distractors": [
+        "I'm familiar with this company",
+        "I'm available next week",
+        "I'm responsible for this project"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "It's a pleasure to meet you",
+      "translation": "É um prazer conhecer você",
+      "explanation": "Em inglês, a frase começa com `It's`; em português, não precisamos dizer um sujeito antes de “é”.",
+      "romanization": null,
+      "distractors": [
+        "I'm",
+        "meeting",
+        "your"
+      ],
+      "translationDistractors": [
+        "reencontrar",
+        "eles",
+        "trabalhar"
+      ],
+      "speakingPrompt": "Cumprimente o entrevistador dizendo que é um prazer conhecê-lo."
+    },
+    {
+      "sentence": "Thanks for having me today",
+      "translation": "Obrigado por me receber hoje",
+      "explanation": "Depois de `thanks for`, use `having`, com `-ing`. Em português, usamos o infinitivo “receber” depois de “por”.",
+      "romanization": null,
+      "distractors": [
+        "have",
+        "has",
+        "to"
+      ],
+      "translationDistractors": [
+        "amanhã",
+        "convidar",
+        "nós"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por receber você hoje."
+    },
+    {
+      "sentence": "Let me briefly introduce myself",
+      "translation": "Deixe-me me apresentar brevemente",
+      "explanation": "`Let me` introduz o que você gostaria de fazer. `Myself` indica que você vai apresentar a si mesmo.",
+      "romanization": null,
+      "distractors": [
+        "my",
+        "introduces",
+        "yourself"
+      ],
+      "translationDistractors": [
+        "apresentar-se",
+        "longamente",
+        "ele"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "I'm interested in this role",
+      "translation": "Tenho interesse nesta vaga",
+      "explanation": "Em inglês, usamos `interested in`; em português, podemos dizer “ter interesse em”.",
+      "romanization": null,
+      "distractors": [
+        "at",
+        "these",
+        "am"
+      ],
+      "translationDistractors": [
+        "desinteresse",
+        "empresa",
+        "ontem"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Agradecer por uma ação",
+    "text": "Para agradecer por algo que alguém fez, use `thanks for` seguido de um verbo com `-ing`. Por exemplo: `Thanks for having me today` e `Thanks for taking the time`. Em português, depois de “por”, usamos o infinitivo; em inglês, não use o verbo sem `-ing` nessa construção.",
+    "examples": [
+      {
+        "sentence": "Thanks for having me today",
+        "translation": "Obrigado por me receber hoje"
+      },
+      {
+        "sentence": "Thanks for taking the time",
+        "translation": "Obrigado por dedicar seu tempo"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete o agradecimento.",
+      "template": "Thanks for [BLANK] me today.",
+      "answer": "having",
+      "distractors": [
+        "have",
+        "had",
+        "has"
+      ],
+      "feedback": "Depois de `thanks for`, use o verbo com `-ing`: `having`."
+    },
+    {
+      "question": "Complete a frase para agradecer pelo tempo do entrevistador.",
+      "template": "Thank you for [BLANK] the time to meet with me.",
+      "answer": "taking",
+      "distractors": [
+        "take",
+        "took",
+        "takes"
+      ],
+      "feedback": "Depois de `thank you for`, use `taking`, a forma com `-ing`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Emma acaba de se apresentar. Como você responde?",
+    "scene": "Início de uma entrevista com Emma",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hello, I'm Emma. It's nice to meet you.",
+        "translation": "Olá, sou Emma. Prazer em conhecer você."
+      }
+    ],
+    "replies": [
+      {
+        "text": "It's a pleasure to meet you, and thanks for having me.",
+        "translation": "É um prazer conhecer você, e obrigado por me receber.",
+        "isBest": true,
+        "why": "A resposta retribui o cumprimento e agradece de forma adequada à entrevista."
+      },
+      {
+        "text": "It's a pleasure to meet you, and thanks for have me.",
+        "translation": "É um prazer conhecer você, e obrigado por me receber.",
+        "isBest": false,
+        "why": "Depois de `thanks for`, use `having`, não `have`."
+      },
+      {
+        "text": "It's a pleasure to meet you, and thanks to having me.",
+        "translation": "É um prazer conhecer você, e obrigado por me receber.",
+        "isBest": false,
+        "why": "Nesse agradecimento, use `for` antes de `having`, não `to`."
+      },
+      {
+        "text": "It's a pleasure to meet you, and thanks for has me.",
+        "translation": "É um prazer conhecer você, e obrigado por me receber.",
+        "isBest": false,
+        "why": "A forma `has` não funciona depois de `thanks for`; use `having`."
+      }
+    ],
+    "explanation": "Você pode usar `It's a pleasure to meet you` ao conhecer o entrevistador."
+  },
+  "writing": {
+    "prompt": "Em uma frase, diga que é um prazer conhecer o entrevistador e agradeça por ele receber você.",
+    "answers": [
+      "It's a pleasure to meet you, and thanks for having me.",
+      "It's a pleasure to meet you, and thank you for having me.",
+      "It is a pleasure to meet you, and thanks for having me.",
+      "It is a pleasure to meet you, and thank you for having me."
+    ],
+    "keyPoints": [
+      "Diga que é um prazer conhecer a pessoa.",
+      "Agradeça usando `thanks for having me` ou `thank you for having me`."
+    ]
+  },
+  "summary": [
+    "“It's a pleasure to meet you” cumprimenta o entrevistador ao conhecê-lo.",
+    "“Thanks for having me” agradece por ser recebido.",
+    "“Let me introduce myself” inicia uma apresentação.",
+    "“I'm interested in this role” expressa interesse na vaga."
+  ]
+}

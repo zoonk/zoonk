@@ -1,0 +1,184 @@
+{
+  "cards": [
+    {
+      "question": "Uma peça passa por fábrica e loja: o que ajuda a evitar cobrança repetida sobre etapas anteriores?",
+      "options": [
+        {
+          "text": "Crédito do imposto pago",
+          "correct": true
+        },
+        {
+          "text": "Desconto por volume",
+          "correct": false
+        },
+        {
+          "text": "Isenção para cada loja",
+          "correct": false
+        }
+      ],
+      "reveal": "Crédito do imposto pago. Em um sistema de valor agregado, a empresa desconta o tributo já recolhido nas etapas anteriores, reduzindo o efeito de cobrar imposto sobre imposto."
+    },
+    {
+      "question": "Quando uma compra acontece longe da sede da empresa, a qual lugar o tributo pode ser destinado?",
+      "options": [
+        {
+          "text": "Local da produção",
+          "correct": false
+        },
+        {
+          "text": "Local do consumo",
+          "correct": true
+        },
+        {
+          "text": "Sede da empresa",
+          "correct": false
+        }
+      ],
+      "reveal": "Local do consumo. Pelo princípio do destino, a arrecadação acompanha onde os bens ou serviços são consumidos, não necessariamente onde são produzidos."
+    },
+    {
+      "question": "Na conta de um tributo, qual valor ou quantidade recebe a aplicação da alíquota?",
+      "options": [
+        {
+          "text": "Base de cálculo",
+          "correct": true
+        },
+        {
+          "text": "Prazo de pagamento",
+          "correct": false
+        },
+        {
+          "text": "Crédito tributário",
+          "correct": false
+        }
+      ],
+      "reveal": "Base de cálculo. É o valor ou a quantidade usada para calcular o tributo; a alíquota é aplicada sobre essa base."
+    },
+    {
+      "question": "Se dois produtos concorrem entre si, que princípio busca evitar vantagem criada só pela diferença tributária?",
+      "options": [
+        {
+          "text": "Neutralidade tributária",
+          "correct": true
+        },
+        {
+          "text": "Progressividade fiscal",
+          "correct": false
+        },
+        {
+          "text": "Simplicidade contábil",
+          "correct": false
+        }
+      ],
+      "reveal": "Neutralidade tributária. A ideia é reduzir a influência dos tributos nas escolhas entre produtos e atividades semelhantes."
+    },
+    {
+      "question": "Quando a nota separa o valor do tributo do preço, que benefício essa informação oferece a quem compra?",
+      "options": [
+        {
+          "text": "Mais transparência",
+          "correct": true
+        },
+        {
+          "text": "Menos imposto",
+          "correct": false
+        },
+        {
+          "text": "Pagamento mais rápido",
+          "correct": false
+        }
+      ],
+      "reveal": "Mais transparência. Destacar o tributo ajuda a pessoa a enxergar quanto do valor da compra corresponde à cobrança."
+    },
+    {
+      "question": "Uma empresa recolhe um tributo, mas o custo pode parar em outro lugar; que conceito descreve isso?",
+      "options": [
+        {
+          "text": "Incidência econômica",
+          "correct": true
+        },
+        {
+          "text": "Base de cálculo",
+          "correct": false
+        },
+        {
+          "text": "Crédito fiscal",
+          "correct": false
+        }
+      ],
+      "reveal": "Incidência econômica. Ela indica quem suporta o custo de fato, o que pode ser diferente de quem tem a obrigação legal de recolher o tributo."
+    },
+    {
+      "question": "Duas pessoas têm rendas diferentes; qual desenho faz a de maior renda pagar uma fração maior?",
+      "options": [
+        {
+          "text": "Progressivo",
+          "correct": true
+        },
+        {
+          "text": "Proporcional",
+          "correct": false
+        },
+        {
+          "text": "Regressivo",
+          "correct": false
+        }
+      ],
+      "reveal": "Progressivo. Nesse desenho, a parcela da renda destinada ao tributo aumenta conforme a renda cresce."
+    },
+    {
+      "question": "Quando uma produção causa poluição que afeta terceiros, que lógica tributária pode incluir esse custo no preço?",
+      "options": [
+        {
+          "text": "Tributo corretivo",
+          "correct": true
+        },
+        {
+          "text": "Tributo sobre salários",
+          "correct": false
+        },
+        {
+          "text": "Taxa de cadastro",
+          "correct": false
+        }
+      ],
+      "reveal": "Tributo corretivo. A ideia é fazer o preço refletir parte do custo social de uma atividade que afeta outras pessoas."
+    },
+    {
+      "question": "Um tributo fixado por litro, sem depender do preço da bebida, usa qual base de cobrança?",
+      "options": [
+        {
+          "text": "Quantidade física",
+          "correct": true
+        },
+        {
+          "text": "Preço de venda",
+          "correct": false
+        },
+        {
+          "text": "Renda do comprador",
+          "correct": false
+        }
+      ],
+      "reveal": "Quantidade física. Esse tipo de cobrança é calculado por unidade, como litro ou quilo, em vez de usar uma porcentagem do preço."
+    },
+    {
+      "question": "Para comparar o tributo pago com a renda de alguém, qual medida mostra a parcela efetivamente comprometida?",
+      "options": [
+        {
+          "text": "Alíquota efetiva",
+          "correct": true
+        },
+        {
+          "text": "Alíquota nominal",
+          "correct": false
+        },
+        {
+          "text": "Base de cálculo",
+          "correct": false
+        }
+      ],
+      "reveal": "Alíquota efetiva. Ela compara o tributo pago com uma base, como a renda, e pode diferir da alíquota anunciada para uma cobrança."
+    }
+  ]
+}

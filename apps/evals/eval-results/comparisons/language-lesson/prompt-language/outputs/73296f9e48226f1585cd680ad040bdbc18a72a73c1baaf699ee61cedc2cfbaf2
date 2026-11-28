@@ -1,0 +1,222 @@
+{
+  "words": [
+    {
+      "word": "die Wohnung",
+      "translation": "the apartment",
+      "pronunciation": "DEE VOH-noong",
+      "romanization": null,
+      "tip": "Say the German w like an English v.",
+      "note": null,
+      "distractors": [
+        "das Zimmer",
+        "das Haus",
+        "die Garage"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "buh-ZICH-tih-gen",
+      "romanization": null,
+      "tip": "For the ch, bring the middle of your tongue close to the roof of your mouth and let air pass through; don't use the English ch sound.",
+      "note": "Use this verb for viewing a property, not for watching a movie.",
+      "distractors": [
+        "vermieten",
+        "kaufen",
+        "renovieren"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "DAIR ter-MEEN",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "die Rechnung",
+        "die Nachricht",
+        "der Vertrag"
+      ]
+    },
+    {
+      "word": "passen",
+      "translation": "to work for someone",
+      "pronunciation": "PAH-sen",
+      "romanization": null,
+      "tip": null,
+      "note": "A time can passen when it is convenient for someone.",
+      "distractors": [
+        "kosten",
+        "wohnen",
+        "mieten"
+      ]
+    },
+    {
+      "word": "Uhr",
+      "translation": "o'clock",
+      "pronunciation": "OOR",
+      "romanization": null,
+      "tip": "Don't curl your tongue back for the final r; let it soften after the long oo sound.",
+      "note": null,
+      "distractors": [
+        "Minuten",
+        "Tage",
+        "Wochen"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "As in English, the question starts with “can.” German puts the main verb, `besichtigen`, at the end.",
+      "romanization": null,
+      "distractors": [
+        "kannst",
+        "Wohnungen",
+        "besichtigt"
+      ],
+      "translationDistractors": [
+        "rent",
+        "house",
+        "does"
+      ],
+      "speakingPrompt": "Ask the landlord if you can view the apartment."
+    },
+    {
+      "sentence": "Wann passt es Ihnen?",
+      "translation": "When works for you?",
+      "explanation": "`Ihnen` is the polite form used for the person the time works for. German includes `es` where English can leave out “it.”",
+      "romanization": null,
+      "distractors": [
+        "bin",
+        "mich",
+        "zu"
+      ],
+      "translationDistractors": [
+        "where",
+        "me",
+        "does"
+      ],
+      "speakingPrompt": "Ask the landlord what time works for them."
+    },
+    {
+      "sentence": "Passt Ihnen Montag um 14 Uhr?",
+      "translation": "Does Monday at 2 p.m. work for you?",
+      "explanation": "The verb comes first in this yes-or-no question. Use `um` before the time and `Ihnen` for the person it works for.",
+      "romanization": null,
+      "distractors": [
+        "mich",
+        "bin",
+        "von"
+      ],
+      "translationDistractors": [
+        "Tuesday",
+        "tomorrow",
+        "from"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Der Termin passt mir",
+      "translation": "The appointment works for me",
+      "explanation": "German uses `mir` for the person the appointment works for, much as English uses “for me.”",
+      "romanization": null,
+      "distractors": [
+        "mich",
+        "bist",
+        "bin"
+      ],
+      "translationDistractors": [
+        "you",
+        "doesn't",
+        "viewing"
+      ],
+      "speakingPrompt": "Tell the landlord the appointment works for you."
+    }
+  ],
+  "tip": {
+    "title": "Ask if you can view the apartment",
+    "text": "For a yes-or-no request, put `Kann` first and `ich` next, then leave the action verb at the end. Say `Kann ich die Wohnung besichtigen?` (Can I view the apartment?). You can also say `Kann ich morgen kommen?` (Can I come tomorrow?). Unlike English, German does not add a separate word for “to” before the final verb here.",
+    "examples": [
+      {
+        "sentence": "Kann ich die Wohnung besichtigen?",
+        "translation": "Can I view the apartment?"
+      },
+      {
+        "sentence": "Kann ich morgen kommen?",
+        "translation": "Can I come tomorrow?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the request.",
+      "template": "[BLANK] ich die Wohnung morgen besichtigen?",
+      "answer": "Kann",
+      "distractors": [
+        "Kannst",
+        "Können",
+        "Könnt"
+      ],
+      "feedback": "Use `Kann` with `ich` when asking if you can do something."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord asks when you are available. What do you say?",
+    "scene": "On the phone with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Guten Tag, kann ich die Wohnung besichtigen?",
+        "translation": "Hello, can I view the apartment?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja, wann passt es Ihnen?",
+        "translation": "Yes, when works for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Montag um 14 Uhr passt mir",
+        "translation": "Monday at 2 p.m. works for me",
+        "isBest": true,
+        "why": "This gives a day and time and says they work for you."
+      },
+      {
+        "text": "Montag um 14 Uhr passen mir",
+        "translation": "Monday at 2 p.m. work for me",
+        "isBest": false,
+        "why": "Use `passt`, not `passen`, for this single proposed time."
+      },
+      {
+        "text": "Montag um 14 Uhr passt mich",
+        "translation": "Monday at 2 p.m. works me",
+        "isBest": false,
+        "why": "Use `mir`, not `mich`, for the person the time works for."
+      }
+    ],
+    "explanation": "Use `um` before a clock time when proposing an appointment."
+  },
+  "writing": {
+    "prompt": "Write a message to the landlord: “Can I view the apartment?”",
+    "answers": [
+      "Kann ich die Wohnung besichtigen?",
+      "Kann ich die Wohnung anschauen?",
+      "Kann ich mir die Wohnung anschauen?",
+      "Kann ich mir die Wohnung ansehen?"
+    ],
+    "keyPoints": [
+      "Asks whether you can view the apartment.",
+      "Starts with the form of “can” and puts the viewing verb at the end."
+    ]
+  },
+  "summary": [
+    "“Kann ich die Wohnung besichtigen?” asks if you can view the apartment.",
+    "“Wann passt es Ihnen?” asks when the time works for the landlord.",
+    "“Montag um 14 Uhr passt mir” says Monday at 2 p.m. works for you."
+  ]
+}

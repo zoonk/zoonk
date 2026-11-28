@@ -9,7 +9,7 @@ import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
 import { NEUTRAL_ADDRESS_PROMPT } from "../_utils/address-form";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
@@ -150,13 +150,21 @@ function buildUserPrompt(
   return `${lines.join("\n")}\n\n${formatUntrustedInput({ TRANSCRIPT: transcript })}`;
 }
 
+/** The exam names its own variety, such as British English for Cambridge. */
+function buildSystemPrompt({ exam, learnerLanguage }: ScoreSpeakingParams): string {
+  return fillPromptLanguages({ learnerLanguage, template: SYSTEM_PROMPTS[exam] }).replaceAll(
+    "{{TARGET_LANGUAGE}}",
+    () => SPEAKING_EXAM_VARIETIES[exam],
+  );
+}
+
 /**
  * Pronunciation is rated for intelligibility only, as a wider range: a transcript can't show sound.
  * It's an estimate, never an official score.
  */
 export async function scoreSpeaking(params: ScoreSpeakingParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
-  const systemPrompt = SYSTEM_PROMPTS[params.exam];
+  const systemPrompt = buildSystemPrompt(params);
   const { spokenSeconds } = params;
   const rated = listRatedCriteria({ criteria: params.criteria, spokenSeconds });
   const userPrompt = buildUserPrompt({ ...params, rated });

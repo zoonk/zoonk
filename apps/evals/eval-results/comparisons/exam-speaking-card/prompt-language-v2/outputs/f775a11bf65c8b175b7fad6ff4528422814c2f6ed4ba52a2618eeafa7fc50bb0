@@ -1,0 +1,36 @@
+{
+  "instructions": [
+    "Compare the two photographs and answer the question.",
+    "You have about one minute to speak. Then answer a short question from the examiner."
+  ],
+  "prompts": [
+    "Why might the people enjoy gardening in these places?"
+  ],
+  "text": null,
+  "table": null,
+  "photos": [
+    {
+      "scene": "A realistic photograph of a woman in her thirties wearing jeans and a light jumper, kneeling to plant flowers in a small garden behind a British terraced house. A watering can and several pots are nearby. Soft morning sunlight.",
+      "alt": "Uma mulher planta flores no pequeno jardim de uma casa."
+    },
+    {
+      "scene": "A realistic photograph of three adults in their twenties and fifties wearing casual clothes and gardening gloves, working together to harvest vegetables in a community garden. They are smiling and holding a basket of vegetables. Warm afternoon light, with no visible text or signs.",
+      "alt": "Três adultos colhem legumes juntos em uma horta comunitária."
+    }
+  ],
+  "summary": "Compare as fotos e responda à pergunta durante um minuto. Depois, converse brevemente com a examinadora sobre as fotos.",
+  "character": {
+    "name": "Hannah",
+    "role": "examinadora",
+    "place": "Exam room"
+  },
+  "characterBrief": "You are the B2 First Speaking examiner. Begin with the opening line. Listen without interrupting while the candidate compares the photographs and answers the question for about one minute. Then say: 'Which of these places would you prefer to spend time in?' Allow a brief response. If the response is very short, ask: 'Why is that?' Then say: 'Thank you.' Do not correct, praise or grade the candidate.",
+  "openingLine": "I'd like you to compare the photographs and say why the people might enjoy gardening in these places. You have about a minute, so please start now.",
+  "hints": [
+    "Both photographs show people doing something outdoors.",
+    "One difference is that the people seem to be doing different things.",
+    "They might be enjoying themselves because of the atmosphere.",
+    "Personally, I would prefer the first one because it appeals to me more.",
+    "Let me think about that for a moment."
+  ]
+}

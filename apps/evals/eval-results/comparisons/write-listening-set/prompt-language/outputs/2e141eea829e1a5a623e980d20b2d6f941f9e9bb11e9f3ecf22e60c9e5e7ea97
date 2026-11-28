@@ -1,0 +1,243 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "It's Kevin Bexley. That's Bexley, B-E-X-L-E-Y.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Surname: ______",
+        "keyPoints": [
+          "The surname is Bexley."
+        ],
+        "acceptedAnswers": [
+          "Bexley"
+        ],
+        "sampleAnswer": "Bexley"
+      },
+      {
+        "evidence": "Beginners meet on Thursday evenings.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Day of Kevin's class: ______",
+        "keyPoints": [
+          "The class is on Thursday."
+        ],
+        "acceptedAnswers": [
+          "Thursday"
+        ],
+        "sampleAnswer": "Thursday"
+      },
+      {
+        "evidence": "The full fee is forty-eight pounds.",
+        "skill": 1,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "easy",
+        "context": "Pottery course booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Current course fee: ______",
+        "keyPoints": [
+          "The fee is £48."
+        ],
+        "acceptedAnswers": [
+          "£48",
+          "48 pounds",
+          "forty-eight pounds"
+        ],
+        "sampleAnswer": "forty-eight pounds"
+      },
+      {
+        "evidence": "Please bring an apron, though, to protect your clothes.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "medium",
+        "context": "Pottery course booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Clothing protection to bring: an ______",
+        "keyPoints": [
+          "Kevin should bring an apron."
+        ],
+        "acceptedAnswers": [
+          "apron"
+        ],
+        "sampleAnswer": "apron"
+      },
+      {
+        "evidence": "So we'll take the finished pieces to the library, and you can collect yours there.",
+        "skill": 2,
+        "answerLimit": {
+          "plusNumber": true,
+          "words": 2
+        },
+        "format": "typed",
+        "difficulty": "hard",
+        "context": "Pottery course booking\nWrite NO MORE THAN TWO WORDS AND/OR A NUMBER.",
+        "question": "Place to collect finished pots: the ______",
+        "keyPoints": [
+          "The finished pots can be collected from the library."
+        ],
+        "acceptedAnswers": [
+          "library"
+        ],
+        "sampleAnswer": "library"
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Hannah",
+        "gender": "female",
+        "accent": "British English"
+      },
+      {
+        "name": "Kevin",
+        "gender": "male",
+        "accent": "British English"
+      }
+    ],
+    "title": "Booking a pottery course",
+    "turns": [
+      {
+        "speaker": "Hannah",
+        "text": "Good morning, Riverside Arts Centre. How can I help?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Hi. I saw a poster about your pottery courses, and I wondered if there were any places left for beginners."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "There are, yes. I can take your details and tell you a bit about the course. What's your name?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "It's Kevin Bexley. That's Bexley, B-E-X-L-E-Y."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Thanks, Kevin. Have you done any pottery before?"
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Not really. I tried it once on holiday, but that was years ago. I'd like something relaxed, not an exam course."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "This should suit you, then. The tutor shows everyone a few basic techniques, and after that you can make whatever you like. Most people start with a bowl or a mug."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "That sounds good. When are the classes?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "There's a Monday afternoon group, but it's full. The other beginner group meets on Wednesday, no, sorry, that's the advanced group. Beginners meet on Thursday evenings."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Thursday's actually better for me. I work late on Mondays. Is it a long class?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "It's two hours, from half past six until half past eight. There's a short break in the middle, and you can get tea or coffee from the machine in the hall."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Great. And how many weeks does it run for?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Six weeks altogether. The first session is in early May. We usually have eight people in the group, so the tutor has time to help everyone individually."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "I was a bit worried it might be a huge class. Eight sounds fine. My sister might be interested too. Can she come and watch before she signs up?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "She can visit the studio this Saturday morning. The tutor will be there, and there'll be some examples of work from the last course. She wouldn't be able to try the equipment that day, though."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "I'll tell her. How much would I need to pay for the course?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "The full fee is forty-eight pounds. That includes the clay and the use of all the tools. We used to charge fifty pounds, but we've reduced it a little this year."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "That's reasonable. Do I pay now, or when I come to the first class?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "You can pay online when I email you the booking form. We ask people to do that within a week, because otherwise we can't hold the place. If online payment's difficult, you can come into the centre instead."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Online is fine. Is the studio in the main building? I've only been to the café there."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "It's behind the main building. Go past the café and through the glass doors. You'll see the studio on your left, opposite the garden. The door is usually open about fifteen minutes before the class starts."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Right. Should I buy any tools beforehand?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "No, we've got everything you'll need. Some people like to bring a notebook for the tutor's instructions, but that's optional."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "What about clothes? I imagine it gets messy. Would a towel be useful?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "We have plenty of towels for cleaning up. Please bring an apron, though, to protect your clothes. And it's best to wear shoes you don't mind getting clay on."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "I'll do that. Can we take our pots home at the end of the course?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Not straight away, I'm afraid. They need to dry, and then we put them in the kiln. That can take another couple of weeks, depending on how many pieces there are."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "Do I come back to the studio for them?"
+      },
+      {
+        "speaker": "Hannah",
+        "text": "Normally you would, but the studio will be closed for repairs in June. So we'll take the finished pieces to the library, and you can collect yours there. We'll email you when they're ready."
+      },
+      {
+        "speaker": "Kevin",
+        "text": "That's convenient. I go there most weeks anyway. Thanks for explaining everything."
+      },
+      {
+        "speaker": "Hannah",
+        "text": "You're welcome. Let's get that booking form sent to you."
+      }
+    ]
+  }
+}

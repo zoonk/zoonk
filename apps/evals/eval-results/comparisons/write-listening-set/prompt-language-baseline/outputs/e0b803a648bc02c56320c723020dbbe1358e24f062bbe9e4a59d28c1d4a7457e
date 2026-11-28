@@ -1,0 +1,125 @@
+{
+  "problems": [],
+  "set": {
+    "questions": [
+      {
+        "evidence": "With these options, you get a detailed list that includes hidden entries.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "easy",
+        "context": null,
+        "question": "What does the demonstrated command display?",
+        "options": [
+          {
+            "text": "A detailed list including hidden entries",
+            "isCorrect": true,
+            "reason": "You hear that the options produce a detailed list that includes hidden entries.",
+            "misconception": null
+          },
+          {
+            "text": "A simple list without hidden entries",
+            "isCorrect": false,
+            "reason": "You hear that L S on its own normally leaves out hidden entries, but the demonstrated command adds options.",
+            "misconception": "Confuses the basic command with the demonstrated command"
+          },
+          {
+            "text": "A detailed list of hidden entries only",
+            "isCorrect": false,
+            "reason": "You hear that hidden entries are included, not that the other entries are removed.",
+            "misconception": "Assumes included entries are the only entries shown"
+          }
+        ]
+      },
+      {
+        "evidence": "Exclude all directories, including the single dot and double dot entries, from both counts.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "medium",
+        "context": null,
+        "question": "How should the single dot and double dot entries be treated in this example?",
+        "options": [
+          {
+            "text": "Count them as hidden files",
+            "isCorrect": false,
+            "reason": "You hear the lecturer consider this idea, then reject it because the entries are directories.",
+            "misconception": "Follows a suggestion that the lecturer rejects"
+          },
+          {
+            "text": "Leave them out of the counts",
+            "isCorrect": true,
+            "reason": "You hear that all directories, including these two entries, should be excluded.",
+            "misconception": null
+          },
+          {
+            "text": "Count them only in the total",
+            "isCorrect": false,
+            "reason": "You hear that these entries should be excluded from both counts, not just the hidden-file count.",
+            "misconception": "Excludes directory entries from only one count"
+          }
+        ]
+      },
+      {
+        "evidence": "So, four of the eight regular files are hidden, which means exactly half are hidden.",
+        "skill": 1,
+        "format": "multipleChoice",
+        "difficulty": "hard",
+        "context": null,
+        "question": "What is the result of the lecturer's check?",
+        "options": [
+          {
+            "text": "Four of twelve regular files are hidden",
+            "isCorrect": false,
+            "reason": "You hear that four directory entries are excluded, leaving eight regular files rather than twelve.",
+            "misconception": "Includes directory entries in the file total"
+          },
+          {
+            "text": "Eight of twelve regular files are hidden",
+            "isCorrect": false,
+            "reason": "You hear that there are eight regular files in total, but only four have names beginning with dots.",
+            "misconception": "Mistakes the regular-file total for the hidden-file count"
+          },
+          {
+            "text": "Four of eight regular files are hidden",
+            "isCorrect": true,
+            "reason": "You hear that four of the eight regular files have names beginning with dots.",
+            "misconception": null
+          }
+        ]
+      }
+    ],
+    "speakers": [
+      {
+        "name": "Lecturer",
+        "gender": "female",
+        "accent": "American English"
+      }
+    ],
+    "title": "Finding hidden files in a directory",
+    "turns": [
+      {
+        "speaker": "Lecturer",
+        "text": "Today we're going to check whether half the files in a directory are hidden. In this system, a hidden file is simply a file whose name begins with a dot. Hidden doesn't mean the file is locked or that you can't open it. It just means the usual listing may not show it."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Let's start in a directory I've prepared. At the command prompt, type L S, then a space, then minus L A, and press Enter. You might remember that L S on its own lists names, but it normally leaves out hidden entries. With these options, you get a detailed list that includes hidden entries. The long format gives you information such as permissions and size as well as each name."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "Now, don't count every line of output as a file. There's a total line at the top, and the list can include directories too. Look at the first character of the permissions field on each entry. In our example, a dash marks a regular file, and the letter D marks a directory. We're counting regular files only."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "I could count the single dot and double dot as hidden files, since their names start with dots. But no, those are directory entries, not regular files. Exclude all directories, including the single dot and double dot entries, from both counts. There are two other directories in my example, so those stay out too."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "After removing those entries, we have eight regular files. Four names begin with dots: dot notes, dot draft, dot cache, and dot settings. The other four names don't begin with dots. So, four of the eight regular files are hidden, which means exactly half are hidden."
+      },
+      {
+        "speaker": "Lecturer",
+        "text": "You can check your own directory the same way. First find the total number of regular files, then count how many of those names start with a dot. Compare the two counts rather than just looking at how many lines appeared on the screen. And remember, if you change directories, you'll need to do the count again for the new location. That's it for today."
+      }
+    ]
+  }
+}

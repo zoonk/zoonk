@@ -1,0 +1,13 @@
+{
+  "caseId": "es-language-english-hotel",
+  "challenger": {
+    "costUsd": 0.03698415,
+    "durationMs": 82307.17300000007,
+    "hash": "eceedc78ebdcf8e773ffafccbe5af4acbcda68e7d9c960b62cc72158a3771960",
+    "systemPromptHash": "fec22d7736604dfc84fc0af28172436ff868318e7aa2216b8a453a7d709ceb8d",
+    "userPromptHash": "f7bf84bf2df79907febacea0b77a842722403fc8010b8ea2871c9dc93fc88214"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

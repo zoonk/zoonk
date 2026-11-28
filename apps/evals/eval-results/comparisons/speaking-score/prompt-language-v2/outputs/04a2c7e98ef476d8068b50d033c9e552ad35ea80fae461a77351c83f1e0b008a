@@ -1,0 +1,42 @@
+{
+  "brief": false,
+  "criteria": [
+    {
+      "criterion": "repetition",
+      "evidence": "You repeated the first two sentences exactly, but later you dropped or changed small parts: “Club tables are set” instead of “Club tables are set up,” and “The workshop that was planned for Friday” omits “afternoon” from the prompt. The meaning usually stayed clear, but the longer sentences included more changes.",
+      "tip": "Listen for small words and endings, then hold longer sentences in groups: “The workshop planned for Friday afternoon / has moved to the lecture hall / next to the bookstore.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "elaboration",
+      "evidence": "You answered each question and supported your opinions with reasons, such as “you have to speak another language every day and you meet people from other cultures.” Your answers are coherent, though you give limited follow-up detail, for example, you do not explain what your group did to resolve its different ideas.",
+      "tip": "After giving a reason, add one specific example: after “we divided the tasks,” explain, “I handled the customer research, while my teammates worked on the budget and promotion.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "grammar",
+      "evidence": "You use simple sentence forms effectively, but some structures are inaccurate: “I learned that is important to communicate” is missing “it,” and “different than see it on a screen” needs a gerund after “than.”",
+      "tip": "Use “it” as the subject in this pattern, and use an -ing form when comparing activities: “I learned that it is important to communicate” and “living in another country is different from seeing it on a screen.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "vocabulary",
+      "evidence": "You use relevant words and phrases such as “marketing plan,” “divided the tasks,” and “people from other cultures.” Much of the wording is broad, though, as in “very useful,” and you could be more precise when explaining the benefits of studying abroad.",
+      "tip": "Replace broad evaluations with a more precise benefit: instead of “very useful,” try “a valuable opportunity to build language skills and cross-cultural understanding.”",
+      "bandHigh": 3.5,
+      "bandLow": 3
+    },
+    {
+      "criterion": "delivery",
+      "evidence": "The transcript can't show how you sounded, so this is a wider estimate; your clear, coherent wording supports this range, but the transcript alone cannot confirm intelligibility, rhythm, or intonation.",
+      "tip": "Make the stressed syllables clear in “expensive” and “important” so listeners can easily catch these key points.",
+      "bandHigh": 4,
+      "bandLow": 3
+    }
+  ],
+  "focus": "repetition",
+  "heard": true
+}

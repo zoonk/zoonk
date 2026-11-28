@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-enem",
+  "challenger": {
+    "costUsd": 0.00159667,
+    "durationMs": 20322.992375,
+    "hash": "47b9a7a299a7be91448c56f3851deca3329c4b9932eeda800fe86e31646c4a38",
+    "systemPromptHash": "638b961635758e427daa5781a5ca1fa0dbe723a6e09a2cd7849e4b6bfe83d7fb",
+    "userPromptHash": "26b390e26beae95d494afef4d8ea964206450d8ef310238b81ad1f4d544de2e5"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.00143863,
+    "durationMs": 22573.661957999982,
+    "hash": "78994c8ed511a49d963dce4b0e904dbbc25c4d0fa8b68362edfc555fa93fd57d",
+    "systemPromptHash": "3122a02e88f361a0c79e6592ca6e25e18189c3fe31c3f766cc26271c3a159c6e",
+    "userPromptHash": "26b390e26beae95d494afef4d8ea964206450d8ef310238b81ad1f4d544de2e5"
+  },
+  "run": 2
+}

@@ -9,7 +9,11 @@ import {
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
-vi.mock("./alphabet-lesson.prompt.md", () => ({ default: "Write the lesson.\n" }));
+
+vi.mock("./alphabet-lesson.prompt.md", () => ({
+  default: "Write the {{TARGET_LANGUAGE}} lesson in {{LEARNER_LANGUAGE}}.\n",
+}));
+
 vi.mock("./alphabet-lesson-fix.prompt.md", () => ({ default: "Fix the lesson.\n" }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -67,7 +71,11 @@ describe(fixAlphabetLesson, () => {
       createGenerateTextResult(rewrite({ summary: ["A new summary."], title: "New title" })),
     );
 
-    const { data, userPrompt } = await fix([{ problem: "The h is silent.", screen: 2 }]);
+    const { data, systemPrompt, userPrompt } = await fix([
+      { problem: "The h is silent.", screen: 2 },
+    ]);
+
+    expect(systemPrompt).toBe("Write the Russian lesson in US English.\n\nFix the lesson.\n");
 
     expect(userPrompt).toContain("Screen 3 (reviewer): The h is silent.");
     expect(userPrompt).toContain('"screen": 3');

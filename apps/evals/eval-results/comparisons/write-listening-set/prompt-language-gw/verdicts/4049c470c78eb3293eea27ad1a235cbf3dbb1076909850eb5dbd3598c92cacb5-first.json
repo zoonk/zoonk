@@ -1,0 +1,194 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00432704,
+  "failures": [],
+  "packetId": "4049c470c78eb3293eea27ad1a235cbf3dbb1076909850eb5dbd3598c92cacb5",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "A",
+            "reason": "A has one sample answer that violates its stated ONE NUMBER ONLY limit; B has three such mismatches, despite both having correct accepted answers.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "B",
+            "reason": "Both sets have ten questions and the same general mix of formats, but B includes a particularly clear corrected detail—the bus route changing from 18 to 28—which better resembles a listening-paper distractor.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both scripts sound like a single speaker addressing a group, and their explanations are in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The output lists an accent and difficulty levels, despite the requirement not to list accents or a level.",
+            "criterion": "examRealism",
+            "learnerCost": "This disregards the requested exam notice format and gives the learner information the production instructions say to omit.",
+            "location": {
+              "detail": "The speaker metadata lists “British English,” and the questions include easy, medium, and hard difficulty labels.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "The sample answer gives a phrase even though the response limit is ONE NUMBER ONLY.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy the sample answer and submit a response that does not follow the stated answer limit.",
+            "location": {
+              "detail": "Question 4 sampleAnswer: “four pounds”.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The output lists an accent and difficulty levels, despite the requirement not to list accents or a level.",
+            "criterion": "examRealism",
+            "learnerCost": "This disregards the requested exam notice format and gives the learner information the production instructions say to omit.",
+            "location": {
+              "detail": "The speaker metadata lists “British English,” and the questions include easy, medium, and hard difficulty labels.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Three sample answers use words or a phrase even though the response limit is ONE NUMBER ONLY.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy these sample answers and submit responses that do not follow the stated answer limit.",
+            "location": {
+              "detail": "Questions 2, 3, and 8 sampleAnswer fields: “twenty-eight”, “half past nine”, and “twelve pounds”.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B’s corrected bus-number detail gives it a small edge in exam-like listening practice; A’s advantage is fewer sample answers that conflict with the response limit."
+        },
+        "pairId": "36871f42-5d35-48fa-820a-2794e8fc3fa5"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical; their keys are correct, though the sample answers for the number questions do not follow the ONE NUMBER ONLY limits.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical and share the same questions and exam-format strengths and weaknesses.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs are identical, with a natural Spanish monologue and explanations in Brazilian Portuguese.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The output lists an accent and difficulty levels, despite the requirement not to list accents or a level.",
+            "criterion": "examRealism",
+            "learnerCost": "This disregards the requested exam notice format and gives the learner information the production instructions say to omit.",
+            "location": {
+              "detail": "The speaker metadata lists “British English,” and the questions include easy, medium, and hard difficulty labels.",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Three sample answers use words or a phrase even though the response limit is ONE NUMBER ONLY.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy these sample answers and submit responses that do not follow the stated answer limit.",
+            "location": {
+              "detail": "Questions 2, 3, and 8 sampleAnswer fields: “twenty-eight”, “half past nine”, and “twelve pounds”.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "minor"
+          },
+          {
+            "claim": "The output lists an accent and difficulty levels, despite the requirement not to list accents or a level.",
+            "criterion": "examRealism",
+            "learnerCost": "This disregards the requested exam notice format and gives the learner information the production instructions say to omit.",
+            "location": {
+              "detail": "The speaker metadata lists “British English,” and the questions include easy, medium, and hard difficulty labels.",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          },
+          {
+            "claim": "Three sample answers use words or a phrase even though the response limit is ONE NUMBER ONLY.",
+            "criterion": "keys",
+            "learnerCost": "A learner could copy these sample answers and submit responses that do not follow the stated answer limit.",
+            "location": {
+              "detail": "Questions 2, 3, and 8 sampleAnswer fields: “twenty-eight”, “half past nine”, and “twelve pounds”.",
+              "kind": "range"
+            },
+            "output": "B",
+            "severity": "minor"
+          }
+        ],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better than the other."
+        },
+        "pairId": "5dec68bc-7004-4c60-892a-42f04a9a1fef"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both versions key the five questions correctly, and their options are supported by the script.",
+            "criterion": "keys"
+          },
+          {
+            "preference": "tie",
+            "reason": "The outputs have the same Spanish monologue and questions; neither is more exam-like than the other.",
+            "criterion": "examRealism"
+          },
+          {
+            "preference": "B",
+            "reason": "B keeps all explanations in Brazilian Portuguese. A switches to Spanish in two explanations, which makes those parts harder for the intended reader to use.",
+            "criterion": "naturalSpeech"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Two answer explanations are in Spanish rather than Brazilian Portuguese.",
+            "criterion": "naturalSpeech",
+            "learnerCost": "A Brazilian learner may not understand the feedback as readily as the questions and other explanations.",
+            "location": {
+              "detail": "Question 2 explanations include “Oyes que aceptan objetos usados...” and “Oyes que aceptaron objetos...”.",
+              "kind": "range"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "B preserves the intended language of the feedback throughout, while A includes Spanish explanations that may be difficult for the Brazilian reader to understand."
+        },
+        "pairId": "dcf07c73-6c1c-4564-8586-327058a962e1"
+      }
+    ]
+  }
+}

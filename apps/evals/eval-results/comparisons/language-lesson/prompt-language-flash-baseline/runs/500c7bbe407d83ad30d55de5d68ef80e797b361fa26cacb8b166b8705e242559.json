@@ -1,0 +1,13 @@
+{
+  "caseId": "en-de-a2-viewing",
+  "challenger": {
+    "costUsd": 0.00886125,
+    "durationMs": 19785.057374999975,
+    "hash": "f4712632592ee97ffc499519c0950f4368d897c63a3270f736f322247c54717e",
+    "systemPromptHash": "924e84e1fdc57acc58a0c674adc13613b54e4d00cef71cc3b4b397d59e3b22a1",
+    "userPromptHash": "166b5f11bc6943299bc94ff6f917f604f99ddca56f11c1a141ce3d369af425a5"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

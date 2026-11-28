@@ -1,0 +1,21 @@
+{
+  "categories": [
+    "health",
+    "science"
+  ],
+  "description": "A farmacologia estuda como os remédios agem, circulam e são eliminados pelo corpo. Você vai ver como dose e forma de uso alteram efeitos, como remédios interagem, para que servem diferentes grupos e por que bactérias podem resistir a antibióticos. Esse conhecimento ajuda a ler informações sobre medicamentos e conversar com profissionais de saúde.",
+  "landingPage": {
+    "audience": [
+      "Estudantes de cursos da saúde",
+      "Curiosos sobre o efeito dos remédios",
+      "Profissionais que lidam com medicamentos"
+    ],
+    "outcomes": [
+      "Explicar como os remédios agem no corpo",
+      "Comparar efeitos de doses e formas de uso",
+      "Notar quando remédios e alimentos podem se atrapalhar",
+      "Explicar usos e riscos de grupos de remédios"
+    ],
+    "valueProposition": "Explicar por que dose, forma de uso e combinações mudam os efeitos dos remédios"
+  }
+}

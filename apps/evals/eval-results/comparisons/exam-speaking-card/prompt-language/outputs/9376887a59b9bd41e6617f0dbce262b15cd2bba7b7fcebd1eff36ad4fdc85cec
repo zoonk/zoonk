@@ -1,0 +1,55 @@
+{
+  "instructions": [
+    "Va a conversar con el examinador sobre los resultados de una encuesta acerca de la elección de restaurantes.",
+    "Diga qué habría respondido usted, compare su respuesta con los resultados y dé su opinión.",
+    "La conversación durará unos cuatro minutos."
+  ],
+  "prompts": [
+    "¿Qué habría respondido usted a la encuesta?",
+    "¿En qué coincide su respuesta con los resultados y en qué se diferencia?",
+    "¿Qué le parecen las preferencias de los encuestados?",
+    "¿Cree que estas preferencias pueden cambiar en el futuro?"
+  ],
+  "text": null,
+  "table": {
+    "title": "¿Qué aspecto valora más al elegir un restaurante? Encuesta de Hábitos de Ocio de Madrid, 2024",
+    "columns": [
+      "Respuesta",
+      "Porcentaje"
+    ],
+    "rows": [
+      [
+        "La calidad de la comida",
+        "40 %"
+      ],
+      [
+        "El precio",
+        "25 %"
+      ],
+      [
+        "La ubicación",
+        "20 %"
+      ],
+      [
+        "El ambiente",
+        "15 %"
+      ]
+    ]
+  },
+  "photos": [],
+  "summary": "Converse com a examinadora sobre os resultados de uma pesquisa, comparando-os com suas próprias preferências e dando sua opinião.",
+  "character": {
+    "name": "Rosa",
+    "role": "examinadora",
+    "place": "Sala de examen"
+  },
+  "characterBrief": "Conduct an informal conversation lasting about four minutes. The candidate has not prepared this task. Ask the questions in order, allowing the candidate to develop each answer. Ask follow-up questions only when useful, and use the backup questions if an answer is brief. Do not correct, praise or grade the candidate. Begin: «Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted a la pregunta y por qué?». Then ask: «¿En qué coincide su respuesta con los resultados y en qué se diferencia?», «¿Qué le parecen las preferencias de las personas encuestadas?» and «¿Cree que estas preferencias pueden cambiar en el futuro? ¿Por qué?». For a short answer, use one or both of these backup questions: «¿Podría explicarlo un poco más?» and «¿Puede poner algún ejemplo?». Close with: «Muchas gracias. Hemos terminado».",
+  "openingLine": "Vamos a conversar sobre los resultados de esta encuesta. ¿Qué habría respondido usted a la pregunta y por qué?",
+  "hints": [
+    "Déjeme pensar un momento.",
+    "En mi opinión, depende de varios factores.",
+    "Coincido en parte, aunque también creo que hay otras posibilidades.",
+    "No estoy del todo de acuerdo, porque lo veo de otra manera.",
+    "¿Podría repetir la pregunta, por favor?"
+  ]
+}
