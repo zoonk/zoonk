@@ -16,8 +16,8 @@ final class PlacementTestContractTests: XCTestCase {
        "result":{"attemptId":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
                  "finishedAt":"2026-11-21T16:23:39Z","lessonsSkipped":4,
                  "chapter":"Why prices move",
-                 "course":{"lessons":9,"chapters":[{"lessons":4,"skipped":4,"start":false},
-                                                   {"lessons":5,"skipped":0,"start":true}]},
+                 "course":{"lessons":9,"chapters":[{"lessons":4,"done":0,"skipped":4,"start":false},
+                                                   {"lessons":5,"done":1,"skipped":0,"start":true}]},
                  "nextLesson":{"id":"c367d72f-4d87-408a-ba10-6bbcddca31ba",
                                "title":"News, results and expectations","estimatedMinutes":5,
                                "chapter":"Why prices move"}}}
@@ -28,6 +28,7 @@ final class PlacementTestContractTests: XCTestCase {
     XCTAssertEqual(result.finishedAt, finishedAt)
     XCTAssertEqual(result.chapter, "Why prices move")
     XCTAssertEqual(result.course?.chapters.map(\.start), [false, true])
+    XCTAssertEqual(result.course?.chapters.map(\.done), [0, 1])
     XCTAssertEqual(result.nextLesson?.estimatedMinutes, 5)
     XCTAssertEqual(
       plainFacts(PlacementTestCopy.planLine(test)).first, "4 lessons skipped",

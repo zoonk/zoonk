@@ -435,8 +435,10 @@ final class PlacementTestRenderTests: XCTestCase {
     course: PlacementCourse(
       lessons: 9,
       chapters: [
-        .init(lessons: 2, skipped: 2, start: false), .init(lessons: 2, skipped: 2, start: false),
-        .init(lessons: 2, skipped: 0, start: true), .init(lessons: 3, skipped: 0, start: false),
+        .init(lessons: 2, done: 0, skipped: 2, start: false),
+        .init(lessons: 2, done: 0, skipped: 2, start: false),
+        .init(lessons: 2, done: 0, skipped: 0, start: true),
+        .init(lessons: 3, done: 0, skipped: 0, start: false),
       ]),
     nextLesson: .init(
       id: "00000000-0000-4000-8000-0000000000a1", title: "News, results and expectations",

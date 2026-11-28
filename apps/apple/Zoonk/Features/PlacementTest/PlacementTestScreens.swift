@@ -45,11 +45,12 @@ struct PlacementTestResultView: View {
 }
 
 /// The course on a test's result: one line of chapters in plan order, each as wide as its
-/// lessons, and how many lessons the learner starts past.
+/// lessons and filled as far as its lessons are behind the learner, and how many lessons the
+/// learner starts past.
 struct PlacementCourseLine: View {
-  /// Lessons a test started the learner past, in progress blue as the language result's level
-  /// meters draw a level reached.
-  static let startedPastTone = Color.success
+  /// The lessons behind the learner, studied or started past, in progress blue as the language
+  /// result's level meters draw a level reached.
+  static let behindTone = Color.success
 
   let course: PlacementCourse
   let lessonsSkipped: Int
@@ -61,8 +62,9 @@ struct PlacementCourseLine: View {
           MeterParts.Part(
             weight: Double(max(chapter.lessons, 1)),
             fill: .share(
-              chapter.lessons > 0 ? Double(chapter.skipped) / Double(chapter.lessons) : 0,
-              color: Self.startedPastTone),
+              chapter.lessons > 0
+                ? Double(chapter.done + chapter.skipped) / Double(chapter.lessons) : 0,
+              color: Self.behindTone),
             ringed: chapter.start)
         },
         height: 6, gap: 3)

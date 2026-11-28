@@ -33,6 +33,8 @@ struct CoursePlacementOffer: Decodable, Equatable, Sendable {
 struct PlacementCourse: Decodable, Equatable, Sendable {
   struct Chapter: Decodable, Equatable, Sendable {
     let lessons: Int
+    /// Lessons already behind the learner for any other reason than this start, such as studied.
+    let done: Int
     /// Lessons the learner starts past.
     let skipped: Int
     /// Holds the lesson the learner starts on.

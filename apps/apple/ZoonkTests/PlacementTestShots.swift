@@ -47,8 +47,10 @@ final class PlacementTestShots: XCTestCase {
       course: PlacementCourse(
         lessons: 9,
         chapters: [
-          .init(lessons: 2, skipped: 0, start: true), .init(lessons: 2, skipped: 0, start: false),
-          .init(lessons: 2, skipped: 0, start: false), .init(lessons: 3, skipped: 0, start: false),
+          .init(lessons: 2, done: 0, skipped: 0, start: true),
+          .init(lessons: 2, done: 0, skipped: 0, start: false),
+          .init(lessons: 2, done: 0, skipped: 0, start: false),
+          .init(lessons: 3, done: 0, skipped: 0, start: false),
         ]),
       nextLesson: .init(
         id: id, title: "Why companies sell shares", estimatedMinutes: 5,
@@ -161,15 +163,56 @@ final class PlacementTestShots: XCTestCase {
               course: PlacementCourse(
                 lessons: 14,
                 chapters: [
-                  .init(lessons: 2, skipped: 2, start: false),
-                  .init(lessons: 3, skipped: 0, start: true),
-                  .init(lessons: 3, skipped: 3, start: false),
-                  .init(lessons: 2, skipped: 0, start: false),
-                  .init(lessons: 4, skipped: 0, start: false),
+                  .init(lessons: 2, done: 0, skipped: 2, start: false),
+                  .init(lessons: 3, done: 0, skipped: 0, start: true),
+                  .init(lessons: 3, done: 0, skipped: 3, start: false),
+                  .init(lessons: 2, done: 0, skipped: 0, start: false),
+                  .init(lessons: 4, done: 0, skipped: 0, start: false),
                 ]),
               nextLesson: .init(
                 id: id, title: "Assets and liabilities", estimatedMinutes: 6,
                 chapter: "Reading a balance sheet")),
+            onboarding: false, pressed: nil, failed: false, onDone: {}))
+      ),
+      (
+        "10c-result-studied-before-start", true,
+        AnyView(
+          PlacementTestResultView(
+            end: PlacementTestEnd(
+              lessonsSkipped: 2, chapter: "Why prices move",
+              course: PlacementCourse(
+                lessons: 11,
+                chapters: [
+                  .init(lessons: 2, done: 2, skipped: 0, start: false),
+                  .init(lessons: 2, done: 2, skipped: 0, start: false),
+                  .init(lessons: 2, done: 0, skipped: 2, start: false),
+                  .init(lessons: 2, done: 0, skipped: 0, start: true),
+                  .init(lessons: 3, done: 0, skipped: 0, start: false),
+                ]),
+              nextLesson: .init(
+                id: id, title: "News, results and expectations", estimatedMinutes: 5,
+                chapter: "Why prices move")),
+            onboarding: false, pressed: nil, failed: false, onDone: {}))
+      ),
+      (
+        "10d-result-studied-after-result", true,
+        AnyView(
+          PlacementTestResultView(
+            end: PlacementTestEnd(
+              lessonsSkipped: 4, chapter: "Reading the news",
+              course: PlacementCourse(
+                lessons: 12,
+                chapters: [
+                  .init(lessons: 2, done: 0, skipped: 2, start: false),
+                  .init(lessons: 2, done: 0, skipped: 2, start: false),
+                  .init(lessons: 2, done: 2, skipped: 0, start: false),
+                  .init(lessons: 3, done: 1, skipped: 0, start: true),
+                  .init(lessons: 3, done: 0, skipped: 0, start: false),
+                ]),
+              nextLesson: .init(
+                id: id, title: "What earnings mean", estimatedMinutes: 6,
+                chapter: "Reading the news"),
+              revisited: true),
             onboarding: false, pressed: nil, failed: false, onDone: {}))
       ),
       (

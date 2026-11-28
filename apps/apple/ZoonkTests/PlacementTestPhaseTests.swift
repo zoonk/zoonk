@@ -250,8 +250,10 @@ final class PlacementTestPhaseTests: XCTestCase {
   private let course = PlacementCourse(
     lessons: 9,
     chapters: [
-      .init(lessons: 2, skipped: 2, start: false), .init(lessons: 2, skipped: 2, start: false),
-      .init(lessons: 2, skipped: 0, start: true), .init(lessons: 3, skipped: 0, start: false),
+      .init(lessons: 2, done: 0, skipped: 2, start: false),
+      .init(lessons: 2, done: 0, skipped: 2, start: false),
+      .init(lessons: 2, done: 0, skipped: 0, start: true),
+      .init(lessons: 3, done: 0, skipped: 0, start: false),
     ])
 
   private func attempt(answered: Int = 0) -> PlacementAttempt {
