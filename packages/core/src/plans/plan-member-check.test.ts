@@ -168,6 +168,15 @@ describe(claimMemberCheck, () => {
     });
   });
 
+  it("still claims on a retry when a read fails before the claim is made", async () => {
+    const { plan } = await plannedGoal();
+
+    vi.spyOn(prisma.skill, "count").mockRejectedValueOnce(new Error("connection reset"));
+
+    await expect(claimMemberCheck(plan.id)).rejects.toThrow("connection reset");
+    await expect(claimMemberCheck(plan.id)).resolves.toMatchObject({ planId: plan.id });
+  });
+
   it("claims nothing for a goal that stopped owing the check after the sweep listed it", async () => {
     const archived = await plannedGoal();
     const guest = await plannedGoal();
@@ -223,6 +232,23 @@ describe(offerMemberSkills, () => {
     expect(proposed).toHaveLength(1);
     expect(proposed[0]?.reason).toBe("Your plan covers every step except the second.");
     expect(parsePlanChangePayload(proposed[0]?.payload).source).toBe(MEMBER_CHECK_SOURCE);
+  });
+
+  it("keeps a member in its neighbor's phase when the next skill starts another phase", async () => {
+    const { plan } = await plannedGoal();
+    const name = `Do the second step ${uniqueWord()}`;
+    mockCoverage(listMissingSecond(name));
+
+    const claimed = await claim(plan.id);
+
+    const phased = {
+      ...claimed,
+      skills: claimed.skills.map((skill, index) => ({ ...skill, phase: index === 0 ? 0 : 1 })),
+    };
+
+    const { skills } = await findMembers(phased);
+
+    expect(skills).toStrictEqual([expect.objectContaining({ name, phase: 0 })]);
   });
 
   it("anchors a member after the plan's last skill just before that skill", async () => {

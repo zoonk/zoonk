@@ -87,10 +87,23 @@ async function hasOwnSkills({ skills, userId }: { skills: readonly GraphSkill[];
 
 /**
  * Internal workflow bridge: marks the plan's graph checked before anything is spent, so a second
- * run, a retry after an offer or a dismissed offer never pays for the check again. Null when another
- * run or a new build already marked it, or the plan no longer owes it.
+ * run, a retry after an offer or a dismissed offer never pays for the check again. The claim is the
+ * step's last write, after every read, so a read that fails leaves the plan owing and a retry
+ * claims it. Null when another run or a new build already marked it, or the plan no longer owes it.
  */
 export async function claimMemberCheck(planId: string): Promise<ClaimedMemberCheck | null> {
+  const plan = await prisma.plan.findUnique({
+    select: { goal: { select: { id: true, userId: true } }, graph: true },
+    where: { id: planId },
+  });
+
+  if (!plan) {
+    return null;
+  }
+
+  const { skills } = planGraphSchema.parse(plan.graph);
+  const { userId } = plan.goal;
+  const ownSkills = await hasOwnSkills({ skills, userId });
   const checkedAt = new Date();
 
   const claimed = await prisma.$queryRaw<{ id: string }[]>`
@@ -108,22 +121,7 @@ export async function claimMemberCheck(planId: string): Promise<ClaimedMemberChe
     return null;
   }
 
-  const plan = await prisma.plan.findUniqueOrThrow({
-    select: { goal: { select: { id: true, userId: true } }, graph: true },
-    where: { id: planId },
-  });
-
-  const { skills } = planGraphSchema.parse(plan.graph);
-  const { userId } = plan.goal;
-
-  return {
-    checkedAt,
-    goalId: plan.goal.id,
-    ownSkills: await hasOwnSkills({ skills, userId }),
-    planId,
-    skills,
-    userId,
-  };
+  return { checkedAt, goalId: plan.goal.id, ownSkills, planId, skills, userId };
 }
 
 /**
@@ -238,6 +236,7 @@ export async function toMemberSkills({
             ...(courseId && { courseId }),
             lessons: member.neighborSkill.lessons,
             name: member.item.name,
+            phase: member.neighborSkill.phase,
             skillId,
           },
         ]
