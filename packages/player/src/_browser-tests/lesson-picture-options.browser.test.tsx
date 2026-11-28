@@ -143,6 +143,49 @@ describe("picture options", () => {
     await checkAnswer("Not quite");
   });
 
+  it.each([
+    { imagePending: false, state: "missing" },
+    { imagePending: true, state: "drawing" },
+  ])(
+    "keeps a $state picture's long description clear of the pick mark on a phone",
+    async ({ imagePending }) => {
+      const alt =
+        "A red apple beside a sliced green pear, a bowl of dark plums and a jug of milk on a long wooden table by a window";
+
+      await atViewport(PHONE, async () => {
+        const step = contentStep("check", {
+          content: {
+            ...pictureCheckContent,
+            options: pictureCheckContent.options.map((choice) =>
+              choice.id === "baroque" ? { ...choice, picture: { ...choice.picture, alt } } : choice,
+            ),
+          },
+          imagePending,
+          optionPictures: pictureCheckStep({ drawn: ["gothic", "romanesque"] }).optionPictures,
+        });
+
+        renderLessonPlayer({ lesson: buildLesson([step]) });
+
+        const description = option(alt).getByText(alt, { exact: true });
+        await expect.element(description).toBeVisible();
+        const mark = option(alt).element().querySelector("[data-slot='answer-option-mark']")!;
+        const markBox = mark.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(description.element());
+
+        const overlapping = [...range.getClientRects()].filter(
+          (line) =>
+            line.right > markBox.left &&
+            line.left < markBox.right &&
+            line.bottom > markBox.top &&
+            line.top < markBox.bottom,
+        );
+
+        expect(overlapping).toStrictEqual([]);
+      });
+    },
+  );
+
   it("is accessible on a phone in light and dark", async () => {
     await atViewport(PHONE, async () => {
       renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
