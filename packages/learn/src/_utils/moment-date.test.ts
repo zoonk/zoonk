@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getMomentDateOptions, getMomentDays } from "./iso-date";
+import { getMomentDateOptions, getMomentDays } from "./moment-date";
 
 describe(getMomentDays, () => {
   it("keeps two turns either side of UTC midnight on the device's one day", () => {
