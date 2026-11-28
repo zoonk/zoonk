@@ -7,6 +7,7 @@ import {
 import { type GenerateGoalTutorAnswerParams } from "@zoonk/ai/tasks/tutor/goal-tutor";
 import {
   ACCOUNTING_PLAN,
+  CLINICAL_PREGNANCY_SCREEN,
   ENEM_PLAN,
   MOBILITY_GUESS_SCREEN,
   QUANTUM_PLAN,
@@ -183,6 +184,173 @@ const CONCURSO_PLAN = {
         reason: "mistakes",
         status: "pending",
         title: "Atos administrativos",
+      },
+    ],
+    source: "session",
+  },
+  version: 1,
+} satisfies PlanScopeContext;
+
+/** A learn goal with two focused areas, so "aprofundar" also reads as giving an area more depth. */
+const REPRODUCTIVE_MEDICINE_PLAN = {
+  catchUp: null,
+  challenges: [],
+  course: {
+    description:
+      "A medicina reprodutiva aborda a fertilidade, o início da gestação e as dificuldades para engravidar.",
+    levels: [
+      {
+        chapters: [
+          "Anatomia reprodutiva",
+          "Da fecundação à implantação",
+          "Gestação inicial e perda gestacional",
+          "Reconhecimento da hipofertilidade",
+        ],
+        inPlan: true,
+        level: "beginner",
+      },
+      {
+        chapters: [
+          "Avaliação ovulatória e ovariana",
+          "Investigação de perdas gestacionais recorrentes",
+          "Fatores tubários e uterinos",
+          "Inseminação intrauterina",
+        ],
+        inPlan: true,
+        level: "intermediate",
+      },
+    ],
+    targetLanguage: null,
+    title: "Medicina reprodutiva",
+  },
+  estimate: { endDate: "2027-01-02", remainingHours: 90 },
+  exam: null,
+  goal: {
+    cutoff: null,
+    dailyMinutes: 60,
+    kind: "learn",
+    target: null,
+    targetDate: "2027-01-02",
+    title: "Entender infertilidade e perdas gestacionais",
+  },
+  language: "pt",
+  mistakes: [],
+  next: [
+    {
+      date: "2026-11-29",
+      items: [{ kind: "lesson", title: "Perda gestacional precoce" }],
+      moreItems: 1,
+    },
+  ],
+  phase: {
+    chapters: [
+      { lessonsDone: 4, lessonsTotal: 4, state: "done", title: "Anatomia reprodutiva" },
+      {
+        lessonsDone: 2,
+        lessonsTotal: 5,
+        state: "current",
+        title: "Gestação inicial e perda gestacional",
+      },
+      {
+        lessonsDone: 0,
+        lessonsTotal: 4,
+        state: "upcoming",
+        title: "Reconhecimento da hipofertilidade",
+      },
+    ],
+    chaptersDone: 1,
+    chaptersLater: 0,
+    endDate: "2026-12-12",
+    index: 0,
+    kind: "learn",
+    name: "Primeiros passos",
+  },
+  scope: { kind: "plan" },
+  setup: {
+    areas: [
+      {
+        focusPart: null,
+        focused: true,
+        name: "Causas endócrinas e sistêmicas",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: true,
+        name: "Integração diagnóstica e aconselhamento",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Conceitos reprodutivos e avaliação inicial",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Ovulação e função ovariana",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Avaliação uterina e tubária",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Fator seminal e endometriose",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+      {
+        focusPart: null,
+        focused: false,
+        name: "Genética das perdas gestacionais",
+        pastBasics: false,
+        reduced: false,
+        skipped: false,
+      },
+    ],
+    coverage: { coreFits: false, fits: false },
+    difficultyBias: "standard",
+    lightWeeks: [],
+    ownLevel: "none",
+    practiceBias: "balanced",
+    weekdayMinutes: [0, 60, 60, 60, 60, 60, 0],
+    writtenCadence: null,
+  },
+  status: {
+    challenges: null,
+    days: null,
+    extraMinutesPerDay: null,
+    kind: "onTrack",
+    lessons: null,
+    options: [],
+  },
+  today: {
+    date: "2026-11-28",
+    items: [
+      {
+        canDo: "Distinguir gravidez bioquímica de gravidez clínica",
+        kind: "lesson",
+        minutes: 10,
+        reason: "newSkill",
+        status: "pending",
+        title: "Gravidez bioquímica e clínica",
       },
     ],
     source: "session",
@@ -1882,6 +2050,27 @@ export const TEST_CASES: GoalTutorCase[] = [
       "Asked from a lesson screen that only teaches (an explanation, with nothing to answer). The learner checks their understanding of it. The answer confirms plainly, in its first sentence, that yes, the núcleo is “envio”, then says why in a sentence or two: it's what was late, “dos relatórios” only says which envio, and the verb agrees with it in the singular. Not confirming, answering with a question back, or telling them to work it out or check it on the next screen is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
     id: "pt-screen-lesson-explanation-confirms",
     question: "o núcleo aqui é o envio, correto?",
+  }),
+  goalCase({
+    context: { ...REPRODUCTIVE_MEDICINE_PLAN, screen: CLINICAL_PREGNANCY_SCREEN },
+    expectations:
+      "The learner tapped the lesson's “go deeper” suggestion on a screen that teaches gravidez clínica (production, 28 Nov 2026: the buddy asked whether they meant the whole plan or an area such as causas endócrinas instead of going deeper). The answer goes deeper into this screen's idea right away: how it works underneath (hCG is made by the tissue that will form the placenta once the embryo implants, so a test shows implantation happened, not where or whether the pregnancy goes on; seeing it on ultrasound is what confirms it), the precise terms after the intuition (such as beta-hCG, ultrassom transvaginal, saco gestacional), and one edge case or limit (such as a positive hCG with no sac in the uterus, which can be a pregnancy too early to see or one outside the uterus, a gravidez ectópica, so it's followed up). It doesn't diagnose the learner or give medical advice beyond the idea. Asking what they want to go deeper into, or reading it as a request about the plan or one of its areas, is a major error (cap 3.0). Answers in Portuguese, under about 160 words. proposedChange is null and offeredTools is null.",
+    id: "pt-screen-suggestion-deeper",
+    question: "Quero me aprofundar",
+  }),
+  goalCase({
+    context: { ...REPRODUCTIVE_MEDICINE_PLAN, screen: CLINICAL_PREGNANCY_SCREEN },
+    expectations:
+      "The learner tapped the lesson's “explain it more simply” suggestion on a screen that teaches gravidez clínica. The answer explains the same idea another way, not the screen's words reworded: a new everyday comparison (such as a sign that something is coming versus seeing it arrive) or a concrete case of its own, one small step at a time: the test finds the hormone, the ultrasound shows the pregnancy, and only seeing it makes it clínica. Asking what they want explained, or reading it as a request for easier lessons or a plan change, is a major error (cap 3.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
+    id: "pt-screen-suggestion-simpler",
+    question: "Explique de um jeito mais simples",
+  }),
+  goalCase({
+    context: { ...REPRODUCTIVE_MEDICINE_PLAN, screen: CLINICAL_PREGNANCY_SCREEN },
+    expectations:
+      "The learner tapped the lesson's “give me another example” suggestion on a screen that teaches gravidez clínica with Mariana's positive test and ultrasound. The answer gives one new case, not Mariana's, that shows what makes a pregnancy clínica (seen on ultrasound or another definitive proof), and says in a sentence how it shows the idea. A case that calls a pregnancy clínica on a test or symptoms alone is a wrong fact. Asking what they want an example of, or retelling Mariana's case, is a major error (cap 4.0). Answers in Portuguese, briefly. proposedChange is null and offeredTools is null.",
+    id: "pt-screen-suggestion-example",
+    question: "Me dê outro exemplo",
   }),
   goalCase({
     context: { ...CONCURSO_PLAN, screen: MOBILITY_GUESS_SCREEN },

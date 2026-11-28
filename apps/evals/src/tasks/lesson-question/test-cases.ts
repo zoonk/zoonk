@@ -5,6 +5,7 @@ import {
   type LessonScopeContext,
 } from "@zoonk/ai/tasks/lessons/question-context";
 import {
+  CLINICAL_PREGNANCY_SCREEN,
   COMPOUND_INTEREST_CHAPTER,
   ENEM_MOCK,
   EXPONENTS_CHAPTER,
@@ -327,6 +328,24 @@ ${SHARED_EXPECTATIONS}
       contextSnapshot: SUBJECT_HEAD_SCREEN,
       priorTurns: [],
       question: "o núcleo aqui é o envio, correto?",
+    },
+  },
+  {
+    expectations: `
+LANGUAGE REQUIREMENT: Answer in Portuguese.
+
+CASE-SPECIFIC GUIDANCE:
+- The learner tapped the lesson's "go deeper" suggestion on a screen that teaches gravidez clínica. The answer is shared with every learner who taps it there.
+- Go deeper into this screen's idea right away: how it works underneath (hCG is made by the tissue that will form the placenta once the embryo implants, so a test shows a sign of the pregnancy, not where it is; seeing it on ultrasound is what confirms it), the precise terms after the intuition (such as beta-hCG, ultrassom transvaginal, saco gestacional), and one edge case or limit (such as a positive hCG with no sac in the uterus, which can be a pregnancy too early to see or one outside the uterus).
+- Only restating the screen's definition, or asking what they want to go deeper into: 4.0 or lower.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-suggestion-deeper-teaching-step",
+    userInput: {
+      contextSnapshot: CLINICAL_PREGNANCY_SCREEN,
+      priorTurns: [],
+      question: "Quero me aprofundar",
     },
   },
   {

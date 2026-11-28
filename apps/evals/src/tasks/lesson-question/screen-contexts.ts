@@ -707,3 +707,116 @@ export const MOBILITY_GUESS_SCREEN = {
   step: MOBILITY_GUESS,
   version: 1,
 } satisfies LessonScopeContext;
+
+/** A production teaching screen from the Library, where a learner asked to go deeper. */
+export const CLINICAL_PREGNANCY_SCREEN = {
+  answer: null,
+  chapter: {
+    description:
+      "Os principais eventos do início da gestação e sua interpretação na história clínica.",
+    title: "Gestação inicial e perda gestacional",
+  },
+  course: {
+    description:
+      "A medicina reprodutiva aborda a fertilidade, o início da gestação e as dificuldades para engravidar. O curso cobre anatomia reprodutiva, fecundação e implantação, perdas gestacionais, exames e tratamentos de fertilidade, incluindo reprodução assistida, para ajudar você a conversar com profissionais de saúde.",
+    language: "pt",
+    targetLanguage: null,
+    title: "Medicina reprodutiva",
+  },
+  lesson: {
+    description:
+      "Um teste positivo isolado não equivale à confirmação de uma gravidez clínica por ultrassom ou evidência clínica.",
+    kind: "library",
+    language: "pt",
+    title: "Gravidez bioquímica e clínica",
+  },
+  lessonSteps: [
+    {
+      answerable: false,
+      content: {
+        text: "Mariana faz um teste de farmácia e dá positivo. Na consulta, a médica diz que a gravidez ainda precisa ser confirmada pelo ultrassom. Se o teste já deu positivo, o que falta confirmar?",
+        variant: "text",
+      },
+      kind: "hook",
+      sentence: null,
+      stepNumber: 1,
+      word: null,
+    },
+    {
+      answerable: false,
+      content: {
+        text: "O teste de Mariana detectou hCG, o hormônio da gravidez. Depois, o laudo do ultrassom descreve um embrião, e agora a gestação foi vista. Uma gravidez confirmada assim, por imagem ou outra prova definitiva, se chama **gravidez clínica**.",
+        title: "Ver a gestação confirma",
+      },
+      kind: "explanation",
+      sentence: null,
+      stepNumber: 2,
+      word: null,
+    },
+    {
+      answerable: false,
+      content: {
+        image: {
+          alt: "Ultrassom esquemático em leque com uma bolsa redonda e escura de borda clara, vazia, marcada com o rótulo “saco gestacional”.",
+          prompt:
+            "Ilustração esquemática de um ultrassom inicial: imagem em leque, em tons de cinza sobre fundo escuro, com uma pequena bolsa arredondada e escura de borda clara bem delimitada no centro, sem embrião dentro. Um rótulo curto aponta para a bolsa: “saco gestacional”.",
+        },
+        text: "A primeira coisa que o ultrassom consegue mostrar é a bolsa que vai abrigar o embrião. Ela se chama **saco gestacional**. Vê-la já confirma a gravidez clínica, porque a gestação foi vista. Embrião e batimentos aparecem depois, mas não são exigidos.",
+        title: "A primeira bolsa já basta",
+      },
+      kind: "explanation",
+      sentence: null,
+      stepNumber: 4,
+      word: null,
+    },
+    {
+      answerable: false,
+      content: {
+        text: "Rita fez dois exames de sangue, e os dois mostraram hCG. Mas ainda não fez ultrassom. Ela tem um sinal químico da gravidez, não uma imagem dela. Mesmo com dois positivos, isso se chama **evidência bioquímica**.",
+        title: "Só o hormônio, sem imagem",
+      },
+      kind: "explanation",
+      sentence: null,
+      stepNumber: 5,
+      word: null,
+    },
+    {
+      answerable: false,
+      content: {
+        exampleLineSlot: {
+          idea: "um sinal que sugere algo sem comprovar, como o aviso de entrega de uma encomenda antes de ela chegar às mãos",
+        },
+        text: "Sofia está com a menstruação atrasada, enjoos e um teste positivo. Atraso e enjoo são comuns na gravidez, mas também têm outras causas e não mostram a gestação. Sem ultrassom ou outra prova definitiva, ela ainda tem só evidência bioquímica.",
+        title: "Sintomas não confirmam",
+      },
+      kind: "explanation",
+      sentence: null,
+      stepNumber: 7,
+      word: null,
+    },
+    {
+      answerable: false,
+      content: {
+        text: "Depois de um teste positivo, um ultrassom feito muito cedo pode ainda não mostrar nada, porque a bolsa é pequena demais. Isso não quer dizer que a gravidez foi perdida. Quer dizer que, por enquanto, só há evidência bioquímica.",
+        title: "Cedo demais para ver",
+      },
+      kind: "explanation",
+      sentence: null,
+      stepNumber: 9,
+      word: null,
+    },
+  ],
+  scope: { kind: "step" },
+  step: {
+    answerable: false,
+    content: {
+      text: "O teste de Mariana detectou hCG, o hormônio da gravidez. Depois, o laudo do ultrassom descreve um embrião, e agora a gestação foi vista. Uma gravidez confirmada assim, por imagem ou outra prova definitiva, se chama **gravidez clínica**.",
+      title: "Ver a gestação confirma",
+    },
+    kind: "explanation",
+    sentence: null,
+    stepNumber: 2,
+    word: null,
+  },
+  version: 1,
+} satisfies LessonScopeContext;
