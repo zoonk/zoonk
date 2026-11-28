@@ -70,5 +70,9 @@ describe(generateConversationScenario, () => {
     expect(spain.systemPrompt).toContain("in Español (España)");
     expect(shared.userPrompt).toContain("- Place: Mexico");
     expect(shared.systemPrompt).toContain("in Español de México");
+    expect(spain.systemPrompt).toContain("even when the unit names a city in another country");
+    expect(spain.systemPrompt).not.toContain("unless the unit names another city");
+    expect(shared.systemPrompt).toContain("unless the unit names another city");
+    expect(shared.systemPrompt).not.toContain("even when the unit names a city in another country");
   });
 });

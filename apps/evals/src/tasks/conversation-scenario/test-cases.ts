@@ -223,6 +223,20 @@ export const TEST_CASES: TestCase<unknown, ConversationScenarioInput>[] = [
     },
   },
   {
+    expectations: `US English speaker learning Spanish at A2 whose goal names Spain, in a unit titled for Mexico City. The learner chose Spain, so the call is set in a Spanish city, never Mexico City: a Spanish name, rent and deposit in euros, and Spain's Spanish ("piso", "fianza" or "depósito"). Nothing from Mexico: no pesos, "departamento" or "colonia". Opening line and hints short (A2). Title, situation, role and every objective description in US English, never Spanish.`,
+    id: "en-es-ES-a2-renting-mexico-city-unit",
+    userInput: {
+      canDo: ["Call about an apartment", "Ask what's included", "Arrange a viewing"],
+      learnerLanguage: "en",
+      level: "A2",
+      targetLanguage: "es",
+      targetRegion: "ES",
+      unitDescription:
+        "Find an apartment, ask about the rent and the deposit, and arrange a viewing",
+      unitTitle: "Renting an apartment in Mexico City",
+    },
+  },
+  {
     expectations: `Brazilian learner of English at A2 whose goal names the United Kingdom, renting a flat. Lessons teach US English, but this call is set in the UK: a British name, a street or area in a UK city, rent in pounds (per month or per week), and British English in the opening line, labels and hints ("flat", "letting agent", "bills included"), never "apartment" or dollars. Opening line and hints short (A2). Title, situation and descriptions in Brazilian Portuguese.`,
     id: "pt-en-GB-a2-renting",
     userInput: { ...PT_RENTING_UNIT, level: "A2", targetRegion: "GB" },

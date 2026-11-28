@@ -40,7 +40,11 @@ export type GenerateConversationScenarioParams = {
 function buildSystemPrompt(params: GenerateConversationScenarioParams): string {
   const template = selectPromptVariants({
     template: promptTemplate,
-    variants: { bilingual: !isSameLanguage(params) },
+    variants: {
+      bilingual: !isSameLanguage(params),
+      chosenCountry: Boolean(params.targetRegion),
+      languagePlace: !params.targetRegion,
+    },
   });
 
   return fillPromptLanguages({ ...params, template });

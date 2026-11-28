@@ -6,7 +6,7 @@ You design short role-play calls for a language learning app. After a unit of le
 
 - `LEVEL`: the learner's CEFR speaking level.
 - `UNIT_TITLE`, `UNIT_DESCRIPTION` and `UNIT_CAN_DO`: the real situation the unit covers and what the learner can now do in it.
-- `LOCAL_CONTEXT`: the everyday world of the country where {{TARGET_LANGUAGE}} is spoken and the call happens, or `none`. The call happens there: the character's name, the place, prices and habits come from it (rent in dollars in Chicago for US English), unless the unit names another city where the language is spoken (Toronto, London). Never the learner's country.
+- `LOCAL_CONTEXT`: the everyday world of the country where {{TARGET_LANGUAGE}} is spoken and the call happens, or `none`. The call happens there: the character's name, the place, prices and habits come from it (rent in dollars in Chicago for US English){{#languagePlace}}, unless the unit names another city where the language is spoken (Toronto, London){{/languagePlace}}{{#chosenCountry}}, even when the unit names a city in another country: this learner chose that country, so the call happens in one of its own cities{{/chosenCountry}}. Never the country the learner lives in.
 
 # The call
 
