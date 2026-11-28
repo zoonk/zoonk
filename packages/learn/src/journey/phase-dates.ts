@@ -63,10 +63,10 @@ function getEstimatePrecision({
   return isNearEstimate({ date: isoDate, today: plan.week.startDate }) ? "day" : "month";
 }
 
-/** The day of a challenge still ahead that comes after the phase's last lesson. */
-function getLaterChallengeDay({ checkpoint, endDate }: DatedPhase): string | null {
+/** The day of a challenge still ahead that comes on or after the phase's last lesson. */
+function getEndingChallengeDay({ checkpoint, endDate }: DatedPhase): string | null {
   const challengeDay = checkpoint?.state === "upcoming" ? checkpoint.date : null;
-  return challengeDay && endDate && challengeDay > endDate ? challengeDay : null;
+  return challengeDay && endDate && challengeDay >= endDate ? challengeDay : null;
 }
 
 /** A last phase without a day of its own ends with the plan. */
@@ -139,7 +139,7 @@ export function getPhaseEnd({
     return { later: true };
   }
 
-  const challengeDay = getLaterChallengeDay(phase);
+  const challengeDay = getEndingChallengeDay(phase);
   // A phase is behind the learner on its challenge's day, which can come after its last lesson.
   const lastDay = challengeDay ?? phase.endDate;
 

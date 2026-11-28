@@ -117,6 +117,26 @@ describe(getPhaseEnd, () => {
     expect(end).toStrictEqual({ estimate: true, isoDate: "2026-11-22", precision: "day" });
   });
 
+  it("estimates a phase ahead whose challenge falls on its last day, as the challenge's row does", () => {
+    const current = phase(0, { endDate: "2026-11-20", kind: "foundations", state: "current" });
+    const ahead = phase(1, {
+      checkpoint: { ...CHALLENGE, date: "2027-07-16" },
+      endDate: "2027-07-16",
+      kind: "gaps",
+      startDate: "2026-11-21",
+    });
+
+    const shaped = plan([current, ahead]);
+    const end = getPhaseEnd({ phase: ahead, plan: shaped });
+
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2027-07-16", precision: "month" });
+    expect(end && "isoDate" in end && getPhaseStart({ end, phase: ahead })).toStrictEqual({
+      estimate: true,
+      isoDate: "2026-11-21",
+      precision: "month",
+    });
+  });
+
   it("estimates every phase's end when the goal's own date is an estimate", () => {
     const current = phase(0, { endDate: "2026-11-20", kind: "foundations", state: "current" });
     const last = phase(1, { endDate: "2027-11-13", kind: "finalStretch" });
