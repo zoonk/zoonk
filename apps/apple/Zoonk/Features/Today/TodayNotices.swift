@@ -187,11 +187,7 @@ struct TodayExamChoiceSection: View {
           VStack(alignment: .leading, spacing: 4) {
             SuggestionHeader(Text.examChoiceQuestion(group: choice.group, take: choice.take))
 
-            SuggestionDescription(Text(choice.leftOut.line))
-
-            if choice.take > 1 {
-              ExamPickLimit(take: choice.take)
-            }
+            SuggestionDescription(Text.examChoiceDescription(take: choice.take))
           }
         } icon: {
           Image(systemName: "signpost.right")

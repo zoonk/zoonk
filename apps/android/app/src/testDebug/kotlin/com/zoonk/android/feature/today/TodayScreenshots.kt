@@ -220,6 +220,33 @@ class TodayScreenshots {
     fun placementChangeTabletDark() =
         captureFocusTestNotice("today-placement-change-tablet-dark", dark = true, day = "notice-placement-change")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun examModulesPhone() {
+        showExamModules()
+        compose.onNodeWithText("Choose").performClick()
+        write(
+            "today-exam-modules-phone",
+            compose
+                .onAllNodes(isRoot())
+                .onLast()
+                .captureRender(scenario = "exam-modules")
+                .asAndroidBitmap(),
+        )
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun examModulesTablet() {
+        showExamModules()
+        write("today-exam-modules-tablet", compose.onRoot().captureRender(scenario = "exam-modules").asAndroidBitmap())
+    }
+
+    private fun showExamModules() {
+        val read = DAYS.first { it.first == "notice-exam-modules" }.second
+        compose.setContent { ZoonkTheme { Screen(read) } }
+    }
+
     /** The Focus test's suggestion on Today, or its proposal on [day]. */
     private fun captureFocusTestNotice(
         name: String,
