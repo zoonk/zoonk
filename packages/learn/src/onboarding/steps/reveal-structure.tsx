@@ -204,7 +204,9 @@ function SubjectRow({ isModule, subject }: { isModule: boolean; subject: Syllabu
           ) : (
             <TopicChapters chapterHref={null} chapters={subject.chapters} />
           )}
-          {subject.leftOut.length > 0 && <LeftOutTopicsRow names={subject.leftOut} />}
+          {subject.leftOut.length > 0 && (
+            <LeftOutTopicsRow className="min-h-control" names={subject.leftOut} />
+          )}
         </div>
       </CollapsibleContent>
     </Collapsible>

@@ -195,13 +195,25 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
     : t("{count, plural, one {# more chapter} other {# more chapters}}", { count: hidden });
 }
 
-/** The topics the plan's date leaves out of a phase or a module, folded under one row that names them. */
-export function LeftOutTopicsRow({ names }: { names: readonly string[] }) {
+/**
+ * The topics the plan's date leaves out of a phase or a module, folded under one row that names
+ * them. Under a list's rows rather than the path's, it takes their height (`min-h-control`).
+ */
+export function LeftOutTopicsRow({
+  className,
+  names,
+}: {
+  className?: string;
+  names: readonly string[];
+}) {
   const label = useLeftOutTopicsLabel();
 
   return (
     <Collapsible>
-      <CollapsibleTrigger className={cn(PATH_ROW_CLASS, "hover:bg-muted/70")} data-slot="path-row">
+      <CollapsibleTrigger
+        className={cn(PATH_ROW_CLASS, "hover:bg-muted/70", className)}
+        data-slot="path-row"
+      >
         <span className={PATH_ROW_LEADING_CLASS} data-slot="path-row-mark">
           <TopicMark mark={{ kind: "notPlanned" }} />
         </span>
