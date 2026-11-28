@@ -105,6 +105,25 @@ describe(placeUncoveredMembers, () => {
     expect(placed).toStrictEqual([{ after: -1, item: 4, neighbor: 0 }]);
   });
 
+  it("reads a gap's side past one skill teaching the members on both sides of it", () => {
+    const placed = placeUncoveredMembers({
+      members: [
+        { item: 1, skills: ["m1"] },
+        { item: 2, skills: ["m2-5"] },
+        { item: 3, skills: [] },
+        { item: 4, skills: [] },
+        { item: 5, skills: ["m2-5"] },
+        { item: 6, skills: ["m6"] },
+      ],
+      order: ["m6", "m2-5", "m1"],
+    });
+
+    expect(placed).toStrictEqual([
+      { after: 1, item: 4, neighbor: 1 },
+      { after: 1, item: 3, neighbor: 1 },
+    ]);
+  });
+
   it("takes the phase and area of the skill it sits beside", () => {
     expect(place({ order: ["intro", "m2", "m3"], size: 4 })).toStrictEqual([
       { after: 0, item: 1, neighbor: 1 },

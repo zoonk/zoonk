@@ -31,8 +31,9 @@ function findDistinct({
 
 /**
  * A stretch between two covered members follows whichever the graph teaches first. One at an end
- * of the list reads the direction from its neighbor and the next distinct member inward, so a fixed
- * opening skill elsewhere in the graph doesn't flip it.
+ * of the list, or between members one skill teaches together, reads the direction from a neighbor
+ * and the next distinct member past it, so a fixed opening skill elsewhere in the graph doesn't flip
+ * it.
  */
 function isForwardAt({
   covered,
@@ -46,17 +47,19 @@ function isForwardAt({
   const previous = covered[start - 1];
   const next = covered[end];
 
-  if (previous && next) {
-    return previous.first <= next.first;
+  if (previous && next && previous.first !== next.first) {
+    return previous.first < next.first;
   }
 
-  if (previous) {
-    const inward = findDistinct({ covered, from: start - 1, step: -1 });
-    return !inward || inward.first <= previous.first;
+  const before = previous && findDistinct({ covered, from: start - 1, step: -1 });
+
+  if (previous && before) {
+    return before.first < previous.first;
   }
 
-  const inward = next ? findDistinct({ covered, from: end, step: 1 }) : undefined;
-  return !next || !inward || next.first <= inward.first;
+  const after = next && findDistinct({ covered, from: end, step: 1 });
+
+  return !next || !after || next.first < after.first;
 }
 
 /** Each stretch of members no skill teaches, with the covered members on either side. */
