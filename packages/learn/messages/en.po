@@ -368,6 +368,28 @@ msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Save"
 
+#. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027", or a year alone, like "2031", when the finish is far.
+#: src/_components/finish-readout.tsx
+msgctxt "XvWNP2"
+msgid "by {month}"
+msgstr "by {month}"
+
+#: src/_components/finish-readout.tsx
+msgctxt "fWobMU"
+msgid "to finish"
+msgstr "to finish"
+
+#. How long finishing the plan takes at the time picked, when it's more than ten years.
+#: src/_components/finish-readout.tsx
+msgctxt "t2dXRJ"
+msgid "10+ years"
+msgstr "10+ years"
+
+#: src/_components/finish-readout.tsx
+msgctxt "x0b1HZ"
+msgid "estimated finish"
+msgstr "estimated finish"
+
 #: src/_components/finish-ready.tsx
 msgctxt "MaLZrn"
 msgid "Nothing left to answer"
@@ -378,15 +400,11 @@ msgctxt "kwl__x"
 msgid "Finish to see how it went."
 msgstr "Finish to see how it went."
 
+#. {date} is a month and year, like "January 2027", or a year, like "2031".
 #: src/_components/finish-sentence.ts
-msgctxt "XhpWxQ"
-msgid "At {time} a day, you reach {level} around {month}."
-msgstr "At {time} a day, you reach {level} around {month}."
-
-#: src/_components/finish-sentence.ts
-msgctxt "6Due7K"
-msgid "You finish around {month}."
-msgstr "You finish around {month}."
+msgctxt "6_LCjp"
+msgid "You finish around {date}."
+msgstr "You finish around {date}."
 
 #: src/_components/help-limit-notice.tsx
 #: src/speech/record-note.tsx
@@ -938,11 +956,6 @@ msgid "{dateKind, select, month {Your date, {date}, has passed.} other {Your dat
 msgstr "{dateKind, select, month {Your date, {date}, has passed.} other {Your date, {date}, has passed.}}"
 
 #: src/_components/time-answer-lines.tsx
-msgctxt "wRhIPZ"
-msgid "We can't estimate an end date. Try more time or more study days."
-msgstr "We can't estimate an end date. Try more time or more study days."
-
-#: src/_components/time-answer-lines.tsx
 msgctxt "Hy8sTO"
 msgid "Choose at least one study day."
 msgstr "Choose at least one study day."
@@ -959,7 +972,6 @@ msgid "We couldn't work out the time your goal needs."
 msgstr "We couldn't work out the time your goal needs."
 
 #: src/_components/time-answer-lines.tsx
-#: src/plan/plan-finish.tsx
 msgctxt "OGpEA-"
 msgid "Working out when you'd finish…"
 msgstr "Working out when you'd finish…"
@@ -4859,6 +4871,14 @@ msgstr "Share the plan"
 
 #: src/journey/journey-path-list.tsx
 #: src/journey/journey-path.tsx
+#: src/journey/phase-details.tsx
+#: src/journey/phase-when.tsx
+msgctxt "uQDRsY"
+msgid "Later"
+msgstr "Later"
+
+#: src/journey/journey-path-list.tsx
+#: src/journey/journey-path.tsx
 #: src/journey/plan-sections.tsx
 #: src/onboarding/steps/reveal-structure.tsx
 msgctxt "4WP0V_"
@@ -5023,11 +5043,16 @@ msgctxt "JQlKi_"
 msgid "Ends {date}"
 msgstr "Ends {date}"
 
-#. In the month form, {date} is a month, like "Jan"; otherwise a day, like "Dec 12".
 #: src/journey/phase-when.tsx
-msgctxt "fC-Q4J"
-msgid "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
-msgstr "{dateKind, select, month {Ends around {date}} other {Ends around {date}}}"
+msgctxt "e81JkE"
+msgid "Ends later"
+msgstr "Ends later"
+
+#. In the month form, {date} is a month, like "Jan"; in the year form, a year, like "2031"; otherwise a day, like "Dec 12".
+#: src/journey/phase-when.tsx
+msgctxt "NkyTeK"
+msgid "{dateKind, select, month {Ends around {date}} year {Ends around {date}} other {Ends around {date}}}"
+msgstr "{dateKind, select, month {Ends around {date}} year {Ends around {date}} other {Ends around {date}}}"
 
 #: src/journey/plan-roadmap.tsx
 msgctxt "EcisNA"
@@ -5399,6 +5424,17 @@ msgstr "Work or study in it"
 msgctxt "uLO8Ma"
 msgid "Speak it fluently"
 msgstr "Speak it fluently"
+
+#: src/language-aim/use-aim-words.ts
+msgctxt "lrkwUR"
+msgid "In 10+ years"
+msgstr "In 10+ years"
+
+#. When a language level is reached. {year} is a year, like "2031".
+#: src/language-aim/use-aim-words.ts
+msgctxt "PqEMe4"
+msgid "Around {year}"
+msgstr "Around {year}"
 
 #: src/language-aim/use-aim-words.ts
 msgctxt "7ncC9e"
@@ -9844,17 +9880,6 @@ msgctxt "UA5qaX"
 msgid "{days, plural, one {# day} other {# days}}"
 msgstr "{days, plural, one {# day} other {# days}}"
 
-#. Under the level a language plan reaches: when. {month} is a month and year, like "Nov 2027".
-#: src/onboarding/steps/reveal-readouts.tsx
-msgctxt "XvWNP2"
-msgid "by {month}"
-msgstr "by {month}"
-
-#: src/onboarding/steps/reveal-readouts.tsx
-msgctxt "x0b1HZ"
-msgid "estimated finish"
-msgstr "estimated finish"
-
 #: src/onboarding/steps/reveal-structure.tsx
 #: src/syllabus/use-subject-progress.ts
 msgctxt "gdK5-t"
@@ -10313,6 +10338,12 @@ msgctxt "fW_YDZ"
 msgid "Your plan will end on {after} instead of {before}."
 msgstr "Your plan will end on {after} instead of {before}."
 
+#. {after} and {before} are a month and year, like "May 2027", or a year, like "2031".
+#: src/plan-diff/use-change-consequence.ts
+msgctxt "ctn8Xw"
+msgid "Your plan will end around {after} instead of {before}."
+msgstr "Your plan will end around {after} instead of {before}."
+
 #. {after} and {before} are days, like "May 5".
 #: src/plan-diff/use-change-consequence.ts
 msgctxt "AVlXD0"
@@ -10535,11 +10566,11 @@ msgctxt "0YytO3"
 msgid "Move your date to {date}"
 msgstr "Move your date to {date}"
 
-#. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#. In the month form, {date} is a month, like "May 2027"; in the year form, a year, like "2031"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
-msgctxt "IGvm5x"
-msgid "{dateKind, select, month {About {date}} other {About {date}}}"
-msgstr "{dateKind, select, month {About {date}} other {About {date}}}"
+msgctxt "QYT_yA"
+msgid "{dateKind, select, month {About {date}} year {About {date}} other {About {date}}}"
+msgstr "{dateKind, select, month {About {date}} year {About {date}} other {About {date}}}"
 
 #: src/plan/plan-date.tsx
 msgctxt "3VeTk-"

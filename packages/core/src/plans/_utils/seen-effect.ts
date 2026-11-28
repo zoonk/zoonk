@@ -1,9 +1,28 @@
+import { getFullCourseFinishDate } from "../planner/after-exam";
+import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanEffect, getFittedStandInLessons, getSeenChange } from "../planner/plan-effect";
 import { type PlanGraph } from "../planner/plan-state";
+import { getCourseFinish, getDatedFinish } from "./course-finish";
 import { type ContextPlanItem } from "./plan-context";
 import { type ComputedPlan } from "./replan";
 
 type CountedItem = { lessonId: string | null; lessons?: number | null; skillId: string | null };
+
+export function getChangeFinish({ plan, today }: { plan: ComputedPlan; today: Date }) {
+  const finish = getCourseFinish(plan);
+
+  if (finish) {
+    return finish;
+  }
+
+  if (plan.state.settings.fullCourse) {
+    const date = getFullCourseFinishDate(plan);
+    return date ? getDatedFinish({ date, today }) : null;
+  }
+
+  const { endDate } = plan.feasibility;
+  return endDate ? getDatedFinish({ date: toIsoDate(endDate), today }) : null;
+}
 
 function fitStandIns(plan: ComputedPlan): Map<string, number> {
   return getFittedStandInLessons({

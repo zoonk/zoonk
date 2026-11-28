@@ -1,3 +1,4 @@
+import { type FinishPrecision } from "../finish-contract";
 import { type NextMockMove } from "./next-mock-move";
 import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
@@ -44,6 +45,8 @@ export type PlanEffect = {
   reviewFirst?: ReviewFirst;
   endDateAfter: string | null;
   endDateBefore: string | null;
+  endPrecisionAfter?: FinishPrecision;
+  endPrecisionBefore?: FinishPrecision;
   lessonsAdded: number;
   lessonsAddedEstimated?: true;
   lessonsLeftOut?: string[];

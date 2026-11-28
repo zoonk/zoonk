@@ -12,7 +12,7 @@ import {
   getTopicNames,
   useNames,
 } from "./change-names";
-import { getShownEndMove } from "./end-move";
+import { useEndMoveText } from "./use-end-move-text";
 
 const NAMED_IN_SENTENCE = 3;
 
@@ -127,23 +127,27 @@ function useLessonConsequence() {
 
 function useEndConsequence() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+  const endMoveText = useEndMoveText();
 
   return function endConsequence(effect: PlanEffect, goalDate?: GoalDateMove): Consequence | null {
-    const end = getShownEndMove(effect);
+    const end = endMoveText(effect);
 
     // A change that moves the goal's own date already says the date in its title.
     return end && !goalDate
       ? {
           key: "end",
-          text: t({
-            description: '{after} and {before} are days, like "May 5".',
-            message: "Your plan will end on {after} instead of {before}.",
-            values: {
-              after: formatDate(end.after, "sentence"),
-              before: formatDate(end.before, "sentence"),
-            },
-          }),
+          text: end.day
+            ? t({
+                description: '{after} and {before} are days, like "May 5".',
+                message: "Your plan will end on {after} instead of {before}.",
+                values: { after: end.after, before: end.before },
+              })
+            : t({
+                description:
+                  '{after} and {before} are a month and year, like "May 2027", or a year, like "2031".',
+                message: "Your plan will end around {after} instead of {before}.",
+                values: { after: end.after, before: end.before },
+              }),
           whole: true,
         }
       : null;

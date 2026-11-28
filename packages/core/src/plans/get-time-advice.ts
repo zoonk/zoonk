@@ -4,19 +4,20 @@ import { getBudgetForGoal, getDaySplit, getGoalShare } from "../goals/daily-budg
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { readFocusSubjects } from "../learner/placement/focus-test-summary";
 import { findOnboardingGoalIds } from "../view-models/onboarding/_utils/onboarding-goals";
-import { getCourseFinish, getFinishDisplay } from "./_utils/course-finish";
+import { getCourseFinish, getDatedFinish, getFinishDisplay } from "./_utils/course-finish";
 import { applyChangeOperations } from "./_utils/part-areas";
 import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
+import { readSavedFinish } from "./_utils/plan-summary";
 import { getTimePlanning, searchPlanTime, withStudyWeek } from "./_utils/plan-time-search";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
 import { getChangePlanning } from "./_utils/steered-areas";
 import { getSuggestedTime } from "./_utils/suggested-time";
 import { type LearnerPlanOperation } from "./plan-contract";
-import { getFullCourseEnd } from "./planner/after-exam";
+import { getFullCourseFinishDate } from "./planner/after-exam";
 import { FITTING_DATE_TRIES } from "./planner/fitting-date";
 import { type MostCoverage } from "./planner/most-coverage";
 import { addDays, toIsoDate } from "./planner/plan-calendar";
@@ -191,20 +192,29 @@ export async function getPlanTimeAdvice({
   ]);
 
   const { feasibility } = computed;
-  const end = computed.built.estimate.endDate;
-  const finish = getCourseFinish(computed);
+
+  const savedSchedule =
+    input.studyDays === undefined &&
+    input.weekendMinutes === undefined &&
+    input.aim === undefined &&
+    dailyMinutes === context.state.goal.dailyMinutes;
+
+  const finish = (savedSchedule && readSavedFinish(context)) || getCourseFinish(computed);
+  const fullCourseEndDate = fullCourse ? getFullCourseFinishDate(computed) : null;
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 
   return {
     advice: {
       coveredShare: feasibility.deadline ? toShownShare(feasibility) : null,
       endDate: finish?.date ?? null,
-      ...getFinishDisplay(finish),
+      ...getFinishDisplay(
+        fullCourseEndDate
+          ? getDatedFinish({ date: fullCourseEndDate, today: context.today })
+          : finish,
+      ),
       focusSubjects:
         feasibility.deadline !== null && !feasibility.fits ? readFocusSubjects(context.goal) : [],
-      fullCourseEndDate: fullCourse
-        ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
-        : null,
+      fullCourseEndDate,
       measure: feasibility.measure,
       numbers: await buildPlanNumbersView({ computed, context }),
       readingNotice: false,

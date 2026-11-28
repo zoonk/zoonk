@@ -48,11 +48,14 @@ function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCou
     }
   }, [ask, base]);
 
+  const result = state.status === "ready" ? state.preview : null;
+
   return {
     checking: ask && (state.status === "idle" || state.status === "loading"),
-    endDate:
-      course.endDate ??
-      (state.status === "ready" ? (state.preview.effect?.endDateAfter ?? null) : null),
+    endDate: course.endDate ?? result?.finishDate ?? result?.effect?.endDateAfter ?? null,
+    precision: course.endDate
+      ? course.precision
+      : (result?.precision ?? result?.effect?.endPrecisionAfter),
   };
 }
 
@@ -62,7 +65,7 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
   const { change, isPending } = usePlanChange();
   const [outcome, setOutcome] = useState<PlanChangeOutcome | null>(null);
   const end = useFullCourseEnd({ asking: !isPending && outcome === null, course });
-  const finish = text.finish({ ...course, endDate: end.endDate });
+  const finish = text.finish({ ...course, ...end });
 
   if (outcome?.status === "applied" && outcome.change) {
     return <PlanChangeApplied change={outcome.change} icon={LibraryBigIcon} onDone={onDone} />;

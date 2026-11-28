@@ -350,6 +350,16 @@ describe(getPlanFinish, () => {
     expect(finish).toStrictEqual({ estimate: true, isoDate: "2031-05-01", precision: "year" });
   });
 
+  it("uses the saved finish precision for the finish row and the phase ending on that date", () => {
+    const endDate = "2026-12-12";
+    const last = phase(0, { endDate, precision: "month" });
+    const shaped = plan([last], { estimate: { endDate, precision: "month" } });
+    const expected = { estimate: true, isoDate: endDate, precision: "month" };
+
+    expect(getPlanFinish({ goalKind: "learn", plan: shaped })).toStrictEqual(expected);
+    expect(getPhaseEnd({ phase: last, plan: shaped })).toStrictEqual(expected);
+  });
+
   it("is none for a plan with no date and no end yet", () => {
     expect(getPlanFinish({ goalKind: "learn", plan: plan([phase(0)]) })).toBeNull();
   });

@@ -4,9 +4,7 @@ import {
   type PlanView,
   type ShortPhaseView,
 } from "@zoonk/core/plans/view-contract";
-import { daysBetween } from "../_utils/iso-date";
-
-const NEAR_ESTIMATE_DAYS = 42;
+import { isNearEstimate } from "../_utils/iso-date";
 
 type GoalKind = GoalView["kind"];
 
@@ -62,7 +60,7 @@ function getEstimatePrecision({
     return "year";
   }
 
-  return daysBetween(plan.week.startDate, isoDate) > NEAR_ESTIMATE_DAYS ? "month" : "day";
+  return isNearEstimate({ date: isoDate, today: plan.week.startDate }) ? "day" : "month";
 }
 
 /** The day of a challenge still ahead that comes after the phase's last lesson. */
@@ -83,8 +81,35 @@ function getEndWithPlan({ phase, plan }: { phase: DatedPhase; plan: DatedPlan })
   return {
     estimate: true,
     isoDate: planEnd,
-    precision: getEstimatePrecision({ isoDate: planEnd, plan, precision: plan.estimate.precision }),
+    precision:
+      plan.estimate.precision ?? getEstimatePrecision({ isoDate: planEnd, plan, precision: null }),
   };
+}
+
+function getPhaseEndPrecision({
+  estimate,
+  lastDay,
+  phase,
+  plan,
+}: {
+  estimate: boolean;
+  lastDay: string;
+  phase: DatedPhase;
+  plan: DatedPlan;
+}): DatePrecision {
+  if (!estimate) {
+    return "day";
+  }
+
+  const finishPrecision =
+    !plan.schedule.targetDate && lastDay === plan.estimate.endDate ? plan.estimate.precision : null;
+
+  return (
+    finishPrecision ??
+    (phase.state === "upcoming" || phase.precision === "year"
+      ? getEstimatePrecision({ isoDate: lastDay, plan, precision: phase.precision })
+      : "day")
+  );
 }
 
 /**
@@ -133,10 +158,7 @@ export function getPhaseEnd({
   return {
     estimate,
     isoDate: lastDay,
-    precision:
-      estimate && (ahead || phase.precision === "year")
-        ? getEstimatePrecision({ isoDate: lastDay, plan, precision: phase.precision })
-        : "day",
+    precision: getPhaseEndPrecision({ estimate, lastDay, phase, plan }),
   };
 }
 
@@ -200,7 +222,7 @@ export function getPlanFinish({
   return {
     estimate: true,
     isoDate: endDate,
-    precision: getEstimatePrecision({ isoDate: endDate, plan, precision }),
+    precision: precision ?? getEstimatePrecision({ isoDate: endDate, plan, precision: null }),
   };
 }
 

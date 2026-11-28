@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
-import { getFullCourseEnd } from "../planner/after-exam";
+import { getFullCourseFinishDate } from "../planner/after-exam";
 import { fromIsoDate } from "../planner/plan-calendar";
 import { toComputedPlanWrite } from "./computed-plan-write";
 import { computeCheckedChange, loadExtraOffer } from "./extra-offer";
@@ -84,11 +84,7 @@ async function prepareReadModel({
         extraOffer,
         feasibility: toFeasibilityView(feasibility),
         fitOffer,
-        fullCourseEndDate: getFullCourseEnd({
-          built: computed.built,
-          end: computed.selected.endDate,
-          targetDate: computed.state.goal.targetDate,
-        }),
+        fullCourseEndDate: getFullCourseFinishDate(computed),
         suggested: null,
         ...(suggestionPending && { suggestionPending }),
       },

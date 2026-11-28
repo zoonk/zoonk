@@ -14,12 +14,12 @@ import {
 } from "../planner/plan-effect";
 import { type PlanState } from "../planner/plan-state";
 import { isShortExam } from "../planner/short-exam-plan";
-import { getCourseFinish } from "./course-finish";
 import { planPhaseDatesMove } from "./moved-phase-dates";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
+import { readSavedFinish } from "./plan-summary";
 import { getGoalUpdate, hasSameItems } from "./plan-unchanged";
 import { type ComputedChange, type ComputedPlan, computePlan } from "./replan";
-import { getSeenEffect } from "./seen-effect";
+import { getChangeFinish, getSeenEffect } from "./seen-effect";
 import { pickSetAsidePlans, plansSetAsideBothWays } from "./set-aside-plans";
 import {
   contradictsSteering,
@@ -94,17 +94,6 @@ function hasNoEffect({
   );
 }
 
-function getChangeEnd(plan: ComputedPlan): string | null {
-  const finish = getCourseFinish(plan);
-
-  if (finish) {
-    return finish.date;
-  }
-
-  const { endDate } = plan.feasibility;
-  return endDate ? toIsoDate(endDate) : null;
-}
-
 function getEventWeekday(plan: ComputedPlan): number {
   return getWeeklyEventWeekday({
     dailyMinutes: plan.state.goal.dailyMinutes,
@@ -134,18 +123,17 @@ function getWeeklyEventMove({
 function getChangeEffect({
   baseline,
   computed,
+  context,
   operations,
   reviewDate,
-  shown,
-  today,
 }: {
   baseline: ComputedPlan;
   computed: ComputedPlan;
+  context: PlanContext;
   operations: readonly PlanOperation[];
   reviewDate: string | null;
-  shown: PlanContext["items"];
-  today: Date;
 }): PlanEffect {
+  const { items: shown, today } = context;
   const seen = getSeenEffect({ computed, fallback: baseline, shown });
   const focus = getChangeFocus({ computed, operations });
   const areaEnds = getSteeredEnds({ baseline, computed, focus, operations, shown });
@@ -168,6 +156,8 @@ function getChangeEffect({
   });
 
   const beforeBasics = startsBeforeBasics({ items: computed.built.items, skillIds: addedSkillIds });
+  const after = getChangeFinish({ plan: computed, today });
+  const before = readSavedFinish(context) ?? getChangeFinish({ plan: baseline, today });
 
   return {
     ...seen,
@@ -182,8 +172,10 @@ function getChangeEffect({
       reviewDate && { reviewFirst: { areas: focus.areas, date: reviewDate } }),
     ...(weeklyEvents && { weeklyEvents }),
     ...(nextMock && { nextMock }),
-    endDateAfter: getChangeEnd(computed),
-    endDateBefore: getChangeEnd(baseline),
+    endDateAfter: after?.date ?? null,
+    endDateBefore: before?.date ?? null,
+    ...(after?.precision && { endPrecisionAfter: after.precision }),
+    ...(before?.precision && { endPrecisionBefore: before.precision }),
   };
 }
 
@@ -313,14 +305,7 @@ export async function computeChange({
     computed,
     contradicts,
     effect: {
-      ...getChangeEffect({
-        baseline: compared,
-        computed,
-        operations,
-        reviewDate,
-        shown: context.items,
-        today: context.today,
-      }),
+      ...getChangeEffect({ baseline: compared, computed, context, operations, reviewDate }),
       ...(computed.effect.phaseEnds && { phaseEnds: computed.effect.phaseEnds }),
       ...(operations.some((operation) => operation.kind === "fitPhaseDates") &&
         getPhaseDatesEffect({

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { savedPlanOfferOperationsSchema } from "../plan-contract";
 import { measureDepth } from "../planner/coverage-measures";
 import { toIsoDate } from "../planner/plan-calendar";
+import { getSavedCourseFinish } from "./course-finish";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import {
@@ -108,6 +109,19 @@ export function toPlanSummary({
     schemaVersion: PLAN_SUMMARY_SCHEMA_VERSION,
     selected,
   };
+}
+
+export function readSavedFinish(context: PlanContext) {
+  if (context.goal.targetDate) {
+    return null;
+  }
+
+  const summary = readPlanSummary({
+    plan: { ...context.plan, userId: context.goal.userId },
+    value: context.plan.summary,
+  });
+
+  return summary ? getSavedCourseFinish(summary) : null;
 }
 
 /** @public A lesson's completion writes what it says. */

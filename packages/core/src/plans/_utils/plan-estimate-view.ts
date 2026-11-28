@@ -2,7 +2,7 @@ import { readScheduledAnswers } from "../../learner/facts/scheduled-answers";
 import { type PlanView } from "../plan-view-contract";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type WritingWork, listRemainingWriting } from "../planner/writing-schedule";
-import { getFinishDisplay, getFinishPrecision } from "./course-finish";
+import { getDatedFinish, getFinishDisplay, getSavedCourseFinish } from "./course-finish";
 import { type PlanReadContext } from "./plan-read-projection";
 import { type PlanSummary } from "./plan-summary";
 
@@ -41,6 +41,29 @@ export async function loadPlanWritingWork({ goal, state, today }: PlanReadContex
   });
 }
 
+function readEstimateFinish({
+  dated,
+  fullCourseEndDate,
+  summary,
+}: {
+  dated: boolean;
+  fullCourseEndDate: string | null;
+  summary: PlanSummary | null;
+}) {
+  if (!summary) {
+    return null;
+  }
+
+  if (fullCourseEndDate) {
+    return getDatedFinish({
+      date: fullCourseEndDate,
+      today: fromIsoDate(summary.basis.layoutStudyDay),
+    });
+  }
+
+  return dated ? null : getSavedCourseFinish(summary);
+}
+
 export function buildEstimateView({
   context,
   summary,
@@ -52,20 +75,10 @@ export function buildEstimateView({
 }): PlanView["estimate"] {
   const pace = context.state.settings.pace;
   const dated = context.goal.targetDate !== null;
-  const forecast = dated ? null : (summary?.selected.forecast.finish ?? null);
-  const endDate = dated ? getShownEnd(context) : (forecast?.date ?? null);
-  const display = getFinishDisplay(forecast);
-
-  const precision =
-    display.precision ??
-    (forecast?.date && summary
-      ? getFinishPrecision({
-          date: fromIsoDate(forecast.date),
-          today: fromIsoDate(summary.basis.layoutStudyDay),
-        })
-      : null);
-
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
+  const fullCourseEndDate = fullCourse ? (summary?.advice.fullCourseEndDate ?? null) : null;
+  const forecast = readEstimateFinish({ dated, fullCourseEndDate, summary });
+
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
 
@@ -76,11 +89,10 @@ export function buildEstimateView({
   const remainingWriting = writing.reduce((sum, entry) => sum + entry.minutes, 0);
 
   return {
-    ...display,
-    endDate,
-    fullCourseEndDate: fullCourse ? (summary?.advice.fullCourseEndDate ?? null) : null,
+    ...getFinishDisplay(forecast),
+    endDate: dated ? (fullCourseEndDate ?? getShownEnd(context)) : (forecast?.date ?? null),
+    fullCourseEndDate,
     pace: pace ? { factor: pace.factor, source: pace.source } : null,
-    precision,
     remainingHours: toHours(remainingMinutes + remainingWriting),
     totalHours: Math.round(totalHours * 10) / 10,
   };

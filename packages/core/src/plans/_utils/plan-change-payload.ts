@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { finishPrecisionSchema } from "../finish-contract";
 import { anyPlanOperationSchema } from "../plan-contract";
 import { type PlanEffect } from "../planner/plan-effect";
 import { planPreviewBasisSchema } from "./plan-preview-basis";
@@ -58,6 +59,8 @@ export const planEffectSchema = z.object({
     .optional(),
   endDateAfter: z.string().nullable(),
   endDateBefore: z.string().nullable(),
+  endPrecisionAfter: finishPrecisionSchema.optional(),
+  endPrecisionBefore: finishPrecisionSchema.optional(),
   fromPlacement: z.literal(true).optional(),
   lessonsAdded: z.int(),
   lessonsAddedEstimated: z.literal(true).optional(),

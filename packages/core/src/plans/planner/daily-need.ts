@@ -5,7 +5,13 @@ import { MAX_PLAN_DAYS } from "../target-date-range";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { findDayMock, getSpendable } from "./mock-day";
-import { addDays, getStudyMinutes, toIsoDate } from "./plan-calendar";
+import {
+  addDays,
+  fromIsoDate,
+  getStudyDayMinutes,
+  getStudyMinutes,
+  toIsoDate,
+} from "./plan-calendar";
 import { PLAN_EPSILON } from "./plan-precision";
 import { createDays, getCalendar, getPlanStart } from "./plan-run-days";
 import { type DayShape, type PlanDay, getLessonCapacity } from "./schedule-units";
@@ -183,7 +189,7 @@ export function readFixedDays({
   return { days, minutesAt, mocks };
 }
 
-export function estimateFinish({
+function estimateFinish({
   built,
   input,
   remaining,
@@ -197,6 +203,11 @@ export function estimateFinish({
   }
 
   const calendar = getCalendar(input);
+
+  if (getStudyDayMinutes(calendar) === 0) {
+    return { date: null, precision: null, reason: "noStudyDays" };
+  }
+
   const share = built.planDays.findLast((day) => day.shape.open)?.shape.share ?? 1;
 
   const capacities = { total: 0 };
@@ -214,9 +225,45 @@ export function estimateFinish({
     }
   }
 
-  return {
-    date: null,
-    precision: null,
-    reason: capacities.total <= PLAN_EPSILON ? "noStudyDays" : "beyondHorizon",
-  };
+  return { date: null, precision: null, reason: "beyondHorizon" };
+}
+
+export function getScheduledFinish({
+  built,
+  endDate,
+  hasUnplacedEstimates,
+  input,
+  remaining,
+}: {
+  built: BuiltPlan;
+  endDate: string | null;
+  hasUnplacedEstimates: boolean;
+  input: BuildPlanInput;
+  remaining: number;
+}): Finish {
+  if (input.goal.targetDate !== null) {
+    return estimateFinish({ built, input, remaining });
+  }
+
+  if (built.phases.some((phase) => phase.later)) {
+    const reason = getStudyDayMinutes(getCalendar(input)) > 0 ? "beyondHorizon" : "noStudyDays";
+    return { date: null, precision: null, reason };
+  }
+
+  const placed = endDate
+    ? [endDate, ...built.phases.flatMap((phase) => phase.endDate ?? [])].toSorted().at(-1)
+    : null;
+
+  if (!placed) {
+    return estimateFinish({ built, input, remaining });
+  }
+
+  const estimated = hasUnplacedEstimates ? estimateFinish({ built, input, remaining }) : null;
+
+  return estimated && (estimated.date === null || estimated.date > placed)
+    ? estimated
+    : {
+        date: placed,
+        precision: getFinishPrecision({ date: fromIsoDate(placed), today: input.today }),
+      };
 }

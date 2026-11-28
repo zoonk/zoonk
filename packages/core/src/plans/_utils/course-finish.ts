@@ -1,6 +1,7 @@
 import { type FinishPrecision } from "../finish-contract";
 import { daysBetween, fromIsoDate } from "../planner/plan-calendar";
 import { type PlanPhase } from "../planner/plan-state";
+import { type PlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
 import { type SelectedSummary } from "./selected-summary-contract";
 
@@ -14,6 +15,18 @@ export function getFinishPrecision({ date, today }: { date: Date; today: Date })
 
 export function getCourseFinish(computed: Pick<ComputedPlan, "selected" | "state">): Finish | null {
   return computed.state.goal.targetDate === null ? computed.selected.forecast.finish : null;
+}
+
+export function getDatedFinish({ date, today }: { date: string; today: Date }): Finish {
+  return { date, precision: getFinishPrecision({ date: fromIsoDate(date), today }) };
+}
+
+export function getSavedCourseFinish(summary: PlanSummary): Finish {
+  const { finish } = summary.selected.forecast;
+
+  return finish.date && !finish.precision
+    ? getDatedFinish({ date: finish.date, today: fromIsoDate(summary.basis.layoutStudyDay) })
+    : finish;
 }
 
 export function getFinishDisplay(finish: Finish | null) {

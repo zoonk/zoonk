@@ -218,7 +218,17 @@ describe(getPlanTimeAdvice, () => {
         input: { operations: [{ kind: "setDailyMinutes", minutes: 30 }], timeZone: "UTC" },
       }),
     ).resolves.toMatchObject({
-      preview: { finishDate: end(long), finishReason: null, precision: "month" },
+      preview: {
+        effect: {
+          endDateAfter: end(long),
+          endDateBefore: end(short),
+          endPrecisionAfter: "month",
+          endPrecisionBefore: "month",
+        },
+        finishDate: end(long),
+        finishReason: null,
+        precision: "month",
+      },
       status: "ready",
     });
 
@@ -231,6 +241,11 @@ describe(getPlanTimeAdvice, () => {
 
     expect(saved).toMatchObject({
       plan: { estimate: { endDate: end(long), finishReason: null, precision: "month" } },
+      status: "ready",
+    });
+
+    await expect(ask({})).resolves.toMatchObject({
+      advice: { endDate: end(long), finishReason: null, precision: "month" },
       status: "ready",
     });
 
@@ -1021,6 +1036,7 @@ describe(getPlanTimeAdvice, () => {
 
     expect(everything.advice.coveredShare).toBe(own.advice.coveredShare);
     expect(everything.advice.fullCourseEndDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
+    expect(everything.advice.precision).toBe("month");
     expect((everything.advice.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
     expect(sundays.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
@@ -1071,6 +1087,7 @@ describe(getPlanTimeAdvice, () => {
 
     const everything = await readEstimate();
     expect(everything.fullCourseEndDate).toBe(everything.endDate);
+    expect(everything.precision).toBe("month");
     expect((everything.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
     await expect(

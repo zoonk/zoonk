@@ -3,7 +3,7 @@ import { sizeLegacyExamSkills } from "../../library/curriculum/legacy-exam-estim
 import { isPlanFinished } from "../_utils/plan-end";
 import { chooseBases } from "./base-choices";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
-import { type FixedDays, estimateDailyNeed, estimateFinish } from "./daily-need";
+import { type FixedDays, estimateDailyNeed, getScheduledFinish } from "./daily-need";
 import { addDays, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { type PlanGraphSkill, parsePlanSettings } from "./plan-state";
@@ -261,6 +261,49 @@ describe(summarizeSelectedPlan, () => {
     });
   });
 
+  it("finishes when its last phase ends, even when the lessons fit sooner in theory", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
+      graph: {
+        phases: [
+          { milestone: null, name: "Basics" },
+          { milestone: null, name: "Practice" },
+        ],
+        skills: [skill("s1", { lessons: 600 }), skill("s2", { lessons: 1200, phase: 1 })],
+      },
+      lessons: [],
+    });
+
+    const built = buildPlan(input);
+    const finish = summarizeSelectedPlan({ built, examSubjects: null, input }).forecast.finish;
+    const end = built.phases.at(-1)?.endDate;
+
+    expect(built.droppedSkillIds).toStrictEqual([]);
+    expect(end).toMatch(/^2029-/u);
+    expect(finish).toStrictEqual({ date: end, precision: "year" });
+  });
+
+  it("reports a study week that leaves no lesson room as beyond the horizon", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 10, kind: "learn", targetDate: null },
+      graph: {
+        phases: [{ milestone: null, name: "Basics" }],
+        skills: [skill("s1", { lessons: 50 })],
+      },
+      lessons: [],
+      settings: parsePlanSettings({
+        startDate: "2026-09-21",
+        weekdayMinutes: [0, 10, 0, 0, 0, 0, 0],
+      }),
+    });
+
+    expect(summarize(input).forecast.finish).toStrictEqual({
+      date: null,
+      precision: null,
+      reason: "beyondHorizon",
+    });
+  });
+
   it.each([
     { finish: { date: expect.any(String), precision: "month" }, unwrittenLessons: 10 },
     { finish: { date: expect.any(String), precision: "year" }, unwrittenLessons: 300 },
@@ -481,18 +524,23 @@ describe(summarizeSelectedPlan, () => {
   });
 
   it("uses month precision through 548 days and year precision for farther finishes", () => {
-    const input = learnInput({ goal: { dailyMinutes: 30, kind: "learn", targetDate: null } });
+    const input = learnInput({
+      goal: { dailyMinutes: 30, kind: "language", targetDate: null },
+      graph: { phases: [], skills: [] },
+      lessons: [],
+    });
+
     const built = buildPlan(input);
     const capacity = getCumulativeCapacity(built.planDays);
 
-    const finishAt = (dayOffset: number) =>
-      estimateFinish({ built, input, remaining: capacity[dayOffset] ?? 0 });
+    const finish = (remaining: number) =>
+      getScheduledFinish({ built, endDate: null, hasUnplacedEstimates: true, input, remaining });
 
-    expect(finishAt(548)).toStrictEqual({ date: "2028-03-29", precision: "month" });
-    expect(finishAt(549)).toStrictEqual({ date: "2028-03-30", precision: "year" });
-    expect(finishAt(3649)).toStrictEqual({ date: "2036-09-24", precision: "year" });
+    expect(finish(capacity[548] ?? 0)).toStrictEqual({ date: "2028-03-29", precision: "month" });
+    expect(finish(capacity[549] ?? 0)).toStrictEqual({ date: "2028-03-30", precision: "year" });
+    expect(finish(capacity[3649] ?? 0)).toStrictEqual({ date: "2036-09-24", precision: "year" });
 
-    expect(estimateFinish({ built, input, remaining: (capacity.at(-1) ?? 0) + 1 })).toMatchObject({
+    expect(finish((capacity.at(-1) ?? 0) + 1)).toMatchObject({
       date: null,
       reason: "beyondHorizon",
     });
