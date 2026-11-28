@@ -56,7 +56,6 @@ const graphSkillSchema = z.object({
   pastLevel: z.boolean().optional(),
   phase: z.int().min(0),
   plannedLessons: z.int().min(0).optional(),
-  sizedEstimate: z.literal(true).optional(),
   skillId: z.string(),
   /** The source's topic texts exactly, so the syllabus can tick each one; absent when unknown. */
   topics: z.array(z.string()).optional(),

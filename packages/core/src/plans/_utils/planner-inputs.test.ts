@@ -20,7 +20,6 @@ import {
   MATH,
   choiceBlueprintFixture,
 } from "../../exams/choices/_test-utils/choice-blueprint";
-import { type PlanGraph } from "../planner/plan-state";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { loadGoalPlannerLessons, loadSkillLessons } from "./planner-lessons";
 
@@ -194,96 +193,14 @@ describe(loadGoalPlannerLessons, () => {
   });
 });
 
-function examSkill({
-  area,
-  lessons,
-  skillId,
-  topics = ["Topic"],
-}: {
-  area: string;
-  lessons: number;
-  skillId: string;
-  topics?: string[];
-}): PlanGraph["skills"][number] {
-  return { area, lessons, name: skillId, phase: 0, skillId, topics, weight: 1 };
-}
-
 describe(chooseExamOptionSkills, () => {
-  it("re-estimates a legacy exam's mixed and placeholder-only subjects on re-plan", async () => {
-    const blueprint = await examBlueprintFixture({ structure: examStructure("multipleChoice") });
-
-    const filled = Array.from({ length: 25 }, (_, index) =>
-      examSkill({ area: "Systems", lessons: 2, skillId: `systems-${index}` }),
-    );
-
-    const stored: PlanGraph = {
-      phases: [{ milestone: null, name: "Start" }],
-      skills: [
-        examSkill({
-          area: "Mathematics",
-          lessons: 12,
-          skillId: "graphs",
-          topics: ["Paths", "Cycles"],
-        }),
-        examSkill({ area: "Mathematics", lessons: 2, skillId: "sets" }),
-        examSkill({ area: "Mathematics", lessons: 2, skillId: "limits" }),
-        examSkill({ area: "Mathematics", lessons: 2, skillId: "derivatives" }),
-        examSkill({
-          area: "Auditing",
-          lessons: 20,
-          skillId: "public-budget",
-          topics: ["Revenue", "Expenses"],
-        }),
-        ...filled,
-      ],
-    };
-
-    await prisma.examSkillGraph.create({
-      data: {
-        examBlueprintId: blueprint.id,
-        generatedAt: new Date(),
-        graph: stored,
-        model: "test",
-        promptVersion: "test",
-        runId: crypto.randomUUID(),
-      },
-    });
-
-    const planned = await chooseExamOptionSkills({
-      goal: { examBlueprintId: blueprint.id, kind: "exam" },
-      graph: stored,
-      picks: { examChoices: [], examSubjects: [] },
-    });
-
-    expect(planned.skills.map(({ skillId, lessons }) => [skillId, lessons])).toStrictEqual([
-      ["graphs", 12],
-      ["sets", 6],
-      ["limits", 6],
-      ["derivatives", 6],
-      ["public-budget", 20],
-      ...filled.map(({ skillId }) => [skillId, 8]),
-    ]);
-
-    const after = await prisma.examSkillGraph.findUniqueOrThrow({
-      where: { examBlueprintId: blueprint.id },
-    });
-
-    expect(after.graph).toStrictEqual(stored);
-  });
-
   it("loads the same exam estimates for plans with different saved sizes", async () => {
     const blueprint = await choiceBlueprintFixture();
     const item = { area: MATH, name: "Algebra", phase: 0, skillId: "algebra", weight: 1 };
     const option = { ...item, area: ENGLISH, name: "Read a passage", skillId: "reading" };
     const own = { ...item, lessons: 3, name: "Practice", skillId: "private-skill" };
 
-    const small = {
-      ...item,
-      lessons: 2,
-      name: "Read set notation",
-      sizedEstimate: true as const,
-      skillId: "notation",
-    };
+    const small = { ...item, lessons: 2, name: "Read set notation", skillId: "notation" };
 
     const phases = [{ milestone: null, name: "Start" }];
 

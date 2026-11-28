@@ -7,7 +7,6 @@ import {
   findSubjectAreas,
   listUnchosenSubjects,
 } from "../../exams/choices/exam-choices";
-import { sizeLegacyExamSkills } from "../../library/curriculum/legacy-exam-estimates";
 import { prunePlanNoticeGraph } from "../../library/curriculum/prune-plan-notice-graph";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import { getSkillArea } from "../planner/graph-areas";
@@ -118,11 +117,7 @@ export async function chooseExamOptionSkills({
 }): Promise<PlanGraph> {
   const blueprint = await readSource();
   const structure = examStructureSchema.safeParse(blueprint?.structure).data;
-
-  const shared = sizeLegacyExamSkills(
-    joinOptionSkills(parsePlanGraph(blueprint?.skillGraph?.graph)),
-  );
-
+  const shared = joinOptionSkills(parsePlanGraph(blueprint?.skillGraph?.graph));
   const personal = joinOptionSkills(graph);
 
   if (!blueprint?.skillGraph && !structure) {

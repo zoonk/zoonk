@@ -4,7 +4,6 @@ import { joinOptionSkills } from "../../plans/planner/option-skills";
 import { type PlanGraph, parsePlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { type PlannedSkillGraph } from "./goal-plan-graph";
-import { isLegacyCoverageEstimate } from "./legacy-exam-estimates";
 
 type GraphSkill = PlannedSkillGraph["skills"][number];
 
@@ -44,7 +43,6 @@ function toGraphSkills({
     estimatedLessons: skill.lessons,
     examWeight: skill.weight,
     key: index === 0 ? skill.skillId : `${skill.skillId}:${courseId}`,
-    ...(isLegacyCoverageEstimate(skill) && { legacyEstimate: true }),
     level: row?.level ?? "beginner",
     name: skill.name,
     outcome: skill.outcome ?? false,

@@ -1,9 +1,4 @@
-type SizedSkill = {
-  area: string | null;
-  estimatedLessons: number;
-  legacyEstimate?: boolean;
-  topics?: readonly string[];
-};
+type SizedSkill = { area: string | null; estimatedLessons: number; topics: readonly string[] };
 
 function getMedian(values: readonly number[]): number | null {
   const sorted = values.toSorted((a, b) => a - b);
@@ -19,15 +14,14 @@ function getMedian(values: readonly number[]): number | null {
 }
 
 function lessonsPerTopic(skill: SizedSkill): number {
-  return skill.estimatedLessons / Math.max(1, skill.topics?.length ?? 0);
+  return skill.estimatedLessons / Math.max(1, skill.topics.length);
 }
 
 export function estimateTopicLessons(skills: readonly SizedSkill[]) {
-  const sized = skills.filter((skill) => !skill.legacyEstimate);
-  const overall = getMedian(sized.map((skill) => lessonsPerTopic(skill)));
+  const overall = getMedian(skills.map((skill) => lessonsPerTopic(skill)));
 
   const subjects = new Map(
-    [...Map.groupBy(sized, (skill) => skill.area)].map(([area, items]) => [
+    [...Map.groupBy(skills, (skill) => skill.area)].map(([area, items]) => [
       area,
       getMedian(items.map((skill) => lessonsPerTopic(skill))),
     ]),

@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { sizeLegacyExamSkills } from "../../library/curriculum/legacy-exam-estimates";
 import { isPlanFinished } from "../_utils/plan-end";
 import { chooseBases } from "./base-choices";
 import { type BuildPlanInput, buildPlan } from "./build-plan";
@@ -596,12 +595,7 @@ describe(summarizeSelectedPlan, () => {
   });
 
   it("counts a partly outlined skill's short remainder until the outline is complete", () => {
-    const written = skill("s1", { lessons: 2 });
-
-    const estimated = sizeLegacyExamSkills({
-      phases: [],
-      skills: [written, skill("reference", { lessons: 4 })],
-    }).skills.filter(({ skillId }) => skillId === written.skillId);
+    const estimated = [skill("s1", { lessons: 4 })];
 
     const partlyWritten = learnInput({
       goal: { dailyMinutes: 15, kind: "learn", targetDate: null },
