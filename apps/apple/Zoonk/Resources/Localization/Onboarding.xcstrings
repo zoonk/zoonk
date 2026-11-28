@@ -5710,13 +5710,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erledigt"
+            "value" : "Fertig"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completado"
+            "value" : "Listo"
           }
         },
         "fr" : {
@@ -5728,7 +5728,7 @@
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completato"
+            "value" : "Fatto"
           }
         },
         "ja" : {
@@ -5752,7 +5752,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluída"
+            "value" : "Concluído"
           }
         },
         "tr" : {
@@ -27299,10 +27299,64 @@
       "comment" : "Leaves a test's result",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fertig"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminé"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fatto"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "完了"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gotowe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Concluído"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamamlandı"
           }
         }
       }
