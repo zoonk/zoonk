@@ -172,6 +172,8 @@ struct StepHeader: View {
   var position: Text?
   let title: Text
   var description: Text?
+  /// What belongs to the title, drawn under it in the heading, such as a result's course line.
+  var below: AnyView?
   /// The plan's reveal ends setup: no step after it has a title to line up with.
   var linesUpWithSteps = true
 
@@ -186,13 +188,17 @@ struct StepHeader: View {
 
   var body: some View {
     Section {
-      PageHeader(
-        title,
-        chip: subject.map { Chip(Text(verbatim: $0)) },
-        position: position,
-        keepsChipRoom: keepsChipRoom,
-        supporting: description
-      )
+      VStack(alignment: .leading, spacing: 0) {
+        PageHeader(
+          title,
+          chip: subject.map { Chip(Text(verbatim: $0)) },
+          position: position,
+          keepsChipRoom: keepsChipRoom,
+          supporting: description
+        )
+
+        below
+      }
       .listRowBackground(Color.clear)
     }
     // Main's step reads on from its heading, a row's room below it, not a section's.
