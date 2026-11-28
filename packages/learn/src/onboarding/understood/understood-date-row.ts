@@ -279,10 +279,6 @@ export function useDateRow(timeZone: string) {
 
   // Only a public exam the learner names has a notice or a calendar; a class test on their notes doesn't.
   const unknownDateNote = (draft: GoalDraft): string => {
-    if (draft.details?.examDay === "booked") {
-      return t("You pick this test's day when you book it. Booked already? Set it here.");
-    }
-
     if (!draft.details?.examName) {
       return t({
         description:
@@ -308,7 +304,8 @@ export function useDateRow(timeZone: string) {
       return ownDateRow({ draft, examDates, targetDate: draft.targetDate, today });
     }
 
-    if (draft.kind !== "exam") {
+    // A booked exam's day is the learner's own booking, which the date question asks.
+    if (draft.kind !== "exam" || draft.details?.examDay === "booked") {
       return null;
     }
 
