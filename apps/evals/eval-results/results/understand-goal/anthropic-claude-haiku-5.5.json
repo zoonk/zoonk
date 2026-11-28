@@ -500,19 +500,19 @@
       },
       "steps": [
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -541,19 +541,19 @@
       },
       "steps": [
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -582,19 +582,19 @@
       },
       "steps": [
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "content country \"BR\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -1045,19 +1045,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "minorErrors",
-          "score": 10
+          "score": 6
         },
         {
-          "conclusion": "None",
+          "conclusion": "1 goals; missing language goal",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 6
         }
       ],
       "testCase": {
@@ -1133,19 +1133,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"Use Docker Desktop better\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Use Docker Desktop better\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Use Docker Desktop better\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -1333,19 +1333,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com iPhone\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com iPhone\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com iPhone\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -1853,19 +1853,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -1897,19 +1897,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -1941,19 +1941,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "title repeats targetCourse; study time missing",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -3514,19 +3514,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "target score \"A2\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3596,19 +3596,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3642,19 +3642,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3688,19 +3688,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -4815,51 +4815,6 @@
           "route": "goals"
         },
         "id": "en-exam-ielts-band-1",
-        "userInput": {
-          "goal": "get band 7 on the IELTS by March",
-          "language": "en",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "examDay": "booked",
-              "examName": {},
-              "examTarget": "score",
-              "hasTarget": true,
-              "kind": "exam",
-              "month": "2027-03",
-              "targetLanguage": "en"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "en-exam-ielts-band-2",
         "userInput": {
           "goal": "get band 7 on the IELTS by March",
           "language": "en",
@@ -7863,6 +7818,47 @@
           ],
           "route": "goals"
         },
+        "id": "pt-exam-concurso-pf-2",
+        "userInput": {
+          "goal": "quero passar no concurso da polícia federal para agente",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examTarget": "position",
+              "hasTarget": true,
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-exam-concurso-pf-3",
         "userInput": {
           "goal": "quero passar no concurso da polícia federal para agente",
@@ -8487,19 +8483,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -8533,19 +8529,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"大学入学共通テストの対策\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"大学入学共通テストの対策\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"大学入学共通テストの対策\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -8579,19 +8575,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"大学入学共通テストの対策\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -9179,6 +9175,123 @@
       ],
       "testCase": {
         "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-1",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-2",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam"
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "pt-school-test-naming-its-subject-is-a-goal-3",
+        "userInput": {
+          "goal": "Prova de matemática na sexta sobre frações",
+          "language": "pt",
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
           "followUp": {},
           "goals": [
             {
@@ -9287,23 +9400,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -9329,23 +9442,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -9371,23 +9484,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -9795,19 +9908,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -9838,19 +9951,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -9924,19 +10037,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"기말고사에 포함되는 과목은 어떻게 되나요?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"기말고사에 포함되는 과목은 어떻게 되나요?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"기말고사에 포함되는 과목은 어떻게 되나요?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -9971,19 +10084,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
@@ -10018,19 +10131,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "exam subjects undefined; follow-ups [\"기말고사에 어떤 과목이 포함되는지 알려주세요.\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -10061,23 +10174,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 1
         }
       ],
       "testCase": {
@@ -10102,23 +10215,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목들이 기말고사에 포함되나요?\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 1
         }
       ],
       "testCase": {
@@ -10143,23 +10256,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"어떤 과목의 기말고사인지 알려주세요.\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목의 기말고사인지 알려주세요.\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "follow-ups [\"어떤 과목의 기말고사인지 알려주세요.\"]",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 1
         }
       ],
       "testCase": {
@@ -10188,19 +10301,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10233,19 +10346,19 @@
       },
       "steps": [
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 4
+          "score": 10
         },
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 4
+          "score": 10
         },
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 4
+          "score": 10
         }
       ],
       "testCase": {
@@ -10278,19 +10391,19 @@
       },
       "steps": [
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 4
+          "score": 10
         },
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 4
+          "score": 10
         },
         {
-          "conclusion": "1 goals; missing exam goal; follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 4
+          "score": 10
         }
       ],
       "testCase": {
@@ -10323,19 +10436,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the finals period cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10405,19 +10518,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects does the final cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the final cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects does the final cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -11182,123 +11295,6 @@
         "expected": {
           "goals": [
             {
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-school-test-naming-its-subject-is-a-goal-1",
-        "userInput": {
-          "goal": "Prova de matemática na sexta sobre frações",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-school-test-naming-its-subject-is-a-goal-2",
-        "userInput": {
-          "goal": "Prova de matemática na sexta sobre frações",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
-              "kind": "exam"
-            }
-          ],
-          "route": "goals"
-        },
-        "id": "pt-school-test-naming-its-subject-is-a-goal-3",
-        "userInput": {
-          "goal": "Prova de matemática na sexta sobre frações",
-          "language": "pt",
-          "today": "2026-09-26"
-        }
-      }
-    },
-    {
-      "classification": {
-        "expected": "goals",
-        "predicted": "goals"
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "goals": [
-            {
               "displayName": {},
               "examName": null,
               "kind": "exam",
@@ -11436,19 +11432,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Preparar para a prova de História\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Preparar para a prova de História\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Preparar para a prova de História\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -11617,6 +11613,108 @@
           "route": "goals"
         },
         "id": "ko-material-friday-test-names-the-notes-topic-1",
+        "userInput": {
+          "goal": "금요일 시험",
+          "language": "ko",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "text": "수학 II 단원 정리 – 삼각함수\n사인, 코사인, 탄젠트의 정의와 단위원\nsin²θ + cos²θ = 1\n삼각함수의 그래프: 주기, 최댓값과 최솟값\n사인법칙과 코사인법칙으로 삼각형의 변과 각 구하기",
+                "title": "수학 정리.pdf"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-material-friday-test-names-the-notes-topic-2",
+        "userInput": {
+          "goal": "금요일 시험",
+          "language": "ko",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "text": "수학 II 단원 정리 – 삼각함수\n사인, 코사인, 탄젠트의 정의와 단위원\nsin²θ + cos²θ = 1\n삼각함수의 그래프: 주기, 최댓값과 최솟값\n사인법칙과 코사인법칙으로 삼각형의 변과 각 구하기",
+                "title": "수학 정리.pdf"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "examName": null,
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "ko-material-friday-test-names-the-notes-topic-3",
         "userInput": {
           "goal": "금요일 시험",
           "language": "ko",
@@ -12129,6 +12227,57 @@
           ],
           "route": "goals"
         },
+        "id": "pt-material-english-notes-get-portuguese-fields-1",
+        "userInput": {
+          "goal": "prova sexta",
+          "language": "pt",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "text": "Earth Science – Plate tectonics\nThe lithosphere is broken into plates that float on the asthenosphere.\nDivergent boundaries: plates move apart (mid-ocean ridges).\nConvergent boundaries: subduction zones, mountains, volcanoes.\nTransform boundaries: plates slide past each other (San Andreas Fault).",
+                "title": "Earth science notes"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "goals"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "displayName": {},
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
         "id": "pt-material-english-notes-get-portuguese-fields-2",
         "userInput": {
           "goal": "prova sexta",
@@ -12406,19 +12555,19 @@
       },
       "steps": [
         {
-          "conclusion": "date \"2026-11-03\"; title \"Prepare for the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "majorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Prepare for the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "minorErrors",
-          "score": 6
+          "score": 8
         },
         {
-          "conclusion": "date \"2026-11-03\"; title \"Prepare for the HIST 210 midterm\"",
+          "conclusion": "title \"Prepare for the HIST 210 exam\"",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
@@ -12458,19 +12607,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Pass the HIST 210 midterm\"",
+          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
           "kind": "majorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title \"Pass the HIST 210 midterm\"",
+          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
           "kind": "minorErrors",
-          "score": 8
+          "score": 6
         },
         {
-          "conclusion": "title \"Pass the HIST 210 midterm\"",
+          "conclusion": "date \"2026-11-03\"; title \"Pass the HIST 210 midterm\"",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 6
         }
       ],
       "testCase": {
@@ -12506,23 +12655,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "majorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "minorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 6
         }
       ],
       "testCase": {
@@ -12555,23 +12704,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "majorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "minorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 6
         }
       ],
       "testCase": {
@@ -12604,23 +12753,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "unclear"
+        "predicted": "goals"
       },
       "steps": [
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "majorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "minorErrors",
-          "score": 1
+          "score": 6
         },
         {
-          "conclusion": "Route \"unclear\"",
+          "conclusion": "kind \"learn\" instead of exam; exam undefined",
           "kind": "potentialImprovements",
-          "score": 1
+          "score": 6
         }
       ],
       "testCase": {
@@ -12800,23 +12949,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -12850,23 +12999,73 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
+              "kind": "exam",
+              "targetDate": "2026-09-28",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-probability-class-notes-are-a-goal-2",
+        "userInput": {
+          "goal": "test on Monday",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "text": "Stats 1 – Probability\nP(A or B) = P(A) + P(B) − P(A and B)\nRolling two dice: P(sum = 7) = 6/36 = 1/6\nDrawing a card: P(ace) = 4/52; without replacement the odds change.\nExpected value of a bet: sum of outcomes × probabilities.\nConditional probability and Bayes' theorem.",
+                "title": ""
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "majorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "minorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "potentialImprovements",
+          "score": 1
         }
       ],
       "testCase": {
@@ -13260,7 +13459,7 @@
           ],
           "route": "goals"
         },
-        "id": "en-material-a-long-textbook-read-by-its-pages-is-named-3",
+        "id": "en-material-a-long-textbook-read-by-its-pages-is-named-2",
         "userInput": {
           "goal": "test on Friday",
           "language": "en",
@@ -13304,6 +13503,57 @@
         "expected": {
           "goals": [
             {
+              "kind": "exam",
+              "targetDate": "2026-10-02",
+              "title": {}
+            }
+          ],
+          "route": "goals"
+        },
+        "id": "en-material-a-long-textbook-read-by-its-pages-is-named-3",
+        "userInput": {
+          "goal": "test on Friday",
+          "language": "en",
+          "material": {
+            "intent": "exam",
+            "sources": [
+              {
+                "mimeType": "application/pdf",
+                "text": "Chapter 1 – GDP and how it is measured\nThis page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. \fChapter 2 – Inflation and the consumer price index\nThis page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. \fChapter 3 – Unemployment and the labor market\nThis page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. \fChapter 4 – Aggregate demand and aggregate supply\nThis page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. \fChapter 5 – Fiscal policy and government budgets\nThis page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. \fChapter 6 – Money, banks and the central bank\nThis page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. \fChapter 7 – Monetary policy and interest rates\nThis page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. \fChapter 8 – Exchange rates and the balance of payments\nThis page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. \fChapter 9 – Economic growth and productivity\nThis page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. \fChapter 10 – Business cycles and recessions\nThis page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. \fChapter 1 – GDP and how it is measured\nThis page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. \fChapter 2 – Inflation and the consumer price index\nThis page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. \fChapter 3 – Unemployment and the labor market\nThis page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. \fChapter 4 – Aggregate demand and aggregate supply\nThis page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. \fChapter 5 – Fiscal policy and government budgets\nThis page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. \fChapter 6 – Money, banks and the central bank\nThis page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. \fChapter 7 – Monetary policy and interest rates\nThis page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. \fChapter 8 – Exchange rates and the balance of payments\nThis page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. \fChapter 9 – Economic growth and productivity\nThis page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. \fChapter 10 – Business cycles and recessions\nThis page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. \fChapter 1 – GDP and how it is measured\nThis page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. \fChapter 2 – Inflation and the consumer price index\nThis page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. \fChapter 3 – Unemployment and the labor market\nThis page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. \fChapter 4 – Aggregate demand and aggregate supply\nThis page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. \fChapter 5 – Fiscal policy and government budgets\nThis page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. \fChapter 6 – Money, banks and the central bank\nThis page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. \fChapter 7 – Monetary policy and interest rates\nThis page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. \fChapter 8 – Exchange rates and the balance of payments\nThis page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. \fChapter 9 – Economic growth and productivity\nThis page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. \fChapter 10 – Business cycles and recessions\nThis page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. \fChapter 1 – GDP and how it is measured\nThis page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. This page explains gdp and how it is measured with worked examples from national accounts. \fChapter 2 – Inflation and the consumer price index\nThis page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. This page explains inflation and the consumer price index with worked examples from national accounts. \fChapter 3 – Unemployment and the labor market\nThis page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. This page explains unemployment and the labor market with worked examples from national accounts. \fChapter 4 – Aggregate demand and aggregate supply\nThis page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. This page explains aggregate demand and aggregate supply with worked examples from national accounts. \fChapter 5 – Fiscal policy and government budgets\nThis page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. This page explains fiscal policy and government budgets with worked examples from national accounts. \fChapter 6 – Money, banks and the central bank\nThis page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. This page explains money, banks and the central bank with worked examples from national accounts. \fChapter 7 – Monetary policy and interest rates\nThis page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. This page explains monetary policy and interest rates with worked examples from national accounts. \fChapter 8 – Exchange rates and the balance of payments\nThis page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. This page explains exchange rates and the balance of payments with worked examples from national accounts. \fChapter 9 – Economic growth and productivity\nThis page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. This page explains economic growth and productivity with worked examples from national accounts. \fChapter 10 – Business cycles and recessions\nThis page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. This page explains business cycles and recessions with worked examples from national accounts. ",
+                "title": "Macro textbook.pdf"
+              }
+            ]
+          },
+          "today": "2026-09-26"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "goals",
+        "predicted": "unclear"
+      },
+      "steps": [
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "majorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "minorErrors",
+          "score": 1
+        },
+        {
+          "conclusion": "Route \"unclear\"",
+          "kind": "potentialImprovements",
+          "score": 1
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "goals": [
+            {
               "kind": "learn",
               "reason": null,
               "title": {}
@@ -13336,23 +13586,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -13391,23 +13641,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -13957,23 +14207,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -14009,23 +14259,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -14367,23 +14617,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "title \"수학 II 중간고사 대비\"",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "title \"수학 II 중간고사 대비\"",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 8
+          "score": 1
         },
         {
-          "conclusion": "title \"수학 II 중간고사 대비\"",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 1
         }
       ],
       "testCase": {
@@ -14418,23 +14668,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {
@@ -14469,23 +14719,23 @@
     {
       "classification": {
         "expected": "goals",
-        "predicted": "goals"
+        "predicted": "unclear"
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 1
         },
         {
-          "conclusion": "None",
+          "conclusion": "Route \"unclear\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 1
         }
       ],
       "testCase": {

@@ -1293,19 +1293,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com o iPhone\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com o iPhone\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Tirar fotos melhores com o iPhone\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -3642,19 +3642,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -7596,19 +7596,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title has 9 words",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title has 9 words",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title has 9 words",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -8620,17 +8620,17 @@
       },
       "steps": [
         {
-          "conclusion": "title \"共通テストの準備\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"共通テストの準備\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"共通テストの準備\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -9953,19 +9953,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "exam subjects [\"期末テスト\"]",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "exam subjects [\"期末テスト\"]",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "exam subjects [\"期末テスト\"]",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -9996,19 +9996,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10082,19 +10082,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam \"기말고사\"; exam subjects [\"국어\",\"数学\",\"영어\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "exam \"기말고사\"; exam subjects [\"국어\",\"数学\",\"영어\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "exam \"기말고사\"; exam subjects [\"국어\",\"数学\",\"영어\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -10129,19 +10129,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam \"기말고사\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"기말고사\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"기말고사\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10346,19 +10346,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10391,19 +10391,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10436,19 +10436,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10563,19 +10563,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10946,19 +10946,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetCourse",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -10988,19 +10988,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetCourse",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -11528,19 +11528,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Preparar para a prova de história\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Preparar para a prova de história\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Preparar para a prova de história\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -11988,17 +11988,17 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Prepare for the economics exam\"",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"Prepare for the economics exam\"",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"Prepare for the economics exam\"",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -12040,19 +12040,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for economics exam\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -12704,19 +12704,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam undefined",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam undefined",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam undefined",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -12802,19 +12802,19 @@
       },
       "steps": [
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "kind \"learn\" instead of exam; exam undefined",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -14666,19 +14666,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"수학 중간고사 준비\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"수학 중간고사 준비\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"수학 중간고사 준비\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {

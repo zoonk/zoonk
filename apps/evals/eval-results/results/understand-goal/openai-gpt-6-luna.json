@@ -1001,19 +1001,19 @@
       },
       "steps": [
         {
-          "conclusion": "displayName \"German for Work\"; displayName \"Japanese for Travel\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "displayName \"German for Work\"; displayName \"Japanese for Travel\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 6
+          "score": 10
         },
         {
-          "conclusion": "displayName \"German for Work\"; displayName \"Japanese for Travel\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 10
         }
       ],
       "testCase": {
@@ -5051,19 +5051,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -5215,19 +5215,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -5256,19 +5256,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title repeats targetScore",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -8450,19 +8450,19 @@
       },
       "steps": [
         {
-          "conclusion": "2 goals",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "2 goals",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "2 goals",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -8620,17 +8620,17 @@
       },
       "steps": [
         {
-          "conclusion": "title \"共通テストの得点を伸ばす\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "majorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"共通テストの得点を伸ばす\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "title \"共通テストの得点を伸ばす\"",
+          "conclusion": "title \"共通テスト対策\"",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -9996,19 +9996,19 @@
       },
       "steps": [
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title repeats targetScore",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10346,19 +10346,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10391,19 +10391,19 @@
       },
       "steps": [
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "follow-ups [\"Which subjects do your finals cover?\"]",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -10481,19 +10481,19 @@
       },
       "steps": [
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "exam \"Chemistry final\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -12600,19 +12600,19 @@
       },
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for the history exam\"",
           "kind": "majorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for the history exam\"",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "title \"Prepare for the history exam\"",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
         }
       ],
       "testCase": {
@@ -13690,19 +13690,19 @@
       },
       "steps": [
         {
-          "conclusion": "title \"Understand the July Crisis and Alliances\"",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Understand the July Crisis and Alliances\"",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "title \"Understand the July Crisis and Alliances\"",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
