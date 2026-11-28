@@ -30,7 +30,7 @@
   "disclosure_collapsed": "fa1bad44df758dfa625098ee66aee098f1952e1601d149bb16e36b7a94b449b6",
   "disclosure_expanded": "27af94e7a4369888430cbe0ef55a24057455dfaad9c6d8691aa91621de99a6a1",
   "exam_choice_left_out": "2b467adf42011a0728d7eed0224e59ea92982d0ad4578385df16075846e1d02f",
-  "exam_choice_left_out_several": "14127a06333d02409f542fe7bf6bd159c2b0340acfde253b9f16093ec657d498",
+  "exam_choice_left_out_several": "4a8a3aea968c3293fb68a79f391b9041c4432e00284d07d0ec9d594c90c1819f",
   "exam_choice_pick_up_to": "6794baca64fe6d3075e568d624d6f91a3967410fea886d6c8e507bb150f7b7b7",
   "gate_build_plan": "6d554b328e568cb66a6a596ba27486b6155c32c45d4d793c45a4603375e25861",
   "gate_log_in": "3f1e893127f663b43010ec90f4b5e06e7a3ae15633e3cc836bb377fce475fff8",
@@ -143,7 +143,7 @@
     <!-- Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options. -->
     <string name="exam_choice_left_out">계획에 포함할 항목을 하나 선택하세요.</string>
     <!-- Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. %1$d is how many they can pick, always 2 or more. -->
-    <string name="exam_choice_left_out_several">계획에 포함할 항목을 최대 %1$d개까지 선택해 보세요.</string>
+    <string name="exam_choice_left_out_several">최대 %1$d개까지 선택해 계획에 포함해 보세요.</string>
     <string name="disclosure_expanded">펼쳐짐</string>
     <string name="disclosure_collapsed">접힘</string>
     <!-- TalkBack reads one line of a before-and-after list: which side it's on, then its words, such as "Now: Plan ends June 3" or "Better: Un café, por favor". -->
