@@ -1,6 +1,7 @@
 package com.zoonk.android.ui.components
 
 import android.content.res.Configuration
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,6 +35,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
@@ -41,6 +43,7 @@ import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
 import kotlin.math.max
@@ -84,15 +87,10 @@ fun AnswerOption(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(ZoonkRadius.option)
-    // While locked the key does nothing, so it hides in its room; once checked it gives the room up, as main's does.
-    val key =
-        answerKey(
-            LocalConfiguration.current.keyboard,
-            checked = result != null,
-            locked = !enabled,
-            ordered = tag != null,
-            keyed = LocalOptionKeys.current,
-        )
+    // Once checked the key does nothing, so its room shows the verdict's mark and the words stay put, as main's does;
+    // a locked option without one hides its key.
+    val key = answerKey(LocalConfiguration.current.keyboard, result != null || !enabled, tag != null, keyed = LocalOptionKeys.current)
+    val keyGlyph = result?.let { painterResource(it.glyph()) } ?: glyph
     val label = MaterialTheme.typography.labelLarge
     val optionStyle = label.copy(lineBreak = label.lineBreak.copy(strategy = LineBreak.Strategy.Simple))
     val shownTag: (@Composable () -> Unit)? =
@@ -134,13 +132,24 @@ fun AnswerOption(
             ) {
                 null
             } else {
-                { OptionKey(marker, picked && result == null, Modifier.alpha(if (key == AnswerKey.Visible) 1f else 0f), glyph) }
+                {
+                    val shown = key == AnswerKey.Visible || result != null
+                    OptionKey(marker, picked && result == null, Modifier.alpha(if (shown) 1f else 0f), keyGlyph)
+                }
             },
         leadingAtTop = keyAtTop,
         readingContent = readingContent?.let { reading -> { ProvideTextStyle(optionStyle, reading) } },
         onReadingOverflow = onReadingOverflow,
     )
 }
+
+@DrawableRes
+private fun AnswerResult.glyph(): Int =
+    when (this) {
+        AnswerResult.Right -> R.drawable.ic_check
+        AnswerResult.Guess -> R.drawable.ic_remove
+        AnswerResult.Wrong -> R.drawable.ic_close
+    }
 
 /** The number key that picks an option or a card, in ink once [picked]; a [glyph] takes the digit's place. */
 @Composable
@@ -309,20 +318,17 @@ internal enum class AnswerKey { None, Hidden, Visible }
 /** Whether what's here shows its number keys: a keyboard is attached and a key picks it ([LocalOptionKeys]). */
 @Composable
 fun optionKeysShown(): Boolean =
-    answerKey(LocalConfiguration.current.keyboard, checked = false, locked = false, ordered = false, keyed = LocalOptionKeys.current) !=
-        AnswerKey.None
+    answerKey(LocalConfiguration.current.keyboard, checked = false, ordered = false, keyed = LocalOptionKeys.current) != AnswerKey.None
 
 /** An option's number key: only with a keyboard, where the key picks it ([keyed]) and the option isn't a place in an order. */
 internal fun answerKey(
     keyboard: Int,
     checked: Boolean,
-    locked: Boolean,
     ordered: Boolean,
     keyed: Boolean,
 ): AnswerKey =
     when {
-        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED -> AnswerKey.None
-        ordered || checked -> AnswerKey.None
-        locked -> AnswerKey.Hidden
+        !keyed || keyboard == Configuration.KEYBOARD_NOKEYS || keyboard == Configuration.KEYBOARD_UNDEFINED || ordered -> AnswerKey.None
+        checked -> AnswerKey.Hidden
         else -> AnswerKey.Visible
     }

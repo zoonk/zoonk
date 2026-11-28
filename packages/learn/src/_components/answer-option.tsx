@@ -4,6 +4,7 @@ import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
+import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
@@ -138,23 +139,29 @@ function AnswerTag({ className, ...props }: React.ComponentProps<"span">) {
   );
 }
 
+const RESULT_MARK: Record<AnswerOptionResult, React.ReactNode> = {
+  guess: <MinusIcon />,
+  right: <CheckIcon />,
+  wrong: <XIcon />,
+};
+
 /**
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). A picked row's key
- * turns ink, the row's mark as a radio's dot is. While locked the key does nothing, so it hides in
- * its room; once checked it gives the room up, as on a touch screen.
+ * turns ink, the row's mark as a radio's dot is. Once checked the key does nothing, so its room
+ * shows the verdict's mark and the answer stays put; a locked row without one hides its key.
  */
 export function OptionMarker({
-  isChecked = false,
   isLocked = false,
   layout,
   marker,
   picked,
+  result = null,
 }: {
-  isChecked?: boolean;
   isLocked?: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
+  result?: AnswerOptionResult | null;
 }) {
   const isKey = typeof marker === "number";
 
@@ -162,9 +169,8 @@ export function OptionMarker({
     <LineMarker
       aria-hidden="true"
       className={cn(
-        isKey && "hidden",
-        isKey && !isChecked && "pointer-fine:flex",
-        isKey && isLocked && "invisible",
+        isKey && "hidden pointer-fine:flex",
+        isKey && isLocked && !result && "invisible",
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
@@ -174,7 +180,7 @@ export function OptionMarker({
           picked && "bg-selected text-selected-foreground ring-0",
         )}
       >
-        {marker}
+        {isKey && result ? RESULT_MARK[result] : marker}
       </Kbd>
     </LineMarker>
   );
@@ -236,11 +242,11 @@ export function AnswerOption({
       {...props}
     >
       <OptionMarker
-        isChecked={Boolean(result)}
         isLocked={Boolean(props.disabled)}
         layout={layout}
         marker={marker}
         picked={picked && !result}
+        result={result}
       />
 
       <TagBesideOrUnder layout={layout} tag={shownTag}>
