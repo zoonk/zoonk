@@ -28,6 +28,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFinishPrecision
 import com.zoonk.api.models.PlanFinishReason
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanPhaseCheckpoint
 import kotlinx.datetime.LocalDate
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -68,23 +69,72 @@ class PlanFinishScreenshots {
 
     @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
-    fun expanded() = capture("expanded", pages = listOf("year" to yearPage(), "beyond" to beyondPage()), editor = false)
+    fun expanded() =
+        capture("expanded", pages = listOf("year" to yearPage(), "beyond" to beyondPage(), "one-phase" to onePhasePage()), editor = false)
 
     @Test
     @Config(qualifiers = "w411dp-h1200dp-xxhdpi")
-    fun phaseSheet() {
-        val page = yearPage()
+    fun phaseSheet() = sheets("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1200dp-night-xxhdpi")
+    fun phaseSheetDark() = sheets("phone-dark", dark = true)
+
+    /** A phase years off, one with no place yet and its challenge, and an exam phase ending on its challenge's day. */
+    private fun sheets(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val sheets =
+            listOf(
+                "year" to (yearPage() to 2),
+                "later" to (beyondPage() to 3),
+                "exam-challenge-day" to (examChallengeDayPage() to 2),
+            )
+        var shown by mutableStateOf(sheets.first())
         compose.setContent {
-            ZoonkTheme {
+            val (page, index) = shown.second
+            ZoonkTheme(darkTheme = dark) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        PhaseDetails(page, page.plan.phases[2], PlanLinks(rememberAppNavigator(), page))
+                        PhaseDetails(page, page.plan.phases[index], PlanLinks(rememberAppNavigator(), page))
                     }
                 }
             }
         }
-        compose.waitForIdle()
-        write("plan-finish-phase-sheet", compose.onRoot().captureRender().asAndroidBitmap())
+        sheets.forEach {
+            shown = it
+            compose.waitForIdle()
+            write("plan-phase-sheet-${it.first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
+        }
+    }
+
+    /** An exam phase ahead whose challenge falls on its last day, as both its row and the challenge's say "~". */
+    private fun examChallengeDayPage(): PlanPageState {
+        val page = examPage(year = false)
+        val challenge =
+            ApiJson.decodeFromString(
+                PlanPhaseCheckpoint.serializer(),
+                """{"date":"2027-01-20","locked":false,"planItemId":null,"precision":"month","state":"upcoming","when":"date"}""",
+            )
+        val plan =
+            page.plan.copy(
+                phases =
+                    page.plan.phases.map {
+                        if (it.index == 2L) {
+                            it.copy(
+                                name = "",
+                                milestone = null,
+                                kind = PlanPhase.Kind.GAPS,
+                                endDate = LocalDate(2027, 1, 20),
+                                checkpoint = challenge,
+                            )
+                        } else {
+                            it
+                        }
+                    },
+            )
+        return page.copy(plan = plan)
     }
 
     @Test
@@ -178,7 +228,13 @@ class PlanFinishScreenshots {
         name: String,
         dark: Boolean = false,
         pages: List<Pair<String, PlanPageState>> =
-            listOf("month" to monthPage(), "year" to yearPage(), "beyond" to beyondPage(), "language" to languagePage()),
+            listOf(
+                "month" to monthPage(),
+                "year" to yearPage(),
+                "beyond" to beyondPage(),
+                "language" to languagePage(),
+                "one-phase" to onePhasePage(),
+            ),
         editor: Boolean = true,
     ) {
         val shots =
@@ -244,7 +300,14 @@ class PlanFinishScreenshots {
                 if (it.index.toInt() != index) {
                     it
                 } else if (end == null) {
-                    it.copy(milestone = milestone, later = true, startDate = null, endDate = null, precision = null, checkpoint = null)
+                    it.copy(
+                        milestone = milestone,
+                        later = true,
+                        startDate = null,
+                        endDate = null,
+                        precision = null,
+                        checkpoint = LATER_CHALLENGE,
+                    )
                 } else {
                     it.copy(milestone = milestone, endDate = end, startDate = start ?: it.startDate, precision = precision)
                 }
@@ -295,6 +358,13 @@ class PlanFinishScreenshots {
             title = "Mathematics",
         )
 
+    /** A plan of one phase: its bar still ends on the plan's finish. */
+    private fun onePhasePage(): PlanPageState {
+        val plan = undated(learnPlan(), LocalDate(2027, 3, 10), PlanFinishPrecision.MONTH)
+        val only = plan.phases[1].copy(index = 0, milestone = "Organize data with lists and dictionaries", endDate = LocalDate(2027, 3, 10))
+        return page(plan.copy(phases = listOf(only), currentPhase = 0))
+    }
+
     /** French to B2: its phases are situations, named and not given a milestone. */
     private fun languagePage(): PlanPageState {
         val aim = ApiJson.decodeFromString(LanguageAim.serializer(), languageAimOf("B2", targetLanguage = "fr"))
@@ -324,5 +394,14 @@ class PlanFinishScreenshots {
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         writeRender(file, bitmap)
+    }
+
+    private companion object {
+        /** Core's challenge under a phase whose work has no place yet: owed, with no day. */
+        val LATER_CHALLENGE =
+            ApiJson.decodeFromString(
+                PlanPhaseCheckpoint.serializer(),
+                """{"date":null,"later":true,"locked":false,"planItemId":null,"precision":null,"state":"upcoming","when":"date"}""",
+            )
     }
 }
