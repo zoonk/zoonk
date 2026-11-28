@@ -4,6 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { type z } from "zod";
 import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
+import { unlessPlanConflict } from "../../../plans/plan-conflict";
 import { replanAfterPlacement } from "../../../plans/replan-after-placement";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
 import { type FocusTestView } from "../focus-test-contract";
@@ -84,7 +85,7 @@ export async function completePlacement({
   }
 
   if (!applied.changeId && (!goal.planRevealedAt || tested)) {
-    await replanAfterPlacement({ goalId, now, timeZone });
+    await unlessPlanConflict(() => replanAfterPlacement({ goalId, now, timeZone }));
   }
 
   await owePlanStartLessons({ goalId, userId });
