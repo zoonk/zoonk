@@ -12,7 +12,7 @@ import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-
 
 export type TutorSubject =
   | { chapterId: string; kind: "chapter"; language: string }
-  | { conversationId: string | null; goal: Goal; kind: "plan"; language: string }
+  | { conversationId: string; goal: Goal; kind: "plan"; language: string }
   | { item: { id: string; language: string }; kind: "item"; language: string }
   | { goal: Goal; kind: "subject"; language: string; syllabusSubject: SyllabusSubject }
   | {
@@ -59,7 +59,7 @@ async function findPlanSubject({
   goalId,
   userId,
 }: Extract<TutorTarget, { kind: "plan" }> & { userId: string }) {
-  if (conversationId !== null && !isUuid(conversationId)) {
+  if (!isUuid(conversationId)) {
     return NOT_FOUND;
   }
 
@@ -284,11 +284,7 @@ export function getSubjectThreadColumn(subject: TutorSubject) {
     case "mock":
       return { mockExamId: subject.mockExamId };
     case "plan":
-      return {
-        goalId: subject.goal.id,
-        id: subject.conversationId ?? undefined,
-        kind: subject.kind,
-      };
+      return { goalId: subject.goal.id, id: subject.conversationId, kind: subject.kind };
     case "subject":
       return { subjectGoalId: subject.goal.id, subjectKey: subject.syllabusSubject.key };
     default:
@@ -305,7 +301,7 @@ export async function findTutorThread({
   subject: TutorSubject;
   userId: string;
 }) {
-  if (subject.kind === "plan" && subject.conversationId !== null) {
+  if (subject.kind === "plan") {
     const thread = await client.lessonQuestionThread.findUnique({
       where: { id: subject.conversationId },
     });
@@ -321,7 +317,6 @@ export async function findTutorThread({
   }
 
   const thread = await client.lessonQuestionThread.findFirst({
-    orderBy: subject.kind === "plan" ? [{ createdAt: "asc" }, { id: "asc" }] : undefined,
     where: { ...getSubjectThreadColumn(subject), userId },
   });
 

@@ -22,6 +22,7 @@ import {
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import {
   claimLessonQuestionAnswer,
@@ -195,7 +196,7 @@ describe("the tutor beyond lessons", () => {
 
       await getTodayStudySession({ goalId: goal.id });
 
-      const target = { conversationId: null, goalId: goal.id, kind: "plan" } as const;
+      const target = buddyTarget(goal.id);
 
       const question = await askCreated({
         context: { kind: "plan" },
@@ -251,7 +252,7 @@ describe("the tutor beyond lessons", () => {
         const question = await askCreated({
           context: { kind: "plan" },
           question: "What's coming this week?",
-          target: { conversationId: null, goalId: goal.id, kind: "plan" },
+          target: buddyTarget(goal.id),
         });
 
         const snapshot = await storedSnapshot(question.id);
