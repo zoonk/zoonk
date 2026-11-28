@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { buddyTarget } from "../lesson-questions/_test-utils/buddy-target";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedPersonaCopy } from "../seed/seed";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
@@ -58,7 +59,7 @@ describe("plans laid out per read", () => {
     const turn = await countBuilds(() =>
       createLessonQuestion({
         input: { context: { kind: "plan" }, question: "What's next?", requestId: randomUUID() },
-        target: { conversationId: null, goalId: user.goalId, kind: "plan" },
+        target: buddyTarget(user.goalId),
       }),
     );
 

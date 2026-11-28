@@ -15,6 +15,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { createLessonQuestion } from "./create-lesson-question";
 
@@ -55,7 +56,7 @@ async function askAboutPlan({ goalId, userId }: { goalId: string; userId: string
       question: "Why am I behind? Which lesson first?",
       requestId: randomUUID(),
     },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   if (created.status !== "created") {

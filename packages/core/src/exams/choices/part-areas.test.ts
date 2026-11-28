@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
+import { buddyTarget } from "../../lesson-questions/_test-utils/buddy-target";
 import { claimLessonQuestionAnswer } from "../../lesson-questions/answer-lifecycle";
 import { createLessonQuestion } from "../../lesson-questions/create-lesson-question";
 import { proposeTutorPlanChange } from "../../lesson-questions/propose-tutor-plan-change";
@@ -83,7 +84,7 @@ async function proposeFocusInAnswer({ areas, goalId }: { areas: string[]; goalId
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
-    target: { conversationId: null, goalId, kind: "plan" },
+    target: buddyTarget(goalId),
   });
 
   const questionId = created.status === "created" ? created.question.id : "";

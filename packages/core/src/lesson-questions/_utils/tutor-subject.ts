@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type LessonQuestionThread, type TransactionClient, prisma } from "@zoonk/db";
+import { type Goal, type LessonQuestionThread, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { hasStoredTimeRunOutAway } from "../../exams/mocks/_utils/owned-mock";
 import { mockConditionsSchema } from "../../exams/mocks/mock-contract";
@@ -12,7 +12,7 @@ import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-
 
 export type TutorSubject =
   | { chapterId: string; kind: "chapter"; language: string }
-  | { conversationId: string | null; goal: Goal; kind: "plan"; language: string }
+  | { conversationId: string; goal: Goal; kind: "plan"; language: string }
   | { item: { id: string; language: string }; kind: "item"; language: string }
   | { goal: Goal; kind: "subject"; language: string; syllabusSubject: SyllabusSubject }
   | {
@@ -59,7 +59,7 @@ async function findPlanSubject({
   goalId,
   userId,
 }: Extract<TutorTarget, { kind: "plan" }> & { userId: string }) {
-  if (conversationId !== null && !isUuid(conversationId)) {
+  if (!isUuid(conversationId)) {
     return NOT_FOUND;
   }
 
@@ -284,11 +284,7 @@ export function getSubjectThreadColumn(subject: TutorSubject) {
     case "mock":
       return { mockExamId: subject.mockExamId };
     case "plan":
-      return {
-        goalId: subject.goal.id,
-        id: subject.conversationId ?? undefined,
-        kind: subject.kind,
-      };
+      return { goalId: subject.goal.id, id: subject.conversationId, kind: subject.kind };
     case "subject":
       return { subjectGoalId: subject.goal.id, subjectKey: subject.syllabusSubject.key };
     default:
@@ -297,16 +293,14 @@ export function getSubjectThreadColumn(subject: TutorSubject) {
 }
 
 export async function findTutorThread({
-  client = prisma,
   subject,
   userId,
 }: {
-  client?: Pick<TransactionClient, "lessonQuestionThread">;
   subject: TutorSubject;
   userId: string;
 }) {
-  if (subject.kind === "plan" && subject.conversationId !== null) {
-    const thread = await client.lessonQuestionThread.findUnique({
+  if (subject.kind === "plan") {
+    const thread = await prisma.lessonQuestionThread.findUnique({
       where: { id: subject.conversationId },
     });
 
@@ -320,8 +314,7 @@ export async function findTutorThread({
     return { status: "ready" as const, thread };
   }
 
-  const thread = await client.lessonQuestionThread.findFirst({
-    orderBy: subject.kind === "plan" ? [{ createdAt: "asc" }, { id: "asc" }] : undefined,
+  const thread = await prisma.lessonQuestionThread.findFirst({
     where: { ...getSubjectThreadColumn(subject), userId },
   });
 
