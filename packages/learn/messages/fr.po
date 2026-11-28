@@ -910,6 +910,12 @@ msgctxt "cOD9je"
 msgid "We suggest {time} a day. Your plan starts with what matters most for your goal."
 msgstr "Nous te conseillons {time} par jour. Ton plan commence par ce qui compte le plus pour ton objectif."
 
+#. When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
+#: src/_components/time-answer-lines.tsx
+msgctxt "5ZCekJ"
+msgid "{dateKind, select, month {We suggest {time} a day to cover everything in your plan by {date}.} other {We suggest {time} a day to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {On te conseille de prévoir {time} par jour pour tout faire dans ton plan d’ici {date}.} other {On te conseille de prévoir {time} par jour pour tout faire dans ton plan d’ici {date}.}}"
+
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h".
 #: src/_components/time-answer-lines.tsx
 msgctxt "aL9GHA"
@@ -959,6 +965,12 @@ msgstr "Calcul de ta date de fin…"
 msgctxt "-TVG-n"
 msgid "We couldn't work out when you'd finish."
 msgstr "Nous n’avons pas pu calculer ta date de fin."
+
+#. Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/_components/time-answer-texts.ts
+msgctxt "zbyuSM"
+msgid "{dateKind, select, month {That's enough to cover everything in your plan by {date}.} other {That's enough to cover everything in your plan by {date}.}}"
+msgstr "{dateKind, select, month {C’est suffisant pour tout faire dans ton plan d’ici {date}.} other {C’est suffisant pour tout faire dans ton plan d’ici {date}.}}"
 
 #. Said under "We suggest {time} a day". In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/_components/time-answer-texts.ts
@@ -10567,15 +10579,19 @@ msgid "The Focus test shows what to study most."
 msgstr "Le Test de priorités t’indique quoi étudier en priorité."
 
 #: src/plan/plan-coverage.tsx
-msgctxt "0YytO3"
-msgid "Move your date to {date}"
-msgstr "Repousser ta date au {date}"
+msgctxt "Cb15Rz"
+msgid "Move your date to cover everything in your plan"
+msgstr "Décale ta date pour couvrir tout ton plan"
 
 #: src/plan/plan-coverage.tsx
-#: src/plan/plan-offer-preview.tsx
 msgctxt "hzzrUH"
 msgid "Move your date to cover everything"
 msgstr "Repousser ta date pour tout couvrir"
+
+#: src/plan/plan-coverage.tsx
+msgctxt "0YytO3"
+msgid "Move your date to {date}"
+msgstr "Repousser ta date au {date}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-date-text.tsx
@@ -10693,6 +10709,12 @@ msgstr "Elles s’affichent en premier dans « Aujourd’hui »."
 msgctxt "XVhC0H"
 msgid "{days, plural, one {Study {minutes, number} more min a day for # day to be up to date.} other {Study {minutes, number} more min a day for # days to be up to date.}}"
 msgstr "{days, plural, one {Étudie {minutes, number} min de plus par jour pendant # jour pour être à jour.} other {Étudie {minutes, number} min de plus par jour pendant # jours pour être à jour.}}"
+
+#. When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
+#: src/plan/plan-offer-preview.tsx
+msgctxt "zRlPAp"
+msgid "{dateKind, select, month {Your time covers everything in your plan by {date}} other {Your time covers everything in your plan by {date}}}"
+msgstr "{dateKind, select, month {Ton temps te permet de tout faire dans ton plan d’ici {date}} other {Ton temps te permet de tout faire dans ton plan d’ici {date}}}"
 
 #. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5".
 #: src/plan/plan-offer-preview.tsx
@@ -10999,9 +11021,19 @@ msgid "You'll use"
 msgstr "Tu utiliseras"
 
 #: src/plan/study-everything.tsx
+msgctxt "WCKfwD"
+msgid "You study every topic in your plan. What doesn't fit before the exam comes after it."
+msgstr "Tu étudies tous les sujets de ton plan. Ce qui ne rentre pas avant l’examen viendra après."
+
+#: src/plan/study-everything.tsx
 msgctxt "f0hmbu"
 msgid "You study every topic. What doesn't fit before the exam comes after it."
 msgstr "Tu étudies tous les sujets. Ce que tu n’as pas le temps de voir avant l’examen est prévu après."
+
+#: src/plan/study-everything.tsx
+msgctxt "YCt9Qf"
+msgid "Every part of your plan, with no end date."
+msgstr "Tout le contenu de ton plan, sans date de fin."
 
 #: src/plan/study-everything.tsx
 msgctxt "x7ZSzV"

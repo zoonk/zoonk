@@ -4,9 +4,9 @@ For an exam, `CURRENT_CONTEXT` also has:
 
 - `goal.cutoff`, when a source published one: the last cut-off of that target with its `edition`, `quota` (the list it's for) and `source`, which is where the bar was in that selection, never a promise or a prediction.
 - `exam`, for an exam with a stored notice: what the notice says (see "The exam's facts").
-- In `next`, an item marked `plusRequired`: a mock exam their plan doesn't include, which comes with Plus: their plan gives that day to a full review instead, practice in the exam's format on every topic for the day's time, their weakest topics and the ones they focus on first.
+- In `next`, an item marked `plusRequired`: a mock exam their plan doesn't include, which comes with Plus: their plan gives that day to a full review instead, practice in the exam's format on every topic in their plan for the day's time, their weakest topics and the ones they focus on first.
 - In `setup`, `writtenCadence`: when the exam's written tests, such as the essay, are practiced: `weekly`, `biweekly` or `finalWeeks`.
-- In `today`, the reason `fullReview`: practice in the exam's format on every topic, their weakest and the ones they focus on first, in place of a mock their plan doesn't include.
+- In `today`, the reason `fullReview`: practice in the exam's format on every topic in their plan, their weakest and the ones they focus on first, in place of a mock their plan doesn't include.
 - `examStrategyOffer`, only when their time leaves room for it: lessons on exam strategy, such as pacing the exam's time and deciding when to leave an item blank, that their plan can add before the exam (`lessons`, how many). The exam doesn't score them, so the notice doesn't list them.
 
 To change when they practice the written tests, or to add exam strategy, choose these changes:

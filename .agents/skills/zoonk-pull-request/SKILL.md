@@ -1,10 +1,10 @@
 ---
 name: zoonk-pull-request
-description: Open the pull request that ends a Zoonk task, watch its CI checks and reviews, judge each review comment as a claim, fix or answer it, and hand back once it's ready, no check fails, the AI reviewers have reviewed it and every comment is resolved. Use when finishing a task, after pushing to an open PR, or when handling review comments.
+description: Use when finishing a Zoonk task with its pull request, after pushing to an open PR, or when handling its CI checks and review comments.
 license: MIT
 metadata:
   author: zoonk
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Pull requests
@@ -13,7 +13,7 @@ A task is done when its one pull request is marked ready, no check is failing or
 
 ## 1. Open it
 
-- Push the task's branch and open the PR against `main` as a draft (`gh pr create --draft`) once the branch has its first commit, with the title and body from [zoonk-commit](../zoonk-commit/SKILL.md). CI runs on drafts, so it checks the work as you push; AI reviewers skip drafts, so they review only the finished change.
+- Push the task's branch and open the PR against `main` as a draft (`gh pr create --draft`) once the branch has its first commit, with the title and body from [the PR description](../zoonk-commit/references/pr-description.md). CI runs on drafts, so it checks the work as you push; AI reviewers skip drafts, so they review only the finished change.
 - Mark it ready (`gh pr ready <pr>`) once the change is complete, its copy [translated](../../guides/translations.md), CI passing on the draft, [verify](../verify/SKILL.md) done with the change's [checks](../../guides/checks.md) passing on the final tree, and the [cross-model review](../../guides/cross-model-review.md) done. You run every verify step the change needs that can run here, the learner walk included, before that; none is left in the handoff for the user to do or to decide on. A verify step that can't run here (no simulator or emulator free, an overloaded machine, a missing service) doesn't keep it a draft: name it under what remains unverified in the PR body and mark it ready anyway. Each push after that can start the AI reviewers again, so batch fixes into as few pushes as you can.
 - A body that shows pictures passes `pnpm pr:media check` before it's sent, and its files go up with `--attach`: [a PR body with pictures](references/pictures.md).
 - Another task's PR that needs this one's unmerged change goes in a GitHub stack, never as a loose PR on its branch: [stacked pull requests](references/stacks.md).
@@ -47,7 +47,7 @@ Handle every open comment before pushing, so each round runs CI and the reviewer
 
 ## 4. Hand back
 
-Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Mark it ready yourself: never hand back a draft, or ask whether to mark it ready. Then update the PR body when the fixes changed what a reviewer reads there ([new commits on an open PR](../zoonk-commit/SKILL.md#new-commits-on-an-open-pr)), retaking pictures a push made stale ([pictures](references/pictures.md#after-a-push)).
+Each push starts CI and some reviewers again: watch and judge once more until no check fails and every thread is resolved. Mark it ready yourself: never hand back a draft, or ask whether to mark it ready. Then update the PR body when the fixes changed what a reviewer reads there ([new commits on an open PR](../zoonk-commit/references/pr-description.md#new-commits-on-an-open-pr)), retaking pictures a push made stale ([pictures](references/pictures.md#after-a-push)).
 
 Work that can only run once the PR is released gets its trigger now: [work that waits for a release](references/after-release.md).
 

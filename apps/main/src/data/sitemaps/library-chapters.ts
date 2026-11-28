@@ -1,7 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
-import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
+import { isSitemapPage } from "./sitemap-page-ids";
+import { getSitemapPageRowIds, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 /** A shared chapter is listed once, at its home placement, which is also its canonical URL. */
 async function getSitemapLibraryChapterWhere() {

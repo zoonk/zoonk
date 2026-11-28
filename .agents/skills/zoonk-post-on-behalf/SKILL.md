@@ -1,10 +1,10 @@
 ---
 name: zoonk-post-on-behalf
-description: Publish as the user's agent, such as GitHub issues, comments, discussions or pull requests in other repositories, with a disclosure naming the model. Use before anything an agent writes goes out under the user's account, except a task's own pull request in this repository and the replies on it, which follow zoonk-pull-request.
+description: Use before anything an agent writes goes out under the user's account (issues, comments, discussions, pull requests in other repositories), except the task's own PR here and its replies.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Posting on behalf of the user

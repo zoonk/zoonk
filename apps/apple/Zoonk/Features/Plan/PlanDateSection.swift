@@ -119,9 +119,11 @@ struct PlanDateSection: View {
 
     return PreviewedPlanChange(
       editor: editor, plan: plan, edits: [.targetDate(nil)], title: title, button: title,
-      what: String(
-        localized: "Every part of your goal, with no end date.", table: "Plan",
-        comment: "What dropping the goal's end date does"),
+      what: plan.subjectsTakenOut
+        ? String(localized: "Every part of your plan, with no end date.", table: "Plan")
+        : String(
+          localized: "Every part of your goal, with no end date.", table: "Plan",
+          comment: "What dropping the goal's end date does"),
       asksOnAppear: asksStudyEverything
     ) { isPreviewing, ask in
       BusyButton(isBusy: isPreviewing, isRow: true, action: ask) {

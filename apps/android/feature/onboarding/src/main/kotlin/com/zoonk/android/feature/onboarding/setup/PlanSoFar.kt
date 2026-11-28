@@ -49,7 +49,6 @@ internal data class PlanFact(
     val value: String,
     val count: String? = null,
     val note: String? = null,
-    val chip: Boolean = false,
 )
 
 @Composable
@@ -68,20 +67,18 @@ internal fun planFacts(goal: Goal): List<PlanFact> {
                 label = dateLabel,
                 value = formatDate(day, locale, DateStyle.Long),
                 count = pluralStringResource(R.plurals.onboarding_days, days, days),
-                chip = true,
             )
         } ?: PlanFact(
             dateLabel,
             stringResource(if (goal.kind == Goal.Kind.EXAM) R.string.onboarding_row_to_be_confirmed else R.string.plan_end_none_set),
-            chip = true,
         ).takeIf { details.answered("targetDate") }
     val resources = LocalResources.current
     val rows = remember(resources, locale) { UnderstoodRows(resources, locale, is24Hour = false) }
     val facts = goal.facts()
 
-    return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.displayName, chip = true), date) +
+    return listOfNotNull(PlanFact(stringResource(R.string.onboarding_row_goal), goal.displayName), date) +
         (rows.languageRows(facts) + rows.detailRows(facts, cutoff = null)).map { row ->
-            PlanFact(row.label, row.value, note = row.note, chip = row.id in CHIP_ROWS)
+            PlanFact(row.label, row.value, note = row.note)
         } +
         listOfNotNull(
             levelFact(goal),
@@ -134,9 +131,6 @@ private val OWN_LEVELS =
         "intermediate" to R.string.onboarding_level_intermediate,
         "advanced" to R.string.onboarding_level_advanced,
     )
-
-/** Short facts that also sit as chips over the schedule question on phones. */
-private val CHIP_ROWS = setOf("targetLanguage", "targetCourse", "institution", "targetPosition", "targetScore")
 
 @Composable
 internal fun PlanSoFar(goal: Goal) {

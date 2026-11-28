@@ -3314,7 +3314,6 @@
       }
     },
     "Choose %lld options." : {
-      "comment" : "Rule above a multiple-choice question asking for an exact number of options.",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -3322,13 +3321,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wähle %lld Antwort aus."
+                  "value" : "Wähle %lld Option aus."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wähle %lld Antworten aus."
+                  "value" : "Wähle %lld Optionen aus."
                 }
               }
             }
@@ -3424,7 +3423,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개를 선택하세요."
+                  "value" : "보기 %lld개를 선택하세요."
                 }
               }
             }
@@ -10439,12 +10438,11 @@
       }
     },
     "Select all that apply." : {
-      "comment" : "Rule above a multiple-choice question where every right option must be picked.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle alles aus, was zutrifft."
+            "value" : "Wähle alles Zutreffende aus."
           }
         },
         "es" : {
@@ -10456,13 +10454,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sélectionne toutes les bonnes réponses."
+            "value" : "Sélectionne toutes les réponses qui conviennent."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seleziona tutte le risposte corrette."
+            "value" : "Seleziona tutte le opzioni corrette."
           }
         },
         "ja" : {
@@ -10474,25 +10472,25 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "정답을 모두 선택하세요."
+            "value" : "해당하는 항목을 모두 선택하세요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zaznacz wszystkie poprawne odpowiedzi."
+            "value" : "Zaznacz wszystkie pasujące opcje."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Selecione todas as alternativas corretas."
+            "value" : "Selecione todas as alternativas que se aplicam."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doğru seçeneklerin tümünü seç."
+            "value" : "Uygun olanların tümünü seç."
           }
         }
       }

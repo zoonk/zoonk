@@ -404,6 +404,11 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     week.days.first { $0.study.isToday }?.date ?? week.startDate
   }
 
+  /// What fits is measured over the subjects the plan kept, so "everything" means only those.
+  var subjectsTakenOut: Bool {
+    areas.contains(where: \.skipped)
+  }
+
   /// The phases a drawing of the plan counts: studying after an exam comes past its finish, and a
   /// phase the plan holds nothing of has no days.
   var roadPhases: [PlanPhase] {

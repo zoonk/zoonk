@@ -1,6 +1,6 @@
 Wrap every admin data query in `cacheAdminData` (`src/data/_utils/admin-data-cache.ts`); the layout's guard doesn't cover streamed route segments.
 
-Admin pages are designed too: each answers one question for a staff person and leads with what they came for, as zoonk-design's [Words](../../.agents/skills/zoonk-design/SKILL.md#words) says for internal tools.
+Admin pages are designed too: each answers one question for a staff person and leads with what they came for, as zoonk-design's [internal tools](../../.agents/skills/zoonk-design/references/internal-tools.md) says.
 
 ## Pages
 

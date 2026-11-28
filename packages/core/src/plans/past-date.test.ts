@@ -175,6 +175,37 @@ describe("a plan whose date came with lessons left", () => {
     expect(view?.feasibility?.coveredShare).toBeLessThan(1);
   });
 
+  it("suggests in onboarding covering everything only when its schedule then covers it", async () => {
+    const { goal } = await pastDateGoal("learn");
+
+    await refreshGoalPlan({ goalId: goal.id });
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ kind: "setTargetDate", targetDate: "2020-10-21" }], timeZone: "UTC" },
+    });
+
+    const studyDays = [0, 1, 2, 3, 4, 5, 6];
+    const found = await findPlanTimeToCover({ goalId: goal.id, input: { studyDays } });
+    const suggested = found.status === "ready" ? found.time.suggested : null;
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: {
+          dailyMinutes: suggested?.minutes ?? 0,
+          question: "schedule",
+          studyDays,
+          timeZone: "UTC",
+        },
+      }),
+    ).resolves.toMatchObject({ status: "saved" });
+
+    await expect(readPlan()).resolves.toMatchObject({
+      feasibility: { fits: suggested?.kind === "everything" },
+    });
+  });
+
   it("keeps an exam's date, which is the exam's: its plan goes on after it", async () => {
     const { goal, plan, plannedLessons } = await pastDateGoal("exam", 6);
     expect(plannedLessons).toBeGreaterThan(1);

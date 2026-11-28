@@ -621,14 +621,9 @@ struct PlanSuggestionSection: View {
   }
 
   private func fitTitle(_ offer: GoalPlan.Offer, today: PlanEffect?) -> Text {
-    guard today == nil, offer.fits, let covers = planCoversEverythingText(context.plan) else {
-      return Text(
-        "You have time for \((today ?? offer.effect).lessonsAdded) more lessons", tableName: "Plan",
-        comment: "Title of the offer that brings into the plan more lessons the learner's time fits"
-      )
-    }
-
-    return covers
+    Text(
+      "You have time for \((today ?? offer.effect).lessonsAdded) more lessons", tableName: "Plan",
+      comment: "Title of the offer that brings into the plan more lessons the learner's time fits")
   }
 
   private var extraTitle: Text {

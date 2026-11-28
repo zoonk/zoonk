@@ -308,6 +308,7 @@
   "plan_more_tools_later": "e9218841cee728b9bb09018971d2b5c72dcb8a5947a106f68ac35d34ebdab81c",
   "plan_more_units": "fbb76bcf36b2bfe6627b1a787216af87686e9aa32e032d9805a838ee41945568",
   "plan_move_date": "86f154933a78c5149afd996c4214109e4b46354219fa60033d224c805c669136",
+  "plan_move_date_in_plan": "878063bf561b6f2590e1038eb568517ca10de422bd50f19ba593f80c7988ca14",
   "plan_move_date_to": "0fbc8328724c22ab752ddaa41921dd916352bd4b6e74eb767ad8f6322ac5c902",
   "plan_named_month_note": "5626a830559ce1d00c95d4ea7b1e5a61c40118f1eb70dc5639c2fc2988876fa2",
   "plan_next": "21329501b8a88e581b81bcb872e8bd336b29a6a9d5439671e783eabc668925a5",
@@ -417,7 +418,9 @@
   "plan_study_everything": "2f44f9477106eb47b22cc5ab8e8a6f1cd757c1517ccd093770ce99fc6e4921cf",
   "plan_study_everything_after_exam": "1b407da82a3b5c8fc5514915a6588009eede9707e633706702272db5e753a587",
   "plan_study_everything_exam_description": "bfadb11667077f7c862b66ecf2f4cb86181f7edcf64b329db28f7390fc0ebdfb",
+  "plan_study_everything_exam_in_plan_description": "ec95e538532fe08c3e99e253338d440a70ba6cc2036814b90ad934413f1229b9",
   "plan_study_everything_goal_description": "2431a4a727cb09800e6ab58c4317cb5c51f0d1d4124b37feea760a02415b94f4",
+  "plan_study_everything_goal_in_plan_description": "23e0e3ae096b106dba16348aed1a5b26b75b59ee839d2ba8dd26fc398d1ee262",
   "plan_study_next": "a38fe5dc34250f720de327c060922675895f4591a347818d70dabcbf89170be0",
   "plan_suggestion": "62adebfb04d32c78dd1c32c43e31cdcfda52af6e5b1ecba0c27d7a17b5ddf698",
   "plan_suggestion_next": "5b60d254b8adef5f63f045aa526a9d7c0338a3bb90cefcfb629ccecf78190751",
@@ -430,11 +433,13 @@
   "plan_this_week": "6b3248b5aaf88f25cda7f1e29cd13c4c7e5c895ec133f81d0d92e69378a4ce84",
   "plan_thursdays": "ca20816cd4241142996da02cc24d568a5b509726b8be74ffc5131d542673e8ed",
   "plan_time_covers_everything_by": "649e09cb57c26efc4e09a2e4cced62489987a6eecabc3fc5605726149f39171f",
-  "plan_time_covers_everything_by_month": "99edcaf9708e7058287d24299de97f6e2bf428507e4051b82f27b32498dfd031",
+  "plan_time_covers_everything_in_plan_by": "5f71245610ce0f3d1942af32baa911ab5fe24dcbaf87dd1ebe9c5c3a0bdb6084",
   "plan_time_enough_exam": "55f335032ee8b0501265e379ee379d45ce25233405c674b0257b7e1e9d9046ef",
   "plan_time_enough_exam_month": "dc965cc1ad67390b9ca3d8d77fef8869cfdee2300f1ed602d0c3988ce33c9763",
   "plan_time_enough_goal": "f5508f710276b92a0c9d4ead6f46d23024d9b5349765a583fb8cccce9231d160",
   "plan_time_enough_goal_month": "d4f2d0ceaea43741d3d986e2c29a09fb2232b1b3fbbd2558afb0449eaea4a6da",
+  "plan_time_enough_in_plan": "96224b6b5d9f89bdb326321c31035e9348494892cd2e462e5e25ac3b55b0b8e7",
+  "plan_time_enough_in_plan_month": "1f68be37e3af3c740b3c80479b836be6ca65a35e4efbe6de1ec29750804cd396",
   "plan_time_find_failed": "a84e025675eded5caf37cc9fdaee40a6cf551cff382a9ef459d368d36ec6d8de",
   "plan_time_finish_failed": "ac3048ae09df782f32ee2e00bc0398542b42efbb33c9953459ec3efff8dadd30",
   "plan_time_finish_unknown": "3346a675149d05658086f591b76bd0119d435b05981842fb1bbb4e123724ee0f",
@@ -450,6 +455,8 @@
   "plan_time_suggest_focus_goal": "2258fc547acb12e28d93c49540a1fb10200a140ab3d6941160d5881d33bf0e1b",
   "plan_time_suggest_goal": "1d5e22038b597f53d16b4366e6a48c090bed6c2bc227c9375b7e9eb9f9cfb1f2",
   "plan_time_suggest_goal_month": "76515ed1ff4fe078387b492e47ef4affdaf1b5e8ff6745888da79b6f928f66d2",
+  "plan_time_suggest_in_plan": "c68ebcad3de98a0b22ddc2fe82c27e6e32742e428f76e1e868a60a68f85a9e29",
+  "plan_time_suggest_in_plan_month": "71cedd191ca1b862769ad721ffce85733ffc78da96c8b0408a12c49e466f183e",
   "plan_time_suggest_title": "bb275559890f7657643455eb36065f7b37fdae5e1763247dc7b16cda22ee8454",
   "plan_time_weekends": "dab15e41dbdeefb79fcecaa5c13ecbc7e45246d7e4b8d65073e3de626b8007b4",
   "plan_time_working": "9eb8205571b70e78e55148437f87b2ba4c9e26d61b5058687586c55031e7e8c3",
@@ -1032,6 +1039,10 @@
     <string name="plan_time_suggest_goal">%2$s까지 목표를 이룰 수 있도록 하루 %1$s을 권해요.</string>
     <!-- Under the time a day, for a goal with a date: the time we suggest covers everything by then. %1$s is a daily study time, such as "2 h 30 min"; %2$s is a month and year, such as "May 2027". -->
     <string name="plan_time_suggest_goal_month">%2$s까지 목표를 이룰 수 있도록 하루 %1$s을 권해요.</string>
+    <!-- When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h". -->
+    <string name="plan_time_suggest_in_plan">계획에 있는 내용을 %2$s까지 모두 학습할 수 있도록 하루에 %1$s씩 학습하는 것을 추천해요.</string>
+    <!-- When the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". {time} is a daily study time, like "2 h". -->
+    <string name="plan_time_suggest_in_plan_month">계획에 있는 내용을 %2$s까지 모두 학습할 수 있도록 하루에 %1$s씩 학습하는 것을 추천해요.</string>
     <!-- Under the time a day, when covering the whole exam by its date would take more than most people keep up: we suggest at most 4 hours, and the plan puts what the exam needs most first. %1$s is a daily study time, such as "4 h". -->
     <string name="plan_time_suggest_focus_exam">하루 %1$s을 권해요. 계획은 시험에 가장 중요한 내용부터 시작해요.</string>
     <!-- Under the time a day, when covering the whole goal by its date would take more than most people keep up: we suggest at most 4 hours, and the plan puts what the goal needs most first. %1$s is a daily study time, such as "4 h". -->
@@ -1056,12 +1067,13 @@
     <string name="plan_finish_working">언제 마칠지 계산하고 있어요…</string>
     <!-- %1$s is a day, such as "May 5". -->
     <string name="plan_time_covers_everything_by">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
-    <!-- %1$s is a month and year, such as "May 2027". -->
-    <string name="plan_time_covers_everything_by_month">설정한 학습 시간으로 %1$s까지 모두 공부할 수 있어요</string>
+    <!-- When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". -->
+    <string name="plan_time_covers_everything_in_plan_by">현재 학습 시간으로 계획에 있는 내용을 %1$s까지 모두 학습할 수 있어요</string>
     <string name="plan_try_again">다시 시도</string>
     <string name="plan_find_building">아직 계획을 만들고 있어요. 잠시 후에 다시 시도해 보세요.</string>
     <string name="plan_find_no_date">모든 내용을 마칠 수 있는 날짜를 찾지 못했어요.</string>
     <string name="plan_move_date">전체 내용을 공부할 수 있게 날짜 변경하기</string>
+    <string name="plan_move_date_in_plan">계획을 모두 마치도록 날짜 변경</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="plan_move_date_to">날짜를 %1$s로 변경하기</string>
     <string name="plan_full_course_switch">시험 후에도 계속 공부하기</string>
@@ -1073,6 +1085,8 @@
     <string name="plan_study_everything">종료일 없애기</string>
     <string name="plan_study_everything_exam_description">모든 주제를 공부해요. 시험 전 일정에 다 넣지 못한 내용은 시험 후에 공부해요.</string>
     <string name="plan_study_everything_goal_description">종료일을 정하지 않고 목표에 필요한 모든 내용을 공부해요.</string>
+    <string name="plan_study_everything_exam_in_plan_description">계획의 모든 주제를 공부해요. 시험 전까지 다루지 못한 내용은 시험 후에 공부해요.</string>
+    <string name="plan_study_everything_goal_in_plan_description">계획의 모든 내용을 공부해요. 종료일은 없어요.</string>
     <string name="plan_sheet_done">완료</string>
     <string name="plan_choose_focus">집중할 과목 선택하기</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
@@ -1110,6 +1124,10 @@
     <string name="plan_time_enough_goal">%1$s까지 목표를 이루기에 충분해요.</string>
     <!-- On the plan's time card, under "We suggest 2 h a day", when that time covers the whole goal by its date. %1$s is a month and year, such as "May 2027". -->
     <string name="plan_time_enough_goal_month">%1$s까지 목표를 이루기에 충분해요.</string>
+    <!-- Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". -->
+    <string name="plan_time_enough_in_plan">계획에 있는 내용을 %1$s까지 모두 학습하기에 충분해요.</string>
+    <!-- Said under "We suggest {time} a day" when the learner took a subject out of their plan. In the month form, {date} is a month, like "May 2027"; otherwise a day, like "May 5". -->
+    <string name="plan_time_enough_in_plan_month">계획에 있는 내용을 %1$s까지 모두 학습하기에 충분해요.</string>
     <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole exam by its date takes longer than the time we suggest: the plan puts what the exam needs most first. -->
     <string name="plan_starts_with_most_exam">계획은 시험에 가장 중요한 내용부터 시작해요.</string>
     <!-- On the plan's time card, under "We suggest 4 h a day", when covering the whole goal by its date takes longer than the time we suggest: the plan puts what the goal needs most first. -->

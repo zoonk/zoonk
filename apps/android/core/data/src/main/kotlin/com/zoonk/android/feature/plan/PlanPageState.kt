@@ -18,4 +18,7 @@ data class PlanPageState(
     val mocksRequirePlus: Boolean get() = plan.access.mocksRequirePlus
     val finish: PlanEnd? = plan.finish(goal.kind, isPaused)
     val libraryCourse get() = plan.course?.takeIf { it.planChapterCount > 0 && it.brandSlug != null }
+
+    /** Main's `useSubjectsTakenOut`: what fits is measured over the subjects the plan kept, so "everything" means only those. */
+    val subjectsTakenOut: Boolean get() = plan.areas.any { it.skipped }
 }

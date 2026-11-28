@@ -86,6 +86,27 @@ describe(getExamFormat, () => {
     ]);
   });
 
+  it("counts a written part answered within its sitting's time once", () => {
+    const sitting = { day: 1, minutes: 330, name: "Linguagens, Ciências Humanas e redação" };
+
+    const format = getExamFormat({
+      days: days.slice(0, 1),
+      structure: structureWith([
+        { ...sitting, kind: "objective", questions: 90 },
+        { ...sitting, kind: "written", questions: null },
+      ]),
+    });
+
+    expect(format).toStrictEqual([
+      {
+        date: "2026-11-08",
+        day: 1,
+        minutes: 330,
+        parts: [{ name: sitting.name, questions: 90, written: false }],
+      },
+    ]);
+  });
+
   it("says nothing when the notice doesn't state its sections", () => {
     expect(getExamFormat({ days, structure: null })).toStrictEqual([]);
     expect(getExamFormat({ days, structure: structureWith([]) })).toStrictEqual([]);

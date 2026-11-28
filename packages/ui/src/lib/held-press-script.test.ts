@@ -652,6 +652,86 @@ describe("the keeper of presses made before React owns a control", () => {
     expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
   });
 
+  it.each([
+    { order: "before", revealFirst: true },
+    { order: "after", revealFirst: false },
+  ])(
+    "moves a link's mark to the link that replaces it when a streamed part of the page shows $order the mark",
+    async ({ revealFirst }) => {
+      const tabs =
+        '<a href="https://zoonk.test/today">Today</a><a href="https://zoonk.test/plan">Plan</a>';
+
+      const { find, page, press, wait } = openPage(
+        `<nav><!--$?--><template id="boundary"></template><div>${tabs}</div><!--/$--></nav>` +
+          `<div hidden id="segment"><div id="streamed">${tabs}</div></div>` +
+          '<a href="https://zoonk.test/plan" id="other">See your plan</a>',
+      );
+
+      /** What React's inline script does when a boundary's content arrives before the page hydrates. */
+      const reveal = () => {
+        const early = find("#boundary").nextElementSibling!;
+        const end = early.nextSibling!;
+        early.remove();
+        end.before(...find("#segment").childNodes);
+        find("#segment").remove();
+      };
+
+      const plan = () => find('nav a[href$="/plan"]');
+
+      press(plan());
+
+      if (revealFirst) {
+        reveal();
+        await Promise.resolve();
+        wait();
+      } else {
+        wait();
+        reveal();
+        await Promise.resolve();
+      }
+
+      expect(plan().closest("#streamed")).not.toBeNull();
+      expect(plan().dataset.held).toBe("");
+      expect(plan().getAttribute("aria-busy")).toBe("true");
+      expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(1);
+
+      page.dispatchEvent(new page.PageTransitionEvent("pageshow", { persisted: true }));
+      expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+    },
+  );
+
+  it("marks only the last link pressed, since the browser follows only that one", () => {
+    const { find, page, press, wait } = openPage(
+      '<a href="https://zoonk.test/plan" id="plan">Plan</a><a href="https://zoonk.test/today" id="today">Today</a>',
+    );
+
+    press(find("#plan"));
+    wait();
+    press(find("#today"));
+    wait();
+
+    const marked = [...page.document.querySelectorAll("[data-held]")].map((link) => link.id);
+    expect(marked).toStrictEqual(["today"]);
+  });
+
+  it("clears a stopped load's mark once the learner opens another page through React", () => {
+    const { commit, find, page, press, wait } = openPage(
+      '<a href="https://zoonk.test/plan" id="plan">Plan</a><a href="https://zoonk.test/buddy" id="buddy">Buddy</a>',
+    );
+
+    press(find("#plan"));
+    wait();
+    expect(find("#plan").dataset.held).toBe("");
+
+    commit();
+    own(find("#plan"), find("#buddy"));
+    page.document.addEventListener("click", (event) => event.preventDefault());
+    press(find("#buddy"));
+    wait();
+
+    expect(page.document.querySelectorAll("[data-held], [aria-busy]")).toHaveLength(0);
+  });
+
   it("leaves unmarked a link whose press the page takes over, as a client-side link does", () => {
     const { commit, find, page, press, wait } = openPage(
       '<a href="https://zoonk.test/plan" id="owned">Plan</a><a href="https://zoonk.test/today" id="hydrating">Today</a>',

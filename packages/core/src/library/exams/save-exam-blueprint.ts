@@ -23,8 +23,9 @@ import {
   topicFrequencySchema,
 } from "./blueprint-contract";
 import { type BlueprintChange, mergeBlueprintContent, movesExamDays } from "./blueprint-diff";
-import { carryConfirmedGaps } from "./confirmed-gaps";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
+import { isSameNotice } from "./stored-facts";
+import { readOverStored } from "./stored-reading";
 import { withoutImplausibleWrittenCounts } from "./written-grading";
 import { withWrittenTaskKeys } from "./written-tasks";
 
@@ -125,15 +126,14 @@ export async function previewExamBlueprintChanges({
   }
 
   const stored = readBlueprintContent(current);
-  const sourceHash = content.edition.sourceHash;
 
-  if (sourceHash !== null && sourceHash === stored.edition.sourceHash) {
+  if (isSameNotice({ read: content, stored })) {
     return null;
   }
 
   return mergeBlueprintContent({
     current: stored,
-    next: carryConfirmedGaps({ next: content, stored }),
+    next: await readOverStored({ read: content, stored }),
   }).changes;
 }
 
@@ -202,13 +202,12 @@ async function updateBlueprint({
   input: SaveExamBlueprintInput;
 }): Promise<SavedExamBlueprint> {
   const read = readBlueprintContent(current);
-  const carried = carryConfirmedGaps({ next: input.content, stored: read });
+  const notDownloaded = input.notDownloaded ?? [];
 
-  const sourceIds = await listReadDocuments({
-    next: carried,
-    notDownloaded: input.notDownloaded ?? [],
-    stored: read,
-  });
+  const [carried, sourceIds] = await Promise.all([
+    readOverStored({ read: input.content, stored: read }),
+    listReadDocuments({ next: input.content, notDownloaded, stored: read }),
+  ]);
 
   const board = input.board ?? current.board;
   const stored = forgetOtherBoardsPapers({ board, stored: read });

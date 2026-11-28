@@ -138,13 +138,9 @@ struct PickRule: View {
     Group {
       switch select {
       case .all:
-        Text(
-          "Select all that apply.", tableName: "Practice",
-          comment: "Rule above a multiple-choice question where every right option must be picked.")
+        Text("Select all that apply.", tableName: "Practice")
       case .count(let count):
-        Text(
-          "Choose \(count) options.", tableName: "Practice",
-          comment: "Rule above a multiple-choice question asking for an exact number of options.")
+        Text("Choose \(count) options.", tableName: "Practice")
       }
     }
     .typeStyle(.note.weight(.medium))

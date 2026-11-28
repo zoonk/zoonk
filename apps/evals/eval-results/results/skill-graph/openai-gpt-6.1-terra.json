@@ -6453,6 +6453,264 @@
           "ownLevel": "basic"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "Every supplied ethics topic is represented, and both written tasks are taught through to production. Content, expression and formal Portuguese all have outcome skills in the exact area “Prova discursiva.” The 70-point solution receives more weight than the 30-point answer. The numeric weight requirement is met for these syllabus skills but not for the three extras.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Command interpretation precedes structuring and justification; the final case solution also requires case analysis and language review. Ethics foundations precede the legal applications. The phase titles name distinct stages, but “começar a estruturar” is a vague milestone where producing a coherent outline would be verifiable.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The final writing phase is clearly undersized in hours relative to its own lesson count and the extended practice its milestone requires. By contrast, the narrow four-article impediment topic receives 24 lessons across two skills, with the first already covering consequences that the second applies. The issue is the allocation to these tasks, not the total hours alone.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The syllabus work is relevant, and timing and marking strategy stay in extraSkills. The clearest overlap is between teaching the consequences of impediment and suspicion and separately teaching communication and abstention under the same articles; the latter are central examples of those consequences.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The plan uses Brazilian Portuguese, preserves both line limits and never turns a notice sentence into an area or skill name. The main naming mismatch is “Redigir questão discursiva,” which describes the examiner's action. Some skill names also hard-code the CGU or statute number where the description could supply that context instead.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes judging ethical conflicts, distinguishing fact-finding from responsibility, framing a response to a case and checking written language. Manual drafting is a scored exam performance, not unnecessary routine work; an AI-tool skill is not needed here.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 8507,
+          "outputTokens": 868,
+          "reasoningTokens": 62
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Phase 3 budgets 3.3 hours for 46 three-minute lessons, leaving just one hour outside the lessons for practice and review. That understates the study time needed to draft and revise both written answers, especially the 60-line case solution. The three strategy skills also have null exam weights despite the stated 1–5 rule for exam goals.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "“Redigir questão discursiva” means writing the question rather than answering it, although the description specifies the right task. The CGU- and statute-specific skill names are less reusable than their underlying actions. The phase 1 milestone's “começar a estruturar” is less informative than the observable capability its skills actually teach.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Budget the final phase around actual drafting and revision sessions. Give the two impediment skills clearer boundaries: teach the grounds for impediment and suspicion first, then use cases to decide when communication and abstention are required, without reteaching the same consequences.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - The notice lists its discursive test as the subject \"Prova discursiva\", whose two topics and two written tasks are the notice's sentences describing each question (lines and points). Every skill that practices those questions, or the written Portuguese the test grades, is an outcome skill in the area \"Prova discursiva\", word for word\n      - No area and no skill name copies a task's sentence (\"uma questão envolvendo situação-problema, …, no valor de 70,00 pontos\"): a learner reads area names as the plan's subjects\n      - Every topic id of every subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-cgu-discursive-test-subject-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "CGU, Auditor Federal de Finanças e Controle - Auditoria (Cebraspe)",
+            "notes": [
+              "Format: itens de certo ou errado; P1 (conhecimentos básicos) com 40 itens, P2 (conhecimentos complementares) com 40 itens e P3 (conhecimentos específicos) com 90 itens, em 5 horas; prova discursiva de 3h30 com duas questões, uma de até 30 linhas (30 pontos) e uma situação-problema de até 60 linhas (70 pontos).",
+              "Scoring: na P1 e na P2, cada item certo vale 1,00 ponto e cada item errado desconta 1,00 ponto; na P3, cada item certo vale 2,00 pontos e cada item errado desconta 2,00 pontos; itens sem marcação valem 0,00.",
+              "Rule: a prova discursiva avalia o conteúdo, a capacidade de expressão na modalidade escrita e o uso das normas do registro formal culto da Língua Portuguesa."
+            ],
+            "subjects": [
+              {
+                "group": "Conhecimentos básicos (P1)",
+                "name": "Ética Pública e Responsabilidade Profissional",
+                "questions": null,
+                "topics": [
+                  "1 Fundamentos da ética pública",
+                  "1.1 Interesse público, dignidade, justiça e responsabilidade; relações entre deveres, consequências e virtudes profissionais; conflitos entre valores em decisões públicas",
+                  "2 Deveres profissionais",
+                  "2.2 Aplicação dos valores e deveres de conduta ética da CGU a situações de trabalho",
+                  "3 Conflitos de interesses e imparcialidade",
+                  "3.1 Identificação de interesses privados em conflito com a função pública e medidas de prevenção, consulta e encaminhamento, nos termos dos arts. 3º a 5º, 8º e 10 da Lei nº 12.813/2013",
+                  "3.2 Impedimento e suspeição no processo administrativo federal, nos termos dos arts. 18 a 21 da Lei nº 9.784/1999; comunicação e abstenção quando exigidas",
+                  "4 Relações de trabalho e atendimento",
+                  "4.1 Dignidade, diversidade e relações de poder; reconhecimento e prevenção de assédio e discriminação; respeito, escuta e não retaliação",
+                  "4.2 Distinção entre acolher uma pessoa, verificar fatos e atribuir responsabilidade",
+                  "5 Integridade como responsabilidade institucional",
+                  "5.1 Coerência entre regras e práticas; ambiente organizacional e incentivos; canais de orientação e relato; papel do exemplo, da confiança e da prestação de contas"
+                ],
+                "weight": null
+              },
+              {
+                "group": "Prova discursiva (P4)",
+                "name": "Prova discursiva",
+                "questions": 2,
+                "topics": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "uma questão discursiva, relacionada a conhecimentos complementares, a ser respondida em até 30 linhas, no valor de 30,00 pontos",
+                  "uma questão envolvendo situação-problema, relacionada a conhecimentos específicos do cargo/especialidade, a ser respondida em até 60 linhas, no valor de 70,00 pontos"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no concurso da CGU",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All five listed topic IDs have substantive teaching skills in their own subject areas. Each written task has outcome skills, with distinct Redação and Resumo areas and an explicit four-answer history outcome. Core weights distinguish the higher-value essay from the summary; the weight defect is confined to the strategy extra.",
+          "score": 9,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The phases progress from analysis to component writing to complete responses, and their titles name stages rather than duplicating topics. The clearest faulty edge is the independence-specific prerequisite for general answer planning: it forces an unrelated dependency into the imperial-diplomacy writing branch. That content gate belongs on the independence answer instead.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Syntax and imperial foreign policy are divided into teachable distinctions and cases rather than compressed into survey skills. The final phase is less credible: it devotes ten lessons to a narrow timing decision while allowing little non-lesson time to produce and review the two longest deliverables.",
+          "score": 8,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "Time allocation stays in extraSkills, where exam strategy is permitted. The integrated essay and four-answer set practice deliverables the notice actually scores, rather than merely recapping earlier lessons. Recognition of independence is taught once and linked to both relevant topics.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text uses Brazilian Portuguese and verb-first skill names. Writing descriptions preserve the different length constraints without copying the notice's scoring lines into area or skill names. The one explicit exam-goal mismatch is the null weight on the extra skill.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The map emphasizes judging whether rewrites preserve meaning, checking a summary against its source, and supporting historical claims with evidence. Manual composition is appropriate because the exam scores it directly.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 10228,
+          "outputTokens": 738,
+          "reasoningTokens": 46
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The exam-strategy extra has a null exam weight despite the stated 1–5 rule for exam goals. The prerequisite graph also makes general historical answer planning depend on evaluating the results of independence, even for a learner preparing an answer about imperial diplomacy.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Budget the final phase around actual writing time. Its 56 three-minute lessons consume 2.8 of the allocated 4.6 hours, leaving only 1.8 hours for practice and review of a full essay and a set of four developed historical answers. Shortening the ten-lesson time-allocation extra would free some of that time.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Língua Portuguesa and História do Brasil are subjects with a syllabus, and each also lists written tasks (an essay and a summary; discursive questions). Their syllabus topics are skills in the subject's own area\n      - The practice for each written task is outcome skills, and no area or skill name copies a task's line with its lines and points. The essay and the summary each get an area of their own with a short name a learner knows, in the notice's words (such as \"Redação\" or \"Resumo\"); history's discursive questions may be practiced in that area or in \"História do Brasil\"\n      - Every topic id of every subject is taught by some skill\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "pt-cacd-written-tasks-in-content-subjects-1",
+        "userInput": {
+          "examBlueprint": {
+            "name": "Concurso de Admissão à Carreira de Diplomata (CACD)",
+            "notes": [],
+            "subjects": [
+              {
+                "group": null,
+                "name": "Língua Portuguesa",
+                "questions": null,
+                "topics": [
+                  "1 Compreensão e interpretação de textos",
+                  "2 Coesão e coerência textuais",
+                  "3 Sintaxe da oração e do período"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "redação de 65 a 70 linhas, valendo 60 pontos",
+                  "resumo de um texto em até 25 linhas, valendo 20 pontos"
+                ]
+              },
+              {
+                "group": null,
+                "name": "História do Brasil",
+                "questions": null,
+                "topics": [
+                  "1 O processo de independência",
+                  "2 A política externa do Império"
+                ],
+                "weight": null,
+                "writtenTasks": [
+                  "quatro questões discursivas de até 60 linhas, valendo 25 pontos cada"
+                ]
+              }
+            ],
+            "topicFrequency": []
+          },
+          "goal": "Passar no CACD",
+          "goalKind": "exam",
+          "language": "pt"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

@@ -20039,6 +20039,64 @@
         }
       }
     },
+    "Every part of your plan, with no end date." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeden Teil deines Plans, ohne Enddatum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo lo que incluye tu plan, sin fecha de finalización."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout le contenu de ton plan, sans date de fin."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tutto quello che c’è nel tuo piano, senza una data di fine."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "期限を決めず、学習計画の内容をすべて学びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획의 모든 내용을 공부해요. 종료일은 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Każda część planu, bez daty końcowej."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo o seu plano, sem data final."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitiş tarihi olmadan planındaki her şeyi çalış."
+          }
+        }
+      }
+    },
     "Every week" : {
       "comment" : "Written practice cadence",
       "localizations" : {
@@ -25558,6 +25616,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tüm dersleri bitirmek için hedef tarihini ertele"
+          }
+        }
+      }
+    },
+    "Move your date to cover everything in your plan" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum verschieben, damit alles in deinen Plan passt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mover tu fecha para cubrir todo lo de tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décale ta date pour couvrir tout ton plan"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sposta la data per includere tutto nel tuo piano"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "計画をすべて終えられるよう日付を変更"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획을 모두 마치도록 날짜 변경"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Przesuń termin, aby plan obejmował wszystko"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mude a data para conseguir estudar tudo do seu plano"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planındaki her şeyi kapsayacak şekilde tarihini değiştir"
           }
         }
       }
@@ -34537,6 +34653,65 @@
         }
       }
     },
+    "That's enough to cover everything in your plan by %@." : {
+      "comment" : "Said under \"We suggest {time} a day\" when the learner took a subject out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\".",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das reicht, um bis %@ alles in deinem Plan zu schaffen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eso alcanza para cubrir todo lo que tienes en tu plan a más tardar en la fecha de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est suffisant pour tout faire dans ton plan d’ici %@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "È un tempo sufficiente per completare tutto il tuo piano entro %@."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "これで、%@までに学習計画の内容をすべて終えるのに十分です。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획에 있는 내용을 %@까지 모두 학습하기에 충분해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To wystarczy, aby cały materiał z planu zmieścił się do %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esse tempo é suficiente para dar conta de tudo no seu plano até %@."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu süre, planındaki her şeyi %@ tarihine kadar tamamlamaya yeter."
+          }
+        }
+      }
+    },
     "That's enough to reach your goal by %@." : {
       "comment" : "Under \"We suggest {time} a day\": that time covers the whole goal by its date. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\".",
       "localizations" : {
@@ -40099,6 +40274,64 @@
         }
       }
     },
+    "You study every topic in your plan. What doesn't fit before the exam comes after it." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du lernst alle Themen in deinem Plan. Was du bis zur Prüfung nicht schaffst, kommt danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudias todos los temas de tu plan. Lo que no alcances a estudiar antes del examen lo verás después."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu étudies tous les sujets de ton plan. Ce qui ne rentre pas avant l’examen viendra après."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Studierai tutti gli argomenti del tuo piano. Quello che non riesci a studiare prima dell’esame lo farai dopo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "学習計画にあるトピックをすべて学びます。試験前に終わらない分は、試験後に学びます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "계획의 모든 주제를 공부해요. 시험 전까지 다루지 못한 내용은 시험 후에 공부해요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uczysz się wszystkich tematów z planu. Tematy, na które nie starczy czasu przed egzaminem, przerobisz po nim."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você estuda todos os tópicos do seu plano. O que não couber antes da prova fica para depois."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planındaki tüm konuları çalışırsın. Sınavdan önce yetişmeyenler sınavdan sonraya kalır."
+          }
+        }
+      }
+    },
     "You study every topic. What doesn't fit before the exam comes after it." : {
       "comment" : "What studying after the exam does",
       "localizations" : {
@@ -44548,61 +44781,61 @@
         }
       }
     },
-    "Your time covers everything by the start of %@" : {
-      "comment" : "The learner's own time a day covers the whole goal; the argument is the month the learner named, like 'May 2027'",
+    "Your time covers everything in your plan by %@" : {
+      "comment" : "When the learner took a part of their goal out of their plan. In the month form, {date} is a month, like \"May 2027\"; otherwise a day, like \"May 5\".",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit deiner Lernzeit schaffst du alles bis Anfang %@"
+            "value" : "Mit deiner Lernzeit schaffst du bis %@ alles in deinem Plan"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tienes tiempo para estudiar todo de aquí al inicio de %@"
+            "value" : "Tu tiempo alcanza para cubrir todo lo que tienes en tu plan a más tardar en la fecha de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as le temps de tout étudier d’ici début %@"
+            "value" : "Ton temps te permet de tout faire dans ton plan d’ici %@"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con il tuo tempo di studio, puoi completare tutto entro l’inizio di %@"
+            "value" : "Con il tempo che hai impostato, riuscirai a completare tutto il tuo piano entro %@"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今の学習時間なら、%@の初めまでにすべて学べます"
+            "value" : "この学習時間なら、%@までに学習計画の内容をすべて終えられます"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "정해 둔 하루 학습 시간이면 %@ 첫날까지 모두 마칠 수 있어요"
+            "value" : "현재 학습 시간으로 계획에 있는 내용을 %@까지 모두 학습할 수 있어요"
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Przy twoim czasie nauki plan obejmuje cały materiał do początku miesiąca: %@"
+            "value" : "Przy tym czasie nauki cały materiał mieści się w planie do %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com seu tempo diário, dá para estudar tudo até o início de %@"
+            "value" : "Com esse tempo, você consegue dar conta de tudo no seu plano até %@"
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Günlük çalışma süren %@ ayının başına kadar her şeyi bitirmeye yetiyor"
+            "value" : "Planındaki her şeyi %@ tarihine kadar tamamlayacak kadar zamanın var"
           }
         }
       }

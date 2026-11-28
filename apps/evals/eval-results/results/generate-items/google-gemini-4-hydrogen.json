@@ -1399,182 +1399,6 @@
       "categoryScores": [
         {
           "categoryId": "correctness",
-          "reasoning": "All three keyed sets are uniquely correct: A and B. For items[0], the flight times are 6 s and 5 s, giving u = 11 m/s, a constant closing speed of 1 m/s, and impact speed 61 m/s for B. For items[1], total distance is 40 m, positions at 6 s and 8 s are zero, maximum distance from the origin is 18 m at 3 s, and acceleration there is −8 m/s². For items[2], the physically admissible cruising speed is 20 m/s, phase durations are 10, 15 and 5 s, midpoint time is 16.25 s, stopping distance is 50 m, and average speed is 15 m/s. No correctness cap applies.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor reflects a specific plausible mistake, and its feedback identifies and corrects that mistake. The numerical traps reproduce their proposed values: gt gives 10 instead of 5 for the initial fall, omitting initial speed gives 60 m/s at impact, using the acceleration magnitude for braking gives 100 m, and averaging zero with cruising speed gives 10 m/s. The graph traps appropriately distinguish velocity from displacement and zero velocity from zero acceleration. No cap applies.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The English wording, SI units, four independently assessable options, multiple-correct structure and fixedOrder=false fit the requested format. However, the set includes direct substitution and single-slope assertions expressly excluded by the requested JEE Advanced difficulty standard. The sled's physical-root selection is stronger, but does not erase the elementary assertions elsewhere or within that item. The cap of 7 for a set that looks out of place in the named exam applies; the explicit difficulty violations warrant 6.",
-          "score": 6,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The questions genuinely exercise one-dimensional kinematics and vary the situation and method: delayed free fall with relative motion, signed velocity–time areas, and a constrained three-phase journey. They remain entirely in English and do not repeat the same task in the same way. Nevertheless, several assertions demand only elementary substitution or graph interpretation, reducing the depth of application for the requested advanced level. Neither the recall nor repeated-task cap is triggered.",
-          "score": 8,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "itemsScored": 3,
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 1121,
-          "cacheWriteTokens": 0,
-          "inputTokens": 5016,
-          "outputTokens": 1300,
-          "reasoningTokens": 502
-        }
-      },
-      "keyFlaws": [],
-      "steps": [
-        {
-          "conclusion": "The set violates the explicit difficulty requirement that no statement be decidable through one formula or one graph reading. In items[0], the distance fallen after one second is simply g t²/2; in items[1], the acceleration assertion requires only reading the graph's slope; in items[2], the average-speed assertion is settled immediately by 450/30. Although other options require multiple steps, these elementary assertions make the set insufficiently demanding for the specified JEE Advanced standard.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "Replace the elementary assertions with coupled deductions: separation at an implicitly determined event, position comparisons requiring signed-area accumulation, or phase-dependent timing constraints. Preserve the current realistic misconception traps and independently assessable options.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-1",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
-          "reasoning": "All three items have the unique correct set consisting of the first two options. For items[0], release occurs at height 100 m with velocity 40 m/s; the peak is 180 m at t = 9 s, impact occurs at t = 15 s with speed 60 m/s, and total distance is 360 m. For items[1], integrating the graph gives overtaking at 6 s, maximum pre-overtaking separation 18 m, P's displacement 168 m, and final separation 48 m. For items[2], u = 15 m/s and a = -6 m/s² give third-second distance 1.5 m, return-trip average speed 7.5 m/s, first-four-second distance 25.5 m, and speed at 4 s of 9 m/s. No correctness cap is triggered.",
-          "score": 10,
-          "label": "Correctness",
-          "weight": 30
-        },
-        {
-          "categoryId": "misconceptionsAndFeedback",
-          "reasoning": "Every distractor has a specific, plausible error mechanism and explanatory feedback. The numerical mistakes reproduce their options: ignoring upward motion after release gives 200 m total distance; averaging P's minimum and maximum velocities gives 12 m/s; and omitting the half-factor yields the erroneous acceleration -3 m/s² and calculated speed 3 m/s. Other traps appropriately distinguish release-level symmetry from ground impact, relative velocity from separation, and displacement from distance. No misconception cap is triggered.",
-          "score": 10,
-          "label": "Misconceptions & feedback",
-          "weight": 25
-        },
-        {
-          "categoryId": "realism",
-          "reasoning": "The four-option, select-all format, SI units, independent statements, and false fixedOrder settings fit the requested exam structure. Each item combines multiple ideas rather than requiring only direct substitution or graph reading. The set is broadly exam-compatible, so the out-of-place cap is not triggered. However, its upper-end challenge is underdeveloped: the supposedly hardest item remains a conventional constant-acceleration reversal exercise rather than a substantial escalation in reasoning.",
-          "score": 8,
-          "label": "Exam and setting realism",
-          "weight": 25
-        },
-        {
-          "categoryId": "skillFit",
-          "reasoning": "The questions directly exercise the requested skill through powered ascent followed by gravity, velocity-time integration with relative motion, and reconstruction of constant-acceleration motion with direction reversal. They vary both representation and requested quantities, remain within one-dimensional kinematics, and are entirely in English. None is recall-based, and no pair tests the same thing in the same way.",
-          "score": 9,
-          "label": "Skill fit & variety",
-          "weight": 20
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 3 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "itemsScored": 3,
-      "judge": {
-        "modelId": "openai/gpt-6-astra",
-        "usage": {
-          "cacheReadTokens": 1121,
-          "cacheWriteTokens": 0,
-          "inputTokens": 5109,
-          "outputTokens": 1464,
-          "reasoningTokens": 718
-        }
-      },
-      "keyFlaws": [],
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The difficulty progression is modest for an advanced set. In particular, items[2], labeled hard, follows a familiar sequence: solve two displacement equations, find the turning point, and calculate path lengths. It is valid multistep practice, but provides limited additional challenge beyond the preceding items.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Strengthen the hardest item with an additional inference, such as an unknown observation time or a parameter-dependent reversal condition, while retaining independently assessable options and the existing misconception-specific feedback.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value.",
-        "id": "en-jee-advanced-kinematics-multi-correct-2",
-        "userInput": {
-          "count": 3,
-          "examFormat": {
-            "name": "JEE Advanced",
-            "optionCount": 4,
-            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
-            "select": "all"
-          },
-          "format": "multipleChoice",
-          "language": "en",
-          "level": "advanced",
-          "skill": {
-            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
-            "name": "Kinematics in one dimension"
-          }
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "correctness",
           "reasoning": "Independent calculations give 120 × 0.75 = 90, 160 × 0.85 = 136, and 85 × 0.85 = 72.25. All keyed answers, solution expressions, and worked calculations agree. Each question has one unambiguous numerical answer.",
           "score": 10,
           "label": "Correctness",
@@ -2772,6 +2596,196 @@
           "skill": {
             "description": "Compare and order negative numbers, such as temperatures below zero.",
             "name": "Ordering negative numbers"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "A and B are the unique correct set in all three items. The balls fly for 6 s and 5 s, giving B an initial speed of 11 m/s and a closing speed of 1 m/s. The cart travels 40 m and its signed areas cancel at 6 s and 8 s. The sled's phase times are 10, 15 and 5 s, placing it at 225 m at 16.25 s. The one factual defect is the overly restrictive averaging rule in the sled feedback.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The traps are specific and reproducible: dropping B's initial-speed term gives 60 m/s, and using the sled's initial acceleration magnitude for braking gives 100 m. The cart feedback distinguishes velocity from graph slope and accumulated area. The sled's final feedback identifies the right mistake but risks teaching a false restriction instead of explaining how the plateau raises the time average.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four independent SI-unit options and shuffled presentation fit the format. The physical-root check for the sled is exam-like, but each item includes an option that can be eliminated by a textbook substitution or a single graph inspection, contrary to the specified exam level.",
+          "score": 7,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set varies the actual work: delayed-release relative motion, signed versus unsigned graph areas, and reconstruction of a three-phase trajectory. All are applications of one-dimensional kinematics in English. The weaker options test the right skill but not the required combination of ideas.",
+          "score": 8,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 3917,
+          "inputTokens": 5191,
+          "outputTokens": 980,
+          "reasoningTokens": 167
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "items[2]",
+          "keyedAnswer": "A and B; D is false. D's explanation says the half-peak average holds only for a single interval of constant acceleration.",
+          "kind": "factualError",
+          "workedAnswer": "A triangular speed–time graph with separate acceleration and braking phases has area v₀T/2, hence average speed v₀/2 despite the change of acceleration. Here the cruising plateau raises the average above v₀/2: 450/30 = 15 m/s. D is false as keyed; the defect is the explanation's word 'only'."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "The set does not consistently meet the required JEE Advanced difficulty. The ball's first-second displacement takes one substitution, the cart's nonzero acceleration at 3 s is visible from the slope, and the sled's average speed follows immediately from the two totals in the stem. These options bypass the multi-step reasoning that the stronger options require.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The sled's final explanation overstates the condition for an average speed of half the peak speed. The key is right, but a run with separate uniform acceleration and braking phases also averages half the peak speed if there is no cruising interval.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the simpler options depend on an intermediate result. For example, ask what fraction of the track the sled covers while moving above half its cruising speed. That requires locating the threshold in both ramps and accounting for the cruise, rather than merely dividing the stated length by the stated time.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-1",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
+          }
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "correctness",
+          "reasoning": "A and B alone are correct in each item. The probe peaks at 180 m at 9 s and lands at 15 s with speed 60 m/s. The carts meet again at 6 s; their largest pre-overtake gap is 18 m, and their final gap is 48 m. The third particle follows x = 15t − 3t², giving 1.5 m in the third second and a round-trip average speed of 7.5 m/s. The single factual overstatement in the cart feedback triggers the one-question cap.",
+          "score": 7,
+          "label": "Correctness",
+          "weight": 30
+        },
+        {
+          "categoryId": "misconceptionsAndFeedback",
+          "reasoning": "The distractors can be reproduced from the named mistakes. For example, ignoring the probe's release velocity gives 100 m up plus 100 m down, and omitting the half in the third item's position equation gives a mistaken acceleration of −3 m/s² and hence a predicted speed of 3 m/s. The cart feedback correctly diagnoses the unweighted extrema average, but should explain that the 24 m/s plateau raises the time average above 12 m/s rather than asserting an exclusive rule.",
+          "score": 8,
+          "label": "Misconceptions & feedback",
+          "weight": 25
+        },
+        {
+          "categoryId": "realism",
+          "reasoning": "The four-option, independently judgeable statements, SI units and graph-based relative-motion reasoning fit the exam format. The main limitation is the probe item's textbook-like sequence of endpoint calculations; the cart and reversal items demand more judgment.",
+          "score": 8,
+          "label": "Exam and setting realism",
+          "weight": 25
+        },
+        {
+          "categoryId": "skillFit",
+          "reasoning": "The set tests three distinct uses of one-dimensional kinematics: transferring initial conditions across release, integrating a relative velocity graph, and inferring a trajectory from repeated passage through one coordinate. All require application rather than recall, are in English, and remain within the requested skill.",
+          "score": 10,
+          "label": "Skill fit & variety",
+          "weight": 20
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 3 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "itemsScored": 3,
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 1271,
+          "cacheWriteTokens": 4010,
+          "inputTokens": 5284,
+          "outputTokens": 875,
+          "reasoningTokens": 47
+        }
+      },
+      "keyFlaws": [
+        {
+          "itemLocator": "items[1]",
+          "keyedAnswer": "C is false; its reason says averaging the minimum and maximum velocities “only works for a single constant-acceleration interval.”",
+          "kind": "factualError",
+          "workedAnswer": "C is indeed false: P's displacement is 168 m, so its average velocity is 14 m/s. But a piecewise linear velocity that rises from 0 to 24 m/s and then falls linearly back to 0 has a triangular graph with average 12 m/s, despite the change in acceleration. The extrema average is not generally justified, rather than impossible outside a single constant-acceleration interval."
+        }
+      ],
+      "steps": [
+        {
+          "conclusion": "All three answer keys are correct. The substantive scientific error is in the cart question's feedback: averaging the minimum and maximum velocities can give the time average even for piecewise motion. It does not work for this particular graph.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The probe question is at the easy end of the requested level. It does require carrying both height and velocity across release, but after that the learner can settle all four options with a routine ascent-and-fall calculation.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "For a more demanding probe option, ask the learner to compare the probe's descent time through a specified height interval with its ascent time through that interval, choosing an interval that spans the release height. That would test when ascent–descent symmetry applies rather than just asking for another endpoint value.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "JEE Advanced-style physics items in English on kinematics where one or more options are correct. Each item has 4 options, at least one correct and at least one wrong, every correct option is right on its own (never \"both A and C\"), wrong options come from real mistakes (sign of acceleration, mixing displacement and distance), and fixedOrder is false. Difficulty matches JEE Advanced's own one-or-more-correct questions, not a textbook's: each item needs several steps that combine at least two ideas (a graph read and then integrated, a relative motion set up and then solved), so no statement follows from one formula or one reading of a given value. No question says how many options to pick or that several are right (\"Select all that apply\"): the app shows that line.",
+        "id": "en-jee-advanced-kinematics-multi-correct-2",
+        "userInput": {
+          "count": 3,
+          "examFormat": {
+            "name": "JEE Advanced",
+            "optionCount": 4,
+            "style": "Physics, chemistry and mathematics problems for engineering admission in India: multiple-choice questions with four options where one or more may be correct (full marks only when every correct option is chosen and no wrong one), and numerical-answer questions entered as a number; concise, rigorous wording with SI units.",
+            "select": "all"
+          },
+          "format": "multipleChoice",
+          "language": "en",
+          "level": "advanced",
+          "skill": {
+            "description": "Use the equations of motion for constant acceleration, including motion under gravity, and read velocity-time graphs.",
+            "name": "Kinematics in one dimension"
           }
         }
       }

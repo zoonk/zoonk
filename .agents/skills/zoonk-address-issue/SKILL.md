@@ -1,10 +1,10 @@
 ---
 name: zoonk-address-issue
-description: Verify and address a zoonk/zoonk GitHub issue together with the issues related to it. Find them through its links and issue searches, make sure no other agent is already on them, mark them In Progress on the project board, close duplicates, link an open PR that covers them, question whether each still holds on the latest main and whether a better design would make it impossible, then fix a bug, research the best way to build an enhancement, or build a new feature after debating its design when it's big, asking the right person for anything missing. Use whenever you're asked to address, fix, work on, look into, triage or verify a GitHub issue in this repository, such as when given its link or number.
+description: Use when asked to address, fix, work on, look into, triage or verify a zoonk/zoonk GitHub issue, such as when given its link or number, together with the issues related to it.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.6.0"
+  version: "2.0.0"
 ---
 
 # Addressing an issue
@@ -62,15 +62,7 @@ Related issues are often filed minutes apart, and search can take a few minutes 
 
 An issue is related when it shares this one's cause, or when its fix would change the same code and behavior, so separate PRs would conflict or redo each other's work: for example, two ways a day that waits on lessons drifts from the plan. Address those here, in the same task and PR. An issue that's only in the same area, such as the same screen or feature, and needs a fix of its own stays separate: link it if it isn't linked yet ([zoonk-github-issues](../zoonk-github-issues/references/linking.md)).
 
-It's a duplicate when an open issue describes the same problem, even in other words or from another screen. Keep the one with the discussion or a linked PR, otherwise the older one, and close the other as its duplicate. GitHub records the relationship and shows it on both:
-
-```sh
-gh issue close <duplicate> --repo zoonk/zoonk --duplicate-of <original>
-```
-
-Check `duplicateOf` on the closed one with the query above. If it had something the original lacks, such as another device or clearer steps, add that to the original as a comment. Then carry on with the original.
-
-When only a closed issue matches: if it was fixed and the problem is back, this is a regression, so go on here and mention the old issue. If it was closed as not planned, read why; close this one as its duplicate unless it brings something new.
+When an open issue describes the same problem, or only a closed issue matches, follow [duplicates](references/duplicates.md) before you go on.
 
 ## 3. Make sure nobody else is on them
 
@@ -80,22 +72,7 @@ When only a closed issue matches: if it was fixed and the problem is back, this 
 gh pr list --repo zoonk/zoonk --state open --search "<words>"
 ```
 
-If an open PR addresses this issue, don't start another. Link it if it isn't linked, so merging it closes the issue, then check `closedByPullRequestsReferences` again:
-
-```sh
-gh api graphql -f query='
-  mutation($issue: ID!, $pr: ID!) {
-    addCloseIssueReferences(input: {issueId: $issue, pullRequestIds: [$pr]}) { issue { url } }
-  }' -f issue="$(gh issue view <n> --repo zoonk/zoonk --json id --jq .id)" \
-  -f pr="$(gh pr view <pr> --repo zoonk/zoonk --json id --jq .id)"
-```
-
-If the PR covers only part of the issue, comment on the issue with its link instead, so merging it leaves the issue open. Then hand back with the PR, and say if it looks abandoned (no recent commits, failing checks nobody fixed).
-
-The board shows who else is working: an issue is In Progress while an agent works on it and In Review once its PR is open. It can lag, since an agent that started a moment ago, or whose `gh` can't set the status yet, hasn't marked its issue. So whatever the board says, look through the agents running on this machine with your harness's tools for one on this issue or a related one, by its number, title or branch. In T3 Code, search and read its threads with its thread tools; in Claude Code, list the other sessions with its agent tools. Your own earlier work on this task doesn't count. Don't start work or open a PR that overlaps another agent's:
-
-- **An agent on this machine has one of them:** whichever of you began working on these issues first keeps them all, whatever the board says, so compare when each of you was asked to take its issue, not when its thread or session was created. If you began first, carry on, and message that agent so it stops and hands you what it found. Otherwise don't start your own work: when that agent is on a related issue rather than this one, message it and ask it to address this one too, since they're related, naming both issues, what connects them and what you've found. Then hand back saying which agent has it.
-- **No agent here has them, but this issue is In Progress, or a related one is In Progress, In Review or addressed by an open PR:** someone elsewhere is likely on it, or an agent your harness can't see. Tell the user that the related issue is already In Progress or In Review, that someone else is likely on it, and that the two should be handled together. Then hand back.
+The board shows who else is working: an issue is In Progress while an agent works on it and In Review once its PR is open. It can lag, since an agent that started a moment ago, or whose `gh` can't set the status yet, hasn't marked its issue. So whatever the board says, look through the agents running on this machine with your harness's tools for one on this issue or a related one, by its number, title or branch. In T3 Code, search and read its threads with its thread tools; in Claude Code, list the other sessions with its agent tools. Your own earlier work on this task doesn't count. Don't start work or open a PR that overlaps another agent's. When an open PR addresses one of them, an agent here has one, or the board shows someone elsewhere likely on one, follow [someone else is on it](references/someone-else.md).
 
 When another agent asks you to take a related issue, check it the way you check one you found: if it's related, add it to your work and mark it In Progress; if it isn't, say why in your handoff.
 
@@ -125,7 +102,7 @@ Confirm each problem before judging it:
 - **A bug:** reproduce it at the cheapest layer that shows it: trace the code path, write a failing test, or use the running app. When it depends on what's stored in production, such as one learner's goal or sessions, read it with [zoonk-staff-data](../zoonk-staff-data/SKILL.md).
 - **Anything else:** see how Zoonk handles it today, in the code or the running app, on each platform it touches.
 
-If it doesn't reproduce, find out why. A change since it was filed may have fixed it after all ([question them](#5-question-them)), or the issue may lack what you need ([when information is missing](#when-information-is-missing)).
+If it doesn't reproduce, find out why. A change since it was filed may have fixed it after all ([question them](#5-question-them)), or the issue may lack what you need ([when information is missing](references/missing-information.md)).
 
 Then judge whether it's worth addressing, the way [zoonk-pull-request](../zoonk-pull-request/SKILL.md#3-judge-every-comment) judges a review comment: can it really happen, who reaches it and with what, and what does it cost when it does? Double taps, retries, concurrent requests, forged fields and partial failures are ordinary traffic here, not rare. A problem nothing reaches, or a rare one with a harmless result, isn't worth a fix: comment with what you checked and why, then close it as not planned (`gh issue close <n> --repo zoonk/zoonk --reason "not planned"`).
 
@@ -150,13 +127,6 @@ When the design holds up ([question them](#5-question-them)), fix narrowly. When
 - **New feature** (something Zoonk doesn't do at all, such as a new flow, screen, kind of content or platform): find the need behind it and who has it, and what Zoonk does today; run a [design debate](../../guides/design-debate.md) when it's a big new flow or a structural change, then build it like an enhancement. The PR lists the calls it made under **Judgment calls**.
 
 Before you mark the PR ready, read the issues again: a comment added while you worked can widen one, and a related issue filed in the meantime belongs in this PR when it shares the fix. A bug or enhancement ends like any task ([root instructions](../../../AGENTS.md#finishing-a-task)), with a `Fixes #<n>` line in the PR body for each issue it fixes, so GitHub links them and closes each one when it merges. An issue it fixes only in part gets a mention without `Fixes`.
-
-## When information is missing
-
-When you can't verify or address the issue without something only people know, such as what they saw, on which device or what they meant, look for it yourself first: the code, git history, the running app, linked issues and PRs. Then ask for only what still blocks you, all at once.
-
-- **From the team** (`authorAssociation` is `OWNER`, `MEMBER` or `COLLABORATOR`, or the author is an app the team runs): ask the user who asked you to address it, in your conversation, not on GitHub. Issues agents file for the team come from team accounts, so they count.
-- **From anyone else:** comment on the issue asking for what's missing, following [zoonk-post-on-behalf](../zoonk-post-on-behalf/SKILL.md). They may not be technical, so ask as [zoonk-bug-report](../zoonk-bug-report/SKILL.md#talk-with-them) does: plain words, two or three questions, examples. Leave the issue open and hand back with the comment's link; the work goes on once they answer.
 
 ## Hand back
 

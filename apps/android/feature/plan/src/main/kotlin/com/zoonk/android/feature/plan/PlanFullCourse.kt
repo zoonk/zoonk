@@ -140,7 +140,14 @@ internal fun ColumnScope.StudyEverythingBody(
     val exam = course?.isExam ?: page.isExam
     val title = stringResource(if (exam) R.string.plan_study_everything_after_exam else R.string.plan_study_everything)
     val description =
-        stringResource(if (exam) R.string.plan_study_everything_exam_description else R.string.plan_study_everything_goal_description)
+        stringResource(
+            when {
+                exam && page.subjectsTakenOut -> R.string.plan_study_everything_exam_in_plan_description
+                exam -> R.string.plan_study_everything_exam_description
+                page.subjectsTakenOut -> R.string.plan_study_everything_goal_in_plan_description
+                else -> R.string.plan_study_everything_goal_description
+            },
+        )
 
     if (applied != null) {
         PlanChangeApplied(

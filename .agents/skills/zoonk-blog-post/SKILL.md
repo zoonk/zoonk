@@ -1,10 +1,10 @@
 ---
 name: zoonk-blog-post
-description: Write a Zoonk blog post, such as a release or launch post, that makes readers want to try what it shows, in Zoonk's voice and with real screenshots, clips and a cover from the app. Use when asked to write, rewrite or review a post for the blog (apps/blog).
+description: Use when asked to write, rewrite or review a post for the Zoonk blog (apps/blog), such as a release or launch post.
 license: MIT
 metadata:
   author: zoonk
-  version: "1.1.0"
+  version: "1.2.0"
 ---
 
 # Blog posts

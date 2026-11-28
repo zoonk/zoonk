@@ -1,5 +1,5 @@
 import { listSitemapCourses } from "@/data/sitemaps/courses";
-import { getSitemapPageIds } from "@/data/sitemaps/sitemap-pages";
+import { getSitemapPageIds } from "@/data/sitemaps/sitemap-page-ids";
 import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { type MetadataRoute } from "next";
 

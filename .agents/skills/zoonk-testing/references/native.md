@@ -1,6 +1,8 @@
-# What is worth a native test
+# Native tests
 
-The lists behind [the native bar](../SKILL.md#the-native-bar) for the Apple and Android apps.
+## The native bar
+
+A screen test in the Apple or Android app breaks whenever the screen's copy or layout changes, while the bugs it would pin turn up in reviews, parity audits and walks on a device. A native test earns its place only by guarding a risk that would hurt a learner and that a check on a device can't see, or can't practically see. Weigh impact, likelihood and cheaper coverage as for E2E, with failure paths counting as much as happy ones. In doubt, cut a screen test and keep a data-layer or race test. A test written to reproduce a bug ships only when it clears this bar. The lists below say what is and isn't worth a native test in the Apple and Android apps.
 
 ## Worth a test
 

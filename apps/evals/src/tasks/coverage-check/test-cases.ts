@@ -1,5 +1,6 @@
 import { type TestCase } from "@/lib/types";
 import { type CoverageCheckParams } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { CGU_WRITTEN_TASKS } from "../skill-graph/cgu-blueprint";
 import { type CoverageCheckExpected } from "./scorer";
 
 type CoverageSkill = CoverageCheckParams["skills"][number];
@@ -516,6 +517,82 @@ export const TEST_CASES: TestCase<CoverageCheckExpected, CoverageCheckParams>[] 
         skill("discount", "İskontolu fiyatı hesaplamak"),
         skill("simple-interest", "Basit faizi hesaplamak"),
         skill("installments", "Taksitli ödemenin toplam maliyetini bulmak"),
+      ],
+    },
+  },
+  {
+    expected: {
+      gaps: [],
+      placements: [
+        { area: "Prova discursiva", key: "resposta-curta", topics: [CGU_WRITTEN_TASKS[0] ?? ""] },
+        {
+          area: "Prova discursiva",
+          key: "situacao-problema",
+          topics: [CGU_WRITTEN_TASKS[1] ?? ""],
+        },
+      ],
+    },
+    id: "pt-written-task-practice-in-its-subject",
+    userInput: {
+      courses: [
+        { key: "etica", title: "Ética no Serviço Público" },
+        { key: "redacao", title: "Redação Discursiva" },
+      ],
+      examOutline: {
+        name: "Concurso da CGU, Auditor Federal de Finanças e Controle",
+        notes: [],
+        subjects: [
+          {
+            group: "Conhecimentos básicos (P1)",
+            name: "Ética Pública e Responsabilidade Profissional",
+            questions: null,
+            topics: ["1 Fundamentos da ética pública", "2 Conflitos de interesses"],
+            weight: null,
+          },
+          {
+            group: "Prova discursiva (P4)",
+            name: "Prova discursiva",
+            questions: 2,
+            topics: CGU_WRITTEN_TASKS,
+            weight: null,
+            writtenTasks: CGU_WRITTEN_TASKS,
+          },
+        ],
+        topicFrequency: [],
+      },
+      goal: "Passar no concurso da CGU",
+      goalKind: "exam",
+      language: "pt",
+      references: [],
+      skills: [
+        placed({
+          area: "Ética Pública e Responsabilidade Profissional",
+          examWeight: 3,
+          key: "fundamentos",
+          name: "Interpretar fundamentos da ética pública",
+          topics: ["1 Fundamentos da ética pública"],
+        }),
+        placed({
+          area: "Ética Pública e Responsabilidade Profissional",
+          examWeight: 3,
+          key: "conflitos",
+          name: "Identificar conflitos de interesses",
+          topics: ["2 Conflitos de interesses"],
+        }),
+        placed({
+          area: "Redação discursiva",
+          examWeight: 4,
+          key: "resposta-curta",
+          name: "Responder questão discursiva em 30 linhas",
+          topics: [],
+        }),
+        placed({
+          area: "Redação discursiva",
+          examWeight: 5,
+          key: "situacao-problema",
+          name: "Resolver situação-problema em 60 linhas",
+          topics: [],
+        }),
       ],
     },
   },

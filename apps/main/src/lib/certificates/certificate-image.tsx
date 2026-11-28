@@ -1,6 +1,5 @@
 import "server-only";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { getOpenGraphLogo } from "@/lib/metadata/open-graph-brand";
 import { type CertificateFacts } from "@zoonk/core/certificates/contract";
 import { type CertificateImageVariant } from "@zoonk/utils/certificate-links";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
@@ -12,11 +11,6 @@ import { CertificateLink, CertificatePost } from "./certificate-share";
 import { CertificateSheet } from "./certificate-sheet";
 import { CERTIFICATE_SIZES, SHEET_SCALES, TEXT } from "./certificate-spec";
 import { type CertificateView, getCertificateView } from "./certificate-view";
-
-const LOGO_PATH = join(process.cwd(), "src/app/icon.svg");
-
-const logoSvg = await readFile(LOGO_PATH);
-const logoSrc = `data:image/svg+xml;base64,${logoSvg.toString("base64")}`;
 
 type Drawing = { locale: string; logo: string; view: CertificateView };
 
@@ -60,7 +54,7 @@ export async function renderCertificateImage({
 
   const [view, fonts] = await Promise.all([getCertificateView(facts), getCertificateFonts(locale)]);
 
-  const content = await DRAWINGS[variant]({ locale, logo: logoSrc, view });
+  const content = await DRAWINGS[variant]({ locale, logo: getOpenGraphLogo("light"), view });
 
   return new ImageResponse(
     <div
