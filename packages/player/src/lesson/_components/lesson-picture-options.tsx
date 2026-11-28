@@ -71,10 +71,11 @@ function PictureOptionContent({
         )}
 
         {!image && !pending && (
+          // Its room above and below keeps the words clear of the corner key and pick mark.
           <p
             className={cn(
               OPTION_DESCRIPTION_CLASS,
-              "bg-muted/50 grid place-items-center p-2 text-center text-sm leading-snug wrap-anywhere",
+              "bg-muted/50 grid place-items-center px-2 py-8 text-center text-sm leading-snug wrap-anywhere",
             )}
             style={OPTION_DESCRIPTION_STYLE}
           >

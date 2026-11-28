@@ -171,7 +171,7 @@ class MockRunnerScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun expired() = capture("mock-expired", expiredMock())
 
-    /** Where a wrong statement cancels a right one, the keys say ✓, ✗ and –. */
+    /** Where a wrong statement cancels a right one, a statement can be left blank. */
     @Test
     fun netScoredStatements() =
         capture(

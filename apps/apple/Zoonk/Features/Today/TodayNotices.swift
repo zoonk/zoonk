@@ -195,7 +195,7 @@ struct TodayExamChoiceSection: View {
 
         Group {
           if choice.take > 1 {
-            ExamOptionToggles(options: choice.options, take: choice.take, picked: $draft)
+            ExamOptionChecks(options: choice.options, take: choice.take, picked: $draft)
 
             Button {
               pick(draft, in: choice.group)

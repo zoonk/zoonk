@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectPoints } from "../../library/exams/subject-points";
 import { listPlanShares, listSubjectShares } from "../../library/exams/subject-shares";
@@ -260,6 +261,61 @@ describe("a qualifying test", () => {
   it("keeps the plan's counted shares as the result's when no test is qualifying", () => {
     const structure = withFormula([term(["P1", "P2", "P3"], 0.5), term(["P4"], 0.5)]);
     expect(listPlanShares(structure)).toStrictEqual(listSubjectShares(structure));
+  });
+});
+
+describe("a qualifying phase that retests the counted subjects", () => {
+  const worldHistory = CACD_SHARED.length;
+  const written = 0.125 * (1 - 0.0625);
+
+  it("counts the written tests for the whole result and the first phase's own subject for none", () => {
+    const shares = listSubjectShares(cacdStructure());
+
+    expect(shares[worldHistory]).toBe(0);
+    expect(shares.toSpliced(worldHistory, 1)).toStrictEqual(Array.from({ length: 9 }, () => 0.125));
+  });
+
+  it("weighs its own subject by its place among the phase's areas and the minimum it helps reach", () => {
+    const shares = listPlanShares(cacdStructure());
+
+    expect(shares[worldHistory]).toBeCloseTo(0.5 * (30 / 240));
+
+    for (const share of shares.toSpliced(worldHistory, 1)) {
+      expect(share).toBeCloseTo(written);
+    }
+  });
+
+  it("keeps its own subject's weight when the written phase's points are known too", () => {
+    expect(listPlanShares(cacdStructure({ secondMaxPoints: 800 }))).toStrictEqual(
+      listPlanShares(cacdStructure()),
+    );
+  });
+
+  it("weighs its own subject by its stated items", () => {
+    const shares = listPlanShares(cacdStructure({ worldHistoryItems: 24 }));
+
+    expect(shares[worldHistory]).toBeCloseTo(0.5 * (24 / 240));
+    expect(shares[0]).toBeCloseTo(0.125 * (1 - 0.05));
+  });
+
+  it("weighs the written tests by their points when the notice gives no final formula", () => {
+    const shares = listPlanShares(cacdStructure({ finalShares: false, secondMaxPoints: 800 }));
+
+    expect(shares[worldHistory]).toBeCloseTo(0.0625);
+    expect(shares[0]).toBeCloseTo(written);
+  });
+
+  it("keeps the shared subjects' questions in the first phase when the written phase counts its tests", () => {
+    expect(
+      listPlanShares(cacdStructure({ secondMaxPoints: 800, secondQuestions: 8 })),
+    ).toStrictEqual(listPlanShares(cacdStructure()));
+  });
+
+  it("states no written weight when neither a formula nor the written points are known", () => {
+    const shares = listPlanShares(cacdStructure({ finalShares: false }));
+
+    expect(shares[worldHistory]).toBeCloseTo(0.0625);
+    expect(shares.toSpliced(worldHistory, 1)).toStrictEqual(Array.from({ length: 9 }, () => null));
   });
 });
 

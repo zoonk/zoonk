@@ -124,6 +124,7 @@ export function blueprintExtraction(
         group: null,
         matrix: [],
         name: "Linguagens",
+        otherGroups: [],
         partOf: null,
         passages: [
           { document: 1, passage: "LINGUAGENS: 1 Língua Portuguesa. 2 Literatura." },
@@ -140,6 +141,7 @@ export function blueprintExtraction(
         group: null,
         matrix: [],
         name: "Matemática",
+        otherGroups: [],
         partOf: null,
         passages: [{ document: 2, passage: "Cada prova objetiva terá 45 questões." }],
         questions: 45,

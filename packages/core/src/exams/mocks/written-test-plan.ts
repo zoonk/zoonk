@@ -1,4 +1,5 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { getObjectiveSections } from "./mock-day-sections";
 import { type MockPlan, type MockSectionPlan } from "./mock-plan";
 import {
   type MockEssayCandidate,
@@ -6,7 +7,6 @@ import {
   listMockWrittenRequests,
   withWrittenParts,
 } from "./written-parts";
-import { isObjectiveSection } from "./written-subject";
 
 export function planWrittenTest({
   day,
@@ -69,10 +69,8 @@ export function onlyObjectiveStructure(structure: ExamStructure | null): ExamStr
   return {
     ...structure,
     formats: structure.formats.filter((format) => format.kind !== "essay"),
-    mock: {
-      ...structure.mock,
-      sections: structure.mock.sections.filter((section) => isObjectiveSection(section)),
-    },
+    // Counted against the whole notice, since its total can include the papers this leaves out.
+    mock: { ...structure.mock, sections: getObjectiveSections(structure) },
   };
 }
 

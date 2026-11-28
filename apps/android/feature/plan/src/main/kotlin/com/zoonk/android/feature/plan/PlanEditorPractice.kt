@@ -33,6 +33,7 @@ internal fun PlanActivities(
 ) {
     if (page.goal.kind != LearnerSummaryGoal.Kind.LANGUAGE) return
     val asked = edits.asked(PlanPart.Activities)
+    val pending = edits.isPending(PlanPart.Activities)
     val skipped =
         page.plan.steering.skippedActivities
             .toSet()
@@ -50,6 +51,7 @@ internal fun PlanActivities(
                         val operation = if (isOn) PlanOp.SkipActivities(activities) else PlanOp.RestoreActivities(activities)
                         edits.change(PlanPart.Activities, listOf(operation), null)
                     },
+                    enabled = !pending,
                 )
             }
         }

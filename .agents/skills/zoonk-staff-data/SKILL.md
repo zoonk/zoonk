@@ -61,6 +61,14 @@ When shared Library content is wrong (a lesson, screen, question, word, sentence
 - **A lesson** (its plan, screens, words, sentences or map ideas): [fix a lesson](references/fix-a-lesson.md).
 - **Any other model**, and a single screen's words or answer key: [fix operations](references/operations.md).
 
+### Audit shared clips
+
+Use `pnpm zoonk staff audit-clips <words|sentences> --limit 10 --voiced-before <release time in ISO format>` to sample older clips for extra speech or sounds. The default page is 24 clips and the maximum is 96. Rerunning the audit reuses saved verdicts for the same recordings. The audit skips clips with an audio fix awaiting review or application and clips that still match the recording in their latest rejected revoice fix.
+
+When `unchecked` is greater than zero, inspect `uncheckedEntries` for each clip's ID, model, and reason. Resolve the failure or wait for the other audit to finish, then retry from the same starting cursor before using `next`. Report the unchecked IDs if they still fail. The CLI prints the page JSON and exits 1 when every attempted clip is unchecked. Continue with `--after <next>` and the same cutoff until `next` is null.
+
+Collect the `fixes` entries into `{ "reason": "…", "fixes": [...] }` files of at most 250 entries. Check and propose each batch with the [usual content-fix commands](references/propose-a-fix.md). Flagged clips in languages without a supported voice appear in `entries` for staff review.
+
 ## Local development
 
 `--api <url>` or `ZOONK_API_URL` points the CLI at another API, such as your checkout's local API URL from `pnpm dev`. Each API keeps its own login. Log in there as a seeded admin such as `owner@zoonk.test`, with the code from the local mailbox ([development guide](../../guides/local-app.md#sign-in)).
