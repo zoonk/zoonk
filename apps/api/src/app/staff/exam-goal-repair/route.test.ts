@@ -50,7 +50,7 @@ describe("staff exam goal repair", () => {
     await expect(applied.json()).resolves.toMatchObject({ after: { contentCountry: "CA" } });
   });
 
-  it("refuses a learner's login and an unknown country", async () => {
+  it("refuses a learner's login, an unknown country and two answers at once", async () => {
     const learner = await userFixture();
     const goal = await goalFixture({ kind: "exam", userId: learner.id });
     const { accessToken } = await cliTokenFixture({ user: learner });
@@ -64,5 +64,13 @@ describe("staff exam goal repair", () => {
 
     sendStaffAuthorization(`Bearer ${staffToken}`);
     await expect(call({ country: "XX", goalId: goal.id })).resolves.toMatchObject({ status: 400 });
+
+    await expect(
+      call({
+        choice: { group: "Discipline", subjects: ["Civil"] },
+        country: "CA",
+        goalId: goal.id,
+      }),
+    ).resolves.toMatchObject({ status: 400 });
   });
 });

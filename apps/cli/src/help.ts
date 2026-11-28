@@ -27,10 +27,10 @@ Written exam preparation repair
                                            or reopens unsupported writing claims.
 
 Exam goal repair
-  staff repair-exam-goal <goalId> [--country <code>] [--choice "<group>=<option>"] [--apply]
-                                           Preview saving the exam country or option that the
-                                           learner's own words state, as their answer would.
-                                           --choice repeats. --apply saves it.
+  staff repair-exam-goal <goalId> (--country <code> | --choice "<group>=<option>") [--apply]
+                                           Preview filling the exam country or option a goal is
+                                           missing, from the learner's own words, as their answer
+                                           would. --apply saves it; a learner's answer stays.
 
 Shared clip audit
   staff audit-clips <words|sentences> [--after <cursor>] [--limit <n>] [--voiced-before <ISO date>]

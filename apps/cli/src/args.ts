@@ -26,7 +26,7 @@ type Options = {
   apply?: boolean;
   batch?: string;
   check?: boolean;
-  choice?: string[];
+  choice?: string;
   country?: string;
   fields?: string;
   limit?: string;
@@ -260,7 +260,7 @@ function parseCommandLine(argv: string[]) {
         apply: { type: "boolean" },
         batch: { type: "string" },
         check: { type: "boolean" },
-        choice: { multiple: true, type: "string" },
+        choice: { type: "string" },
         country: { type: "string" },
         fields: { type: "string" },
         help: { short: "h", type: "boolean" },

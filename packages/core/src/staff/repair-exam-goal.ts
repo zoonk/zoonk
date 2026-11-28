@@ -1,131 +1,146 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
 import { type Goal, prisma } from "@zoonk/db";
-import { isCountryCode } from "@zoonk/utils/countries";
 import { isJsonObject } from "@zoonk/utils/json";
 import { logInfo } from "@zoonk/utils/logger";
 import { findOfferedChoices } from "../exams/choices/choose-exam-option";
 import { type ExamChoice } from "../exams/choices/exam-choices";
 import { loadExamPicks } from "../exams/choices/load-exam-choices";
-import { isCountryGoal } from "../goals/_utils/goal-content-country";
-import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
-import { saveGoalAnswer } from "../view-models/onboarding/answer-onboarding-question";
+import {
+  type GoalAnswerInput,
+  isInvalidGoalAnswer,
+} from "../view-models/onboarding/_utils/onboarding-answer-details";
+import { saveAnswerInputs } from "../view-models/onboarding/_utils/save-onboarding-answer";
+import { settleGoalAnswer } from "../view-models/onboarding/answer-onboarding-question";
+import { getAnsweredQuestions } from "../view-models/onboarding/onboarding-steps";
 
-type Answers = { choices?: ExamChoice[]; country?: string };
+type Answer = { choice: ExamChoice } | { country: string };
 
 type GoalAnswers = { contentCountry: string | null; examChoices: readonly ExamChoice[] };
 
-export type ExamGoalRepairResult =
-  | { status: "invalid" | "notFound" }
-  | { after: GoalAnswers; before: GoalAnswers; status: "applied" | "failed" | "preview" };
+type Refusal = { status: "conflict" | "invalid" | "notFound" | "unchanged" };
 
-async function findExamGoal(goalId: string): Promise<Goal | null> {
-  return prisma.goal.findFirst({ where: { id: goalId, kind: "exam", status: "active" } });
+export type ExamGoalRepairResult =
+  | { status: "conflict" | "invalid" | "notFound" }
+  | { after: GoalAnswers; before: GoalAnswers; status: "applied" | "preview" | "unchanged" };
+
+type Planned = Refusal | { after: GoalAnswers; input: GoalAnswerInput };
+
+function planCountry({
+  before,
+  country,
+  goal,
+}: {
+  before: GoalAnswers;
+  country: string;
+  goal: Goal;
+}): Planned {
+  const input = { country, question: "contentCountry" } as const;
+
+  if (goal.contentCountry === country) {
+    return { status: "unchanged" };
+  }
+
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  if (goal.contentCountry !== null || getAnsweredQuestions(details).includes("contentCountry")) {
+    return { status: "conflict" };
+  }
+
+  return isInvalidGoalAnswer({ current: goal, input })
+    ? { status: "invalid" }
+    : { after: { ...before, contentCountry: country }, input };
 }
 
-async function readAnswers(goal: Goal): Promise<GoalAnswers> {
-  const picks = await loadExamPicks(goal.id);
+async function planChoice({
+  before,
+  choice,
+  goal,
+}: {
+  before: GoalAnswers;
+  choice: ExamChoice;
+  goal: Goal;
+}): Promise<Planned> {
+  const [offered] = (await findOfferedChoices({ choices: [choice], goal })) ?? [];
+
+  if (!offered) {
+    return { status: "invalid" };
+  }
+
+  const picked = before.examChoices.find(({ group }) => group === offered.group);
+
+  if (picked) {
+    return isDeepStrictEqual(picked.subjects, offered.subjects)
+      ? { status: "unchanged" }
+      : { status: "conflict" };
+  }
+
+  return {
+    after: { ...before, examChoices: [...before.examChoices, offered] },
+    input: { choices: [offered], question: "examChoice", timeZone: goal.timezone ?? undefined },
+  };
+}
+
+async function readAnswers(goalId: string): Promise<GoalAnswers> {
+  const [goal, picks] = await Promise.all([
+    prisma.goal.findUniqueOrThrow({ select: { contentCountry: true }, where: { id: goalId } }),
+    loadExamPicks(goalId),
+  ]);
+
   return { contentCountry: goal.contentCountry, examChoices: picks.examChoices };
 }
 
 /**
- * A goal read before exams recorded whether their country matters has no such reading, so a
- * country answer would be refused. The learner's words naming one say it does.
- */
-async function markCountryDependent(goal: Goal): Promise<void> {
-  await writeLearnerChange(
-    { goalIds: [goal.id], planInputs: true, userId: goal.userId },
-    async (tx) => {
-      const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-      if (isCountryGoal(current)) {
-        return unchanged(null);
-      }
-
-      const details = isJsonObject(current.details) ? current.details : {};
-
-      return tx.goal.update({
-        data: { details: { ...details, countryDependent: true } },
-        where: { id: goal.id },
-      });
-    },
-  );
-}
-
-async function saveAnswers({ choices, country, goal }: Answers & { goal: Goal }): Promise<boolean> {
-  if (country) {
-    await markCountryDependent(goal);
-
-    const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-    const saved = await saveGoalAnswer({
-      goal: current,
-      input: { country, question: "contentCountry" },
-    });
-
-    if (saved.status !== "saved") {
-      return false;
-    }
-  }
-
-  if (choices) {
-    const current = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-    const saved = await saveGoalAnswer({
-      goal: current,
-      input: { choices, question: "examChoice", timeZone: current.timezone ?? undefined },
-    });
-
-    return saved.status === "saved";
-  }
-
-  return true;
-}
-
-/**
- * Saves an active exam goal's country or exam options for a release repair, only where the
- * learner's own words state them: through the learner's own answer, so research, plan and
- * curriculum follow as they would after it and finished lessons stay. A preview writes nothing.
+ * Fills one answer an active exam goal is missing, for a release repair, only where the
+ * learner's own words state it, and never over an answer the learner gave. It saves the
+ * learner's own answer, so research, plan and curriculum follow as they would after it and
+ * finished lessons stay. A preview writes nothing.
  */
 export async function repairExamGoal({
   actor,
+  answer,
   apply,
-  choices,
-  country,
   goalId,
-}: Answers & {
+}: {
   actor: { clientId: string; userId: string };
+  answer: Answer;
   apply: boolean;
   goalId: string;
 }): Promise<ExamGoalRepairResult> {
-  const goal = await findExamGoal(goalId);
+  const goal = await prisma.goal.findFirst({
+    where: { id: goalId, kind: "exam", status: "active" },
+  });
 
   if (!goal) {
     return { status: "notFound" };
   }
 
-  const offered = choices ? await findOfferedChoices({ choices, goal }) : undefined;
+  const before = await readAnswers(goal.id);
 
-  if ((country && !isCountryCode(country)) || offered === null) {
-    return { status: "invalid" };
+  const planned =
+    "country" in answer
+      ? planCountry({ before, country: answer.country, goal })
+      : await planChoice({ before, choice: answer.choice, goal });
+
+  if ("status" in planned) {
+    return planned.status === "unchanged"
+      ? { after: before, before, status: "unchanged" }
+      : { status: planned.status };
   }
-
-  const before = await readAnswers(goal);
 
   if (!apply) {
-    return {
-      after: {
-        contentCountry: country ?? before.contentCountry,
-        examChoices: offered ?? before.examChoices,
-      },
-      before,
-      status: "preview",
-    };
+    return { after: planned.after, before, status: "preview" };
   }
 
-  const saved = await saveAnswers({ choices: offered, country, goal });
-  const updated = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
-  const after = await readAnswers(updated);
-  const status = saved ? "applied" : "failed";
+  const saved = await saveAnswerInputs({ goal, input: planned.input });
+
+  if (saved.status !== "saved") {
+    return { status: saved.status === "notFound" ? "notFound" : "invalid" };
+  }
+
+  await settleGoalAnswer({ goal, goalIds: saved.goalIds, input: planned.input });
+
+  const after = await readAnswers(goal.id);
 
   logInfo(
     JSON.stringify({
@@ -136,9 +151,8 @@ export async function repairExamGoal({
       event: "staff.exam-goal-repair",
       goalId,
       learnerId: goal.userId,
-      status,
     }),
   );
 
-  return { after, before, status };
+  return { after, before, status: "applied" };
 }

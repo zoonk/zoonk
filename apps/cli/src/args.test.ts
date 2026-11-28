@@ -28,7 +28,7 @@ describe(parseInvocation, () => {
     });
   });
 
-  it("previews an exam goal repair by default and groups each choice's options", () => {
+  it("previews an exam goal repair by default and sends one answer", () => {
     expect(sentRequest(["staff", "repair-exam-goal", "goal-1", "--country", "ca"])).toStrictEqual({
       body: { apply: false, country: "CA", goalId: "goal-1" },
       method: "POST",
@@ -41,18 +41,13 @@ describe(parseInvocation, () => {
         "repair-exam-goal",
         "goal-1",
         "--choice",
-        "Discipline=Mechanical",
-        "--choice",
-        "Language = Italian",
+        "Discipline = Mechanical",
         "--apply",
       ]),
     ).toStrictEqual({
       body: {
         apply: true,
-        choices: [
-          { group: "Discipline", subjects: ["Mechanical"] },
-          { group: "Language", subjects: ["Italian"] },
-        ],
+        choice: { group: "Discipline", subjects: ["Mechanical"] },
         goalId: "goal-1",
       },
       method: "POST",
@@ -60,10 +55,22 @@ describe(parseInvocation, () => {
     });
   });
 
-  it("refuses an exam goal repair that names nothing to save", () => {
+  it("refuses an exam goal repair that names no answer or two", () => {
     expect(() => parseInvocation(["staff", "repair-exam-goal", "goal-1"])).toThrow(
-      "--country or --choice",
+      "either --country or --choice",
     );
+
+    expect(() =>
+      parseInvocation([
+        "staff",
+        "repair-exam-goal",
+        "goal-1",
+        "--country",
+        "CA",
+        "--choice",
+        "Discipline=Mechanical",
+      ]),
+    ).toThrow("either --country or --choice");
 
     expect(() =>
       parseInvocation(["staff", "repair-exam-goal", "goal-1", "--choice", "Mechanical"]),

@@ -111,29 +111,28 @@ function trackAnswer({
   }
 }
 
-/**
- * Saves a goal's own answer and re-plans it: the learner's answer, or staff saving one the
- * learner's words already gave. Schedule is last: personalization can read every answer before
- * the first lessons.
- */
-export async function saveGoalAnswer({ goal, input }: { goal: Goal; input: GoalAnswerInput }) {
-  const saved = await saveAnswerInputs({ goal, input });
-
-  if (saved.status !== "saved") {
-    return saved;
-  }
-
+/** Re-plans a goal after its answer was saved: the learner's answer, or staff filling one the learner's words already gave. */
+export async function settleGoalAnswer({
+  goal,
+  goalIds,
+  input,
+}: {
+  goal: Goal;
+  goalIds: string[];
+  input: GoalAnswerInput;
+}): Promise<void> {
   revalidateCacheTags([
     getGoalsCacheTag(goal.userId),
     getLearningProfileCacheTag(goal.userId),
     getLearnerModelCacheTag(goal.userId),
   ]);
 
+  // Schedule is last: personalization can read every answer before the first lessons.
   if (input.question === "schedule") {
     await settleNewPlan({ goalId: goal.id });
 
     await Promise.all(
-      saved.goalIds
+      goalIds
         .filter((id) => id !== goal.id)
         .map(async (id) => {
           await refreshGoalPlan({ goalId: id, mode: "forced", onConflict: "yield" });
@@ -162,8 +161,6 @@ export async function saveGoalAnswer({ goal, input }: { goal: Goal; input: GoalA
       userId: goal.userId,
     });
   }
-
-  return saved;
 }
 
 /** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason is a certificate it knows moves to an exam goal for it. */
@@ -202,7 +199,7 @@ export async function answerOnboardingQuestion({
     return { status: "invalid" };
   }
 
-  const saved = await saveGoalAnswer({ goal, input });
+  const saved = await saveAnswerInputs({ goal, input });
 
   if (saved.status === "dayTooShort") {
     return saved;
@@ -213,6 +210,7 @@ export async function answerOnboardingQuestion({
   }
 
   trackAnswer({ changed: saved.goalIds.includes(goalId), goal, input });
+  await settleGoalAnswer({ goal, goalIds: saved.goalIds, input });
 
   // "Pass a certificate" inside a language goal moves it to an exam goal for that certificate.
   if (isCertificateAnswer(input) && goal.kind === "language") {

@@ -1,42 +1,34 @@
 import { usageError } from "./errors.ts";
 import { commandUsage } from "./help.ts";
 
-function parseChoices(choices: string[] | undefined) {
-  const groups = new Map<string, string[]>();
+function parseChoice(choice: string) {
+  const [group = "", option = ""] = choice.split("=", 2).map((part) => part.trim());
 
-  for (const choice of choices ?? []) {
-    const [group = "", option = ""] = choice.split("=", 2).map((part) => part.trim());
-
-    if (!group || !option) {
-      throw usageError(
-        `Write --choice as "<group>=<option>": ${commandUsage("staff repair-exam-goal")}`,
-      );
-    }
-
-    groups.set(group, [...(groups.get(group) ?? []), option]);
+  if (!group || !option) {
+    throw usageError(
+      `Write --choice as "<group>=<option>": ${commandUsage("staff repair-exam-goal")}`,
+    );
   }
 
-  return groups.size > 0
-    ? [...groups].map(([group, subjects]) => ({ group, subjects }))
-    : undefined;
+  return { group, subjects: [option] };
 }
 
 export function examGoalRepairCommand(
   [goalId]: string[],
-  { apply, choice, country }: { apply?: boolean; choice?: string[]; country?: string },
+  { apply, choice, country }: { apply?: boolean; choice?: string; country?: string },
 ) {
-  const choices = parseChoices(choice);
-
-  if (!country && !choices) {
+  if ((choice === undefined) === (country === undefined)) {
     throw usageError(
-      `Give --country or --choice from the learner's own words: ${commandUsage("staff repair-exam-goal")}`,
+      `Give either --country or --choice, from the learner's own words: ${commandUsage("staff repair-exam-goal")}`,
     );
   }
+
+  const answer = choice ? { choice: parseChoice(choice) } : { country: country?.toUpperCase() };
 
   return {
     name: "request",
     request: {
-      body: { apply: apply === true, choices, country: country?.toUpperCase(), goalId },
+      body: { apply: apply === true, goalId, ...answer },
       method: "POST",
       path: "/staff/exam-goal-repair",
     },

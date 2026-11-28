@@ -10,12 +10,12 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-const inputSchema = z.strictObject({
-  apply: z.boolean().default(false),
-  choices: z.array(examChoicePickSchema).min(1).optional(),
-  country: countryCodeSchema.optional(),
-  goalId: uuidSchema(),
-});
+const target = { apply: z.boolean().default(false), goalId: uuidSchema() };
+
+const inputSchema = z.union([
+  z.strictObject({ ...target, country: countryCodeSchema }),
+  z.strictObject({ ...target, choice: examChoicePickSchema }),
+]);
 
 async function repairGoal(request: Request) {
   const input = await readBody(request, inputSchema);
@@ -33,18 +33,23 @@ async function repairGoal(request: Request) {
     return actor.status === "unauthorized" ? errors.unauthorized() : errors.forbidden();
   }
 
-  if (!input.country && !input.choices) {
-    return errors.badRequest("Give a country or a choice to save");
-  }
-
-  const result = await repairExamGoal({ ...input, actor });
+  const result = await repairExamGoal({
+    actor,
+    answer: "choice" in input ? { choice: input.choice } : { country: input.country },
+    apply: input.apply,
+    goalId: input.goalId,
+  });
 
   if (result.status === "notFound") {
     return errors.notFound("No active exam goal with this id");
   }
 
   if (result.status === "invalid") {
-    return errors.unprocessableEntity("The exam doesn't offer this country or option");
+    return errors.unprocessableEntity("This goal can't take this country or option");
+  }
+
+  if (result.status === "conflict") {
+    return errors.conflict("The learner already gave another answer");
   }
 
   return NextResponse.json(result);
