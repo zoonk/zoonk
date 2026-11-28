@@ -160,7 +160,7 @@ fun placementResultOf(
             id = java.util.UUID.fromString("6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c"),
             title = "News, results and expectations",
             estimatedMinutes = 5,
-            chapter = chapter,
+            chapter = "Reading company news",
         ),
     changeId = changeId,
 )

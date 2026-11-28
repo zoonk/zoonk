@@ -43,6 +43,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
 import com.zoonk.android.feature.plan.lessonsSkippedLine
+import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.feature.plan.restoredLessonsLine
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Facts
@@ -65,6 +66,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.BarError
 import com.zoonk.android.ui.theme.ZoonkRadius
+import com.zoonk.api.models.PlanPhase
 
 /**
  * One way to start (main's `TestOfferCard`): a test with its kind's mark, the most it asks and its minutes as the
@@ -250,11 +252,11 @@ private fun CourseLine(course: PlacementTestPhase.Course) {
 }
 
 /**
- * Main's `PlacementResult`: where the course's test starts the learner. The chapter's name is the title under "You
- * start here", over the course's line, how much of it was skipped and the lesson that's next. A result that exists
- * before the plan does has no line to draw and says only where they start. A sentence shows only for what the picture
- * can't: lessons Undo put back, or skips held until tomorrow. A saved result opened again from the plan offers a new
- * test ([onRetake]) while one can start.
+ * Main's `PlacementResult`: where the course's test starts the learner. The name of the Plan's stop that holds the next
+ * lesson is the title under "You start here", over the course's line (one segment per stop, as the Plan shows them),
+ * how much of it was skipped and the lesson that's next. A result that exists before the plan does has no line to draw
+ * and says only where they start. A sentence shows only for what the picture can't: lessons Undo put back, or skips
+ * held until tomorrow. A saved result opened again from the plan offers a new test ([onRetake]) while one can start.
  */
 @Composable
 internal fun ColumnScope.PlacementResult(
@@ -269,7 +271,13 @@ internal fun ColumnScope.PlacementResult(
 ) {
     val restored = undo?.restoredLessons
     val undone = restored != null
-    val place = result.chapter.takeUnless { undone }
+    // A stop saved without a name (older plans) is called what the Plan calls it.
+    val start =
+        result.course
+            ?.chapters
+            ?.indexOfFirst { it.start }
+            ?.takeIf { it >= 0 }
+    val place = (result.chapter ?: start?.let { phaseKindName(PlanPhase.Kind.LEARN, it + 1) }).takeUnless { undone }
     val course = result.course.takeUnless { undone }
     SetupContent {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

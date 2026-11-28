@@ -357,6 +357,29 @@ class PlacementTestScreenshots(
             )
         }
 
+    /** The plan's first lesson isn't written yet: no lesson to name, so no "Up next" and the way out is Done. */
+    @Test
+    fun levelResultWithoutNextLesson() =
+        shoot("level-result-no-next-lesson") {
+            LevelResult(
+                result = ApiJson.decodeFromString(LanguageLevelTestResult.serializer(), LEVEL_RESULT.replace(NEXT_LESSON, "null")),
+                targetLanguage = "it",
+                testOutLevel = null,
+                pressed = null,
+                failed = false,
+                action = "Done",
+                onAction = {},
+                onTestOut = {},
+            )
+        }
+
+    /** A stop saved without a name (older plans) is called what the Plan calls it. */
+    @Test
+    fun resultUnnamedStop() =
+        shoot("course-result-unnamed-stop", sitting = Sitting()) {
+            PlacementResult(result = placementResultOf(chapter = null).phase(), action = "Start lesson", onAction = {})
+        }
+
     @Test
     fun levelResultListeningNotTested() =
         shoot("language-result-listening-not-tested") {
@@ -539,10 +562,12 @@ class PlacementTestScreenshots(
                 arrayOf<Any>("dark", "tablet"),
             )
 
+        const val NEXT_LESSON = """{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"Ordering at a restaurant"}"""
+
         const val LEVEL_RESULT =
             """{"levels":[],"result":{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-21T14:00:00Z",
              "lessonsSkipped":12,"levelsSkipped":["A1"],"ranges":{"reading":{"low":"B1","high":"B2"},"listening":{"low":"A2","high":"B1"}},
-             "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"Ordering at a restaurant"}}}"""
+             "nextLesson":$NEXT_LESSON}}"""
 
         val TEST = TestContext(GOAL_ID, TestContext.Kind.Course, TestContext.Surface.Plan)
 

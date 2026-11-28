@@ -143,6 +143,16 @@ class PlanCourseOfferTest {
         rule.onNodeWithContentDescription("9 lessons", substring = true).assertDoesNotExist()
     }
 
+    @Test
+    fun aStartWithNoSavedNameIsCalledWhatThePlanCallsThatStop() {
+        show(RESULT_WITHOUT_OFFER.replace("\"chapter\":\"Why prices move\"", "\"chapter\":null"))
+
+        rule.onNodeWithText("You start here").assertIsDisplayed()
+        rule.onNodeWithText("Phase 3").assertIsDisplayed()
+        rule.onNodeWithText("Reading company news").assertDoesNotExist()
+        rule.onNodeWithText("4 lessons skipped").assertDoesNotExist()
+    }
+
     private fun planWith(row: String) = planOf().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(row))
 
     private companion object {
@@ -158,7 +168,7 @@ class PlanCourseOfferTest {
               "course":{"lessons":9,"chapters":[{"done":0,"lessons":2,"skipped":2,"start":false},{"done":0,"lessons":2,"skipped":2,"start":false},
               {"done":0,"lessons":2,"skipped":0,"start":true},{"done":0,"lessons":3,"skipped":0,"start":false}]},
               "nextLesson":{"id":"6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c","title":"News, results and expectations","estimatedMinutes":5,
-              "chapter":"Why prices move"}}"""
+              "chapter":"Reading company news"}}"""
 
         const val RESULT_WITHOUT_OFFER =
             """{"kind":"learn","state":"result","estimatedMinutes":0,"attempt":null,"offer":null,"result":$RESULT}"""
