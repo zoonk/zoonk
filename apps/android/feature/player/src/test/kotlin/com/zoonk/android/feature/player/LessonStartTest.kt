@@ -13,6 +13,8 @@ import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRun
+import com.zoonk.android.feature.player.engine.SpokenMode
+import com.zoonk.android.feature.player.engine.spokenMode
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.session.FakeStudyApi
@@ -642,6 +644,22 @@ class LessonStartTest {
                     ?.answers
                     ?.get(TWO),
             )
+        }
+
+    /** An older app typed spoken sentences: its unchecked draft is gone, so the screen offers Record again. */
+    @Test fun aTypedDraftAnOlderAppSavedOnASpeakingScreenIsDropped() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(spokenStep(ONE), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            val draft = ApiJson.encodeToString(LessonAnswer.serializer(), LessonAnswer.Spoken("Tengo hambre"))
+            val vm = player(null, tapped = true, saved = SavedStateHandle(mapOf("answers" to hashMapOf(ONE to draft))))
+            vm.open(lesson)
+            advanceUntilIdle()
+
+            val state = vm.state.value!!
+            assertEquals(ONE, state.currentStep?.id)
+            assertEquals(null, state.answers[ONE])
+            assertEquals(SpokenMode.Speak, state.spokenMode(state.currentStep!!, cantTalk = false, cantListen = false))
         }
 
     private fun answered(vararg stepIds: String) =

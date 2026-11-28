@@ -979,7 +979,8 @@ class LessonPlayerViewModel(
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
         // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they
         // entered on this visit stays. A screen the run answered moves past its saved round, so its canvas draws that
-        // answer instead of the work saved there.
+        // answer instead of the work saved there. A spoken sentence an older app let the learner type goes: speaking screens
+        // now take only a recording.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty().filterKeys { it !in workedHere }
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
@@ -988,7 +989,7 @@ class LessonPlayerViewModel(
                 .orEmpty()
                 .mapValues { (_, json) ->
                     ApiJson.decodeFromString(LessonAnswer.serializer(), json)
-                }.filterKeys { it !in workedHere }
+                }.filter { (id, answer) -> id !in workedHere && answer !is LessonAnswer.Spoken }
         val resumed = state.withFirstAnswer(started)
         val unanswered = { id: String -> id !in resumed.results }
         val runAnswered = resumed.results.keys - workedHere
