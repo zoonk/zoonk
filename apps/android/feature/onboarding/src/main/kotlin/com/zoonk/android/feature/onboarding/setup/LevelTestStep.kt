@@ -64,6 +64,7 @@ import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenAudio
 import com.zoonk.android.feature.audio.SpokenText
 import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.canRetrySpeech
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.audio.withoutFailure
@@ -302,6 +303,8 @@ private fun ColumnScope.TestQuestion(
     val cantListen = stringResource(R.string.onboarding_language_test_cant_listen)
     val notUnderstood = stringResource(R.string.onboarding_language_test_did_not_understand)
     val skip = stringResource(R.string.onboarding_language_test_skip_question)
+    // Every way the question ends is a save (an answer, a skip, a stop), so the message falls silent at its press.
+    LaunchedEffect(vm.isSaving) { if (vm.isSaving) audio?.cancel() }
     PlacementQuestion(
         item =
             Question(
@@ -338,9 +341,10 @@ private fun ColumnScope.TestQuestion(
 }
 
 /**
- * The voice message as one row: play, a line that fills as it plays, and its length counting down. Read a little
- * slower than normal, so the test isn't one of catching fast speech. A stored recording plays as it is; without one, the
- * learner's tap asks for it. While the recording is on its way, the button waits and the line says so.
+ * The voice message as one row: play, a line that fills as it plays, and how long it takes to hear, the same before,
+ * during and after a play. A stored recording plays as it is; without one, the learner's tap asks for it, and its length
+ * shows once a play has heard it to its end. While the recording is on its way, the button waits and the line says so.
+ * A play that failed and can be tried again turns the button into the retry.
  */
 @Composable
 private fun ListeningMessage(
@@ -356,9 +360,12 @@ private fun ListeningMessage(
         return
     }
     var played by rememberSaveable { mutableStateOf(false) }
-    val state = audio.state.withoutFailure()
+    val failed = audio.state as? SpeechState.Failed
+    val retry = failed != null && canRetrySpeech(failed.limit)
+    val state = if (retry) audio.state else audio.state.withoutFailure()
     val playing = state == SpeechState.Playing
-    val totalMs = question.audio?.durationMs?.let { (it / LISTENING_RATE).toLong() }
+    var heardMs by rememberSaveable { mutableStateOf<Long?>(null) }
+    val lengthMs = question.audio?.durationMs?.let(::heardLengthMs) ?: heardMs
     var elapsedMs by remember { mutableLongStateOf(0L) }
     LaunchedEffect(playing) {
         elapsedMs = 0L
@@ -379,7 +386,10 @@ private fun ListeningMessage(
         audio.speak(
             listOf(SpokenText(question.passage, recording = question.audio?.url?.toString())),
             rate = LISTENING_RATE,
-            onDone = onHeard,
+            onDone = {
+                heardMs = heardMs ?: ((elapsedMs + HALF_SECOND_MS) / 1000 * 1000)
+                onHeard()
+            },
         )
     }
 
@@ -411,14 +421,14 @@ private fun ListeningMessage(
                 )
             } else {
                 Meter(
-                    share = if (playing && totalMs != null && totalMs > 0) elapsedMs.toFloat() / totalMs else 0f,
+                    share = if (playing && lengthMs != null && lengthMs > 0) elapsedMs.toFloat() / lengthMs else 0f,
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurface,
                     height = 4.dp,
                 )
                 // The length's room is kept while it isn't known, so the line never jumps.
                 Text(
-                    totalMs?.let { formatClock((it - if (playing) elapsedMs else 0L).coerceAtLeast(0L)) }.orEmpty(),
+                    lengthMs?.let(::formatClock).orEmpty(),
                     modifier = Modifier.widthIn(min = 36.dp),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.zoonkType.data.withTabularFigures(),
@@ -426,9 +436,7 @@ private fun ListeningMessage(
                 )
             }
         }
-        (audio.state as? SpeechState.Failed)?.let { failed ->
-            SpeechFailedNote(language, failed.limit, onRetry = play, navigator = navigator)
-        }
+        failed?.let { SpeechFailedNote(language, it.limit, onRetry = null, navigator = navigator) }
     }
 }
 
@@ -490,7 +498,6 @@ internal fun skillName(skill: LanguageLevelTestOneOf1LevelsInner.Skill): String 
     )
 }
 
-private const val LISTENING_RATE = 0.9f
-
 private const val TICK_MS = 250L
+private const val HALF_SECOND_MS = 500L
 private const val NAME_SHARE_LIMIT = 0.4f

@@ -250,7 +250,78 @@ class LevelTestStepFlowTest {
     private val asked = mutableListOf<Pair<String, String>>()
     private val downloads = mutableListOf<String>()
 
-    private fun speech(): SpeechPlayer {
+    @Test
+    fun aPressThatEndsAListeningQuestionSilencesItsMessageBeforeItsSaveIsBack() {
+        val gate = CompletableDeferred<Unit>()
+        api.levelTestWriteGate = gate
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.onNodeWithContentDescription("Stop the audio").assertIsDisplayed()
+
+        tap("Can't listen now")
+
+        rule.onNodeWithContentDescription("Stop the audio").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message again").assertIsDisplayed()
+        assertEquals(1, api.levelTestAnswers.size)
+        gate.complete(Unit)
+    }
+
+    @Test
+    fun stoppingTheTestSilencesAPlayingMessageAtThePress() {
+        val gate = CompletableDeferred<Unit>()
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 4, attemptId = ATTEMPT, canStop = true),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.onNodeWithContentDescription("Stop the audio").assertIsDisplayed()
+
+        api.levelTestWriteGate = gate
+        rule.onNodeWithContentDescription("Leave").performClick()
+        tap("Stop and use my answers")
+
+        rule.onNodeWithContentDescription("Stop the audio").assertDoesNotExist()
+        assertEquals(0, api.finishedLevelTests)
+        gate.complete(Unit)
+    }
+
+    @Test
+    fun aMessageThatDidNotPlayIsTriedAgainFromItsOwnButton() {
+        show(opened = levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT), speech = speech())
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+
+        rule.onNodeWithText("The audio didn't play.").assertIsDisplayed()
+        rule.onNodeWithText("Try again").assertDoesNotExist()
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Try the audio again").performClick()
+
+        assertEquals(2, asked.size)
+    }
+
+    @Test
+    fun aMessageShowsTheSameLengthBeforeDuringAndAfterAPlay() {
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL, durationMs = 8_500), answered = 1, attemptId = ATTEMPT),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.mainClock.advanceTimeBy(3_000)
+
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Stop the audio").performClick()
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+    }
+
+    private fun speech(output: AudioOutput = SilentOutput): SpeechPlayer {
         val http =
             OkHttpClient
                 .Builder()
@@ -271,7 +342,7 @@ class LevelTestStepFlowTest {
                 throw ApiException(ApiError.Unavailable)
             },
             files = VoiceFiles(folder.root, http, { false }, session, Dispatchers.Main.immediate),
-            output = SilentOutput,
+            output = output,
             sessions = session,
             scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
@@ -377,6 +448,26 @@ class LevelTestStepFlowTest {
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Your Italian level").assertIsDisplayed()
+    }
+
+    /** A message that plays until something stops it. */
+    private class HeldOutput : AudioOutput {
+        private var playing: CompletableDeferred<Unit>? = null
+
+        override suspend fun play(
+            file: File,
+            rate: Float,
+            onStart: () -> Unit,
+        ): PlaybackEnd {
+            val play = CompletableDeferred<Unit>().also { playing = it }
+            onStart()
+            play.await()
+            return PlaybackEnd.Stopped
+        }
+
+        override fun stop() {
+            playing?.complete(Unit)
+        }
     }
 
     private object SilentOutput : AudioOutput {

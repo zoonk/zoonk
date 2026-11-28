@@ -9,6 +9,7 @@ import com.zoonk.api.models.LanguageLevelTestOneOf
 import com.zoonk.api.models.LanguageLevelTestOneOf1
 import com.zoonk.api.models.LanguageLevelTestOneOf1Next
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
+import kotlin.math.roundToLong
 
 internal typealias LevelTestQuestion = LanguageLevelTestOneOf1NextOneOfQuestion
 
@@ -89,6 +90,12 @@ internal fun levelTestGroups(total: Int): List<Int> {
     val listening = minOf(LEVEL_TEST_BLOCK, total - reading)
     return listOf(reading, listening, total - reading - listening).filter { it > 0 }
 }
+
+/** A voice message is read a little slower than normal, so the test isn't one of catching fast speech. */
+internal const val LISTENING_RATE = 0.9f
+
+/** How long a message of [durationMs] takes to hear at [LISTENING_RATE], to the second, as its row shows it. */
+internal fun heardLengthMs(durationMs: Long): Long = (durationMs / LISTENING_RATE / 1000f).roundToLong() * 1000
 
 /** Core's `LEVEL_TEST_BLOCK_SIZE`: the questions each skill's block asks. */
 private const val LEVEL_TEST_BLOCK = 4

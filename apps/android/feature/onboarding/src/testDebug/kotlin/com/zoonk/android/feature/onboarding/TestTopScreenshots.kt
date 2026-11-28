@@ -108,6 +108,13 @@ class TestTopScreenshots(
             compose.onNodeWithContentDescription("Play the message").performClick()
         }
 
+    /** A message that didn't play: the row's own button is the retry, and the note only says why. */
+    @Test
+    fun listeningFailed() =
+        language("listening-failed", listeningQuestion()) {
+            compose.onNodeWithContentDescription("Play the message").performClick()
+        }
+
     @Test
     fun listeningOnItsWay() = language("listening-on-its-way", listeningQuestion(audioPending = true))
 

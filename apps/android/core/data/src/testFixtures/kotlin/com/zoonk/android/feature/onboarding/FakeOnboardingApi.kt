@@ -515,6 +515,9 @@ class FakeOnboardingApi : OnboardingApi {
     /** Holds the level test's reads until it completes, or fails them when it completes exceptionally. */
     var levelTestGate: CompletableDeferred<Unit>? = null
 
+    /** Holds the level test's answers and its close until it completes. */
+    var levelTestWriteGate: CompletableDeferred<Unit>? = null
+
     override suspend fun levelTest(
         session: AuthenticatedSession,
         goalId: String,
@@ -540,6 +543,7 @@ class FakeOnboardingApi : OnboardingApi {
         input: LanguageLevelTestAnswerInput,
     ): LanguageLevelTest {
         levelTestAnswers += input
+        levelTestWriteGate?.await()
         writeFailure?.let { throw it }
         levelTest = levelTestAnswered(input)
         if (replyLost) throw ApiException(ApiError.Network)
@@ -567,6 +571,7 @@ class FakeOnboardingApi : OnboardingApi {
         goalId: String,
         attemptId: UUID?,
     ): LanguageLevelTestResult {
+        levelTestWriteGate?.await()
         writeFailure?.let { throw it }
         finishedLevelTests++
         return levelTestResult
