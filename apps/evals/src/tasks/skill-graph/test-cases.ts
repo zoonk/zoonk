@@ -1024,6 +1024,57 @@ export const TEST_CASES: TestCase<SkillGraphExpected, SkillGraphCase>[] = [
   },
   {
     expectations: `
+      - MUST be in Korean
+      - The finals' subjects come from the learner's answer to the follow-up (Korean language, mathematics, English, science): a course for each of those four, and no subject they didn't name (no social studies, history or other school subject)
+      - Never only the general study-skills path: each course teaches its subject's content, with exam weights spread so every subject counts toward the average the learner aims for
+      - Nothing says the grade or which topics each test covers, so each course keeps to the core of its subject at the secondary-school level the learner's starting point fits, instead of a whole curriculum
+      - Lesson-sized skills, a total that fits the weeks before a school's finals
+      - Nothing about the exam day's procedures, such as documents to bring or sleep
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-term-finals-subjects-from-the-follow-up",
+    userInput: {
+      context: JSON.stringify({
+        examDay: "official",
+        followUps: [
+          { answer: "국어, 수학, 영어, 과학", question: "이번 기말고사는 어떤 과목들을 보시나요?" },
+        ],
+        subject: "기말고사",
+        targetScore: "평균 85점 이상",
+      }),
+      goal: "이번 기말고사 평균 85점 넘기고 싶어요",
+      goalKind: "exam",
+      language: "ko",
+      ownLevel: "intermediate",
+    },
+  },
+  {
+    expectations: `
+      - MUST be in Korean
+      - The learner skipped the question about which subjects the finals cover, so nothing says what they test: it never guesses the school's subjects (no Korean language, mathematics, English, science or any other discipline)
+      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers
+      - No tactic for one question format, such as eliminating multiple-choice options or structuring an essay
+      - Lesson-sized skills, a few hours in all at most
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "ko-term-finals-subjects-skipped",
+    userInput: {
+      context: JSON.stringify({
+        examDay: "official",
+        followUps: [{ answer: null, question: "이번 기말고사는 어떤 과목들을 보시나요?" }],
+        subject: "기말고사",
+        targetScore: "평균 85점 이상",
+      }),
+      goal: "이번 기말고사 평균 85점 넘기고 싶어요",
+      goalKind: "exam",
+      language: "ko",
+      ownLevel: "intermediate",
+    },
+  },
+  {
+    expectations: `
       - MUST be in Brazilian Portuguese
       - A class test on Friday from the learner's own notes, read into a blueprint with one subject (Biologia) and six topics (S1.1 to S1.6): one skill for each topic at least, never one skill for several topics, each skill's \`topics\` listing its topic id; every topic id appears in a skill
       - Sized by the notes, not by the budget (LESSON_BUDGET 15, the most two days hold): roughly one to three lessons a topic, more for membrane transport (osmosis, active transport, endocytosis) and organelles (the notes say they come up a lot), never above 15 in all
