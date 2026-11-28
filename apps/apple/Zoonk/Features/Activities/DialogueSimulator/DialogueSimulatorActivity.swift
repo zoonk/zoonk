@@ -49,15 +49,15 @@ private struct DialogueCanvas: View {
     let selectedId = context.answer?.ids?.first
 
     VStack(alignment: .leading, spacing: 16) {
-      Label {
-        LessonRichText(fields.scene)
-      } icon: {
-        Image(systemName: "mappin")
-      }
-      .typeStyle(.note)
-      .foregroundStyle(.mutedForeground)
+      VStack(alignment: .leading, spacing: 12) {
+        Label {
+          LessonRichText(fields.scene)
+        } icon: {
+          Image(systemName: "mappin")
+        }
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
 
-      VStack(spacing: 10) {
         ForEach(Array(fields.lines.enumerated()), id: \.offset) { _, line in
           bubble(line)
         }
@@ -66,13 +66,13 @@ private struct DialogueCanvas: View {
       LessonOptionList(
         options: fields.replies.map { reply in
           LessonOption(
-            id: reply.id, text: reply.text,
-            detail: isChecked ? "\(reply.translation)\n\(LessonRichText.plain(reply.why))" : nil,
+            id: reply.id, text: reply.text, detail: isChecked ? detail(reply) : nil,
             isCorrect: reply.isBest)
         },
         selectedId: selectedId,
         isChecked: isChecked,
-        isLocked: isChecked
+        isLocked: isChecked,
+        keepsEveryOption: true
       ) { id in
         context.setAnswer(id == selectedId ? nil : .selection([id]))
       }
@@ -94,44 +94,52 @@ private struct DialogueCanvas: View {
     }
   }
 
+  /// Every reply stays to say why, so the best one is named, whichever was picked.
+  private func detail(_ reply: DialogueFields.Reply) -> RichInline {
+    var why = LessonRichText.typeset(reply.why)
+    why.text.foregroundColor = Color(.foreground)
+
+    var best = AttributedString(String(localized: "Best reply:", table: "Activities") + " ")
+    best.foregroundColor = .successText
+
+    return RichInline(text: AttributedString(reply.translation + "\n"))
+      + (reply.isBest ? RichInline(text: best) : RichInline(text: AttributedString())) + why
+  }
+
   private func bubble(_ line: DialogueFields.Line) -> some View {
     let isThem = line.speaker == "them"
+    let words = VStack(alignment: .leading, spacing: 2) {
+      Text(line.text)
+        .typeWeight(.medium)
+      Text(line.translation)
+        .typeStyle(.note)
+        .foregroundStyle(.mutedForeground)
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel(
+      isThem
+        ? Text(
+          "They say: \(line.text), \(line.translation)", tableName: "Activities",
+          comment: "VoiceOver: a line the other person says in a conversation, then its meaning")
+        : Text(
+          "You said: \(line.text), \(line.translation)", tableName: "Activities",
+          comment: "VoiceOver: a line the learner said in a conversation, then its meaning"))
 
-    // The avatar and the speaker sit level with the line's first words, not under the bubble.
-    return HStack(alignment: .firstTextBaseline, spacing: 8) {
+    return HStack(alignment: .bottom, spacing: 10) {
       if isThem {
-        Image(systemName: "person.crop.circle.fill")
-          .typeStyle(.section.weight(.regular))
-          .foregroundStyle(.vizSecondary)
-          .accessibilityHidden(true)
-      } else {
-        Spacer(minLength: 40)
-      }
-
-      VStack(alignment: .leading, spacing: 2) {
-        Text(line.text)
-          .typeWeight(.medium)
-        Text(line.translation)
+        Image(systemName: "person")
           .typeStyle(.note)
-          .foregroundStyle(.mutedForeground)
-      }
-      .padding(.horizontal, 14)
-      .padding(.vertical, 10)
-      .background(
-        isThem ? Color.boxBackground : Color.vizAccent.opacity(0.15),
-        in: .rect(cornerRadius: Radius.xl)
-      )
-      .accessibilityElement(children: .combine)
-      .accessibilityLabel(
-        isThem
-          ? Text(
-            "They say: \(line.text), \(line.translation)", tableName: "Activities",
-            comment: "VoiceOver: a line the other person says in a conversation, then its meaning")
-          : Text(
-            "You said: \(line.text), \(line.translation)", tableName: "Activities",
-            comment: "VoiceOver: a line the learner said in a conversation, then its meaning"))
+          .foregroundStyle(.vizSecondary)
+          .frame(width: 36, height: 36)
+          .background(Color.vizSecondary.opacity(0.15), in: .circle)
+          .accessibilityHidden(true)
 
-      if isThem {
+        words
+          .padding(.horizontal, 14)
+          .padding(.vertical, 10)
+          .background(.boxBackground, in: Self.theirBubble)
+          .overlay(Self.theirBubble.strokeBorder(.border))
+
         if let speak = audio.speak {
           Button {
             Task { await speak(line.text, fields.language, nil, 1) }
@@ -149,7 +157,16 @@ private struct DialogueCanvas: View {
         }
 
         Spacer(minLength: 40)
+      } else {
+        Spacer(minLength: 40)
+
+        words.learnerBubble()
       }
     }
   }
+
+  /// Main's outline bubble, its corner by the speaker tucked in.
+  private static let theirBubble = UnevenRoundedRectangle(
+    topLeadingRadius: Radius.xxl, bottomLeadingRadius: Radius.sm,
+    bottomTrailingRadius: Radius.xxl, topTrailingRadius: Radius.xxl, style: .continuous)
 }
