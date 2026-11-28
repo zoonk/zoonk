@@ -5,7 +5,10 @@ import { normalizeString } from "@zoonk/utils/string";
 
 export type GoalSpecificityExpected = {
   privateCourse: boolean;
+  /** Any one of them names the shared subject. */
   generalKeywords: string[];
+  /** Every one must stay in the shared subject, such as each subject an exam period covers. */
+  requiredKeywords?: string[];
   personalKeywords: string[];
   noPersonalDetails?: boolean;
 };
@@ -65,6 +68,11 @@ function getSplitProblems({
       split.personalDetails.length > 0 &&
       "Invented personal details for a general audience.",
     missingGeneral && `generalGoal "${split.generalGoal}" doesn't name the shared subject.`,
+    ...(expected.requiredKeywords ?? []).map(
+      (keyword) =>
+        !includesText(split.generalGoal, keyword) &&
+        `generalGoal "${split.generalGoal}" dropped "${keyword}".`,
+    ),
     expected.privateCourse && split.generalGoal !== null && "A private goal kept a generalGoal.",
     ...expected.personalKeywords.flatMap((keyword) => [
       !includesText(details, keyword) && `"${keyword}" is missing from personalDetails.`,

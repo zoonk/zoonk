@@ -12,8 +12,12 @@ function goalCase({
   noPersonalDetails,
   personalKeywords = [],
   privateCourse,
+  requiredKeywords,
 }: Partial<
-  Pick<GoalSpecificityExpected, "generalKeywords" | "personalKeywords" | "noPersonalDetails">
+  Pick<
+    GoalSpecificityExpected,
+    "generalKeywords" | "noPersonalDetails" | "personalKeywords" | "requiredKeywords"
+  >
 > &
   Pick<GoalSpecificityExpected, "privateCourse"> & {
     goal: string;
@@ -21,7 +25,13 @@ function goalCase({
     language: string;
   }): GoalSpecificityTestCase {
   return {
-    expected: { generalKeywords, noPersonalDetails, personalKeywords, privateCourse },
+    expected: {
+      generalKeywords,
+      noPersonalDetails,
+      personalKeywords,
+      privateCourse,
+      requiredKeywords,
+    },
     id,
     userInput: { goal, language },
   };
@@ -255,6 +265,7 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     id: "ko-term-finals-share-their-subjects",
     language: "ko",
     privateCourse: false,
+    requiredKeywords: ["국어", "수학", "영어"],
   }),
   goalCase({
     generalKeywords: ["calculus"],
@@ -262,5 +273,6 @@ export const TEST_CASES: GoalSpecificityTestCase[] = [
     id: "en-class-finals-share-their-subjects",
     language: "en",
     privateCourse: false,
+    requiredKeywords: ["calculus", "physics"],
   }),
 ];
