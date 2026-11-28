@@ -28,6 +28,7 @@ describe("staff clip audit authority", () => {
       next: null,
       skipped: 0,
       unchecked: 0,
+      uncheckedEntries: [],
     });
 
     await prisma.user.update({ data: { role: null }, where: { id: user.id } });
@@ -36,9 +37,9 @@ describe("staff clip audit authority", () => {
 
   it.each([
     { limit: 0 },
-    { limit: 251 },
+    { limit: 97 },
     { after: "wrong cursor" },
-    { kind: "listening" },
+    { kind: "speech" },
     { voicedBefore: "yesterday" },
     { url: "https://example.test/clip.mp3" },
   ])("refuses an invalid page or caller-supplied URL (%j)", async (overrides) => {

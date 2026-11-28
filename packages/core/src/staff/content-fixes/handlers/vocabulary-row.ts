@@ -51,7 +51,7 @@ export const clipSchema = z.object({
 
 export type Clip = z.infer<typeof clipSchema>;
 
-const CLIP_COLUMNS = {
+export const CLIP_COLUMNS = {
   audioGeneratedAt: true,
   audioModel: true,
   audioPromptVersion: true,

@@ -55,7 +55,7 @@ describe(parseInvocation, () => {
       sentRequest([
         "staff",
         "audit-clips",
-        "speech",
+        "sentences",
         "--after",
         "cursor",
         "--limit",
@@ -64,15 +64,15 @@ describe(parseInvocation, () => {
         "2026-11-27T12:00:00Z",
       ]),
     ).toStrictEqual({
-      body: { after: "cursor", kind: "speech", limit: 25, voicedBefore: "2026-11-27T12:00:00Z" },
+      body: { after: "cursor", kind: "sentences", limit: 25, voicedBefore: "2026-11-27T12:00:00Z" },
       method: "POST",
       path: "/staff/audit-clips",
     });
   });
 
   it("rejects an unknown clip kind and nonnumeric limit before making a request", () => {
-    expect(() => sentRequest(["staff", "audit-clips", "listening"])).toThrow(
-      /Choose "words", "sentences", or "speech"/u,
+    expect(() => sentRequest(["staff", "audit-clips", "speech"])).toThrow(
+      /Choose "words" or "sentences"/u,
     );
 
     expect(() => sentRequest(["staff", "audit-clips", "words", "--limit", "1.5"])).toThrow(

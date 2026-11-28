@@ -1,62 +1,53 @@
 import "server-only";
+import { isDeepStrictEqual } from "node:util";
+import { chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkClipEnding } from "@zoonk/ai/tasks/audio/check-clip-ending";
 import { prisma } from "@zoonk/db";
 import { chunk } from "@zoonk/utils/chunk";
 import { safeAsync } from "@zoonk/utils/error";
+import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { logError } from "@zoonk/utils/logger";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
-import { SPEECH_CLIP_KEY_PREFIX } from "../audio/speech-clip-key";
 import { targetsOf } from "./content-fixes/_utils/prepare-content-fix";
-import { MAX_BATCH_FIXES } from "./content-fixes/batches";
 import { contentFixChangesSchema } from "./content-fixes/contract";
-import { UNIT_KIND } from "./content-fixes/handlers/vocabulary-row";
+import {
+  CLIP_COLUMNS,
+  UNIT_KIND,
+  type VocabularyModel,
+  toClipData,
+} from "./content-fixes/handlers/vocabulary-row";
 import { staffRead } from "./read";
 
-const DEFAULT_CLIPS_PER_PAGE = 100;
+const DEFAULT_CLIPS_PER_PAGE = 24;
+const MAX_CLIPS_PER_PAGE = 96;
+const CLIPS_AT_ONCE = 12;
+const DOWNLOAD_TIMEOUT_MS = 8000;
+const LISTEN_TIMEOUT_MS = 20_000;
+const AUDIT_MODEL = "google/gemini-3.8-flash";
+const AUDIO_MEDIA_TYPE = "audio/mpeg";
 
 const auditClipsSchema = z.strictObject({
   after: uuidSchema().optional(),
-  kind: z.enum(["words", "sentences", "speech"]),
-  limit: z.int().min(1).max(MAX_BATCH_FIXES).default(DEFAULT_CLIPS_PER_PAGE),
+  kind: z.enum(["words", "sentences"]),
+  limit: z.int().min(1).max(MAX_CLIPS_PER_PAGE).default(DEFAULT_CLIPS_PER_PAGE),
   voicedBefore: z.union([z.iso.datetime({ offset: true }), z.iso.date()]).optional(),
 });
 
 type AuditPage = z.infer<typeof auditClipsSchema>;
-type ClipModel = "Word" | "Sentence" | "MediaAsset";
 
 type StoredClip = {
+  audio: ReturnType<typeof toClipData>;
   id: string;
-  language: string | null;
-  model: ClipModel;
-  text: string | null;
-  url: string | null;
+  language: string;
+  model: VocabularyModel;
+  text: string;
 };
-
-const CLIPS_AT_ONCE = 12;
-const CLIP_TIMEOUT_MS = 12_000;
-const AUDIO_MEDIA_TYPE = "audio/mpeg";
 
 async function listClips({ after, kind, limit, voicedBefore }: AuditPage): Promise<StoredClip[]> {
   const before = voicedBefore ? new Date(voicedBefore) : undefined;
   const paging = { orderBy: { id: "asc" }, take: limit + 1 } as const;
   const where = { id: { gt: after } };
-
-  if (kind === "speech") {
-    const rows = await prisma.mediaAsset.findMany({
-      ...paging,
-      select: { id: true, language: true, prompt: true, url: true },
-      where: {
-        ...where,
-        generatedAt: before && { lt: before },
-        kind: "audio",
-        ownerId: null,
-        reuseKey: { startsWith: SPEECH_CLIP_KEY_PREFIX },
-        visibility: "public",
-      },
-    });
-
-    return rows.map(({ prompt, ...row }) => ({ ...row, model: "MediaAsset", text: prompt }));
-  }
 
   const vocabularyWhere = {
     ...where,
@@ -64,7 +55,7 @@ async function listClips({ after, kind, limit, voicedBefore }: AuditPage): Promi
     audioUrl: { not: null },
   };
 
-  const select = { audioUrl: true, id: true, targetLanguage: true } as const;
+  const select = { ...CLIP_COLUMNS, id: true, targetLanguage: true } as const;
 
   if (kind === "words") {
     const rows = await prisma.word.findMany({
@@ -73,12 +64,12 @@ async function listClips({ after, kind, limit, voicedBefore }: AuditPage): Promi
       where: vocabularyWhere,
     });
 
-    return rows.map(({ audioUrl, id, targetLanguage, word }) => ({
+    return rows.map(({ id, targetLanguage, word, ...audio }) => ({
+      audio,
       id,
       language: targetLanguage,
       model: "Word",
       text: word,
-      url: audioUrl,
     }));
   }
 
@@ -88,99 +79,187 @@ async function listClips({ after, kind, limit, voicedBefore }: AuditPage): Promi
     where: vocabularyWhere,
   });
 
-  return rows.map(({ audioUrl, id, sentence, targetLanguage }) => ({
+  return rows.map(({ id, sentence, targetLanguage, ...audio }) => ({
+    audio,
     id,
     language: targetLanguage,
     model: "Sentence",
     text: sentence,
-    url: audioUrl,
   }));
 }
 
-async function clipsWithWaitingFixes(clips: StoredClip[]) {
+async function clipsToSkip(clips: StoredClip[]) {
   const [first] = clips;
+  const skip = new Set<string>();
 
-  if (!first || first.model === "MediaAsset") {
-    return new Set<string>();
+  if (!first) {
+    return skip;
   }
+
+  const clipsById = new Map(clips.map((clip) => [clip.id, clip]));
 
   const fixes = await prisma.contentFix.findMany({
-    select: { changes: true },
-    where: {
-      status: { in: ["proposed", "approved"] },
-      unit: UNIT_KIND[first.model],
-      unitId: { in: clips.map(({ id }) => id) },
-    },
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    select: { changes: true, status: true },
+    where: { unit: UNIT_KIND[first.model], unitId: { in: [...clipsById.keys()] } },
   });
 
-  return new Set(
-    fixes.flatMap(({ changes }) =>
-      contentFixChangesSchema
-        .parse(changes)
-        .flatMap((change) => targetsOf(change))
-        .filter(({ model, part }) => model === first.model && part === "audio")
-        .map(({ id }) => id),
-    ),
+  const reviewedChanges = fixes.flatMap(({ changes, status }) =>
+    contentFixChangesSchema.parse(changes).map((change) => ({ change, status })),
   );
+
+  const seenRevoice = new Set<string>();
+
+  for (const { change, status } of reviewedChanges) {
+    if (status === "proposed" || status === "approved") {
+      for (const { id, model, part } of targetsOf(change)) {
+        if (model === first.model && part === "audio") {
+          skip.add(id);
+        }
+      }
+    }
+
+    if (change.op === "revoice" && change.model === first.model && !seenRevoice.has(change.id)) {
+      seenRevoice.add(change.id);
+      const clip = clipsById.get(change.id);
+
+      if (
+        status === "rejected" &&
+        clip &&
+        isDeepStrictEqual(clip.audio, toClipData(change.before))
+      ) {
+        skip.add(change.id);
+      }
+    }
+  }
+
+  return skip;
 }
 
-async function listenToClip({
-  clip: { id, language, model, text, url },
-  signal,
+function timedSignal({ signal, timeoutMs }: { signal?: AbortSignal; timeoutMs: number }) {
+  const timeout = AbortSignal.timeout(timeoutMs);
+  return signal ? AbortSignal.any([signal, timeout]) : timeout;
+}
+
+function uncheckedClip({
+  clip: { id, model },
+  error,
+  reason,
 }: {
   clip: StoredClip;
-  signal?: AbortSignal;
+  error?: Error;
+  reason: string;
 }) {
-  if (!url || !language || !text) {
-    return { status: "unchecked" } as const;
-  }
+  const entry = { id, model, reason };
+  const statusCode = error && "statusCode" in error ? error.statusCode : undefined;
 
-  const timeout = AbortSignal.timeout(CLIP_TIMEOUT_MS);
-  const abortSignal = signal ? AbortSignal.any([signal, timeout]) : timeout;
-
-  const { data } = await safeAsync(async () => {
-    const response = await fetch(url, { redirect: "error", signal: abortSignal });
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const audio = new Uint8Array(await response.arrayBuffer());
-
-    if (audio.length === 0) {
-      return null;
-    }
-
-    const [contentType] = response.headers.get("content-type")?.split(";") ?? [];
-    const mediaType = contentType?.startsWith("audio/") ? contentType : AUDIO_MEDIA_TYPE;
-    const input = { abortSignal, audio, language, mediaType, serviceTier: "flex" as const, text };
-    const first = await checkClipEnding(input);
-
-    if (first.data.added === "none") {
-      return first.data;
-    }
-
-    const confirmation = await checkClipEnding(input);
-    return confirmation.data;
+  logError("staff.audit-clips.unchecked", {
+    ...entry,
+    errorName: error?.name,
+    statusCode: typeof statusCode === "number" ? statusCode : undefined,
   });
 
-  if (!data) {
-    return { status: "unchecked" } as const;
+  return { entry, status: "unchecked" } as const;
+}
+
+function failureReason({
+  operation,
+  request,
+  signal,
+}: {
+  operation: "Download" | "Listen";
+  request?: AbortSignal;
+  signal: AbortSignal;
+}) {
+  if (request?.aborted) {
+    return "Request canceled.";
   }
 
-  return data.added === "none"
+  return signal.aborted ? `${operation} timed out.` : `${operation} failed.`;
+}
+
+async function downloadClip({ signal, url }: { signal: AbortSignal; url: string }) {
+  const response = await fetch(url, { redirect: "error", signal });
+
+  if (!response.ok) {
+    return { reason: `Download returned HTTP ${String(response.status)}.` };
+  }
+
+  const audio = new Uint8Array(await response.arrayBuffer());
+
+  if (audio.length === 0) {
+    return { reason: "Download returned an empty clip." };
+  }
+
+  const [contentType] = response.headers.get("content-type")?.split(";") ?? [];
+  const mediaType = contentType?.startsWith("audio/") ? contentType : AUDIO_MEDIA_TYPE;
+
+  return { audio, mediaType };
+}
+
+async function listenToClip({ clip, signal }: { clip: StoredClip; signal?: AbortSignal }) {
+  const {
+    audio: { audioUrl },
+    id,
+    language,
+    model,
+    text,
+  } = clip;
+
+  if (!audioUrl || !language || !text) {
+    return uncheckedClip({ clip, reason: "Clip is missing a URL, language, or text." });
+  }
+
+  const downloadSignal = timedSignal({ signal, timeoutMs: DOWNLOAD_TIMEOUT_MS });
+  const download = await safeAsync(() => downloadClip({ signal: downloadSignal, url: audioUrl }));
+
+  if (download.error) {
+    return uncheckedClip({
+      clip,
+      error: download.error,
+      reason: failureReason({ operation: "Download", request: signal, signal: downloadSignal }),
+    });
+  }
+
+  if (download.data.reason !== undefined) {
+    return uncheckedClip({ clip, reason: download.data.reason });
+  }
+
+  const { audio, mediaType } = download.data;
+  const abortSignal = timedSignal({ signal, timeoutMs: LISTEN_TIMEOUT_MS });
+
+  const listen = await safeAsync(() =>
+    checkClipEnding({
+      abortSignal,
+      audio,
+      language,
+      mediaType,
+      model: AUDIT_MODEL,
+      serviceTier: chooseServiceTier({ wait: "soon" }),
+      text,
+    }),
+  );
+
+  if (listen.error) {
+    return uncheckedClip({
+      clip,
+      error: listen.error,
+      reason: failureReason({ operation: "Listen", request: signal, signal: abortSignal }),
+    });
+  }
+
+  const { added, heard } = listen.data.data;
+
+  return added === "none"
     ? ({ status: "clean" } as const)
-    : ({
-        entry: { added: data.added, heard: data.heard, id, language, model, text },
-        status: "flagged",
-      } as const);
+    : ({ entry: { added, heard, id, language, model, text }, status: "flagged" } as const);
 }
 
 async function auditPage({ page, signal }: { page: AuditPage; signal?: AbortSignal }) {
   const rows = await listClips(page);
   const clips = rows.slice(0, page.limit);
-  const waiting = await clipsWithWaitingFixes(clips);
-  const candidates = clips.filter(({ id }) => !waiting.has(id));
+  const skip = await clipsToSkip(clips);
+  const candidates = clips.filter(({ id }) => !skip.has(id));
   const results = [];
 
   for (const batch of chunk(candidates, CLIPS_AT_ONCE)) {
@@ -189,21 +268,25 @@ async function auditPage({ page, signal }: { page: AuditPage; signal?: AbortSign
   }
 
   const entries = results.flatMap((result) => (result.status === "flagged" ? [result.entry] : []));
-  const unchecked = results.filter(({ status }) => status === "unchecked").length;
 
-  const fixes = entries.flatMap(({ id, model }) =>
-    model === "MediaAsset" ? [] : [{ changes: [{ id, model, revoice: true as const }] }],
+  const uncheckedEntries = results.flatMap((result) =>
+    result.status === "unchecked" ? [result.entry] : [],
   );
+
+  const fixes = entries
+    .filter(({ language }) => isTTSSupportedLanguage(language))
+    .map(({ id, model }) => ({ changes: [{ id, model, revoice: true as const }] }));
 
   return {
     data: {
       entries,
-      ...(page.kind === "speech" ? {} : { fixes }),
+      fixes,
       flagged: entries.length,
-      listened: results.length - unchecked,
+      listened: results.length - uncheckedEntries.length,
       next: rows.length > clips.length ? (clips.at(-1)?.id ?? null) : null,
       skipped: clips.length - candidates.length,
-      unchecked,
+      unchecked: uncheckedEntries.length,
+      uncheckedEntries,
     },
     rows: clips.length,
   };

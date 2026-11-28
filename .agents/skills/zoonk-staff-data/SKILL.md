@@ -63,9 +63,11 @@ When shared Library content is wrong (a lesson, screen, question, word, sentence
 
 ### Audit shared clips
 
-Use `pnpm zoonk staff audit-clips <words|sentences|speech> --limit 10 --voiced-before <release time in ISO format>` to sample older clips for extra speech or sounds. Continue one page at a time with `--after <next>` and the same cutoff until `next` is null. The default page is 100 clips and the maximum is 250. A page spends AI to listen, and a possible addition gets a second listen. `unchecked` counts clips whose download or listen failed.
+Use `pnpm zoonk staff audit-clips <words|sentences> --limit 10 --voiced-before <release time in ISO format>` to sample older clips for extra speech or sounds. The default page is 24 clips and the maximum is 96. Each eligible clip gets one AI listen. The audit skips clips with an audio fix awaiting review or application and clips that still match the recording in their latest rejected revoice fix.
 
-Collect the `fixes` entries from word and sentence pages into `{ "reason": "…", "fixes": [...] }` files of at most 250 entries. Check and propose each batch with the [usual content-fix commands](references/propose-a-fix.md). Speech pages report findings for staff to review.
+When `unchecked` is greater than zero, inspect `uncheckedEntries` for each clip's ID, model, and failure reason. Resolve the failure and retry from the same starting cursor before using `next`, or report the unchecked IDs if they still fail. The CLI prints the page JSON and exits 1 when every attempted clip is unchecked. Continue with `--after <next>` and the same cutoff until `next` is null.
+
+Collect the `fixes` entries into `{ "reason": "…", "fixes": [...] }` files of at most 250 entries. Check and propose each batch with the [usual content-fix commands](references/propose-a-fix.md). Flagged clips in languages without a supported voice appear in `entries` for staff review.
 
 ## Local development
 

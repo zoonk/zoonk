@@ -1,13 +1,12 @@
 import { checkClipEnding } from "@zoonk/ai/tasks/audio/check-clip-ending";
 import { STAFF_READ_SCOPE } from "@zoonk/auth/cli-login-contract";
 import { prisma } from "@zoonk/db";
-import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import * as logger from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { cliTokenFixture } from "../../../auth/src/_test-utils/cli-tokens";
-import { getSpeechClipKey } from "../audio/speech-clip-key";
 import { auditStoredClips } from "./audit-clips";
 
 // Use the real staff login and database without calling the paid listening model.
@@ -26,23 +25,29 @@ function clipUrl(number: number) {
   return `https://example.test/${String(number)}.mp3`;
 }
 
-function waitingFix({
+function priorFix({
+  beforeGeneratedAt,
+  beforeUrl = clipUrl(1),
+  createdAt,
   id,
   status,
   revoice,
 }: {
+  beforeGeneratedAt?: string;
+  beforeUrl?: string;
+  createdAt?: Date;
   id: string;
-  status: "proposed" | "approved" | "applied";
+  status: "proposed" | "approved" | "applied" | "rejected";
   revoice: boolean;
 }) {
   const change = revoice
     ? {
         before: {
-          audioGeneratedAt: null,
+          audioGeneratedAt: beforeGeneratedAt ?? null,
           audioModel: null,
           audioPromptVersion: null,
           audioRunId: null,
-          audioUrl: clipUrl(1),
+          audioUrl: beforeUrl,
         },
         op: "revoice",
         text: "living in",
@@ -53,6 +58,7 @@ function waitingFix({
     data: {
       batchId: crypto.randomUUID(),
       changes: [{ ...change, id, model: "Word" }],
+      createdAt,
       effects: [],
       media: [],
       proposerClientId: "test",
@@ -107,10 +113,10 @@ describe(auditStoredClips, () => {
     });
 
     await Promise.all([
-      waitingFix({ id: clipId(1), revoice: true, status: "proposed" }),
-      waitingFix({ id: clipId(2), revoice: false, status: "approved" }),
-      waitingFix({ id: clipId(5), revoice: true, status: "approved" }),
-      waitingFix({ id: clipId(6), revoice: true, status: "applied" }),
+      priorFix({ id: clipId(1), revoice: true, status: "proposed" }),
+      priorFix({ id: clipId(2), revoice: false, status: "approved" }),
+      priorFix({ id: clipId(5), revoice: true, status: "approved" }),
+      priorFix({ id: clipId(6), revoice: true, status: "applied" }),
     ]);
 
     const input = { kind: "words", limit: 2, voicedBefore: cutoff };
@@ -124,6 +130,7 @@ describe(auditStoredClips, () => {
       next: clipId(2),
       skipped: 1,
       unchecked: 0,
+      uncheckedEntries: [],
     });
 
     expect(listen).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ text: "sitting in" }));
@@ -138,38 +145,34 @@ describe(auditStoredClips, () => {
       next: null,
       skipped: 1,
       unchecked: 0,
+      uncheckedEntries: [],
     });
 
     expect(listen).toHaveBeenLastCalledWith(expect.objectContaining({ text: "staying in" }));
     expect(listen).toHaveBeenCalledTimes(2);
   });
 
-  it("confirms additions twice and counts failed downloads or listens as unchecked", async () => {
+  it("listens once with the audit model and identifies every unchecked clip", async () => {
     const { id: organizationId } = await organizationFixture();
+    const logError = vi.spyOn(logger, "logError");
 
     await prisma.sentence.createMany({
       data: [
         { audioUrl: clipUrl(11), id: clipId(11), sentence: "Missing recording." },
-        { audioUrl: clipUrl(12), id: clipId(12), sentence: "First listen fails." },
+        { audioUrl: clipUrl(12), id: clipId(12), sentence: "The listen fails." },
         { audioUrl: clipUrl(13), id: clipId(13), sentence: "Confirmed." },
-        { audioUrl: clipUrl(14), id: clipId(14), sentence: "Cleared." },
-        { audioUrl: clipUrl(15), id: clipId(15), sentence: "Confirmation fails." },
+        { audioUrl: clipUrl(14), id: clipId(14), sentence: "Clean." },
       ].map((sentence) => ({ ...sentence, organizationId, targetLanguage: "en" })),
     });
 
-    const firstChecks = new Set<string>();
-
     listen.mockImplementation(async ({ text }) => {
-      const confirming = firstChecks.has(text);
-      firstChecks.add(text);
-
-      if (text === "First listen fails." || (confirming && text === "Confirmation fails.")) {
-        throw new Error("Model unavailable");
+      if (text === "The listen fails.") {
+        throw new Error(text);
       }
 
       return {
         data:
-          confirming && text === "Cleared."
+          text === "Clean."
             ? { added: "none", heard: text }
             : { added: "sound", heard: `${text} [laugh]` },
       };
@@ -178,81 +181,107 @@ describe(auditStoredClips, () => {
     const result = await auditStoredClips({ input: { after: cursor, kind: "sentences" } });
 
     expect(result).toMatchObject({
-      entries: [
-        {
-          added: "sound",
-          heard: "Confirmed. [laugh]",
-          id: clipId(13),
-          language: "en",
-          model: "Sentence",
-          text: "Confirmed.",
-        },
-      ],
+      entries: [{ added: "sound", heard: "Confirmed. [laugh]", id: clipId(13), model: "Sentence" }],
       fixes: [{ changes: [{ id: clipId(13), model: "Sentence", revoice: true }] }],
       flagged: 1,
       listened: 2,
       next: null,
       skipped: 0,
-      unchecked: 3,
+      unchecked: 2,
+      uncheckedEntries: [
+        { id: clipId(11), model: "Sentence", reason: "Download returned HTTP 404." },
+        { id: clipId(12), model: "Sentence", reason: "Listen failed." },
+      ],
     });
 
-    expect(listen).toHaveBeenCalledTimes(7);
+    expect(listen).toHaveBeenCalledTimes(3);
+
+    const wavDownload = vi.mocked(fetch).mock.calls.find(([url]) => url === clipUrl(13));
+    const wavListen = listen.mock.calls.find(([{ text }]) => text === "Confirmed.");
+
+    expect(wavDownload?.[1]?.signal).toBeInstanceOf(AbortSignal);
+    expect(wavListen?.[0].abortSignal).toBeInstanceOf(AbortSignal);
+    expect(wavListen?.[0].abortSignal).not.toBe(wavDownload?.[1]?.signal);
 
     expect(listen).toHaveBeenCalledWith(
-      expect.objectContaining({ mediaType: "audio/wav", serviceTier: "flex", text: "Confirmed." }),
-    );
-  });
-
-  it("only audits public ownerless speech assets voiced before the cutoff", async () => {
-    const user = await userFixture();
-
-    const assets = [
-      { id: clipId(21), prompt: "Shared clip" },
-      { id: clipId(22), prompt: "Listening recording", reuseKey: "listening:en:recording" },
-      { id: clipId(23), ownerId: user.id, prompt: "Owner clip" },
-      { id: clipId(24), prompt: "Private clip", visibility: "private" as const },
-      { generatedAt: new Date(cutoff), id: clipId(25), prompt: "New clip" },
-    ];
-
-    await Promise.all(
-      assets.map((asset) =>
-        mediaAssetFixture({
-          generatedAt: old,
-          kind: "audio",
-          language: "en",
-          mimeType: "audio/mpeg",
-          reuseKey: getSpeechClipKey({ language: "en", text: asset.prompt }),
-          url: clipUrl(21),
-          ...asset,
-        }),
-      ),
+      expect.objectContaining({
+        mediaType: "audio/wav",
+        model: "google/gemini-3.8-flash",
+        serviceTier: undefined,
+        text: "Confirmed.",
+      }),
     );
 
-    listen.mockResolvedValue({ data: { added: "speech", heard: "Shared clip, and more" } });
-
-    const result = await auditStoredClips({
-      input: { after: cursor, kind: "speech", voicedBefore: cutoff },
+    expect(logError).toHaveBeenCalledWith("staff.audit-clips.unchecked", {
+      errorName: "Error",
+      id: clipId(12),
+      model: "Sentence",
+      reason: "Listen failed.",
+      statusCode: undefined,
     });
 
+    expect(JSON.stringify(logError.mock.calls)).not.toContain("The listen fails.");
+    logError.mockRestore();
+  });
+
+  it("only proposes supported voices and skips unchanged clips with a latest rejected revoice", async () => {
+    const { id: organizationId } = await organizationFixture();
+
+    await prisma.word.createMany({
+      data: [
+        { audioUrl: clipUrl(21), id: clipId(21), word: "Unchanged after rejection" },
+        { audioUrl: clipUrl(22), id: clipId(22), word: "New clip after rejection" },
+        { audioUrl: clipUrl(23), id: clipId(23), word: "Newer revoice was applied" },
+        { audioUrl: clipUrl(24), id: clipId(24), targetLanguage: "zxx", word: "No voice" },
+      ].map((word) => ({
+        audioGeneratedAt: new Date(cutoff),
+        organizationId,
+        targetLanguage: "en",
+        ...word,
+      })),
+    });
+
+    await Promise.all([
+      priorFix({
+        beforeGeneratedAt: cutoff,
+        beforeUrl: clipUrl(21),
+        id: clipId(21),
+        revoice: true,
+        status: "rejected",
+      }),
+      priorFix({
+        beforeGeneratedAt: old.toISOString(),
+        beforeUrl: clipUrl(22),
+        id: clipId(22),
+        revoice: true,
+        status: "rejected",
+      }),
+      priorFix({
+        beforeGeneratedAt: cutoff,
+        beforeUrl: clipUrl(23),
+        createdAt: old,
+        id: clipId(23),
+        revoice: true,
+        status: "rejected",
+      }),
+      priorFix({ beforeUrl: clipUrl(23), id: clipId(23), revoice: true, status: "applied" }),
+    ]);
+
+    listen.mockResolvedValue({ data: { added: "speech", heard: "Extra words" } });
+
+    const result = await auditStoredClips({ input: { after: clipId(20), kind: "words" } });
+
     expect(result).toMatchObject({
-      entries: [
-        {
-          added: "speech",
-          heard: "Shared clip, and more",
-          id: clipId(21),
-          language: "en",
-          model: "MediaAsset",
-          text: "Shared clip",
-        },
+      entries: [{ id: clipId(22) }, { id: clipId(23) }, { id: clipId(24) }],
+      fixes: [
+        { changes: [{ id: clipId(22), model: "Word", revoice: true }] },
+        { changes: [{ id: clipId(23), model: "Word", revoice: true }] },
       ],
-      flagged: 1,
-      listened: 1,
-      next: null,
-      skipped: 0,
+      listened: 3,
+      skipped: 1,
       unchecked: 0,
     });
 
-    expect(result).not.toHaveProperty("fixes");
-    expect(listen).toHaveBeenCalledTimes(2);
+    expect(listen).toHaveBeenCalledTimes(3);
   });
 });

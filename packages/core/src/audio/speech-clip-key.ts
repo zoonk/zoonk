@@ -2,7 +2,6 @@ import { createHash } from "node:crypto";
 import { normalizeSpeechText } from "./speech-clip-contract";
 
 const TEXT_HASH_LENGTH = 32;
-export const SPEECH_CLIP_KEY_PREFIX = "audio:";
 
 /** Voice changes apply only to new clips; re-voicing stored clips requires an explicit decision. */
 export function getSpeechClipKey({
@@ -19,7 +18,7 @@ export function getSpeechClipKey({
     .digest("hex")
     .slice(0, TEXT_HASH_LENGTH);
 
-  const key = `${SPEECH_CLIP_KEY_PREFIX}${language}:${textHash}`;
+  const key = `audio:${language}:${textHash}`;
 
   return ownerId ? `${key}:${ownerId}` : key;
 }
