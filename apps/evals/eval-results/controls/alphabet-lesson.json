@@ -1,0 +1,14 @@
+{
+  "pairs": [
+    {
+      "input": { "learnerLanguage": "pt", "targetLanguage": "ru" },
+      "expectations": "Everything the learner reads is in Brazilian Portuguese, except the script and romanization.",
+      "clean": "script: o alfabeto cirílico. title: Suas primeiras letras cirílicas. description: Leia palavras curtas como мама e кот. canDo: Ler e dizer А, О, М, Т, К. Intro: Letras parecidas, sons diferentes. Algumas letras cirílicas parecem latinas, mas soam diferente: Р (r) soa como o r de \"caro\", e Н (n) como o n de \"nada\". Letters: А (a), ipa a, pronunciation: como o a de \"pai\", curto. О (o), ipa o, pronunciation: como o o de \"bolo\" quando tônico. М (m), ipa m, pronunciation: como o m de \"mão\". Summary: Cada letra tem um som. Leia da esquerda para a direita.",
+      "flawed": "script: the Cyrillic alphabet. title: Your first Cyrillic letters. description: Read short words like мама and кот. canDo: Read and say А, О, М, Т, К. Intro: Look-alike letters, different sounds. Some Cyrillic letters look Latin but sound different: Р (r) sounds like the r in \"caro\", and Н (n) like the n in \"nada\". Letters: А (a), ipa a, pronunciation: like the a in \"pai\", short. О (o), ipa o, pronunciation: like the o in \"bolo\" when stressed. М (m), ipa m, pronunciation: like the m in \"mão\". Summary: Each letter has one sound. Read from left to right.",
+      "criterion": "language",
+      "defect": "Every field the Brazilian Portuguese learner reads (script name, title, description, can-do, intro, sound cues and summary) is written in English instead of Portuguese.",
+      "falseAllegation": "The clean answer's title, intro and sound cues are written in English instead of Portuguese.",
+      "provenance": "Handwritten synthetic lesson with Portuguese text written and checked by hand."
+    }
+  ]
+}

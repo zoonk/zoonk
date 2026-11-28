@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-ar-letters",
+  "challenger": {
+    "costUsd": 0.00193546,
+    "durationMs": 27735.283916,
+    "hash": "51ed3da498310b46763b70d3863a7e289f07adc40e7a9d0da3303647f9bc17c5",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "f22961726cea928c9cfd84016832bf878f30a7bc195aab00b0ed0640d925f9ee"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

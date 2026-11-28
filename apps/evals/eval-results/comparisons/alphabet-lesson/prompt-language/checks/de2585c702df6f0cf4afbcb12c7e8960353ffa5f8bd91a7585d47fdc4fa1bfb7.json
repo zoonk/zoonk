@@ -1,0 +1,14 @@
+{
+  "blockingProblems": [],
+  "caseId": "en-ko-hangul",
+  "costUsd": 0,
+  "criteria": [
+    "accuracy"
+  ],
+  "name": "code checks",
+  "passed": 8,
+  "problems": [],
+  "run": 1,
+  "side": "challenger",
+  "total": 8
+}

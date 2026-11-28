@@ -1,0 +1,127 @@
+{
+  "attempt": "first",
+  "costUsd": 0.00218694,
+  "failures": [],
+  "packetId": "624c6053eab0a93a105c5d30b82e4566ee08fbc8b030b42938e621ec3fa87e94",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "gateway",
+    "family": "openai",
+    "model": "openai/gpt-6-luna"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both sets ask learners to identify plainly stated A1 details such as days, times, places, and prices.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "Both keys are correct, but A more consistently uses distractors based on details in the passage; B includes unsupported alternatives such as Thursday and a train station in its first item.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "Some distractors are not other values of the same kind stated in the passage, such as the jacket, Monday opening at 8, and front door.",
+            "criterion": "answers",
+            "learnerCost": "These distractors can be eliminated without carefully comparing the stated values, so they test less of the intended reading skill.",
+            "location": {
+              "detail": "Some options across the four items",
+              "kind": "whole"
+            },
+            "output": "A",
+            "severity": "major"
+          },
+          {
+            "claim": "Some distractors are not other values of the same kind stated in the passage, such as Thursday and the train station in the first item, and Monday opening at 8 in the second.",
+            "criterion": "answers",
+            "learnerCost": "These distractors can be eliminated without carefully comparing the stated values, so they test less of the intended reading skill.",
+            "location": {
+              "detail": "Some options across the four items",
+              "kind": "whole"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "Both outputs have correct keys and are easy A1 tasks, but A's distractors are more consistently grounded in passage details than B's."
+        },
+        "pairId": "36a78258-3cab-4bd9-8d18-103b4ef604d6"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use simple stated facts appropriate for A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The answer keys and options match exactly, and the selected options are supported by the passages.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use US English passages and Brazilian Portuguese questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The two outputs are identical and their keys are correct."
+        },
+        "pairId": "615cbd46-1db6-425c-a7f5-abba19fac8bc"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both present simple stated facts appropriate for an A1 task; the difference is the key, not the level of understanding required.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "A",
+            "reason": "A's key correctly selects statements 1 and 3. B incorrectly selects statement 2, since the bus leaves at ten, and omits statement 3.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use English for the message and Brazilian Portuguese for the question and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes statement 2, but the message says the bus leaves at ten, not nine; it also omits statement 3, which is supported by the message.",
+            "criterion": "answers",
+            "learnerCost": "A learner who follows this key would be marked wrong for selecting a true statement and right for selecting a false one.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "B",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "A",
+          "reason": "A has the correct key; B selects a false statement and misses a true one."
+        },
+        "pairId": "d332a6d5-669e-46e9-88f3-370e9861eaa2"
+      }
+    ]
+  }
+}

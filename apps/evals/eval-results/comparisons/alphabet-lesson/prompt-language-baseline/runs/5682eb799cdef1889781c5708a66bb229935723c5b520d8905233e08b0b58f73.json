@@ -1,0 +1,13 @@
+{
+  "caseId": "en-ko-hangul",
+  "challenger": {
+    "costUsd": 0.00194846,
+    "durationMs": 26633.15274999998,
+    "hash": "31604d96fe68516d3d448b79bc1857fd42c38ad4337a4c8dfda8dfe2a315730f",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "31775ab0f68bd761775e9c88a6c4a848095574bde8cc65eb404bb1745d95c5b1"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

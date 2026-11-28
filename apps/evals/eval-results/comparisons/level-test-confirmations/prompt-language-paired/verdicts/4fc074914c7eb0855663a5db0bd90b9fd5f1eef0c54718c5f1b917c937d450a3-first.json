@@ -1,0 +1,110 @@
+{
+  "attempt": "first",
+  "costUsd": 0,
+  "failures": [],
+  "packetId": "4fc074914c7eb0855663a5db0bd90b9fd5f1eef0c54718c5f1b917c937d450a3",
+  "passed": true,
+  "protocolHash": "0cdec09aa31cd2f6df48021b800469ef40c6fa762c63e7da1955ff8fd5eabf21",
+  "reader": {
+    "channel": "seat",
+    "family": "anthropic",
+    "model": "anthropic/claude-haiku-5.5"
+  },
+  "response": {
+    "verdicts": [
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical. Each item asks for stated facts in very common words (times, days, prices, places), with distractors a learner can reject by reading the passage.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and every answer set checks out against its passage: backpack blue and found Tuesday at the bus stop, pool open Saturday 8am and closed Sunday, Priya's appointment Thursday 2:30 with ID, and the pizza delivery at 24 dollars with two large pizzas.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "The two outputs are identical, and the Portuguese questions and options are natural Brazilian Portuguese.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "The outputs are identical, so neither serves the learner better."
+        },
+        "pairId": "4b31284d-ebb9-41da-bad1-3ebed75f6ea7"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs use the same plain, short English message and the same stated-facts question, which sits at A1.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "B",
+            "reason": "B's key (1 and 3) matches the message: the shop opens at nine and the cafe is next to the shop. A's key (1 and 2) includes an option that contradicts the message, since the bus leaves at ten, not nine.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use the same Brazilian Portuguese question and option text.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [
+          {
+            "claim": "The key includes option (2), \"O ônibus sai às nove.\", but the message says \"The bus leaves at ten.\" The correct set is 1 and 3, since the message does say the cafe is next to the shop.",
+            "criterion": "answers",
+            "learnerCost": "A learner who trusts the key will mark a false statement as correct and will learn a wrong bus time.",
+            "location": {
+              "detail": "Key: 1 and 2.",
+              "kind": "quote"
+            },
+            "output": "A",
+            "severity": "major"
+          }
+        ],
+        "overall": {
+          "preference": "B",
+          "reason": "A's answer key marks a false statement as correct, so the learner would be taught that the bus leaves at nine. B's key is correct."
+        },
+        "pairId": "ad759b3a-fd4f-4baf-ad36-37503bc2d468"
+      },
+      {
+        "criteria": [
+          {
+            "preference": "tie",
+            "reason": "Both outputs have two reading and two listening items at A1, with short, plain English texts and stated-fact questions.",
+            "criterion": "calibration"
+          },
+          {
+            "preference": "tie",
+            "reason": "Every answer set in both outputs matches its passage: the library backpack found Monday and kept at the front desk, the pool hours and kids and adult prices, the Thursday 10am appointment with the Friday closure, and the two boxes at the back door next to the chair.",
+            "criterion": "answers"
+          },
+          {
+            "preference": "tie",
+            "reason": "Both use natural, consistent Brazilian Portuguese in the questions and options.",
+            "criterion": "language"
+          }
+        ],
+        "observations": [],
+        "overall": {
+          "preference": "tie",
+          "reason": "Both outputs are correct and at the right level, with similar distractor quality, so neither serves the learner noticeably better."
+        },
+        "pairId": "da811deb-a62b-4830-a014-38c3cac6e17e"
+      }
+    ]
+  },
+  "seatContext": {
+    "accountIdentity": "present",
+    "managedSettings": [
+      "channelsEnabled"
+    ]
+  }
+}

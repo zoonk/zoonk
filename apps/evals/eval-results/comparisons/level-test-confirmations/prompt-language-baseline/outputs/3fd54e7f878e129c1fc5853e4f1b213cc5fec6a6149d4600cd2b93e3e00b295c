@@ -1,0 +1,76 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        3,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "A mochila é azul.",
+        "A mochila é vermelha.",
+        "A mochila foi achada na quinta-feira.",
+        "A mochila foi achada na terça-feira.",
+        "A mochila estava no ponto de ônibus.",
+        "A mochila estava na estação de trem."
+      ],
+      "passage": "FOUND: a blue backpack with a red water bottle at the bus stop on Tuesday. Call Noah after 6:00 p.m.",
+      "question": "O que o bilhete diz sobre a mochila?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2
+      ],
+      "level": "A1",
+      "options": [
+        "No domingo, a piscina fica fechada.",
+        "No sábado, a piscina fecha às 9 da noite.",
+        "No sábado, a piscina abre às 8 da manhã.",
+        "Na segunda-feira, a piscina abre às 8 da manhã.",
+        "No sábado, a aula das crianças é às 8 da manhã."
+      ],
+      "passage": "POOL HOURS\nMonday to Friday: 6:00 a.m. to 9:00 p.m.\nSaturday: 8:00 a.m. to 5:00 p.m.\nSunday: Closed\nKids' class: Saturday, 10:00 a.m.",
+      "question": "O que é verdade sobre a piscina?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        2,
+        5
+      ],
+      "level": "A1",
+      "options": [
+        "A consulta de Priya é na quinta-feira.",
+        "A consulta de Priya é na terça-feira.",
+        "A consulta de Priya é às 2 e meia da tarde.",
+        "A consulta de Priya é às 3 e meia da tarde.",
+        "Priya precisa levar dinheiro para a consulta.",
+        "Priya precisa levar um documento de identidade."
+      ],
+      "passage": "Hi, Priya. This is the doctor's office. Your appointment is on Thursday at 2:30 in the afternoon. Please bring your ID.",
+      "question": "O que a recepcionista diz para Priya?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        2,
+        4
+      ],
+      "level": "A1",
+      "options": [
+        "A entrega é para Sophia.",
+        "A entrega custa 14 dólares.",
+        "A entrega custa 24 dólares.",
+        "A entrega tem dois refrigerantes.",
+        "A entrega tem duas pizzas grandes."
+      ],
+      "passage": "Hi, pizza delivery for Olivia! I have two large pizzas and one soda. That's twenty-four dollars, please.",
+      "question": "O que é verdade sobre a entrega?",
+      "skill": "listening"
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "cases": [
+    {
+      "caseId": "en-ja-hiragana",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-ru-cyrillic",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-ar-letters",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-ko-hangul",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "A pricier challenger needs owner judgment.",
+  "rows": [
+    {
+      "attempted": 8,
+      "casesByLanguage": {
+        "en": 2,
+        "pt": 2
+      },
+      "costPer1000": 1.7929399999999998,
+      "date": "2026-11-28T13:26:39.662Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 1.607095,
+          "p50": 19.033055792,
+          "p95": 26.63315274999998,
+          "successful": 4
+        },
+        "pt": {
+          "costPer1000": 1.9787849999999998,
+          "p50": 24.373811833,
+          "p95": 37.225355958,
+          "successful": 4
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 24.373811833,
+      "p95": 37.225355958,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pedagogy",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pedagogy",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-ru-cyrillic",
+              "run": 1
+            }
+          ],
+          "both": [],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        }
+      ],
+      "side": "incumbent",
+      "status": "trade",
+      "succeeded": 8,
+      "ties": 0,
+      "unresolved": 4,
+      "weightedMajorsByLanguage": {
+        "en": 0,
+        "pt": 3
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 8,
+      "casesByLanguage": {
+        "en": 2,
+        "pt": 2
+      },
+      "costPer1000": 2.0310299999999994,
+      "date": "2026-11-28T13:26:39.662Z",
+      "deliveryByLanguage": {
+        "en": {
+          "costPer1000": 1.5679999999999998,
+          "p50": 21.98395,
+          "p95": 28.42443400000001,
+          "successful": 4
+        },
+        "pt": {
+          "costPer1000": 2.49406,
+          "p50": 34.313823542,
+          "p95": 43.93071379199999,
+          "successful": 4
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 25.897699708,
+      "p95": 43.93071379199999,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pedagogy",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pedagogy",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "language",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 8,
+      "ties": 0,
+      "unresolved": 4,
+      "weightedMajorsByLanguage": {
+        "en": 0,
+        "pt": 0
+      },
+      "wins": 0
+    }
+  ]
+}

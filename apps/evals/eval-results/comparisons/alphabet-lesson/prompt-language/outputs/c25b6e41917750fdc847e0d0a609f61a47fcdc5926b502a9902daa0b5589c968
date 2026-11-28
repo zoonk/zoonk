@@ -1,0 +1,94 @@
+{
+  "script": "o alfabeto cirílico",
+  "title": "Suas primeiras letras cirílicas",
+  "description": "Com estas letras, você já consegue ler palavras curtas como кот (kot), нос (nos) e мама (mama).",
+  "canDo": "Leia e diga в, н, р, с, а, о, к, т e м.",
+  "intro": [
+    {
+      "title": "Leia da esquerda para a direita",
+      "text": "O russo se lê da esquerda para a direita. Junte os sons das letras para formar sílabas e palavras."
+    },
+    {
+      "title": "Não confie só no formato",
+      "text": "Algumas letras lembram as latinas, mas têm outro som: в (v), н (n), р (r) e с (s). O som de о (o) também muda quando a letra não recebe o acento da palavra."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "в",
+      "readingAid": "v",
+      "ipa": "/v/",
+      "audioText": "ва",
+      "pronunciation": "Você vai ouvir ва (va); o в tem som como o v de “vida”.",
+      "forms": []
+    },
+    {
+      "symbol": "н",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "на",
+      "pronunciation": "Você vai ouvir на (na); o н tem som como o n de “nada”.",
+      "forms": []
+    },
+    {
+      "symbol": "р",
+      "readingAid": "r",
+      "ipa": "/r/",
+      "audioText": "ра",
+      "pronunciation": "Você vai ouvir ра (ra); faça o r com a ponta da língua vibrando. O r de “caro” é parecido, mas costuma ser mais curto.",
+      "forms": []
+    },
+    {
+      "symbol": "с",
+      "readingAid": "s",
+      "ipa": "/s/",
+      "audioText": "са",
+      "pronunciation": "Você vai ouvir са (sa); o с tem som como o s de “sapo”.",
+      "forms": []
+    },
+    {
+      "symbol": "а",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "а",
+      "pronunciation": "Como o a de “pá”, sem prolongar; o russo não distingue vogais curtas e longas.",
+      "forms": []
+    },
+    {
+      "symbol": "о",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "о",
+      "pronunciation": "Como o o fechado de “avô”, sem prolongar; sem acento, costuma soar mais fraco e aberto.",
+      "forms": []
+    },
+    {
+      "symbol": "к",
+      "readingAid": "k",
+      "ipa": "/k/",
+      "audioText": "ка",
+      "pronunciation": "Você vai ouvir ка (ka); o к tem som como o c de “casa”.",
+      "forms": []
+    },
+    {
+      "symbol": "т",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "та",
+      "pronunciation": "Você vai ouvir та (ta); o т tem som como o t de “tapa”, com a língua um pouco mais à frente.",
+      "forms": []
+    },
+    {
+      "symbol": "м",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "ма",
+      "pronunciation": "Você vai ouvir ма (ma); o м tem som como o m de “mala”.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Leia as letras da esquerda para a direita e junte seus sons em sílabas.",
+    "Algumas letras parecem latinas, mas soam diferente; o о também muda quando não recebe o acento."
+  ]
+}

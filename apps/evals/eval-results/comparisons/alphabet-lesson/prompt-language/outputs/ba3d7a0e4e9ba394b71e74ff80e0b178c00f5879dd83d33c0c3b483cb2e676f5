@@ -1,0 +1,206 @@
+{
+  "script": "alfabeto árabe",
+  "title": "Suas primeiras letras árabes",
+  "description": "Você já consegue ler بَاب (bāb), que significa “porta”.",
+  "canDo": "Leia e pronuncie ا (ā), ب (b), ت (t), م (m), ن (n), ل (l), و (w) e ي (y).",
+  "intro": [
+    {
+      "title": "Leia da direita para a esquerda",
+      "text": "Comece pelo lado direito da linha. A maioria das letras se liga às vizinhas; ا (ā) e و (w) se ligam apenas à letra anterior na leitura."
+    },
+    {
+      "title": "As vogais podem aparecer como marcas",
+      "text": "A marca َ (a) indica um a curto. Depois desse a, ا (ā) pode alongar o som, como em بَاب (bāb)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ا",
+      "readingAid": "ā",
+      "ipa": "/aː/",
+      "audioText": "بَا",
+      "pronunciation": "É um a longo, como o a de “pá”, sustentado por mais tempo; você o ouvirá em بَا (bā).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ا"
+        },
+        {
+          "label": "final",
+          "symbol": "ـا"
+        }
+      ]
+    },
+    {
+      "symbol": "ب",
+      "readingAid": "b",
+      "ipa": "/b/",
+      "audioText": "بَ",
+      "pronunciation": "Como o b de “bola”; você o ouvirá em بَ (ba).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ب"
+        },
+        {
+          "label": "inicial",
+          "symbol": "بـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـبـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـب"
+        }
+      ]
+    },
+    {
+      "symbol": "ت",
+      "readingAid": "t",
+      "ipa": "/t/",
+      "audioText": "تَ",
+      "pronunciation": "Como o t de “tatu”; você o ouvirá em تَ (ta).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ت"
+        },
+        {
+          "label": "inicial",
+          "symbol": "تـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـتـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـت"
+        }
+      ]
+    },
+    {
+      "symbol": "م",
+      "readingAid": "m",
+      "ipa": "/m/",
+      "audioText": "مَ",
+      "pronunciation": "Como o m de “mão”; você o ouvirá em مَ (ma).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "م"
+        },
+        {
+          "label": "inicial",
+          "symbol": "مـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـمـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـم"
+        }
+      ]
+    },
+    {
+      "symbol": "ن",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "نَ",
+      "pronunciation": "Como o n de “navio”; você o ouvirá em نَ (na).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ن"
+        },
+        {
+          "label": "inicial",
+          "symbol": "نـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـنـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـن"
+        }
+      ]
+    },
+    {
+      "symbol": "ل",
+      "readingAid": "l",
+      "ipa": "/l/",
+      "audioText": "لَ",
+      "pronunciation": "Como o l de “lado”; você o ouvirá em لَ (la).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ل"
+        },
+        {
+          "label": "inicial",
+          "symbol": "لـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـلـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـل"
+        }
+      ]
+    },
+    {
+      "symbol": "و",
+      "readingAid": "w",
+      "ipa": "/w/",
+      "audioText": "وَ",
+      "pronunciation": "Como o começo de “uau”; você o ouvirá em وَ (wa).",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "و"
+        },
+        {
+          "label": "final",
+          "symbol": "ـو"
+        }
+      ]
+    },
+    {
+      "symbol": "ي",
+      "readingAid": "y",
+      "ipa": "/j/",
+      "audioText": "يَ",
+      "pronunciation": "Como o i inicial de “iate”; você o ouvirá em يَ (ya). Depois de kasra, também pode indicar um i longo.",
+      "forms": [
+        {
+          "label": "isolada",
+          "symbol": "ي"
+        },
+        {
+          "label": "inicial",
+          "symbol": "يـ"
+        },
+        {
+          "label": "medial",
+          "symbol": "ـيـ"
+        },
+        {
+          "label": "final",
+          "symbol": "ـي"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    "Leia as letras árabes da direita para a esquerda e repare em quais se ligam às vizinhas.",
+    "A marca َ (a) dá um a curto; ا (ā) depois dela alonga esse som."
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "data": {
+    "claims": [
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "231a0e432ff610c0",
+        "criterion": "answers",
+        "observationId": "6aeab274bacc2034d0272e038e8780451ef15a2cdfe66036f16038a676869e08.first.43633815-2921-402f-87de-5217d80b6e1f.0",
+        "run": 1,
+        "side": "challenger"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "109c163d37f9853c",
+        "criterion": "answers",
+        "observationId": "6aeab274bacc2034d0272e038e8780451ef15a2cdfe66036f16038a676869e08.first.43633815-2921-402f-87de-5217d80b6e1f.1",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "6e973cd82d37025f",
+        "criterion": "answers",
+        "observationId": "359706a76c04f329cb6c96d2d6a2612fd14a4cedc546d378fc00f99b4c505184.first.85ce00c2-aafd-456f-83a5-1a537664ea0c.0",
+        "run": 1,
+        "side": "incumbent"
+      },
+      {
+        "caseId": "pt-en-a1",
+        "claimId": "12f5657fd17dae72",
+        "criterion": "answers",
+        "observationId": "359706a76c04f329cb6c96d2d6a2612fd14a4cedc546d378fc00f99b4c505184.first.85ce00c2-aafd-456f-83a5-1a537664ea0c.1",
+        "run": 1,
+        "side": "challenger"
+      }
+    ],
+    "costUsd": 0.0023076499999999996,
+    "id": "1c4b9ca158cb5234704920ca96d3fb3db7eaddda3a781c15410e9fe05105ca24",
+    "packet": [
+      {
+        "A": {
+          "blob": "c5cbca458fd994101547579ac8cef4bdb2867aaa1cbe8aaa3f3c00ffe1f75154",
+          "format": "text"
+        },
+        "B": {
+          "blob": "3fd54e7f878e129c1fc5853e4f1b213cc5fec6a6149d4600cd2b93e3e00b295c",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "Some wrong options are not other values of the same kind stated elsewhere in the passages, including the 4 p.m. appointment, three boxes, and front door.",
+            "claimId": "231a0e432ff610c0",
+            "criterion": "answers",
+            "location": {
+              "detail": "Listening confirmations about the appointment and delivery.",
+              "kind": "range"
+            },
+            "output": "A"
+          },
+          {
+            "claim": "Several wrong options are not other values of the same kind stated elsewhere in the passages, including Thursday, the train station, Tuesday, 3:30, money, Sophia, and $14.",
+            "claimId": "109c163d37f9853c",
+            "criterion": "answers",
+            "location": {
+              "detail": "Wrong options across the four confirmations, including the options quoted in the claim.",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The questions do not explicitly tell learners to select all applicable answers, even though each has multiple correct options.",
+            "claimId": "6e973cd82d37025f",
+            "criterion": "answers",
+            "location": {
+              "detail": "The question wording throughout does not state that multiple options may be selected.",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The questions do not explicitly tell learners to select all applicable answers, even though each has multiple correct options.",
+            "claimId": "12f5657fd17dae72",
+            "criterion": "answers",
+            "location": {
+              "detail": "The question wording throughout does not state that multiple options may be selected.",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "0a5d17ddd43202f9ccdd62a00b8775e2e1740e4293dd670aab02be1a5b1e7533",
+          "format": "text"
+        },
+        "input": {
+          "blob": "befd6f9310301606e2449f203fe1b8342929cc4d3ea2fd4e317e6c30757059f4",
+          "format": "json"
+        }
+      },
+      {
+        "A": {
+          "blob": "ff187a8521225483e0384467fd2d625d0db51dbd39cd40dda100b3550482d2db",
+          "format": "text"
+        },
+        "B": {
+          "blob": "684d18c1cf3a0c079f1f156b15df060592593622a35cc691ddc7ee6240a68ef4",
+          "format": "text"
+        },
+        "claims": [
+          {
+            "claim": "The key incorrectly includes option 2, which says the bus leaves at nine although it leaves at ten, and omits option 3, which correctly places the cafe next to the shop.",
+            "claimId": "4edddc2f974f4d67",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "B"
+          },
+          {
+            "claim": "The clean answer includes the false statement that the bus leaves at nine.",
+            "claimId": "9bdefba15d388061",
+            "criterion": "answers",
+            "location": {
+              "detail": "Across the explanation",
+              "kind": "whole"
+            },
+            "output": "A"
+          }
+        ],
+        "expectations": {
+          "blob": "355710153d40bdbe440d1b555c1b4c5bd883fc93a099efcbd35454e742057a41",
+          "format": "text"
+        },
+        "input": {
+          "blob": "72e151980963facf1832a34f2363294552310aca0fa5baaea666e502105dcbca",
+          "format": "json"
+        }
+      }
+    ],
+    "passed": true,
+    "plantedDefectPassed": true,
+    "protocolHash": "ed018fd13c57b447f6f3cbfd3fcf01e6b506c0102da6f1fa19dac5ce44b4d919",
+    "reader": {
+      "channel": "gateway",
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5"
+    },
+    "response": {
+      "results": [
+        {
+          "claimId": "231a0e432ff610c0",
+          "finding": "holds for both",
+          "reason": "In A, the wrong options 4 p.m. (appointment), three boxes, and front door appear nowhere else in the passage, which says 10 a.m., two boxes, and back door. B has the same kind of problem: 3:30 p.m., money, Sophia, and $14 are not stated anywhere in its passages."
+        },
+        {
+          "claimId": "109c163d37f9853c",
+          "finding": "doesn't hold",
+          "reason": "Thursday and Tuesday are not wrong options in B: the Thursday option is correct (the passage says Thursday) and the Tuesday option is correct (the passage says Tuesday). The wrong options are Thursday for the backpack, the train station, 3:30, money, Sophia, and $14, so the claim misidentifies correct answers as wrong."
+        },
+        {
+          "claimId": "6e973cd82d37025f",
+          "finding": "holds for both",
+          "reason": "B's question, 'O que o bilhete diz sobre a mochila?', and the other B questions never tell learners to select all that apply. The same is true of A's questions, so the omission is shared."
+        },
+        {
+          "claimId": "12f5657fd17dae72",
+          "finding": "holds for both",
+          "reason": "A's questions, such as 'O que o bilhete diz sobre o objeto encontrado?', never tell learners to select all that apply, and neither do B's. The omission is shared."
+        },
+        {
+          "claimId": "4edddc2f974f4d67",
+          "finding": "holds",
+          "reason": "The message says the bus leaves at ten, so option 2 (bus leaves at nine) is false, yet B's key includes it. B's key also omits option 3, 'O café fica ao lado da loja', which the message supports. A's key is 1 and 3, which is correct."
+        },
+        {
+          "claimId": "9bdefba15d388061",
+          "finding": "doesn't hold",
+          "reason": "A's key is 1 and 3, and option 2 (bus leaves at nine) is not in it. Option 2 is false because the message says the bus leaves at ten, so A's answer contains no false statement."
+        }
+      ]
+    }
+  },
+  "snapshotVersion": 2
+}

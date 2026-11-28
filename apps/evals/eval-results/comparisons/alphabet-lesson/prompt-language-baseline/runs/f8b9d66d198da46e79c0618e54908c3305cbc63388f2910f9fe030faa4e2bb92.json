@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-ru-cyrillic",
+  "challenger": {
+    "costUsd": 0.00176386,
+    "durationMs": 24373.811833,
+    "hash": "9bb5e4f9987753edbdaccf389a571307e0fe4030b9b618f50c997c903669d2ca",
+    "systemPromptHash": "fb800533e6a995f7cf583e764f862f1f50fc79dac987c3eb5ddbe77dfed5cc9c",
+    "userPromptHash": "7c13f213e9db4fe417400e5eb6c333178e6ce0298669a311820cfa50de30f014"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 2
+}

@@ -8,7 +8,7 @@ vi.mock("server-only", () => ({}));
 
 vi.mock("./language-sentence-orders.prompt.md", () => ({
   default:
-    "Orders.\n{{#bilingual}}\nTranslation orders.\n{{/bilingual}}\n{{#sameLanguage}}\nOne language.\n{{/sameLanguage}}\n",
+    "Orders in {{TARGET_LANGUAGE}}.\n{{#bilingual}}\nTranslation orders in {{LEARNER_LANGUAGE}}.\n{{/bilingual}}\n{{#sameLanguage}}\nOne language.\n{{/sameLanguage}}\n",
 }));
 
 vi.mock("ai", async (importOriginal) => {
@@ -37,10 +37,14 @@ describe(generateLanguageSentenceOrders, () => {
       targetLanguage: "en",
     });
 
-    expect(sameLanguage.systemPrompt).toBe("Orders.\nOne language.\n");
+    expect(sameLanguage.systemPrompt).toBe("Orders in US English.\nOne language.\n");
     expect(sameLanguage.userPrompt).not.toContain("translation");
     expect(sameLanguage.userPrompt).not.toContain("LEARNER_LANGUAGE");
-    expect(bilingual.systemPrompt).toBe("Orders.\nTranslation orders.\n");
+
+    expect(bilingual.systemPrompt).toBe(
+      "Orders in US English.\nTranslation orders in Português Brasileiro.\n",
+    );
+
     expect(bilingual.userPrompt).toContain("translation: Plantas precisam de água");
   });
 });

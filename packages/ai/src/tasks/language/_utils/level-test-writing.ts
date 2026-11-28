@@ -1,5 +1,5 @@
 import { formatLocalContext } from "../../_utils/language-context";
-import { getLanguagePromptContext } from "../../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../../_utils/prompt-language";
 import ladder from "../level-test-ladder.prompt.md";
 import languageRules from "../level-test-language-rules.prompt.md";
 import { type LevelTestSkill, type TestLevel } from "../level-test-levels";
@@ -240,10 +240,18 @@ export const CONFIRMATION_SITUATIONS = {
 } as const satisfies Record<TestLevel, Record<LevelTestSkill, readonly [string, string]>>;
 
 /** Both writers share the ladder and the language rules, so their levels mean the same. */
-export function withLevelTestRules(template: string): string {
-  return template
-    .replace("{{LEVELS}}\n", () => `${ladder.trimEnd()}\n\n`)
-    .replace("{{LANGUAGE_RULES}}\n", () => `${languageRules.trimEnd()}\n\n`);
+export function withLevelTestRules({
+  learnerLanguage,
+  targetLanguage,
+  template,
+}: LevelTestLanguages & { template: string }): string {
+  return fillPromptLanguages({
+    learnerLanguage,
+    targetLanguage,
+    template: template
+      .replace("{{LEVELS}}\n", () => `${ladder.trimEnd()}\n\n`)
+      .replace("{{LANGUAGE_RULES}}\n", () => `${languageRules.trimEnd()}\n\n`),
+  });
 }
 
 export function formatLevelTestLanguages({ learnerLanguage, targetLanguage }: LevelTestLanguages) {

@@ -1,0 +1,75 @@
+{
+  "confirmations": [
+    {
+      "answerIndices": [
+        0,
+        2,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "The group class is worth its higher price.",
+        "The videos are still the best way to learn.",
+        "The videos seemed like a great option at first.",
+        "The group class is too expensive to be worth it.",
+        "The videos were enough to correct the writer's mistakes.",
+        "The group class brought faster progress than studying alone."
+      ],
+      "passage": "Comecei a aprender violão há seis meses, só com vídeos na internet. No começo achei ótimo, porque era de graça e eu estudava na hora que queria. Porém, percebi que repetia os mesmos erros sem ninguém para me corrigir. Por isso, no mês passado me matriculei numa aula em grupo. É mais cara, mas vale a pena: evoluí mais em quatro semanas do que em cinco meses sozinho.",
+      "question": "What does the writer think about the two ways of learning guitar?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        1
+      ],
+      "level": "B1",
+      "options": [
+        "The heat is still easy enough to handle.",
+        "The neighborhood has fewer people around.",
+        "The percussion groups perform at that time.",
+        "The tourist groups arrive before lunchtime.",
+        "The streets are narrow with almost no parking."
+      ],
+      "passage": "O centro histórico de Salvador pode ser visitado o ano todo, mas recomendamos ir de manhã. Nesse horário o calor ainda é suportável e o bairro fica mais vazio, já que os grupos de turistas só chegam depois do almoço. Deixe o carro no hotel: as ruas são estreitas e quase não há onde estacionar. À noite, vale voltar para ouvir os grupos de percussão.",
+      "question": "Why does the guide recommend visiting the historic center of Salvador in the morning?",
+      "skill": "reading"
+    },
+    {
+      "answerIndices": [
+        0,
+        5
+      ],
+      "level": "B1",
+      "options": [
+        "The players worked hard for the whole game.",
+        "The players left the coach upset with them.",
+        "The defense was the main problem in the game.",
+        "The referee was to blame for the final result.",
+        "The players need more fitness work this week.",
+        "The attack failed to use most of its opportunities."
+      ],
+      "passage": "Pessoal, a gente perdeu por dois a um, mas eu não estou chateado com vocês. O time correu até o fim e a defesa jogou muito bem. O problema foi no ataque: criamos várias chances e não aproveitamos quase nenhuma. Então, nesta semana, em vez de treino físico, vamos treinar só chutes a gol. E nada de culpar o juiz, combinado?",
+      "question": "What does the coach think about the match?",
+      "skill": "listening"
+    },
+    {
+      "answerIndices": [
+        1,
+        4
+      ],
+      "level": "B1",
+      "options": [
+        "The subway is often late in the morning.",
+        "The friend's mind went blank at the interview.",
+        "The interview will have only three questions.",
+        "Camila always gets very nervous in interviews.",
+        "The friend sounded unnatural after doing the same."
+      ],
+      "passage": "Oi, Camila! Sobre a entrevista de amanhã: eu sei que você quer decorar as respostas, mas eu não faria isso. Quando eu fiz assim, fiquei parecendo um robô e esqueci tudo na hora por causa do nervosismo. É melhor anotar só três pontos fortes seus e contar exemplos reais. Ah, e saia cedo de casa, porque o metrô costuma atrasar de manhã.",
+      "question": "Why does the friend tell Camila not to memorize her answers?",
+      "skill": "listening"
+    }
+  ]
+}

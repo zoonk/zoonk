@@ -1,0 +1,102 @@
+{
+  "script": "Hiragana",
+  "title": "Your First Hiragana",
+  "description": "Sound out simple strings such as あ( a ) and ここ( koko).",
+  "canDo": "Read and say あいうえお (a i u e o) and かきくけこ (ka ki ku ke ko).",
+  "intro": [
+    {
+      "title": "Read across",
+      "text": "Read hiragana from left to right. Each character gets one beat: か(ka)き(ki) is read as two beats, ka-ki."
+    },
+    {
+      "title": "One character, one beat",
+      "text": "These characters are either a vowel on its own, like あ(a), or a consonant followed by a vowel, like か(ka). Keep each vowel short and clear."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "あ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "あ",
+      "pronunciation": "You'll hear あ (a), like the vowel in US English “father,” with the tongue a little farther forward. Keep it short.",
+      "forms": []
+    },
+    {
+      "symbol": "い",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "い",
+      "pronunciation": "You'll hear い (i), like the vowel in “machine.” Keep it short and steady.",
+      "forms": []
+    },
+    {
+      "symbol": "う",
+      "readingAid": "u",
+      "ipa": "/ɯ/",
+      "audioText": "う",
+      "pronunciation": "You'll hear う (u). The closest English sound is the vowel in “boot,” but Japanese う is made without rounding your lips. Keep it short.",
+      "forms": []
+    },
+    {
+      "symbol": "え",
+      "readingAid": "e",
+      "ipa": "/e/",
+      "audioText": "え",
+      "pronunciation": "You'll hear え (e), close to the vowel in “get,” but a little tenser and without a glide. Keep it short.",
+      "forms": []
+    },
+    {
+      "symbol": "お",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "お",
+      "pronunciation": "You'll hear お (o), like the start of the vowel in “go,” but stop before it glides. Keep it short.",
+      "forms": []
+    },
+    {
+      "symbol": "か",
+      "readingAid": "ka",
+      "ipa": "/ka/",
+      "audioText": "か",
+      "pronunciation": "You'll hear か (ka): k as in “skill,” followed by the short vowel in “father,” made a little farther forward.",
+      "forms": []
+    },
+    {
+      "symbol": "き",
+      "readingAid": "ki",
+      "ipa": "/ki/",
+      "audioText": "き",
+      "pronunciation": "You'll hear き (ki): k as in “skill,” followed by the short vowel in “machine.”",
+      "forms": []
+    },
+    {
+      "symbol": "く",
+      "readingAid": "ku",
+      "ipa": "/kɯ/",
+      "audioText": "く",
+      "pronunciation": "You'll hear く (ku): k as in “skill,” followed by a short vowel like “boot,” but with unrounded lips.",
+      "forms": []
+    },
+    {
+      "symbol": "け",
+      "readingAid": "ke",
+      "ipa": "/ke/",
+      "audioText": "け",
+      "pronunciation": "You'll hear け (ke): k as in “skill,” followed by a short vowel close to the one in “get,” but tenser and without a glide.",
+      "forms": []
+    },
+    {
+      "symbol": "こ",
+      "readingAid": "ko",
+      "ipa": "/ko/",
+      "audioText": "こ",
+      "pronunciation": "You'll hear こ (ko): k as in “skill,” followed by the start of the vowel in “go,” with no glide.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Read hiragana from left to right, giving each character one beat.",
+    "The first five are short vowels; the K row pairs k with each of those vowels."
+  ]
+}

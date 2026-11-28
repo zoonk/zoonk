@@ -1,0 +1,90 @@
+{
+  "script": "Hangul",
+  "title": "Your First Hangul: Vowels and K",
+  "description": "You can sound out simple blocks such as 가(ga), 너(neo), and 도(do).",
+  "canDo": "Read and say ㅏ(a), ㅓ(eo), ㅗ(o), ㅜ(u), ㅡ(eu), ㅣ(i), ㄱ(g), ㄴ(n), and ㄷ(d), then combine them into simple blocks.",
+  "intro": [
+    {
+      "title": "Letters make blocks",
+      "text": "Hangul runs left to right, with letters packed into syllable blocks: 가(ga) puts ㄱ(g) before ㅏ(a), while 고(go) stacks ㅗ(o) below ㄱ(g). A vowel heard alone uses a silent consonant as a holder, as in 아(a)."
+    }
+  ],
+  "letters": [
+    {
+      "symbol": "ㅏ",
+      "readingAid": "a",
+      "ipa": "/a/",
+      "audioText": "아",
+      "pronunciation": "You'll hear it as 아(a); closest to the “ah” in “father,” but Korean is more forward.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅓ",
+      "readingAid": "eo",
+      "ipa": "/ʌ/",
+      "audioText": "어",
+      "pronunciation": "You'll hear it as 어(eo); like the vowel in “sun.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㅗ",
+      "readingAid": "o",
+      "ipa": "/o/",
+      "audioText": "오",
+      "pronunciation": "You'll hear it as 오(o); like the start of “go,” held steady without the English glide.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅜ",
+      "readingAid": "u",
+      "ipa": "/u/",
+      "audioText": "우",
+      "pronunciation": "You'll hear it as 우(u); like the “oo” in “food,” held steady.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅡ",
+      "readingAid": "eu",
+      "ipa": "/ɯ/",
+      "audioText": "으",
+      "pronunciation": "You'll hear it as 으(eu); English has no exact match—shape your tongue for “oo” but keep your lips unrounded.",
+      "forms": []
+    },
+    {
+      "symbol": "ㅣ",
+      "readingAid": "i",
+      "ipa": "/i/",
+      "audioText": "이",
+      "pronunciation": "You'll hear it as 이(i); like the “ee” in “see.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㄱ",
+      "readingAid": "g",
+      "ipa": "/k/",
+      "audioText": "가",
+      "pronunciation": "You'll hear it as 가(ga); at the start, its first sound is like the unaspirated k in “skin,” and it sounds more like g between vowels.",
+      "forms": []
+    },
+    {
+      "symbol": "ㄴ",
+      "readingAid": "n",
+      "ipa": "/n/",
+      "audioText": "나",
+      "pronunciation": "You'll hear it as 나(na); its first sound is like n in “nap.”",
+      "forms": []
+    },
+    {
+      "symbol": "ㄷ",
+      "readingAid": "d",
+      "ipa": "/t/",
+      "audioText": "다",
+      "pronunciation": "You'll hear it as 다(da); at the start, its first sound is like the unaspirated t in “stop,” and it sounds more like d between vowels.",
+      "forms": []
+    }
+  ],
+  "summary": [
+    "Build each block with a consonant and a vowel; a vertical vowel sits to the right, while a horizontal vowel sits below.",
+    "Say the vowels steadily, and remember that ㄱ(g) and ㄷ(d) sound more voiced between vowels."
+  ]
+}

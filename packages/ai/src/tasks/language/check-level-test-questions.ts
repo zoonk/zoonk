@@ -6,8 +6,8 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
-import systemPrompt from "./check-level-test-questions.prompt.md";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
+import promptTemplate from "./check-level-test-questions.prompt.md";
 
 /**
  * A missed flaw reaches every learner of the pair. On the eval's 15 levels (11 Nov 2026, each run 3
@@ -117,6 +117,7 @@ export async function checkLevelTestQuestions(params: CheckLevelTestQuestionsPar
     useFallback = true,
   } = params;
 
+  const systemPrompt = fillPromptLanguages({ ...params, template: promptTemplate });
   const userPrompt = buildUserPrompt(params);
 
   const providerOptions = buildProviderOptions({

@@ -1,0 +1,9 @@
+{
+  "model": "anthropic/claude-fable-5.2",
+  "pipeline": [
+    "anthropic/claude-fable-5.2"
+  ],
+  "reasoning": "provider-default",
+  "settingsHash": "6b94c7f9fa42b4c41752d04bdc91b587a4001bcb45b12afaefd6e51b2dbce2fb",
+  "systemPromptHash": "0c7f9c5b354719d4ff959ab7a03bcdaa82065f4a462213955a9f8d3a4bdf9141"
+}
