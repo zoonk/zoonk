@@ -3,7 +3,6 @@
 {
   "placementtest_about": "e2cf1ba4741ab77c1789031fcf82658ec47b79632c0d5a25a1bc1b0c5468feb7",
   "placementtest_choose_description": "46cd6ced1ce5b6af4d22fdd651eb7991b7649b158890ef0cde259a059f0b41eb",
-  "placementtest_course_lessons": "bc702bb9effd87049b309496504a5b52a2aa11a5751e2b8834c92b6e8ef892ef",
   "placementtest_course_skipped": "759497862c1ff78bb10deff06d2cd7013be2b9b57016e723d0506f287f77c33a",
   "placementtest_done": "cb1323ed87695e1fb296328cf95696dbf22d81ce56d045089410ce09c44c15e3",
   "placementtest_find_level": "1d29b2f3fcd4031c007a557b45ad47d9c51a4038fe65b5a6293a2a230624f645",
@@ -106,9 +105,5 @@
     <plurals name="placementtest_course_skipped">
         <item quantity="one">%1$d / %2$d ders atlandı</item>
         <item quantity="other">%1$d / %2$d ders atlandı</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d ders</item>
-        <item quantity="other">%d ders</item>
     </plurals>
 </resources>

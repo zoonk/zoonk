@@ -99,6 +99,13 @@ class LevelTestTest {
         assertEquals(LevelTestPhase.Done, phase(LoadState.Loaded(levelTestOf(answered = 4)), stopped = true))
     }
 
+    @Test
+    fun aMessageShowsTheTimeItTakesToHearToTheNearestSecond() {
+        assertEquals(9_000L, heardLengthMs(8_500))
+        assertEquals(9_000L, heardLengthMs(8_000))
+        assertEquals(3_000L, heardLengthMs(3_000))
+    }
+
     private fun phase(
         test: LoadState<LanguageLevelTest>,
         stopped: Boolean = false,

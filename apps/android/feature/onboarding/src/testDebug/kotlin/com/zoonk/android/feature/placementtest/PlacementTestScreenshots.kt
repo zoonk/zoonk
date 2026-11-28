@@ -225,6 +225,13 @@ class PlacementTestScreenshots(
             PlacementResult(result = placementResultOf().phase(), action = "Start lesson", onAction = {}, undo = undo())
         }
 
+    /** The Plan's row opens the last result, with Done and a quiet way to take the test again. */
+    @Test
+    fun planSavedResult() =
+        shoot("course-plan-saved-result", captureUndo = true, sitting = Sitting()) {
+            PlacementResult(result = placementResultOf().phase(), action = "Done", onAction = {}, undo = undo(), onRetake = {})
+        }
+
     @Test
     fun resultNothingSkipped() =
         shoot("course-result-none-skipped", sitting = Sitting()) {

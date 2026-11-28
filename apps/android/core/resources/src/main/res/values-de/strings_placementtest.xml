@@ -3,7 +3,6 @@
 {
   "placementtest_about": "a37e23d9ff2e9ec82305ea8ecb4ff5e02848f4800c089e0ddb3c9ab5313eb9d9",
   "placementtest_choose_description": "6807e1dde8bd657376e3706a363392445d156736722190bbf1064ac586cf4b3f",
-  "placementtest_course_lessons": "044d7355cb488045af044cc1feb75e140b0aabe2ac2a25f120a0df08169b55f6",
   "placementtest_course_skipped": "e4a414ac728c0626efe94a682a7df6c40dca96f845a0a2fa2ef2459e7679450f",
   "placementtest_done": "928bd56a414b4ec8a0b384ea981d1ce221cfe1712ebd57bd351c8faec8b18d8e",
   "placementtest_find_level": "77965490519b13cf857efc5de4c5a27dbab6dd10ef31e38ee0a8fdf25e9e0a8e",
@@ -106,9 +105,5 @@
     <plurals name="placementtest_course_skipped">
         <item quantity="one">%1$d von %2$d Lektionen übersprungen</item>
         <item quantity="other">%1$d von %2$d Lektionen übersprungen</item>
-    </plurals>
-    <plurals name="placementtest_course_lessons">
-        <item quantity="one">%d Lektion</item>
-        <item quantity="other">%d Lektionen</item>
     </plurals>
 </resources>

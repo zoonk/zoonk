@@ -151,15 +151,23 @@ fun speechActionLabel(
         SpeechState.Idle -> idle
     }
 
+/** A play that failed can be tried again unless a limit refuses it for longer than a moment. */
+@Composable
+fun canRetrySpeech(limit: Limit?): Boolean {
+    val refusal = limit?.takeUnless { limitLifted(it) }
+    return refusal == null || refusal is Limit.SlowDown
+}
+
 /**
  * [text] is what the audio says, shown when it couldn't play; a limit that only waits can't be
  * retried. Without [navigator] (a recording, which no limit refuses) there are no limit actions.
+ * Without [onRetry] the screen's own button is the retry, and the note only says why.
  */
 @Composable
 fun SpeechFailedNote(
     language: String,
     limit: Limit?,
-    onRetry: () -> Unit,
+    onRetry: (() -> Unit)?,
     navigator: AppNavigator?,
     modifier: Modifier = Modifier,
     text: String? = null,
@@ -188,7 +196,7 @@ fun SpeechFailedNote(
             )
         }
         // Beside the note's words, small, as the limit's Subscribe it takes the place of.
-        if (refusal == null || refusal is Limit.SlowDown) {
+        if (onRetry != null && canRetrySpeech(limit)) {
             OutlinedButton(onClick = onRetry, leadingIcon = { ButtonIcon(R.drawable.ic_refresh) }) {
                 Text(stringResource(R.string.audio_try_again))
             }
