@@ -138,7 +138,7 @@ When the lesson's situation is a conversation the learner takes part in (asking,
 - `translation` (on every line and reply): the same meaning in plainer words.
 {{/sameLanguage}}
 - `why`: one sentence in `LEARNER_LANGUAGE` on why this reply is best, or what makes it wrong.
-- `explanation`: one sentence in `LEARNER_LANGUAGE` on what makes the best reply right.
+- `explanation`: one sentence in `LEARNER_LANGUAGE` with what to remember for the next conversation like this one ("To give a time, say at: at 3 p.m."). The app shows it under every reply's `why`, so it never repeats the best reply's `why`.
 
 # Shared lessons
 
