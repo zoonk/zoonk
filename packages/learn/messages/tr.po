@@ -5392,7 +5392,7 @@ msgstr "Bitiş tarihi"
 #: src/journey/use-roadmap.ts
 msgctxt "VnP0TP"
 msgid "You finish"
-msgstr "Planın biteceği tarih"
+msgstr "Bitiş"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"

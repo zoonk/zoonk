@@ -5392,7 +5392,7 @@ msgstr "Data di fine"
 #: src/journey/use-roadmap.ts
 msgctxt "VnP0TP"
 msgid "You finish"
-msgstr "Finisci"
+msgstr "Fine del piano"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"

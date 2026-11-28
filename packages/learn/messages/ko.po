@@ -5392,7 +5392,7 @@ msgstr "종료일"
 #: src/journey/use-roadmap.ts
 msgctxt "VnP0TP"
 msgid "You finish"
-msgstr "완료 시점"
+msgstr "계획 완료"
 
 #: src/journey/use-roadmap.ts
 msgctxt "nO5Gb7"
