@@ -271,7 +271,14 @@ private fun WordStep(
         when {
             step.grade != null -> null
             model.microphoneOff -> ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
-            else -> recordNote(status, checking = round.pending, issue = round.issue, navigator = navigator)
+            else ->
+                recordNote(
+                    status,
+                    checking = round.pending,
+                    issue = round.issue,
+                    navigator = navigator,
+                    unavailable = stringResource(R.string.pronunciation_microphone_unavailable),
+                )
         }
 
     LaunchedEffect(step.grade) {
