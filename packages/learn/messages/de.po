@@ -433,12 +433,12 @@ msgstr "Du hast dein Fragenlimit erreicht"
 #: src/_components/help-limit-notice.tsx
 msgctxt "19tT0C"
 msgid "No more code runs today"
-msgstr ""
+msgstr "Heute sind keine weiteren Code-Ausführungen möglich"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "JnTk6z"
 msgid "You've used your code runs"
-msgstr ""
+msgstr "Du hast alle deine Code-Ausführungen genutzt"
 
 #: src/_components/help-limit-notice.tsx
 msgctxt "aw2Ukw"
