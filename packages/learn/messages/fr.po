@@ -735,6 +735,7 @@ msgstr "L’enregistrement a échoué. Réessaie."
 #: src/country/country-picker.tsx
 #: src/explain/explain-waiting.tsx
 #: src/mind-maps/mind-map-viewer.tsx
+#: src/onboarding/onboarding-task.tsx
 #: src/plan/plan-editor.tsx
 msgctxt "rbrahO"
 msgid "Close"
@@ -6382,12 +6383,6 @@ msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "Utiliser l’app en {language}"
 
-#: src/language/level-test/level-test-results.tsx
-#: src/plan/use-system-change-sentence.ts
-msgctxt "qd8BIn"
-msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
-msgstr "{lessons, plural, one {# leçon que tu connais déjà a été sautée.} other {# leçons que tu connais déjà ont été sautées.}}"
-
 #. On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.
 #: src/language/level-test/level-test-results.tsx
 msgctxt "8txltA"
@@ -10152,12 +10147,6 @@ msgctxt "xu6eM8"
 msgid "Test"
 msgstr "Test"
 
-#. Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "yjiD94"
-msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr "{skipped, plural, one {# sur {lessons, number} leçons sautées} other {# sur {lessons, number} leçons sautées}}"
-
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"
@@ -11479,6 +11468,11 @@ msgstr "Tous les jours"
 msgctxt "aEYPJ2"
 msgid "{first} – {last}"
 msgstr "{first} – {last}"
+
+#: src/plan/use-system-change-sentence.ts
+msgctxt "qd8BIn"
+msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+msgstr "{lessons, plural, one {# leçon que tu connais déjà a été sautée.} other {# leçons que tu connais déjà ont été sautées.}}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "3Qo-pr"

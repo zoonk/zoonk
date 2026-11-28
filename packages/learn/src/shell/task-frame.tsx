@@ -16,6 +16,7 @@ import {
   type TaskSegment,
 } from "../_components/task-header";
 import {
+  TASK_HEADER_MIDDLE_CLASS,
   TaskActionBar,
   TaskAside,
   type TaskAsideWidth,
@@ -126,7 +127,7 @@ export function TaskFrame({
               toApp={exitToApp}
             />
           </TaskHeaderSide>
-          <div className="text-foreground flex min-w-0 shrink justify-center text-center text-sm font-medium text-balance">
+          <div className={cn(TASK_HEADER_MIDDLE_CLASS, "text-foreground text-sm font-medium")}>
             {headerTitle}
           </div>
           <TaskHeaderSide align="end">{headerEnd}</TaskHeaderSide>

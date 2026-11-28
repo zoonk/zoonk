@@ -38,19 +38,6 @@ function CourseLine({ course }: { course: Course }) {
   );
 }
 
-function useSkippedFact() {
-  const t = useExtracted();
-
-  return ({ lessons, skipped }: { lessons: number; skipped: number }): string =>
-    t({
-      description:
-        "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.",
-      message:
-        "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}",
-      values: { lessons, skipped },
-    });
-}
-
 export function UpNextLesson({
   estimatedMinutes,
   title,
@@ -165,7 +152,6 @@ export function PlacementResult({
 }) {
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
-  const skippedFact = useSkippedFact();
   const { button, pending: undoing, undone } = useResultUndo(undo);
   const stopName = useStartStopName();
   const { course, lessonsSkipped } = result;
@@ -198,10 +184,8 @@ export function PlacementResult({
       {course && !undone && (
         <div className="-mt-1 flex flex-col gap-2.5">
           <CourseLine course={course} />
-          {/* With nothing skipped the line and its ring say it; a bare count reads as work done. */}
-          {lessonsSkipped > 0 && (
-            <TaskMeta facts={[skippedFact({ lessons: course.lessons, skipped: lessonsSkipped })]} />
-          )}
+          {/* With nothing skipped the line and its ring say it; with no start the title says it. */}
+          {place && lessonsSkipped > 0 && <TaskMeta facts={[sentences.skipped(lessonsSkipped)]} />}
         </div>
       )}
 

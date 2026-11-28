@@ -6,6 +6,7 @@ import { getLanguageNameInSentence } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
+import { TaskMeta } from "../../_components/task-meta";
 import { useAppLocale } from "../../_utils/locale";
 import { useLanguageNameInSentence } from "../../_utils/use-language-name";
 import { OnboardingDescription } from "../../onboarding/onboarding-frame";
@@ -74,6 +75,7 @@ export function LevelResult({
   const languageName = useLanguageNameInSentence();
   const { skipped } = useSkippedLessonsSentences();
   const { button, pending, undone } = useResultUndo({ changeId: result?.changeId, onUndo });
+  const skippedNow = undone ? 0 : (result?.lessonsSkipped ?? 0);
   const nextLesson = undone ? null : result?.nextLesson;
   const action = useResultAction({ nextLesson, onboarding });
   const { lessonId } = action;
@@ -92,7 +94,12 @@ export function LevelResult({
         undone ? skipped(0) : t("Your {language} level", { language: languageName(targetLanguage) })
       }
     >
-      {result && <LevelRanges ranges={result.ranges} />}
+      {result && (
+        <div className="flex flex-col gap-2.5">
+          <LevelRanges ranges={result.ranges} />
+          {skippedNow > 0 && <TaskMeta facts={[skipped(skippedNow)]} />}
+        </div>
+      )}
       {nextLesson && <UpNextLesson title={nextLesson.title} />}
       {testOutLevel && (
         <Button
@@ -114,29 +121,24 @@ export function LevelResult({
 function useLevelResultSentence() {
   const t = useExtracted();
 
-  return (result: LevelTestResult | null): string => {
-    const lessons = result?.lessonsSkipped ?? 0;
-
-    if (lessons > 0) {
-      return t(
-        "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}",
-        { lessons },
-      );
-    }
-
-    return result?.ranges.reading && !result.ranges.listening
+  return (result: LevelTestResult | null): string =>
+    result?.ranges.reading && !result.ranges.listening
       ? t({
           description:
             "On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.",
           message: "You can take the test again later, from your plan.",
         })
       : t("Your lessons keep adjusting as you answer.");
-  };
 }
 
+/** Lessons the test skipped are the caption under the levels, so the title has no sentence then. */
 function LevelResultLead({ result, undone }: { result: LevelTestResult | null; undone: boolean }) {
   const { back } = useSkippedLessonsSentences();
   const sentence = useLevelResultSentence();
+
+  if (!undone && (result?.lessonsSkipped ?? 0) > 0) {
+    return null;
+  }
 
   return (
     <OnboardingDescription role="status">

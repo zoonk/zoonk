@@ -47,9 +47,8 @@ function CardFace<Value extends string>({ card }: { card: TestOfferCard<Value> }
 
   return (
     <>
-      {/* The mark sits on the name's line, and the two are centered in the card as one. */}
-      <span className="flex min-w-0 flex-1 items-start gap-4">
-        <KindIcon className="mt-0.5 size-5" kind={card.mark === "test" ? "mock" : "lesson"} />
+      <span className="flex min-w-0 flex-1 items-center gap-4">
+        <KindIcon className="size-5" kind={card.mark === "test" ? "mock" : "lesson"} />
 
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-reading font-medium wrap-break-word">{card.label}</span>

@@ -1,19 +1,22 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { Drawer, DrawerContent, DrawerPopup } from "@zoonk/ui/components/drawer";
+import { Drawer, DrawerCloseButton, DrawerContent, DrawerPopup } from "@zoonk/ui/components/drawer";
 import { TaskLayer } from "@zoonk/ui/components/task-layer";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type ReactNode } from "react";
 import { useTaskExitAsk } from "../_components/task-close";
 import { TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
-import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
 import { useTestFacts } from "../placement-test/use-test-facts";
 import { TaskFrame } from "../shell/task-frame";
 import { type TestQuestionTop, useOnboardingScreen } from "./onboarding-host";
 
 const PERCENT = 100;
+
+/** The set's button height for the pointer in use, growing only when a long label wraps. */
+const WAY_OUT_CLASS =
+  "h-auto min-h-control max-w-full py-2 text-center text-balance whitespace-normal";
 
 /**
  * A test's two ways out, behind its ✕: leave and come back to it, or end it with the answers
@@ -34,25 +37,29 @@ function TestWaysOut({
   return (
     <Drawer onOpenChange={onOpenChange} open={open}>
       <DrawerPopup aria-label={t("Leave")}>
+        <div className="flex justify-end px-6 pt-3 sm:pt-5">
+          <DrawerCloseButton label={t("Close")} />
+        </div>
+
         <DrawerContent
-          className="flex flex-col gap-2 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
+          className="flex flex-col gap-2 pt-2 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
           data-slot="test-ways-out"
         >
           {hint && <p className="text-muted-foreground pb-2 text-sm">{hint}</p>}
 
-          <Button className={TASK_WRAPPING_ACTION_CLASS} onClick={onLeave} size="xl">
+          <Button className={WAY_OUT_CLASS} onClick={onLeave} size="lg">
             {t("Finish later")}
           </Button>
 
           <Button
-            className={TASK_WRAPPING_ACTION_CLASS}
+            className={WAY_OUT_CLASS}
             disabled={waits}
             focusableWhenDisabled
             onClick={() => {
               onOpenChange(false);
               onStop();
             }}
-            size="xl"
+            size="lg"
             variant="outline"
           >
             {t("Stop and use my answers")}

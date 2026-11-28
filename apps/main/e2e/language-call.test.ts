@@ -491,6 +491,51 @@ test.describe("Language practice in the plan", () => {
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
   });
 
+  test("a level test that skipped lessons says so under the levels, not under the title", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }, testInfo) => {
+    const goal = await onboardingGoal({
+      details: { reason: "Trabalho" },
+      language: "pt",
+      prompt: "quero melhorar meu inglês",
+      targetLanguage: "en",
+      title: "Inglês para o trabalho",
+      userId: noProgressUser.id,
+    });
+
+    // The learner's own finished test, which onboarding shows when it opens.
+    const attemptId = randomUUID();
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          answered: [...ANSWERED, ...PROFILE_QUESTIONS],
+          level: "A2",
+          levelTest: {
+            attemptId,
+            result: {
+              attemptId,
+              finishedAt: new Date().toISOString(),
+              lessonsSkipped: 3,
+              levelsSkipped: ["A1"],
+              ranges: { listening: { high: "B1", low: "A2" }, reading: { high: "B2", low: "B1" } },
+            },
+          },
+          reason: "Trabalho",
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await page.goto(`/start/${goal.id}`);
+
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+    await expect(page.getByText("3 lessons skipped", { exact: true })).toBeVisible();
+    await expect(page.getByText(/you already know/u)).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath("level-result-skipped.png") });
+  });
+
   test("the level test's question waits while Stop saves, and its result shows the plan's next lesson", async ({
     noProgressUser,
     userWithoutProgress: page,

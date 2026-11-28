@@ -166,7 +166,7 @@ function LevelRow({
       <span
         className={cn(
           "text-end text-xs whitespace-nowrap tabular-nums",
-          muted ? "text-muted-foreground" : "font-medium",
+          muted ? "text-muted-foreground" : "font-mono font-medium",
         )}
       >
         {label}
