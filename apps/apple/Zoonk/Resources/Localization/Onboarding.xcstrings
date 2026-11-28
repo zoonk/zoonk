@@ -944,16 +944,16 @@
         "pl" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld lekcja"
-                }
-              },
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld lekcje"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lekcja"
                 }
               },
               "other" : {
@@ -968,16 +968,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld aula"
-                }
-              },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld aulas"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula"
                 }
               },
               "other" : {
@@ -1012,13 +1012,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion als schon bekannt erkannt"
+                  "value" : "%lld Lektion übersprungen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen als schon bekannt erkannt"
+                  "value" : "%lld Lektionen übersprungen"
                 }
               }
             }
@@ -1045,16 +1045,22 @@
         "es" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Se saltaron %lld lecciones"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lección omitida"
+                  "value" : "Se saltó %lld lección"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld lecciones omitidas"
+                  "value" : "Se saltaron %lld lecciones"
                 }
               }
             }
@@ -1063,6 +1069,12 @@
         "fr" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons sautées"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1081,6 +1093,12 @@
         "it" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lezioni saltate"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1102,7 +1120,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lldレッスンがスキップされました"
+                  "value" : "%lldレッスンをスキップ"
                 }
               }
             }
@@ -1114,7 +1132,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld개 레슨 건너뜀"
+                  "value" : "건너뛴 레슨 %lld개"
                 }
               }
             }
@@ -1126,25 +1144,25 @@
               "few" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pominięte lekcje"
+                  "value" : "Pominięto %lld lekcje"
                 }
               },
               "many" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pominiętych lekcji"
+                  "value" : "Pominięto %lld lekcji"
                 }
               },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pominięta lekcja"
+                  "value" : "Pominięto %lld lekcję"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Liczba pominiętych lekcji: %lld"
+                  "value" : "Pominięto %lld lekcji"
                 }
               }
             }
@@ -1153,6 +1171,12 @@
         "pt" : {
           "variations" : {
             "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas puladas"
+                }
+              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -1180,7 +1204,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Atlanan ders sayısı: %lld"
+                  "value" : "%lld ders atlandı"
                 }
               }
             }
@@ -10401,13 +10425,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keine Lektionen als schon bekannt erkannt"
+            "value" : "Keine Lektionen übersprungen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ninguna lección omitida"
+            "value" : "No se saltaron lecciones"
           }
         },
         "fr" : {
@@ -10425,7 +10449,7 @@
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "スキップされたレッスンはありません"
+            "value" : "スキップしたレッスンはありません"
           }
         },
         "ko" : {
@@ -10437,7 +10461,7 @@
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nie pominięto żadnych lekcji"
+            "value" : "Nie pominięto żadnej lekcji"
           }
         },
         "pt" : {
@@ -15477,13 +15501,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Der Test hat %lld Lektion, die du schon kennst, als bekannt erkannt."
+                  "value" : "%lld Lektion übersprungen, die du schon kennst."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Der Test hat %lld Lektionen, die du schon kennst, als bekannt erkannt."
+                  "value" : "%lld Lektionen übersprungen, die du schon kennst."
                 }
               }
             }
@@ -15513,13 +15537,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se omitió %lld lección que ya conocías."
+                  "value" : "Se saltó %lld lección que ya conoces."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se omitieron %lld lecciones que ya conocías."
+                  "value" : "Se saltaron %lld lecciones que ya conoces."
                 }
               }
             }
@@ -15609,7 +15633,7 @@
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Liczba pominiętych, znanych już lekcji: %lld."
+                  "value" : "Pominięto %lld znanej już lekcji."
                 }
               }
             }
@@ -15636,16 +15660,10 @@
         "tr" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Zaten bildiğin %lld ders atlandı."
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Önceden öğrendiğin %lld ders atlandı."
+                  "value" : "Zaten bildiğin %lld ders atlandı."
                 }
               }
             }

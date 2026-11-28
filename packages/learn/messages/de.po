@@ -11470,7 +11470,7 @@ msgstr "{count, plural, one {Du kennst die Lektion schon. Sie bleibt Teil deiner
 #: src/plan/use-skipped-lessons-sentences.ts
 msgctxt "psTUYu"
 msgid "{count, plural, =0 {No lessons skipped} one {# lesson skipped} other {# lessons skipped}}"
-msgstr "{count, plural, =0 {Keine Lektionen ausgelassen} one {# Lektion ausgelassen} other {# Lektionen ausgelassen}}"
+msgstr "{count, plural, =0 {Keine Lektionen übersprungen} one {# Lektion übersprungen} other {# Lektionen übersprungen}}"
 
 #: src/plan/use-study-days-text.ts
 msgctxt "1ooK0d"
