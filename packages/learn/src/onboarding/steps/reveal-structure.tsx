@@ -40,7 +40,7 @@ import { SubjectTopics } from "../../syllabus/subject-topics";
 import { hasSyllabusSection } from "../../syllabus/syllabus-section";
 import { useNotPlannedReason } from "../../syllabus/topic-note";
 
-function PhaseRow({ phase }: { phase: PlanPhaseView }) {
+function PhaseRow({ alignChevron, phase }: { alignChevron: boolean; phase: PlanPhaseView }) {
   const phaseRowName = usePhaseRowName();
 
   const row = (
@@ -58,7 +58,7 @@ function PhaseRow({ phase }: { phase: PlanPhaseView }) {
     return (
       <div className={PATH_ROW_CLASS} data-slot="path-row">
         {row}
-        <ListRowChevronSpace />
+        {alignChevron && <ListRowChevronSpace />}
       </div>
     );
   }
@@ -101,7 +101,7 @@ function RevealPath() {
         <ol className="flex flex-col [&>li+li]:border-t" data-slot="journey-path-list">
           {plan.phases.map((phase) => (
             <li key={phase.index}>
-              <PhaseRow phase={phase} />
+              <PhaseRow alignChevron={rest.length > 0} phase={phase} />
             </li>
           ))}
         </ol>
