@@ -2,11 +2,7 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 
-async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "language">) {
-  if (course.format !== "exam") {
-    return null;
-  }
-
+async function findQuestionBankExam(course: Pick<Course, "id" | "language">) {
   const chapter = { courses: { some: { courseId: course.id } }, visibility: "public" as const };
 
   const blueprints = await prisma.examBlueprint.findMany({
@@ -47,11 +43,14 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
     : null;
 }
 
-/** Linked by its curriculum or question bank, never by its title. */
+/**
+ * Only a course made for the whole exam is that exam's course; a subject course an exam reuses
+ * stays a course of its own. Linked by its curriculum or question bank, never by its title.
+ */
 export async function loadCourseExam(courseId: string) {
   const course = await prisma.course.findFirst({
     omit: { landingPage: true },
-    where: { id: courseId, visibility: "public" },
+    where: { format: "exam", id: courseId, visibility: "public" },
   });
 
   if (!course) {

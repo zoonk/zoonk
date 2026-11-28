@@ -11,14 +11,11 @@ import { startCourseGoal } from "./start-course-goal";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/**
- * Exam A's first discipline is the shared course, so A's graph stores it as its primary course.
- * Exam B teaches the same course but starts with another discipline, so B's graph only names it.
- */
+/** Exam A's graph stores the shared exam course as its own; exam B's graph only names it. */
 async function primaryAndNamedCourse() {
   const [shared, other] = await Promise.all([
-    courseFixture({ format: "core", isPublished: true, visibility: "public" }),
-    courseFixture({ format: "core", isPublished: true, visibility: "public" }),
+    courseFixture({ format: "exam", isPublished: true, visibility: "public" }),
+    courseFixture({ format: "exam", isPublished: true, visibility: "public" }),
   ]);
 
   const bands = await courseBandsFixture({ courseId: shared.id, levels: MASTERY_LEVELS });
@@ -95,12 +92,12 @@ describe("a course one exam stores as primary and another names", () => {
     await expect(loadCourseExam(shared.id)).resolves.toBeNull();
   });
 
-  it("starts the shared course as an undated course goal", async () => {
+  it("starts the shared course as an undated exam goal of no single exam", async () => {
     const [{ shared }, user] = await Promise.all([primaryAndNamedCourse(), userFixture()]);
     mockSession(user.id);
 
     await expect(startCourseGoal({ courseId: shared.id, input: {} })).resolves.toMatchObject({
-      goal: { examBlueprintId: null, kind: "learn", targetDate: null },
+      goal: { examBlueprintId: null, kind: "exam", targetDate: null },
       status: "created",
     });
   });

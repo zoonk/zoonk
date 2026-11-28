@@ -719,9 +719,9 @@ describe(startCourseGoal, () => {
     },
   );
 
-  it("keeps a linked core course's exam kind in either language and its notice only in the original", async () => {
+  it("keeps a linked exam course's exam kind in either language and its notice only in the original", async () => {
     const [course, user, blueprint] = await Promise.all([
-      publicCourse({ format: "core" }),
+      publicCourse({ format: "exam" }),
       userFixture(),
       examBlueprintFixture({
         edition: {
@@ -793,10 +793,75 @@ describe(startCourseGoal, () => {
     const translatedId = translated.status === "created" ? translated.goal.id : "";
 
     await expect(loadGoalCurriculumInputs(translatedId)).resolves.toMatchObject({
-      sourceCourse: { format: "core", id: course.id },
+      sourceCourse: { format: "exam", id: course.id },
       startedCourse: null,
     });
   });
+
+  it.each([true, false])(
+    "starts a subject course one exam reuses as an undated course goal (the exam's first course: %s)",
+    async (isFirstCourse) => {
+      const [{ course, skills }, user, blueprint] = await Promise.all([
+        outlinedCourse({ format: "core" }),
+        userFixture(),
+        examBlueprintFixture({
+          edition: {
+            check: null,
+            citations: [],
+            dates: [
+              {
+                citation: { passage: "", sourceId: "notice" },
+                date: "2020-11-08",
+                kind: "exam",
+                label: "Exam",
+                startTime: null,
+              },
+            ],
+            noticeUrl: null,
+            questionCount: null,
+            sourceHash: null,
+            timeZone: null,
+            year: 2020,
+          },
+        }),
+      ]);
+
+      await prisma.examSkillGraph.create({
+        data: {
+          examBlueprintId: blueprint.id,
+          generatedAt: NOW,
+          graph: {
+            phases: [{ milestone: null, name: "Exam" }],
+            skills: [...skills].map(([name, skillId]) => ({
+              area: null,
+              courseIds: [course.id],
+              lessons: 1,
+              name,
+              phase: 0,
+              skillId,
+              weight: null,
+            })),
+          },
+          model: "test",
+          primaryCourseId: isFirstCourse ? course.id : null,
+          promptVersion: "test",
+          runId: randomUUID(),
+        },
+      });
+
+      mockSession(user.id);
+
+      await expect(startCourseGoal({ courseId: course.id, input: {} })).resolves.toMatchObject({
+        goal: {
+          examBlueprintId: null,
+          kind: "learn",
+          primaryCourseId: course.id,
+          targetDate: null,
+        },
+        status: "created",
+      });
+    },
+  );
 
   it("starts an exam course without a stored exam as an exam goal, which research reads", async () => {
     const [course, user] = await Promise.all([

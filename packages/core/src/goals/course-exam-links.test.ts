@@ -60,7 +60,7 @@ describe("explicit course exam links", () => {
     expect(estimate.numbers.scheduledMinutes).toBeGreaterThan(0);
   });
 
-  it("keeps a subject's explicit graph link when the umbrella is the primary course", async () => {
+  it("never makes a subject course the exam's graph names the exam's course, only the exam course", async () => {
     const [fixture, subject] = await Promise.all([
       estimateNumbersFixture(),
       courseFixture({ format: "core", isPublished: true, visibility: "public" }),
@@ -84,7 +84,9 @@ describe("explicit course exam links", () => {
       where: { examBlueprintId: fixture.blueprint.id },
     });
 
-    const exam = await loadCourseExam(subject.id);
+    await expect(loadCourseExam(subject.id)).resolves.toBeNull();
+
+    const exam = await loadCourseExam(fixture.course.id);
     expect(exam?.blueprint.id).toBe(fixture.blueprint.id);
   });
 
