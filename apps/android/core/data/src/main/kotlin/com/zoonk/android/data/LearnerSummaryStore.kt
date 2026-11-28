@@ -2,14 +2,16 @@ package com.zoonk.android.data
 
 import com.zoonk.api.models.LearnerSummary
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.dropWhile
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
@@ -51,9 +53,11 @@ fun CoroutineScope.invalidateAtNextChange(
         .distinctUntilChanged()
         .collectLatest { nextChangeAt ->
             nextChangeAt ?: return@collectLatest
-            isForeground.filter { it }.collectLatest {
-                delay((nextChangeAt - now()).coerceAtLeast(0).milliseconds)
-                resource.invalidate()
+            while (now() < nextChangeAt) {
+                withTimeoutOrNull((nextChangeAt - now()).milliseconds) {
+                    isForeground.dropWhile { it }.firstOrNull { it } ?: awaitCancellation()
+                }
             }
+            resource.invalidate()
         }
 }
