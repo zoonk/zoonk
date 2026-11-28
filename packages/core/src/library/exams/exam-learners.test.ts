@@ -144,7 +144,7 @@ describe(linkGoalToExamBlueprint, () => {
     ).toStrictEqual({ "DELE B2": [other.id, "es"], "PTE Academic 65": [pte.id, "en"] });
   });
 
-  it("never links another country's notice to an exam the learner placed in theirs", async () => {
+  it.each([true, false])("keeps a placed exam in its country (%s)", async (countryDependent) => {
     const user = await userFixture();
 
     const [american, canadian, international, placed, unplaced] = await Promise.all([
@@ -153,7 +153,7 @@ describe(linkGoalToExamBlueprint, () => {
       examBlueprintFixture({ country: "ZZ", name: "IELTS Academic" }),
       goalFixture({
         contentCountry: "CA",
-        details: { countryDependent: true },
+        details: { countryDependent },
         kind: "exam",
         userId: user.id,
       }),

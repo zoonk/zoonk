@@ -10,7 +10,6 @@ import {
 } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 import { findNamedChoices } from "../../exams/choices/named-exam-choices";
-import { isCountryGoal } from "../../goals/_utils/goal-content-country";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import {
   refreshGoalTestSummary,
@@ -135,21 +134,16 @@ async function saveNamedChoices(
 
 const INTERNATIONAL = "ZZ";
 
-/**
- * A country-dependent exam the learner placed is only that country's: another country's notice by
- * the same name teaches another exam. A notice of the learner's own material, or one run the same
- * everywhere, is never another country's.
- */
+/** Exams run by different countries can share a name and teach different syllabuses. */
 function isOtherCountryExam({
   blueprint,
   goal,
 }: {
   blueprint: Pick<ExamBlueprint, "country" | "ownerId">;
-  goal: Pick<Goal, "contentCountry" | "details" | "kind">;
+  goal: Pick<Goal, "contentCountry" | "kind">;
 }): boolean {
   return (
     goal.kind === "exam" &&
-    isCountryGoal(goal) &&
     goal.contentCountry !== null &&
     blueprint.ownerId === null &&
     blueprint.country !== INTERNATIONAL &&

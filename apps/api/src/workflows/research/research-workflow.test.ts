@@ -41,6 +41,7 @@ import { Response as PageResponse, fetch } from "undici";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sleep } from "workflow";
 import { getRun, start } from "workflow/api";
+import { saveAnswerInputs } from "../../../../../packages/core/src/view-models/onboarding/_utils/save-onboarding-answer";
 import { mockHookConflict } from "../../../mocks/workflow";
 import { followWithOutdatedSummary, readFollowerDetails } from "../_test-utils/focus-test-follower";
 import { goalContentWorkflow } from "../goals/goal-content-workflow";
@@ -264,6 +265,33 @@ describe(researchWorkflow, () => {
 
     expect(generateExamResearchPlan).not.toHaveBeenCalled();
     expect(generateSourceResearchPlan).not.toHaveBeenCalled();
+  });
+
+  it("waits for the learner's exam country and uses it to research the notice", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      details: { answered: [], countryDependent: true, examName: "Civil service exam" },
+      kind: "exam",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    await replayTcdfResearch();
+
+    vi.mocked(sleep).mockImplementationOnce(async () => {
+      expect(generateExamResearchPlan).not.toHaveBeenCalled();
+
+      await expect(
+        saveAnswerInputs({ goal, input: { country: "BR", question: "contentCountry" } }),
+      ).resolves.toMatchObject({ status: "saved" });
+    });
+
+    await expect(researchWorkflow({ goalId: goal.id })).resolves.toMatchObject({ status: "ready" });
+
+    expect(generateExamResearchPlan).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ details: '{"contentCountry":"BR"}' }),
+    );
   });
 
   it("builds the blueprint from official sources, keeps every fact's passage and links the goal", async () => {
