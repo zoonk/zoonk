@@ -145,7 +145,8 @@ private fun PhaseItem(
         return
     }
 
-    val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
+    val hasContent =
+        phase.chapters.isNotEmpty() || phase.leftOut.isNotEmpty() || phase.checkpoint != null || phase.mocks.nextDate != null
     if (!hasContent) {
         PhaseRow(page.plan, phase, phaseMeta(page, phase, open), paused = page.isPaused)
         return
@@ -167,7 +168,7 @@ private fun PhaseItem(
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
         if (expanded) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief)
+            PhaseChapters(page, phase.chapters, phase.checkpoint, links, indent = nested, brief = brief, leftOut = phase.leftOut)
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
         }
     }
@@ -279,6 +280,11 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
+    if (phase.leftOut.isNotEmpty()) {
+        return sameWords(
+            pluralStringResource(R.plurals.plan_left_out_topics, phase.leftOut.size, phase.leftOut.size),
+        )
+    }
     // Main's `PhaseResume`: nothing continues while the goal is paused.
     if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
@@ -402,6 +408,7 @@ internal fun PhaseChapters(
     links: PlanLinks,
     indent: Dp = 0.dp,
     brief: Boolean = false,
+    leftOut: List<String> = emptyList(),
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
     val rows = chapters.filterNot { it.isWritingAhead }
@@ -425,7 +432,37 @@ internal fun PhaseChapters(
                 indent = indent,
             ) { showAll = !showAll }
         }
+        if (leftOut.isNotEmpty()) LeftOutTopicsRow(leftOut, indent)
         checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
+    }
+}
+
+/** Main's left-out row: the topics the plan's date leaves out of a phase, folded under one row that names them. */
+@Composable
+private fun LeftOutTopicsRow(
+    names: List<String>,
+    indent: Dp,
+) {
+    var open by rememberSaveable { mutableStateOf(false) }
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+
+    Column {
+        ListRow(
+            headline = { Text(pluralStringResource(R.plurals.plan_left_out_topics, names.size, names.size), color = muted) },
+            onClick = { open = !open },
+            indent = indent,
+            expanded = open,
+            leading = { Icon(painterResource(R.drawable.ic_do_not_disturb_on), contentDescription = null, tint = muted) },
+        )
+        if (open) {
+            names.forEach { name ->
+                ListRow(
+                    headline = { Text(name, color = muted) },
+                    indent = indent,
+                    leading = { Box(Modifier.size(MARK_COLUMN)) },
+                )
+            }
+        }
     }
 }
 
@@ -743,7 +780,7 @@ internal fun ColumnScope.PhaseDetails(
 
     Column(Modifier.bleed(LIST_ITEM_INSET)) {
         if (learn) {
-            PhaseChapters(page, phase.chapters, phase.checkpoint, links)
+            PhaseChapters(page, phase.chapters, phase.checkpoint, links, leftOut = phase.leftOut)
         } else {
             phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
             if (phase.mocks.nextDate == null && phase.mocks.count > 0) {

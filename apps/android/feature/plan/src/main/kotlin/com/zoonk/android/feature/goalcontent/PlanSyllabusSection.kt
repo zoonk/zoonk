@@ -171,6 +171,13 @@ private fun SubjectRow(
             if (alsoIn != null) {
                 Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
+            if (subject.leftOut.isNotEmpty()) {
+                Text(
+                    pluralStringResource(R.plurals.plan_left_out_topics, subject.leftOut.size, subject.leftOut.size),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         }
     }
     val progress: @Composable (Modifier) -> Unit = { progressModifier ->

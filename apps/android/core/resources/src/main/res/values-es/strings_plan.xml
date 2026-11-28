@@ -281,6 +281,7 @@
   "plan_going_deeper": "7725d2ac4f133206f9a9041b03e70ccd96e27584ca20e400e8dfc6ff7c32260f",
   "plan_how_calculated": "4e3ef66d26681ec72edc3904d5fb9e0c63706a44ed556e117192657a58b993ff",
   "plan_keep_studying": "65c0935be11444b5b4f85f0652642cc07b5337f7b299e52ba57e318020b75d9c",
+  "plan_left_out_topics": "a2421520a193fae793994a943cf2bee12dc61814304aa1f61136a724aae58d7a",
   "plan_legend_phase_questions": "7551d749d694371d1966791a58da26b2fce642f8738ad1b04e067e6add002ea4",
   "plan_lessons": "7e706b806ec55d99ddb289dc4baa8968b01af0eb9d6a7ee78b512d6f690993a7",
   "plan_lessons_done_of": "46b68a8695613d3d129c603690e026edc8b99e83aaaa0cbea14d84a10a02cdb0",
@@ -623,6 +624,12 @@
         <item quantity="other">%1$d de %2$d lecciones completadas</item>
     </plurals>
     <string name="plan_not_in_your_plan">No está en tu plan</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d tema no está en tu plan</item>
+        <item quantity="many">%d temas no están en tu plan</item>
+        <item quantity="other">%d temas no están en tu plan</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d lección sin estudiar</item>
         <item quantity="many">%d lecciones sin estudiar</item>

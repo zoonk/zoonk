@@ -30,6 +30,7 @@
   "goalcontent_lessons_skipped": "f40679bd367b38f7602f877f40ea9c34b6739d59628d8a6ef18a1a98a8c24828",
   "goalcontent_matrix_title": "a9d714259f006e806456c71d0f6369bb7864385024ffddf64d2dcaffb43bcdc4",
   "goalcontent_module_missing": "f5fdbc77e0d2d342df06a91eb4a6d3619f1ef6c7cc3701e55c053bc19d9fc03f",
+  "goalcontent_module_part_time": "e70dfef77e1d060d0c3e18ad2a1bd2f9b2d6f79b35ae59cb23494591c6fa2389",
   "goalcontent_module_skipped": "ade64ba98d079dba076623bc5801fd1419fe22c480bf7f947b05531bd9912cb2",
   "goalcontent_module_time": "fc87a863f457d3655798f1d86a9ed2d233fc71db7e487e499fc36ab4a25317ea",
   "goalcontent_modules": "32d106d2def2828c689d63a0f431c40cb26c60966354e07b6d67948d748baec1",
@@ -66,6 +67,7 @@
   "goalcontent_start": "cc0854bb8b324a41aac7839102d140a50a3298942faad4506e8b76f1bebde64b",
   "goalcontent_studied": "260a27a1ffd6d7a3467ad774d19d11ffe648c2336e6e5b90598ad63ce84398ec",
   "goalcontent_subject_missing": "72fae9565a7f3eb935ab499cf2abc2748d2ad1214ac630dbe6c26fc5e5edf993",
+  "goalcontent_subject_part_time": "b6a2c5d206f4bc58265fbe1edd0e2038ea8a943b82c39cb4824360130660434c",
   "goalcontent_subject_skipped": "59fb69074e12839f355c73ff8fe03099e66b4a63b6d57e12d7f68285751987de",
   "goalcontent_subject_time": "999ac921ff069f4b2c29063d58ea8d6bfdbb682da8fd14b0b408bfceb3d27a3d",
   "goalcontent_subjects": "46863f044cc7cdee487ab68c0582f28c6bd73069c7e521fad7645c2bcfe5027d",
@@ -221,6 +223,10 @@
     <string name="goalcontent_module_skipped">Sacaste este módulo de tu plan.</string>
     <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
     <string name="goalcontent_module_time">Este módulo no está en tu plan. Primero van otros módulos.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
+    <string name="goalcontent_module_part_time">Parte de este módulo no está en tu plan. Primero van otros temas.</string>
+    <!-- On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
+    <string name="goalcontent_subject_part_time">Parte de esta materia no está en tu plan. Primero van otros temas.</string>
     <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">Este módulo aún no está en tu plan.</string>
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->

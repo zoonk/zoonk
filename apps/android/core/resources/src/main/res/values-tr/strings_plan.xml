@@ -281,6 +281,7 @@
   "plan_going_deeper": "c6676339e3672f28169c69eeacc170db63d3e8ebf0115415c2c81d71034c6a19",
   "plan_how_calculated": "a7883158c74e8d82bf53ae3ebbda9c3460dc06097cb136e16b3ca038162bb012",
   "plan_keep_studying": "92981b39491ef5320d97f9d110c6f5f05a77389626abda9207090300a4662580",
+  "plan_left_out_topics": "42e3a97dd4caf978d9cf35715c112af83713035d308508a8bb75c84ec1e20a8d",
   "plan_legend_phase_questions": "42094716d7adb46c7ab4d1a5b29085fde8a62420c5fa66195133b6b80d59ae82",
   "plan_lessons": "56bedeaeea4bc07e669e164401573bfd11ca76dad04f68ec64e4f57c0d1b661b",
   "plan_lessons_done_of": "225a776889f0cc67b5844f74a028524fca70ba9d4830e9138aa5c3f059bc277c",
@@ -618,6 +619,11 @@
         <item quantity="other">%1$d / %2$d ders tamamlandı</item>
     </plurals>
     <string name="plan_not_in_your_plan">Planında yok</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="one">%d konu planında yok</item>
+        <item quantity="other">%d konu planında yok</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="one">%d ders çalışılmadı</item>
         <item quantity="other">%d ders çalışılmadı</item>

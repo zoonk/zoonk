@@ -281,6 +281,7 @@
   "plan_going_deeper": "03f217a5f80dd0d811378afa697746bbdf73728d151ab6bcc543df99f1ac903a",
   "plan_how_calculated": "7ce829a1b2d889ac1956707e436377b146de370982785cede27a5adbbbb3e66f",
   "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
+  "plan_left_out_topics": "30bd560df920e8db20c26b9d51b226ef60eb0ef0f15577a5cd5636f505f1aa17",
   "plan_legend_phase_questions": "a4071ec348b9cd094daae737e3a1b5900ffd94717315afec62596eb41eb7eb1d",
   "plan_lessons": "b3c5878d231409800298e7e37dfcb5f2c3a3b8df01b0308493b8666f4192ef08",
   "plan_lessons_done_of": "38b1e5994bd4b0dca6e1deda3c6018affe74764aa6eb94edadf1f2dadf2a4494",
@@ -613,6 +614,10 @@
         <item quantity="other">레슨 %1$d개 완료(총 %2$d개)</item>
     </plurals>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="other">계획에 없는 주제 %d개</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">공부하지 않은 레슨 %d개</item>
     </plurals>

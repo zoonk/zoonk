@@ -30,6 +30,7 @@
   "goalcontent_lessons_skipped": "ae0c80232a723983083b00e0df9129a82c420741076831dae59003432881394b",
   "goalcontent_matrix_title": "70a62fcd8fa9b6f8a93c4fd81b8c2c8a5bbfcbdac2913caaba0424de09570e88",
   "goalcontent_module_missing": "018c379c7e7ab239fb8b160cb461b94557a09b56d9c015a5637d16e3695d00af",
+  "goalcontent_module_part_time": "d28f36e0a803c697bdef951ea9e2d6bc7b3f493c1a9fa6e9082dff81966983eb",
   "goalcontent_module_skipped": "774ea409b136aa621701b24ad72e6bc1ca82eadbe20d2d679601bb0c8b396134",
   "goalcontent_module_time": "594899d998c336095a0e04e779de28833a95eb1968b58fcb659d18dce7ba9960",
   "goalcontent_modules": "fd5ee7a77628ff793c52a7856d78007b0c660186b8c6b8085c05f0001ae5b9c3",
@@ -66,6 +67,7 @@
   "goalcontent_start": "f7ad2965f13dfc17a2aed81b6d6b8ced8eaee68137dd71c1be689ab332628eaa",
   "goalcontent_studied": "a343b22f5e86829b4b3d93f9c2a2a496302d3015a7b7923743b6ae5650212739",
   "goalcontent_subject_missing": "d6e9e46409cc37e5c8edb8b49336d3be41be7056b34e4c58268eb449cac77f21",
+  "goalcontent_subject_part_time": "5cd65504bfb7cd922bcee7b404b8a1a6fff48206108d425cae5d09af2da32816",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
   "goalcontent_subject_time": "3e3f99757b2bf2ee618c17b6a59291cdaf0d5a1b3d2a92b4d46fc32db2fa8fe1",
   "goalcontent_subjects": "a3fade2e499bdb9dced80de11c7d81bf4136dfa987d1442796dbb9426bfe81b2",
@@ -209,6 +211,10 @@
     <string name="goalcontent_module_skipped">Bu modülü planından çıkardın.</string>
     <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
     <string name="goalcontent_module_time">Bu modül planında yok. Önce diğer modüllere yer veriliyor.</string>
+    <!-- On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
+    <string name="goalcontent_module_part_time">Bu modülün bir kısmı planında yok. Önce başka konular var.</string>
+    <!-- On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
+    <string name="goalcontent_subject_part_time">Bu konunun bir kısmı planında yok. Önce başka konular var.</string>
     <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">Bu modül henüz planında yok.</string>
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->

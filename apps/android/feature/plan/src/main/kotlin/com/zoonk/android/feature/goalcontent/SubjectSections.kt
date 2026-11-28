@@ -194,16 +194,37 @@ internal fun NotPlannedNotice(
 ) {
     val words =
         when (subject.notPlannedReason) {
-            "skipped" -> if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
-            "time" -> if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
-            "missing" -> if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
-            else -> return
+            "skipped" -> {
+                if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
+            }
+
+            "time" -> {
+                if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
+            }
+
+            "missing" -> {
+                if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
+            }
+
+            null -> {
+                if (subject.leftOut.isEmpty()) {
+                    return
+                } else if (module) {
+                    R.string.goalcontent_module_part_time
+                } else {
+                    R.string.goalcontent_subject_part_time
+                }
+            }
+
+            else -> {
+                return
+            }
         }
 
     val sentence = stringResource(words)
     // Main's `NotPlannedCallout`: for time, the sentence ends with the way to change the plan.
     val text =
-        if (subject.notPlannedReason == "time") {
+        if (subject.notPlannedReason == "time" || subject.notPlannedReason == null) {
             buildAnnotatedString {
                 append(sentence + spaceAfterSentence(sentence))
                 append(statusLink(stringResource(R.string.goalcontent_adjust_plan), actions.adjustPlan))
@@ -764,15 +785,34 @@ private fun TopicFrequencySource(
 
 /** What a subject out of the plan would teach, by name, when it has no chapters or topics to show it. */
 internal fun LazyListScope.subjectCovers(covers: List<String>) {
-    if (covers.isEmpty()) return
+    skillNames(key = "covers", names = covers, title = { stringResource(R.string.goalcontent_covers) })
+}
 
-    sectionTitle(key = "covers-title", title = { stringResource(R.string.goalcontent_covers) })
+/** The topics of a subject in the plan that its date leaves out, by name, after the chapters it keeps. */
+internal fun LazyListScope.subjectLeftOut(leftOut: List<String>) {
+    skillNames(
+        key = "left-out",
+        names = leftOut,
+        title = { stringResource(R.string.goalcontent_not_in_plan) },
+        detail = { formatNumber(leftOut.size.toDouble(), currentLocale()) },
+    )
+}
 
-    item(key = "covers", contentType = "covers") {
+private fun LazyListScope.skillNames(
+    key: String,
+    names: List<String>,
+    title: @Composable () -> String,
+    detail: @Composable () -> String? = { null },
+) {
+    if (names.isEmpty()) return
+
+    sectionTitle(key = "$key-title", title = title, detail = detail)
+
+    item(key = key, contentType = "skill-names") {
         Column {
-            covers.forEachIndexed { index, name ->
+            names.forEachIndexed { index, name ->
                 if (index > 0) ListDivider()
-                ListRow(headline = { Text(name) })
+                ListRow(headline = { Text(name, color = MaterialTheme.colorScheme.onSurfaceVariant) })
             }
         }
     }

@@ -281,6 +281,7 @@
   "plan_going_deeper": "94fb0cff69cebfe4114dc7eda9f884837ed8d4d7e83be869c1e4eaaf323f3d46",
   "plan_how_calculated": "25827d5969869d99dfe361df9fc4b07849612b7a6ebfa656275201902691f853",
   "plan_keep_studying": "716930c38be9bec15a782e37c666f8fcec348cc911d62a9d833bc6c04bc5c032",
+  "plan_left_out_topics": "dbc58e03ca10e9ef953a7dd1d982f5b58df6ae7da3fc8ff050b8c1b80d79beb7",
   "plan_legend_phase_questions": "4a95dc0e9f7a890f0981fe4094474a318eb7b60face9465b979c121fc20f255d",
   "plan_lessons": "65b934f8502d6bae30024110402ab5c46f99ce9fed92f06c648472609e95628f",
   "plan_lessons_done_of": "c7f221d32f4f021ec452747cc7279169daec5bc7cf62bd844598a18f274f403a",
@@ -613,6 +614,10 @@
         <item quantity="other">%1$d / %2$dレッスン完了</item>
     </plurals>
     <string name="plan_not_in_your_plan">学習計画に含まれていません</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="other">%dトピックが学習計画に入っていません</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">%dレッスンが未学習</item>
     </plurals>
