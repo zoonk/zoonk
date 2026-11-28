@@ -9,13 +9,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -138,7 +142,7 @@ private fun PhaseItem(
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
             )
-            if (phase.leftOut.isNotEmpty()) LeftOutTopicsRow(phase.leftOut, indent = nested)
+            LeftOutTopicsRow(phase.leftOut, indent = nested)
             if (open) {
                 phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
                 phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }
@@ -434,17 +438,18 @@ internal fun PhaseChapters(
                 indent = indent,
             ) { showAll = !showAll }
         }
-        if (leftOut.isNotEmpty()) LeftOutTopicsRow(leftOut, indent)
+        LeftOutTopicsRow(leftOut, indent)
         checkpoint?.let { CheckpointRow(page, it, links, indent, brief) }
     }
 }
 
-/** Main's left-out row: the topics the plan's date leaves out of a phase, folded under one row that names them. */
+/** Main's left-out row: the topics the plan's date leaves out of a phase or a module, folded under one row that names them. */
 @Composable
-private fun LeftOutTopicsRow(
+internal fun LeftOutTopicsRow(
     names: List<String>,
     indent: Dp,
 ) {
+    if (names.isEmpty()) return
     var open by rememberSaveable { mutableStateOf(false) }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
@@ -456,17 +461,34 @@ private fun LeftOutTopicsRow(
             expanded = open,
             leading = { Icon(painterResource(R.drawable.ic_do_not_disturb_on), contentDescription = null, tint = muted) },
         )
-        if (open) {
+        if (open) FoldedNames(names, indent)
+    }
+}
+
+/** Main's `FoldedNames`: names a fold opens to, which open nothing themselves, as one quiet list of bullets hanging off the rows' title edge. */
+@Composable
+private fun FoldedNames(
+    names: List<String>,
+    indent: Dp,
+) {
+    val style = MaterialTheme.typography.bodyMedium
+    Column(
+        Modifier.padding(start = indent + listRowWordsStart() - BULLET_WIDTH - BULLET_GAP, end = LIST_ITEM_INSET, bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.onSurfaceVariant) {
             names.forEach { name ->
-                ListRow(
-                    headline = { Text(name, color = muted) },
-                    indent = indent,
-                    leading = { Box(Modifier.size(MARK_COLUMN)) },
-                )
+                Row(horizontalArrangement = Arrangement.spacedBy(BULLET_GAP)) {
+                    Text("•", Modifier.width(BULLET_WIDTH).clearAndSetSemantics {}, style = style)
+                    Text(name, style = style)
+                }
             }
         }
     }
 }
+
+private val BULLET_WIDTH = 8.dp
+private val BULLET_GAP = 6.dp
 
 /** Without [links] the row only says what's there, and opens nothing. */
 @Composable

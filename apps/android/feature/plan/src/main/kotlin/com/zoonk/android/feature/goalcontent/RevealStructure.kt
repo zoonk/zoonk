@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterRow
+import com.zoonk.android.feature.plan.LeftOutTopicsRow
 import com.zoonk.android.feature.plan.PhaseRow
 import com.zoonk.android.feature.plan.isWritingAhead
 import com.zoonk.android.feature.plan.optionalStudyLabel
@@ -68,6 +69,7 @@ private fun RevealPath(
         Column(Modifier.bleed(LIST_ITEM_INSET)) {
             if (only != null) {
                 only.chapters.filterNot { it.isWritingAhead }.forEach { ChapterRow(it, links = null, indent = 0.dp) }
+                LeftOutTopicsRow(only.leftOut, indent = 0.dp)
             } else {
                 phases.forEachIndexed { index, phase ->
                     if (index > 0) ListDivider()
@@ -78,24 +80,31 @@ private fun RevealPath(
     }
 }
 
-/** Every chapter of the phase, with no fold and no challenge: the Plan says when each comes. */
+/** Every chapter of the phase, then the topics the plan's date leaves out, with no challenge: the Plan says when each comes. */
 @Composable
 private fun RevealPhase(
     plan: Plan,
     phase: PlanPhase,
 ) {
     val chapters = phase.chapters.filterNot { it.isWritingAhead }
-    val line = phase.milestone?.let(::sameWords)
-    if (chapters.isEmpty()) {
+    val leftOut =
+        phase.leftOut
+            .takeIf { it.isNotEmpty() }
+            ?.let { pluralStringResource(R.plurals.plan_left_out_topics, it.size, it.size) }
+    // Main's two lines: its milestone over how many topics the plan's date leaves out.
+    val line = listOfNotNull(phase.milestone, leftOut).takeIf { it.isNotEmpty() }?.joinToString("\n")?.let(::sameWords)
+    if (chapters.isEmpty() && phase.leftOut.isEmpty()) {
         PhaseRow(plan, phase, line)
         return
     }
 
     var expanded by rememberSaveable(phase.index) { mutableStateOf(false) }
+    val nested = listRowWordsStart() - LIST_ITEM_INSET
     Column {
         PhaseRow(plan, phase, line, onClick = { expanded = !expanded }, expanded = expanded)
         if (expanded) {
-            chapters.forEach { ChapterRow(it, links = null, indent = listRowWordsStart() - LIST_ITEM_INSET) }
+            chapters.forEach { ChapterRow(it, links = null, indent = nested) }
+            LeftOutTopicsRow(phase.leftOut, indent = nested)
         }
     }
 }
@@ -159,7 +168,7 @@ private fun RevealSubject(
             }
         }
     val questions = subject.questions?.toInt()?.takeIf { it > 0 && withQuestions }
-    val opens = subject.topics.isNotEmpty() || subject.chapters.isNotEmpty()
+    val opens = subject.topics.isNotEmpty() || subject.chapters.isNotEmpty() || subject.leftOut.isNotEmpty()
     var expanded by rememberSaveable(subject.key) { mutableStateOf(false) }
 
     Column {
@@ -172,7 +181,12 @@ private fun RevealSubject(
             },
             onClick = if (opens) ({ expanded = !expanded }) else null,
             expanded = if (opens) expanded else null,
-            supporting = line?.let { { Text(it) } },
+            supporting =
+                if (line == null && subject.leftOut.isEmpty()) {
+                    null
+                } else {
+                    { SubjectLines(line, subject.leftOut.size) }
+                },
             meta =
                 questions?.let {
                     {
@@ -186,7 +200,22 @@ private fun RevealSubject(
                 },
             chevronSpace = true,
         )
-        if (opens && expanded) SubjectContents(subject)
+        if (opens && expanded) {
+            SubjectContents(subject)
+            LeftOutTopicsRow(subject.leftOut, indent = 0.dp)
+        }
+    }
+}
+
+/** Main's lines under a module's name: what it holds, then how many of its topics the plan's date leaves out. */
+@Composable
+private fun SubjectLines(
+    line: String?,
+    leftOut: Int,
+) {
+    Column {
+        if (line != null) Text(line)
+        if (leftOut > 0) Text(pluralStringResource(R.plurals.plan_left_out_topics, leftOut, leftOut))
     }
 }
 
