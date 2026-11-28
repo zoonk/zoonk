@@ -11,6 +11,8 @@ import com.zoonk.android.data.perform
 import com.zoonk.api.models.BuddyStatus
 import com.zoonk.api.models.LearnerSummary
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 interface BuddyApi {
     suspend fun status(
@@ -35,13 +37,14 @@ class BuddyStore(
     private val timeZone: () -> String,
     summary: Resource<LearnerSummary>,
     scope: CoroutineScope,
+    isForeground: Flow<Boolean> = flowOf(true),
 ) {
     val status: Resource<BuddyStatus> =
         cache.resource(Audience.SignedIn, DOMAINS) { session -> session?.let { api.status(it, timeZone()) } }
 
     init {
         // Today's missions and first steps belong to the learner's day, which ends without a write.
-        scope.invalidateAtNextChange(summary, status)
+        scope.invalidateAtNextChange(summary, status, isForeground)
     }
 
     private companion object {

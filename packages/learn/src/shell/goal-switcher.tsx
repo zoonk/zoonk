@@ -13,7 +13,6 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { showErrorToast } from "@zoonk/ui/components/toast";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { ChevronDownIcon, LayoutGridIcon, LightbulbIcon, PlusIcon } from "lucide-react";
@@ -21,7 +20,6 @@ import { useExtracted } from "next-intl";
 import { useEffect, useOptimistic, useSyncExternalStore, useTransition } from "react";
 import { DaysLeft } from "../_components/days-left";
 import { FactSegments } from "../_components/task-meta";
-import { daysUntilIsoDate, hasIsoDatePassed } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { LearnLink } from "../learn-link";
 import { GoalCountryName, GoalMark, NoGoalMark } from "./goal-mark";
@@ -31,11 +29,11 @@ import { MakeRoomSheet, type WaitingStart, useMakeRoom } from "./make-room-sheet
 
 type SwitcherGoal = {
   dailyMinutes: number;
+  daysLeft: number | null;
   id: string;
   kind: GoalKind;
   languageFlag: string | null;
   status: "active" | "completed" | "paused";
-  targetDate: string | null;
   targetDateEstimated: boolean;
   targetLanguage: string | null;
   targetRegion: string | null;
@@ -86,13 +84,7 @@ export function useGoalSwitchPending(): boolean {
 
 function GoalLine({ goal }: { goal: SwitcherGoal }) {
   const t = useExtracted("goalSwitcher");
-  const today = useMountTime();
   const formatDuration = useFormatDuration();
-
-  const days =
-    goal.targetDate && !hasIsoDatePassed({ isoDate: goal.targetDate, today })
-      ? daysUntilIsoDate({ isoDate: goal.targetDate, today })
-      : null;
 
   const facts = {
     active: [t("{time} a day", { time: formatDuration(goal.dailyMinutes) })],
@@ -105,7 +97,9 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
       <FactSegments
         extra={
           goal.status === "active" &&
-          days !== null && <DaysLeft days={days} estimated={goal.targetDateEstimated} />
+          goal.daysLeft !== null && (
+            <DaysLeft days={goal.daysLeft} estimated={goal.targetDateEstimated} />
+          )
         }
         facts={facts}
       />

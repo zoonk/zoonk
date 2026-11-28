@@ -1,6 +1,7 @@
 import { type Subscription, type UserLearningProfile } from "@zoonk/db";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getUsageResets } from "../../../entitlements/_utils/usage-periods";
 import { resolveProfileBuddy } from "../../../profile/default-buddy";
 import { projectPersistedEnergy } from "../../../progress/energy";
@@ -63,9 +64,13 @@ function getSubscriptionChanges(subscription: Subscription | null): Date[] {
   );
 }
 
-/** Uses the earliest local/UTC midnight, carried-day end, subscription change, or session expiry. */
+function getNextMidnight({ localDate, timeZone }: { localDate: Date; timeZone: string }): Date {
+  return getStartOfLocalDay({ localDate: new Date(localDate.getTime() + MS_PER_DAY), timeZone });
+}
+
 export function getNextChangeAt({
   carriedUntil,
+  deadlineTimeZones,
   localDate,
   now,
   sessionExpiresAt,
@@ -74,16 +79,21 @@ export function getNextChangeAt({
 }: {
   /** When the day carried over from the night before stops being the learner's, if it's held. */
   carriedUntil: Date | null;
+  deadlineTimeZones: readonly string[];
   localDate: Date;
   now: Date;
   sessionExpiresAt: Date;
   subscription: Subscription | null;
   timeZone: string;
 }): number {
-  const midnight = getStartOfLocalDay({
-    localDate: new Date(localDate.getTime() + MS_PER_DAY),
-    timeZone,
-  });
+  const midnight = getNextMidnight({ localDate, timeZone });
+
+  const deadlineMidnights = deadlineTimeZones.map((zone) =>
+    getNextMidnight({
+      localDate: getDateInTimeZone({ date: now, timeZone: zone }),
+      timeZone: zone,
+    }),
+  );
 
   const allowanceResets = getUsageResets(now).day;
 
@@ -92,6 +102,7 @@ export function getNextChangeAt({
     allowanceResets,
     sessionExpiresAt,
     carriedUntil,
+    ...deadlineMidnights,
     ...getSubscriptionChanges(subscription),
   ]
     .filter((date): date is Date => date !== null)

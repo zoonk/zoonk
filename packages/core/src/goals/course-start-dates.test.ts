@@ -20,9 +20,9 @@ const EXAM_DATE = "2020-10-11";
 
 const COURSE_LESSONS = 14;
 
-async function courseLibrary() {
+async function courseLibrary(format: "core" | "exam" = "core") {
   const [course, library, user] = await Promise.all([
-    courseFixture({ isPublished: true, title: "Robotics", visibility: "public" }),
+    courseFixture({ format, isPublished: true, title: "Robotics", visibility: "public" }),
     planLibraryFixture({ skills: [{ area: "Engineering", lessons: 12 }] }),
     userFixture(),
   ]);
@@ -63,7 +63,7 @@ async function examCourse(
   attrs: Parameters<typeof examBlueprintFixture>[0] = {},
   { deferred = false }: { deferred?: boolean } = {},
 ) {
-  const fixture = await courseLibrary();
+  const fixture = await courseLibrary("exam");
   const untaught = deferred ? await skillFixture() : null;
 
   const blueprint = await examBlueprintFixture({
@@ -458,7 +458,7 @@ describe("course-start deadlines", () => {
     const result = await startCourseWithPlan({ courseId: course.id, input: {} });
 
     expect(result).toMatchObject({
-      goal: { examBlueprintId: null, kind: "learn", targetDate: null },
+      goal: { examBlueprintId: null, kind: "exam", targetDate: null },
       status: "created",
     });
   });

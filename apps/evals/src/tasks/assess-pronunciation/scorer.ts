@@ -1,7 +1,7 @@
 import { createFixedScore } from "@/lib/score";
 import { type TaskScorer } from "@/lib/types";
 import { type AssessPronunciationSchema } from "@zoonk/ai/tasks/language/assess-pronunciation";
-import { scoreFlaggedWords } from "../transcribe-speech/scorer";
+import { scoreFlaggedWords, scoreNoSpeech } from "../transcribe-speech/scorer";
 import { type PronunciationClipExpected, type PronunciationClipInput } from "./test-cases";
 
 export const scorePronunciation: TaskScorer<PronunciationClipExpected> = ({ output, testCase }) => {
@@ -11,6 +11,11 @@ export const scorePronunciation: TaskScorer<PronunciationClipExpected> = ({ outp
 
   const input = testCase.userInput as PronunciationClipInput;
   const { transcript, words } = JSON.parse(output) as AssessPronunciationSchema;
+
+  if (!input.spokenText) {
+    return scoreNoSpeech(transcript);
+  }
+
   const flaggedWords = words.filter((word) => word.status !== "correct");
   const flagged = flaggedWords.map((word) => word.text);
 

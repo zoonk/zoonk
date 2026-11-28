@@ -28,5 +28,10 @@ export default getRequestConfig(async ({ locale: overrideLocale }) => {
     notFound();
   }
 
-  return { locale: getFormattingLocale(locale), messages: await getAllMessages(locale) };
+  // Every learner date names its zone; anything left unzoned draws alike on the server and in the browser.
+  return {
+    locale: getFormattingLocale(locale),
+    messages: await getAllMessages(locale),
+    timeZone: "UTC",
+  };
 });

@@ -81,11 +81,12 @@ export async function saveExamSkillGraph({
   }
 
   const goal = await prisma.goal.findUnique({
-    select: { primaryCourseId: true },
+    select: { primaryCourse: { select: { format: true, id: true } } },
     where: { id: inputs.goal.id },
   });
 
-  const kept = { primaryCourseId: goal?.primaryCourseId ?? null, ...provenance };
+  const examCourse = goal?.primaryCourse?.format === "exam" ? goal.primaryCourse : null;
+  const kept = { primaryCourseId: examCourse?.id ?? null, ...provenance };
   const current = { examBlueprintId, runId: provenance.runId };
 
   const stored = await prisma.examSkillGraph.findUnique({

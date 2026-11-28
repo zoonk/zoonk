@@ -9,7 +9,7 @@ function toCount(value: number | undefined): number {
   return value === undefined ? 0 : Math.round(value);
 }
 
-export function toAiCallRow({ context = {}, provenance, task }: AiGeneration): AiCallRow {
+export function toAiCallRow({ context = {}, failed, provenance, task }: AiGeneration): AiCallRow {
   const { usage } = provenance;
 
   return {
@@ -21,6 +21,7 @@ export function toAiCallRow({ context = {}, provenance, task }: AiGeneration): A
     costUsd: provenance.costUsd ?? null,
     createdAt: new Date(provenance.generatedAt),
     credential: provenance.credential ?? null,
+    failed: failed ?? false,
     gatewayCostUsd: provenance.gatewayCostUsd ?? null,
     goalId: isUuid(context.goalId) ? context.goalId : null,
     images: usage.images ?? null,
