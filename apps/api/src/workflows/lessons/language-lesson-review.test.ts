@@ -5,6 +5,7 @@ import {
   generateLanguageLesson,
 } from "@zoonk/ai/tasks/language/language-lesson";
 import { checkLanguageLesson } from "@zoonk/ai/tasks/language/language-lesson-check";
+import { generateLessonSpec } from "@zoonk/ai/tasks/lesson-spec";
 import { prisma } from "@zoonk/db";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -23,6 +24,9 @@ const SECOND_CARD = 1;
 const FIRST_WORD_CHOICE = 5;
 
 const DRAFT = languageLessonDraft();
+
+const OUTLINE_CAN_DO = "Perguntar quanto é o aluguel";
+const OUTLINE_MINUTES = 3;
 
 function review(issues: { problem: string; screen: number | null }[]) {
   return taskResult(
@@ -48,6 +52,7 @@ function withDistractors(lesson: LanguageLessonContent, index: number, distracto
 
 async function writeLanguageLesson(
   drafts: Awaited<ReturnType<typeof generateLanguageLesson>>[] = [],
+  { specStatus = "completed" }: { specStatus?: "completed" | "pending" } = {},
 ) {
   await aiOrganizationFixture();
 
@@ -58,9 +63,11 @@ async function writeLanguageLesson(
   });
 
   const lesson = await libraryLessonFixture({
+    canDo: OUTLINE_CAN_DO,
+    estimatedMinutes: OUTLINE_MINUTES,
     homeChapterId: chapter.id,
     language: "pt",
-    specStatus: "completed",
+    specStatus,
     targetLanguage: "en",
   });
 
@@ -118,6 +125,27 @@ describe("a language lesson's review", () => {
     );
 
     expect(fixLanguageLesson).not.toHaveBeenCalled();
+  });
+
+  it("writes a lesson nobody planned without planning it, keeping its outline's details", async () => {
+    vi.mocked(checkLanguageLesson).mockResolvedValue(review([]));
+
+    const { lessonId, result } = await writeLanguageLesson([], { specStatus: "pending" });
+
+    expect(result).toStrictEqual({ lessonId, status: "ready" });
+    expect(generateLessonSpec).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({
+        select: { canDo: true, estimatedMinutes: true, spec: true, specStatus: true },
+        where: { id: lessonId },
+      }),
+    ).resolves.toStrictEqual({
+      canDo: OUTLINE_CAN_DO,
+      estimatedMinutes: OUTLINE_MINUTES,
+      spec: null,
+      specStatus: "completed",
+    });
   });
 
   it("publishes the lesson as written when its writer finds the problem isn't real", async () => {
