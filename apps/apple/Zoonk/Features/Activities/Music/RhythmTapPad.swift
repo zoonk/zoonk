@@ -1,4 +1,3 @@
-import GameController
 import SwiftUI
 import UIKit
 
@@ -8,6 +7,7 @@ import UIKit
 /// (`allowsDirectInteraction`), since a double tap can't keep time.
 struct RhythmTapPad: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.hasHardwareKeyboard) private var hasKeyboard
   @State private var isPressed = false
 
   let isActive: Bool
@@ -21,7 +21,7 @@ struct RhythmTapPad: View {
       title
         .typeStyle(.body.weight(.semibold))
 
-      if GCKeyboard.coalesced != nil {
+      if hasKeyboard {
         Text(
           "or press Space", tableName: "ActivitiesMusic",
           comment: "Under the rhythm pad, with a hardware keyboard"
