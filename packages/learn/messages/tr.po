@@ -9419,6 +9419,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "Derslerindeki örnekleri, para birimini ve ölçü birimlerini ülkene göre seçiyoruz."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr ""
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "Derslerin hangi ülkeye göre hazırlansın?"
@@ -9463,6 +9468,16 @@ msgstr "Sınavın {date} (ve {second}) tarihlerinde"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {Hedef tarihin bugün, bu yüzden planlanacak gün kalmadı.} other {Hedeflediğin {date} tarihi geçti.}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr ""
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr ""
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -10000,11 +10015,6 @@ msgstr "Bu sınav yılda birkaç kez yapılıyor. Bir tarih seçene kadar planı
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "Tarihini seç"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "Bu sınavın tarihini kayıt yaptırırken seçersin. Zaten kayıt yaptırdın mı? Tarihi buradan ayarla."
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts

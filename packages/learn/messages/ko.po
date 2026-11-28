@@ -9419,6 +9419,11 @@ msgid "We use it for examples, money and units in your lessons."
 msgstr "레슨에 나오는 예시, 화폐, 단위를 나라에 맞춰 정해요."
 
 #: src/onboarding/steps/country-step.tsx
+msgctxt "E7Yvro"
+msgid "Which country's exam is it?"
+msgstr ""
+
+#: src/onboarding/steps/country-step.tsx
 msgctxt "jFT6CV"
 msgid "Which country should your lessons be about?"
 msgstr "어느 나라를 기준으로 배울까요?"
@@ -9463,6 +9468,16 @@ msgstr "시험은 {date}에 있어요 ({second}에도 있어요)"
 msgctxt "cozhs1"
 msgid "{when, select, today {Your date is today, so there are no days left to plan.} other {Your date, {date}, has passed.}}"
 msgstr "{when, select, today {목표 날짜가 오늘이라 계획을 세울 기간이 남아 있지 않아요.} other {목표 날짜({date})가 지났어요.}}"
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "tFQzba"
+msgid "Not booked yet"
+msgstr ""
+
+#: src/onboarding/steps/date-step.tsx
+msgctxt "4-H9Zy"
+msgid "When is your exam?"
+msgstr ""
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "xle5hd"
@@ -10000,11 +10015,6 @@ msgstr "이 시험은 매년 여러 번 열려요. 날짜를 고르기 전까지
 msgctxt "I5Nteo"
 msgid "Pick your date"
 msgstr "날짜 선택하기"
-
-#: src/onboarding/understood/understood-date-row.ts
-msgctxt "oxqgs5"
-msgid "You pick this test's day when you book it. Booked already? Set it here."
-msgstr "예약할 때 시험 날짜를 정해요. 이미 예약했나요? 여기서 날짜를 설정해 주세요."
 
 #. Under the date of a test with no official notice, such as a class test, when the learner hasn't given its date.
 #: src/onboarding/understood/understood-date-row.ts
