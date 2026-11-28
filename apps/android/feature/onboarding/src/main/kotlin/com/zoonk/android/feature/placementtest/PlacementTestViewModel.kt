@@ -122,7 +122,9 @@ internal class PlacementTestViewModel(
                 WriteOutcome.Obsolete -> {}
 
                 else -> {
-                    saveFailure.send(asked, saveFailures + 1)
+                    // Another device may have stopped or answered the test: one fresh read says where it is.
+                    val now = if (reread(attempt)) openAttempt else attempt
+                    if (now?.id == attempt.id && now.answered == attempt.answered) saveFailure.send(asked, saveFailures + 1)
                 }
             }
             answering = false
@@ -173,17 +175,27 @@ internal class PlacementTestViewModel(
             return true
         }
         if (finished == WriteOutcome.Obsolete) return true
+        if (!reread(attempt)) return false
+        val now = openAttempt
+        return now == null || now.id != attempt.id || (answered != null && now.answered != answered)
+    }
+
+    /**
+     * One fresh read after a save the server refused or whose reply was lost: a result it has for [attempt] (the test
+     * closed, on another device or by the save itself) shows as the test's end. False when the read failed too.
+     */
+    private suspend fun reread(attempt: PlacementAttempt): Boolean {
         val placements = store.placements[goalId]
         if (!placements.refreshed()) return false
         val read = placements.state.value.value
-        val saved = read?.result?.takeIf { read.attempt == null && it.attemptId == attempt.id }
-        if (saved != null) {
-            show(ClosedTest(attempt.id, saved.phase()))
-            return true
-        }
-        val now = read?.attempt
-        return now == null || now.id != attempt.id || (answered != null && now.answered != answered)
+        read?.result?.takeIf { read.attempt == null && it.attemptId == attempt.id }?.let { show(ClosedTest(attempt.id, it.phase())) }
+        return true
     }
+
+    private val openAttempt get() =
+        store.placements[goalId]
+            .state.value.value
+            ?.attempt
 
     private fun show(test: ClosedTest?) {
         closed = test

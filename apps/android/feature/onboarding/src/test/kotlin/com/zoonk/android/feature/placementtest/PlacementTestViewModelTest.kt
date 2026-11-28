@@ -295,6 +295,50 @@ class PlacementTestViewModelTest {
         }
 
     @Test
+    fun anAnswerRefusedBecauseAnotherDeviceStoppedTheTestShowsThatTestsResult() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN_FOURTH)
+                    writeFailure = ApiException(ApiError.Unavailable, status = 409)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+            api.placement = placement(attempt = null, next = null, status = "unavailable", result = RESULT)
+            val reads = api.placementReads
+
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
+            runCurrent()
+
+            assertEquals(reads + 1, api.placementReads)
+            assertEquals(0, vm.saveFailures)
+            val read = store.placements[GOAL_ID].state.value
+            for (finished in listOf(false, true)) {
+                val result = vm.phase(read, finished = finished) as PlacementTestPhase.Result
+                assertEquals("Why prices move", result.chapter)
+                assertEquals(CHANGE, result.changeId)
+            }
+        }
+
+    @Test
+    fun anAnswerThatDidNotGoThroughWhileTheTestIsStillOpenSaysSo() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN_FOURTH)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
+            runCurrent()
+
+            assertEquals(1, vm.saveFailures)
+            assertEquals(4, (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question).number)
+        }
+
+    @Test
     fun aResultThatSkippedNothingOffersNoUndo() {
         val nothing = completion(skipped = 0, result = RESULT.replace("\"lessonsSkipped\":4", "\"lessonsSkipped\":0"))
         val opened = placement(OPEN).attempt!!

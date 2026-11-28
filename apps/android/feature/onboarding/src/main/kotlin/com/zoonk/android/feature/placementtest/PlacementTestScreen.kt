@@ -352,7 +352,8 @@ internal fun courseTest(
 
 /**
  * The plan's offer for a course: the test's card alone, with "Not now". With no offer the server can't open a test (one
- * was taken and too little is left ahead to check again), so there's no Start: it says the first days place the learner.
+ * was taken and too little is left ahead to check again), so there's no Start: the page opens the saved result, with
+ * Done, and only without one says the first days place the learner.
  */
 @Composable
 private fun ColumnScope.PlanCourseOffer(
@@ -374,10 +375,20 @@ private fun ColumnScope.PlanCourseOffer(
         SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
         return
     }
-    val offer = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOfValue)?.value?.offer
-    if (offer == null) {
-        PlacementUnavailable(pending = false, failed = false, onContinue = onDone, action = stringResource(R.string.placementtest_done))
-        return
+    val row = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOfValue)?.value
+    val offer = row?.offer
+    val saved = row?.result?.phase()
+    when {
+        offer == null && saved != null -> {
+            val undo = rememberPlacementUndo(plans, goalId, saved.changeId)
+            PlacementResult(saved, action = stringResource(R.string.placementtest_done), onAction = onDone, undo = undo)
+            return
+        }
+
+        offer == null -> {
+            PlacementUnavailable(pending = false, failed = false, onContinue = onDone, action = stringResource(R.string.placementtest_done))
+            return
+        }
     }
     TestOffer(
         title = stringResource(R.string.placementtest_start_title),
