@@ -1,5 +1,4 @@
 import "server-only";
-import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -8,7 +7,6 @@ import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
 import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
-import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { findRowsFixedSince } from "../../../staff/content-fixes/fixed-since";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
@@ -28,7 +26,6 @@ import {
   readLevelTestSummary,
 } from "../read-level-test-summary";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
-import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
 import { withLevelTestChange } from "./level-test-result-change";
 import { showLevelTestOptions } from "./level-test-shown-order";
 import { getLevelTestStart } from "./level-test-start-score";
@@ -136,41 +133,6 @@ function bankForAttempt(
         !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
     ),
   };
-}
-
-/** Returns false if progress changed since `from`; callers must reload rather than overwrite it. */
-export async function saveLevelTestProgress({
-  from,
-  goal,
-  progress,
-  record,
-}: {
-  from: LevelTestProgress;
-  goal: Pick<Goal, "id" | "userId">;
-  progress: LevelTestProgress;
-  record?: LevelTestAnswerRecord;
-}): Promise<boolean> {
-  return writeLearnerChange({ userId: goal.userId }, async (tx) => {
-    const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-    if (
-      !canWriteLevelTest(current, from) ||
-      !isDeepStrictEqual(readLevelTestProgress(current, from.attemptId), from)
-    ) {
-      return unchanged(false);
-    }
-
-    await tx.goal.update({
-      data: { details: levelTestDetailsWithProgress(current, progress) },
-      where: { id: goal.id },
-    });
-
-    if (record) {
-      await recordLevelTestAnswer(tx, record);
-    }
-
-    return true;
-  });
 }
 
 export async function loadLevelTestContext(
