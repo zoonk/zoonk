@@ -10178,7 +10178,7 @@ msgstr "여기서 시작해요"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "p9JOZc"
 msgid "Take the test again"
-msgstr ""
+msgstr "레벨 테스트 다시 하기"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"

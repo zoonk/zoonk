@@ -10178,7 +10178,7 @@ msgstr "Você começa aqui"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "p9JOZc"
 msgid "Take the test again"
-msgstr ""
+msgstr "Fazer o teste de novo"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"
