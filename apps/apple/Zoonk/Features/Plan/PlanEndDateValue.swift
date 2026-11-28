@@ -18,8 +18,8 @@ struct PlanEndDateValue: Equatable {
         finishesLater
         ? PlanForecast.beyondText
         : isExam
-        ? String(localized: "To be confirmed", table: "Plan")
-        : String(localized: "None set", table: "Plan")
+          ? String(localized: "To be confirmed", table: "Plan")
+          : String(localized: "None set", table: "Plan")
       spoken = shown
       return
     }
