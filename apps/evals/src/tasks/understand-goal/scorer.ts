@@ -147,6 +147,32 @@ function getExamChecks({
   ];
 }
 
+function getCountryChecks({
+  expected,
+  goal,
+}: {
+  expected: ExpectedGoal;
+  goal: Record<string, unknown>;
+}): [boolean, string][] {
+  return [
+    [
+      expected.contentCountry === undefined ||
+        (goal.contentCountry ?? null) === expected.contentCountry,
+      `content country ${show(goal.contentCountry)}`,
+    ],
+    [
+      expected.contentCountryNot === undefined ||
+        goal.contentCountry !== expected.contentCountryNot,
+      `content country ${show(goal.contentCountry)}`,
+    ],
+    [
+      expected.countryDependent === undefined ||
+        goal.countryDependent === expected.countryDependent,
+      `country dependent ${show(goal.countryDependent)}`,
+    ],
+  ];
+}
+
 function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }): string[] {
   if (!isJsonObject(goal)) {
     return [`missing ${expected.kind} goal`];
@@ -179,20 +205,7 @@ function checkGoal({ expected, goal }: { expected: ExpectedGoal; goal: unknown }
       expected.targetRegion === undefined || (goal.targetRegion ?? null) === expected.targetRegion,
       `country ${show(goal.targetRegion)}`,
     ],
-    [
-      expected.contentCountry === undefined ||
-        (goal.contentCountry ?? null) === expected.contentCountry,
-      `content country ${show(goal.contentCountry)}`,
-    ],
-    [
-      expected.contentCountryNot === undefined || goal.contentCountry !== expected.contentCountryNot,
-      `content country ${show(goal.contentCountry)}`,
-    ],
-    [
-      expected.countryDependent === undefined ||
-        goal.countryDependent === expected.countryDependent,
-      `country dependent ${show(goal.countryDependent)}`,
-    ],
+    ...getCountryChecks({ expected, goal }),
     [
       !expected.nativeLanguage || goal.nativeLanguage === expected.nativeLanguage,
       `speaks ${show(goal.nativeLanguage)}`,

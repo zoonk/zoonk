@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  type RawGoalUnderstanding,
-  normalizeGoalUnderstanding,
-} from "./normalize-goal-understanding";
+import { normalizeGoalUnderstanding } from "./normalize-goal-understanding";
+import { type RawGoalUnderstanding } from "./understood-goal";
 
 const DAILY_MINUTES_LIMITS = { max: 1440, min: 5 };
 
@@ -470,9 +468,9 @@ describe(normalizeGoalUnderstanding, () => {
       today: TODAY,
     });
 
-    expect(result.route === "goals" && result.goals.map((goal) => goal.examNotBooked)).toStrictEqual(
-      [undefined, undefined],
-    );
+    expect(
+      result.route === "goals" && result.goals.map((goal) => goal.examNotBooked),
+    ).toStrictEqual([undefined, undefined]);
   });
 
   it("asks for more when nothing usable is left", () => {
