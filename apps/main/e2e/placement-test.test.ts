@@ -387,6 +387,10 @@ test.describe("Testing what you know from the plan", () => {
   });
 });
 
+function middleOf(rect: { width: number; x: number } | null) {
+  return (rect?.x ?? 0) + (rect?.width ?? 0) / 2;
+}
+
 test("a long topic keeps the question's title on one line in the middle of the bar", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -399,12 +403,16 @@ test("a long topic keeps the question's title on one line in the middle of the b
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   await atQuestion(page, 1);
 
-  const title = page.locator('[data-slot="task-header"] h1').filter({ visible: true });
-  const box = await title.boundingBox();
+  const bar = page.locator('[data-slot="task-header"]').filter({ visible: true });
+  const title = bar.locator("h1");
+  const [barBox, box] = await Promise.all([bar.boundingBox(), title.boundingBox()]);
+
   expect(await title.evaluate((node) => node.scrollWidth > node.clientWidth)).toBe(true);
   // The title's line is 20px; a second line would make it 40.
   expect(box?.height).toBeLessThan(30);
-  expect(Math.abs((box?.x ?? 0) + (box?.width ?? 0) / 2 - 390 / 2)).toBeLessThanOrEqual(1);
+  expect(Math.abs(middleOf(box) - middleOf(barBox))).toBeLessThanOrEqual(1);
+  // A task keeps the window's whole width, with no room kept for a scrollbar it doesn't have.
+  expect(barBox?.width).toBe(390);
   await page.screenshot({ path: testInfo.outputPath("question-long-topic.png") });
 });
 
