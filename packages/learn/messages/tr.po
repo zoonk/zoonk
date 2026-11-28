@@ -10178,7 +10178,7 @@ msgstr "Buradan başlıyorsun"
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "p9JOZc"
 msgid "Take the test again"
-msgstr ""
+msgstr "Testi yeniden çöz"
 
 #: src/placement-test/use-test-facts.ts
 msgctxt "HUvYmi"
