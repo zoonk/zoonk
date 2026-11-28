@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
-  "agentGuidance": true,
   "futureFlags": { "globalConfiguration": true },
   "global": {
     "env": [
@@ -32,7 +31,6 @@
       "ZOONK_DEV_PROJECT",
       "ZOONK_NO_AI_SPEND"
     ],
-    "ui": "tui",
     "passThroughEnv": [
       "ANDROID_*",
       "APP_CACHE_SECRET",

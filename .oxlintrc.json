@@ -413,16 +413,12 @@
     ".next",
     ".next-e2e",
     ".claude/skills",
-    ".cursor/skills",
-    ".opencode/skills",
-    ".github/skills",
     "dist",
     "build",
     "**/generated/**",
     "**/messages/*.po",
     ".turbo",
     "pnpm-lock.yaml",
-    ".agents",
-    "apps/video/**"
+    ".agents"
   ]
 }

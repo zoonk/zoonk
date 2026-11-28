@@ -21,7 +21,7 @@ Run commands from the repository root with the Node.js and pnpm versions in `.to
 | Apple app                         | [Apple verification](../../apps/apple/AGENTS.md#verification) covers the local Mac units and iPhone checks for device-specific changes                                                |
 | Prisma schema                     | `pnpm db:generate`, generated migration, affected database tests                                                                                                                      |
 | Public API contract               | `pnpm openapi:generate`, `pnpm openapi:check`, affected HTTP tests                                                                                                                    |
-| Next.js or Turborepo version      | `pnpm agent-rules:sync`, which updates the blocks they write into `AGENTS.md`                                                                                                         |
+| Next.js version                   | `pnpm agent-rules:sync`, which updates the block Next.js writes into each app's `AGENTS.md`                                                                                           |
 | Translated copy                   | Affected app's `i18n` and `i18n:lint` ([translations](translations.md)); `pnpm i18n:extract` when web strings only moved                                                              |
 
 Android's lint and release build run after merge or on demand (`gh workflow run android.yml --ref <branch>`), so run the Android row before its PR is marked ready.

@@ -98,6 +98,7 @@ When you're:
 - **Working in Admin or the staff CLI (`pnpm zoonk`):** [Admin](apps/admin/AGENTS.md), [CLI](apps/cli/AGENTS.md)
 - **Working in the Apple app:** [Apple app](apps/apple/AGENTS.md)
 - **Working in the Android app:** [Android app](apps/android/AGENTS.md)
+- **Changing Turborepo configuration or commands:** the docs bundled with the installed `turbo` package (`node -p "require.resolve('turbo/package.json')"`, then its `docs/README.md`), since they match its version
 - **Choosing which checks to run:** [Checks for a change](.agents/guides/checks.md)
 - **Starting the app, signing in, setting up databases:** [Running the app locally](.agents/guides/local-app.md)
 - **Running Vitest or E2E, or a test database is in the way:** [Running tests locally](.agents/guides/local-tests.md)
@@ -119,14 +120,3 @@ When you're:
 - Write for any contributor, on any OS and agent harness: no one person's name, personal paths, computer, personal memory or soon-stale branch names. Call the person an agent works for "the user", and state a step that needs one OS or tool as a condition ("On macOS, …"). Personal preferences belong in your own user-level instructions.
 - When you move or rename a section, update everything that points at it, scripts included (`git grep -n -e AGENTS.md -e .agents/`).
 - Keep `.agents/skills` as the source of truth. When adding, renaming, or removing a skill, update its relative symlink in `.claude/skills`.
-
-<!-- BEGIN:turborepo-agent-rules -->
-
-# This is NOT the Turborepo you know
-
-Turborepo configuration, task behavior, and CLI commands can vary between installed versions and may differ from your training data. Resolve the `turbo` package from this file's directory or relevant workspace; in monorepos, it may not be visible from the repository root. For example, run `node -p "require.resolve('turbo/package.json')"` from a workspace that depends on `turbo`.
-
-Read `docs/README.md` inside that installed package first, then read the relevant pages from its `docs/` directory before changing Turborepo configuration or commands. Heed deprecation notices. These bundled docs match the installed package version and are available without network access.
-
-This block is written and re-added by `turbo` before repository-scoped commands when an AI agent is detected. In the Turborepo source repository, its template is defined in `crates/turborepo-cli/src/cli/agent_guidance.rs`. Removing the managed block while updates are enabled means a later qualifying invocation will add it again. Set `"agentGuidance": true` in the root `turbo.json` or `turbo.jsonc` to opt in; this does not remove an existing block. Keep the block committed with your work to avoid an uncommitted change on the next agent invocation.
-<!-- END:turborepo-agent-rules -->

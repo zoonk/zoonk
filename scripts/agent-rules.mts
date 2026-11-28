@@ -1,4 +1,3 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync, readdirSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join, relative, resolve } from "node:path";
@@ -35,15 +34,6 @@ function syncNextRules(appDir: string) {
   writeAgentFiles(appDir);
 }
 
-function syncTurboRules() {
-  // turbo has no command for its block: it refreshes it before any repository command, only when it detects an agent.
-  execFileSync("turbo", ["ls"], {
-    cwd: ROOT,
-    env: { ...process.env, AI_AGENT: process.env.AI_AGENT ?? "agent-rules" },
-    stdio: "ignore",
-  });
-}
-
 function restore({ path, content }: { path: string; content: string | null }) {
   if (content === null) {
     rmSync(path, { force: true });
@@ -57,8 +47,6 @@ function syncAgentRules() {
   for (const appDir of NEXT_APPS) {
     syncNextRules(appDir);
   }
-
-  syncTurboRules();
 }
 
 function findStaleAgentRules(): string[] {
