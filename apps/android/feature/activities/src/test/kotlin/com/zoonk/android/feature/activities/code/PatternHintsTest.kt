@@ -5,8 +5,8 @@ import org.junit.Test
 
 class PatternHintsTest {
     @Test
-    fun aCorrectCheckedPatternDoesNotKeepItsMistakeHints() {
-        assertEquals(0, patternHintCount(3, 2, checked = true, correct = true))
+    fun aCorrectCheckedPatternKeepsTheHintsItShowed() {
+        assertEquals(2, patternHintCount(3, 2, checked = true, correct = true))
     }
 
     @Test

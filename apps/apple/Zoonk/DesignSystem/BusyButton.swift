@@ -79,7 +79,7 @@ enum ActionIcon: String {
   case notSure = "questionmark.circle"
   case notify = "bell"
   /// Starts or resumes something: a session, a lesson, a test, a mock, a task.
-  case play = "play.fill"
+  case play = "play"
   case print = "printer"
   case retry = "arrow.clockwise"
   case send = "paperplane"

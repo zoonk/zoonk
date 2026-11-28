@@ -27,7 +27,9 @@ struct LessonRecapView: View {
           }
         }
       } icon: {
+        // Main's TextQuote. The system names this symbol "Lyrics", which says nothing here.
         Image(systemName: "text.quote")
+          .accessibilityHidden(true)
       }
     }
   }

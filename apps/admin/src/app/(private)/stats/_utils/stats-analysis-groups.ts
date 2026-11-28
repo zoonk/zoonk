@@ -125,6 +125,12 @@ export const STATS_ANALYSIS_GROUPS = [
     views: [
       { id: "new-courses", label: "New courses", path: "/stats/content", usesPeriod: true },
       { id: "new-lessons", label: "New lessons", path: "/stats/content", usesPeriod: true },
+      {
+        id: "activity-use",
+        label: "Activities in lessons",
+        path: "/stats/content",
+        usesPeriod: true,
+      },
       { id: "new-skills", label: "New skills", path: "/stats/content", usesPeriod: true },
       { id: "new-items", label: "New items", path: "/stats/content", usesPeriod: true },
       { id: "new-media", label: "New images and audio", path: "/stats/content", usesPeriod: true },

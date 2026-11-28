@@ -2,13 +2,14 @@ import {
   LESSON_SCREEN_KINDS,
   type LessonScreen,
   type LessonSpec,
+  isPlannedActivity,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { LESSON_VISUAL_KINDS } from "@zoonk/ai/tasks/lesson-spec/visuals";
 import { z } from "zod";
 
 /** Plans saved before screens named their visual's kind show a picture or a template, or nothing. */
 function savedVisualKind(screen: Omit<LessonScreen, "visualKind">): LessonScreen["visualKind"] {
-  if (screen.kind === "activity") {
+  if (isPlannedActivity(screen)) {
     return "template";
   }
 
