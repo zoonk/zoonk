@@ -7,7 +7,10 @@
   "audio_getting_ready": "ad8ec761d371f30c6c4114ab5a65ff36ca50106ecf96b77013f781d4b2bed9a2",
   "audio_here_is_what_it_says": "eb97ed078237248084acc9e738e94c81721a8d61102b3d27f2f46183d6c2a086",
   "audio_listening": "93c097bfe679dc900bbbcbf547a828a19351a43b1869e131e0a439554c69c2f2",
+  "audio_microphone_ask_again": "c6a342d4b84b8d1bd676acb66b148d91a79f0dff9c5badbdede0d1d7d561c8e6",
+  "audio_microphone_blocked": "4c68ee0493115c0166968677130aabf2995527d89e8d364021ac9ddc72080dca",
   "audio_microphone_off_title": "fc19121e877983c6dfd585ca1121454d7a29b5834b0cbeb0c1f3d487240e1b2b",
+  "audio_microphone_unavailable": "b6946690be2a82bcd0ea85f86d3af4fc001b9f9e86fa1b976535a29078e8b999",
   "audio_no_speech": "1408b1168e74b616d853cf8b1df81737a042fe701c9dfabe53725fc49026db85",
   "audio_open_settings": "23162c5b9dbe02a234b7ade9008b02385d5b2879d19d28cdb6a4e0b6a61b119a",
   "audio_record": "b53f31b2f40a899d7f7b9ed9765607c5d9554e7fb65d98fce6642eda1e6cb56e",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Kaydet düğmesine dokun ve sesli söyle</string>
     <string name="audio_microphone_off_title">Mikrofon kapalı</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Kaydet’e dokun ve mikrofon erişimine izin ver.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Ayarlar’da mikrofona izin ver, ardından Kaydet’e dokun.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">Mikrofonunu kullanamıyoruz. Kontrol et, ardından Kaydet’e dokun.</string>
     <string name="audio_open_settings">Ayarlar’ı aç</string>
 </resources>

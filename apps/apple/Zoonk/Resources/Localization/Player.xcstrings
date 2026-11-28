@@ -5122,7 +5122,7 @@
       }
     },
     "I can't talk now" : {
-      "comment" : "Answers a spoken screen by listening or typing instead",
+      "comment" : "Answers a spoken screen by listening instead; without a listening version the lesson leaves it out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6061,6 +6061,72 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Posłuchaj"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvir"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinle"
+          }
+        }
+      }
+    },
+    "listenInstead" : {
+      "comment" : "After \"I can't talk now\": the spoken screen is answered by listening",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anhören"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Listen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuchar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ascolta"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "聞く"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "듣기"
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Słuchaj"
           }
         },
         "pt" : {
@@ -7253,65 +7319,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cevaplanacak soru kalmadı"
-          }
-        }
-      }
-    },
-    "Open Settings" : {
-      "comment" : "Opens the app's settings to turn the microphone back on",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einstellungen öffnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir Configuración"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvrir les réglages"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Apri Impostazioni"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "設定を開く"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "설정 열기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otwórz Ustawienia"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abrir Ajustes"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ayarları aç"
           }
         }
       }
@@ -8732,65 +8739,6 @@
         }
       }
     },
-    "Say it instead" : {
-      "comment" : "Tries the microphone again",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sag es stattdessen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Decirlo en voz alta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le dire à la place"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dillo a voce"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "声に出して言う"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "말로 답하기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Odpowiedz głosem"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Falar em vez de escrever"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sesli söyle"
-          }
-        }
-      }
-    },
     "Scenario complete" : {
       "comment" : "Title after a what-if scenario ends",
       "localizations" : {
@@ -9436,6 +9384,65 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Kaynak: %@"
+          }
+        }
+      }
+    },
+    "Speaking is off for today." : {
+      "comment" : "Shown after the learner chose \"I can't talk now\": the lesson's questions answered out loud are off until tomorrow. Word it like its twin \"Writing is off for today.\" (shown after \"Can't write now\"), naming the spoken questions the way that line names the written ones.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprechen ist für heute deaktiviert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La expresión oral está desactivada por hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les questions à l’oral sont désactivées pour aujourd’hui."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La parte orale è disattivata per oggi."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "声に出して答える問題は今日はお休みです。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘은 말하기 문제를 건너뛰어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mówienie jest dziś wyłączone."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As perguntas de fala estão desativadas por hoje."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün konuşma kapalı."
           }
         }
       }
@@ -10443,64 +10450,6 @@
         }
       }
     },
-    "The microphone is blocked." : {
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Der Zugriff auf das Mikrofon ist blockiert."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El micrófono está bloqueado."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le micro est bloqué."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il microfono è bloccato."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "マイクの使用が許可されていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "마이크 사용이 차단됐어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dostęp do mikrofonu jest zablokowany."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O microfone está bloqueado."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mikrofon erişimi engellendi."
-          }
-        }
-      }
-    },
     "This activity isn't available in the app yet" : {
       "comment" : "An interactive activity the iOS app can't show yet",
       "localizations" : {
@@ -10614,6 +10563,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu meydan okuma henüz hazır değil"
+          }
+        }
+      }
+    },
+    "This device can't record your voice." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf diesem Gerät kannst du deine Stimme nicht aufnehmen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este dispositivo no puede grabar tu voz."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet appareil ne peut pas enregistrer ta voix."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo dispositivo non può registrare la tua voce."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "このデバイスでは音声を録音できません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 기기에서는 음성을 녹음할 수 없어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To urządzenie nie może nagrywać twojego głosu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este dispositivo não consegue gravar sua voz."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu cihaz sesini kaydedemiyor."
           }
         }
       }
@@ -11385,7 +11392,7 @@
       }
     },
     "Turn back on" : {
-      "comment" : "Takes back \"Skip writing questions today\": written answers come back",
+      "comment" : "Takes back \"Skip writing questions today\" or \"I can't talk now\": the questions it left out come back",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -12739,60 +12746,59 @@
       }
     },
     "Writing is off for today." : {
-      "comment" : "\"Skip writing questions today\" left the lesson's writing out",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreibaufgaben sind für heute deaktiviert."
+            "value" : "Schreibaufgaben sind für heute ausgeschaltet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas escritas están desactivadas por hoy."
+            "value" : "Las preguntas de respuesta escrita están desactivadas por hoy."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les réponses écrites sont désactivées pour aujourd’hui."
+            "value" : "Les questions à l’écrit sont désactivées pour aujourd’hui."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Per oggi le risposte scritte sono disattivate."
+            "value" : "Le domande a risposta scritta sono disattivate per oggi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今日は記述式の問題をスキップしています。"
+            "value" : "今日は記述式の問題を出しません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "오늘은 글로 답하는 문제가 나오지 않아요."
+            "value" : "오늘은 쓰기 문제를 건너뛰어요."
           }
         },
         "pl" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zadania pisemne są dziś wyłączone."
+            "value" : "Pisanie jest dziś wyłączone."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem respostas escritas por hoje."
+            "value" : "Perguntas de escrita desativadas por hoje."
           }
         },
         "tr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bugün yazma soruları kapalı."
+            "value" : "Yazma soruları bugün kapalı."
           }
         }
       }

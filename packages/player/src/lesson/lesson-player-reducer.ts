@@ -11,7 +11,7 @@ import {
 } from "./_utils/lesson-flow";
 import { isReadStep } from "./_utils/lesson-steps";
 import { placeUnsent, restartChanged, resyncRun, startRun } from "./_utils/run-placement";
-import { restoreWriting, skipWriting } from "./_utils/writing-skip";
+import { restoreSkipped, skipSpeaking, skipWriting } from "./_utils/today-skips";
 import {
   type LessonPlayerAction,
   type LessonPlayerState,
@@ -184,12 +184,13 @@ const LEARNER_WORK = new Set<LessonPlayerAction["type"]>([
   "explainFirst",
   "knowThis",
   "selectAnswer",
+  "skipRestored",
+  "skipSpeaking",
   "skipWriting",
-  "writingRestored",
 ]);
 
 function isLearnerWork(action: LessonPlayerAction): boolean {
-  return LEARNER_WORK.has(action.type) && !(action.type === "skipWriting" && action.opening);
+  return LEARNER_WORK.has(action.type) && !("opening" in action && action.opening);
 }
 
 function markActedOn({
@@ -223,8 +224,10 @@ function reduceLearnerAction(
       return state.engaged ? state : { ...state, engaged: true };
     case "skipWriting":
       return skipWriting(state, action);
-    case "writingRestored":
-      return restoreWriting(state);
+    case "skipSpeaking":
+      return skipSpeaking(state, action);
+    case "skipRestored":
+      return restoreSkipped(state);
     case "skipSteps":
       return skipSteps(state, action.stepIds);
     case "navigate":

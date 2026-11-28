@@ -37,7 +37,6 @@ struct LessonStepView: View {
         step: step, state: state, context: context, part: part,
         cantTalk: Binding(get: { store.cantTalkToday }, set: { store.cantTalkToday = $0 }),
         cantListen: Binding(get: { store.cantListenToday }, set: { store.cantListenToday = $0 }),
-        micBlocked: Binding(get: { store.isMicBlocked }, set: { store.isMicBlocked = $0 }),
         team: store.challengeTeam, waitForRun: { await store.ensureRun() },
         studySessionId: { store.studySessionId })
       if part == .turn, step.kind == .check || step.kind == .typedAnswer {
@@ -54,6 +53,7 @@ struct LessonStepView: View {
       answer: state.answers[step.id],
       result: state.results[step.id],
       isLocked: state.phase != .playing,
+      opensKeyboard: state.notice?.showsOverScreen != true,
       waitsForPicture: step.isRequiredPictureDrawing(openedAt: store.openedAt),
       select: { store.select($0) },
       resolveSpoken: { store.resolveSpoken($0, stepId: step.id) },
@@ -78,7 +78,6 @@ struct LessonQuestionStepView: View {
   let part: LessonStepPart
   @Binding var cantTalk: Bool
   @Binding var cantListen: Bool
-  @Binding var micBlocked: Bool
   var team: [String] = []
   var waitForRun: @MainActor () async -> Bool = { true }
   var studySessionId: @MainActor () -> String? = { nil }
@@ -95,7 +94,7 @@ struct LessonQuestionStepView: View {
     case .spokenAnswer(let content, let listening):
       SpokenAnswerStepView(
         step: step, content: content, listening: listening, context: context,
-        cantTalk: $cantTalk, cantListen: $cantListen, micBlocked: $micBlocked,
+        cantTalk: $cantTalk, cantListen: $cantListen,
         waitForRun: waitForRun, studySessionId: studySessionId, part: part, mistake: mistake,
         onPracticeGraded: onPracticeGraded, onCheckingChanged: onCheckingChanged)
     case .activity(let content):
@@ -117,6 +116,9 @@ struct LessonStepContext {
   let answer: LessonAnswer?
   let result: LessonStepResult?
   let isLocked: Bool
+  /// A written answer's field takes focus as its screen opens, unless a notice shows over the
+  /// screen: the rising keyboard would scroll it away before the learner reads it.
+  var opensKeyboard = true
   /// Picks wait while the numbered picture the question is about is still being drawn, as on main.
   let waitsForPicture: Bool
   let select: @MainActor (LessonAnswer?) -> Void
@@ -395,7 +397,7 @@ private struct TypedAnswerStepView: View {
         isFocused: $isFocused,
         check: context.check
       ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
-      .onAppear { isFocused = !context.isLocked }
+      .onAppear { isFocused = !context.isLocked && context.opensKeyboard }
     }
   }
 }
@@ -456,26 +458,27 @@ struct LessonAnswerField: View {
   }
 }
 
-/// Mirrors main's `getAnswerMode`. Every spoken screen keeps a way to answer.
+/// Mirrors main's `getGivenMode` and `getAnswerMode`: a spoken screen is said or listened to, never
+/// typed. One that can be neither now (`cantAnswer`) is left out of a lesson. An answer an older app
+/// typed (`typed`) still shows the way it was given.
 enum SpokenAnswerMode: Equatable {
   case speak
   case listen
-  case type
+  case typed
+  case cantAnswer
 
   init(
-    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
+    canListen: Bool, canSpeak: Bool, cantTalk: Bool, cantListen: Bool,
     lockedAnswer: LessonAnswer? = nil, heard: SpokenHeard? = nil
   ) {
     if heard != nil {
       self = .speak
     } else if case .spokenAnswer = lockedAnswer {
-      self = .type
+      self = .typed
     } else if canListen, case .listening = lockedAnswer {
       self = .listen
-    } else if (cantTalk || !canSpeak) && canListen && !cantListen {
-      self = .listen
-    } else if cantTalk || micBlocked || !canSpeak {
-      self = .type
+    } else if cantTalk || !canSpeak {
+      self = canListen && !cantListen ? .listen : .cantAnswer
     } else {
       self = .speak
     }
@@ -484,14 +487,22 @@ enum SpokenAnswerMode: Equatable {
 
 extension LessonStep {
   func spokenAnswerMode(
-    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, micBlocked: Bool,
-    lockedAnswer: LessonAnswer?, heard: SpokenHeard?
+    canSpeak: Bool, cantTalk: Bool, cantListen: Bool, lockedAnswer: LessonAnswer?,
+    heard: SpokenHeard?
   ) -> SpokenAnswerMode? {
     guard case .spokenAnswer(_, let listening) = content else { return nil }
 
     return SpokenAnswerMode(
       canListen: listening != nil, canSpeak: canSpeak, cantTalk: cantTalk, cantListen: cantListen,
-      micBlocked: micBlocked, lockedAnswer: lockedAnswer, heard: heard)
+      lockedAnswer: lockedAnswer, heard: heard)
+  }
+
+  /// A spoken screen nobody can answer now, which the lesson leaves out: it can't be said aloud
+  /// (`canSpeak` false) and has no listening version the learner can play instead.
+  func isUnanswerableAloud(canSpeak: Bool, cantListen: Bool) -> Bool {
+    spokenAnswerMode(
+      canSpeak: canSpeak, cantTalk: false, cantListen: cantListen, lockedAnswer: nil, heard: nil)
+      == .cantAnswer
   }
 
   /// The prompt this screen plays. Main's `ListeningInstead`: a spoken screen answered by listening
@@ -518,7 +529,6 @@ private struct SpokenAnswerStepView: View {
   let context: LessonStepContext
   @Binding var cantTalk: Bool
   @Binding var cantListen: Bool
-  @Binding var micBlocked: Bool
   let waitForRun: @MainActor () async -> Bool
   let studySessionId: @MainActor () -> String?
   let part: LessonStepPart
@@ -529,14 +539,14 @@ private struct SpokenAnswerStepView: View {
   private var mode: SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-      cantListen: cantListen, micBlocked: micBlocked,
-      lockedAnswer: context.isLocked ? context.answer : nil, heard: context.result?.heard)
+      cantListen: cantListen, lockedAnswer: context.isLocked ? context.answer : nil,
+      heard: context.result?.heard)
   }
 
   var body: some View {
     if mode == .listen, let listening {
       ArrangeWordsView(
-        exercise: listening, context: context, part: part, cantListen: typingWhenCantListen
+        exercise: listening, context: context, part: part, cantListen: leavingWhenCantListen
       ) {
         modeSwitch
       }
@@ -562,58 +572,43 @@ private struct SpokenAnswerStepView: View {
           Text(translation).foregroundStyle(.mutedForeground)
         }
       }
-      if mode == .speak {
-        modeSwitch
-      }
+      modeSwitch
     }
   }
 
   @ViewBuilder
   private var turn: some View {
-    if mode == .speak, let input = recording.input {
-      input(
-        SpokenAnswerContext(
-          lessonId: context.lessonId, stepId: step.id, content: content,
-          isLocked: context.isLocked,
-          waitForRun: waitForRun,
-          studySessionId: studySessionId,
-          onGraded: context.resolveSpoken,
-          onBlocked: {
-            micBlocked = true
-            announcePolitely(Self.micBlockedLine)
-          }, mistake: mistake, onPracticeGraded: onPracticeGraded,
-          onCheckingChanged: onCheckingChanged))
-    } else {
-      if micBlocked, !context.isLocked {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(Self.micBlockedLine)
-            .foregroundStyle(.mutedForeground)
-
-          if let settings = URL(string: UIApplication.openSettingsURLString) {
-            Link(destination: settings) {
-              Text(
-                "Open Settings", tableName: "Player",
-                comment: "Opens the app's settings to turn the microphone back on")
-            }
-          }
-        }
-        .typeStyle(.body)
+    switch mode {
+    case .speak:
+      if let input = recording.input {
+        input(
+          SpokenAnswerContext(
+            lessonId: context.lessonId, stepId: step.id, content: content,
+            isLocked: context.isLocked,
+            waitForRun: waitForRun,
+            studySessionId: studySessionId,
+            onGraded: context.resolveSpoken, mistake: mistake,
+            onPracticeGraded: onPracticeGraded,
+            onCheckingChanged: onCheckingChanged))
       }
-
+    case .typed:
       LessonAnswerField(
         label: Text(verbatim: LessonRichText.spoken(content.prompt)),
-        text: context.answer?.text ?? "",
-        isLocked: context.isLocked, isFocused: $isFocused, check: context.check
-      ) {
-        context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
+        text: context.answer?.text ?? "", isLocked: true, isFocused: $isFocused, check: nil
+      ) { _ in }
+    case .cantAnswer:
+      // Only where nothing leaves this screen out, such as the mistakes notebook.
+      if recording.input == nil {
+        Text("This device can't record your voice.", tableName: "Player")
+          .foregroundStyle(.mutedForeground)
       }
-
-      modeSwitch
+    case .listen:
+      EmptyView()
     }
   }
 
-  /// Not listening leaves this screen to be typed, and an answer started one way doesn't carry over.
-  private var typingWhenCantListen: Binding<Bool> {
+  /// Not listening leaves this screen out, and an answer started by listening doesn't carry over.
+  private var leavingWhenCantListen: Binding<Bool> {
     Binding {
       cantListen
     } set: {
@@ -622,36 +617,28 @@ private struct SpokenAnswerStepView: View {
     }
   }
 
-  private static var micBlockedLine: String {
-    String(
-      localized: "The microphone is blocked.", table: "Player")
-  }
-
-  /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
+  /// An answer started one way doesn't carry over.
   @ViewBuilder
   private var modeSwitch: some View {
     if !context.isLocked, recording.input != nil {
       Button {
         context.select(nil)
         cantTalk = mode == .speak
-        micBlocked = false
       } label: {
         if mode == .speak {
           Label {
             Text(
               "I can't talk now", tableName: "Player",
-              comment: "Answers a spoken screen by listening or typing instead")
+              comment:
+                "Answers a spoken screen by listening instead; without a listening version the lesson leaves it out"
+            )
           } icon: {
             Image(systemName: "mic.slash")
           }
         } else {
           Label {
-            if cantTalk {
-              Text(
-                "I can talk now", tableName: "Player", comment: "Goes back to answering out loud")
-            } else {
-              Text("Say it instead", tableName: "Player", comment: "Tries the microphone again")
-            }
+            Text(
+              "I can talk now", tableName: "Player", comment: "Goes back to answering out loud")
           } icon: {
             Image(systemName: "mic")
           }
@@ -659,6 +646,14 @@ private struct SpokenAnswerStepView: View {
       }
       .buttonStyle(.outline)
       .controlSize(.large)
+      // Main's label says where it leads when the screen has a listening version.
+      .accessibilityHint(
+        mode == .speak && listening != nil && !cantListen
+          ? Text(
+            LocalizedStringResource(
+              "listenInstead", defaultValue: "Listen", table: "Player",
+              comment: "After \"I can't talk now\": the spoken screen is answered by listening"))
+          : Text(verbatim: ""))
     }
   }
 }

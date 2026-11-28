@@ -13,9 +13,6 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
-  /// A microphone that's off hands over to the screen's other way to answer; without one, the bar
-  /// says how to turn it on and the screen's other way on (Skip) stays.
-  var onBlocked: (() -> Void)?
   var onCheckingChanged: ((Bool) -> Void)?
 
   private enum Issue: Equatable {
@@ -30,9 +27,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
         LimitNotice(limit: limit)
       }
     }
-    .recordsInBar(
-      bar, recorder: recorder, isChecking: checking, note: note, canRecord: !isOff
-    ) {
+    // Record stays when the microphone is off, so it works once the learner turns it on.
+    .recordsInBar(bar, recorder: recorder, isChecking: checking, note: note) {
       Task { await record() }
     }
     .announcesStatus(announcement)
@@ -44,20 +40,23 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     .slowCheck(checking, isSlow: $isSlow)
   }
 
-  private var isOff: Bool {
-    recorder.isDenied && onBlocked == nil
-  }
-
   private var note: RecordNote? {
-    if isOff {
+    if recorder.isDenied {
       return .microphoneOff(
         String(
-          localized: "Turn on the microphone for Zoonk in Settings to answer out loud.",
-          table: "Voice", comment: "How to turn the microphone back on to record a spoken answer"))
+          localized: "Allow the microphone in Settings, then tap Record.",
+          table: "Voice",
+          comment:
+            "The learner refused the microphone for the app. “Record” is the label of the button that starts the recording."
+        ))
     }
 
     if let active = RecordNote(active: recorder.status) {
       return active
+    }
+
+    if recorder.isUnavailable {
+      return .microphoneUnavailable
     }
 
     if checking {
@@ -84,12 +83,8 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   private func record() async {
     issue = nil
 
-    let started = await recorder.start { recording in
+    await recorder.start { recording in
       grading = Task { await check(recording) }
-    }
-
-    if !started, recorder.isDenied {
-      onBlocked?()
     }
   }
 

@@ -21,7 +21,7 @@ import kotlinx.coroutines.delay
 /**
  * Main's `RecordNote` for [model]'s take, the bar's note right over its Record. This is where the take's screen composes it, so it
  * also stands for the take's visit there. A limit shows here with its way on when [navigator] is given; without it, the screen's
- * column shows it ([VoiceAnswerLimit]).
+ * column shows it ([VoiceAnswerLimit]). A microphone the learner turned off says how to turn it on, and Record stays to try again.
  */
 @Composable
 fun recordNote(
@@ -30,6 +30,7 @@ fun recordNote(
 ): (@Composable () -> Unit)? {
     VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
+    if (model.microphoneOff) return { MicrophoneOff(stringResource(R.string.audio_microphone_blocked), titled = false) }
     return recordNote(status, model.checking, model.issue.value, navigator)
 }
 
@@ -50,6 +51,8 @@ fun recordNote(
         status is VoiceRecorder.Status.Recording -> ({ RecordingHint(R.string.audio_listening) })
         checking || issue == VoiceIssue.Failed -> check
         issue == VoiceIssue.NoSpeech -> ({ NoteLine(stringResource(R.string.audio_no_speech), wrong = true) })
+        issue == VoiceIssue.Unavailable -> ({ NoteLine(stringResource(R.string.audio_microphone_unavailable), wrong = true) })
+        issue == VoiceIssue.Refused -> ({ NoteLine(stringResource(R.string.audio_microphone_ask_again)) })
         issue is VoiceIssue.Limited -> navigator?.let { ({ LimitNote(issue, it) }) }
         else -> ({ NoteLine(stringResource(R.string.audio_say_it)) })
     }

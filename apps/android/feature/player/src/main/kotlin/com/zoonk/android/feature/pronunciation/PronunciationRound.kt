@@ -126,6 +126,9 @@ class PronunciationRound(
         }
     }
 
+    /** The learner said no to the microphone this time; Record asks again. */
+    fun refused() = takeIssue.send(visit.number, VoiceIssue.Refused)
+
     fun tryAgain() {
         val index = (step as? RoundStep.Word)?.index ?: return
         attempt++
@@ -207,6 +210,11 @@ class PronunciationViewModel(
                 if ((round.step as? RoundStep.Word)?.grade != null) recorder.cancel()
             }
         }
+    }
+
+    /** For now ([lasting] false, Android asks again on Record) or until Settings. */
+    fun refused(lasting: Boolean) {
+        if (lasting) microphoneOff = true else round?.refused()
     }
 
     fun next() {

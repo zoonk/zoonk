@@ -64,6 +64,7 @@ extension EnvironmentValues {
 
 struct LessonPlayerScreen: View {
   @Environment(\.lessonPlayer) private var player
+  @Environment(\.spokenAnswerRecording) private var recording
 
   let lessonId: String
   var sessionId: String?
@@ -90,7 +91,7 @@ struct LessonPlayerScreen: View {
           },
           api: player.api, cache: player.cache, preferences: player.preferences,
           lessonResource: player.lesson(id: lessonId, hostedAs: host),
-          blockFinished: player.blockFinished,
+          canRecord: recording.input != nil, blockFinished: player.blockFinished,
           sessionStarted: player.sessionStarted, runStarting: player.runStarting),
         ending: ending, savesLesson: host == nil
       )

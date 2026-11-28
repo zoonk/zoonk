@@ -13,7 +13,6 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
@@ -34,21 +33,6 @@ import org.robolectric.Shadows.shadowOf
 class VoiceAnswerRecorderTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
-
-    @Test
-    fun aRefusedMicrophoneStillAnswersAnotherWayAfterTheProcessIsReclaimed() {
-        val handle = SavedStateHandle()
-        VoiceAnswerModel(rule.activity, { GradeOutcome.Failed }, handle).blocked = true
-
-        val restored =
-            VoiceAnswerModel(
-                rule.activity,
-                { GradeOutcome.Failed },
-                SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null),
-            )
-
-        assertEquals(true, restored.blocked)
-    }
 
     @Test
     fun tappingRecordWithPermissionPendingReplacesTheIdleHint() {
@@ -89,6 +73,34 @@ class VoiceAnswerRecorderTest {
 
         rule.onNodeWithText("Record").assertIsDisplayed()
         rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
+    }
+
+    /** A first refusal, which Android asks about again on Record, keeps Record and says to allow the microphone. */
+    @Test
+    fun aRefusalAndroidAsksAboutAgainKeepsRecordAndSaysToAllowTheMicrophone() {
+        refuse(asksAgain = true)
+        rule.onNodeWithText("Tap Record and allow the microphone.").assertIsDisplayed()
+        rule.onNodeWithText("Record").assertIsDisplayed()
+    }
+
+    @Test
+    fun aLastingRefusalPointsToSettings() {
+        refuse(asksAgain = false)
+        rule.onNodeWithText("The microphone is off").assertIsDisplayed()
+        rule.onNodeWithText("Tap Record and allow the microphone.").assertDoesNotExist()
+    }
+
+    private fun refuse(asksAgain: Boolean) {
+        shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
+        rule.setContent {
+            ZoonkTheme { Recorder(voiceAnswerModel(KEY) { GradeOutcome.Failed }, rememberAppNavigator()) }
+        }
+        rule.onNodeWithText("Record").performClick()
+        rule.runOnIdle {
+            shadowOf(rule.activity.packageManager).setShouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO, asksAgain)
+            val request = shadowOf(rule.activity).lastRequestedPermission
+            rule.activity.activityResultRegistry.dispatchResult(request.requestCode, false)
+        }
     }
 
     /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */

@@ -7,7 +7,10 @@
   "audio_getting_ready": "1722e249d4a172d8a6cf8fc31ab290e671407e87e166b0b12a1c9393fb99c71b",
   "audio_here_is_what_it_says": "84efdf9dd73f874beff22db55a43cfd4a339510d4805c2cfa84b9f6333fd3dbb",
   "audio_listening": "851d2517fd639e127847f81063ff4f9ab75737b49f37531924f54bc2b325e229",
+  "audio_microphone_ask_again": "df3cc4f2ad5a5ea1fe23ae70947487d2ba621f78e289842086711833289789b7",
+  "audio_microphone_blocked": "82196ea9eea3d526887eb32113fa0b3092bf8ce96104097b5c71c2fc87641c35",
   "audio_microphone_off_title": "5feb2c051f896fbc1eefa45cd4dc6bc1b7f4bf3fda5b7b55484c323d961d43b1",
+  "audio_microphone_unavailable": "8b434ce23fa201c11259fad1bcd9fd795e57e5ee0dc01e217ff59daefe86a6d7",
   "audio_no_speech": "999c7c583ef97744f274e58bc0189e9320fd760ee8f463fe32e5ee061a2eab33",
   "audio_open_settings": "ce465fd3cb68788fef20ceaf1d10801f036200b3cbf9e67d175248e8c8e54019",
   "audio_record": "d8969302d4661d7415b1863799a5602232d71fe91004411b856126b367c5781e",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Toque em Gravar e fale em voz alta</string>
     <string name="audio_microphone_off_title">O microfone está desativado</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Toque em Gravar e permita o uso do microfone.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Permita o uso do microfone nas Configurações e toque em Gravar.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">Não conseguimos usar seu microfone. Confira se está funcionando e toque em Gravar.</string>
     <string name="audio_open_settings">Abrir configurações</string>
 </resources>

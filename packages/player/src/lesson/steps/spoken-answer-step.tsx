@@ -5,11 +5,7 @@ import { MainActionInBar } from "@zoonk/learn/main-action-slot";
 import { useSpokenText } from "@zoonk/learn/rich-text/speech";
 import { RecordButton } from "@zoonk/learn/speech/record-button";
 import { useRecordNote } from "@zoonk/learn/speech/record-note";
-import {
-  type MicrophoneProblem,
-  useCanRecord,
-  useVoiceRecorder,
-} from "@zoonk/ui/hooks/voice-recorder";
+import { type MicrophoneProblem, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { MicIcon, MicOffIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
@@ -18,7 +14,8 @@ import { StepWayOut } from "../../components/step-way-out";
 import { PlayerAudioProvider } from "../../player-audio-context";
 import { LessonHelpLimitNotice } from "../_components/help-limit-notice";
 import { splitQuestionData } from "../_utils/lesson-aside";
-import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context";
+import { useLessonPlayer } from "../lesson-player-context";
+import { getSpokenAnswerMode, useCanSpeak } from "../use-can-speak";
 import { CANT_LISTEN_TODAY, CANT_TALK_TODAY, useTodayChoice } from "../use-today-choice";
 import { ExerciseStepView } from "./exercise-step";
 import { LessonAnswerField } from "./lesson-answer-field";
@@ -43,14 +40,10 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
 }
 
 /** Recording is this step's answer, so Record and Stop take the bar's place where Check is. */
-function RecordAnswer({
-  onProblem,
-  stepId,
-}: {
-  onProblem: (problem: MicrophoneProblem) => void;
-  stepId: string;
-}) {
+function RecordAnswer({ stepId }: { stepId: string }) {
+  const t = useExtracted();
   const { actions, state } = useLessonPlayer();
+  const [micProblem, setMicProblem] = useState<MicrophoneProblem | null>(null);
 
   const onRecorded = useCallback(
     ({ audio, durationMs }: { audio: Blob; durationMs: number }) =>
@@ -62,23 +55,38 @@ function RecordAnswer({
   const isRecording = recorder.status === "recording";
 
   const startRecording = async () => {
+    setMicProblem(null);
     actions.startRecording();
 
     const started = await recorder.start();
 
     if (started === "blocked" || started === "unavailable") {
-      onProblem(started);
+      setMicProblem(started);
     }
   };
 
-  const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
-  const issue = isIdle ? state.checkIssue : null;
+  const issue = isRecording ? null : state.checkIssue;
   const limit = issue?.status === "noSpeech" ? null : issue;
+
+  const micLine =
+    micProblem === "blocked"
+      ? t({
+          description:
+            "The learner blocked the microphone for Zoonk in the browser. “Record” is the label of the button that starts the recording.",
+          message: "Allow the microphone in your browser settings, then tap Record.",
+        })
+      : micProblem &&
+        t({
+          description:
+            "The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.",
+          message: "We can't use your microphone. Check it, then tap Record.",
+        });
 
   const note = useRecordNote({
     acquiring: recorder.status === "acquiring",
     problem: issue?.status === "noSpeech" ? "noSpeech" : null,
     recording: isRecording,
+    unavailable: micLine,
   });
 
   return (
@@ -87,7 +95,7 @@ function RecordAnswer({
         {limit && <LessonHelpLimitNotice limit={limit} />}
       </div>
 
-      <MainActionInBar note={!limit && (isIdle || isRecording) && note}>
+      <MainActionInBar note={!limit && note}>
         <RecordButton
           busy={recorder.status === "acquiring"}
           elapsedMs={recorder.elapsedMs}
@@ -101,25 +109,8 @@ function RecordAnswer({
   );
 }
 
+/** "type" is only how an answer was given before speaking screens stopped offering typing. */
 type AnswerMode = "listen" | "speak" | "type";
-
-function getAnswerMode({
-  canListen,
-  canSpeak,
-  cantTalk,
-  micProblem,
-}: {
-  canListen: boolean;
-  canSpeak: boolean;
-  cantTalk: boolean;
-  micProblem: MicrophoneProblem | null;
-}): AnswerMode {
-  if ((cantTalk || !canSpeak) && canListen) {
-    return "listen";
-  }
-
-  return cantTalk || micProblem || !canSpeak ? "type" : "speak";
-}
 
 /**
  * An answer shows the way it was given, whatever this device would offer now. A take sent for
@@ -150,28 +141,27 @@ function useAnswerMode({
   result,
   step,
 }: Pick<LessonStepViewProps<StepOf<"spokenAnswer">>, "answer" | "onAnswer" | "result" | "step">) {
-  const { adapters, canRecordSpokenAnswer } = useLessonPlayerConfig();
-  const canRecord = useCanRecord();
-
-  const canSpeak =
-    (Boolean(adapters.gradeSpokenAnswer) || Boolean(canRecordSpokenAnswer)) && canRecord;
-
+  const { actions, state } = useLessonPlayer();
+  const canSpeak = useCanSpeak() ?? true;
   const [cantListen] = useTodayChoice(CANT_LISTEN_TODAY);
   const canListen = step.listening !== null && !cantListen;
   const [cantTalk, setCantTalk] = useTodayChoice(CANT_TALK_TODAY);
-  const [micProblem, setMicProblem] = useState<MicrophoneProblem | null>(null);
 
   const mode =
     getGivenMode({ answer, result, step }) ??
-    getAnswerMode({ canListen, canSpeak, cantTalk, micProblem });
+    getSpokenAnswerMode({ canListen, canSpeak, cantTalk });
 
   const switchTo = (next: { cantTalk: boolean }) => {
     onAnswer(null);
-    setCantTalk(next.cantTalk);
-    setMicProblem(null);
+
+    if (!next.cantTalk && state.notice === "speakingSkipped") {
+      actions.restoreSkipped();
+    } else {
+      setCantTalk(next.cantTalk);
+    }
   };
 
-  return { canListen, canSpeak, cantTalk, micProblem, mode, onProblem: setMicProblem, switchTo };
+  return { canListen, canSpeak, mode, switchTo };
 }
 
 function ListeningInstead({
@@ -205,28 +195,19 @@ function ModeSwitch({
   isLocked: boolean;
 }) {
   const t = useExtracted();
-  const { canListen, canSpeak, cantTalk, mode, switchTo } = answerMode;
+  const { canListen, canSpeak, mode, switchTo } = answerMode;
 
-  if (isLocked || !canSpeak) {
+  if (isLocked || !canSpeak || mode === "type") {
     return null;
   }
 
   if (mode === "speak") {
     const label = t("I can't talk now");
 
-    const alternative = canListen
-      ? t("Listen")
-      : t({
-          description:
-            "On a question answered aloud: the learner types this one answer instead of saying it.",
-          id: "typeSpokenAnswer",
-          message: "Type instead",
-        });
-
     return (
       <StepWayOut
         icon={<MicOffIcon aria-hidden="true" />}
-        label={`${label}. ${alternative}`}
+        label={canListen ? `${label}. ${t("Listen")}` : label}
         onClick={() => switchTo({ cantTalk: true })}
       >
         {label}
@@ -236,7 +217,7 @@ function ModeSwitch({
 
   return (
     <StepWayOut icon={<MicIcon aria-hidden="true" />} onClick={() => switchTo({ cantTalk: false })}>
-      {cantTalk ? t("I can talk now") : t("Say it instead")}
+      {t("I can talk now")}
     </StepWayOut>
   );
 }
@@ -247,7 +228,6 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
   const { answer, isLocked, onAnswer, result, step } = props;
   const answerMode = useAnswerMode({ answer, onAnswer, result, step });
   const { listening } = step;
-  const text = answer?.kind === "spokenAnswer" ? answer.text : "";
 
   if (answerMode.mode === "listen" && listening) {
     return (
@@ -263,27 +243,20 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
     <InteractiveStepLayout>
       <TargetText step={step} />
 
-      {answerMode.mode === "type" ? (
-        <>
-          {/* Typing in place of speaking says why, unless the learner chose it ("I can't talk now"). */}
-          {(answerMode.micProblem || !answerMode.canSpeak) && !isLocked && (
-            <p className="text-muted-foreground text-sm" role="status">
-              {answerMode.micProblem === "blocked"
-                ? t("To speak instead, allow the microphone for Zoonk in your browser settings.")
-                : t("We can't use your microphone, so type what you'd say.")}
-            </p>
-          )}
+      {answerMode.mode === "type" && (
+        <LessonAnswerField
+          isLocked
+          label={spoken.blocks(splitQuestionData(step.content.prompt).question)}
+          onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
+          value={answer?.kind === "spokenAnswer" ? answer.text : ""}
+        />
+      )}
 
-          <LessonAnswerField
-            autoFocusOnPointer={answerMode.micProblem !== null}
-            isLocked={isLocked}
-            label={spoken.blocks(splitQuestionData(step.content.prompt).question)}
-            onChange={(value) => onAnswer(value ? { kind: "spokenAnswer", text: value } : null)}
-            value={text}
-          />
-        </>
-      ) : (
-        !isLocked && <RecordAnswer onProblem={answerMode.onProblem} stepId={step.id} />
+      {answerMode.mode === "speak" && !isLocked && <RecordAnswer stepId={step.id} />}
+
+      {/* Only where nothing leaves this screen out, such as the mistakes notebook. */}
+      {answerMode.mode === null && !answerMode.canSpeak && (
+        <p className="text-muted-foreground text-sm">{t("This device can't record your voice.")}</p>
       )}
 
       <ModeSwitch answerMode={answerMode} isLocked={isLocked} />

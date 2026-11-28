@@ -1,5 +1,5 @@
 import { isAnswerableStep } from "@zoonk/core/lesson-player/run";
-import { type LessonPlayerState, getCurrentStep } from "../lesson-player-state";
+import { type LessonPlayerState, getCurrentStep, isSkipNotice } from "../lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 import { getChallengeProgress } from "./challenge-progress";
 import { hasAttemptAt } from "./lesson-attempts";
@@ -171,7 +171,11 @@ export function leaveOutAhead(
     : enterPosition(next, state.position);
 }
 
-export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]): LessonPlayerState {
+export function skipSteps(
+  state: LessonPlayerState,
+  stepIds: readonly string[],
+  completionStatus: "ready" | "saving" = "ready",
+): LessonPlayerState {
   const added = stepIds.filter((id) => id in state.steps && !state.unavailableStepIds.includes(id));
 
   if (added.length === 0) {
@@ -189,7 +193,7 @@ export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]):
     returnQueue: state.quickCheck.returnQueue.filter((id) => !isLeftOut(id)),
   };
 
-  return leaveOutAhead({ ...state, quickCheck, unavailableStepIds }, isLeftOut, "ready");
+  return leaveOutAhead({ ...state, quickCheck, unavailableStepIds }, isLeftOut, completionStatus);
 }
 
 export function continueReading(state: LessonPlayerState): LessonPlayerState {
@@ -293,7 +297,7 @@ export function resolveCheck(
       ? { ...state.firstVerdicts, [stepId]: result.isCorrect }
       : state.firstVerdicts,
     misses: getMisses({ counts, isCorrect: result.isCorrect, state, step }),
-    notice: state.notice === "writingSkipped" ? state.notice : null,
+    notice: isSkipNotice(state.notice) ? state.notice : null,
     phase: "feedback",
     queue: willRetry ? [...state.queue, stepId] : state.queue,
     quickCheck:

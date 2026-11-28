@@ -42,7 +42,9 @@
     <string name="player_notice_answer_not_saved">Your answer here didn\'t save. Answer it again to finish the lesson.</string>
     <string name="player_notice_picture_ready">This question was waiting for its picture. Answer it to finish the lesson.</string>
     <string name="player_notice_writing_skipped">Writing is off for today.</string>
-    <string name="player_write_again">Turn back on</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">Speaking is off for today.</string>
+    <string name="player_turn_back_on">Turn back on</string>
 
     <string name="player_verdict_almost">Almost there</string>
     <string name="player_verdict_correct">Correct!</string>
@@ -163,9 +165,6 @@
     <string name="player_can_talk_now">I can talk now</string>
     <string name="player_cant_listen_now">I can\'t listen now</string>
     <string name="player_can_listen_now">I can listen now</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">Say it instead</string>
-    <string name="player_microphone_is_blocked">The microphone is blocked.</string>
     <string name="player_what_we_heard">What we heard</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (not heard)</string>

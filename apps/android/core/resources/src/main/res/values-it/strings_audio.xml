@@ -7,7 +7,10 @@
   "audio_getting_ready": "67f07e24b6fc6dba259570961ba82acb113da806e3f46b12cd7b29bfda2c5bc4",
   "audio_here_is_what_it_says": "3d023a62e9951d4ebad166624ee4b54fa9540da6aa1c0176818d37ce2958e750",
   "audio_listening": "bca6f3ffe4f547398a94510432bd3dbac7d872908e217b2ee8e51e8d4edcd8bc",
+  "audio_microphone_ask_again": "837b100145a26b79f6f1d2052f99be1dff877fb7255b2c7f68adb9dd9ceb40f6",
+  "audio_microphone_blocked": "45387b99100290eced90e6957dd52060cb821c329f44103916d4604e5fe3df2d",
   "audio_microphone_off_title": "31d9a5396e04209c3ec3aeb69813158053c536ebd83cd781396c89ba2232b016",
+  "audio_microphone_unavailable": "cec9704c21c84989a6c5823857d8947897617ff0c3639c75c2178f0e6521a9ef",
   "audio_no_speech": "edbb064c72e192a31655fe945e0accac9da3e0716a94f033c7ab40eede025e34",
   "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
   "audio_record": "0549bac6ef4a692f6a1fc52e2da296642de0781a85de07073bb93fbbcc505e5b",
@@ -37,5 +40,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tocca Registra e dillo ad alta voce</string>
     <string name="audio_microphone_off_title">Il microfono è disattivato</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Tocca Registra e consenti l’accesso al microfono.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Consenti l’accesso al microfono nelle Impostazioni, poi tocca Registra.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">Non possiamo usare il tuo microfono. Controllalo, poi tocca Registra.</string>
     <string name="audio_open_settings">Apri Impostazioni</string>
 </resources>

@@ -35,7 +35,7 @@ import { getScreenRef, useKeptScreens } from "./use-kept-screens";
 import { useLessonKeyboard } from "./use-lesson-keyboard";
 import { useRevealFeedback } from "./use-reveal-feedback";
 import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
-import { useSkipUnheardDictations } from "./use-skip-unheard-dictations";
+import { useSkipUnanswerableSteps } from "./use-skip-unanswerable-steps";
 import { useSwipeNavigation } from "./use-swipe-navigation";
 import { useIsQuietListening } from "./use-today-choice";
 
@@ -197,7 +197,7 @@ function LessonPlayerFrame() {
   const turns = useScreenTurns();
 
   useLessonKeyboard();
-  useSkipUnheardDictations();
+  useSkipUnanswerableSteps();
   useRevealFeedback(mainRef);
   useSwipeNavigation({ onBack: turns.back, onForward: turns.forward, ref: mainRef });
 

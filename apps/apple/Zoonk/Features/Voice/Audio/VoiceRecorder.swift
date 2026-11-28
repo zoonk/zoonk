@@ -24,6 +24,8 @@ final class VoiceRecorder {
   static let maxDuration: TimeInterval = 30
 
   private(set) var status = Status.idle
+  /// The microphone is allowed but didn't start: there's none, or something else holds it.
+  private(set) var isUnavailable = false
   /// From 0 to 1.
   private(set) var level: Double = 0
 
@@ -55,6 +57,7 @@ final class VoiceRecorder {
     }
 
     status = .acquiring
+    isUnavailable = false
     acquisition += 1
     let mine = acquisition
     let isAllowed = await AVAudioApplication.requestRecordPermission()
@@ -71,6 +74,7 @@ final class VoiceRecorder {
     guard let recorder = makeRecorder() else {
       SharedAudioSession.release(for: self)
       status = .idle
+      isUnavailable = true
       return false
     }
 
@@ -82,6 +86,7 @@ final class VoiceRecorder {
       discard(recorder)
       SharedAudioSession.release(for: self)
       status = .idle
+      isUnavailable = true
       return false
     }
 

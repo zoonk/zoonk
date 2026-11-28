@@ -222,3 +222,48 @@ describe("dictations", () => {
     ).resolves.toMatchObject({ status: "completed" });
   });
 });
+
+describe("speaking screens", () => {
+  it("finishes a lesson whose speaking screen the learner couldn't answer aloud, and counts one they answered", async () => {
+    const left = await setupPlayableLesson({ steps: ["check", "spokenAnswer", "summary"] });
+    const leftRunId = await startRun(left.lesson.id);
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "check", optionId: "path" },
+        durationMs: 5000,
+        runId: leftRunId,
+        timeZone: TIME_ZONE,
+      },
+      stepId: stepOfKind(left.steps, "check").id,
+    });
+
+    await expect(
+      completeLibraryLesson({
+        input: { runId: leftRunId, timeZone: TIME_ZONE },
+        lessonId: left.lesson.id,
+      }),
+    ).resolves.toMatchObject({ completion: { incorrectCount: 1 }, status: "completed" });
+
+    const answered = await setupPlayableLesson({ steps: ["spokenAnswer", "summary"] });
+    const answeredRunId = await startRun(answered.lesson.id);
+    const spoken = stepOfKind(answered.steps, "spokenAnswer");
+
+    await checkLessonStep({
+      input: {
+        answer: { kind: "spokenAnswer", text: "The electron is a cloud" },
+        durationMs: 5000,
+        runId: answeredRunId,
+        timeZone: TIME_ZONE,
+      },
+      stepId: spoken.id,
+    });
+
+    await expect(
+      completeLibraryLesson({
+        input: { runId: answeredRunId, timeZone: TIME_ZONE },
+        lessonId: answered.lesson.id,
+      }),
+    ).resolves.toMatchObject({ completion: { correctCount: 1 }, status: "completed" });
+  });
+});

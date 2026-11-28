@@ -19,7 +19,7 @@ import {
 import { useLessonRun } from "./use-lesson-run";
 import { usePageLifecycle } from "./use-page-lifecycle";
 import { type CheckContext, useStepGrading } from "./use-step-grading";
-import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
+import { CANT_TALK_TODAY, CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
@@ -243,9 +243,10 @@ export function useLessonPlayerActions({
         dispatch({ direction: "prev", type: "navigate" });
       },
       knowThis: () => dispatch({ type: "knowThis" }),
-      restoreWriting: () => {
-        setChosenToday(CANT_WRITE_TODAY, false);
-        dispatch({ type: "writingRestored" });
+      restoreSkipped: () => {
+        const choice = state.notice === "speakingSkipped" ? CANT_TALK_TODAY : CANT_WRITE_TODAY;
+        setChosenToday(choice, false);
+        dispatch({ type: "skipRestored" });
       },
       retryCompletion: () => dispatch({ type: "completionRetried" }),
       retryStart: () => void ensureRun(),
@@ -253,6 +254,7 @@ export function useLessonPlayerActions({
         void ensureRun();
         dispatch({ answer, stepId, type: "selectAnswer" });
       },
+      skipSpeaking: (stepIds, { opening }) => dispatch({ opening, stepIds, type: "skipSpeaking" }),
       skipSteps: (stepIds) => dispatch({ stepIds, type: "skipSteps" }),
       skipWriting: () => {
         setChosenToday(CANT_WRITE_TODAY, true);
@@ -267,6 +269,7 @@ export function useLessonPlayerActions({
       ensureRun,
       resendUnsaved,
       state.run.status,
+      state.notice,
       state.steps,
       submitSpokenAnswer,
       writeExampleLines,

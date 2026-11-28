@@ -33,19 +33,21 @@ val LessonStep.isReadStep: Boolean
 
 val LessonStep.isLanguageStep: Boolean get() = content is StepContent.Language
 
-/** How a spoken screen is answered: said into the recorder, heard instead, or typed. */
-enum class SpokenMode { Speak, Listen, Type }
+/**
+ * How a spoken screen is answered: said into the recorder or heard instead. [Typed] only shows an answer already typed, which
+ * older apps offered; a screen is never typed now.
+ */
+enum class SpokenMode { Speak, Listen, Typed }
 
 /**
  * Main's `getGivenMode`, then its `getAnswerMode`: an answered spoken screen shows the way it was answered (said once something
  * was heard, typed, or heard instead) whatever today's choices are now; one still to answer follows them, heard instead when the
- * learner can't talk, typed when they can't listen either or the microphone is blocked. Null on any other screen.
+ * learner can't talk. Null on any other screen, and on one the learner can neither say nor hear today, which the lesson leaves out.
  */
 fun LessonPlayerState.spokenMode(
     step: LessonStep,
     cantTalk: Boolean,
     cantListen: Boolean,
-    micBlocked: Boolean = false,
 ): SpokenMode? {
     val content = step.content as? StepContent.SpokenAnswer ?: return null
     val answer = answers[step.id]
@@ -53,12 +55,18 @@ fun LessonPlayerState.spokenMode(
 
     return when {
         results[step.id]?.heard != null -> SpokenMode.Speak
-        answer is LessonAnswer.Spoken && answer.text.isNotEmpty() -> SpokenMode.Type
+        answer is LessonAnswer.Spoken && answer.text.isNotEmpty() -> SpokenMode.Typed
         answer is LessonAnswer.Listening && canListen -> SpokenMode.Listen
-        cantTalk && canListen && !cantListen -> SpokenMode.Listen
-        cantTalk || micBlocked -> SpokenMode.Type
-        else -> SpokenMode.Speak
+        !cantTalk -> SpokenMode.Speak
+        canListen && !cantListen -> SpokenMode.Listen
+        else -> null
     }
+}
+
+/** A spoken screen the learner can't say today and can't hear instead: it has no listening, or they can't listen either. */
+fun LessonStep.isUnspeakable(cantListen: Boolean): Boolean {
+    val content = content as? StepContent.SpokenAnswer ?: return false
+    return content.listening == null || cantListen
 }
 
 /** The screen as it shows: a spoken screen heard instead is its listening exercise, as main's `ListeningInstead`. */
@@ -124,4 +132,10 @@ val LessonStep.isWritingStep: Boolean
     get() {
         val typed = content as? StepContent.TypedAnswer ?: return false
         return !isNumberAnswer(typed.content.acceptedAnswers)
+    }
+
+fun DaySkill.leavesOut(step: LessonStep): Boolean =
+    when (this) {
+        DaySkill.Writing -> step.isWritingStep
+        is DaySkill.Speaking -> step.isUnspeakable(cantListen)
     }

@@ -252,6 +252,20 @@ describe("exact lesson mistake practice", () => {
     expect(record.mock.calls[0]?.[0].practiceDurationMs).toBeGreaterThanOrEqual(0);
   });
 
+  it("offers no typing for a speaking mistake the learner can't say, keeping the way back to Record", async () => {
+    openPractice(spokenAnswerStep(), { record: vi.fn<NonNullable<Actions["record"]>>() });
+    await page.getByRole("button", { name: "I can't talk now" }).click();
+
+    await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("button", { exact: true, name: "Record" }))
+      .not.toBeInTheDocument();
+
+    await page.getByRole("button", { name: "I can talk now" }).click();
+    await expect.element(page.getByRole("button", { exact: true, name: "Record" })).toBeVisible();
+  });
+
   it("keeps a spoken recording for a network retry, still offering Record in the bar, and sends its original step", async () => {
     allowMicrophone();
 

@@ -124,36 +124,69 @@ internal fun LessonPlayerState.revealAnswer(stepId: String): LessonPlayerState {
     }
 }
 
-/** "Can't write now" leaves out every writing screen ahead for the rest of the day; "Write again" puts them back. */
-internal fun LessonPlayerState.skipWriting(
+/**
+ * "Can't write now" or "I can't talk now" leaves out every screen ahead that needs the [skill], for the rest of the day, the one
+ * in view too while it's being answered; "Turn back on" puts them back. [opening] when the lesson opens with the skill already
+ * off, so a lesson left with nothing to do waits for its finish instead of saving it. A second skip of the same skill while its
+ * notice shows keeps the first one's restore, so one "Turn back on" puts back both.
+ */
+internal fun LessonPlayerState.skipSkill(
+    skill: DaySkill,
     opening: Boolean,
     now: Long,
 ): LessonPlayerState {
-    if (phase != LessonPhase.Playing) return this
+    if (phase == LessonPhase.Completed) return this
 
-    val isLeftOut = { id: String -> steps[id]?.isWritingStep == true }
-    val skipped = queue.drop(position).filter(isLeftOut)
+    val isLeftOut = { id: String -> steps[id]?.let(skill::leavesOut) == true }
+    val start = position + if (phase == LessonPhase.Playing) 0 else 1
+    val leftOut =
+        queue
+            .drop(start)
+            .filter(isLeftOut)
+            .distinct()
+            .filterNot { it in leftOutBy(skill) }
     val next =
-        copy(skippedWritingStepIds = (skippedWritingStepIds + skipped).distinct())
+        withLeftOut(skill, leftOutBy(skill) + leftOut)
             .leaveOutAhead(isLeftOut, if (opening) CompletionStatus.Ready else CompletionStatus.Saving, now)
 
-    if (next.phase != LessonPhase.Playing || skipped.isEmpty()) return next
+    if (next.phase != LessonPhase.Playing || phase != LessonPhase.Playing || leftOut.isEmpty()) return next
 
-    return next.copy(
-        notice = LessonNotice.WritingSkipped,
-        writingRestore = WritingRestore(position, queue, skippedWritingStepIds),
-    )
+    val earlier = skillRestore?.takeIf { notice == LessonNotice.SkillSkipped && it.skill::class == skill::class }
+    val restore =
+        earlier?.copy(skill = skill, leftOut = earlier.leftOut + leftOut) ?: SkillRestore(skill, position, queue, leftOut)
+
+    return next.copy(notice = LessonNotice.SkillSkipped, skillRestore = restore)
 }
 
-internal fun LessonPlayerState.restoreWriting(now: Long): LessonPlayerState {
-    val restore = writingRestore
+/** What was left out since for another reason, such as a dictation, stays out. */
+internal fun LessonPlayerState.restoreSkill(now: Long): LessonPlayerState {
+    val restore = skillRestore
 
-    if (restore == null || notice != LessonNotice.WritingSkipped || phase != LessonPhase.Playing) return this
+    if (restore == null || notice != LessonNotice.SkillSkipped || phase != LessonPhase.Playing) return this
 
-    return copy(
-        notice = null,
-        queue = restore.queue,
-        skippedWritingStepIds = restore.skippedWritingStepIds,
-        writingRestore = null,
-    ).enterPosition(restore.position, now)
+    val back = putBack(restore)
+    val leftOut = (back.unavailableStepIds + back.skippedWritingStepIds).toSet()
+    val queue = restore.queue.filterIndexed { index, id -> index < restore.position || id !in leftOut }
+
+    return back.copy(notice = null, queue = queue, skillRestore = null).enterPosition(restore.position, now)
 }
+
+/** Left-out writing goes to the server as skipped; left-out speaking stays with the screens this device can't play. */
+private fun LessonPlayerState.leftOutBy(skill: DaySkill): List<String> =
+    when (skill) {
+        DaySkill.Writing -> skippedWritingStepIds
+        is DaySkill.Speaking -> unavailableStepIds
+    }
+
+private fun LessonPlayerState.withLeftOut(
+    skill: DaySkill,
+    stepIds: List<String>,
+): LessonPlayerState =
+    when (skill) {
+        DaySkill.Writing -> copy(skippedWritingStepIds = stepIds)
+        is DaySkill.Speaking -> copy(unavailableStepIds = stepIds)
+    }
+
+/** The screens [restore] left out, back in the lesson. */
+internal fun LessonPlayerState.putBack(restore: SkillRestore): LessonPlayerState =
+    withLeftOut(restore.skill, leftOutBy(restore.skill) - restore.leftOut.toSet())

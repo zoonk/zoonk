@@ -18,5 +18,11 @@
     <!-- “Record” is the label of the button that starts the recording. -->
     <string name="audio_say_it">Tap Record and say it out loud</string>
     <string name="audio_microphone_off_title">The microphone is off</string>
+    <!-- The learner refused the microphone this time; tapping “Record” asks for it again. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_ask_again">Tap Record and allow the microphone.</string>
+    <!-- The learner refused the microphone for the app. “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_blocked">Allow the microphone in Settings, then tap Record.</string>
+    <!-- The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording. -->
+    <string name="audio_microphone_unavailable">We can\'t use your microphone. Check it, then tap Record.</string>
     <string name="audio_open_settings">Open Settings</string>
 </resources>

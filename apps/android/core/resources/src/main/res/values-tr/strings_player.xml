@@ -100,7 +100,6 @@
   "player_lesson_of": "77f8e143211024c89ebbeff43401e51f5d0088247e3d0a68dcbc807a572a054b",
   "player_lesson_ready": "037a345bbdd6e70ae8e9424b7b61d0faaf4fef9f3637e8d801b3217baed00e8e",
   "player_listen": "2c3a1e1d4744442bb0e25bb21d912496b7f443f7d9dd8d415bfb9b4554e32753",
-  "player_microphone_is_blocked": "54d6475c830558a4e912fc07daf453612fbb75294e35e5a551669475887b6d85",
   "player_next_lesson": "583121a7d9e9b9f39395ad7a06c87700ce3481b968ed7a23fd5b050ab4fb6554",
   "player_next_step_failed": "4ddec6a37ae918efcb2f45be3d5e408cebeec412b0bf2b9e8b24a133f752a720",
   "player_not_found_description": "2ef200e6d51d0748325fe27340f8ebea2ddb0e2743a63edd97e9e4a3728b7b6a",
@@ -113,7 +112,8 @@
   "player_notice_answer_not_saved": "0ffd1d6cd13fbe924920c7562e9119fe551379a7d7b1f224a088167bfa7bbd21",
   "player_notice_picture_ready": "e2744f86b16f67cdda997321755b3f1a6293ba025bce9780c28cc1667a490a9c",
   "player_notice_self_correct": "d08469d66c3b513c6fe960c753432dfbf754ead98de2f49403a0f36e11181ba3",
-  "player_notice_writing_skipped": "b49842c36afcc9aa5b2bde4892398295cd9c5ae391237c5a84ec308720b36471",
+  "player_notice_speaking_skipped": "703895ff86d2b8e67adaa3f655d826a338a373dea04d494305f90650b628e747",
+  "player_notice_writing_skipped": "b1dc441e6101af7aa7f269d81dfbd13d60623e1349ddf6ee7b69d75542933aa0",
   "player_offer_no_thanks": "d50e32202f9f5fdf68061c891218e537ac4a79178cf934c9b2d617a089751a85",
   "player_offer_taking_time": "4a6de29f676afed36c365f1636f0d1bf4797a7f62c0d4a57ea401fbca06941f0",
   "player_offer_tricky": "18011757acce053c6d478c95a2ae70ed192e1f1c95f1b67fe2508d8c4be285ff",
@@ -144,7 +144,6 @@
   "player_saved_to_mistakes": "75b2650f784a5618fedec34029e44cb5cb46e6bdcdfe97bc65f792d5380aaded",
   "player_saved_to_mistakes_back_at_end": "86590eb884d7a60511d1b4ad6585d91b4757345c4ff83edf85da16a18522e5bf",
   "player_saving_progress": "88aa09188d40416edd4df3de80fd49db4cb8c2a8bb13ba2499afa5fbb231b67a",
-  "player_say_it_instead": "b981fadc5ae697923de315eafab2b24791b0331d9bcacb9f66a6d1f2bb4f55a4",
   "player_screen_options": "fa549e3ce14d23736e7d5d8fed84e3ddcde2bfab8c8746f39dabc95eca54ae3a",
   "player_set_aside_description": "e92946b831186dcaf14e5b88c5e4f717cf090b3c070a08f832d21f790b2ebb3b",
   "player_set_aside_title": "da1a3741e39d26aca549a34ffc0ada175f2741c3bbb5ccab5609754e7f6219d6",
@@ -165,6 +164,7 @@
   "player_summary_ideas": "700167b879504ae64f8a16e5bf850e683e52569debcc1788134b30b29f4afa5b",
   "player_time_studied": "4d571ba2220429c1d0df3f856481726e0a01b0208f8046f7c14d644b3588c135",
   "player_try_again": "0bd2ae7a08f67176343ff4e2853fe6a81616d3f4229b321f43771a7023092587",
+  "player_turn_back_on": "bee1439f7155b036a5d33645db2f840ef3146d042065a7685b33c1bc7417b45d",
   "player_unchecked_compare": "2bb62e285434df49d57a0511f0a6733cb8a7e373c64041ec5b9e8ef2d9ae04b0",
   "player_unchecked_updated": "9c34e7f5fc735231fbff489b2524686fed914d0c474511a4c1d36b145a5e162c",
   "player_verdict_almost": "ef061ca34d4ec5dfad5cac44977b98d0964e9316fbf7480f241487bea7945c74",
@@ -182,7 +182,6 @@
   "player_worked_example": "53bf1186ba96bdf0e2daf830787b99d40d2c1b5d2005270f87d4db0663432bfe",
   "player_worked_example_result": "3473cddf25f2ec80e8e83676abe67d00d4f82e09082596a655c5d77cb84ec63b",
   "player_worked_example_steps": "5cce18499ba28100a3d73f7bb942cdd3565fd4e7c3f27cd6cefa6f7bcaa24a75",
-  "player_write_again": "53de59a614de72dcb65c7c092efd01d2bf4473b281c9bad6509f68973463fd4f",
   "player_write_your_answer": "2bccbed46fb67a1c21ac7f7bec82bf53d3acdfefbc9d8bab6aebe58f0f16c701",
   "player_writing_lesson": "8975f01bba2c0faad3702827b546e4e78f406275856f78ebb131ea4578d4c8a7",
   "player_writing_note": "9d086f682e583b14eddcd4646c0326fdc985b714839efa7e1bf9198910ec5f0a",
@@ -230,8 +229,10 @@
     <string name="player_notice_self_correct">Doğru değil. Tekrar bakıp kendin düzelt, sonra kontrol et.</string>
     <string name="player_notice_answer_not_saved">Bu soruya verdiğin cevap kaydedilmedi. Dersi bitirmek için tekrar cevapla.</string>
     <string name="player_notice_picture_ready">Bu soru için görsel bekleniyordu. Dersi bitirmek için soruyu cevapla.</string>
-    <string name="player_notice_writing_skipped">Yazma soruları bugün için kapalı.</string>
-    <string name="player_write_again">Yeniden aç</string>
+    <string name="player_notice_writing_skipped">Yazma soruları bugün kapalı.</string>
+    <!-- Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones. -->
+    <string name="player_notice_speaking_skipped">Bugün konuşma kapalı.</string>
+    <string name="player_turn_back_on">Yeniden aç</string>
     <string name="player_verdict_almost">Çok yaklaştın</string>
     <string name="player_verdict_correct">Doğru!</string>
     <string name="player_verdict_guess">İşte cevap</string>
@@ -348,9 +349,6 @@
     <string name="player_can_talk_now">Şu an konuşabilirim</string>
     <string name="player_cant_listen_now">Şu an dinleyemiyorum</string>
     <string name="player_can_listen_now">Artık dinleyebilirim</string>
-    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">Sesli söyle</string>
-    <string name="player_microphone_is_blocked">Mikrofon erişimi engellendi.</string>
     <string name="player_what_we_heard">Duyduklarımız</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (duyulmadı)</string>

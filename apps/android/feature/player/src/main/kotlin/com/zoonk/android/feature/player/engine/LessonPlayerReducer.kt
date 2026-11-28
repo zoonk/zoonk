@@ -24,12 +24,14 @@ sealed interface LessonAction {
         val stepId: String,
     ) : LessonAction
 
-    /** "Can't write now" for every writing screen ahead. */
-    data class SkipWriting(
+    /** "Can't write now" or "I can't talk now" for every screen ahead that needs the [skill]. */
+    data class SkipSkill(
+        val skill: DaySkill,
         val opening: Boolean = false,
     ) : LessonAction
 
-    data object RestoreWriting : LessonAction
+    /** "Turn back on" while the skill's notice shows. */
+    data object RestoreSkill : LessonAction
 
     data class SkipSteps(
         val stepIds: List<String>,
@@ -124,12 +126,12 @@ fun reduce(
             state.revealAnswer(action.stepId)
         }
 
-        is LessonAction.SkipWriting -> {
-            if (state.phase == LessonPhase.Playing) state.skipWriting(action.opening, now) else state
+        is LessonAction.SkipSkill -> {
+            state.skipSkill(action.skill, action.opening, now)
         }
 
-        LessonAction.RestoreWriting -> {
-            state.restoreWriting(now)
+        LessonAction.RestoreSkill -> {
+            state.restoreSkill(now)
         }
 
         is LessonAction.SkipSteps -> {
@@ -240,23 +242,25 @@ private fun LessonPlayerState.resumeFrom(
     now: Long,
 ): LessonPlayerState {
     val fresh = LessonPlayerState.initial(lessonId, steps.values.toList(), now = now)
-    val restore = writingRestore.takeIf { notice == LessonNotice.WritingSkipped }
-    val skipped = restore?.skippedWritingStepIds ?: skippedWritingStepIds
+    val restore = skillRestore.takeIf { notice == LessonNotice.SkillSkipped }
+    val before = restore?.let(::putBack) ?: this
+    val skipped = before.skippedWritingStepIds
+    val unavailable = before.unavailableStepIds
     val isGuess = { id: String -> steps[id]?.content is StepContent.Guess }
     val available =
         fresh.copy(
             answers = this.answers.filterKeys(isGuess),
-            queue = fresh.queue.filterNot { it in unavailableStepIds || it in skipped },
+            queue = fresh.queue.filterNot { it in unavailable || it in skipped },
             results = results.filterKeys(isGuess),
             rounds = rounds,
         )
 
     if (available.queue.isEmpty()) return this
 
-    val resumed = available.resume(answers, now).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailableStepIds)
+    val resumed = available.resume(answers, now).copy(run = run, skippedWritingStepIds = skipped, unavailableStepIds = unavailable)
     val changed = (this.answers.keys + resumed.answers.keys).filter { this.answers[it] != resumed.answers[it] }
     val restarted = resumed.copy(rounds = resumed.rounds + changed.associateWith { round(it) + 1 })
-    return if (restore != null) restarted.skipWriting(opening = true, now = now) else restarted
+    return if (restore != null) restarted.skipSkill(restore.skill, opening = true, now = now) else restarted
 }
 
 private fun LessonPlayerState.startRun(

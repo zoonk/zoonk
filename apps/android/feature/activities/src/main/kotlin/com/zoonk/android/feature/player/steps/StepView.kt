@@ -83,7 +83,7 @@ interface StepActions {
 
     fun explainFirst()
 
-    /** The day's "I can't talk now", which types spoken screens instead. */
+    /** The day's "I can't talk now": spoken screens are heard instead, or left out with nothing to hear. */
     val cantTalk: Boolean
 
     fun setCantTalk(chosen: Boolean)

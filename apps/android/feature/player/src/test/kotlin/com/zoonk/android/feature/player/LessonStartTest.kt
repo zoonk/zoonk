@@ -10,8 +10,11 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
+import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonRun
+import com.zoonk.android.feature.player.engine.SpokenMode
+import com.zoonk.android.feature.player.engine.spokenMode
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.session.FakeStudyApi
@@ -155,6 +158,64 @@ class LessonStartTest {
             assertTrue(vm.cantListen)
             assertTrue(vm.cantTalk)
             api.startGate!!.complete(Unit)
+        }
+
+    @Test fun aLessonOpenedWithCantTalkChosenLeavesItsSpeakingOutUntilItsTurnedBackOn() =
+        runTest(dispatcher) {
+            val drafts = DraftStore(folder.newFolder(), backgroundScope, dispatcher)
+            drafts.follow { DraftsChange("ana") }
+            TodayChoices(drafts).set(session.current!!, TodayChoice.CantTalk, true)
+            lesson = playable(listOf(explanationStep(FIRST), spokenStep(ONE), checkStep(TWO)))
+            api.load = LessonLoad.Ready(lesson)
+            val vm = player(null, tapped = true, draftStore = drafts)
+
+            vm.open(lesson)
+            advanceUntilIdle()
+
+            assertEquals(listOf(FIRST, TWO), vm.state.value?.queue)
+            assertEquals(LessonNotice.SkillSkipped, vm.state.value?.notice)
+
+            while (vm.state.value?.run !is LessonRun.Started) {
+                runCurrent()
+                kotlinx.coroutines.yield()
+            }
+            val started = vm.state.value!!
+            assertEquals(listOf(FIRST, TWO), started.queue)
+            assertEquals(LessonNotice.SkillSkipped, started.notice)
+
+            vm.restoreSkill()
+            advanceUntilIdle()
+            assertEquals(listOf(FIRST, ONE, TWO), vm.state.value?.queue)
+            assertFalse(vm.cantTalk)
+            assertFalse(TodayChoices(drafts).isChosen(session.current!!, TodayChoice.CantTalk))
+        }
+
+    @Test fun cantTalkOnASpeakingScreenWithNothingToHearMovesOnAndICanTalkNowBringsItBack() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(explanationStep(FIRST), spokenStep(ONE), checkStep(TWO)))
+            api.load = LessonLoad.Ready(lesson)
+            val vm = player(null, tapped = true)
+            vm.open(lesson)
+            advanceUntilIdle()
+            vm.dispatch(LessonAction.Continue)
+
+            vm.setCantTalk(true)
+            assertEquals(
+                TWO,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertEquals(LessonNotice.SkillSkipped, vm.state.value?.notice)
+
+            vm.setCantTalk(false)
+            assertEquals(
+                ONE,
+                vm.state.value
+                    ?.currentStep
+                    ?.id,
+            )
+            assertFalse(vm.cantTalk)
         }
 
     @Test fun aLateRunLeavesWorkWithNoAnswerOnAPreviousScreenAlone() =
@@ -583,6 +644,22 @@ class LessonStartTest {
                     ?.answers
                     ?.get(TWO),
             )
+        }
+
+    /** An older app typed spoken sentences: its unchecked draft is gone, so the screen offers Record again. */
+    @Test fun aTypedDraftAnOlderAppSavedOnASpeakingScreenIsDropped() =
+        runTest(dispatcher) {
+            lesson = playable(listOf(spokenStep(ONE), explanationStep(LAST)))
+            api.load = LessonLoad.Ready(lesson)
+            val draft = ApiJson.encodeToString(LessonAnswer.serializer(), LessonAnswer.Spoken("Tengo hambre"))
+            val vm = player(null, tapped = true, saved = SavedStateHandle(mapOf("answers" to hashMapOf(ONE to draft))))
+            vm.open(lesson)
+            advanceUntilIdle()
+
+            val state = vm.state.value!!
+            assertEquals(ONE, state.currentStep?.id)
+            assertEquals(null, state.answers[ONE])
+            assertEquals(SpokenMode.Speak, state.spokenMode(state.currentStep!!, cantTalk = false, cantListen = false))
         }
 
     private fun answered(vararg stepIds: String) =

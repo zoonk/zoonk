@@ -74,8 +74,9 @@ enum RecordNote: Equatable {
   case noSpeech
   case failed
   case slow
-  /// The microphone is off where skipping is the other way on: how to turn it back on.
+  /// The microphone is off: how to turn it back on.
   case microphoneOff(String)
+  case microphoneUnavailable
 
   init?(active status: VoiceRecorder.Status) {
     switch status {
@@ -115,6 +116,14 @@ enum RecordNote: Equatable {
         LocalizedStringResource(
           "Still checking. This is taking longer than usual.", table: "Voice",
           comment: "Grading a spoken answer is taking longer than usual"), tone: .status)
+    case .microphoneUnavailable:
+      BarNote(
+        LocalizedStringResource(
+          "We can't use your microphone. Check it, then tap Record.", table: "Voice",
+          comment:
+            "The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording."
+        ),
+        tone: .status)
     case .microphoneOff(let line):
       BarNote(
         line, tone: .status,

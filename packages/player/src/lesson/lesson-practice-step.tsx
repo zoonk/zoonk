@@ -188,7 +188,7 @@ export function LessonPracticeStep(props: Props) {
     explainFirst: idle,
     goBack: idle,
     knowThis: idle,
-    restoreWriting: idle,
+    restoreSkipped: idle,
     retryCompletion: idle,
     retryStart: idle,
     selectAnswer: (_id, next) => {
@@ -196,6 +196,7 @@ export function LessonPracticeStep(props: Props) {
         onAnswer(next);
       }
     },
+    skipSpeaking: idle,
     skipSteps: idle,
     skipWriting: onDontKnow,
     startRecording: idle,

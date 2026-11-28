@@ -13,6 +13,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.numberAnswerStep
+import com.zoonk.android.feature.player.spokenStep
 import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.feature.player.typedAnswerStep
@@ -361,18 +362,19 @@ class LessonPlayerReducerTest {
     @Test
     fun leavesOutTheRestOfTheWritingAndGoesOnFromWhereTheLearnerIs() {
         val steps = listOf(typedAnswerStep("write-1"), explanationStep("tip"), typedAnswerStep("write-2"), summaryStep("end"))
-        val skipped = play(steps, LessonAction.SkipWriting())
+        val skipped = play(steps, LessonAction.SkipSkill(DaySkill.Writing))
 
         assertEquals(listOf("tip", "end"), skipped.queue)
         assertEquals("tip", skipped.currentId)
         assertEquals(listOf("write-1", "write-2"), skipped.skippedWritingStepIds)
-        assertEquals(LessonNotice.WritingSkipped, skipped.notice)
+        assertEquals(LessonNotice.SkillSkipped, skipped.notice)
         assertNull(skipped.then(LessonAction.Continue).notice)
     }
 
     @Test
     fun keepsNumberQuestionsWhenTheRestOfTheWritingIsLeftOut() {
-        val skipped = play(listOf(typedAnswerStep("write"), numberAnswerStep("count"), summaryStep("end")), LessonAction.SkipWriting())
+        val skipped =
+            play(listOf(typedAnswerStep("write"), numberAnswerStep("count"), summaryStep("end")), LessonAction.SkipSkill(DaySkill.Writing))
 
         assertEquals(listOf("count", "end"), skipped.queue)
         assertEquals("count", skipped.currentId)
@@ -380,32 +382,32 @@ class LessonPlayerReducerTest {
     }
 
     @Test
-    fun putsTheWritingBackWithWriteAgainUntilTheLearnerMovesOn() {
+    fun putsTheWritingBackWithTurnBackOnUntilTheLearnerMovesOn() {
         val steps = listOf(explanationStep("tip"), typedAnswerStep("write"), summaryStep("end"))
-        val skipped = play(steps, LessonAction.SkipWriting(opening = true))
-        assertEquals(LessonNotice.WritingSkipped, skipped.notice)
+        val skipped = play(steps, LessonAction.SkipSkill(DaySkill.Writing, opening = true))
+        assertEquals(LessonNotice.SkillSkipped, skipped.notice)
         assertEquals(listOf("tip", "end"), skipped.queue)
 
-        val restored = skipped.then(LessonAction.RestoreWriting)
+        val restored = skipped.then(LessonAction.RestoreSkill)
         assertNull(restored.notice)
         assertEquals(0, restored.position)
         assertEquals(listOf("tip", "write", "end"), restored.queue)
         assertEquals(emptyList<String>(), restored.skippedWritingStepIds)
 
         val movedOn = skipped.then(LessonAction.Continue)
-        assertSame(movedOn, movedOn.then(LessonAction.RestoreWriting))
+        assertSame(movedOn, movedOn.then(LessonAction.RestoreSkill))
     }
 
     @Test
     fun keepsTodaysWritingNoticeAndUndoWhenTheRunStartReconcilesStaleProgress() {
         val steps = listOf(checkStep("quiz"), typedAnswerStep("write"), explanationStep("tip"), summaryStep("end"))
-        val resumed = play(steps, LessonAction.SkipWriting(opening = true), started(saved("quiz", true)))
+        val resumed = play(steps, LessonAction.SkipSkill(DaySkill.Writing, opening = true), started(saved("quiz", true)))
 
-        assertEquals(LessonNotice.WritingSkipped, resumed.notice)
+        assertEquals(LessonNotice.SkillSkipped, resumed.notice)
         assertEquals("tip", resumed.currentId)
         assertEquals(listOf("write"), resumed.skippedWritingStepIds)
 
-        val restored = resumed.then(LessonAction.RestoreWriting)
+        val restored = resumed.then(LessonAction.RestoreSkill)
         assertEquals("write", restored.currentId)
         assertEquals(listOf("quiz", "write", "tip", "end"), restored.queue)
         assertEquals(emptyList<String>(), restored.skippedWritingStepIds)
@@ -416,15 +418,139 @@ class LessonPlayerReducerTest {
     @Test
     fun bringsTheLearnerBackToTheScreenTheyLeftWithCantWriteNow() {
         val restored =
-            play(listOf(typedAnswerStep("write"), explanationStep("tip")), LessonAction.SkipWriting(), LessonAction.RestoreWriting)
+            play(
+                listOf(typedAnswerStep("write"), explanationStep("tip")),
+                LessonAction.SkipSkill(DaySkill.Writing),
+                LessonAction.RestoreSkill,
+            )
         assertEquals("write" to LessonPhase.Playing, restored.currentId to restored.phase)
     }
 
     @Test
     fun waitsForFinishWhenWritingLeftOutAsTheLessonOpensLeavesNothingToDo() {
-        val opened = play(listOf(typedAnswerStep("write")), LessonAction.SkipWriting(opening = true))
+        val opened = play(listOf(typedAnswerStep("write")), LessonAction.SkipSkill(DaySkill.Writing, opening = true))
         assertEquals(LessonPhase.Completed, opened.phase)
         assertEquals(CompletionStatus.Ready, opened.completion?.status)
+    }
+
+    @Test
+    fun leavesOutTheSpeakingThereIsNothingToHearInsteadAndGoesOnFromWhereTheLearnerIs() {
+        val steps = listOf(spokenStep("say-1"), spokenStep("heard", heardInstead = true), spokenStep("say-2"), summaryStep("end"))
+        val skipped = play(steps, LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)))
+
+        assertEquals(listOf("heard", "end"), skipped.queue)
+        assertEquals("heard", skipped.currentId)
+        assertEquals(listOf("say-1", "say-2"), skipped.unavailableStepIds)
+        assertEquals(emptyList<String>(), skipped.skippedWritingStepIds)
+        assertEquals(LessonNotice.SkillSkipped to DaySkill.Speaking(cantListen = false), skipped.notice to skipped.skillRestore?.skill)
+    }
+
+    @Test
+    fun leavesOutTheSpeakingHeardInsteadOnceTheLearnerCantListenEither() {
+        val steps = listOf(spokenStep("heard", heardInstead = true), explanationStep("tip"), spokenStep("later", heardInstead = true))
+        val hearing = play(steps, LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)))
+        assertEquals("heard" to null, hearing.currentId to hearing.notice)
+
+        val unheard = hearing.then(LessonAction.SkipSkill(DaySkill.Speaking(cantListen = true)))
+        assertEquals(listOf("tip"), unheard.queue)
+        assertEquals("tip", unheard.currentId)
+        assertEquals(listOf("heard", "later"), unheard.unavailableStepIds)
+        assertEquals(LessonNotice.SkillSkipped, unheard.notice)
+    }
+
+    @Test
+    fun turnBackOnPutsBackBothSpeakingSkipsMadeOnTheSameScreen() {
+        val steps = listOf(spokenStep("heard", heardInstead = true), spokenStep("say"), summaryStep("end"))
+        val unheard =
+            play(
+                steps,
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)),
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = true)),
+            )
+        assertEquals(listOf("end"), unheard.queue)
+
+        val restored = unheard.then(LessonAction.RestoreSkill)
+        assertEquals(listOf("heard", "say", "end"), restored.queue)
+        assertEquals("heard", restored.currentId)
+        assertEquals(emptyList<String>(), restored.unavailableStepIds)
+    }
+
+    @Test
+    fun turnBackOnKeepsOutADictationLeftOutBetweenTwoSpeakingSkips() {
+        val steps = listOf(spokenStep("heard", heardInstead = true), checkStep("dictation"), spokenStep("say"), summaryStep("end"))
+        val unheard =
+            play(
+                steps,
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)),
+                LessonAction.SkipSteps(listOf("dictation")),
+                LessonAction.SkipSkill(DaySkill.Speaking(cantListen = true)),
+            )
+        assertEquals(listOf("end"), unheard.queue)
+
+        val restored = unheard.then(LessonAction.RestoreSkill)
+        assertEquals(listOf("heard", "say", "end"), restored.queue)
+        assertEquals("heard", restored.currentId)
+        assertEquals(listOf("dictation"), restored.unavailableStepIds)
+    }
+
+    @Test
+    fun putsTheSpeakingBackWithTurnBackOnUntilTheLearnerMovesOn() {
+        val steps = listOf(explanationStep("tip"), spokenStep("say"), summaryStep("end"))
+        val skipped = play(steps, LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false), opening = true))
+        assertEquals(listOf("tip", "end"), skipped.queue)
+
+        val restored = skipped.then(LessonAction.RestoreSkill)
+        assertNull(restored.notice)
+        assertEquals(listOf("tip", "say", "end"), restored.queue)
+        assertEquals(emptyList<String>(), restored.unavailableStepIds)
+
+        val movedOn = skipped.then(LessonAction.Continue)
+        assertEquals("end", movedOn.currentId)
+        assertSame(movedOn, movedOn.then(LessonAction.RestoreSkill))
+    }
+
+    @Test
+    fun turnBackOnKeepsOutTheScreensThatCantBePlayed() {
+        val steps = listOf(spokenStep("say"), typedAnswerStep("numbered"), explanationStep("tip"))
+        val skipped =
+            play(steps, LessonAction.SkipSteps(listOf("numbered")), LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false)))
+
+        assertEquals(listOf("numbered", "say"), skipped.unavailableStepIds)
+        assertEquals(listOf("numbered"), skipped.then(LessonAction.RestoreSkill).unavailableStepIds)
+    }
+
+    @Test
+    fun keepsTodaysSpeakingNoticeAndUndoWhenTheRunStartReconcilesStaleProgress() {
+        val steps = listOf(checkStep("quiz"), spokenStep("say"), explanationStep("tip"), summaryStep("end"))
+        val resumed =
+            play(steps, LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false), opening = true), started(saved("quiz", true)))
+
+        assertEquals(LessonNotice.SkillSkipped, resumed.notice)
+        assertEquals("tip", resumed.currentId)
+        assertEquals(listOf("say"), resumed.unavailableStepIds)
+
+        val restored = resumed.then(LessonAction.RestoreSkill)
+        assertEquals("say", restored.currentId)
+        assertEquals(listOf("quiz", "say", "tip", "end"), restored.queue)
+        assertEquals(emptyList<String>(), restored.unavailableStepIds)
+    }
+
+    @Test
+    fun keepsSpeakingLeftOutWhenAMissingAnswerResyncsTheSameLesson() {
+        val steps = listOf(checkStep("quiz"), spokenStep("say"), summaryStep("end"))
+        val skip = LessonAction.SkipSkill(DaySkill.Speaking(cantListen = false))
+        val done = play(steps, *answerCheck("quiz", true), LessonAction.Continue, skip, LessonAction.Continue)
+
+        val resumed = done.then(LessonAction.RunResynced(runId = null, answers = emptyList()))
+        assertEquals(listOf("quiz", "end"), resumed.queue)
+        assertEquals(listOf("say"), resumed.unavailableStepIds)
+    }
+
+    @Test
+    fun finishesALessonWhoseOnlySpeakingLeftCantBeAnswered() {
+        val done =
+            play(listOf(explanationStep("tip"), spokenStep("say")), LessonAction.Continue, LessonAction.SkipSkill(DaySkill.Speaking(false)))
+        assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
     }
 
     @Test
@@ -438,14 +564,16 @@ class LessonPlayerReducerTest {
 
     @Test
     fun finishesALessonWhoseOnlyScreensLeftWereSkipped() {
-        val done = play(listOf(explanationStep("tip"), typedAnswerStep("write")), LessonAction.Continue, LessonAction.SkipWriting())
+        val done =
+            play(listOf(explanationStep("tip"), typedAnswerStep("write")), LessonAction.Continue, LessonAction.SkipSkill(DaySkill.Writing))
         assertEquals(LessonPhase.Completed to CompletionStatus.Saving, done.phase to done.completion?.status)
     }
 
     @Test
     fun keepsWritingSkippedWhenAMissingNonWritingAnswerResyncsTheSameLesson() {
         val steps = listOf(checkStep("quiz"), typedAnswerStep("write"), summaryStep("end"))
-        val done = play(steps, *answerCheck("quiz", true), LessonAction.Continue, LessonAction.SkipWriting(), LessonAction.Continue)
+        val done =
+            play(steps, *answerCheck("quiz", true), LessonAction.Continue, LessonAction.SkipSkill(DaySkill.Writing), LessonAction.Continue)
 
         val resumed = done.then(LessonAction.RunResynced(runId = null, answers = emptyList()))
         assertEquals("quiz", resumed.currentId)

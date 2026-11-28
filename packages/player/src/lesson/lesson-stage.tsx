@@ -1,10 +1,8 @@
 "use client";
 
-import { Eyebrow } from "@zoonk/learn/eyebrow";
-import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CloudOffIcon, ImageIcon, PenOffIcon, PencilIcon, ZapIcon } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useState } from "react";
 import { SCREEN_TURN_CLASS, type ScreenTurn } from "../components/screen-turn";
@@ -13,7 +11,7 @@ import { WordBankCheckContext } from "../components/word-bank";
 import { LessonCitation } from "./_components/lesson-citation";
 import { UpcomingPictures } from "./_components/lesson-pictures";
 import { OrientationStrip } from "./_components/orientation-strip";
-import { LESSON_CONTENT_ID, focusLessonAfterTurn } from "./_utils/lesson-focus";
+import { LESSON_CONTENT_ID } from "./_utils/lesson-focus";
 import { canSelfCorrect, getAnsweredStep, isLanguageStep } from "./_utils/lesson-steps";
 import { AskBuddyOffer } from "./controls/ask-buddy-offer";
 import { BoardMissesContext } from "./feedback/board-misses";
@@ -24,104 +22,13 @@ import {
 } from "./feedback/lesson-result-notes";
 import { LessonStepResultView } from "./feedback/lesson-step-result";
 import { LessonRecapRow } from "./lesson-aside";
+import { LessonNotice } from "./lesson-notice";
 import { useLessonPlayer } from "./lesson-player-context";
 import { type LessonScreen } from "./lesson-player-screen";
 import { type LessonPlayerState } from "./lesson-player-state";
 import { type LessonStepResult, type PlayableLibraryStep } from "./lesson-player-types";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { CANT_LISTEN_TODAY, useTodayChoice } from "./use-today-choice";
-
-function NoticeLine({
-  action,
-  children,
-  icon,
-}: {
-  action?: React.ReactNode;
-  children: React.ReactNode;
-  icon: React.ReactNode;
-}) {
-  return (
-    <PlayerContentFrame className="flex items-center justify-between gap-3 pt-4">
-      <p className="text-muted-foreground flex items-start gap-2 text-sm" role="status">
-        <LineMarker>{icon}</LineMarker>
-        {children}
-      </p>
-      {action}
-    </PlayerContentFrame>
-  );
-}
-
-function WriteAgainButton() {
-  const t = useExtracted();
-  const { actions, state } = useLessonPlayer();
-
-  if (!state.writingRestore || state.phase !== "playing") {
-    return null;
-  }
-
-  return (
-    <Button
-      edge="end"
-      onClick={() => {
-        actions.restoreWriting();
-        focusLessonAfterTurn();
-      }}
-      size="sm"
-      variant="ghost"
-    >
-      {t("Turn back on")}
-    </Button>
-  );
-}
-
-function LessonNotice() {
-  const t = useExtracted();
-  const { screen, state } = useLessonPlayer();
-
-  if (screen.quickCheck) {
-    return (
-      <PlayerContentFrame className="pt-4">
-        <Eyebrow icon={<ZapIcon aria-hidden="true" />}>
-          {t("Quick check · {current} of {total}", {
-            current: String(screen.quickCheck.current + 1),
-            total: String(screen.quickCheck.total),
-          })}
-        </Eyebrow>
-      </PlayerContentFrame>
-    );
-  }
-
-  switch (state.notice) {
-    case "selfCorrect":
-      // Drawn with what the check adds (`CheckAdditions`), so nothing above the answer moves.
-      return null;
-    case "answerNotSaved":
-      return (
-        <NoticeLine icon={<CloudOffIcon aria-hidden="true" className="size-4" />}>
-          {t("Your answer here didn't save. Answer it again to finish the lesson.")}
-        </NoticeLine>
-      );
-    case "pictureReady":
-      return (
-        <NoticeLine icon={<ImageIcon aria-hidden="true" className="size-4" />}>
-          {t("This question was waiting for its picture. Answer it to finish the lesson.")}
-        </NoticeLine>
-      );
-    case "writingSkipped":
-      return (
-        <NoticeLine
-          action={<WriteAgainButton />}
-          icon={<PenOffIcon aria-hidden="true" className="size-4" />}
-        >
-          {t("Writing is off for today.")}
-        </NoticeLine>
-      );
-    case null:
-      return null;
-    default:
-      return state.notice satisfies never;
-  }
-}
 
 /** An activity's verdict is in its own card, so the lesson's notes go inside that card. */
 function drawsOwnCard(step: PlayableLibraryStep): boolean {

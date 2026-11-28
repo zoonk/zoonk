@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -670,9 +671,9 @@ internal fun TypedAnswerView(
 }
 
 /**
- * Main's spoken screen: said into L8's recorder; when the learner can't talk today, built from the
- * heard sentence if the step has its listening exercise, else typed, as when the microphone is
- * blocked. All are graded by the server. An answered screen shows its answer the way it was given.
+ * Main's spoken screen: said into L8's recorder, or built from the heard sentence when the learner can't talk today and the step
+ * has its listening exercise; both are graded by the server. One that can be neither has no answer here: the lesson leaves it out,
+ * and practice keeps only "I can talk now". An answered screen shows its answer the way it was given, typed by an older app too.
  */
 @Composable
 internal fun SpokenAnswerView(
@@ -688,19 +689,18 @@ internal fun SpokenAnswerView(
     val spoken = content.content
     val locked = state.phase != LessonPhase.Playing
     val voice = spokenVoice(step, actions)
-    val types = state.spokenMode(step, actions.cantTalk, actions.cantListen, voice.blocked) == SpokenMode.Type
+    val mode = state.spokenMode(step, actions.cantTalk, actions.cantListen)
     val switchTo = { cantTalk: Boolean ->
         actions.select(null)
-        voice.blocked = false
         actions.setCantTalk(cantTalk)
     }
     val listening = state.shownStep(step, actions.cantTalk, actions.cantListen).content as? StepContent.Language
 
     if (listening != null) {
-        val typesInstead = remember(actions) { ListeningTurnsToTyping(actions) }
+        val leavesUnheard = remember(actions) { ListeningLeavesUnheard(actions) }
         val canTalkNow: (@Composable () -> Unit)? =
             if (locked) null else ({ StepWayOut(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) } })
-        LanguageStepView(listening, answer, state.results[step.id], locked, language, typesInstead, part, canTalkNow)
+        LanguageStepView(listening, answer, state.results[step.id], locked, language, leavesUnheard, part, canTalkNow)
         return
     }
 
@@ -708,45 +708,33 @@ internal fun SpokenAnswerView(
         if (part.showsScreen) TargetText(spoken)
 
         if (part.showsTurn) {
-            when {
-                types -> {
-                    if (voice.blocked && !locked) {
-                        Text(
-                            stringResource(R.string.player_microphone_is_blocked),
-                            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+            when (mode) {
+                SpokenMode.Typed -> {
+                    AnswerField((answer as? LessonAnswer.Spoken)?.text.orEmpty(), {}, state, actions, readOnly = true)
+                }
+
+                SpokenMode.Speak -> {
+                    if (!locked || state.phase == LessonPhase.Checking) VoiceAnswerLimit(voice, navigator)
+                    if (!locked) {
+                        val listensInstead = content.listening != null && !actions.cantListen
+                        StepWayOut(
+                            R.drawable.ic_mic_off,
+                            stringResource(R.string.player_cant_talk_now),
+                            leadsTo = stringResource(R.string.player_listen).takeIf { listensInstead },
+                        ) { switchTo(true) }
                     }
-                    AnswerField(
-                        (answer as? LessonAnswer.Spoken)?.text.orEmpty(),
-                        { actions.select(it?.let(LessonAnswer::Spoken)) },
-                        state,
-                        actions,
-                    )
                 }
 
-                !locked || state.phase == LessonPhase.Checking -> {
-                    VoiceAnswerLimit(voice, navigator)
-                }
-            }
-
-            if (!locked) {
-                if (types) {
-                    StepWayOut(
-                        R.drawable.ic_mic,
-                        stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
-                    ) { switchTo(false) }
-                } else {
-                    StepWayOut(R.drawable.ic_mic_off, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+                SpokenMode.Listen, null -> {
+                    if (!locked) StepWayOut(R.drawable.ic_mic, stringResource(R.string.player_can_talk_now)) { switchTo(false) }
                 }
             }
         }
     }
 }
 
-/** A spoken screen heard instead turns to typing once the learner can't listen either, so the words placed so far go. */
-private class ListeningTurnsToTyping(
+/** A spoken screen heard instead has nothing left to answer once the learner can't listen either, so the words placed so far go. */
+private class ListeningLeavesUnheard(
     private val actions: StepActions,
 ) : StepActions by actions {
     override fun setCantListen(chosen: Boolean) {
@@ -762,10 +750,7 @@ private fun spokenVoice(
     actions: StepActions,
 ): VoiceAnswerModel = voiceAnswerModel("spoken:${step.id}") { recording -> actions.gradeSpoken(step.id, recording) }
 
-/**
- * A spoken screen's Record and Stop, the bar's main action while the learner answers out loud;
- * null while they type or listen instead, when the bar keeps its Check.
- */
+/** A spoken screen's Record and Stop, the bar's main action while the learner answers out loud; otherwise the bar keeps its Check. */
 @Composable
 fun SpokenRecordAction(
     step: LessonStep,
@@ -773,7 +758,7 @@ fun SpokenRecordAction(
     modifier: Modifier = Modifier,
 ) {
     val voice = spokenVoice(step, actions)
-    VoiceAnswerButton(voice, modifier, onRecordTap = actions::engage, onBlocked = { voice.blocked = true })
+    VoiceAnswerButton(voice, modifier, onRecordTap = actions::engage)
 }
 
 /** Whether a written answer offers "I don't know yet" in the bar; one with its explanation ahead offers that first instead. */
@@ -803,14 +788,13 @@ fun lessonBarNote(
 }
 
 /** Whether [SpokenRecordAction] takes the bar's main action on this screen now: while it's answered out loud. */
-@Composable
 fun recordsInBar(
     step: LessonStep?,
     state: LessonPlayerState,
     actions: StepActions,
 ): Boolean =
     step?.content is StepContent.SpokenAnswer &&
-        state.spokenMode(step, actions.cantTalk, actions.cantListen, spokenVoice(step, actions).blocked) == SpokenMode.Speak
+        state.spokenMode(step, actions.cantTalk, actions.cantListen) == SpokenMode.Speak
 
 @Composable
 private fun TargetText(spoken: SpokenAnswerStepContent) {
@@ -839,6 +823,7 @@ private fun AnswerField(
     state: LessonPlayerState,
     actions: StepActions,
     isNumber: Boolean = false,
+    readOnly: Boolean = state.phase != LessonPhase.Playing,
 ) {
     val field = rememberTextFieldState(text)
     field.ObserveEdits { onChange(it.takeIf(String::isNotEmpty)) }
@@ -853,7 +838,7 @@ private fun AnswerField(
             inputTransformation = InputTransformation.fitTo(MAX_TYPED_ANSWER_LENGTH),
             modifier =
                 if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth().submitOnEnter(field, submit),
-            readOnly = state.phase != LessonPhase.Playing,
+            readOnly = readOnly,
             label = stringResource(R.string.player_your_answer),
             placeholder = { if (!isNumber) Text(stringResource(R.string.player_write_your_answer)) },
             lineLimits = if (isNumber) TextFieldLineLimits.SingleLine else TextFieldLineLimits.MultiLine(minHeightInLines = 3),
@@ -869,7 +854,7 @@ private fun AnswerField(
             textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },
             minHeight = NUMBER_ANSWER_HEIGHT,
         )
-        AnswerHint(state, isNumber)
+        if (!readOnly) AnswerHint(state, isNumber)
     }
 }
 
@@ -930,9 +915,21 @@ internal fun GhostAction(
 internal fun StepWayOut(
     icon: Int,
     label: String,
+    leadsTo: String? = null,
     onClick: () -> Unit,
 ) {
-    OutlinedButton(onClick = onClick, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
+    val click = onClick
+    // TalkBack reads where the tap leads ("double-tap to listen"), as main's label does.
+    val says =
+        leadsTo?.let { destination ->
+            Modifier.semantics {
+                onClick(destination) {
+                    click()
+                    true
+                }
+            }
+        } ?: Modifier
+    OutlinedButton(onClick = onClick, modifier = says, size = ButtonSize.Large, leadingIcon = { ButtonIcon(icon) }) { Text(label) }
 }
 
 data class ChoiceOption(

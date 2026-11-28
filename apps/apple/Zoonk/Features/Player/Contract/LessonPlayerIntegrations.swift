@@ -156,15 +156,13 @@ struct SpokenAnswerContext {
   /// The run's session, once it started.
   let studySessionId: @MainActor () -> String?
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
-  /// The microphone is off for the app: the screen offers typing instead.
-  let onBlocked: @MainActor () -> Void
   var mistake: SpokenMistakeTarget? = nil
   var onPracticeGraded: (@MainActor (Components.Schemas.MistakePracticeFeedback) -> Void)? = nil
   var onCheckingChanged: (@MainActor (Bool) -> Void)? = nil
 }
 
-/// Records spoken answers. Without a recorder (`input` nil), spoken screens take a typed answer,
-/// and "I can't talk now" plays their listening exercise.
+/// Records spoken answers. Without a recorder (`input` nil), a spoken screen plays its listening
+/// exercise, or the lesson leaves it out.
 struct SpokenAnswerRecording: Sendable {
   let input: (@MainActor @Sendable (SpokenAnswerContext) -> AnyView)?
 

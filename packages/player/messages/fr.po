@@ -3238,6 +3238,37 @@ msgctxt "chnAWh"
 msgid "Help with this screen"
 msgstr "Aide pour cet écran"
 
+#: src/lesson/lesson-notice.tsx
+msgctxt "Bvu2Yr"
+msgid "Turn back on"
+msgstr "Réactiver"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "LnHBcu"
+msgid "Quick check · {current} of {total}"
+msgstr "Vérification rapide · {current} sur {total}"
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "KC15MC"
+msgid "Your answer here didn't save. Answer it again to finish the lesson."
+msgstr "Ta réponse n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "rKXfRV"
+msgid "This question was waiting for its picture. Answer it to finish the lesson."
+msgstr "Cette question attendait son image. Réponds-y pour terminer la leçon."
+
+#: src/lesson/lesson-notice.tsx
+msgctxt "36aQ8F"
+msgid "Writing is off for today."
+msgstr "Les questions à l’écrit sont désactivées pour aujourd’hui."
+
+#. Shown after the learner chose "I can't talk now": the lesson's questions answered out loud are off until tomorrow. Word it like its twin "Writing is off for today." (shown after "Can't write now"), naming the spoken questions the way that line names the written ones.
+#: src/lesson/lesson-notice.tsx
+msgctxt "EoOxGU"
+msgid "Speaking is off for today."
+msgstr "Les questions à l’oral sont désactivées pour aujourd’hui."
+
 #: src/lesson/lesson-player-header.tsx
 msgctxt "xNSBn4"
 msgid "Keep writing"
@@ -3292,31 +3323,6 @@ msgstr "Sauter les questions à l’écrit aujourd’hui"
 msgctxt "JfMPi0"
 msgid "I already know this"
 msgstr "Je connais déjà"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "Bvu2Yr"
-msgid "Turn back on"
-msgstr "Réactiver"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "LnHBcu"
-msgid "Quick check · {current} of {total}"
-msgstr "Vérification rapide · {current} sur {total}"
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "KC15MC"
-msgid "Your answer here didn't save. Answer it again to finish the lesson."
-msgstr "Ta réponse n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "rKXfRV"
-msgid "This question was waiting for its picture. Answer it to finish the lesson."
-msgstr "Cette question attendait son image. Réponds-y pour terminer la leçon."
-
-#: src/lesson/lesson-stage.tsx
-msgctxt "36aQ8F"
-msgid "Writing is off for today."
-msgstr "Les questions à l’écrit sont désactivées pour aujourd’hui."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "s0oKCO"
@@ -3455,16 +3461,22 @@ msgctxt "YAXwBl"
 msgid "Write your answer"
 msgstr "Écris ta réponse"
 
+#. The learner blocked the microphone for Zoonk in the browser. “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "g0T0lw"
+msgid "Allow the microphone in your browser settings, then tap Record."
+msgstr "Autorise l’accès au micro dans les paramètres de ton navigateur, puis appuie sur Enregistrer."
+
+#. The microphone couldn't start (missing, or in use by something else). “Record” is the label of the button that starts the recording.
+#: src/lesson/steps/spoken-answer-step.tsx
+msgctxt "idhizk"
+msgid "We can't use your microphone. Check it, then tap Record."
+msgstr "On ne peut pas utiliser ton micro. Vérifie-le, puis appuie sur Enregistrer."
+
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"
 msgid "I can't talk now"
 msgstr "Je ne peux pas parler maintenant"
-
-#. On a question answered aloud: the learner types this one answer instead of saying it.
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "typeSpokenAnswer"
-msgid "Type instead"
-msgstr "Écris plutôt"
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "UwEXD9"
@@ -3472,19 +3484,9 @@ msgid "I can talk now"
 msgstr "Je peux parler maintenant"
 
 #: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "0gloy9"
-msgid "Say it instead"
-msgstr "Le dire à voix haute"
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "eUqe2x"
-msgid "To speak instead, allow the microphone for Zoonk in your browser settings."
-msgstr "Pour répondre à l’oral, autorise Zoonk à utiliser le microphone dans les paramètres de ton navigateur."
-
-#: src/lesson/steps/spoken-answer-step.tsx
-msgctxt "uTDJ3g"
-msgid "We can't use your microphone, so type what you'd say."
-msgstr "On ne peut pas utiliser ton micro, alors écris ce que tu dirais."
+msgctxt "2fUdG_"
+msgid "This device can't record your voice."
+msgstr "Cet appareil ne peut pas enregistrer ta voix."
 
 #: src/lesson/steps/summary-step.tsx
 msgctxt "RrCui3"

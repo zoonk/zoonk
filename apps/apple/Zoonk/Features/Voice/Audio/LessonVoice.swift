@@ -55,7 +55,7 @@ private struct SpokenStepRecorder: View {
               feedback: grade.explanation, heard: SpokenHeard(grade),
               checked: grade.checked != false))
         },
-        onBlocked: context.onBlocked, onCheckingChanged: context.onCheckingChanged)
+        onCheckingChanged: context.onCheckingChanged)
     }
   }
 }

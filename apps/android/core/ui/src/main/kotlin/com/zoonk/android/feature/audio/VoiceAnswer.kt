@@ -35,15 +35,11 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
-import androidx.lifecycle.viewmodel.compose.saveable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
@@ -67,11 +63,9 @@ import kotlinx.coroutines.launch
  * Holds the take and its grading through rotation; leaving the screen throws an unfinished take away.
  * [grade] is the screen's grading call (a ViewModel's or a store's), which saves what it graded.
  */
-@OptIn(SavedStateHandleSaveableApi::class)
 class VoiceAnswerModel(
     context: Context,
     private val grade: suspend (VoiceRecording) -> GradeOutcome<*>,
-    handle: SavedStateHandle,
 ) : ViewModel() {
     val recorder = VoiceRecorder(context.applicationContext, viewModelScope)
 
@@ -87,12 +81,14 @@ class VoiceAnswerModel(
     var microphoneOff by mutableStateOf(false)
         internal set
 
-    /** The learner refused the microphone on a screen that then answers another way, kept through a reclaimed process. */
-    var blocked by handle.saveable { mutableStateOf(false) }
-
     internal fun record() {
         issue.clear()
-        recorder.start(::check)
+        if (!recorder.start(::check)) issue.send(visit.number, VoiceIssue.Unavailable)
+    }
+
+    /** The learner said no to the microphone: for now ([lasting] false, Android asks again on Record) or until Settings. */
+    internal fun refused(lasting: Boolean) {
+        if (lasting) microphoneOff = true else issue.send(visit.number, VoiceIssue.Refused)
     }
 
     internal fun check(recording: VoiceRecording) {
@@ -122,6 +118,12 @@ sealed interface VoiceIssue {
 
     data object Failed : VoiceIssue
 
+    /** The microphone couldn't start: there's none, or something else holds it. */
+    data object Unavailable : VoiceIssue
+
+    /** The learner said no to the microphone this time; Record asks again. */
+    data object Refused : VoiceIssue
+
     data class Limited(
         val limit: Limit,
     ) : VoiceIssue
@@ -138,7 +140,7 @@ fun voiceAnswerModel(
     grade: suspend (VoiceRecording) -> GradeOutcome<*>,
 ): VoiceAnswerModel {
     val context = LocalContext.current
-    val model = viewModel(key = key) { VoiceAnswerModel(context, grade, createSavedStateHandle()) }
+    val model = viewModel(key = key) { VoiceAnswerModel(context, grade) }
     LifecycleResumeEffect(model) {
         if (model.recorder.hasPermission) model.microphoneOff = false
         onPauseOrDispose {}
@@ -147,26 +149,19 @@ fun voiceAnswerModel(
 }
 
 /**
- * The take's Record and Stop, in its screen's bottom bar, with [recordNote] over it saying how it went. With [onBlocked], a denied
- * microphone hands over to the screen's other way to answer instead of showing how to turn it on. A take still running when the
- * screen leaves or the app goes to the background is thrown away.
+ * The take's Record and Stop, in its screen's bottom bar, with [recordNote] over it saying how it went, a microphone that's off
+ * included. A take still running when the screen leaves or the app goes to the background is thrown away.
  */
 @Composable
 fun VoiceAnswerButton(
     model: VoiceAnswerModel,
     modifier: Modifier = Modifier,
     onRecordTap: () -> Unit = {},
-    onBlocked: (() -> Unit)? = null,
 ) {
     val tapRecord =
         rememberRecordTap(
             recorder = model.recorder,
-            onRefused = { lasting ->
-                when {
-                    onBlocked != null -> onBlocked()
-                    lasting -> model.microphoneOff = true
-                }
-            },
+            onRefused = model::refused,
             record = model::record,
         )
     val status by model.recorder.state.collectAsStateWithLifecycle()

@@ -27,8 +27,10 @@ import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.player.engine.CheckIssue
 import com.zoonk.android.feature.player.engine.CompletionStatus
+import com.zoonk.android.feature.player.engine.DaySkill
 import com.zoonk.android.feature.player.engine.HyperdriveStart
 import com.zoonk.android.feature.player.engine.LessonAction
+import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
@@ -336,7 +338,7 @@ class LessonPlayerViewModel(
         if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) {
             if (!activated && this.lesson != lesson) {
                 showLesson(lesson)
-                leaveOutUnheardDictations()
+                leaveOutUnanswerable(opening = true)
             }
             return
         }
@@ -365,7 +367,7 @@ class LessonPlayerViewModel(
         showLesson(lesson)
         work.launch {
             reading.join()
-            leaveOutUnheardDictations()
+            leaveOutUnanswerable(opening = true)
         }
         if (activated) startRun()
     }
@@ -512,8 +514,10 @@ class LessonPlayerViewModel(
     fun dispatch(action: LessonAction) {
         when (action) {
             LessonAction.Continue, LessonAction.GoBack, LessonAction.ExplainFirst, LessonAction.KnowThis,
-            LessonAction.RestoreWriting, LessonAction.CompletionRetried, is LessonAction.DontKnow, is LessonAction.SkipWriting,
+            LessonAction.RestoreSkill, LessonAction.CompletionRetried, is LessonAction.DontKnow,
             -> act()
+
+            is LessonAction.SkipSkill -> if (!action.opening) act()
 
             is LessonAction.SelectAnswer -> activate()
 
@@ -575,27 +579,56 @@ class LessonPlayerViewModel(
     /** "Can't write now", kept for the rest of the day on this device. */
     fun skipWriting() {
         owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, true) } }
-        dispatch(LessonAction.SkipWriting())
+        dispatch(LessonAction.SkipSkill(DaySkill.Writing))
     }
 
-    fun restoreWriting() {
-        owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, false) } }
-        dispatch(LessonAction.RestoreWriting)
+    /** "Turn back on": the skill the learner just turned off is on again today, and its screens come back. */
+    fun restoreSkill() {
+        when (mutableState.value?.skillRestore?.skill) {
+            DaySkill.Writing -> owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, false) } }
+            is DaySkill.Speaking -> day.setCantTalk(false, owner, work)
+            null -> return
+        }
+        dispatch(LessonAction.RestoreSkill)
     }
 
     private val day = DayChoices(choices)
 
-    /** "I can't talk now": spoken screens are typed for the rest of the day on this device. */
+    /** "I can't talk now", for the rest of the day on this device: spoken screens are heard instead, or left out with nothing to hear. */
     val cantTalk: Boolean get() = day.cantTalk
 
-    fun setCantTalk(chosen: Boolean) = day.setCantTalk(chosen, owner, work)
+    /** "I can talk now" while speaking's notice shows is its "Turn back on". */
+    fun setCantTalk(chosen: Boolean) {
+        val state = mutableState.value
+        val speakingOff = state?.notice == LessonNotice.SkillSkipped && state.skillRestore?.skill is DaySkill.Speaking
+        when {
+            chosen -> {
+                day.setCantTalk(true, owner, work)
+                leaveOutUnanswerable(opening = false)
+            }
+
+            speakingOff -> {
+                restoreSkill()
+            }
+
+            else -> {
+                day.setCantTalk(false, owner, work)
+            }
+        }
+    }
 
     /** "I can't listen now": a sound to find by ear is shown as its notes for the rest of the day on this device. */
     val cantListen: Boolean get() = day.cantListen
 
     fun setCantListen(chosen: Boolean) {
         day.setCantListen(chosen, owner, work)
+        leaveOutUnanswerable(opening = false)
+    }
+
+    /** What today's choices leave nothing to do on: sentences to hear, and spoken screens with nothing to hear instead. */
+    private fun leaveOutUnanswerable(opening: Boolean) {
         leaveOutUnheardDictations()
+        if (day.cantTalk) dispatch(LessonAction.SkipSkill(DaySkill.Speaking(day.cantListen), opening))
     }
 
     /**
@@ -857,7 +890,7 @@ class LessonPlayerViewModel(
                         replay = outcome.run.replay
                         if (!hosted) runSaved = { shownSaved(outcome.run.saved) }
                         mutableState.value = state
-                        leaveOutUnheardDictations()
+                        leaveOutUnanswerable(opening = true)
                         if (hasHeld) sendUnsent()
                         work.launch { followLatePictures() }
                     }
@@ -940,13 +973,14 @@ class LessonPlayerViewModel(
 
         val session = owner
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
-            state = reduce(state, LessonAction.SkipWriting(opening = true), started)
+            state = reduce(state, LessonAction.SkipSkill(DaySkill.Writing, opening = true), started)
         }
 
         // After the server's answers rebuild the run, what the learner did and hadn't checked comes back on the screens the
         // run has no answer for, under the round it was saved in, when Android closed the app in the background; what they
         // entered on this visit stays. A screen the run answered moves past its saved round, so its canvas draws that
-        // answer instead of the work saved there.
+        // answer instead of the work saved there. A spoken sentence an older app let the learner type goes: speaking screens
+        // now take only a recording.
         val rounds = saved.get<Map<String, Int>>(ROUNDS).orEmpty().filterKeys { it !in workedHere }
         val revealed = saved.get<Map<String, Int>>(REVEALED).orEmpty()
         val answers =
@@ -955,7 +989,7 @@ class LessonPlayerViewModel(
                 .orEmpty()
                 .mapValues { (_, json) ->
                     ApiJson.decodeFromString(LessonAnswer.serializer(), json)
-                }.filterKeys { it !in workedHere }
+                }.filter { (id, answer) -> id !in workedHere && answer !is LessonAnswer.Spoken }
         val resumed = state.withFirstAnswer(started)
         val unanswered = { id: String -> id !in resumed.results }
         val runAnswered = resumed.results.keys - workedHere

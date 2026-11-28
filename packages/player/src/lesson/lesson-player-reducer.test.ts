@@ -6,6 +6,7 @@ import {
   fillBlankStep,
   hookGuessStep,
   numberAnswerStep,
+  spokenAnswerStep,
   stepResult,
   summaryStep,
   typedAnswerStep,
@@ -386,13 +387,13 @@ describe(lessonPlayerReducer, () => {
 
     expect(skipped).toMatchObject({ notice: "writingSkipped", position: 0, queue: ["tip", "end"] });
 
-    const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });
+    const restored = lessonPlayerReducer(skipped, { type: "skipRestored" });
 
     expect(restored).toMatchObject({ notice: null, position: 0, queue: ["tip", "write", "end"] });
     expect(restored.skippedWritingStepIds).toStrictEqual([]);
 
     const movedOn = lessonPlayerReducer(skipped, { type: "continue" });
-    expect(lessonPlayerReducer(movedOn, { type: "writingRestored" })).toBe(movedOn);
+    expect(lessonPlayerReducer(movedOn, { type: "skipRestored" })).toBe(movedOn);
   });
 
   it("keeps today's writing notice and undo when run start reconciles stale progress", () => {
@@ -421,7 +422,7 @@ describe(lessonPlayerReducer, () => {
     expect(getCurrentStep(resumed)?.id).toBe("tip");
     expect(resumed.skippedWritingStepIds).toStrictEqual(["write"]);
 
-    const restored = lessonPlayerReducer(resumed, { type: "writingRestored" });
+    const restored = lessonPlayerReducer(resumed, { type: "skipRestored" });
     expect(getCurrentStep(restored)?.id).toBe("write");
     expect(restored.queue).toStrictEqual(["quiz", "write", "tip", "end"]);
     expect(restored.skippedWritingStepIds).toStrictEqual([]);
@@ -432,7 +433,7 @@ describe(lessonPlayerReducer, () => {
   it("brings the learner back to the screen they left with Skip writing today", () => {
     const steps = [typedAnswerStep("write"), explanationStep("tip")];
     const skipped = play(steps, [{ type: "skipWriting" }]);
-    const restored = lessonPlayerReducer(skipped, { type: "writingRestored" });
+    const restored = lessonPlayerReducer(skipped, { type: "skipRestored" });
 
     expect([getCurrentStep(restored)?.id, restored.phase]).toStrictEqual(["write", "playing"]);
   });
@@ -440,6 +441,113 @@ describe(lessonPlayerReducer, () => {
   it("waits for Finish when writing left out as the lesson opens leaves nothing to do", () => {
     const opened = play([typedAnswerStep("write")], [{ opening: true, type: "skipWriting" }]);
     expect(opened).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
+  });
+
+  it("leaves out the speaking screens the learner can't answer and puts them back with Turn back on", () => {
+    const steps = [
+      spokenAnswerStep("say-1"),
+      explanationStep("tip"),
+      spokenAnswerStep("say-2"),
+      summaryStep("end"),
+    ];
+
+    const skipped = play(steps, [{ stepIds: ["say-1", "say-2"], type: "skipSpeaking" }]);
+
+    expect(skipped).toMatchObject({
+      notice: "speakingSkipped",
+      position: 0,
+      queue: ["tip", "end"],
+    });
+
+    expect(skipped.skippedWritingStepIds).toStrictEqual([]);
+    expect(lessonPlayerReducer(skipped, { type: "continue" }).notice).toBeNull();
+
+    const restored = lessonPlayerReducer(skipped, { type: "skipRestored" });
+
+    expect(restored).toMatchObject({ notice: null, position: 0 });
+    expect(restored.queue).toStrictEqual(["say-1", "tip", "say-2", "end"]);
+    expect(restored.unavailableStepIds).toStrictEqual([]);
+  });
+
+  it("puts back every speaking screen left out on one screen, but not a dictation left out since", () => {
+    const steps = [
+      explanationStep("tip"),
+      spokenAnswerStep("say-1"),
+      typedAnswerStep("dictation"),
+      spokenAnswerStep("say-2"),
+      summaryStep("end"),
+    ];
+
+    const skipped = play(steps, [
+      { stepIds: ["say-1"], type: "skipSpeaking" },
+      { stepIds: ["dictation"], type: "skipSteps" },
+      { stepIds: ["say-1", "say-2"], type: "skipSpeaking" },
+    ]);
+
+    expect(skipped).toMatchObject({ notice: "speakingSkipped", queue: ["tip", "end"] });
+
+    const restored = lessonPlayerReducer(skipped, { type: "skipRestored" });
+
+    expect(restored.queue).toStrictEqual(["tip", "say-1", "say-2", "end"]);
+    expect(restored.unavailableStepIds).toStrictEqual(["dictation"]);
+  });
+
+  it("doesn't show the speaking notice when nothing ahead was left out", () => {
+    const steps = [spokenAnswerStep("say"), explanationStep("tip"), summaryStep("end")];
+
+    const atTip = play(steps, [
+      { counts: true, result: stepResult(true), stepId: "say", type: "checkResolved" },
+      { type: "continue" },
+    ]);
+
+    const skipped = lessonPlayerReducer(atTip, { stepIds: ["say"], type: "skipSpeaking" });
+
+    expect(skipped).toMatchObject({ notice: null, position: 1, skipRestore: null });
+    expect(skipped.queue).toStrictEqual(["say", "tip", "end"]);
+  });
+
+  it("waits for Finish only when speaking left out as the lesson opens leaves nothing to do", () => {
+    const steps = [explanationStep("tip"), spokenAnswerStep("say")];
+
+    expect(
+      play(steps.slice(1), [{ opening: true, stepIds: ["say"], type: "skipSpeaking" }]),
+    ).toMatchObject({ completion: { status: "ready" }, phase: "completed" });
+
+    expect(
+      play(steps, [{ type: "continue" }, { stepIds: ["say"], type: "skipSpeaking" }]),
+    ).toMatchObject({ completion: { status: "saving" }, phase: "completed" });
+  });
+
+  it("keeps today's speaking notice and undo when run start reconciles stale progress", () => {
+    const steps = [
+      checkStep("quiz"),
+      spokenAnswerStep("say"),
+      explanationStep("tip"),
+      summaryStep("end"),
+    ];
+
+    const resumed = play(steps, [
+      { opening: true, stepIds: ["say"], type: "skipSpeaking" },
+      {
+        answers: [runAnswer("quiz", true)],
+        held: [],
+        hyperdrive: HYPERDRIVE,
+        replay: false,
+        runId: "run",
+        saved: false,
+        startedAt: STARTED_AT,
+        type: "runStarted",
+      },
+    ]);
+
+    expect(resumed.notice).toBe("speakingSkipped");
+    expect(getCurrentStep(resumed)?.id).toBe("tip");
+    expect(resumed.unavailableStepIds).toStrictEqual(["say"]);
+
+    const restored = lessonPlayerReducer(resumed, { type: "skipRestored" });
+    expect(getCurrentStep(restored)?.id).toBe("say");
+    expect(restored.queue).toStrictEqual(["quiz", "say", "tip", "end"]);
+    expect(restored.unavailableStepIds).toStrictEqual([]);
   });
 
   it("leaves out screens that can't be played, the one in view too, and keeps the ones before", () => {

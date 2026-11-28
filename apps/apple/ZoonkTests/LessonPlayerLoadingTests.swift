@@ -871,6 +871,37 @@ final class LessonPlayerLoadingTests: XCTestCase {
       store.state?.currentStep?.id, "check", "reading it instead would show the answer")
   }
 
+  func testICantTalkNowLeavesOutASpokenScreenUntilTurnedBackOn() async throws {
+    let (store, choices) = try spokenPlayer()
+    await store.load()
+    XCTAssertEqual(store.state?.currentStep?.id, "speak")
+
+    store.cantTalkToday = true
+    XCTAssertEqual(store.state?.currentStep?.id, "check", "never typed instead")
+    XCTAssertEqual(store.state?.notice, .speakingSkipped)
+
+    store.restoreSkipped()
+    XCTAssertEqual(store.state?.currentStep?.id, "speak")
+    XCTAssertFalse(store.cantTalkToday)
+    XCTAssertFalse(choices.isChosenToday(.cantTalk))
+  }
+
+  func testALessonOpenedWhileTheLearnerCantTalkLeavesOutItsSpokenScreens() async throws {
+    let (store, _) = try spokenPlayer(cantTalk: true)
+    await store.load()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "check")
+    XCTAssertEqual(store.state?.notice, .speakingSkipped)
+  }
+
+  func testADeviceThatCantRecordLeavesOutSpokenScreensSilently() async throws {
+    let (store, _) = try spokenPlayer(canRecord: false)
+    await store.load()
+
+    XCTAssertEqual(store.state?.currentStep?.id, "check")
+    XCTAssertNil(store.state?.notice)
+  }
+
   func testALessonOpenedWhileTheLearnerCantListenLeavesOutASentenceThatIsItsOwnAnswer()
     async throws
   {
@@ -1369,6 +1400,24 @@ final class LessonPlayerLoadingTests: XCTestCase {
     return player(cache: cache, content: content, transport: transport, defaults: defaults)
   }
 
+  /// The day's choices live in a throwaway store, so the test never changes the device's.
+  private func spokenPlayer(cantTalk: Bool = false, canRecord: Bool = true) throws -> (
+    LessonPlayerStore, LessonTodayChoices
+  ) {
+    let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
+    let lesson = try checkLesson(["speak", "check"], spoken: ["speak"])
+    let content: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in .ready(lesson) }
+    nonisolated(unsafe) let defaults = UserDefaults(suiteName: UUID().uuidString)!
+    let choices = LessonTodayChoices(
+      today: { "today" }, read: { defaults.string(forKey: $0.rawValue) },
+      write: { defaults.set($1, forKey: $0.rawValue) })
+    choices.setChosenToday(.cantTalk, cantTalk)
+    let store = player(
+      cache: cache, content: content, transport: OfflineLessonTransport(), choices: choices,
+      canRecord: canRecord)
+    return (store, choices)
+  }
+
   /// "I can't listen now" is kept in memory, so the test never changes the device's choice.
   private func dictationPlayer(cantListen: Bool) throws -> LessonPlayerStore {
     let cache = AppCache(session: SessionStore.preview(account: .lessonLoadingTestAccount))
@@ -1385,7 +1434,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport(),
     defaults: UserDefaults = .standard, opening: LessonOpening? = nil, activated: Bool = true,
-    choices: LessonTodayChoices = .standard,
+    choices: LessonTodayChoices = .standard, canRecord: Bool = true,
     onOpened: @escaping @MainActor (StudyBlockOpening) -> Void = { _ in },
     sessionStarted: @escaping @MainActor (String) -> Void = { _ in }
   ) -> LessonPlayerStore {
@@ -1398,7 +1447,7 @@ final class LessonPlayerLoadingTests: XCTestCase {
         clients: APIClientFactory(
           baseURL: URL(string: "https://api.zoonk.test")!, transport: transport)),
       cache: cache, preferences: preferences, lessonResource: content, choices: choices,
-      defaults: defaults, sessionStarted: sessionStarted)
+      canRecord: canRecord, defaults: defaults, sessionStarted: sessionStarted)
   }
 }
 
