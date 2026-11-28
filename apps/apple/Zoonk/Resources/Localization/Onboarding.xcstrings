@@ -5705,7 +5705,7 @@
       }
     },
     "Done" : {
-      "comment" : "A finished step of a wait\nLeaves a test's result",
+      "comment" : "A finished step of a wait",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -27291,6 +27291,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoonk sana veya başkalarına zarar verebilecek şeyleri, kumar oynamayı ya da hile yapmayı öğretmez. Öğrenmek istediğin başka bir şey var mı?"
+          }
+        }
+      }
+    },
+    "leaveTestResult" : {
+      "comment" : "Leaves a test's result",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Done"
           }
         }
       }
