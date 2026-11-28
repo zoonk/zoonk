@@ -383,6 +383,7 @@ describe("language checkpoint calls", () => {
       writing: {
         kind: "unitScenario",
         level: "B1",
+        targetRegion: "",
         unit: expect.objectContaining({ id: renting.id, title: renting.title }),
         userId: user.id,
       },

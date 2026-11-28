@@ -6,7 +6,9 @@ import { getAllowance } from "../../../entitlements/get-allowance";
 import { type PracticeCallLengths, toPracticeCallLengths } from "./call-lengths";
 import { findUnitScenario } from "./conversation-scenario";
 
-async function findCharacter(where: { chapterId: string; level: CefrLevel }) {
+type PracticeScenarioKey = { chapterId: string; level: CefrLevel; targetRegion: string };
+
+async function findCharacter(where: PracticeScenarioKey) {
   const scenario = await findUnitScenario(where);
   return scenario ? { name: scenario.character.name, role: scenario.character.role } : null;
 }
@@ -41,17 +43,8 @@ async function loadCallLengths(): Promise<PracticeCallLengths & { paused: boolea
   };
 }
 
-export async function loadPracticeCall({
-  chapterId,
-  level,
-}: {
-  chapterId: string;
-  level: CefrLevel;
-}) {
-  const [character, lengths] = await Promise.all([
-    findCharacter({ chapterId, level }),
-    loadCallLengths(),
-  ]);
+export async function loadPracticeCall(where: PracticeScenarioKey) {
+  const [character, lengths] = await Promise.all([findCharacter(where), loadCallLengths()]);
 
   return { character, ...lengths };
 }

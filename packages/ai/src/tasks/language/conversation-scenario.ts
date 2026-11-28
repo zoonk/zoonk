@@ -13,7 +13,7 @@ import { scenarioSchema } from "./_utils/scenario-schema";
 import promptTemplate from "./conversation-scenario.prompt.md";
 
 /**
- * Cached per chapter and level and shared, so it runs rarely. On 15 cases (11 Nov 2026), Luna
+ * Cached per chapter, level and country and shared, so it runs rarely. On 15 cases (11 Nov 2026), Luna
  * scored 9.34 at $1.63/1k and Muse Ember 9.24 at $3.74/1k (it reasons longer); Ember won a blind
  * read 12 to 1 against Flash Lite (8.60), whose phone calls asked for a table and the bill.
  */
@@ -28,6 +28,8 @@ export type GenerateConversationScenarioParams = {
   canDo: string[];
   level: CefrLevel;
   targetLanguage: string;
+  /** The learner's country when lessons don't teach its variety: the call is set there instead. */
+  targetRegion?: string | null;
   learnerLanguage: string;
   model?: string;
   useFallback?: boolean;
@@ -38,7 +40,11 @@ export type GenerateConversationScenarioParams = {
 function buildSystemPrompt(params: GenerateConversationScenarioParams): string {
   const template = selectPromptVariants({
     template: promptTemplate,
-    variants: { bilingual: !isSameLanguage(params) },
+    variants: {
+      bilingual: !isSameLanguage(params),
+      chosenCountry: Boolean(params.targetRegion),
+      languagePlace: !params.targetRegion,
+    },
   });
 
   return fillPromptLanguages({ ...params, template });
@@ -52,7 +58,7 @@ function buildUserPrompt(params: GenerateConversationScenarioParams): string {
     UNIT_CAN_DO:
 ${params.canDo.map((item) => `- ${item}`).join("\n")}
 
-${formatLocalContext({ country: null, language: params.targetLanguage, register: false })}
+${formatLocalContext({ country: params.targetRegion ?? null, language: params.targetLanguage, register: false })}
   `;
 }
 
