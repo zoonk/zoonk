@@ -20,6 +20,7 @@ import { z } from "zod";
 const seededKeySchema = z.object({
   options: z.array(z.object({ isCorrect: z.boolean(), text: z.string() })).optional(),
   pairs: z.array(z.object({ left: z.string(), right: z.string() })).optional(),
+  question: z.string(),
   steps: z.array(z.string()).optional(),
 });
 
@@ -81,6 +82,16 @@ export async function stopTest(page: Page) {
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
 }
 
+/**
+ * The app typesets money and numbers for the page's language ("R$ 100" is drawn "R$100" in
+ * English), so a seeded text is matched by its letters and digits, whatever sits between them.
+ */
+function asDrawn(text: string): RegExp {
+  const gap = String.raw`[^\p{L}\p{N}]*`;
+  const words = text.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  return new RegExp(`^${gap}${words.join(gap)}${gap}$`, "u");
+}
+
 export async function sortSteps(page: Page, steps: readonly string[]) {
   const list = page.getByRole("list", { name: "Steps, in your order" });
   const rows = list.getByRole("button");
@@ -91,10 +102,12 @@ export async function sortSteps(page: Page, steps: readonly string[]) {
   for (const [target, step] of steps.entries()) {
     const destination = rows.nth(target);
 
-    if ((await destination.textContent()) !== step) {
-      const row = list.getByRole("button", { exact: true, name: step });
-      await row.dragTo(destination, { steps: 12 });
-      await expect(destination).toHaveText(step);
+    const drawn = asDrawn(step);
+    const text = await destination.textContent();
+
+    if (!drawn.test(text ?? "")) {
+      await list.getByRole("button", { name: drawn }).dragTo(destination, { steps: 12 });
+      await expect(destination).toHaveText(drawn);
     }
   }
   /* oxlint-enable no-await-in-loop */
@@ -108,15 +121,17 @@ async function findSeededItem(page: Page) {
 
   const items = await prisma.item.findMany({
     select: { content: true },
-    where: { content: { equals: title, path: ["question"] } },
+    where: { format: { in: ["matchPairs", "multipleChoice", "order"] } },
   });
 
-  const keys = items.map(({ content }) => seededKeySchema.parse(content));
+  const keys = items
+    .flatMap(({ content }) => seededKeySchema.safeParse(content).data ?? [])
+    .filter((key) => asDrawn(key.question).test(title));
 
   const shown = await Promise.all(
     keys.map((key) => {
       const first = key.steps?.[0] ?? key.pairs?.[0]?.left ?? key.options?.[0]?.text ?? "";
-      return page.getByText(first, { exact: true }).first().isVisible();
+      return page.getByText(asDrawn(first)).first().isVisible();
     }),
   );
 
@@ -139,12 +154,12 @@ export async function answerSeededQuestion(page: Page) {
 
   /* oxlint-disable no-await-in-loop -- A board takes one tap at a time. */
   for (const pair of key.pairs ?? []) {
-    await page.getByRole("button", { exact: true, name: pair.left }).click();
-    await page.getByRole("button", { exact: true, name: pair.right }).click();
+    await page.getByRole("button", { name: asDrawn(pair.left) }).click();
+    await page.getByRole("button", { name: asDrawn(pair.right) }).click();
   }
 
   for (const option of key.options?.filter((item) => item.isCorrect) ?? []) {
-    await page.getByRole("checkbox", { exact: true, name: option.text }).click();
+    await page.getByRole("checkbox", { name: asDrawn(option.text) }).click();
   }
   /* oxlint-enable no-await-in-loop */
 
