@@ -61,8 +61,7 @@ describe(toPlanChangeModelResult, () => {
         ],
         endDateAfter: null,
         endDateBefore: null,
-        lessonsAdded: 4,
-        lessonsRemoved: 2,
+        lessonCount: { count: 2, kind: "more" },
       },
       leftOut: [],
       officialExamDate: null,
@@ -106,5 +105,74 @@ describe(toPlanChangeModelResult, () => {
       changes: "adds Investigar o calendário da escola",
       effect: { addedTopicsStart: "2026-10-10", endDateAfter: null, endDateBefore: null },
     });
+  });
+
+  it("gives no lesson count when topics leave, so taking a subject out never reads as adding lessons", () => {
+    const result = toPlanChangeModelResult({
+      cautions: [],
+      change: {
+        ...CHANGE,
+        effect: {
+          endDateAfter: "2026-11-08",
+          endDateBefore: "2026-11-08",
+          lessonsAdded: 151,
+          lessonsRemoved: 115,
+          topicsLeftOut: [{ area: "Redação", topics: ["Texto dissertativo-argumentativo"] }],
+        },
+        operations: [{ areas: ["Redação"], kind: "skipAreas" }],
+      },
+      leftOut: [],
+      replaced: [],
+      status: "proposed",
+    });
+
+    expect(result).toMatchObject({
+      changes: "Redação left out of the plan",
+      effect: {
+        topicsLeftOut: [{ area: "Redação", topics: ["Texto dissertativo-argumentativo"] }],
+      },
+    });
+
+    expect(result).not.toHaveProperty("effect.lessonCount");
+    expect(result).not.toHaveProperty("effect.lessonsAdded");
+    expect(result).not.toHaveProperty("effect.lessonsRemoved");
+  });
+
+  it("gives one net lesson count, estimated when some lessons aren't written yet", () => {
+    const result = toPlanChangeModelResult({
+      cautions: [],
+      change: {
+        ...CHANGE,
+        effect: {
+          endDateAfter: null,
+          endDateBefore: null,
+          lessonsAdded: 22,
+          lessonsAddedEstimated: true,
+          lessonsRemoved: 45,
+        },
+      },
+      leftOut: [],
+      replaced: [],
+      status: "proposed",
+    });
+
+    expect(result).toMatchObject({
+      effect: { lessonCount: { count: 23, estimated: true, kind: "fewer" } },
+    });
+  });
+
+  it("gives no lesson count when the change keeps as many lessons", () => {
+    const result = toPlanChangeModelResult({
+      cautions: [],
+      change: {
+        ...CHANGE,
+        effect: { endDateAfter: null, endDateBefore: null, lessonsAdded: 25, lessonsRemoved: 25 },
+      },
+      leftOut: [],
+      replaced: [],
+      status: "proposed",
+    });
+
+    expect(result).not.toHaveProperty("effect.lessonCount");
   });
 });
