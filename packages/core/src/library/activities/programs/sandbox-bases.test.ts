@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { SANDBOX_LANGUAGE_IDS } from "./program-languages";
 import { sandboxBaseName } from "./sandbox-bases";
+import type * as Wrapper from "./sandbox-wrapper";
 
 describe(sandboxBaseName, () => {
   it("names each language's base by a hash of what the build puts in it", () => {
@@ -14,7 +15,7 @@ describe(sandboxBaseName, () => {
     vi.resetModules();
 
     vi.doMock("./sandbox-wrapper", async (original) => ({
-      ...(await original<typeof import("./sandbox-wrapper")>()),
+      ...(await original<typeof Wrapper>()),
       SANDBOX_WRAPPER: "#!/bin/bash\nexit 0\n",
     }));
 

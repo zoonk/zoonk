@@ -5,7 +5,7 @@ export const SANDBOX_WRAPPER_PATH = "/usr/local/bin/zoonk-code-run";
 
 const MAX_LEARNER_TASKS = 128;
 // The sandbox's own processes and the wrapper keep this much of the machine's memory.
-const RESERVED_MEMORY_BYTES = 512 * 1024 * 1024;
+const RESERVED_MEMORY_BYTES = 536_870_912;
 
 export const SANDBOX_WRAPPER = `#!/bin/bash
 set -eu

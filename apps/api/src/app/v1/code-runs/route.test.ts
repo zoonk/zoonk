@@ -3,13 +3,14 @@ import { runLearnerProgram } from "@zoonk/core/library/activities/run-learner-pr
 import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
 import { POST as postCodeRun } from "./route";
+import type * as NextServer from "next/server";
 
 vi.mock("@zoonk/core/library/activities/run-learner-program", () => ({
   runLearnerProgram: vi.fn(),
 }));
 
 vi.mock("next/server", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("next/server")>()),
+  ...(await importOriginal<typeof NextServer>()),
   after: vi.fn(),
 }));
 
