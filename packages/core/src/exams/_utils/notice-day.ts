@@ -1,10 +1,12 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { isJsonObject } from "@zoonk/utils/json";
 import { examEditionSchema } from "../../library/exams/blueprint-contract";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { NOTICE_SOURCE } from "../../plans/plan-change-contract";
 import { type NoSitting, type NoticeDay } from "../../plans/plan-view-contract";
 import { addDays, fromIsoDate, toIsoDate } from "../../plans/planner/plan-calendar";
+import { isBookedExam } from "../../view-models/onboarding/onboarding-steps";
 import { readOfferedNoticeDay } from "../kept-month";
 import { getExamEditionDays, readExamMonth, readExamYear } from "./exam-edition-days";
 import { findClosestSittings, findLearnerSitting, groupSittings } from "./exam-sittings";
@@ -165,6 +167,7 @@ type NoticeDatesRequest = {
   today: string;
 };
 
+/** A booked exam's day is the one its candidate booked, so no notice date is ever offered for it. */
 export async function loadNoticeDates({
   blueprint: knownBlueprint,
   goal,
@@ -172,7 +175,9 @@ export async function loadNoticeDates({
   noticeDate,
   today,
 }: NoticeDatesRequest): Promise<NoticeDates> {
-  if (goal.kind !== "exam" || !goal.examBlueprintId) {
+  const details = isJsonObject(goal.details) ? goal.details : {};
+
+  if (goal.kind !== "exam" || !goal.examBlueprintId || isBookedExam({ details, kind: goal.kind })) {
     return NO_NOTICE_DATES;
   }
 
@@ -185,8 +190,6 @@ export async function loadNoticeDates({
       : knownBlueprint,
     loadKeptNoticeDays(goal.id),
   ]);
-
-  const { details } = goal;
 
   return {
     day: getNoticeDay({ blueprint, details, goalDate, kept, noticeDate, today }),
