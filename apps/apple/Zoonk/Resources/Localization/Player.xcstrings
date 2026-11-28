@@ -14036,6 +14036,19 @@
     },
     "Speaking is off for today." : {
       "comment" : "\"I can't talk now\" left out the lesson's questions answered out loud that can't be listened to instead"
+    },
+    "This device can't record your voice." : {},
+    "listenInstead" : {
+      "comment" : "After \"I can't talk now\": the spoken screen is answered by listening",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Listen"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

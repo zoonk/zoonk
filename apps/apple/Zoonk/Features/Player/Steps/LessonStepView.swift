@@ -592,7 +592,13 @@ private struct SpokenAnswerStepView: View {
         label: Text(verbatim: LessonRichText.spoken(content.prompt)),
         text: context.answer?.text ?? "", isLocked: true, isFocused: $isFocused, check: nil
       ) { _ in }
-    case .listen, .cantAnswer:
+    case .cantAnswer:
+      // Only where nothing leaves this screen out, such as the mistakes notebook.
+      if recording.input == nil {
+        Text("This device can't record your voice.", tableName: "Player")
+          .foregroundStyle(.mutedForeground)
+      }
+    case .listen:
       EmptyView()
     }
   }
@@ -636,6 +642,14 @@ private struct SpokenAnswerStepView: View {
       }
       .buttonStyle(.outline)
       .controlSize(.large)
+      // Main's label says where it leads when the screen has a listening version.
+      .accessibilityHint(
+        mode == .speak && listening != nil && !cantListen
+          ? Text(
+            LocalizedStringResource(
+              "listenInstead", defaultValue: "Listen", table: "Player",
+              comment: "After \"I can't talk now\": the spoken screen is answered by listening"))
+          : Text(verbatim: ""))
     }
   }
 }
