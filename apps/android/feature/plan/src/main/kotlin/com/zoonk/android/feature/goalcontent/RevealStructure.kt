@@ -21,7 +21,6 @@ import com.zoonk.android.feature.plan.ChapterRow
 import com.zoonk.android.feature.plan.PhaseRow
 import com.zoonk.android.feature.plan.isWritingAhead
 import com.zoonk.android.feature.plan.optionalStudyLabel
-import com.zoonk.android.feature.plan.sameWords
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -85,15 +84,14 @@ private fun RevealPhase(
     phase: PlanPhase,
 ) {
     val chapters = phase.chapters.filterNot { it.isWritingAhead }
-    val line = phase.milestone?.let(::sameWords)
     if (chapters.isEmpty()) {
-        PhaseRow(plan, phase, line)
+        PhaseRow(plan, phase, line = null)
         return
     }
 
     var expanded by rememberSaveable(phase.index) { mutableStateOf(false) }
     Column {
-        PhaseRow(plan, phase, line, onClick = { expanded = !expanded }, expanded = expanded)
+        PhaseRow(plan, phase, line = null, onClick = { expanded = !expanded }, expanded = expanded)
         if (expanded) {
             chapters.forEach { ChapterRow(it, links = null, indent = listRowWordsStart() - LIST_ITEM_INSET) }
         }

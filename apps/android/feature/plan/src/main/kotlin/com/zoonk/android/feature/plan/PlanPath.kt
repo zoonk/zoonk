@@ -188,7 +188,7 @@ internal fun PhaseRow(
 ) {
     // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
     val date = if (paused) null else phaseEnd(plan, phase, plan.today)
-    val name = phase.milestone?.takeIf { it.isNotBlank() } ?: phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
+    val name = phaseRowName(phase, plan.access.mocksRequirePlus, byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
             stringResource(R.string.plan_up_next_suffix)
@@ -541,19 +541,31 @@ internal fun CheckpointRow(
     val date = checkpoint.date?.toJavaLocalDate()
     val trailing =
         when {
-            done -> sameWords(stringResource(R.string.plan_challenge_won))
+            done -> {
+                sameWords(stringResource(R.string.plan_challenge_won))
+            }
 
             // A paused plan has nothing planned until the learner resumes, as [PhaseRow]'s end.
-            page.isPaused -> null
+            page.isPaused -> {
+                null
+            }
 
             // Dated today, the next session is today's, which may already be under way.
-            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> sameWords(stringResource(R.string.plan_today))
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION && date == page.today -> {
+                sameWords(stringResource(R.string.plan_today))
+            }
 
-            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> sameWords(stringResource(R.string.plan_challenge_next_session))
+            whenPlanned == PlanPhaseCheckpoint.`When`.NEXT_SESSION -> {
+                sameWords(stringResource(R.string.plan_challenge_next_session))
+            }
 
-            date != null -> planDate(date, page.today, estimate = true)
-
-            else -> null
+            else -> {
+                when (val day = page.plan.challengeDay(checkpoint)) {
+                    PhaseEnd.Later -> sameWords(stringResource(R.string.plan_later))
+                    is PlanEnd -> planDate(day.date, page.today, day.estimate, day.month, day.year)
+                    else -> null
+                }
+            }
         }
     val planItemId = checkpoint.planItemId?.toString()
     val lines =
@@ -726,7 +738,8 @@ internal fun ColumnScope.PhaseDetails(
                 phase.start?.let { start ->
                     stringResource(
                         R.string.plan_date_range,
-                        formatPlanDate(start, page.today, currentLocale(), end.month, year = end.year),
+                        // Main's `getPhaseStart`: a phase ahead starts where the one before it ends, so it's an estimate whenever its end is.
+                        planDate(start, page.today, end.estimate && phase.state == PlanPhase.State.UPCOMING, end.month, end.year).text,
                         planDate(end.date, page.today, end.estimate, end.month, end.year).text,
                     )
                 }
@@ -754,11 +767,10 @@ internal fun ColumnScope.PhaseDetails(
 
     Column {
         Text(
-            text = phaseName(phase, page.mocksRequirePlus, byPlace),
+            text = phaseRowName(phase, page.mocksRequirePlus, byPlace),
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
-        phase.milestone?.takeIf { it.isNotBlank() }?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         Text(
             text = listOfNotNull(range, lessons).factsLine(),
             style = MaterialTheme.zoonkType.data,

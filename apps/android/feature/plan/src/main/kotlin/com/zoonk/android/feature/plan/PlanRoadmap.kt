@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -96,11 +97,12 @@ internal fun PlanRoadmap(
     onOpenPath: (() -> Unit)? = null,
 ) {
     val phases = page.plan.roadmapPhases
-    if (phases.size < 2) return
+    if (phases.isEmpty()) return
 
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val bandsFit = MIN_BAND_WIDTH * phases.size + BAND_GAP * (phases.size - 1) <= maxWidth
-        if (maxWidth < FULL_ROADMAP_WIDTH || !bandsFit) {
+        // A plan with one phase has no phases to set side by side, but its bar still ends on its finish.
+        if (phases.size == 1 || maxWidth < FULL_ROADMAP_WIDTH || !bandsFit) {
             RoadmapCompact(page, phases, onOpenPath)
         } else {
             RoadmapFull(page, phases, links, maxWidth)
@@ -163,8 +165,6 @@ private fun RoadmapCompact(
     onOpen: (() -> Unit)?,
 ) {
     val position = roadmapPosition(page, phases)
-    val done = phases.count { it.state == PlanPhase.State.DONE }
-    val small = MaterialTheme.typography.labelMedium
     val clickable =
         if (onOpen == null) {
             Modifier
@@ -178,33 +178,68 @@ private fun RoadmapCompact(
         modifier = clickable.heightIn(min = 48.dp).padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        RoadmapMeter(phases)
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            if (position != null) {
-                PositionLine(position, Modifier.weight(1f))
-                position.end?.let { PhaseEndLine(it) }
-            } else if (onOpen != null) {
-                Text(
-                    text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
-                    modifier = Modifier.weight(1f),
-                    style = small,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            if (onOpen != null) ListRowChevron()
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            RoadmapMeter(phases, Modifier.weight(1f))
+            CompactFinish(page)
+            // One phase has no place to say under the bar, so the way to its path ends the bar.
+            if (phases.size == 1 && onOpen != null) ListRowChevron()
         }
+        if (phases.size > 1) CompactLine(phases, position, onOpen)
+    }
+}
+
+/** Main's `CompactFinish`: where the bar ends, as the full timeline's axis ends: the flag and the goal's date, or open. */
+@Composable
+private fun CompactFinish(page: PlanPageState) {
+    val finish = page.finish ?: return
+    val words = planDate(finish.date, page.today, finish.estimate, finish.month, finish.year)
+    val label = stringResource(page.finishLabel())
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+
+    Row(
+        modifier = Modifier.clearAndSetSemantics { contentDescription = "$label, ${words.spoken}" },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(14.dp * glyphScale()), tint = color)
+        Text(words.text, style = MaterialTheme.typography.labelMedium, color = color, maxLines = 1)
     }
 }
 
 @Composable
-private fun RoadmapMeter(phases: List<PlanPhase>) {
+private fun CompactLine(
+    phases: List<PlanPhase>,
+    position: RoadmapPosition?,
+    onOpen: (() -> Unit)?,
+) {
+    val done = phases.count { it.state == PlanPhase.State.DONE }
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (position != null) {
+            PositionLine(position, Modifier.weight(1f))
+            position.end?.let { PhaseEndLine(it) }
+        } else if (onOpen != null) {
+            Text(
+                text = pluralStringResource(R.plurals.plan_phases_done, phases.size, done, phases.size),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        if (onOpen != null) ListRowChevron()
+    }
+}
+
+@Composable
+private fun RoadmapMeter(
+    phases: List<PlanPhase>,
+    modifier: Modifier,
+) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     Canvas(
-        Modifier
-            .fillMaxWidth()
+        modifier
             .height(6.dp)
             .clearAndSetSemantics {},
     ) {
@@ -261,8 +296,9 @@ private fun RoadmapFull(
     val overrun = page.plan.overrun(page.goal.kind)
     val axisDated = page.plan.axisDatedPhases(page.goal.kind, page.today)
     val weights = phases.map { it.weight() }
-    val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
-    val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
+    val names = phases.map { phaseRowName(it, page.mocksRequirePlus) }
+    val parted = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = true) }
+    val loose = phases.mapIndexed { index, phase -> bandName(phase, names[index], keepParts = false) }
     // Main's `EndDateSizer`: the last band is never narrower than the date under it, so the date keeps one line.
     val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
     val bands = bandLayout(parted, loose, weights, width, endDate)
@@ -340,17 +376,20 @@ private fun RoadmapLegend(
                     )
                 },
             ) {
-                val finish =
-                    when {
-                        page.isExam -> R.string.plan_exam_date
-                        page.plan.schedule.targetDate != null -> R.string.plan_deadline
-                        else -> R.string.plan_roadmap_you_finish
-                    }
-                Text(stringResource(finish), style = style, color = color)
+                Text(stringResource(page.finishLabel()), style = style, color = color)
             }
         }
     }
 }
+
+/** Main's `useFinishLabel`: what the flag at the plan's finish stands for: the goal's date, or with none the finish the plan works out. */
+@StringRes
+private fun PlanPageState.finishLabel(): Int =
+    when {
+        isExam -> R.string.plan_exam_date
+        plan.schedule.targetDate != null -> R.string.plan_deadline
+        else -> R.string.plan_roadmap_you_finish
+    }
 
 @Composable
 private fun LegendPair(
