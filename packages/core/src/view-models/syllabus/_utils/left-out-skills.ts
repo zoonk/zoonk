@@ -1,3 +1,5 @@
+import { type PlanItem } from "@zoonk/db";
+import { getWorkProgress } from "../../../plans/_utils/work-progress";
 import { getNotPlannedReason } from "./syllabus-topics";
 
 type LeftOutFacts = {
@@ -8,6 +10,17 @@ type LeftOutFacts = {
   skippedAreas: readonly string[];
   skippedBaseIds?: ReadonlySet<string>;
 };
+
+/** The skills the plan still holds work of: lessons set aside for time don't hold theirs. */
+export function listHeldSkillIds(
+  items: readonly Pick<PlanItem, "skillId" | "status">[],
+): Set<string> {
+  return new Set(
+    items.flatMap((item) =>
+      item.skillId && getWorkProgress(item.status) !== "setAside" ? [item.skillId] : [],
+    ),
+  );
+}
 
 /** The skills the plan leaves out for time, in the order given. */
 export function listLeftOutSkills<TSkill extends { area: string; skillId: string }>({

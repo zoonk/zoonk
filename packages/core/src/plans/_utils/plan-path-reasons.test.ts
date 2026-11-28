@@ -86,7 +86,7 @@ function lessonOn({ day, phase, skillId }: { day: string; phase: number; skillId
 }
 
 describe("a phase the plan holds part of", () => {
-  it("names the skills its date leaves out, and none for a phase left out whole", async () => {
+  it("names the skills its date leaves out, set-aside lessons included, and none for a phase left out whole", async () => {
     const user = await userFixture();
 
     const goal = await goalFixture({
@@ -139,6 +139,7 @@ describe("a phase the plan holds part of", () => {
     context.items = [
       lessonOn({ day: "2026-11-27", phase: 0, skillId: "naba" }),
       lessonOn({ day: "2026-12-20", phase: 1, skillId: "s64" }),
+      { ...lessonOn({ day: "2026-12-21", phase: 1, skillId: "s57" }), status: "skipped" as const },
     ];
 
     const path = buildPlanPath({

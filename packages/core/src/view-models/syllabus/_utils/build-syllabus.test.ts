@@ -799,6 +799,28 @@ describe(buildSyllabus, () => {
     expect(withTopics.subjects[0]?.leftOut).toStrictEqual([]);
   });
 
+  it("names a skill whose every lesson was set aside as left out", () => {
+    const input = oldGraphInput();
+
+    const syllabus = buildSyllabus({
+      ...input,
+      items: [
+        ...input.items,
+        lesson({ chapterId: "ch-verbs", skillId: "s-verbs", status: "skipped" }),
+      ],
+      notice: input.notice && {
+        ...input.notice,
+        subjects: input.notice.subjects.map((subject) => ({ ...subject, topics: [] })),
+      },
+      skills: [
+        ...input.skills,
+        { area: PT, name: "Reconhecer tempos verbais", skillId: "s-verbs", topics: [] },
+      ],
+    });
+
+    expect(syllabus.subjects[0]?.leftOut).toStrictEqual(["Reconhecer tempos verbais"]);
+  });
+
   it("leaves what an exam subject out of the plan covers to its topics", () => {
     const input = oldGraphInput();
 

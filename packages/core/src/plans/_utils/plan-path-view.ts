@@ -3,7 +3,10 @@ import { type CheckpointResult } from "../../checkpoints/_utils/checkpoint-resul
 import { listTodayLearnBlocks } from "../../learner/facts/today-learn-blocks";
 import { readTodayPlanSession } from "../../learner/facts/today-plan-session";
 import { previewTodayBlocks } from "../../sessions/_utils/read-study-day";
-import { listLeftOutSkills } from "../../view-models/syllabus/_utils/left-out-skills";
+import {
+  listHeldSkillIds,
+  listLeftOutSkills,
+} from "../../view-models/syllabus/_utils/left-out-skills";
 import { type SyllabusInput } from "../../view-models/syllabus/_utils/syllabus-input";
 import { getNotPlannedReason } from "../../view-models/syllabus/_utils/syllabus-topics";
 import { type PlanView } from "../plan-view-contract";
@@ -60,9 +63,7 @@ export function buildPlanPath({
   const studiesPastTarget = goal.kind === "exam" && state.settings.fullCourse;
   const deadline = hasPlanDeadline({ studiesPastTarget, targetDate: goal.targetDate });
 
-  const heldSkillIds = new Set(
-    withinLessonScope({ deadline, items }).flatMap((item) => (item.skillId ? [item.skillId] : [])),
-  );
+  const heldSkillIds = listHeldSkillIds(withinLessonScope({ deadline, items }));
 
   const leftOut = listLeftOutSkills({
     facts: {

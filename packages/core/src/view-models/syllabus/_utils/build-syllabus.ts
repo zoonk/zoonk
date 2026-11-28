@@ -9,7 +9,7 @@ import {
   type SyllabusView,
 } from "../syllabus-contract";
 import { getDisplayWeights } from "./display-weights";
-import { listLeftOutSkills } from "./left-out-skills";
+import { listHeldSkillIds, listLeftOutSkills } from "./left-out-skills";
 import { getSubjectProgress } from "./subject-progress";
 import {
   buildChapters,
@@ -142,10 +142,7 @@ function listSubjectLeftOut({
     return [];
   }
 
-  const facts = {
-    ...input,
-    heldSkillIds: new Set(items.flatMap((item) => (item.skillId ? [item.skillId] : []))),
-  };
+  const facts = { ...input, heldSkillIds: listHeldSkillIds(items) };
 
   return listLeftOutSkills({ facts, skills }).map((skill) => skill.name);
 }
