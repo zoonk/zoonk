@@ -36,6 +36,24 @@ export function useRoadmapFinish(): PlanDate | null {
   return getPlanFinish({ goalKind: goal.kind, paused, plan });
 }
 
+/** What the flag at the plan's finish stands for: the goal's date, or with none the finish the plan works out. */
+export function useFinishLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+
+  if (goal.kind === "exam") {
+    return t("Exam date");
+  }
+
+  return plan.schedule.targetDate
+    ? t("End date")
+    : t({
+        description:
+          "Names the day the plan works out it finishes when the learner set no end date: beside the flag in the roadmap's legend, and as the label of that date in the plan's settings.",
+        message: "You finish",
+      });
+}
+
 /** The finish row reads "Later" where the plan's finish lies past the years it lays out. */
 export function useRoadmapFinishLater(): boolean {
   const { goal, paused, plan } = usePlanScreen();

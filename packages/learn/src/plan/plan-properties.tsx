@@ -9,7 +9,7 @@ import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { useFormatDuration } from "../_utils/time-format";
 import { type LessonVariety, getLessonVarietyName } from "../country/use-country-lines";
-import { useRoadmapFinish } from "../journey/use-roadmap";
+import { useFinishLabel, useRoadmapFinish } from "../journey/use-roadmap";
 import { useVarietyName } from "../language-variety/use-variety-words";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
@@ -219,6 +219,20 @@ function GoalDateValue() {
   return goal.kind === "exam" ? t("To be confirmed") : t("None set");
 }
 
+/** The setting is the goal's date; while it holds the finish the plan works out, it's named as that. */
+function useGoalDateLabel() {
+  const t = useExtracted();
+  const { goal, plan } = usePlanScreen();
+  const finish = useRoadmapFinish();
+  const finishLabel = useFinishLabel();
+
+  if (plan.end || !finish) {
+    return goal.kind === "exam" ? t("Exam date") : t("End date");
+  }
+
+  return finishLabel;
+}
+
 export function PlanProperties({
   className,
   examHref = null,
@@ -233,6 +247,7 @@ export function PlanProperties({
   const studyDaysText = useStudyDaysText();
   const varietyName = useVarietyName();
   const { goal, paused, plan } = usePlanScreen();
+  const goalDateLabel = useGoalDateLabel();
   const skipped = new Set(plan.steering.skippedActivities);
   const practiced = LANGUAGE_ACTIVITY_TYPES.filter((activity) => !skipped.has(activity));
 
@@ -243,10 +258,7 @@ export function PlanProperties({
       </PageSectionHeader>
 
       <ul className="flex flex-col">
-        <PropertyRow
-          label={goal.kind === "exam" ? t("Exam date") : t("End date")}
-          onOpen={() => onOpen("date")}
-        >
+        <PropertyRow label={goalDateLabel} onOpen={() => onOpen("date")}>
           <GoalDateValue />
         </PropertyRow>
 

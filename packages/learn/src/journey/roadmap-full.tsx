@@ -26,6 +26,7 @@ import {
 import { useBandFit } from "./use-band-fit";
 import {
   useAxisDatedPhases,
+  useFinishLabel,
   useRoadmapFinish,
   useRoadmapPhases,
   useRoadmapPosition,
@@ -109,23 +110,6 @@ function PhaseColumn({
       <PhaseAxis isLast={isLast} labelled={labelled} phase={phase} />
     </li>
   );
-}
-
-function useFinishLabel() {
-  const t = useExtracted();
-  const { goal, plan } = usePlanScreen();
-
-  if (goal.kind === "exam") {
-    return t("Exam date");
-  }
-
-  return plan.schedule.targetDate
-    ? t("End date")
-    : t({
-        description:
-          "In the roadmap's legend, beside the flag at the day the plan finishes when the learner set no end date.",
-        message: "You finish",
-      });
 }
 
 function RoadmapLegend() {
