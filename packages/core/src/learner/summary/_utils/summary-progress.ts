@@ -88,14 +88,12 @@ export function getNextChangeAt({
 }): number {
   const midnight = getNextMidnight({ localDate, timeZone });
 
-  const deadlineMidnights = [...new Set(deadlineTimeZones)]
-    .filter((zone) => zone !== timeZone)
-    .map((zone) =>
-      getNextMidnight({
-        localDate: getDateInTimeZone({ date: now, timeZone: zone }),
-        timeZone: zone,
-      }),
-    );
+  const deadlineMidnights = deadlineTimeZones.map((zone) =>
+    getNextMidnight({
+      localDate: getDateInTimeZone({ date: now, timeZone: zone }),
+      timeZone: zone,
+    }),
+  );
 
   const allowanceResets = getUsageResets(now).day;
 
