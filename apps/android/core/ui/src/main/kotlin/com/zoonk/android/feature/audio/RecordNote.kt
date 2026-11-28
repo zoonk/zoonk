@@ -1,14 +1,11 @@
 package com.zoonk.android.feature.audio
 
-import androidx.annotation.StringRes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
@@ -34,8 +31,8 @@ fun recordNote(
 }
 
 /**
- * Main's `RecordNote`, the one line over a screen's Record in its bottom bar, read out by the bar's note as it changes: how to start, that it's listening, what went wrong,
- * or that the check is slow. Nothing while a take is checked in good time: Record or Check shows busy for that.
+ * Main's `RecordNote`, the one line over a screen's Record in its bottom bar, read out by the bar's note as it changes: only what
+ * went wrong, or that the check is slow. When to speak is [SpeakCue]'s, under what the learner says.
  */
 @Composable
 fun recordNote(
@@ -46,12 +43,13 @@ fun recordNote(
 ): (@Composable () -> Unit)? {
     val check = checkNote(checking, failed = status == VoiceRecorder.Status.Idle && issue == VoiceIssue.Failed)
     return when {
-        status == VoiceRecorder.Status.Acquiring -> ({ RecordingHint(R.string.today_step_being_written) })
-        status is VoiceRecorder.Status.Recording -> ({ RecordingHint(R.string.audio_listening) })
+        status == VoiceRecorder.Status.Unavailable -> ({ NoteLine(stringResource(R.string.audio_microphone_unavailable)) })
+        status != VoiceRecorder.Status.Idle -> null
         checking || issue == VoiceIssue.Failed -> check
         issue == VoiceIssue.NoSpeech -> ({ NoteLine(stringResource(R.string.audio_no_speech), wrong = true) })
+        issue == VoiceIssue.MissedStart -> ({ NoteLine(stringResource(R.string.audio_missed_start)) })
         issue is VoiceIssue.Limited -> navigator?.let { ({ LimitNote(issue, it) }) }
-        else -> ({ NoteLine(stringResource(R.string.audio_say_it)) })
+        else -> null
     }
 }
 
@@ -76,14 +74,6 @@ fun checkNote(
         checking && slow -> ({ NoteLine(stringResource(R.string.audio_checking_slow)) })
         else -> null
     }
-}
-
-/** TalkBack reading it would speak into the take, so it stays out of what TalkBack reads, as main's `aria-hidden` line does. */
-@Composable
-private fun RecordingHint(
-    @StringRes line: Int,
-) {
-    Text(stringResource(line), Modifier.clearAndSetSemantics {}, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable

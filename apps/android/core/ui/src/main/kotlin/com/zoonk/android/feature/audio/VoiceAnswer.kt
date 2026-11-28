@@ -50,7 +50,6 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Visit
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
@@ -78,7 +77,7 @@ class VoiceAnswerModel(
     var checking by mutableStateOf(false)
         private set
 
-    /** The recorder on its screen, until it goes for real; [VoiceAnswerLimit] and [recordNote] stand for it. */
+    /** The recorder's screen, held by [recordNote] until the screen goes. */
     internal val visit = Visit()
 
     internal val issue = visit.outcome<VoiceIssue>()
@@ -90,6 +89,9 @@ class VoiceAnswerModel(
     /** The learner refused the microphone on a screen that then answers another way, kept through a reclaimed process. */
     var blocked by handle.saveable { mutableStateOf(false) }
 
+    /** Once the server said a take missed its start, the screen's takes go without their startup time, so it says so once. */
+    private var missedStartVisit: Int? = null
+
     internal fun record() {
         issue.clear()
         recorder.start(::check)
@@ -98,13 +100,28 @@ class VoiceAnswerModel(
     internal fun check(recording: VoiceRecording) {
         checking = true
         val started = visit.number
+        val sent = if (missedStartVisit == started) recording.withoutMicStartup() else recording
         viewModelScope.launch {
             try {
-                when (val outcome = grade(recording)) {
-                    is GradeOutcome.Graded, GradeOutcome.Obsolete -> Unit
-                    GradeOutcome.NoSpeech -> issue.send(started, VoiceIssue.NoSpeech)
-                    is GradeOutcome.Limited -> issue.send(started, VoiceIssue.Limited(outcome.limit))
-                    GradeOutcome.Failed -> issue.send(started, VoiceIssue.Failed)
+                when (val outcome = grade(sent)) {
+                    is GradeOutcome.Graded, GradeOutcome.Obsolete -> {}
+
+                    GradeOutcome.NoSpeech -> {
+                        issue.send(started, VoiceIssue.NoSpeech)
+                    }
+
+                    GradeOutcome.MissedStart -> {
+                        if (visit.number == started) missedStartVisit = started
+                        issue.send(started, VoiceIssue.MissedStart)
+                    }
+
+                    is GradeOutcome.Limited -> {
+                        issue.send(started, VoiceIssue.Limited(outcome.limit))
+                    }
+
+                    GradeOutcome.Failed -> {
+                        issue.send(started, VoiceIssue.Failed)
+                    }
                 }
             } finally {
                 checking = false
@@ -119,6 +136,8 @@ class VoiceAnswerModel(
 
 sealed interface VoiceIssue {
     data object NoSpeech : VoiceIssue
+
+    data object MissedStart : VoiceIssue
 
     data object Failed : VoiceIssue
 
@@ -183,18 +202,12 @@ fun VoiceAnswerButton(
     )
 }
 
-/**
- * The take's limit with its way on, once it hits one. It is the take's visit, as the one piece shown from Record through the
- * grading to what went wrong (a lesson's bar drops Record while the take is checked), so the take's visit ends only when it goes
- * for real.
- */
 @Composable
 fun VoiceAnswerLimit(
     model: VoiceAnswerModel,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
 ) {
-    VisitOf(model.visit)
     val status by model.recorder.state.collectAsStateWithLifecycle()
     val issue = model.issue.value.takeUnless { status is VoiceRecorder.Status.Recording }
     if (issue !is VoiceIssue.Limited) return
@@ -242,6 +255,7 @@ fun rememberRecordTap(
         onStopOrDispose { if (activity?.isChangingConfigurations != true) recorder.cancel() }
     }
     return {
+        recorder.clearStartFailure()
         if (recorder.hasPermission) {
             currentRecord()
         } else if (recorder.beginPermissionRequest()) {

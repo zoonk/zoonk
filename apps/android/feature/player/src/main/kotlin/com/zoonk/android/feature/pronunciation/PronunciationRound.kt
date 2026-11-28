@@ -108,6 +108,10 @@ class PronunciationRound(
                         VoiceIssue.NoSpeech
                     }
 
+                    GradeOutcome.MissedStart -> {
+                        VoiceIssue.MissedStart
+                    }
+
                     is GradeOutcome.Limited -> {
                         VoiceIssue.Limited(outcome.limit)
                     }
@@ -210,7 +214,12 @@ class PronunciationViewModel(
     }
 
     fun next() {
-        viewModelScope.launch { round?.next() }
+        viewModelScope.launch {
+            val round = round ?: return@launch
+            val previous = round.step
+            round.next()
+            if (round.step != previous) recorder.clearStartFailure()
+        }
     }
 
     fun finish() {
