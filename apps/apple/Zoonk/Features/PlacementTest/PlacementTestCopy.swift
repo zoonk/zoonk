@@ -52,24 +52,21 @@ enum PlacementTestCopy {
   /// Over the chapter's name on a course test's result.
   static let youStartHere = LocalizedStringResource(
     "You start here", table: "Onboarding",
-    comment: "Over the name of the chapter a course's placement test starts the learner in")
+    comment: "Over the name of the chapter a course's placement test starts the learner in.")
 
   /// "4 of 9 lessons skipped", under the course's line on a test's result.
   static func lessonsSkipped(_ count: Int, of total: Int) -> LocalizedStringResource {
     LocalizedStringResource(
       "\(count) of \(total) lessons skipped", table: "Onboarding", locale: .appLanguage,
       comment:
-        "Under the course's line on a placement test's result: the lessons the test skipped out of the course's lessons."
+        "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them."
     )
   }
 
   /// "9 lessons", under the course's line when the test skipped none.
   static func lessons(_ count: Int) -> LocalizedStringResource {
     LocalizedStringResource(
-      "\(count) lessons", table: "Onboarding", locale: .appLanguage,
-      comment:
-        "Under the course's line on a placement test's result that skipped nothing: the course's lessons."
-    )
+      "\(count) lessons", table: "Onboarding", locale: .appLanguage)
   }
 
   static func skillRange(_ skill: LevelTest.Skill, _ range: LevelRange) -> String {

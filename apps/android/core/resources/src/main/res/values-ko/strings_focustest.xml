@@ -40,7 +40,6 @@
   "focustest_speaking_not_checked": "fef00e3e9c47ecc8c8f82aa9bfb6b8d266d389e6f34b6934b67b679dccc84bdd",
   "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
   "focustest_starting_point_title": "e4c3b569a66d398550089102cd29ba04cab6851efe7a43ed5b77e94ba6d5ff33",
-  "focustest_stop": "6d6f087ae7a44e3df57e22cbd81e797a43399f486bb273aa17e5ca9f61511f86",
   "focustest_subject_right": "b3e6c3db597bf4645d0aa3c3ca593248bb713fdaf244c2c3bc9675065c4030c9",
   "focustest_subjects": "070e03166d4f13df9930e82793b5616a350832412240de0b2d5f0332a008c9f2",
   "focustest_suggestion_body": "2b67c4358554aba1c0fa66d4424d2c146d8c0fc787dba8b0b6e0ec84ff9f53e4",
@@ -65,7 +64,6 @@
     <string name="focustest_continue">계속하기</string>
     <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">내 결과 보기</string>
-    <string name="focustest_stop">그만 풀고 내 답변 반영하기</string>
     <string name="focustest_many_unknown">아직 배우지 않은 내용이 대부분인가요? 괜찮아요. 여기서 멈추고 학습을 시작해도 돼요.</string>
     <string name="focustest_answers_saved_title">답변이 저장됐어요</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->

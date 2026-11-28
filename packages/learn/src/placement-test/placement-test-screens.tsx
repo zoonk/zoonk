@@ -69,7 +69,7 @@ function useCourseFact() {
     skipped > 0
       ? t({
           description:
-            "Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.",
+            "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.",
           message:
             "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}",
           values: { lessons, skipped },
@@ -196,7 +196,15 @@ export function PlacementResult({
       lead={<ResultLead held={result.heldUntilTomorrow} lessons={lessonsSkipped} undone={undone} />}
       onContinue={lessonId ? () => onStartLesson(lessonId) : onDone}
       other={button(pressed !== null)}
-      subject={place ? t("You start here") : undefined}
+      subject={
+        place
+          ? t({
+              description:
+                "Over the name of the chapter a course's placement test starts the learner in.",
+              message: "You start here",
+            })
+          : undefined
+      }
       title={place ?? sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
       {course && !undone && (

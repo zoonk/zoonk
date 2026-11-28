@@ -40,7 +40,6 @@
   "focustest_speaking_not_checked": "87676ccbcf6d89c7a3bc7af5b356e5c89d51c2837916529dd6c6890659940101",
   "focustest_start": "4ab9c05dc69e281186fe3fcafeadde580d66a38c885e89ca09ddafb4795bf7a9",
   "focustest_starting_point_title": "130658eb4101d0dc8b94d717101a3b0ef7df71f3c490add2e08ac30b193c59b1",
-  "focustest_stop": "400a92fd3efd4663eb8c7e6bbdc4449b9ed96ebbb73ec53d369ffe7e82e13d89",
   "focustest_subject_right": "dd9ae875db6708a3719d58b0368431bf861080627403069f98fa61a30787cc8e",
   "focustest_subjects": "c812afb6dfda2e49a1c6b915d0f34894c2f0ef1f5ccd615ba504d15d36c7cc63",
   "focustest_suggestion_body": "6bde3d8007cff10917b48a35cfe69a53aa030b71670010cba46cec96f49ea8e3",
@@ -65,7 +64,6 @@
     <string name="focustest_continue">Devam et</string>
     <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Sonucumu gör</string>
-    <string name="focustest_stop">Durdur ve cevaplarımı kullan</string>
     <string name="focustest_many_unknown">Bu konuların çoğuna henüz çalışmadın mı? Sorun değil. Burada durup öğrenmeye başlayabilirsin.</string>
     <string name="focustest_answers_saved_title">Cevapların kaydedildi</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->

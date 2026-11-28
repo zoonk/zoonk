@@ -6345,7 +6345,7 @@ msgstr "Non posso ascoltare ora"
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "DxEIkj"
 msgid "I didn't understand"
-msgstr ""
+msgstr "Non ho capito"
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "-JyB5g"
@@ -10183,13 +10183,13 @@ msgstr "Da dove vuoi iniziare?"
 #: src/placement-test/placement-test-offers.tsx
 msgctxt "xu6eM8"
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
-#. Under a picture of a course, after a placement test: how many of the course's lessons the learner starts past.
+#. Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "yjiD94"
 msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr ""
+msgstr "{skipped, plural, one {# di {lessons, number} lezioni saltate} other {# di {lessons, number} lezioni saltate}}"
 
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
@@ -10201,10 +10201,11 @@ msgctxt "Yr5YUZ"
 msgid "You undid these today. Answer again tomorrow to skip them."
 msgstr "Oggi hai annullato queste lezioni. Rispondi di nuovo domani per saltarle."
 
+#. Over the name of the chapter a course's placement test starts the learner in.
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "SGu5bG"
 msgid "You start here"
-msgstr ""
+msgstr "Inizi da qui"
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts

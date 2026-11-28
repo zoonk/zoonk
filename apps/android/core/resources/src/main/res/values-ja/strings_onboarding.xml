@@ -112,10 +112,8 @@
   "onboarding_join_waitlist": "427d4bcc193d9062760081e6eb3d31ada31ce547cb31ee0d665a3fc967944ac6",
   "onboarding_language_test_audio_on_its_way": "b4eeccf5b74e1903105a0c160c9141ec35e3a2e3742218c0abb4c8578569bb9f",
   "onboarding_language_test_cant_listen": "175110d5871dfa816f77c2dfff99032d5fafa336ea8bc0c382770af345b7f85f",
-  "onboarding_language_test_did_not_understand": "27686bbd068a76d3dc07b74c8e956355b05f5eeb3a9e1e142cf3086da6cf30f7",
+  "onboarding_language_test_did_not_understand": "23feb5fcc3faa6a61c77aa6268968e53730133200a3ee6c601f15557e9e78d33",
   "onboarding_language_test_listening": "62ba1538409aff6d399727b81025097843bfc91714c4f805d2e5e146fc4613a0",
-  "onboarding_language_test_message": "407ae315822109d1ba28db9a818358f92dd3a4daee1e00641bc091f354045fc5",
-  "onboarding_language_test_message_loading": "cde5d7a0c2e2f6ebeb6b2525a84d1dd35b4e44e5a72da4d6fc0fa46ad79b6f21",
   "onboarding_language_test_play": "0626814a40b4dea1c59c24357a81ee9c8eb4c2e5bbe1ccfc89e3deddc1530eec",
   "onboarding_language_test_play_again": "638ab7bcde3e0b8abeb971bf46b3505b96c6ddcac7e40ba92c8f613149d5dfea",
   "onboarding_language_test_reading": "591f0cb9521fb34d33d3f20376144e67cc67743375ce4d78f7423a201a49dcc1",
@@ -168,7 +166,6 @@
   "onboarding_placement_answer_failed": "2610c70abc59c425f63405d074992e497a80f2f23988f8186bcd00230cd6087c",
   "onboarding_placement_confirm": "4358b2bb592ae544460bef70bbcf0cad3e58143691093a7b0316bb87a4c01e48",
   "onboarding_placement_dont_know": "c12a57eaabe66a48fa20792d0692bff7ac791b25532fcdb16b0f8ec92c3d7ee0",
-  "onboarding_placement_progress": "dec6421572e5a92a42b74628801f8f0ab7c999a4383ef240c18eda9d03505a45",
   "onboarding_placement_ready": "22ccd7582fb8e5bb706a08c8f0fd46f5b4c34d12746b8accb5a9f4f8a378cdde",
   "onboarding_placement_stop": "923084fb6166a1b4f3f1aea8cdbcbe5fef486b8d3057c426b4f47cd3cffc6ad9",
   "onboarding_placement_unavailable_title": "a895c6a92640cf07d2def3082a9ce67511a9a5a61974f2f9fc3f8a246bd1223d",
@@ -564,22 +561,20 @@
     <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
     <string name="onboarding_placement_waiting_time">1〜2分ほどかかります。</string>
     <string name="onboarding_placement_ready">テストの準備ができました</string>
-    <string name="onboarding_placement_progress">回答済みの問題数</string>
     <string name="onboarding_placement_dont_know">まだわからない</string>
     <string name="onboarding_placement_confirm">確定する</string>
     <string name="onboarding_placement_stop">ここで終えて回答を使う</string>
     <string name="onboarding_placement_answer_failed">送信できませんでした。回答はそのまま残っています。</string>
     <string name="onboarding_placement_unavailable_title">最初の数日で、知っていることを確認します</string>
     <string name="onboarding_language_test_use_app_in">アプリを%1$sで使う</string>
-    <string name="onboarding_language_test_did_not_understand">音声の内容がわからない</string>
+    <!-- Button on a listening question, after the learner played the message: they heard it and didn't understand it. -->
+    <string name="onboarding_language_test_did_not_understand">わかりませんでした</string>
     <string name="onboarding_language_test_skip_question">この問題をスキップ</string>
     <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
     <string name="onboarding_language_test_cant_listen">今は音声を聞けない</string>
     <string name="onboarding_language_test_audio_on_its_way">音声メッセージを準備しています…</string>
     <string name="onboarding_language_test_play">メッセージを再生する</string>
     <string name="onboarding_language_test_play_again">メッセージをもう一度再生する</string>
-    <string name="onboarding_language_test_message_loading">メッセージを準備しています。初回は数秒かかることがあります。</string>
-    <string name="onboarding_language_test_message">音声メッセージが届きました。聞いて答えてください。</string>
     <string name="onboarding_language_test_reading">リーディング</string>
     <string name="onboarding_language_test_listening">リスニング</string>
     <string name="onboarding_language_test_speaking">スピーキング</string>
