@@ -78,12 +78,16 @@ internal sealed interface PlacementTestPhase {
         val chapters: List<Chapter>,
     )
 
-    /** A chapter's lessons, how many of them the test started the learner past, and whether they start in it. */
+    /**
+     * A chapter's lessons: how many the test started the learner past ([skipped]), how many were already behind them for
+     * any other reason ([done]), and whether they start in it.
+     */
     @Serializable
     data class Chapter(
         val lessons: Int,
         val skipped: Int,
         val start: Boolean,
+        val done: Int = 0,
     )
 }
 
@@ -183,7 +187,10 @@ internal fun PlacementResult.phase() =
             course?.let { line ->
                 PlacementTestPhase.Course(
                     lessons = line.lessons.toInt(),
-                    chapters = line.chapters.map { PlacementTestPhase.Chapter(it.lessons.toInt(), it.skipped.toInt(), it.start) },
+                    chapters =
+                        line.chapters.map {
+                            PlacementTestPhase.Chapter(it.lessons.toInt(), it.skipped.toInt(), it.start, done = it.done.toInt())
+                        },
                 )
             },
     )

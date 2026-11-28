@@ -140,10 +140,10 @@ fun placementResultOf(
             lessons = 9,
             chapters =
                 listOf(
-                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
-                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
-                    PlacementResultCourseChaptersInner(lessons = 2, skipped = 0, start = true),
-                    PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 0, start = true),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
                 ),
         ),
     changeId: java.util.UUID? = java.util.UUID.fromString("5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b"),
