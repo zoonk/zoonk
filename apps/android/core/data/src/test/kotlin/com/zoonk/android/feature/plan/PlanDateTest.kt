@@ -42,6 +42,11 @@ class PlanDateTest {
     }
 
     @Test
+    fun aFarEstimateSaysOnlyItsYear() {
+        assertEquals("2031", formatPlanDate(date("2031-03-02"), today, en, year = true))
+    }
+
+    @Test
     fun anExamDayPutsItsWeekdayWhereEachLanguageDoes() {
         assertEquals("Sat, Nov 21", formatPlanDate(date("2026-11-21"), today, en, weekday = true))
         assertEquals("Sun, Nov 14, 2027", formatPlanDate(date("2027-11-14"), today, en, weekday = true))

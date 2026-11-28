@@ -17,6 +17,8 @@ import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.plan.LanguageAimRow
+import com.zoonk.android.feature.plan.PlanForecast
+import com.zoonk.android.feature.plan.forecast
 import com.zoonk.android.ui.ActOn
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.format.currentLocale
@@ -24,8 +26,6 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingLanguageAim
 import com.zoonk.api.models.PlanTimeAdviceInput
-import kotlinx.datetime.toJavaLocalDate
-import java.time.LocalDate
 import java.time.ZoneId
 
 internal data class SetupAimContext(
@@ -42,7 +42,7 @@ internal val LocalSetupAim = compositionLocalOf { SetupAimContext() }
 
 @Composable
 internal fun ScheduleAim(
-    endDate: LocalDate?,
+    endDate: PlanForecast?,
     minutes: Int?,
     goal: Goal,
     store: OnboardingStore,
@@ -86,7 +86,7 @@ internal fun ScheduleAim(
                         store.timeAdvice[query]
                             .collectShown()
                             .value.value
-                    choice.aim.value to advice?.takeIf { it.ready }?.endDate?.toJavaLocalDate()
+                    choice.aim.value to advice?.takeIf { it.ready }?.forecast
                 }
             }
         },

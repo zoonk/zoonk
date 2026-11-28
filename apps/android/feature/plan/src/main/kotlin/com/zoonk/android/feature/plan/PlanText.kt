@@ -32,8 +32,9 @@ fun planDate(
     today: LocalDate,
     estimate: Boolean = false,
     month: Boolean = false,
+    year: Boolean = false,
 ): PlanDateWords {
-    val formatted = formatPlanDate(date, today, currentLocale(), month)
+    val formatted = formatPlanDate(date, today, currentLocale(), month, year = year)
     return if (estimate) {
         PlanDateWords(
             stringResource(R.string.plan_date_estimate, formatted),

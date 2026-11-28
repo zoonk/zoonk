@@ -18,7 +18,8 @@ fun isInAnotherYear(
 
 /**
  * A day in the plan as main's `formatPlanDate` writes it: "Nov 3", with the year when it's in another
- * year; [month] for a date standing for its month ("Nov"), [weekday] for an exam's day ("Sat, Nov 8").
+ * year; [month] for a date standing for its month ("Nov"), [year] for one standing for its year ("2031"), [weekday]
+ * for an exam's day ("Sat, Nov 8").
  */
 fun formatPlanDate(
     date: LocalDate,
@@ -26,10 +27,12 @@ fun formatPlanDate(
     locale: Locale,
     month: Boolean = false,
     weekday: Boolean = false,
+    year: Boolean = false,
 ): String {
-    val year = if (isInAnotherYear(date, today)) "y" else ""
+    if (year) return formatDay(date, "y", locale)
+    val yearPart = if (isInAnotherYear(date, today)) "y" else ""
     val day = if (month) "MMM" else "MMMd"
-    return formatDay(date, year + (if (weekday) "EEE" else "") + day, locale)
+    return formatDay(date, yearPart + (if (weekday) "EEE" else "") + day, locale)
 }
 
 /** A calendar day carries no time zone, so it's formatted as a UTC instant in UTC. */

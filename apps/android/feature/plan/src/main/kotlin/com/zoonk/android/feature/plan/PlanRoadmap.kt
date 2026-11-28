@@ -278,7 +278,7 @@ private fun RoadmapFull(
     val parted = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = true) }
     val loose = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus), keepParts = false) }
     // Main's `EndDateSizer`: the last band is never narrower than the date under it, so the date keeps one line.
-    val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
+    val endDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
     val bands = bandLayout(parted, loose, weights, width, endDate)
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -793,7 +793,7 @@ private fun PhaseAxis(
     val goalShare = overrun?.share?.takeIf { axisFinish != null }
     val goalAtEnd = goalShare != null && goalShare >= MIDDLE_SHARE
     // The legend names the flag's date ("Exam date"), so the axis shows the date alone, in the data face.
-    val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month).text) }
+    val goalDate = page.finish?.let { dateValue(planDate(it.date, page.today, it.estimate, it.month, it.year).text) }
     val end = phaseEnd(page, phase)?.let { if (it.date) dateValue(it.text) else AnnotatedString(it.text) }
     // A phase's end gives way when it meets an earlier label: its row on the path says it.
     val labels =

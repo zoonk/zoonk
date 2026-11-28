@@ -92,6 +92,9 @@ import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOfResult
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingDraft
+import com.zoonk.api.models.PlanFinishPrecision
+import com.zoonk.api.models.PlanFinishReason
+import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.SourceReadStatus
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CoroutineScope
@@ -772,23 +775,40 @@ class OnboardingScreenshots {
         write("level-test-writing-$name", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    /** When an undated plan finishes, beside the time question's minutes and in the reveal: a month, a year, past ten years, an aim. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun finishPhone() = capture("phone-screen", screens = FINISH_SCREENS)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun finishPhoneDark() = capture("phone-dark", dark = true, screens = FINISH_SCREENS)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1800dp-xxhdpi")
+    fun finishPhoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("phone-font200", screens = FINISH_SCREENS)
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        screens: List<Pair<String, @Composable () -> Unit>> = SCREENS,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { key(index) { SCREENS[index].second() } }
+                Surface { key(index) { screens[index].second() } }
             }
         }
-        SCREENS.indices.forEach { screen ->
+        screens.indices.forEach { screen ->
             // Each navigation entry has its own ViewModels in the app.
             compose.activity.viewModelStore.clear()
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
+            write("${screens[screen].first}-$name", compose.onRoot().captureRender().asAndroidBitmap())
         }
     }
 
@@ -1301,6 +1321,59 @@ class OnboardingScreenshots {
                 )
             }
         }
+
+        private fun undatedAdvice(
+            endDate: kotlinx.datetime.LocalDate?,
+            precision: PlanFinishPrecision? = null,
+            reason: PlanFinishReason? = null,
+        ) = adviceOf(null, endDate = endDate, targetDate = null).copy(precision = precision, finishReason = reason)
+
+        private fun undatedPlan(
+            endDate: LocalDate?,
+            precision: PlanFinishPrecision? = null,
+            reason: PlanFinishReason? = null,
+        ) = planOf(targetDate = null, endDate = endDate).let {
+            it.copy(estimate = it.estimate.copy(precision = precision, finishReason = reason))
+        }
+
+        @Composable
+        private fun UndatedSchedule(
+            advice: PlanTimeAdvice,
+            languageAim: String? = null,
+        ) = Setup(
+            FakeOnboardingApi().apply {
+                setup = {
+                    if (languageAim == null) {
+                        setupView(listOf("schedule", "plan"))
+                    } else {
+                        setupView(listOf("schedule", "plan"), kind = "language", targetLanguage = "fr", languageAim = languageAim)
+                    }
+                }
+                this.advice = { advice }
+            },
+        )
+
+        val FINISH_SCREENS: List<Pair<String, @Composable () -> Unit>> =
+            listOf(
+                "time-month" to { UndatedSchedule(undatedAdvice(kotlinx.datetime.LocalDate(2027, 3, 15), PlanFinishPrecision.MONTH)) },
+                "time-year" to { UndatedSchedule(undatedAdvice(kotlinx.datetime.LocalDate(2031, 5, 2), PlanFinishPrecision.YEAR)) },
+                "time-beyond" to { UndatedSchedule(undatedAdvice(null, reason = PlanFinishReason.BEYOND_HORIZON)) },
+                "time-language" to {
+                    UndatedSchedule(
+                        undatedAdvice(kotlinx.datetime.LocalDate(2027, 11, 6), PlanFinishPrecision.MONTH),
+                        languageAim = languageAimOf("B1", targetLanguage = "fr"),
+                    )
+                },
+                "reveal-month" to {
+                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(LocalDate.now().plusDays(120), PlanFinishPrecision.MONTH) })
+                },
+                "reveal-year" to {
+                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(LocalDate.now().plusYears(5), PlanFinishPrecision.YEAR) })
+                },
+                "reveal-beyond" to {
+                    Reveal(setupPlanApi().apply { shownPlan = undatedPlan(null, reason = PlanFinishReason.BEYOND_HORIZON) })
+                },
+            )
 
         private fun setupPlanApi() =
             FakePlanApi().apply {

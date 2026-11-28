@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.feature.onboarding.planOf
+import com.zoonk.android.feature.plan.PlanForecast
+import com.zoonk.api.models.PlanFinishPrecision
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -12,18 +14,17 @@ class RevealShapeTest {
     @Test
     fun factsCountTheDaysToTheGoal() {
         assertEquals(
-            RevealFacts(days = 53, daysEstimated = false, end = null, endAsMonth = false),
+            RevealFacts(days = 53, daysEstimated = false, forecast = null),
             planOf().revealFacts(today),
         )
     }
 
     @Test
-    fun aPlanWithoutADateEndsAtItsPaceAsAMonthWhenFarOff() {
-        val near = planOf(targetDate = null, endDate = today.plusDays(30)).revealFacts(today)
-        val far = planOf(targetDate = null, endDate = today.plusDays(200)).revealFacts(today)
+    fun aPlanWithoutADateEndsWhenItsForecastSays() {
+        val plan = planOf(targetDate = null, endDate = today.plusDays(900))
+        val facts = plan.copy(estimate = plan.estimate.copy(precision = PlanFinishPrecision.YEAR)).revealFacts(today)
 
-        assertEquals(today.plusDays(30) to false, near.end to near.endAsMonth)
-        assertEquals(today.plusDays(200) to true, far.end to far.endAsMonth)
-        assertNull(far.days)
+        assertEquals(PlanForecast.On(today.plusDays(900), year = true), facts.forecast)
+        assertNull(facts.days)
     }
 }

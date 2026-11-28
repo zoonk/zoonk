@@ -271,7 +271,7 @@ private fun goalDateValue(page: PlanPageState): AnnotatedString {
         return dateValue(planDate(target, page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text)
     }
     val finish = page.finish?.takeIf { !page.isExam && it.estimate }
-    return finish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month).text) }
+    return finish?.let { dateValue(planDate(it.date, page.today, estimate = true, month = it.month, year = it.year).text) }
         ?: AnnotatedString(stringResource(if (page.isExam) R.string.plan_to_be_confirmed else R.string.plan_end_none_set))
 }
 

@@ -173,7 +173,7 @@ private fun PhaseItem(
     }
 }
 
-/** A phase's row on the path: its mark, its name over [line], and when it ends. */
+/** A phase's row on the path: its mark, what the learner can do by its end (else its name) over [line], and when it ends. */
 @Composable
 internal fun PhaseRow(
     plan: Plan,
@@ -188,7 +188,7 @@ internal fun PhaseRow(
 ) {
     // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
     val date = if (paused) null else phaseEnd(plan, phase, plan.today)
-    val name = phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
+    val name = phase.milestone?.takeIf { it.isNotBlank() } ?: phaseName(phase, plan.access.mocksRequirePlus, byPlace = byPlace)
     val state =
         if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
             stringResource(R.string.plan_up_next_suffix)
@@ -229,10 +229,30 @@ fun phaseEnd(
     today: LocalDate,
 ): PlanDateWords? =
     when (val end = plan.phaseEnd(phase)) {
-        null -> null
-        is PhaseEnd.Days -> shortDays(plan, phase)?.let(::sameWords)
-        is PlanEnd -> endWords(formatPlanDate(end.date, today, currentLocale(), month = end.month), end.estimate, end.month)
+        null -> {
+            null
+        }
+
+        is PhaseEnd.Days -> {
+            shortDays(plan, phase)?.let(::sameWords)
+        }
+
+        PhaseEnd.Later -> {
+            laterWords()
+        }
+
+        is PlanEnd -> {
+            endWords(
+                formatPlanDate(end.date, today, currentLocale(), month = end.month, year = end.year),
+                end.estimate,
+                end.month || end.year,
+            )
+        }
     }
+
+/** An end not in the plan yet: its work is still owed, past the years the plan lays out. */
+@Composable
+internal fun laterWords() = PlanDateWords(stringResource(R.string.plan_later), stringResource(R.string.plan_ends_later))
 
 /** A phase's or the goal's end as it's shown ("Nov 10", "~Nov 10") and as TalkBack says it ("Ends about Nov 10"). */
 @Composable
@@ -618,8 +638,12 @@ private fun FinishItem(
     inSheet: Boolean,
 ) {
     val finish =
-        page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-            ?: if (page.isExam) sameWords(stringResource(R.string.plan_date_to_be_confirmed)) else null
+        page.finish?.let { planDate(it.date, page.today, it.estimate, it.month, it.year) }
+            ?: when {
+                page.isExam -> sameWords(stringResource(R.string.plan_date_to_be_confirmed))
+                page.plan.forecast == PlanForecast.Beyond && !page.isPaused -> laterWords()
+                else -> null
+            }
 
     ListRow(
         chevronSpace = true,
@@ -694,7 +718,7 @@ internal fun ColumnScope.PhaseDetails(
                 null
             }
 
-            is PhaseEnd.Days -> {
+            is PhaseEnd.Days, PhaseEnd.Later -> {
                 phaseEnd(page, phase)?.text
             }
 
@@ -702,8 +726,8 @@ internal fun ColumnScope.PhaseDetails(
                 phase.start?.let { start ->
                     stringResource(
                         R.string.plan_date_range,
-                        formatPlanDate(start, page.today, currentLocale(), end.month),
-                        planDate(end.date, page.today, end.estimate, end.month).text,
+                        formatPlanDate(start, page.today, currentLocale(), end.month, year = end.year),
+                        planDate(end.date, page.today, end.estimate, end.month, end.year).text,
                     )
                 }
             }
@@ -734,6 +758,7 @@ internal fun ColumnScope.PhaseDetails(
             modifier = Modifier.semantics { heading() },
             style = MaterialTheme.typography.titleLarge,
         )
+        phase.milestone?.takeIf { it.isNotBlank() }?.let { Text(it, style = MaterialTheme.typography.bodyMedium) }
         Text(
             text = listOfNotNull(range, lessons).factsLine(),
             style = MaterialTheme.zoonkType.data,

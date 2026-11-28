@@ -448,7 +448,6 @@
     <!-- %1$s is hours of study, such as "190 hr"; %2$s a month, such as "Mar 2027". -->
     <string name="onboarding_aim_hours_month">About %1$s more · around %2$s</string>
     <string name="onboarding_aim_by_month">by %1$s</string>
-    <string name="onboarding_aim_finish">At %1$s a day, you reach %2$s around %3$s.</string>
     <string name="onboarding_reason_travel">Travel</string>
     <string name="onboarding_reason_travel_description">Get by on trips: order, ask the way, small talk</string>
     <string name="onboarding_reason_talk">Talk with people</string>

@@ -72,10 +72,7 @@ internal fun DailyCoverage(
     val pending = edits.isPending(PlanPart.Schedule)
     val feasibility = plan.feasibility
     val target = plan.schedule.targetDate
-    if (feasibility?.deadline == null || target == null) {
-        FinishLine(page, pending)
-        return
-    }
+    if (feasibility?.deadline == null || target == null) return
     val date = GoalDate(target, plan.schedule.targetDateNamedMonth, plan.schedule.targetDateEstimated)
     val search = edits.timeToCover.forPlan(plan)
     val found = (search as? TimeToCoverState.Answered)?.time
@@ -97,7 +94,6 @@ internal fun DailyCoverage(
                 date = date,
                 exam = page.isExam,
                 line = line,
-                minutes = minutes,
                 // Asked as the editor opens, so a search not answered yet is being found.
                 finding = search is TimeToCoverState.Idle || search is TimeToCoverState.Pending,
                 offer = timeOffer(line, minutes),
@@ -130,30 +126,12 @@ internal fun DailyCoverage(
     }
 }
 
-/** Main's `PlanFinish`: when a plan without a date finishes. */
-@Composable
-private fun FinishLine(
-    page: PlanPageState,
-    pending: Boolean,
-) {
-    val end =
-        page.plan.estimate.endDate
-            ?.toJavaLocalDate()
+/** Main's `PlanFinish`: when a plan without a date finishes, until it's finished or while it's paused. */
+internal fun shownFinish(page: PlanPageState): PlanForecast? {
+    if (page.isPaused || page.plan.end != null) return null
     // The end is the saved schedule's last day, laid out again only by a change: once it has
     // passed, it no longer says when the learner finishes.
-    if (end == null || end < page.today || page.plan.end != null) return
-
-    Text(
-        text =
-            if (pending) {
-                stringResource(R.string.plan_finish_working)
-            } else {
-                stringResource(R.string.plan_finish_around, formatDate(end, currentLocale(), DateStyle.Month))
-            },
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
+    return page.plan.forecast?.takeUnless { it is PlanForecast.On && it.date < page.today }
 }
 
 /**

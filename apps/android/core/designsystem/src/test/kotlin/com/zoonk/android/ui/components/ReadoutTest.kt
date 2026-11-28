@@ -22,4 +22,10 @@ class ReadoutTest {
         assertEquals(emptyList<String>(), smallParts("70\u202F%"))
         assertEquals(listOf(" left"), smallParts("16% left"))
     }
+
+    @Test
+    fun aPlusAfterTheNumberIsPartOfIt() {
+        assertEquals(listOf(" years"), smallParts("10+ years"))
+        assertEquals(listOf("over "), smallParts("over 10+"))
+    }
 }

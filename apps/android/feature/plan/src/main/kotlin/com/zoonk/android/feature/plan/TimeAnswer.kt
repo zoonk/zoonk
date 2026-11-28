@@ -45,14 +45,13 @@ data class DaySplit(
 /**
  * Main's `TimeAnswer`, shared by onboarding's time question and the Plan's time a day: the time we suggest, and that
  * time to use while a shorter one is picked, in one polite live region. While [updating], the last answer stays in
- * place, dimmed, and is read as busy.
+ * place, dimmed, and is read as busy. An undated goal's finish is the readout's beside the time ([TimeWithFinish]).
  */
 @Composable
 fun TimeAnswer(
     date: GoalDate?,
     exam: Boolean,
     line: TimeLine,
-    minutes: Int?,
     offer: Int?,
     onRetry: () -> Unit,
     onUseOffer: (Int) -> Unit,
@@ -61,7 +60,6 @@ fun TimeAnswer(
     split: DaySplit? = null,
     updating: Boolean = false,
     today: LocalDate = LocalDate.now(),
-    aim: String? = null,
     subjectsTakenOut: Boolean = false,
 ) {
     val failed = line == TimeLine.AskFailed || line == TimeLine.FindFailed
@@ -70,8 +68,7 @@ fun TimeAnswer(
     val busyWords = stringResource(R.string.plan_time_working)
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val style = MaterialTheme.typography.bodyMedium
-    val lineWords = lineWords(date, exam, line, minutes, today, aim, subjectsTakenOut)
-    val shared = split?.let { splitWords(it) }
+    val words = listOfNotNull(lineWords(date, exam, line, today, subjectsTakenOut), split?.let { splitWords(it) })
 
     Column(
         modifier
@@ -82,11 +79,9 @@ fun TimeAnswer(
             },
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            lineWords + (shared?.let { spaceAfterSentence(lineWords) + it } ?: ""),
-            color = muted,
-            style = style,
-        )
+        if (words.isNotEmpty()) {
+            Text(words.reduce { first, second -> first + spaceAfterSentence(first) + second }, color = muted, style = style)
+        }
         when {
             failed -> {
                 TextButton(onClick = onRetry, edge = ButtonEdge.Start) {
@@ -151,37 +146,25 @@ private fun lineWords(
     date: GoalDate?,
     exam: Boolean,
     line: TimeLine,
-    minutes: Int?,
     today: LocalDate,
-    aim: String?,
     subjectsTakenOut: Boolean,
-): String {
-    val locale = currentLocale()
-    return when (line) {
+): String? =
+    when (line) {
         is TimeLine.Suggest -> {
             suggestWords(date, exam, line, today, subjectsTakenOut)
         }
 
         TimeLine.PastDate -> {
-            date ?: return ""
-            stringResource(
-                if (date.namedMonth) R.string.plan_time_past_date_month else R.string.plan_time_past_date,
-                goalDateText(date, today),
-            )
-        }
-
-        is TimeLine.Finish -> {
-            val month = formatDate(line.endDate.toJavaLocalDate(), locale, DateStyle.Month)
-            // One quiet sentence, the month not singled out, as the Plan's own finish line.
-            if (aim == null) {
-                stringResource(R.string.plan_finish_around, month)
-            } else {
-                stringResource(R.string.onboarding_aim_finish, formatMinutes(minutes ?: 0, locale), aim, month)
+            date?.let {
+                stringResource(
+                    if (it.namedMonth) R.string.plan_time_past_date_month else R.string.plan_time_past_date,
+                    goalDateText(it, today),
+                )
             }
         }
 
-        TimeLine.NoFinish -> {
-            stringResource(R.string.plan_time_finish_unknown)
+        is TimeLine.Finish, TimeLine.NoFinish -> {
+            null
         }
 
         TimeLine.NoDays -> {
@@ -204,6 +187,5 @@ private fun lineWords(
             stringResource(R.string.plan_time_finish_failed)
         }
     }
-}
 
-private const val UPDATING_ALPHA = 0.5f
+internal const val UPDATING_ALPHA = 0.5f

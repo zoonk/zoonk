@@ -27,14 +27,11 @@ import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ModalBottomSheet
 import com.zoonk.android.ui.components.bleed
-import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.factsLine
-import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageAimChoicesInner
-import java.time.LocalDate
 import java.util.Locale
 
 fun languageAimTitle(
@@ -85,10 +82,10 @@ fun LanguageAimRow(
     modifier: Modifier = Modifier,
     pending: Boolean = false,
     failed: Boolean = false,
-    endDate: LocalDate? = null,
+    endDate: PlanForecast? = null,
     description: String? = null,
     note: String? = null,
-    dates: @Composable () -> Map<String, LocalDate?> = { emptyMap() },
+    dates: @Composable () -> Map<String, PlanForecast?> = { emptyMap() },
 ) {
     if (choices.isEmpty()) return
     ListRow(
@@ -127,9 +124,9 @@ fun LanguageAimSheet(
     onPick: (String) -> Unit,
     pending: Boolean = false,
     failed: Boolean = false,
-    endDate: LocalDate? = null,
+    endDate: PlanForecast? = null,
     description: String? = null,
-    endDates: Map<String, LocalDate?> = emptyMap(),
+    endDates: Map<String, PlanForecast?> = emptyMap(),
     label: String? = null,
 ) {
     val locale = currentLocale()
@@ -148,7 +145,7 @@ fun LanguageAimSheet(
             ChoiceList(
                 choices =
                     choices.map { choice ->
-                        val date = if (choice.aim.value == aim) endDate else endDates[choice.aim.value]
+                        val date = (if (choice.aim.value == aim) endDate else endDates[choice.aim.value]) as? PlanForecast.On
                         Choice(
                             choice.aim.value,
                             listOfNotNull(
@@ -164,7 +161,7 @@ fun LanguageAimSheet(
                                 stringResource(
                                     R.string.onboarding_aim_hours_month,
                                     formatMinutes(choice.hours.toInt() * MINUTES_PER_HOUR, locale),
-                                    formatDate(date, locale, DateStyle.MonthShort),
+                                    forecastDate(date),
                                 )
                             },
                         )

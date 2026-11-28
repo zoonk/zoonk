@@ -3,7 +3,6 @@ package com.zoonk.android.feature.plan
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverSuggested
-import kotlinx.datetime.LocalDate
 
 /** What the line under the time says, or why that isn't known yet. */
 sealed interface TimeLine {
@@ -13,8 +12,9 @@ sealed interface TimeLine {
 
     data object FindFailed : TimeLine
 
+    /** Said by the finish readout beside the time, not in the line. */
     data class Finish(
-        val endDate: LocalDate,
+        val forecast: PlanForecast,
     ) : TimeLine
 
     data object NoDays : TimeLine
@@ -32,12 +32,12 @@ sealed interface TimeLine {
     data object Working : TimeLine
 }
 
-/** When an undated goal finishes at the time shown; null [endDate] when it doesn't within the plan. */
+/** When an undated goal finishes at the time shown; null [forecast] when there's no finish to show. */
 data class LineAdvice(
-    val endDate: LocalDate?,
+    val forecast: PlanForecast?,
 )
 
-fun PlanTimeAdvice.lineAdvice() = LineAdvice(endDate)
+fun PlanTimeAdvice.lineAdvice() = LineAdvice(forecast)
 
 val TimeLine.isBusy: Boolean get() = this == TimeLine.Asking || this == TimeLine.Working
 
@@ -72,7 +72,7 @@ fun timeLine(
         }
 
         !dated -> {
-            advice?.let { it.endDate?.let(TimeLine::Finish) ?: TimeLine.NoFinish }
+            advice?.let { it.forecast?.let(TimeLine::Finish) ?: TimeLine.NoFinish }
                 ?: if (askFailed) TimeLine.AskFailed else TimeLine.Asking
         }
 
