@@ -64,12 +64,8 @@ final class RecordInBar {
   }
 }
 
-/// Main's `RecordNote`: the bar's line right over Record when a take ran into a problem, in the same
-/// words on every screen that records. When to speak is the `RecordCue`'s, under what's said, and a
-/// check that isn't slow yet has no line: Record's busy button says it.
 enum RecordNote: Equatable {
   case noSpeech
-  /// The take likely lost its first words while the microphone started.
   case missedStart
   case failed
   case slow

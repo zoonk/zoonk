@@ -10,7 +10,6 @@ sealed interface GradeOutcome<out T> {
 
     data object NoSpeech : GradeOutcome<Nothing>
 
-    /** The microphone started late and only the opening words were missed, so the take wasn't graded. */
     data object MissedStart : GradeOutcome<Nothing>
 
     data class Limited(

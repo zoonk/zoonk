@@ -29,17 +29,13 @@ import java.io.File
 import java.util.UUID
 import kotlin.math.log10
 
-/**
- * AAC in an MPEG-4 file, which the API accepts as `audio/mp4`. [micStartupMs] is how long the microphone took to start after
- * Record was pressed, which lets the server tell a clipped opening from a wrong one; null when it wasn't measured.
- */
+/** AAC in MPEG-4 for the API; [micStartupMs] runs from Record to the live microphone, when measured. */
 class VoiceRecording(
     val audio: ByteArray,
     val durationMs: Long,
     val micStartupMs: Long? = null,
     val attemptId: UUID = UUID.randomUUID(),
 ) {
-    /** The same take sent without its startup time, so the server grades the words as heard. */
     fun withoutMicStartup(): VoiceRecording = VoiceRecording(audio, durationMs, attemptId = attemptId)
 
     fun part(): MultipartBody.Part = MultipartBody.Part.createFormData("audio", "answer.m4a", audio.toRequestBody(MEDIA_TYPE))
@@ -52,9 +48,6 @@ class VoiceRecording(
 /**
  * Each take lives in a temporary file that's read and deleted as soon as it stops. Losing audio
  * focus (a call, another app recording) throws the take away: half a sentence isn't worth grading.
- *
- * The microphone opens off the main thread, so [Status.Acquiring] can draw while it starts; the take is live
- * ([Status.Recording]) once `MediaRecorder.start()` returned, and only then does the screen say "Speak now".
  */
 class VoiceRecorder(
     private val context: Context,
@@ -79,13 +72,12 @@ class VoiceRecorder(
 
     private val recentLevels = MutableStateFlow<List<Float>>(emptyList())
 
-    /** The live take's loudness, 0 to 1, oldest first and newest last; empty until it's live. */
+    /** Normalized input levels (0 to 1), oldest first. */
     val levels: StateFlow<List<Float>> = recentLevels.asStateFlow()
 
     private val audio = context.getSystemService(AudioManager::class.java)
     private var take: Take? = null
 
-    /** Counts starts and cancels, so a microphone that finishes opening after its take was cancelled is closed again. */
     private var opening = 0
 
     private class Take(
@@ -110,10 +102,7 @@ class VoiceRecorder(
         status.compareAndSet(Status.Unavailable, Status.Idle)
     }
 
-    /**
-     * Opens the microphone for a take; [state] says when it's live or unavailable.
-     * False when acquisition cannot begin.
-     */
+    /** Returns false if acquisition could not begin; observe [state] for its eventual result. */
     fun start(onRecorded: (VoiceRecording) -> Unit): Boolean {
         if (status.value != Status.Idle || !scope.isActive || !hasPermission) return false
         val pressedAt = SystemClock.elapsedRealtime()
@@ -173,14 +162,13 @@ class VoiceRecorder(
         finish(deliver = false)
     }
 
-    /** The prepared and started recorder, or null when the microphone couldn't start. */
     private fun open(
         file: File,
         attempt: Int,
     ): MediaRecorder? {
         var recorder: MediaRecorder? = null
         return try {
-            // The Context constructor is API 31; this one records the same on every version.
+            // MediaRecorder(Context) requires API 31.
             @Suppress("DEPRECATION")
             val current = MediaRecorder().also { recorder = it }
             current.configure(file, attempt)
@@ -193,7 +181,6 @@ class VoiceRecorder(
         }
     }
 
-    /** Samples the take's loudness for the screen; a meter that fails leaves the take recording. */
     private fun meter(recorder: MediaRecorder): Job =
         scope.launch {
             while (isActive) {
@@ -256,16 +243,14 @@ class VoiceRecorder(
         /** A spoken answer is one sentence; a longer recording is a microphone left on. */
         const val MAX_DURATION_MS = 30_000L
 
-        /** The most the API takes as `micStartupMs`. */
+        /** Upper bound accepted by the grading API. */
         private const val MAX_MIC_STARTUP_MS = 60_000L
         private const val SAMPLE_RATE = 22_050
         private const val BIT_RATE = 32_000
 
-        /** About as many as fit across a wide screen's row at one per 8dp. */
         private const val MAX_LEVELS = 128
         private const val LEVEL_INTERVAL_MS = 60L
 
-        /** A peak from `getMaxAmplitude()` on a decibel scale: [QUIET_DB] and below is 0, full scale is 1. */
         internal fun loudness(amplitude: Int): Float {
             if (amplitude <= 0) return 0f
             val decibels = 20 * log10(amplitude / FULL_SCALE)

@@ -183,7 +183,7 @@ enum Refusable<Value: Sendable>: Sendable {
 enum GradeOutcome<Value: Sendable>: Sendable {
   case graded(Value)
   case noSpeech
-  /// The take likely lost its first words while the microphone started: nothing was graded.
+  /// A likely clipped opening; the answer was not graded.
   case missedStart
   case limit(HelpLimit)
   case failed

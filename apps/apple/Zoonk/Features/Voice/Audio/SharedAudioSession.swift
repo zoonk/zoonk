@@ -11,9 +11,7 @@ enum SharedAudioSession {
     users.insert(ObjectIdentifier(user))
   }
 
-  /// Sets the session up and activates it off the main actor, where it can block while the audio
-  /// route changes. The user holds the session from the start, so another user letting go
-  /// meanwhile doesn't deactivate it.
+  /// Holds the shared session during activation, which can block while the audio route changes.
   static func activate(
     for user: AnyObject,
     configure: @escaping @Sendable (AVAudioSession) throws -> Void

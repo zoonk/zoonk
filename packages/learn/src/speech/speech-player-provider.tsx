@@ -29,7 +29,7 @@ type SpeechPlayer = {
     rate: number;
     url: string;
   }) => Promise<PlaybackEnd>;
-  /** Stops whatever is playing, whoever started it. */
+  /** Stops playback across all owners. */
   silence: () => void;
   stop: (owner: PlaybackOwner) => void;
 };

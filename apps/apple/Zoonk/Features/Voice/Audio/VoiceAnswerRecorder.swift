@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// Records an answer from the screen's bottom bar: Record is the bar's main action and a problem
-/// with the take (`RecordNote`) sits right over it, so the step draws only a limit here. When to
-/// speak is the `RecordCue` under the sentence.
 struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(RecordInBar.self) private var bar: RecordInBar?
@@ -11,8 +8,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @State private var isSlow = false
   @State private var grading: Task<Void, Never>?
   @State private var issue: Issue?
-  /// Off once this screen's take was refused as a missed start, so the next take is graded as
-  /// heard rather than refused again.
+  // Ask for a retake once per screen; grade later takes as heard.
   @State private var sendsStartup = true
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>

@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 
-/** [SpeakCue] for [recorder]'s take; [checking] while the take is graded. */
 @Composable
 fun SpeakCue(
     recorder: VoiceRecorder,
@@ -48,14 +47,7 @@ fun SpeakCue(
     SpeakCue(status, checking, { levels }, modifier)
 }
 
-/**
- * Main's cue row, right under what the learner says: when to start talking. Before a take it says to wait for "Speak now";
- * while the microphone opens, a pale flat track says it's getting ready; once the recorder runs, "Speak now" over a dark
- * track whose bars follow the voice ([levels], newest at the end), with one light tap. Empty while the take is [checking].
- * It keeps one height through all of them, so nothing under it moves.
- *
- * TalkBack doesn't read it: speech at "Speak now" would land in the take, and Record turning into Stop already says it.
- */
+// TalkBack speech during recording would be captured in the take.
 @Composable
 fun SpeakCue(
     status: VoiceRecorder.Status,
@@ -124,7 +116,6 @@ private fun CueLabel(
     Text(text, modifier = modifier, color = color, fontWeight = weight, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** As many bars as fit, each a dot at rest and as tall as the row at full voice; quiet slots before the first sample. */
 @Composable
 private fun RowScope.Track(
     color: Color,
@@ -146,7 +137,7 @@ private fun RowScope.Track(
     }
 }
 
-/** One light tap when a take goes live, kept through a recreation so a turned phone doesn't tap again. */
+// Preserve the haptic across recreation so rotation cannot replay it.
 @Composable
 private fun LiveTap(startedAt: Long?) {
     val haptics = LocalHapticFeedback.current
@@ -158,7 +149,6 @@ private fun LiveTap(startedAt: Long?) {
     }
 }
 
-/** Animations turned off for the device: the bars hold still, while pale and dark still say getting ready and live. */
 @Composable
 private fun animationsOff(): Boolean {
     val resolver = LocalContext.current.contentResolver

@@ -94,10 +94,6 @@ function WordListenButtons({
   );
 }
 
-/**
- * `cue` goes right under the word and its Listen buttons, which wait while a take is getting ready
- * or recording (`recording`), so the example never plays into it.
- */
 export function PronunciationWord({
   cue,
   language,

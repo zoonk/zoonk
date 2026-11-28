@@ -92,7 +92,6 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
   );
 }
 
-/** While a word waits for a take: the cue under it and the bar's note. */
 function useWordTake({
   mic,
   pending,

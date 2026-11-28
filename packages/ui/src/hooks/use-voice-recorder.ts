@@ -8,7 +8,6 @@ import { useIsMounted } from "./use-is-mounted";
 /** A spoken answer is one sentence; a longer recording is a microphone left on. */
 const MAX_RECORDING_MS = 30_000;
 const TICK_MS = 250;
-/** The most the grader takes as the microphone's startup; a longer wait isn't one it can use. */
 const MAX_STARTUP_MS = 60_000;
 
 /** Formats the grader accepts. */
@@ -16,7 +15,7 @@ const RECORDING_TYPES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
 
 type RecorderStatus = "acquiring" | "denied" | "idle" | "recording";
 
-/** `micStartupMs`: from the press on Record to the recorder going live, when it was measured. */
+/** `micStartupMs` measures from Record to the microphone going live. */
 export type Recording = { audio: Blob; durationMs: number; micStartupMs?: number };
 
 /** `blocked`: the learner or the browser refused it. `unavailable`: there's none, or another app holds it. */
@@ -48,7 +47,6 @@ export function stopTracks(stream: MediaStream) {
   stream.getTracks().forEach((track) => track.stop());
 }
 
-/** The level meter is extra: a browser that can't measure the stream still records it. */
 function openContext(): AudioContext | null {
   try {
     const context = new AudioContext();
@@ -70,11 +68,10 @@ function listenSafely(context: AudioContext | null, stream: MediaStream): Microp
 type ActiveRecording = {
   level: MicrophoneLevel | null;
   live: ReturnType<typeof Promise.withResolvers<boolean>>;
-  /** On the monotonic clock, for the startup the grader reads. */
   liveAt: number | null;
+  readiness: AbortController;
   recorder: MediaRecorder;
   released: boolean;
-  /** On the wall clock, for the clock the learner reads. */
   startedAt: number | null;
   stream: MediaStream;
   timeout: ReturnType<typeof setTimeout>;
@@ -86,6 +83,7 @@ function finishRecording(active: ActiveRecording) {
   }
 
   active.released = true;
+  active.readiness.abort();
   active.live.resolve(false);
   globalThis.clearTimeout(active.timeout);
   active.level?.stop();
@@ -97,10 +95,7 @@ function finishRecording(active: ActiveRecording) {
   stopTracks(active.stream);
 }
 
-/**
- * Live is the recorder's own start with sound coming in: a track starts muted while some devices,
- * such as Bluetooth headphones, switch to their microphone.
- */
+// A Bluetooth input can stay muted after the recorder starts.
 function createRecording({
   level,
   onStopped,
@@ -118,6 +113,7 @@ function createRecording({
     level,
     live: Promise.withResolvers<boolean>(),
     liveAt: null,
+    readiness: new AbortController(),
     recorder,
     released: false,
     startedAt: null,
@@ -133,15 +129,19 @@ function createRecording({
     }
   };
 
-  recorder.addEventListener("start", () => {
+  const watchReadiness = { once: true, signal: active.readiness.signal };
+
+  const onStart = () => {
     const [track] = stream.getAudioTracks();
 
     if (track?.muted) {
-      track.addEventListener("unmute", goLive, { once: true });
+      track.addEventListener("unmute", goLive, watchReadiness);
     } else {
       goLive();
     }
-  });
+  };
+
+  recorder.addEventListener("start", onStart, watchReadiness);
 
   recorder.addEventListener("dataavailable", (event) => chunks.push(event.data));
 
@@ -179,10 +179,6 @@ function getStartupMs(take: Take): number | undefined {
   return startupMs === null || startupMs > MAX_STARTUP_MS ? undefined : Math.round(startupMs);
 }
 
-/**
- * The microphone opens on Record and closes at Stop. `readLevel` is the live input's level while
- * recording, for a meter that moves with the learner's voice.
- */
 export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recording) => void }) {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const [elapsedMs, setElapsedMs] = useState(0);
@@ -265,7 +261,7 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
       return "unavailable";
     }
 
-    // Made in the tap, or Safari on iOS keeps the meter silent.
+    // Safari on iOS requires audio context creation during the tap.
     const take: Take = { context: openContext(), pressedAt: performance.now() };
     takeRef.current = take;
     setStatus("acquiring");
@@ -286,7 +282,7 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
     return result;
   }, [open, release]);
 
-  const readLevel = useCallback(() => takeRef.current?.active?.level?.read() ?? 0, []);
+  const readLevel = () => takeRef.current?.active?.level?.read() ?? 0;
 
   useEffect(() => {
     if (status !== "recording") {

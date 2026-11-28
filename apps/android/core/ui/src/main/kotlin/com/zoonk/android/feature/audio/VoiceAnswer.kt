@@ -77,7 +77,6 @@ class VoiceAnswerModel(
     var checking by mutableStateOf(false)
         private set
 
-    /** The recorder's screen, held by [recordNote] until the screen goes. */
     internal val visit = Visit()
 
     internal val issue = visit.outcome<VoiceIssue>()
@@ -89,7 +88,7 @@ class VoiceAnswerModel(
     /** The learner refused the microphone on a screen that then answers another way, kept through a reclaimed process. */
     var blocked by handle.saveable { mutableStateOf(false) }
 
-    /** Once the server said a take missed its start, the screen's takes go without their startup time, so it says so once. */
+    // Ask for a retake once per screen; grade later takes as heard.
     private var missedStartVisit: Int? = null
 
     internal fun record() {

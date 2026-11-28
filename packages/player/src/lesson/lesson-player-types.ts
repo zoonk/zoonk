@@ -128,10 +128,7 @@ export type LessonPlayerAdapters = {
   /** Omit `stepIds` to read every screen's pictures. */
   getLessonPictures?: (stepIds?: string[]) => Promise<LessonPicture[]>;
   explainAnswer?: (input: { answer: string; stepId: string }) => Promise<AnswerExplanationOutcome>;
-  /**
-   * Grades a recording of a spoken answer. Without it, spoken screens take a typed answer.
-   * `micStartupMs`: from the press on Record to the microphone going live, when measured.
-   */
+  /** Without this adapter, spoken screens accept typed answers. */
   gradeSpokenAnswer?: (input: {
     attemptId: string;
     audio: Blob;

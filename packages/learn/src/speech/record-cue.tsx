@@ -1,17 +1,13 @@
-"use client";
-
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent, useRef } from "react";
 
 const BAR_WIDTH = 4;
 const BAR_GAP = 4;
 const ROW_HEIGHT = 24;
 const SAMPLE_MS = 80;
-/** A quiet room's level, drawn as a dot. */
 const NOISE_LEVEL = 0.005;
-/** A loud voice's level, drawn as a full bar. */
 const LOUD_LEVEL = 0.15;
 
 type CueStatus = "acquiring" | "denied" | "idle" | "recording";
@@ -28,10 +24,6 @@ function drawBar(bar: Element | undefined, level: number) {
   bar?.setAttribute("y", String((ROW_HEIGHT - height) / 2));
 }
 
-/**
- * The recent level, newest at the end, written outside React's render. With reduced motion the
- * bars hold still: the dark track and "Speak now" still say it's listening.
- */
 function useLevelBars({
   count,
   live,
@@ -42,6 +34,7 @@ function useLevelBars({
   readLevel: () => number;
 }) {
   const ref = useRef<SVGSVGElement>(null);
+  const sample = useEffectEvent(readLevel);
 
   useEffect(() => {
     const bars = ref.current?.children;
@@ -54,7 +47,7 @@ function useLevelBars({
 
     const timer = globalThis.setInterval(() => {
       levels.shift();
-      levels.push(readLevel());
+      levels.push(sample());
       levels.forEach((level, index) => drawBar(bars[index], level));
     }, SAMPLE_MS);
 
@@ -62,7 +55,7 @@ function useLevelBars({
       globalThis.clearInterval(timer);
       [...bars].forEach((bar) => drawBar(bar, 0));
     };
-  }, [count, live, readLevel]);
+  }, [count, live]);
 
   return ref;
 }
@@ -99,16 +92,11 @@ function LevelTrack({ live, readLevel }: { live: boolean; readLevel: () => numbe
   );
 }
 
-/**
- * The cue under what the learner says, on every screen that records an answer: when to start
- * talking, and that they're heard. It keeps one height in every state, so nothing moves. Hidden
- * from screen readers, whose speech at "Speak now" would land in the take.
- */
+// Screen reader speech during recording would be captured in the take.
 export function RecordCue({
   checking = false,
   recorder,
 }: {
-  /** A take is being checked: the bar's busy button says it, so the row stays empty. */
   checking?: boolean;
   recorder: { readLevel: () => number; status: CueStatus };
 }) {

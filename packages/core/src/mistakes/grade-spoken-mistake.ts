@@ -121,7 +121,7 @@ export async function gradeSpokenMistake({
     return { status: "missedStart" };
   }
 
-  // Earlier notebook attempts cached silence as a null grade.
+  // A cached null grade also represents silence.
   if (graded.result.status === "noSpeech" || graded.result.grade === null) {
     return { status: "noSpeech" };
   }

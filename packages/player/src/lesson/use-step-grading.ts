@@ -118,7 +118,7 @@ export function useStepGrading({
     [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
-  // The take right after a missed start goes unmeasured, so it's never called missed twice.
+  // After a missed start, always grade the next take for this step as heard.
   const missedStartRef = useRef<string | null>(null);
 
   const submitSpokenAnswer = useCallback(

@@ -566,7 +566,6 @@ private struct SpokenAnswerStepView: View {
         }
       }
       if mode == .speak {
-        // Right under the sentence, where the learner looks before saying it.
         if !context.isLocked {
           RecordCue(
             recorder: recordInBar?.recorder, isChecking: recordInBar?.isChecking == true)

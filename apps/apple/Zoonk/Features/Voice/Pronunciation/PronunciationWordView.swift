@@ -7,7 +7,6 @@ struct PronunciationWordView: View {
   let language: String
   /// So leaving the round stops the word's sound.
   let owner: AnyHashable
-  /// False while a take is getting ready or recording: the microphone would record the word.
   var canListen = true
 
   var body: some View {

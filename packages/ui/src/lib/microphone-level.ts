@@ -4,7 +4,6 @@ export type MicrophoneLevel = {
   stop: () => void;
 };
 
-/** `context` must have been made during a tap, or Safari on iOS keeps it silent. */
 export function listenToLevel({
   context,
   stream,

@@ -88,7 +88,7 @@ fun rememberSpokenAudio(
  * Plays [segments] on tap and stops them on the next one. A screen that shows [SpeechFailedNote]
  * passes `audio.state.withoutFailure()` as [state], so the note's Try again is the only retry.
  * Two buttons with their own [SpokenAudio] (normal and slow) stop each other, since one sound
- * plays at a time. Not [enabled] while the learner records, so the example doesn't play into their take.
+ * plays at a time.
  */
 @Composable
 fun ListenButton(

@@ -32,7 +32,7 @@ export async function allowPronunciationRecording(page: Page) {
 
       const track = {
         stop() {
-          /** This fixture has no device resources to release. */
+          // The Playwright stub owns no hardware track.
         },
       };
 

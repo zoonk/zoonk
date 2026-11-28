@@ -269,9 +269,15 @@ private fun WordStep(
     val haptics = LocalHapticFeedback.current
     val note =
         when {
-            step.grade != null -> null
-            model.microphoneOff -> ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
-            else ->
+            step.grade != null -> {
+                null
+            }
+
+            model.microphoneOff -> {
+                ({ MicrophoneOff(stringResource(R.string.pronunciation_microphone_off), titled = false) })
+            }
+
+            else -> {
                 recordNote(
                     status,
                     checking = round.pending,
@@ -279,6 +285,7 @@ private fun WordStep(
                     navigator = navigator,
                     unavailable = stringResource(R.string.pronunciation_microphone_unavailable),
                 )
+            }
         }
 
     LaunchedEffect(step.grade) {

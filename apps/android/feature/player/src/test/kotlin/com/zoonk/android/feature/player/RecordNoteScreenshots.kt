@@ -55,8 +55,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
 /**
- * Review screenshots of the cue under what the learner says and the line over Record on the lesson's spoken screen and the
- * pronunciation review, and of a lesson's check line, written only on demand:
+ * Generate recording review screenshots on demand:
  * `./gradlew :feature:player:testDebugUnitTest --tests '*RecordNoteScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -275,7 +274,6 @@ class RecordNoteScreenshots {
         rule.onNodeWithText("Record").performClick()
     }
 
-    /** Record while Android asks for the microphone: the take is getting ready until the learner answers. */
     private fun askForMicrophone() {
         shadowOf(rule.activity.application).denyPermissions(Manifest.permission.RECORD_AUDIO)
         rule.onNodeWithText("Record").performClick()

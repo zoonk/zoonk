@@ -22,8 +22,6 @@ final class StudyAPITests: XCTestCase {
     }
   }
 
-  /// The grader reads a slow microphone start as a likely lost first word, so only a measured start
-  /// is sent.
   func testASpokenAnswerSendsItsMicrophoneStartOnlyWhenMeasured() async throws {
     let transport = StudyRecordingTransport()
     let api = VoiceAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))

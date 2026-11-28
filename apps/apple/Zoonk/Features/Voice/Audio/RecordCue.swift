@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// The row right under what the learner says, telling them when to speak, as on main. Before
-/// a take it says to wait for "Speak now"; while the microphone starts, a pale flat track reads
-/// "Getting ready…"; once the recorder runs, a dark track whose bars follow the voice reads "Speak
-/// now", with one light tap. It keeps one height in every state, empty while a take is checked.
-/// VoiceOver skips it: its speech would end up in the take.
+// VoiceOver speech during recording would be captured in the take.
 struct RecordCue: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @ScaledMetric(relativeTo: .subheadline) private var height = 24.0
@@ -17,7 +13,6 @@ struct RecordCue: View {
   }
 
   private enum Source {
-    /// Nil before the screen's recorder is set up, which reads as before a take.
     case recorder(VoiceRecorder?, isChecking: Bool)
     case fixed(Phase, levels: [Double])
   }
@@ -28,7 +23,6 @@ struct RecordCue: View {
     source = .recorder(recorder, isChecking: isChecking)
   }
 
-  /// A state drawn as given, as the Debug gallery shows each one.
   init(phase: Phase, levels: [Double] = []) {
     source = .fixed(phase, levels: levels)
   }
@@ -46,7 +40,6 @@ struct RecordCue: View {
     }
   }
 
-  /// Read only where the bars draw, since they change ten times a second.
   private var levels: [Double] {
     switch source {
     case .fixed(_, let levels): levels
@@ -57,7 +50,6 @@ struct RecordCue: View {
   var body: some View {
     let phase = phase
 
-    // Every state is laid out and only one shows, so the row's height never changes.
     ZStack(alignment: .leading) {
       Text(
         "Say it after “Speak now”", tableName: "Voice",
@@ -101,8 +93,6 @@ struct RecordCue: View {
   }
 }
 
-/// One bar per level, newest at the trailing end, and a dot wherever there's no level yet or no
-/// voice.
 private struct LevelBars: View {
   let levels: [Double]
   let color: Color

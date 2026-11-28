@@ -628,8 +628,6 @@
     }
   }
 
-  /// Each state of the row under a sentence to say, as the simulator often has no microphone to
-  /// reach them: before a take, getting ready, live in silence, live with a voice, checking (empty).
   private struct RecordCues: View {
     private let voice = (0..<60).map { abs(sin(Double($0) * 0.55)) * (0.35 + Double($0 % 7) / 10) }
 

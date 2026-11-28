@@ -45,7 +45,6 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-/** A take's problem goes in the bar's note; a limit gets its own notice. */
 function splitIssue(issue: LessonPlayerState["checkIssue"]) {
   if (issue?.status === "missedStart" || issue?.status === "noSpeech") {
     return { limit: null, problem: issue.status };

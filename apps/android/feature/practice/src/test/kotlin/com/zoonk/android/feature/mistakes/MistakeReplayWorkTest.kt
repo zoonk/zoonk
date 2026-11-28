@@ -87,7 +87,6 @@ class MistakeReplayWorkTest {
         }
     }
 
-    /** The spoken screen says when to speak, so mistake practice's bar has the lesson's own Record. */
     @Test
     fun aSpokenMistakeCanBeRecorded() {
         val spoken =

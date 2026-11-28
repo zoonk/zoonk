@@ -107,7 +107,6 @@ final class SpeechPlayer {
     stopAny()
   }
 
-  /// Whichever screen it's for: a take starting would record it.
   func stopAny() {
     guard current != nil else {
       return

@@ -9,7 +9,6 @@ import {
   type PracticeStep,
 } from "./mistake-practice-state";
 
-/** `micStartupMs`: from the press on Record to the microphone going live, when measured. */
 type RecordingInput = { audio: Blob; durationMs: number; micStartupMs?: number };
 
 type RecordingIssue =
@@ -55,7 +54,7 @@ export function usePracticeRecording({
     (RecordingInput & { attemptId: string; index: number; practiceDurationMs: number }) | null
   >(null);
 
-  // The take right after a missed start goes unmeasured, so it's never called missed twice.
+  // After a missed start, always grade the next take for this mistake as heard.
   const missedStartAt = useRef<number | null>(null);
 
   const sendRecording = async (input: NonNullable<typeof recording.current>) => {

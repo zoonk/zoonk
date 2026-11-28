@@ -7,12 +7,6 @@ import { useNoSpeechMessage } from "../language/no-speech-message";
 
 export type RecordProblem = "failed" | "missedStart" | "noSpeech" | "signUpRequired";
 
-/**
- * The one line about a problem with recording, for the bar's `note` right over Record, on every
- * screen that records an answer; the screen's `RecordCue` says when to talk. Null while a take is
- * on, and while it's checked and the check isn't slow yet: the bar's busy main action says it.
- * `unavailable` is the screen's own line for a microphone it can't use.
- */
 export function useRecordNote({
   checking = false,
   problem = null,
@@ -21,7 +15,6 @@ export function useRecordNote({
 }: {
   checking?: boolean;
   problem?: RecordProblem | null;
-  /** Getting ready or recording. */
   recording: boolean;
   unavailable?: string | null;
 }): React.ReactNode {

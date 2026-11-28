@@ -127,7 +127,6 @@ class VoiceAnswerRecorderTest {
         assertEquals(GradeOutcome.Obsolete, MutationResult.Obsolete.toGradeOutcome())
     }
 
-    /** After the server says a take missed its start, the screen's next takes are graded as heard, so it says it once. */
     @Test
     fun takesOnTheSameVisitOmitStartupAfterAMissedStart() {
         val sent = mutableListOf<VoiceRecording>()

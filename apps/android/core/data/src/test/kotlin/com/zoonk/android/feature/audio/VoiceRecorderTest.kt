@@ -31,7 +31,6 @@ class VoiceRecorderTest {
         shadowOf(context).grantPermissions(Manifest.permission.RECORD_AUDIO)
     }
 
-    /** Leaving while the microphone opens: once it opens, it's closed again, and the next Record starts cleanly. */
     @Test
     fun aTakeCancelledWhileTheMicrophoneOpensNeverGoesLive() {
         val recorder = VoiceRecorder(context, main, opener)

@@ -30,10 +30,6 @@ fun recordNote(
     return recordNote(status, model.checking, model.issue.value, navigator)
 }
 
-/**
- * Main's `RecordNote`, the one line over a screen's Record in its bottom bar, read out by the bar's note as it changes: only what
- * went wrong, or that the check is slow. When to speak is [SpeakCue]'s, under what the learner says.
- */
 @Composable
 fun recordNote(
     status: VoiceRecorder.Status,
