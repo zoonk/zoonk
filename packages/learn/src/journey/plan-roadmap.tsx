@@ -3,15 +3,41 @@
 import { MeterPart, MeterParts } from "@zoonk/ui/components/meter";
 import { RowChevron } from "@zoonk/ui/components/row-chevron";
 import { cn } from "@zoonk/ui/lib/utils";
+import { FlagIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { getPhaseWeight } from "../plan/phase-weight";
+import { PlanDateText } from "../plan/plan-date-text";
 import { type JourneyPathLinks } from "./journey-links";
 import { PhaseWhen } from "./phase-when";
 import { RoadmapFull } from "./roadmap-full";
 import { BAND_STATE_CLASS } from "./roadmap-styles";
-import { getLessonShare, useRoadmapPhases, useRoadmapPosition } from "./use-roadmap";
+import {
+  getLessonShare,
+  useFinishLabel,
+  useRoadmapFinish,
+  useRoadmapPhases,
+  useRoadmapPosition,
+} from "./use-roadmap";
 
 const PERCENT = 100;
+
+/** Where the bar ends, as the full timeline's axis ends: the flag and the goal's date, or open. */
+function CompactFinish() {
+  const finish = useRoadmapFinish();
+  const finishLabel = useFinishLabel();
+
+  if (!finish) {
+    return null;
+  }
+
+  return (
+    <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs">
+      <FlagIcon aria-hidden="true" className="size-3.5" />
+      <span className="sr-only">{finishLabel}</span>
+      <PlanDateText inWords {...finish} />
+    </span>
+  );
+}
 
 function RoadmapCompact({
   className,
@@ -26,27 +52,30 @@ function RoadmapCompact({
 
   const content = (
     <>
-      <MeterParts as="span">
-        {phases.map((phase) => (
-          <MeterPart
-            as="span"
-            className={cn(
-              "relative min-w-6 overflow-hidden",
-              phase.state === "current" && BAND_STATE_CLASS.current,
-            )}
-            key={phase.index}
-            weight={getPhaseWeight(phase)}
-          >
-            <span
+      <span className="flex w-full items-center gap-2">
+        <MeterParts as="span" className="min-w-0 flex-1">
+          {phases.map((phase) => (
+            <MeterPart
+              as="span"
               className={cn(
-                "absolute inset-y-0 left-0",
-                phase.state === "current" ? "bg-success/30" : "bg-success",
+                "relative min-w-6 overflow-hidden",
+                phase.state === "current" && BAND_STATE_CLASS.current,
               )}
-              style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
-            />
-          </MeterPart>
-        ))}
-      </MeterParts>
+              key={phase.index}
+              weight={getPhaseWeight(phase)}
+            >
+              <span
+                className={cn(
+                  "absolute inset-y-0 left-0",
+                  phase.state === "current" ? "bg-success/30" : "bg-success",
+                )}
+                style={{ width: `${getLessonShare(phase) * PERCENT}%` }}
+              />
+            </MeterPart>
+          ))}
+        </MeterParts>
+        <CompactFinish />
+      </span>
 
       {position && (
         <span
