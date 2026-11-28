@@ -29,7 +29,7 @@ import {
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { useIsQuietListening } from "./use-today-choice";
 
-type Props = Parameters<LessonPracticeRenderer>[0];
+type Props = Parameters<LessonPracticeRenderer>[0] & Pick<LessonPlayerAdapters, "runCode">;
 
 function idle() {
   return null;
@@ -145,8 +145,18 @@ function PracticeStepScreen({
 
 /** The notebook controls saving and progression; these are the lesson's original answer controls. */
 export function LessonPracticeStep(props: Props) {
-  const { answer, disabled, lesson, notes, onAnswer, onDontKnow, onCheck, onRecord, recordIssue } =
-    props;
+  const {
+    answer,
+    disabled,
+    lesson,
+    notes,
+    onAnswer,
+    onDontKnow,
+    onCheck,
+    onRecord,
+    recordIssue,
+    runCode,
+  } = props;
 
   const { step } = lesson;
   const [shown, setShown] = useState(0);
@@ -216,7 +226,7 @@ export function LessonPracticeStep(props: Props) {
   return (
     <LessonPlayerConfigContext
       value={{
-        adapters: NO_ADAPTERS,
+        adapters: { ...NO_ADAPTERS, runCode },
         canRecordSpokenAnswer: Boolean(onRecord),
         challengeTeam: null,
         exampleLinesWriting: null,
