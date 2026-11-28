@@ -37,7 +37,15 @@ const blueprintSubjectSchema = z.object({
   partOf: z.string().nullable().optional(),
   questions: z.number().int().nullable(),
   shortName: z.string().nullable().optional(),
-  topicGroups: z.array(z.object({ name: z.string(), topics: z.array(z.string()) })).optional(),
+  topicGroups: z
+    .array(
+      z.object({
+        name: z.string(),
+        share: z.number().min(0).max(1).optional(),
+        topics: z.array(z.string()),
+      }),
+    )
+    .optional(),
   topics: z.array(z.string()),
   weight: z.number().nullable(),
 });
