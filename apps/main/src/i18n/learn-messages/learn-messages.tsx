@@ -20,16 +20,14 @@ const PROVIDERS = {
 export function LearnMessages({
   children,
   locale,
-  timeZone,
 }: {
   children: React.ReactNode;
   locale: SupportedLocale;
-  timeZone: string;
 }) {
   const Provider = PROVIDERS[locale];
 
   return (
-    <Provider locale={getFormattingLocale(locale)} timeZone={timeZone}>
+    <Provider locale={getFormattingLocale(locale)} timeZone="UTC">
       {children}
     </Provider>
   );

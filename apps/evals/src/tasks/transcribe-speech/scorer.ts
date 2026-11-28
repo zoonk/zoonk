@@ -1,5 +1,6 @@
 import { createFixedScore } from "@/lib/score";
 import { type ClassificationOutcome, type TaskScorer } from "@/lib/types";
+import { normalizeTypedAnswer } from "@zoonk/ai/tasks/grading/typed-answer-match";
 import { matchSpokenAnswer } from "@zoonk/core/library/language/spoken-answer-match";
 import { type SpeechClipExpected, type SpeechClipInput } from "./test-cases";
 
@@ -48,6 +49,19 @@ export function scoreFlaggedWords({
   };
 }
 
+/** Any word heard in a clip with no speech, even a wrong one, makes the app grade it as speech. */
+export function scoreNoSpeech(heard: string) {
+  const silent = !normalizeTypedAnswer(heard);
+
+  return {
+    ...createFixedScore({
+      conclusion: `The clip has no speech and we heard "${heard}".`,
+      score: silent ? WORDS_MATCH_SCORE : WRONG_VERDICT_SCORE,
+    }),
+    classification: { expected: "no speech", predicted: silent ? "no speech" : "speech" },
+  };
+}
+
 export const scoreSpeechTranscript: TaskScorer<SpeechClipExpected> = ({ output, testCase }) => {
   if (!testCase.expected) {
     throw new Error(`Test case ${testCase.id} has no labeled words.`);
@@ -55,6 +69,10 @@ export const scoreSpeechTranscript: TaskScorer<SpeechClipExpected> = ({ output, 
 
   const input = testCase.userInput as SpeechClipInput;
   const { text } = JSON.parse(output) as { text: string };
+
+  if (!input.spokenText) {
+    return scoreNoSpeech(text);
+  }
 
   const match = matchSpokenAnswer({
     expected: input.targetText,

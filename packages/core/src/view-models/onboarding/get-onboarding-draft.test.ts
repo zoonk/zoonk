@@ -159,6 +159,47 @@ describe(getOnboardingDraft, () => {
     ]);
   });
 
+  it("shows the exam country the learner said", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const title = "Pass the G1 knowledge test";
+
+    const draft = await onboardingDraftFixture({
+      understanding: {
+        goals: [
+          {
+            contentCountry: {
+              code: "CA",
+              editable: false,
+              kind: "exam",
+              lessonVariety: null,
+              name: "Canada",
+              rebuild: "none",
+              source: "said",
+            },
+            countryDependent: true,
+            draft: { contentCountry: "CA", kind: "exam", language: "en", prompt: title, title },
+            examDates: [],
+          },
+        ],
+        schedule: { dailyMinutes: 15, studyDays: null, studyTime: null, studyTimeNote: null },
+        status: "goals",
+      },
+      userId: user.id,
+    });
+
+    const result = await getOnboardingDraft({ draftId: draft.id });
+    const understanding = result.status === "ready" ? result.draft.understanding : null;
+    const goals = understanding?.status === "goals" ? understanding.goals : [];
+
+    expect(goals[0]?.contentCountry).toMatchObject({
+      code: "CA",
+      editable: false,
+      kind: "exam",
+      source: "said",
+    });
+  });
+
   it("reads another learner's draft, or a malformed id, as missing", async () => {
     const [owner, other] = await Promise.all([userFixture(), userFixture()]);
     const draft = await onboardingDraftFixture({ userId: owner.id });

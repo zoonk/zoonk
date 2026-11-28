@@ -65,6 +65,15 @@ async function lessonWithPlan(spec: object = savedPlan) {
   return { lesson, step };
 }
 
+function withTemplate(index: number, activityTemplate: string) {
+  return {
+    ...plan,
+    screens: plan.screens.map((screen, position) =>
+      position === index ? { ...screen, activityTemplate, visualKind: "template" } : screen,
+    ),
+  };
+}
+
 function readLesson(id: string) {
   return prisma.lesson.findUniqueOrThrow({ where: { id } });
 }
@@ -156,6 +165,21 @@ describe("Lesson setPlan", () => {
       message: expect.stringContaining("Unlinked skill"),
       status: "invalid",
     });
+
+    await expect(readLesson(lesson.id)).resolves.toMatchObject({ spec: lesson.spec });
+  });
+
+  it("refuses a screen that names a template the writer can't fill", async () => {
+    const { lesson } = await lessonWithPlan();
+    await signInProposer();
+
+    await expect(
+      proposeContentFix(fixPlan(lesson.id, withTemplate(2, "codeRuner"))),
+    ).resolves.toMatchObject({ message: expect.stringContaining("codeRuner"), status: "invalid" });
+
+    await expect(
+      proposeContentFix(fixPlan(lesson.id, withTemplate(1, "matchPairs"))),
+    ).resolves.toMatchObject({ message: expect.stringContaining("matchPairs"), status: "invalid" });
 
     await expect(readLesson(lesson.id)).resolves.toMatchObject({ spec: lesson.spec });
   });

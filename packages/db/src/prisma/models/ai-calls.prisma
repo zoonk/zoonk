@@ -31,6 +31,9 @@ model AiCall {
   costUsd          Float?   @map("cost_usd")
   gatewayCostUsd   Float?   @map("gateway_cost_usd")
   latencyMs        Int      @map("latency_ms")
+  /// A billed run that threw, such as one whose answer failed its schema. A stream is logged when it
+  /// ends, before its output is checked. Null on rows written before outcomes were recorded.
+  failed           Boolean?
   createdAt        DateTime @default(now()) @map("created_at")
 
   @@index([createdAt])

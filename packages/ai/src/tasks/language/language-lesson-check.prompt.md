@@ -32,6 +32,8 @@ Each screen has a `kind` and the `content` the learner sees:
 - `listening`: plays `audio`, a `TARGET_LANGUAGE` sentence; the learner builds its `LEARNER_LANGUAGE` translation in `answer` from its words plus `extraTiles`. `explanation` shows after the answer.
 - `spokenAnswer`: shows `prompt` (and `translation` when given); the learner says it out loud and passes when what they say matches `targetText`.
 - `typedAnswer`: shows `question`; the learner types an answer, graded against `acceptedAnswers` and `keyPoints`.
+- `activity` with `template` `patternTable`: shows `modelWord`'s forms in `rows` (`model`) and `newWord`'s forms with the `blank` rows hidden; the learner fills each blank by choosing an ending from `choices`, and the accepted ending is the longest choice its `answer` ends with. `check.explanation` shows after the answer.
+- `activity` with `template` `dialogueSimulator`: shows the `scene` and the conversation's `lines`; the learner picks a reply to the last line, and only the one with `isBest` is accepted. Every reply's `why` and `check.explanation` show after the answer.
 - `summary`: what the learner can now say.
 
 Return issues as { screen, problem, fix }. Quote the words at fault in problem and give the correct version in fix. Screen numbers are 1-based; use null for the whole lesson. Every issue is an error.

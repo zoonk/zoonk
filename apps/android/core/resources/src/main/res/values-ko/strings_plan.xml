@@ -17,7 +17,7 @@
   "plan_archive_goal": "b85039bdd7e18d65713c882c9a418e0f5408f381728a9664cda94ad52c4938cd",
   "plan_archive_goal_short": "a6649e28ca455621e7078842b597d9b0b43c272eaf52f2c94b0be1cffad0577c",
   "plan_archive_title": "e095fcfa43fc484503e2ebd01fb007b29f699429f3d8270408a70bb91d079b35",
-  "plan_ask_add_topics": "886744af7f624da052f744ebff3f8d51f4b0c9fd538c2c04f3f399e7fc58c414",
+  "plan_ask_add_topics": "bf12921f5971d9ceca5ceb6f194fc163c1e1996b5f2d0000b9887904fdd01ab2",
   "plan_ask_aim": "3276395e15a1ede42949d8e96b6b657168def9e4dd6852a2e4f70bd0fd8db3b4",
   "plan_ask_change": "22d241436dc4d39ea83fb12e0070dd1f6134e24f9069b44f454ad3b54098e377",
   "plan_ask_daily_time": "b1aa8d6b08fb47cc833422fd2a981da7ae7dbae5362d24328cb5d88d100de8f0",
@@ -281,6 +281,7 @@
   "plan_going_deeper": "03f217a5f80dd0d811378afa697746bbdf73728d151ab6bcc543df99f1ac903a",
   "plan_how_calculated": "7ce829a1b2d889ac1956707e436377b146de370982785cede27a5adbbbb3e66f",
   "plan_keep_studying": "8886bf31b84c648c8f910574f29889d9af073db71149bf9f6a844f8da699118f",
+  "plan_left_out_topics": "30bd560df920e8db20c26b9d51b226ef60eb0ef0f15577a5cd5636f505f1aa17",
   "plan_legend_phase_questions": "a4071ec348b9cd094daae737e3a1b5900ffd94717315afec62596eb41eb7eb1d",
   "plan_lessons": "b3c5878d231409800298e7e37dfcb5f2c3a3b8df01b0308493b8666f4192ef08",
   "plan_lessons_done_of": "38b1e5994bd4b0dca6e1deda3c6018affe74764aa6eb94edadf1f2dadf2a4494",
@@ -511,16 +512,17 @@
   "plan_why_phase_dates_later": "09624ad55bb08dc4d83735f6dab347c8331579d88bfac6cb2432187121600a81",
   "plan_why_phase_end_later": "ccb81acaa07a6d0fe394789827312220f1a54ea1906b1239c1016835a4931cdf",
   "plan_why_phase_end_off_rest": "f349025f7db0c125e64bf56cb625fc8eabb7d1dd19261d24c11f33e8f4bcebdc",
-  "plan_written_above_minimum": "20f4470344ae614ee697be77d6210d54a8425a71d299d1a1889082fbdb9f8681",
+  "plan_written_above_minimum": "53c2e54f48ecaeacb44d61efa52270906b2311a87ea7458fb11ec80705c63361",
   "plan_written_asks_for": "d4793b8fe5ca789b2184c44916d50a4af0f7d7b98e5097b2d1263ed8d9e10559",
   "plan_written_asks_for_share": "12879f5387b72f104765923ee5a723b5ff665e93847518743dfd48ad942e9887",
-  "plan_written_below_minimum": "109777454ef54e71fdc5bd3fc7265d43ea26456817ba8521a249fb43383aa133",
-  "plan_written_close_to_minimum": "b1589103d00896fe9c4ea3eded94ddb57f417bcf62ad304750792334a0cb9705",
+  "plan_written_below_minimum": "0e6fc9bed8e499efccc9232d7639f7644274164af1b5bccb277ab74db81d04db",
+  "plan_written_cant_say": "a951581f192880962a4905a6acbec3418651b33d1dc5d659da8967b7a4e75b56",
+  "plan_written_close_to_minimum": "4db1d718cc015058df263f8caf2db66d37235ea4ed75e93057d24daa1b4cce27",
+  "plan_written_likely_below": "5312b7b5836862b290430787bb014d365e722d01cd58adb4bdc2de67abfe14de",
   "plan_written_not_measured": "ac4549752bad0cf9ebeebc01a06cff287762695f5c4b415ed23ed115ce6dcf78",
   "plan_written_not_measured_half": "0b48cfc6f22085f9888bfc04bd3691617512649473862b417772cccd15083076",
   "plan_written_not_measured_share": "8d3dc6038c3a9f5ddf252de2be8d21124fb090a06da4d07f2c212c17eff7d7ec",
   "plan_written_objective": "d2296c1b72bf30bd04d9de67c724edad17b81ee4fc9197ec6c658013d238fbc9",
-  "plan_written_points_below": "ead1d323d2ccec02e6b519ffc43fd696be288adbcf32c274fa4e133b91b7a461",
   "plan_you_are_here_suffix": "a5de9bea67715eb66aac362d6169bd878da55ee2e9144be4df4648b3e09619e7",
   "plan_your_level": "8d42ee1b842b7b2df49de28c84ddaf446bf1c17920c5a01443f825826ff36e47",
   "plan_your_pace": "71cca99cd65eff7ea3a1daabf04192de2ffe20b2df19f66851081b9cb21e98f7",
@@ -613,6 +615,10 @@
         <item quantity="other">레슨 %1$d개 완료(총 %2$d개)</item>
     </plurals>
     <string name="plan_not_in_your_plan">계획에 없어요</string>
+    <!-- Under a module or a phase of the learner's plan, and on the row that lists them: how many of its topics the plan leaves out because they don't fit before the plan's date. -->
+    <plurals name="plan_left_out_topics">
+        <item quantity="other">계획에 없는 주제 %d개</item>
+    </plurals>
     <plurals name="plan_lessons_not_studied">
         <item quantity="other">공부하지 않은 레슨 %d개</item>
     </plurals>
@@ -1235,7 +1241,8 @@
     <string name="plan_change_areas_from_basics">%1$s 과목은 기초부터 시작해요.</string>
     <string name="plan_change_exam_date">시험일: %1$s.</string>
     <string name="plan_change_end_date">종료일: %1$s.</string>
-    <string name="plan_ask_add_topics">계획에 %1$s을(를) 추가할까요?</string>
+    <!-- Asks whether to add topics to the learner's plan. {topics} lists their names, which are often actions themselves, such as “Memorize An-Nahl”, so they stay after the colon rather than inside the sentence. -->
+    <string name="plan_ask_add_topics">내 계획에 추가할까요: %1$s?</string>
     <string name="plan_ask_focus">%1$s에 집중할까요?</string>
     <string name="plan_ask_remove_focus">집중 학습 설정을 해제할까요?</string>
     <string name="plan_ask_less_time">%1$s 공부 시간을 줄일까요?</string>
@@ -1297,14 +1304,15 @@
     <string name="plan_call_not_in_plan">대화는 계획에 없어요</string>
     <string name="plan_outside_past_basics">건너뜀 · 기초를 이미 알고 있어요</string>
     <string name="plan_outside_skipped_base">건너뜀 · 직접 선택했어요</string>
-    <string name="plan_written_below_minimum">합격 최소 점수 미달</string>
+    <string name="plan_written_below_minimum">합격선에 못 미칠 가능성이 높아요</string>
     <string name="plan_written_asks_for">다른 점수와 관계없이 %1$s에서 %2$s점을 받아야 해요.</string>
     <string name="plan_written_asks_for_share">다른 점수와 관계없이 %1$s에서 배점의 %2$s를 받아야 해요.</string>
     <string name="plan_written_not_measured">%1$s은(는) 아직 측정되지 않았어요.</string>
     <string name="plan_written_not_measured_half">%1$s은(는) 최종 점수의 절반인데 아직 측정되지 않았어요.</string>
     <string name="plan_written_not_measured_share">%1$s은(는) 최종 점수의 %2$s에 해당하며 아직 측정되지 않았어요.</string>
     <string name="plan_written_objective">객관식 시험</string>
-    <string name="plan_written_above_minimum">필요한 최소 점수인 %1$s점보다 높아요</string>
-    <string name="plan_written_points_below">필요 점수 %2$s점에 %1$s점 모자라요</string>
-    <string name="plan_written_close_to_minimum">필요한 최소 점수 %1$s점에 가까워요</string>
+    <string name="plan_written_above_minimum">필요한 %1$s점보다 높을 가능성이 높아요</string>
+    <string name="plan_written_likely_below">필요한 %1$s점에 못 미칠 가능성이 높아요</string>
+    <string name="plan_written_close_to_minimum">필요한 %1$s점보다 높을 수도 낮을 수도 있어요</string>
+    <string name="plan_written_cant_say">필요한 %1$s점에 도달할지 아직 알 수 없어요</string>
 </resources>

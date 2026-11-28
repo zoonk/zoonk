@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation3.runtime.NavEntry
@@ -14,7 +13,6 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.LoadFailedMessage
-import kotlinx.coroutines.launch
 
 /**
  * Every entry behind [ShellGate], so a screen can assume what its route requires and no lane
@@ -58,9 +56,8 @@ fun ShellGate(
             }
 
             LearnerAccess.Unavailable -> {
-                val scope = rememberCoroutineScope()
                 LoadFailedMessage(
-                    onRetry = { scope.launch { app.sessions.retryRestore() } },
+                    onRetry = app::retrySessionRestore,
                     modifier = Modifier.padding(padding),
                 )
             }

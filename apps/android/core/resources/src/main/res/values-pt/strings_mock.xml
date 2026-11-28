@@ -12,8 +12,6 @@
   "mock_cell_unsure": "e4b006e4b4ff7232a230cf95c8ccb9977b7cafc7d9c20cb809b85c6bc1f5254a",
   "mock_continue": "1357c3012d9690c7dc533e11cd0e7a4aa8b56918e7f417625ae911555c981bd7",
   "mock_continue_section": "46ee19d55a1dab561333d0a00f8a3f4fc7b6bd627bec601ee76fbb77f57182b2",
-  "mock_essay_blank": "81108836c829806b2283ab6dd5964e5985af71551f13f8041ff65ca4a9ddf848",
-  "mock_essays_blank": "f4613a046d96c975ec4a832d872b63f5a8bf74f039f9050d8f6cc8b08752aac5",
   "mock_every_answered": "ca1c3fafb8d8f5cc36ebdba8d21678b24aabc146e41db78b7cfff0866fbdd398",
   "mock_expired_detail": "e2ccfbd788140d3c15c1739d9d01b69b50b98376cfbf90b4f6f97c2d5b8f2f83",
   "mock_expired_title": "909a29c8671454e99231f8ef9d285b4429ce1e3ab965400c13defa1a4eefe753",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "776f3ec7232d13e89256437497dc23d49d65a49a112494e884770df52bc01bff",
   "mock_written_question_blank": "8f60bffdba1ade2fd5efb1060f68149eeb888f485af31fc3ab3bda709ac0ae17",
   "mock_written_question_place": "f00f325dcc5f1a2d3f808f7b030b46d3ec8d62b6d2a22884fcb1f802a7409b46",
-  "mock_written_questions_blank": "9a89a53026b9937bca7731ad9f916d11b82c81b21592ef7a71533bf7e7afaa83",
-  "mock_your_essay": "04196ed6283cb810c4839e7f3f9ca3ed6688833c419018ed4366763340a9e9a9"
+  "mock_written_questions_blank": "9a89a53026b9937bca7731ad9f916d11b82c81b21592ef7a71533bf7e7afaa83"
 }
 -->
 <resources>
@@ -194,7 +191,6 @@
         <item quantity="other">Você está em dúvida sobre %d respostas.</item>
     </plurals>
     <string name="mock_every_answered">Todas as perguntas foram respondidas.</string>
-    <string name="mock_essay_blank">A redação está em branco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">A questão discursiva está em branco.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
@@ -202,11 +198,6 @@
         <item quantity="one">Há %d questão discursiva em branco.</item>
         <item quantity="many">%d questões discursivas estão em branco.</item>
         <item quantity="other">%d questões discursivas estão em branco.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d redação está em branco.</item>
-        <item quantity="many">%d redações estão em branco.</item>
-        <item quantity="other">%d redações estão em branco.</item>
     </plurals>
     <string name="mock_hand_in_final">Depois disso, suas respostas não poderão ser alteradas.</string>
     <string name="mock_keep_answering">Continuar respondendo</string>
@@ -259,7 +250,6 @@
     <string name="mock_expired_title">O tempo acabou enquanto você estava fora</string>
     <string name="mock_expired_detail">Esse não conta.</string>
     <string name="mock_take_another">Fazer outro</string>
-    <string name="mock_your_essay">Sua redação</string>
     <plurals name="mock_words">
         <item quantity="one">%d palavra</item>
         <item quantity="many">%d palavras</item>

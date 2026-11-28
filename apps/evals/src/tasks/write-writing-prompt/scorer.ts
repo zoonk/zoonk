@@ -8,7 +8,6 @@ import { normalizeString } from "@zoonk/utils/string";
 import { type WriteWritingPromptInput } from "./test-cases";
 
 const POINTS_PRECISION = 1e-9;
-const ENEM_IDS = ["c1", "c2", "c3", "c4", "c5"];
 
 export const WRITE_WRITING_PROMPT_SCORE_CATEGORIES = defineScoreCategories([
   {
@@ -20,7 +19,7 @@ export const WRITE_WRITING_PROMPT_SCORE_CATEGORIES = defineScoreCategories([
   },
   {
     expectations:
-      "Judge the private key as an examiner who will grade with it: every aspect is one observable thing, earned whole or not at all, a requested aspect a board grades in steps is split into steps, every requested aspect is covered, and every fact in the key points is correct and current (articles, dates, figures). The context invents no quote or figure attributed to a real source. Score at most 5 when a key fact is wrong; at most 7 when an aspect is a vague quality or a requested aspect has no aspect.",
+      "Judge the private key as an examiner who will grade with it: an item with definite answers is keyed as aspects that are each one observable thing, earned whole or not at all, or in three steps when it asks to explain or justify; an item that asks to discuss, analyze or relate a topic is one aspect with four steps on how well the answer treats it; every requested item is covered, and every fact in the key points is correct and current (articles, dates, figures). The context invents no quote or figure attributed to a real source. Score at most 5 when a key fact is wrong; at most 7 when an aspect is a vague quality or a requested aspect has no aspect.",
     id: "key",
     label: "A key an examiner can grade with",
     weight: 40,
@@ -43,8 +42,8 @@ function checkPoints({
 }) {
   const graded = input.unit === "answer" ? input.task.grading.criteria : [];
 
-  return graded.flatMap(({ id, points }) => {
-    if (points === null) {
+  return graded.flatMap(({ awards, id, points }) => {
+    if (points === null || awards) {
       return [];
     }
 
@@ -71,21 +70,6 @@ function checkTitle({
     return title === old || title.includes(old) || old.includes(title);
   })
     ? [`The title "${output.title}" repeats a used title.`]
-    : [];
-}
-
-function checkEnem({
-  input,
-  output,
-}: {
-  input: WriteWritingPromptInput;
-  output: WritingPromptOutput;
-}) {
-  const enem = input.unit === "answer" && input.task.grading.kind === "enem";
-  const ids = output.criteria.map(({ id }) => id);
-
-  return enem && ids.join(",") !== ENEM_IDS.join(",")
-    ? [`ENEM criteria are ${ids.join(", ")}, not c1 to c5.`]
     : [];
 }
 
@@ -117,7 +101,7 @@ function checkValidator({
   }
 }
 
-const CHECKS = [checkPoints, checkTitle, checkEnem];
+const CHECKS = [checkPoints, checkTitle];
 
 export const checkWriteWritingPrompt: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as WriteWritingPromptInput;

@@ -116,22 +116,27 @@ class GoalContentScreenshots {
     @Config(qualifiers = "w1280dp-h1600dp-land-xhdpi")
     fun expanded() = capture("expanded")
 
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun partlyPlannedModulePhone() = capture("phone", screens = SCREENS.filter { it.first == "subject-module-partly-left-out" })
+
     private fun capture(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
         opens: Boolean = true,
+        screens: List<Pair<String, @Composable () -> Unit>> = SCREENS,
     ) {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { key(index) { SCREENS[index].second() } }
+                Surface { key(index) { screens[index].second() } }
             }
         }
-        SCREENS.indices.forEach { screen ->
+        screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            val shot = SCREENS[screen].first
+            val shot = screens[screen].first
             write("$shot-$name", compose.onRoot().captureRender().asAndroidBitmap())
             // The taps find English words.
             val taps = OPENED[shot]?.takeIf { opens } ?: return@forEach
@@ -250,6 +255,10 @@ class GoalContentScreenshots {
                     },
             )
 
+        /** Estimated in points, before the first answer. */
+        private fun notMeasured(written: WrittenPracticeSubjectsInner) =
+            gradedByLevel(written).copy(scale = WrittenPracticeSubjectsInner.Scale.POINTS, answers = emptyList(), trend = emptyList())
+
         private fun waitingForAChoice(written: WrittenPracticeSubjectsInner) =
             gradedByLevel(written).copy(
                 writeActions =
@@ -343,7 +352,13 @@ class GoalContentScreenshots {
                 "plan-section-module-taken-out" to
                     { PlanSyllabusSection(modulesWithDataOut("skipped"), {}, Modifier.padding(vertical = 16.dp)) },
                 "reveal-module-taken-out" to { RevealStructure(plan(), modulesWithDataOut("skipped"), Modifier.padding(16.dp)) },
+                "subject-module-partly-left-out" to {
+                    val syllabus = modulesWithTopicsLeftOut()
+                    val (menu, ask) = tools(TutorScope.Subject(GOAL, "data", module = true))
+                    SubjectPage(syllabus, syllabus.subjects.first { it.key == "data" }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+                },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
+                "subject-written-unmeasured" to { WrittenSubject(::notMeasured) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
                 "chapter" to { Chapter() },

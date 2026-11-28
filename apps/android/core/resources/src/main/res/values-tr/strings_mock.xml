@@ -12,8 +12,6 @@
   "mock_cell_unsure": "03883e535d33c248349461c92bb6f7e784614ead98a611fc88c6b1c1bf1fcd6f",
   "mock_continue": "5965ef3b8dfb02a512bfb09c3f92a8f71d18c31a47f4aae5a481ce2f5e19d343",
   "mock_continue_section": "92d4bff9c631dc4d0d43288bce514ed7726014cedb42ce5e7a973e2ebf87b7a2",
-  "mock_essay_blank": "0f4c6b7edf719b845b0c39be8ddf03293dc3f5304436ac13d23c5e0c4e5e2da5",
-  "mock_essays_blank": "2d8657594f92edc80cd24eddea4af4efccf77af18c69c2982d404e602b3042f8",
   "mock_every_answered": "446f8b091b3e4dca2d3762c7062cbb8b8f0d2fc49100d5cba177f236dccfa631",
   "mock_expired_detail": "998b93bf8ce02a2b73f450ee6c5d7010bf48cd0ccc05d44558b2e2af32acd706",
   "mock_expired_title": "80bcba749c71165a024b4e9592b373bea46679bcd80fc2effc4bb96791c0a5a4",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "b43f3a2581a6f24450f38dc40c9c8920a7c5a5d0031d2105e31516cbc48973d3",
   "mock_written_question_blank": "fb2fc1b8d52772c88d0568981f4195d50f95908590c5378ab5c479991a2d8cc0",
   "mock_written_question_place": "ccb91ac827e2d41d57e7446d018f44ede91385b31eacec6aab20f680206ee45b",
-  "mock_written_questions_blank": "109d0bed451a63fa23226906969084adf58eab6ccd2b0917ec8fbdbdd8147b54",
-  "mock_your_essay": "724e58e8832e908e0d0c917af8d1825bb46d456b8931e292c59ab41a37af3eb1"
+  "mock_written_questions_blank": "109d0bed451a63fa23226906969084adf58eab6ccd2b0917ec8fbdbdd8147b54"
 }
 -->
 <resources>
@@ -187,17 +184,12 @@
         <item quantity="other">Emin olmadığın cevap sayısı: %d.</item>
     </plurals>
     <string name="mock_every_answered">Tüm sorular cevaplandı.</string>
-    <string name="mock_essay_blank">Kompozisyon boş.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">Yazılı sorunun cevabı boş.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <plurals name="mock_written_questions_blank">
         <item quantity="one">%d yazılı sorunun cevabı boş.</item>
         <item quantity="other">%d yazılı sorunun cevabı boş.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d kompozisyon boş.</item>
-        <item quantity="other">%d kompozisyon boş.</item>
     </plurals>
     <string name="mock_hand_in_final">Bundan sonra cevaplarını değiştiremezsin.</string>
     <string name="mock_keep_answering">Cevaplamaya devam et</string>
@@ -248,7 +240,6 @@
     <string name="mock_expired_title">Sen yokken süre doldu</string>
     <string name="mock_expired_detail">Bu deneme sınavı sayılmıyor.</string>
     <string name="mock_take_another">Başka bir deneme sınavına gir</string>
-    <string name="mock_your_essay">Kompozisyonun</string>
     <plurals name="mock_words">
         <item quantity="one">%d kelime</item>
         <item quantity="other">%d kelime</item>

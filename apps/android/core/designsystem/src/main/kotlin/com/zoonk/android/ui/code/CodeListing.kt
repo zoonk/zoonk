@@ -417,7 +417,8 @@ fun CodeLine(
  * Home and End, taking keyboard focus while there's more to see. [wraps] decides it instead, as for
  * code with fields in it. For TalkBack it's one stop that says its [label] and then each line's
  * reading, or, with [stopPerLine], one stop per line, for a line the learner edits or one marked as
- * the current step. Code reads left to right in every language.
+ * the current step. Code that [holdsFields] lets them take focus instead, as main's scroller does when
+ * something inside it can, so the frame never rings itself. Code reads left to right in every language.
  */
 @Composable
 fun CodeFrame(
@@ -426,6 +427,7 @@ fun CodeFrame(
     variant: CodeFrameVariant = CodeFrameVariant.Inset,
     wraps: Boolean? = null,
     stopPerLine: Boolean = false,
+    holdsFields: Boolean = false,
     content: @Composable ColumnScope.(wraps: Boolean) -> Unit,
 ) {
     val panel = variant == CodeFrameVariant.Panel
@@ -459,7 +461,7 @@ fun CodeFrame(
                         Modifier
                             .padding(start = start)
                             .fadingHorizontalScroll(scroll) { gutter.intValue.toFloat() }
-                            .arrowKeyScroll(scroll) { focused = it }
+                            .then(if (holdsFields) Modifier else Modifier.arrowKeyScroll(scroll) { focused = it })
                             .widthIn(min = maxWidth - start)
                             .width(IntrinsicSize.Max)
                     }

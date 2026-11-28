@@ -1,6 +1,6 @@
 import { type MockResult, type MockVerdict } from "@zoonk/core/exams/mocks/contract";
 import { useExtracted } from "next-intl";
-import { reachedEveryMinimum } from "./mock-result-points";
+import { reachedEveryMinimum } from "./mock-result-test-rows";
 
 /** One sentence on what the number means for the learner's next days, or nothing. */
 export function useMockVerdict({

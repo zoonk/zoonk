@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Every `DisclosureGroup` ends its label with the app's `DisclosureChevron`, pointing down while
-/// open, where the system's draws its own in the ink tint, heavier than a `NavigationLink` row's.
+/// Every `DisclosureGroup` ends its label with the app's fold `DisclosureChevron`, down and turned
+/// up while open, where the system's points forward in the ink tint, heavier than a
+/// `NavigationLink` row's.
 /// What it opens follows indented, as the system's does; in a list, as rows of their own.
 struct FoldDisclosureGroupStyle: DisclosureGroupStyle {
   var opensUnderLabel = false
@@ -43,7 +44,7 @@ private struct Fold: View {
           .environment(\.rowHasChevron, true)
           .frame(maxWidth: .infinity, alignment: .leading)
 
-        DisclosureChevron(pointsDown: configuration.isExpanded)
+        DisclosureChevron(foldIsOpen: configuration.isExpanded)
       }
       .contentShape(.rect)
     }

@@ -21,7 +21,8 @@ export async function heldPicture() {
   const path = `/held-pictures/${crypto.randomUUID()}.png`;
   await commands.holdPictures();
 
-  // A new route isn't always active at once (vitest-dev/vitest#8339).
+  // Chromium acknowledges a new route before it intercepts requests; vitest-dev/vitest#11083 closed
+  // that race only for vi.mock's own routes.
   await expect.poll(() => isHeld(path)).toBe(true);
 
   return { answer: () => commands.answerPicture(path), url: path };

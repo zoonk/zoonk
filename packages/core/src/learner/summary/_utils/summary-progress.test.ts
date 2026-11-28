@@ -45,11 +45,13 @@ function appleSubscription({
 
 function nextChange({
   carriedUntil = null,
+  deadlineTimeZones = [],
   now = NOW,
   subscription = null,
   timeZone,
 }: {
   carriedUntil?: Date | null;
+  deadlineTimeZones?: string[];
   now?: Date;
   subscription?: Subscription | null;
   timeZone: string;
@@ -57,6 +59,7 @@ function nextChange({
   return new Date(
     getNextChangeAt({
       carriedUntil,
+      deadlineTimeZones,
       localDate: getDateInTimeZone({ date: now, timeZone }),
       now,
       sessionExpiresAt: new Date(now.getTime() + 30 * 24 * MS_PER_HOUR),
@@ -73,6 +76,12 @@ describe(getNextChangeAt, () => {
 
   it("reads again at a local midnight that comes before UTC's", () => {
     expect(nextChange({ timeZone: "Asia/Tokyo" })).toBe("2026-03-10T15:00:00.000Z");
+  });
+
+  it("reads again at an inactive deadline's midnight before the active goal's and UTC's", () => {
+    expect(
+      nextChange({ deadlineTimeZones: ["Europe/Paris", "Asia/Tokyo"], timeZone: "Asia/Kolkata" }),
+    ).toBe("2026-03-10T15:00:00.000Z");
   });
 
   it("reads again when the month's allowance starts over, at the month's first UTC midnight", () => {

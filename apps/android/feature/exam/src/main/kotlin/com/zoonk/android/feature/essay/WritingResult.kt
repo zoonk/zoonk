@@ -405,13 +405,14 @@ private fun LevelCells(level: WritingResultOutputOneOfCriteriaInner.Level) {
 }
 
 @Composable
-private fun criteriaSource(
+private fun criteriaFooter(
     grade: WritingGrade,
     prompt: WritingPromptOutput,
 ): String? =
     when {
         grade.points == null && prompt.criteria.all { it.points == null } -> stringResource(R.string.essay_no_points_in_notice)
-        grade.points == null -> null
+        grade.points == null && grade.turnedBack -> null
+        grade.points == null -> stringResource(R.string.essay_graded_by_level_why)
         prompt.keySource == WritingPromptOutput.KeySource.NOTICE -> stringResource(R.string.essay_criteria_from_notice)
         else -> stringResource(R.string.essay_criteria_from_notice_practice_key)
     }
@@ -424,7 +425,7 @@ private fun WritingCriteria(
 ) {
     val locale = currentLocale()
     var comments by rememberSaveable { mutableStateOf(false) }
-    val source = criteriaSource(grade, prompt)
+    val source = criteriaFooter(grade, prompt)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.essay_criteria))
@@ -450,7 +451,7 @@ private fun WritingCriteria(
                             stringResource(
                                 R.string.essay_score_of,
                                 pointsRange(range.low, range.high, decimals),
-                                formatPoints(row.max, locale, decimals),
+                                formatPoints(row.max, locale),
                             ),
                             Modifier.sizeIn(minWidth = 64.dp),
                             textAlign = TextAlign.End,

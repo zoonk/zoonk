@@ -11,10 +11,9 @@ import {
 } from "@zoonk/core/exams/kept-month";
 import { type GoalDraft } from "@zoonk/core/goals/contract";
 import { type OnboardingExamDate } from "@zoonk/core/view-models/onboarding/contract";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted, useFormatter } from "next-intl";
 import { useDaysLeftText } from "../../_components/days-left";
-import { daysBetween, getTodayInZone, useFormatIsoDate } from "../../_utils/iso-date";
+import { daysBetween, useFormatIsoDate, useTodayInZone } from "../../_utils/iso-date";
 import { toLabelCase } from "../../_utils/label-case";
 import { useNoticeDayText } from "../../plan/notice-day";
 import { type UnderstoodRow } from "./use-understood-rows";
@@ -275,14 +274,10 @@ export function useDateRow(timeZone: string) {
   const sittingChoiceRow = useSittingChoiceRow();
   const ownDateRow = useOwnDateRow();
   // The draft's zone, as core counts a goal's days and as the date editor bounds them.
-  const today = getTodayInZone({ now: useMountTime(), timeZone });
+  const today = useTodayInZone(timeZone);
 
   // Only a public exam the learner names has a notice or a calendar; a class test on their notes doesn't.
   const unknownDateNote = (draft: GoalDraft): string => {
-    if (draft.details?.examDay === "booked") {
-      return t("You pick this test's day when you book it. Booked already? Set it here.");
-    }
-
     if (!draft.details?.examName) {
       return t({
         description:
@@ -308,7 +303,8 @@ export function useDateRow(timeZone: string) {
       return ownDateRow({ draft, examDates, targetDate: draft.targetDate, today });
     }
 
-    if (draft.kind !== "exam") {
+    // A booked exam's day is the learner's own booking, which the date question asks.
+    if (draft.kind !== "exam" || draft.details?.examDay === "booked") {
       return null;
     }
 

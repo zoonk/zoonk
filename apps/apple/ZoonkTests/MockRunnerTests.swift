@@ -699,7 +699,7 @@ private actor MockTransport: ClientTransport {
       {
         "adapt": null, "blockId": "01a18235-e60e-7dbb-a938-b0ae54987c58", "brainPower": 0,
         "breakUntil": null, "canMove": false, "ceremony": null, "certificates": [], "checklist": [],
-        "current": \(currentJSON), "date": "2026-10-29", "day": null, "essayRubric": null,
+        "current": \(currentJSON), "date": "2026-10-29", "day": null,
         "essays": [], "examDocument": "notice", "examName": "Sample Exam", "examQuestions": null,
         "fullLength": true, "goalId": "44444444-4444-4444-8444-444444444444", "leftOut": [],
         "minutes": 30, "missionMoment": null, "mistakes": [], "mockId": null, "number": 1, "passMarks": null,

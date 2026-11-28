@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getOnboardingSteps, isGoalSetupLeft } from "./onboarding-steps";
+import { getMissingQuestions, getOnboardingSteps, isGoalSetupLeft } from "./onboarding-steps";
 
 const NEW_PROFILE = { hasBuddy: false, hasEarlierGoals: false };
 
@@ -202,6 +202,13 @@ describe(getOnboardingSteps, () => {
     });
 
     expect(steps.slice(0, 2)).toStrictEqual(["targetDate", "level"]);
+  });
+
+  it("asks a typed class test for its date too, since no notice gives a school's own test", () => {
+    expect(examSteps({ classTest: true, subject: "기말고사" }).slice(0, 2)).toStrictEqual([
+      "targetDate",
+      "level",
+    ]);
   });
 
   it("asks a language goal why, unless it said so", () => {
@@ -499,5 +506,77 @@ describe(isGoalSetupLeft, () => {
         targetDate: null,
       }),
     ).toBe(false);
+  });
+});
+
+function examQuestions({
+  details,
+  hasUnpickedChoice,
+  hasUnpickedRequiredChoice,
+  targetDate = null,
+}: {
+  details: Record<string, unknown>;
+  hasUnpickedChoice?: boolean;
+  hasUnpickedRequiredChoice?: boolean;
+  targetDate?: string | null;
+}) {
+  return getMissingQuestions({
+    details: { level: "basic", ...details },
+    hasUnpickedChoice,
+    hasUnpickedRequiredChoice,
+    kind: "exam",
+    targetDate,
+  });
+}
+
+describe(getMissingQuestions, () => {
+  it("asks an undated booked exam for its date once, and never an official one", () => {
+    expect(examQuestions({ details: { examDay: "booked" } })).toStrictEqual([
+      "targetDate",
+      "schedule",
+    ]);
+
+    expect(
+      examQuestions({ details: { answered: ["targetDate"], examDay: "booked" } }),
+    ).toStrictEqual(["schedule"]);
+
+    expect(
+      examQuestions({ details: { examDay: "booked" }, targetDate: "2027-03-01" }),
+    ).toStrictEqual(["schedule"]);
+
+    expect(examQuestions({ details: { examDay: "official" } })).toStrictEqual(["schedule"]);
+  });
+
+  it("asks a country-dependent exam whose country nobody gave for it, once", () => {
+    expect(examQuestions({ details: { countryDependent: true } })).toStrictEqual([
+      "contentCountry",
+      "schedule",
+    ]);
+
+    expect(
+      examQuestions({ details: { answered: ["contentCountry"], countryDependent: true } }),
+    ).toStrictEqual(["schedule"]);
+
+    expect(examQuestions({ details: { countryDependent: false } })).toStrictEqual(["schedule"]);
+  });
+
+  it("asks a choice that makes up the whole exam again after Decide later, and any other only once", () => {
+    const deferred = { answered: ["examChoice"] };
+
+    expect(
+      examQuestions({
+        details: deferred,
+        hasUnpickedChoice: true,
+        hasUnpickedRequiredChoice: true,
+      }),
+    ).toStrictEqual(["examChoice", "schedule"]);
+
+    expect(
+      examQuestions({
+        details: deferred,
+        hasUnpickedChoice: true,
+        hasUnpickedRequiredChoice: false,
+      }),
+    ).toStrictEqual(["schedule"]);
   });
 });

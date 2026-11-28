@@ -5,6 +5,7 @@ import {
   type LessonScreenKind,
   type LessonSpec,
   getLessonSpecIssues,
+  isPlannedActivity,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { getSecondTakeIssues } from "@zoonk/ai/tasks/lesson-spec/second-take";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -72,6 +73,28 @@ function getTemplateProblem({
     : null;
 }
 
+function getPracticeTemplateProblem({
+  lessons,
+  templates,
+}: {
+  lessons: LessonSpec[];
+  templates: readonly string[];
+}): string | null {
+  const practiced = lessons.some((lesson) =>
+    lesson.screens.some(
+      (screen) =>
+        isPlannedActivity(screen) &&
+        screen.skills.length > 0 &&
+        screen.activityTemplate !== null &&
+        templates.includes(screen.activityTemplate),
+    ),
+  );
+
+  return practiced
+    ? null
+    : `No practice screen lets the learner do this skill with ${templates.join(" or ")}.`;
+}
+
 const QUESTION_KINDS: ReadonlySet<LessonScreenKind> = new Set([
   "activity",
   "application",
@@ -102,6 +125,9 @@ function checkExpected({
       : undefined,
     (expected?.avoidTemplates?.length ?? 0) > 0
       ? getTemplateProblem({ expected, lessons })
+      : undefined,
+    expected?.practiceTemplates?.length
+      ? getPracticeTemplateProblem({ lessons, templates: expected.practiceTemplates })
       : undefined,
     expected?.questionPicture ? getQuestionPictureProblem(lessons) : undefined,
   ].filter((result) => result !== undefined);

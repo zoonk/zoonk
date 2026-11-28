@@ -24,7 +24,7 @@ import {
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { pressAnswerKey } from "./answer-key";
 
-const DAYS_TO_EXAM = 32;
+export const DAYS_TO_EXAM = 32;
 const TIME_MACHINE_DAYS_AGO = 4;
 const SHORT_ID_LENGTH = 6;
 

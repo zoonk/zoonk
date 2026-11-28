@@ -12,7 +12,6 @@ import { type PassMarks } from "../../library/exams/pass-marks";
 import { type TrueFalseLabels } from "../../library/exams/true-false-labels";
 import { type MilestoneView, type MissionMomentView } from "../../sessions/completion-contract";
 import { type Reached } from "../../sessions/reached";
-import { type EssayView } from "../essays/essay-contract";
 import { type WritingNeedsChoice, writingNeedsChoiceSchema } from "../essays/writing-contract";
 import { type ExamDocument } from "../exam-document";
 import { type ExamMockSummary } from "../view/exam-view-contract";
@@ -218,7 +217,6 @@ export type MockView = {
   current: MockCurrentSection | null;
   date: string;
   day: number | null;
-  essayRubric: EssayView["rubric"] | null;
   leftOut: MockLeftOut[];
   essays: MockEssayView[];
   examDocument: ExamDocument;

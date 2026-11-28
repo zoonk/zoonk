@@ -43,6 +43,7 @@ import { pictureChecksWorkflow } from "../images/picture-checks-workflow";
 import { levelTestBankCheckWorkflow } from "../language/level-test-bank-check-workflow";
 import { sentenceOrdersWorkflow } from "../language/sentence-orders-workflow";
 import { skillLevelsWorkflow } from "../language/skill-levels-workflow";
+import { getMemberCheckToken, memberCheckWorkflow } from "../plans/member-check-workflow";
 import { courseReleaseWorkflow } from "../products/course-release-workflow";
 import { examNoticePlansWorkflow } from "../research/exam-notice-plans-workflow";
 import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow";
@@ -500,6 +501,39 @@ describe(dailySweepsWorkflow, () => {
     expect(wait).toBe("later");
     expect(options).toStrictEqual({ experimental_hook: { token: "skill-levels:sweep" } });
     expect(result.skillLevels).toBe(skillIds.length);
+  });
+
+  it("starts the member check of each active learn plan that still owes one, once per plan", async () => {
+    const user = await userFixture();
+    const skill = await skillFixture();
+    const graph = { skills: plannedSkills([skill]) };
+
+    const [owedGoal, checkedGoal, examGoal] = await Promise.all([
+      goalFixture({ userId: user.id }),
+      goalFixture({ userId: user.id }),
+      goalFixture({ kind: "exam", userId: user.id }),
+    ]);
+
+    const [owed, checked, exam] = await Promise.all([
+      planFixture({ goalId: owedGoal.id, graph }),
+      planFixture({ goalId: checkedGoal.id, graph, membersCheckedAt: new Date() }),
+      planFixture({ goalId: examGoal.id, graph }),
+    ]);
+
+    const result = await dailySweepsWorkflow(scheduledRun());
+    assert(result.status === "swept");
+
+    const planIds = getStartMock()
+      .mock.calls.filter(([workflow]) => workflow === memberCheckWorkflow)
+      .map(([, args]) => (args as [{ planId: string }])[0].planId);
+
+    expect(planIds).toContain(owed.id);
+    expect(planIds).not.toContain(checked.id);
+    expect(planIds).not.toContain(exam.id);
+
+    expect(getStartMock()).toHaveBeenCalledWith(memberCheckWorkflow, [{ planId: owed.id }], {
+      experimental_hook: { token: getMemberCheckToken(owed.id) },
+    });
   });
 
   it("starts the rewrite of what a changed source left flagged", async () => {

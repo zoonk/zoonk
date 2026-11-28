@@ -10,16 +10,23 @@ struct LearnerBubble: View {
         Text(verbatim: words)
           .accessibilityLabel(spokenLabel ?? Text(verbatim: words))
           .typeStyle(.body)
-          .padding(.horizontal, 12)
-          .padding(.vertical, 8)
-          .background(
-            Color.muted,
-            in: UnevenRoundedRectangle(
-              topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
-              bottomTrailingRadius: Radius.sm, topTrailingRadius: Radius.option)
-          )
+          .learnerBubble()
           .textSelection(.enabled)
       }
     }
+  }
+}
+
+extension View {
+  /// Main's `LearnerBubble`: what the learner said, on `muted` with its corner by them tucked in.
+  func learnerBubble() -> some View {
+    padding(.horizontal, 12)
+      .padding(.vertical, 8)
+      .background(
+        Color.muted,
+        in: UnevenRoundedRectangle(
+          topLeadingRadius: Radius.option, bottomLeadingRadius: Radius.option,
+          bottomTrailingRadius: Radius.sm, topTrailingRadius: Radius.option)
+      )
   }
 }

@@ -857,14 +857,14 @@ describe("onboarding a new goal", () => {
     });
   });
 
-  it("starts a class test's time question short, also once its material is read into its own notice", async () => {
+  it("starts a class test's time question short, typed or on material, also once its material is read into its own notice", async () => {
     const user = await useLearner();
     const inThreeDays = new Date(Date.now() + 3 * MS_PER_DAY);
     const inTenDays = new Date(Date.now() + 10 * MS_PER_DAY);
 
     const material = await examBlueprintFixture({ ownerId: user.id, visibility: "private" });
 
-    const [fromMaterial, attached] = await Promise.all([
+    const [fromMaterial, attached, typed] = await Promise.all([
       goalFixture({
         examBlueprintId: material.id,
         kind: "exam",
@@ -877,7 +877,17 @@ describe("onboarding a new goal", () => {
         targetDate: inTenDays,
         userId: user.id,
       }),
+      goalFixture({
+        details: { classTest: true },
+        kind: "exam",
+        targetDate: inTenDays,
+        userId: user.id,
+      }),
     ]);
+
+    await expect(getOnboarding({ goalId: typed.id })).resolves.toMatchObject({
+      onboarding: { recommendedMinutes: 30 },
+    });
 
     await expect(getOnboarding({ goalId: fromMaterial.id })).resolves.toMatchObject({
       onboarding: { recommendedMinutes: 45 },

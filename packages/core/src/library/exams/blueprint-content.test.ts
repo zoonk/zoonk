@@ -1175,17 +1175,23 @@ describe("keeping written facts from a checked notice", () => {
           ...task,
           description: "a professional brief",
           grading: {
+            combination: null,
+            conventions: [],
             criteria: [
               {
+                awards: [],
                 document: 1,
                 id: "brief",
+                parts: [],
                 passage: score,
                 points: 5,
                 text: "Applying the relevant law",
+                weight: null,
               },
             ],
-            kind: "oab",
+            deductions: [],
             language: null,
+            limits: [],
             rounding: null,
             zeroing: [
               {
@@ -1215,7 +1221,6 @@ describe("keeping written facts from a checked notice", () => {
       {
         grading: {
           criteria: [{ id: "brief", points: 5 }],
-          kind: "oab",
           zeroing: [{ kinds: ["wrongForm"], text: form }],
         },
         points: 5,
@@ -1234,7 +1239,7 @@ describe("keeping written facts from a checked notice", () => {
     });
 
     expect(listWrittenTasks({ structure })).toMatchObject([
-      { description: "an essay", grading: { kind: "levels" }, lines: 30, points: null },
+      { description: "an essay", grading: { criteria: [] }, lines: 30, points: null },
     ]);
   });
 });

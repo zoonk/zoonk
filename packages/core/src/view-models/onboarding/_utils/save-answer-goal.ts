@@ -6,6 +6,7 @@ import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { hasCountryReading } from "../../../goals/_utils/goal-content-country";
 import { saveMetadataInTransaction } from "../../../goals/_utils/goal-metadata";
 import { readCourseProbes } from "../../../learner/placement/_utils/course-placement-bank";
+import { oweExamCountryResearch } from "../../../library/exams/exam-country";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
 import { getAnsweredQuestions } from "../onboarding-steps";
@@ -59,13 +60,7 @@ function needsCurriculumRebuild({
   );
 }
 
-export async function saveAnswerGoal({
-  current,
-  data,
-  input,
-  own,
-  tx,
-}: AnswerGoal): Promise<boolean> {
+async function saveGoalAnswer({ current, data, input, own, tx }: AnswerGoal): Promise<boolean> {
   if (own && input.question === "contentCountry" && savesAsGoalEdit(current)) {
     const saved = await saveMetadataInTransaction(tx, {
       goal: current,
@@ -127,4 +122,14 @@ export async function saveAnswerGoal({
   });
 
   return true;
+}
+
+export async function saveAnswerGoal(answer: AnswerGoal): Promise<boolean> {
+  const changed = await saveGoalAnswer(answer);
+
+  if (changed && answer.own && answer.input.question === "contentCountry") {
+    await oweExamCountryResearch(answer.tx, answer.current);
+  }
+
+  return changed;
 }

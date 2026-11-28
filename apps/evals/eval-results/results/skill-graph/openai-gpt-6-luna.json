@@ -6251,6 +6251,370 @@
           "ownLevel": "basic"
         }
       }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four requested courses are present, and Korean, mathematics and English teach identifiable subject content. Science covers inquiry and data interpretation but misses the conceptual-content portion: “explain scientific concepts and models” does not identify what the learner will study. Required exam weighting is absent across all four courses.",
+          "score": 6,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The three distinct stages progress from foundations to application. The causal-reasoning skill appropriately depends on both variables and data interpretation. By contrast, applying a symbolic scientific relationship under given conditions depends on manipulating expressions, yet the skill links only to scientific models, not to the existing algebra skill.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The lesson counts are plausible for focused review, but some units do not define a focused action. Geometry spans lengths, angles and areas without specifying a property to apply; data and probability combine distinct tasks; the model skill leaves its scope open. The 18.7-hour total is also somewhat high for the school-finals benchmark.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The skills target subject work rather than motivation, study tips, recaps or exam-day logistics. Inferring vocabulary in Korean and English requires practice with different texts, so the similar names do not indicate duplicated lessons. No concrete filler skill is evident.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Korean, the four course titles match the follow-up exactly, and the path assumes an intermediate learner without inventing a grade or test syllabus. However, using non-exam weights throughout makes the map less useful for deciding what to prioritize toward the target average.",
+          "score": 7,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "Judgment is central: the learner evaluates evidence for a claim, checks mathematical solutions against conditions and justifies reading inferences. The science reasoning skill could strengthen that emphasis by distinguishing an observed association from evidence sufficient to support a causal conclusion. AI-tool practice is not needed for this school exam.",
+          "score": 9,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6027,
+          "outputTokens": 775,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All 20 exam weights are null. The map gives each subject study time, but none contributes to exam prioritization as required. Science also lacks a concrete content anchor: it asks the learner to explain models and apply formulas without naming a single phenomenon, model or relationship to learn.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The 18.7-hour estimate exceeds the rough 15-hour school-test benchmark. Several skills are too broad: the data-and-probability skill combines summarizing data, interpreting representative values and reasoning about chance. The science formula skill also omits its direct algebra prerequisite.",
+          "kind": "minorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Use provisional 1–5 priorities balanced across the four courses rather than implying a known exam blueprint. Make science review teachable by naming a representative relationship, such as predicting a change of state with a particle model, without claiming it will be on the test. Narrow broad skills rather than adding more lessons.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The finals' subjects come from the learner's answer to the follow-up (Korean language, mathematics, English, science): a course for each of those four, and no subject they didn't name (no social studies, history or other school subject)\n      - Never only the general study-skills path: each course teaches its subject's content, with exam weights spread so every subject counts toward the average the learner aims for\n      - Nothing says the grade or which topics each test covers, so each course keeps to the core of its subject at the secondary-school level the learner's starting point fits, instead of a whole curriculum\n      - Lesson-sized skills, a total that fits the weeks before a school's finals\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-term-finals-subjects-from-the-follow-up-1",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"followUps\":[{\"answer\":\"국어, 수학, 영어, 과학\",\"question\":\"이번 기말고사는 어떤 과목들을 보시나요?\"}],\"subject\":\"기말고사\",\"targetScore\":\"평균 85점 이상\"}",
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "intermediate"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All four named subjects have substantive content and contribute throughout the plan. Their respective skill weights sum to 18, 21, 19 and 18, so none is sidelined. No chapter list or exam blueprint was supplied that would justify requiring another topic or a particular weighting.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "Expressions precede equation solving, and sentence analysis precedes contextual grammar. Other edges do not reflect necessary dependencies: cell structure does not prepare the learner to explain weather, force-and-motion analysis is not required for energy transfers in general, and finding a main idea is not required for tracking references. The phase titles distinguish stages, but milestones such as applying concepts to various problems give little guidance for judging completion.",
+          "score": 7,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Eight hours is plausible for a short review: the 80 three-minute lessons occupy four hours, leaving four for practice and review. The problem is local sizing. Ecosystems and weather combine distinct mechanisms, data interpretation and probability combine distinct mathematical judgments, and tense, voice and modality leave little room for worked contrasts within four lessons.",
+          "score": 7,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The time goes to subject tasks rather than study advice, recap units or exam-day procedures. Similar reading actions in Korean and English require work with different language material; that is not redundant instruction. The bundled topics need clearer boundaries, but are not themselves filler.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing map is in Korean, uses verb-final can-do names, and targets an intermediate learner reviewing four secondary-school subjects. It neither assumes a specific grade nor promises that completion guarantees an 85 average. The Korean editing description should match the productive ability promised by its name.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The plan asks the learner to infer meaning from evidence, interpret relationships in graphs, explain observations with models and check equation solutions against conditions. These are appropriate independent judgments for a school exam; an AI-tool unit is not needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 6669,
+          "outputTokens": 801,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The final science skill treats ecosystem change and weather as one explanatory task. Organism–environment interactions can explain an ecosystem's response to weather, but they are not the general mechanism behind weather phenomena. Requiring cell structure first does not supply the missing atmospheric concepts.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Several skills lack a single assessable action: the mathematics skill on data and probability does not specify what judgment the learner will make, and the English grammar skill spans tense, voice and modality in four short lessons. Some prerequisites are unnecessarily restrictive: identifying a passage's main idea is not required to resolve a pronoun reference. The Korean editing skill also names correction as the outcome but describes only detecting a problem.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Narrow the science task to predicting an ecosystem's response to a weather change, or teach weather through a separate physical explanation. Give each broad skill a checkable task, such as comparing two event probabilities, and anchor each phase milestone in the kinds of answers the learner can produce.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The finals' subjects come from the learner's answer to the follow-up (Korean language, mathematics, English, science): a course for each of those four, and no subject they didn't name (no social studies, history or other school subject)\n      - Never only the general study-skills path: each course teaches its subject's content, with exam weights spread so every subject counts toward the average the learner aims for\n      - Nothing says the grade or which topics each test covers, so each course keeps to the core of its subject at the secondary-school level the learner's starting point fits, instead of a whole curriculum\n      - Lesson-sized skills, a total that fits the weeks before a school's finals\n      - Nothing about the exam day's procedures, such as documents to bring or sleep\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-term-finals-subjects-from-the-follow-up-2",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"followUps\":[{\"answer\":\"국어, 수학, 영어, 과학\",\"question\":\"이번 기말고사는 어떤 과목들을 보시나요?\"}],\"subject\":\"기말고사\",\"targetScore\":\"평균 85점 이상\"}",
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "intermediate"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six requested abilities are present, including both pacing during the exam and checking answers before submission. The missing numeric weights are the coverage defect: the map gives no indication of the relative emphasis assigned to any skill.",
+          "score": 8,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The two phases progress sensibly from preparation to performance, with distinct stage titles and attainable milestones. The clearest missing link is from selecting weak material to allocating review time to it. An early timed run is defensible as a diagnostic, but if it is the rehearsal for the second milestone, it belongs after the techniques being rehearsed.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "Each skill has a narrow action and two or three short lessons. The 16 lessons account for 48 minutes of instruction, leaving another 48 minutes in the estimate for recall, review and a short timed run. That is credible for this skills course without implying that all finals content can be mastered in 1.6 hours.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The review-scheduling skill has a distinct use: deciding when and how often to revisit material rather than identifying which material is weakest. The remaining skills directly serve the requested preparation path, with no guessed discipline, format-specific tactic or orientation lesson.",
+          "score": 10,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The learner-facing text is in Korean, and the single intermediate course works for an unspecified set of finals. It neither invents school subjects nor promises an average of 85. The concrete exam-goal mismatch is using null weights throughout.",
+          "score": 8,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path exercises judgment: learners identify what they cannot explain, interpret what a question asks, adjust their pace and check for omissions. Retrieval from memory serves the exam setting rather than being rote work for its own sake; an AI-tool skill is not needed here.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4055,
+          "outputTokens": 784,
+          "reasoningTokens": 72
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "All seven skills have null exam weights. This is an exam goal, so every skill needs a weight from 1 to 5. The subjects are unknown, but that does not remove the requirement.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The map puts the timed run before question interpretation, pacing and answer checking, without saying whether it is an initial diagnostic or a rehearsal that applies those skills. The review schedule also has no prerequisite linking it to the preceding decision about what to review first.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Make the recall exercise more actionable: ask the learner to close their notes, recall a key point, then reopen the notes to check it. A missed point becomes a concrete candidate for priority review.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner skipped the question about which subjects the finals cover, so nothing says what they test: it never guesses the school's subjects (no Korean language, mathematics, English, science or any other discipline)\n      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers\n      - No tactic for one question format, such as eliminating multiple-choice options or structuring an essay\n      - Lesson-sized skills, a few hours in all at most\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-term-finals-subjects-skipped-1",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"followUps\":[{\"answer\":null,\"question\":\"이번 기말고사는 어떤 과목들을 보시나요?\"}],\"subject\":\"기말고사\",\"targetScore\":\"평균 85점 이상\"}",
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "intermediate"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "coverage",
+          "reasoning": "All six required abilities have identifiable skills, including both pacing and answer checking. The school supplied no subject list or weighting blueprint, so there is no basis for adding disciplines or requiring different weights.",
+          "score": 10,
+          "label": "Coverage",
+          "weight": 25
+        },
+        {
+          "categoryId": "orderAndPrerequisites",
+          "reasoning": "The two phases progress sensibly from preparation to application, and adjusting the plan correctly depends on identifying weaknesses. The central sequencing weakness is that timed practice has no prerequisites and precedes the response skills that would make it a rehearsal of the second milestone.",
+          "score": 8,
+          "label": "Order & prerequisites",
+          "weight": 20
+        },
+        {
+          "categoryId": "granularity",
+          "reasoning": "The actions are narrow enough for short lessons. Fourteen three-minute lessons occupy 42 minutes of the 84-minute estimate, leaving a plausible 42 minutes for practice and review. This fits a compact skills path rather than claiming to cover the finals syllabus.",
+          "score": 10,
+          "label": "Size matched to demand",
+          "weight": 15
+        },
+        {
+          "categoryId": "noFiller",
+          "reasoning": "The one overlapping skill is review-plan adjustment: time remaining is a useful additional criterion, but its output is still the review order already taught in weak-first review. The other skills serve distinct purposes explicitly requested for this case.",
+          "score": 8,
+          "label": "No filler or overlap",
+          "weight": 15
+        },
+        {
+          "categoryId": "goalFit",
+          "reasoning": "The Korean map fits an intermediate learner preparing for unspecified finals. It uses one general study and test-taking course, avoids assumptions about subjects and question formats, and states achievable milestones rather than promising an 85-point average.",
+          "score": 10,
+          "label": "Goal & level fit",
+          "weight": 15
+        },
+        {
+          "categoryId": "aiEraSkills",
+          "reasoning": "The path emphasizes deciding what needs attention, interpreting demands, allocating limited time, and detecting errors. Unaided recall is appropriate for this exam goal; an AI-tool skill is not needed.",
+          "score": 10,
+          "label": "Skills for a world with AI",
+          "weight": 10
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 8 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 4085,
+          "outputTokens": 634,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The timed run comes before the learner practices interpreting prompts, pacing the work, and checking answers. It can serve as a diagnostic there, but the map never brings those skills together in a later run. Adjusting the review plan also largely repeats the preceding decision about which weak material to review first.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Use the timed run as the final application, with explicit links to the skills practiced in it. Fold the time-remaining criterion into weak-first review. Make recall more concrete: close the notes, retrieve the key points, then reopen the notes to identify gaps.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Korean\n      - The learner skipped the question about which subjects the finals cover, so nothing says what they test: it never guesses the school's subjects (no Korean language, mathematics, English, science or any other discipline)\n      - A small path for preparing for any exam, in one course on study and test-taking skills and one or two phases: recalling from one's own notes, reviewing what's weakest first, a timed practice run, reading what a question asks, pacing the time and checking answers\n      - No tactic for one question format, such as eliminating multiple-choice options or structuring an essay\n      - Lesson-sized skills, a few hours in all at most\n\n      \n  - The output is the planner's map of the goal: courses, phases (title, milestone and estimated hours) and skills (key, name, description, course, level, phase, prerequisites, estimated lessons, exam weight)\n  - Skill names are actions worded in the form that language's course pages use (the verb first in English and the Romance languages, verb-final in German, Turkish, Japanese and Korean), named generically so other courses could reuse them\n  - Estimated hours are study time (3-minute lessons plus practice and reviews); judge whether the total is honest for the goal, not whether it matches an exact number\n  - Exam weights are 1 to 5 for exam goals and null otherwise\n  - Don't evaluate JSON formatting\n\n    ",
+        "id": "ko-term-finals-subjects-skipped-2",
+        "userInput": {
+          "context": "{\"examDay\":\"official\",\"followUps\":[{\"answer\":null,\"question\":\"이번 기말고사는 어떤 과목들을 보시나요?\"}],\"subject\":\"기말고사\",\"targetScore\":\"평균 85점 이상\"}",
+          "goal": "이번 기말고사 평균 85점 넘기고 싶어요",
+          "goalKind": "exam",
+          "language": "ko",
+          "ownLevel": "intermediate"
+        }
+      }
     }
   ],
   "taskId": "skill-graph"

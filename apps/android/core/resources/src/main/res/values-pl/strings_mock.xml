@@ -12,8 +12,6 @@
   "mock_cell_unsure": "e85ecdb0ab668ee8936b2db59de60e3b1e5c320c6946e1ac85e5bf7965d03fde",
   "mock_continue": "59ebca15fca625f1f00d1f8da2a052b22b6cc153ff607e777134a05e7f9f8c0f",
   "mock_continue_section": "973f7cae7364368a9e56e5ebf83629345fa5fee7b58d5fbc2da67b66307e2655",
-  "mock_essay_blank": "16c1fb57a4e8e1e27c0c000a01eea209c2983ba5c129c7e49fc20c9ed2caaf19",
-  "mock_essays_blank": "76029146367982858b53385c6d75baad1586ce88338637971bfa40aced672063",
   "mock_every_answered": "261a0d4189c141a69e2ed1e378a5b0a4e2ba190e10df9e3ec6895b732f95eb73",
   "mock_expired_detail": "a3d7d6edc5580be04238146b56171d2215b3f873acf370aa18a1fb71c04bcf41",
   "mock_expired_title": "e07ec3207d714329967cd76cf88daf020148c0789ea894cd027d2c2d2874c37b",
@@ -106,8 +104,7 @@
   "mock_written_part_area": "f56b68c4b6c7021f13e3cf0635f9ddb3c5b1b4a85f58e40a02d9940d8c2651ca",
   "mock_written_question_blank": "55b5cb269742fc57d059d47f1ffef8e3fa6ad7fefd6bf12b26d9753f9c5c90f6",
   "mock_written_question_place": "cb412559b9de307fa0e0139444616aec8a4573a49fec6c3951c3211cec2c899d",
-  "mock_written_questions_blank": "a1a36440772a6a7ba554298a3a6be3fcd928a1b90bd9bb4482dd4c2e1680f547",
-  "mock_your_essay": "f3b2541f02e0bcb52782b2a069156e4b16b7c6862b01f1fa2e3ecd781cf88b6c"
+  "mock_written_questions_blank": "a1a36440772a6a7ba554298a3a6be3fcd928a1b90bd9bb4482dd4c2e1680f547"
 }
 -->
 <resources>
@@ -201,7 +198,6 @@
         <item quantity="other">Nie masz pewności co do %d z odpowiedzi.</item>
     </plurals>
     <string name="mock_every_answered">Na wszystkie pytania udzielono odpowiedzi.</string>
-    <string name="mock_essay_blank">Wypracowanie jest puste.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
     <string name="mock_written_question_blank">Brak odpowiedzi na pytanie pisemne.</string>
     <!-- Before handing in a mock exam with objective and written questions: how many written answers are blank. -->
@@ -210,12 +206,6 @@
         <item quantity="few">Brak odpowiedzi na %d pytania pisemne.</item>
         <item quantity="many">Brak odpowiedzi na %d pytań pisemnych.</item>
         <item quantity="other">Liczba pustych odpowiedzi pisemnych: %d.</item>
-    </plurals>
-    <plurals name="mock_essays_blank">
-        <item quantity="one">%d wypracowanie jest puste.</item>
-        <item quantity="few">%d wypracowania są puste.</item>
-        <item quantity="many">%d wypracowań jest pustych.</item>
-        <item quantity="other">%d wypracowań jest pustych.</item>
     </plurals>
     <string name="mock_hand_in_final">Po oddaniu nie zmienisz już odpowiedzi.</string>
     <string name="mock_keep_answering">Odpowiadaj dalej</string>
@@ -270,7 +260,6 @@
     <string name="mock_expired_title">Czas minął pod twoją nieobecność</string>
     <string name="mock_expired_detail">Ten egzamin się nie liczy.</string>
     <string name="mock_take_another">Podejdź do kolejnego</string>
-    <string name="mock_your_essay">Twoje wypracowanie</string>
     <plurals name="mock_words">
         <item quantity="one">%d słowo</item>
         <item quantity="few">%d słowa</item>

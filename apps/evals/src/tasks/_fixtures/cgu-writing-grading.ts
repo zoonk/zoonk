@@ -25,7 +25,6 @@ export function cguWritingGrading({
         text: "a apresentação e a estrutura textuais e o desenvolvimento do tema (NC)",
       },
     ],
-    kind: "points",
     language: {
       citation: {
         passage: `${item} … d) será calculada, então, a nota … pela fórmula ${formula}, em que TL corresponde ao número de linhas efetivamente escritas pelo candidato;`,

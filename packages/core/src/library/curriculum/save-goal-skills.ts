@@ -67,7 +67,7 @@ async function saveGoalSkillsInScope({
     provenance,
     scope,
     serviceTier,
-    skills: fresh.map((skill) => ({ ...skill, course: skill.area })),
+    skills: fresh.map((skill) => ({ ...skill, course: skill.subject ?? skill.area })),
   });
 
   const freshIds = new Map(fresh.map((skill, index) => [skill.key, ids[index] ?? ""]));

@@ -8,13 +8,11 @@ import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
 import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
-import {
-  type RawGoalUnderstanding,
-  normalizeGoalUnderstanding,
-} from "./normalize-goal-understanding";
+import { normalizeGoalUnderstanding } from "./normalize-goal-understanding";
 import template from "./understand-goal.prompt.md";
+import { type RawGoalUnderstanding } from "./understood-goal";
 
-export type { GoalUnderstanding, UnderstoodGoal } from "./normalize-goal-understanding";
+export type { GoalUnderstanding, UnderstoodGoal } from "./understood-goal";
 
 /**
  * The first wait a new learner sees: Flash Lite passed every check on 53 of 58 goals in 1.59 s p50
@@ -32,9 +30,12 @@ const goalSchema = z.object({
   examDay: z.enum(["official", "booked"]).nullable(),
   examMonth: z.number().nullable(),
   examName: z.string().nullable(),
+  examNotBooked: z.boolean(),
+  examOption: z.string().nullable(),
   examSubjects: z.array(z.string()).nullable(),
   examTarget: z.enum(["admission", "score", "position"]).nullable(),
   examYear: z.number().nullable(),
+  followUps: z.array(z.string()),
   institution: z.string().nullable(),
   kind: z.enum(["learn", "exam", "language"]),
   level: z.string().nullable(),
@@ -52,9 +53,8 @@ const goalSchema = z.object({
   title: z.string(),
 });
 
-const schema = z.object({
+const materialSchema = z.object({
   dailyMinutes: z.number().nullable(),
-  followUps: z.array(z.string()),
   goals: z.array(goalSchema),
   instrument: z.string().nullable(),
   question: z.string().nullable(),
@@ -62,6 +62,14 @@ const schema = z.object({
   studyDays: z.array(z.number()).nullable(),
   studyTime: z.string().nullable(),
   studyTimeNote: z.string().nullable(),
+}) satisfies z.ZodType<RawGoalUnderstanding>;
+
+/**
+ * Material's own rules already say when an exam on it is a class test; asking again there made
+ * readings take a test's date from a syllabus.
+ */
+const wordsSchema = materialSchema.extend({
+  goals: z.array(goalSchema.extend({ classTest: z.boolean() })),
 }) satisfies z.ZodType<RawGoalUnderstanding>;
 
 type GoalMaterial = {
@@ -114,6 +122,7 @@ function getSystemPrompt({
   const variants = {
     material: Boolean(material?.overview),
     unreadMaterial: material?.overview === null,
+    wordsOnly: !material?.overview,
   };
 
   return fillPromptLanguages({
@@ -178,7 +187,9 @@ export async function understandGoal(params: UnderstandGoalParams) {
       generateText({
         instructions: systemPrompt,
         model,
-        output: Output.object({ schema }),
+        output: Output.object<RawGoalUnderstanding>({
+          schema: params.material?.overview ? materialSchema : wordsSchema,
+        }),
         prompt: userPrompt,
         providerOptions,
         reasoning,
@@ -201,7 +212,7 @@ export async function understandGoal(params: UnderstandGoalParams) {
 export const goalRouteClassifier = {
   instructions: selectPromptVariants({
     template,
-    variants: { material: false, unreadMaterial: false },
+    variants: { material: false, unreadMaterial: false, wordsOnly: true },
   }),
   labels: {
     explain: "A one-off question about how or why something works or what something means.",

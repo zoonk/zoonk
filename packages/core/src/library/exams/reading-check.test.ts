@@ -125,6 +125,49 @@ describe(findReadingProblems, () => {
     ).toStrictEqual([{ kind: "countsOffTotal", sum: 76, total: 80 }]);
   });
 
+  it("names subjects that each hold the whole exam, an exam taken in one of several versions", () => {
+    const content = reading([]);
+
+    const check = (subjects: BlueprintContent["structure"]["subjects"], questionCount = 110) =>
+      findReadingProblems({
+        checked: subjects,
+        content: {
+          ...content,
+          edition: { ...content.edition, questionCount },
+          structure: { ...content.structure, subjects },
+        },
+        documents,
+        findings: { missingSubjects: [], statedCounts: [] },
+      });
+
+    expect(
+      check([
+        noticeSubject("Civil", 110),
+        noticeSubject("Electrical and Computer", 110),
+        noticeSubject("Mechanical", 110),
+      ]),
+    ).toStrictEqual([
+      {
+        kind: "wholeExamSubjects",
+        subjects: ["Civil", "Electrical and Computer", "Mechanical"],
+        total: 110,
+      },
+    ]);
+
+    const discipline = { choiceGroup: "Discipline" };
+
+    expect(
+      check([
+        noticeSubject("Civil", 110, discipline),
+        noticeSubject("Mechanical", 110, discipline),
+      ]),
+    ).toStrictEqual([]);
+
+    expect(check([noticeSubject("Paper 1", 80), noticeSubject("Paper 2", 80)], 160)).toStrictEqual(
+      [],
+    );
+  });
+
   it("counts a first phase's questions on the subjects a later written phase tests again", () => {
     const structure = cacdStructure();
 

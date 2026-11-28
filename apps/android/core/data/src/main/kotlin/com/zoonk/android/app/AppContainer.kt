@@ -163,15 +163,14 @@ import kotlin.time.TimeSource
 class AppContainer private constructor(
     context: Context,
     credentials: SessionCredentials,
-    previewAccess: LearnerAccess?,
+    preview: Preview?,
     analyticsSdk: AnalyticsSdk?,
     val timeSource: TimeSource = TimeSource.Monotonic,
-    previewAccount: MeResponse? = null,
 ) {
     constructor(context: Context, analyticsSdk: AnalyticsSdk?) : this(
         context,
         EncryptedSessionCredentials(context),
-        previewAccess = null,
+        preview = null,
         analyticsSdk = analyticsSdk,
     )
 
@@ -184,11 +183,11 @@ class AppContainer private constructor(
     private val integrity =
         BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
             .toLongOrNull()
-            ?.takeIf { previewAccess == null }
+            ?.takeIf { preview == null }
             ?.let { PlayIntegrity(context, it, scope) }
     val sessions: SessionStore =
         SessionStore(
-            api = previewAccount?.let(::PreviewSessionApi) ?: LiveSessionApi(api, integrity),
+            api = preview?.sessionApi ?: LiveSessionApi(api, integrity),
             appleClientId = BuildConfig.APPLE_CLIENT_ID,
             appleReflectorUrl = api.baseUrl.resolve("/auth/apple/android").toString(),
             credentials = credentials,
@@ -201,16 +200,26 @@ class AppContainer private constructor(
                 }
             },
             clearCredentialState = { clearCredentialState(context) },
-            restoreKeys = if (previewAccess == null) DeviceRestoreKeys(context) else RestoreKeys.None,
+            restoreKeys = if (preview == null) DeviceRestoreKeys(context) else RestoreKeys.None,
         )
     val cache = AppCache(sessions, scope, timeSource)
 
     val writingWaits = WritingWaits { kind, scope -> ContentWritingWait(kind, scope, sessions) { LiveGenerationSource(api, it) } }
+    private val isForeground =
+        if (preview == null) {
+            ProcessLifecycleOwner
+                .get()
+                .lifecycle.currentStateFlow
+                .map { it.isAtLeast(Lifecycle.State.STARTED) }
+        } else {
+            flowOf(false)
+        }
     val learnerSummary =
         LearnerSummaryStore(
             api = { session -> perform { api.clients(session).account.getCurrentUserSummary() }.summary },
             cache = cache,
             scope = scope,
+            isForeground = isForeground,
         )
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
     val push = FirebasePush(context)
@@ -243,19 +252,11 @@ class AppContainer private constructor(
         SubscriptionStore(
             api = LiveSubscriptionApi(api),
             // Previews make no requests, Play's included.
-            billing = if (previewAccess == null) GooglePlayBilling(context) else NoPlayBilling,
+            billing = if (preview == null) GooglePlayBilling(context) else NoPlayBilling,
             sessions = sessions,
             cache = cache,
             scope = scope,
-            isForeground =
-                if (previewAccess == null) {
-                    ProcessLifecycleOwner
-                        .get()
-                        .lifecycle.currentStateFlow
-                        .map { it.isAtLeast(Lifecycle.State.STARTED) }
-                } else {
-                    flowOf(false)
-                },
+            isForeground = isForeground,
         )
 
     val tutor =
@@ -354,13 +355,17 @@ class AppContainer private constructor(
     val focusTests = FocusTestStore(LiveFocusTestApi(api), cache, studySessions, learnerSummary.summary, timeZone)
     val essays = EssayStore(LiveEssayApi(api), cache, drafts, timeZone)
 
-    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
+    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope, isForeground)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =
-        previewAccess?.let(::MutableStateFlow)
+        preview?.access?.let(::MutableStateFlow)
             ?: combine(sessions.state, learnerSummary.summary.state, ::learnerAccess)
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
+
+    fun retrySessionRestore() {
+        scope.launch { sessions.retryRestore() }
+    }
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
     val countries = CountryStore(LiveCountryApi(api), cache)
@@ -381,6 +386,11 @@ class AppContainer private constructor(
         scope.launch { sessions.keepRestoreKeys() }
     }
 
+    private data class Preview(
+        val access: LearnerAccess?,
+        val sessionApi: SessionApi?,
+    )
+
     companion object {
         /**
          * For previews and shell tests: no requests; screens open as for [access]. With [account], the frame shows
@@ -388,16 +398,16 @@ class AppContainer private constructor(
          */
         fun preview(
             context: Context,
-            access: LearnerAccess = LearnerAccess.Learner,
+            access: LearnerAccess? = LearnerAccess.Learner,
             timeSource: TimeSource = TimeSource.Monotonic,
             account: MeResponse? = null,
+            sessionApi: SessionApi? = null,
         ) = AppContainer(
             context,
             account?.let(::PreviewCredentials) ?: NoStoredSession,
-            access,
+            preview = Preview(access, sessionApi ?: account?.let(::PreviewSessionApi)),
             analyticsSdk = null,
             timeSource,
-            previewAccount = account,
         )
     }
 }

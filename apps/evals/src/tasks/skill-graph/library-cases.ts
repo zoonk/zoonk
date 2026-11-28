@@ -21,6 +21,7 @@ export type SkillGraphExpected = {
   noCourses?: string[];
   noReuse?: string[];
   reuse?: string[];
+  writtenOptionSection?: string;
 };
 
 function isSameCourse(first: string, second: string): boolean {

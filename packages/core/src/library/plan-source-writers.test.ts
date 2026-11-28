@@ -246,6 +246,14 @@ const REGISTRY: Record<string, Registration[]> = {
       writes: ["examBlueprint.updateMany"],
     },
   ],
+  "library/exams/notice-reading.ts": [
+    {
+      fields: ["setAside"],
+      verdict: "excluded",
+      why: "a set-aside notice version only spares research and freshness checks a reread",
+      writes: ["raw:exam_blueprints"],
+    },
+  ],
   "library/exams/record-choice-options.ts": [
     {
       fields: ["pastOptions"],
@@ -1101,7 +1109,15 @@ async function writingPromptCase(): Promise<WriterCase> {
 
   vi.mocked(writeWritingPrompt, { partial: true }).mockImplementation(async ({ input }) => ({
     data: {
-      aspects: [{ criterionId: "case", description: "Apply the rule", points: 1 }],
+      aspects: [
+        {
+          criterionId: "case",
+          description: "Apply the rule",
+          kind: "definitePoint",
+          points: 1,
+          steps: null,
+        },
+      ],
       assessedSkillIds: input.skills.map((skill) => skill.id),
       context: null,
       criteria: [{ id: "case", name: "Application", points: 1 }],

@@ -3,6 +3,7 @@ import XCTest
 
 @testable import Zoonk
 
+@MainActor
 final class WeekdayTogglesTests: XCTestCase {
   /// The narrowest iPhone's list row, 390pt less the page's margins.
   private let phoneRow: CGFloat = 358

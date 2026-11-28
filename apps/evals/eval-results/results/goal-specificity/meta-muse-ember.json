@@ -3360,6 +3360,228 @@
           "language": "pl"
         }
       }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "수학"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "ko-term-finals-share-their-subjects-1",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "수학"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "ko-term-finals-share-their-subjects-2",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "수학"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "ko-term-finals-share-their-subjects-3",
+        "userInput": {
+          "goal": "기말고사 국어, 수학, 영어 평균 90점",
+          "language": "ko"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "calculus"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "en-class-finals-share-their-subjects-1",
+        "userInput": {
+          "goal": "Get through my calculus and physics finals next month",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "calculus"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "en-class-finals-share-their-subjects-2",
+        "userInput": {
+          "goal": "Get through my calculus and physics finals next month",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "false",
+        "predicted": "false"
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "generalKeywords": [
+            "calculus"
+          ],
+          "personalKeywords": [],
+          "privateCourse": false
+        },
+        "id": "en-class-finals-share-their-subjects-3",
+        "userInput": {
+          "goal": "Get through my calculus and physics finals next month",
+          "language": "en"
+        }
+      }
     }
   ],
   "taskId": "goal-specificity"

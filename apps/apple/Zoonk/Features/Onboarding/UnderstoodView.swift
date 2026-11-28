@@ -348,7 +348,8 @@ private struct UnderstoodCard: View {
 
   private func rows(goal index: Int) -> [UnderstoodRow] {
     let rows = UnderstoodRows.rows(
-      for: understood.goals[index], countryAsked: countryAsked.contains(index))
+      for: understood.goals[index], countryAsked: countryAsked.contains(index),
+      today: GoalDate.today(now: .now, timeZone: draft.timeZone))
 
     // The material and the schedule go with the first goal that starts, so they leave when none can.
     guard index == 0, !startable.isEmpty else {
@@ -555,9 +556,13 @@ private struct UnderstoodRowView: View {
     }
   }
 
+  private var today: String {
+    GoalDate.today(now: .now, timeZone: timeZone)
+  }
+
   /// Only days core would save are offered.
   private var dateRange: ClosedRange<Date> {
-    GoalDate.range(today: GoalDate.today(now: .now, timeZone: timeZone))
+    GoalDate.range(today: today)
   }
 
   private var suggestedDate: String? {
@@ -587,7 +592,7 @@ private struct UnderstoodRowView: View {
           Button {
             use(date)
           } label: {
-            Text(PlanDate.text(date, today: PlanDate.today()))
+            Text(PlanDate.text(date, today: today))
           }
         }
       }

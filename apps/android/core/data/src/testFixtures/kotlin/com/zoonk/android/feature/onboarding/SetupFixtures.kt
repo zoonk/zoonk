@@ -363,7 +363,7 @@ fun specialtyChoice(subject: String? = null) =
     """
     [{"group":"Especialidade","leftOut":{"examPoints":360,"examQuestions":null,"name":"Conhecimentos específicos (P3)","points":180,"questions":null},
       "options":[{"name":"Auditoria","shortName":null},{"name":"Tecnologia da Informação – Desenvolvimento de Sistemas","shortName":"Desenvolvimento de Sistemas"}],
-      "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1}]
+      "subjects":[${subject?.let { "\"$it\"" }.orEmpty()}],"take":1,"required":false}]
     """.trimIndent()
 
 fun revealTodayOf(): com.zoonk.api.models.PlanRevealToday {

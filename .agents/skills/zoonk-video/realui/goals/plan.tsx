@@ -48,6 +48,7 @@ function phase(
 ): Phase {
   return {
     challengeLeftOut: false,
+    leftOut: [],
     chapterCount: 6,
     chapters: [],
     checkpoint: {
@@ -210,6 +211,7 @@ export function examSyllabus(lang: Lang): SyllabusView {
       areas: [subject.name],
       chapters: [],
       covers: [],
+      leftOut: [],
       displayWeight: null,
       group: null,
       imageUrl: null,

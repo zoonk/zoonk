@@ -1,8 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { keepRequestReads } from "../../_test-utils/keep-request-reads";
 import { mockSession } from "../../_test-utils/mock-session";
+import * as planContext from "../../plans/_utils/plan-context";
 import { loadPlanSnapshot } from "../../plans/_utils/restore-plan";
 import { loadTodayPlanChange } from "../../plans/_utils/today-plan-change";
 import { decidePlanChange } from "../../plans/decide-plan-change";
@@ -90,6 +91,10 @@ async function finishPart({
 }
 
 describe("placement Undo restores the plan", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("keeps Undo on Plan and Today when the follow-up commits during the render", async () => {
     const user = await userFixture();
 
@@ -114,7 +119,7 @@ describe("placement Undo restores the plan", () => {
     const { changeId } = finished.completion;
     const { readSavedPlan } = savedPlan;
     // Vitest runs private reads uncached. Hold the real plan read as Next does for a render.
-    const read = vi.spyOn(savedPlan, "readSavedPlan").mockImplementation(
+    vi.spyOn(savedPlan, "readSavedPlan").mockImplementation(
       keepRequestReads(async (userId, goalId) => {
         const plan = await readSavedPlan(userId, goalId);
 
@@ -135,23 +140,19 @@ describe("placement Undo restores the plan", () => {
       }),
     );
 
-    try {
-      const [plan, today] = await Promise.all([
-        getGoalPlan(goal.id),
-        loadTodayPlanChange({ goal, now: new Date() }),
-      ]);
+    const [plan, today] = await Promise.all([
+      getGoalPlan(goal.id),
+      loadTodayPlanChange({ goal, now: new Date() }),
+    ]);
 
-      expect
-        .soft(plan)
-        .toMatchObject({
-          plan: { changes: [expect.objectContaining({ canUndo: true, id: changeId })] },
-          status: "ready",
-        });
+    expect
+      .soft(plan)
+      .toMatchObject({
+        plan: { changes: [expect.objectContaining({ canUndo: true, id: changeId })] },
+        status: "ready",
+      });
 
-      expect(today).toMatchObject({ canUndo: true, id: changeId });
-    } finally {
-      read.mockRestore();
-    }
+    expect(today).toMatchObject({ canUndo: true, id: changeId });
   });
 
   it.each([
@@ -212,6 +213,51 @@ describe("placement Undo restores the plan", () => {
     ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
 
     await expect(readPlanView(goal.id)).resolves.toStrictEqual(shown);
+    await expect(readSchedule(goal.id)).resolves.toStrictEqual(before);
+  });
+
+  it("undoes when the finish's reschedule lands while Undo reads the plan", async () => {
+    const user = await userFixture();
+
+    const { goal, skills } = await learnerGoalFixture({
+      itemsPerSkill: 0,
+      phases: [3],
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+    const before = await readSchedule(goal.id);
+
+    const finished = await finishPart({
+      goalId: goal.id,
+      length: "quick",
+      skillIds: skills.map(({ id }) => id),
+    });
+
+    if (finished.status !== "ready" || !finished.completion.changeId) {
+      throw new Error("Expected a finish that skips lessons and offers Undo");
+    }
+
+    // A commit between two of Undo's reads can't be timed from outside: once Undo has read the
+    // plan's version, the reschedule the finish owes commits before Undo reads the rest.
+    const readContext = planContext.loadPlanContext;
+    const landed = { done: false };
+
+    vi.spyOn(planContext, "loadPlanContext").mockImplementationOnce(async (input) => {
+      landed.done = true;
+      await refreshTestedOutPlan({ goalId: goal.id, userId: user.id });
+      return readContext(input);
+    });
+
+    await expect(
+      decidePlanChange({
+        changeId: finished.completion.changeId,
+        goalId: goal.id,
+        input: { status: "undone" },
+      }),
+    ).resolves.toMatchObject({ change: { status: "undone" }, status: "updated" });
+
+    expect(landed.done).toBe(true);
     await expect(readSchedule(goal.id)).resolves.toStrictEqual(before);
   });
 });

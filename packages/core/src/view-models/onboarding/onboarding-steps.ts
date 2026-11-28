@@ -19,6 +19,8 @@ type StepGoal = {
   details: Record<string, unknown>;
   /** Omit unless the caller loaded notice/plan choices; omission never asks an exam-choice question. */
   hasUnpickedChoice?: boolean;
+  /** A choice that makes up the whole exam is unpicked: asked again even after "Decide later". */
+  hasUnpickedRequiredChoice?: boolean;
   kind: GoalKind;
   /**
    * A shown plan never asks why again: goals set up before a language goal's reason became its aim
@@ -81,7 +83,7 @@ function hasExamTarget(details: Record<string, unknown>): boolean {
 }
 
 export function isClassTest(details: Record<string, unknown>): boolean {
-  return details.materialIntent === "exam";
+  return details.classTest === true || details.materialIntent === "exam";
 }
 
 /** Includes explicitly skipped questions. */
@@ -134,8 +136,18 @@ function isAskedAtCourseStart({
   );
 }
 
-function isContentCountryMissing({ details, kind }: StepGoal): boolean {
-  return kind === "learn" && details.countryDependent === true;
+/** An exam whose country was said or picked has it answered, so only an unplaced one is asked. */
+function isContentCountryMissing({ details, kind }: Pick<StepGoal, "details" | "kind">): boolean {
+  return (kind === "learn" || kind === "exam") && details.countryDependent === true;
+}
+
+/** Matching and research wait for it: another country's exam of the same name is another exam. */
+export function isExamCountryOwed(goal: Pick<StepGoal, "details" | "kind">): boolean {
+  return (
+    goal.kind === "exam" &&
+    isContentCountryMissing(goal) &&
+    !getAnsweredQuestions(goal.details).includes("contentCountry")
+  );
 }
 
 function isQuestionMissing({ goal, question }: { goal: StepGoal; question: OnboardingQuestion }) {
@@ -172,12 +184,19 @@ function isQuestionMissing({ goal, question }: { goal: StepGoal; question: Onboa
   }
 }
 
+/** Each candidate books their own day, so no notice ever gives it. */
+export function isBookedExam(goal: Pick<StepGoal, "details" | "kind">): boolean {
+  return goal.kind === "exam" && goal.details.examDay === "booked";
+}
+
 /** A course's notice date is a default: only a learner answer removes its date question. */
 function isDateMissing(goal: StepGoal): boolean {
+  const undatedExam = isClassTest(goal.details) || isBookedExam(goal);
+
   return (
     Boolean(goal.dateProblem) ||
     readCourseStart(goal.details) !== null ||
-    (goal.targetDate === null && (goal.kind !== "exam" || isClassTest(goal.details)))
+    (goal.targetDate === null && (goal.kind !== "exam" || undatedExam))
   );
 }
 
@@ -196,6 +215,9 @@ export function getMissingQuestions(goal: StepGoal): OnboardingQuestion[] {
   return ONBOARDING_QUESTION_ORDER[goal.kind].filter(
     (question) =>
       (question === "targetDate" && isDateGone(goal)) ||
+      (question === "examChoice" &&
+        goal.kind === "exam" &&
+        goal.hasUnpickedRequiredChoice === true) ||
       (!answered.has(question) && isQuestionMissing({ goal, question })),
   );
 }

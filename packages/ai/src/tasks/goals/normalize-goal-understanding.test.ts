@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  type RawGoalUnderstanding,
-  normalizeGoalUnderstanding,
-} from "./normalize-goal-understanding";
+import { normalizeGoalUnderstanding } from "./normalize-goal-understanding";
+import { type RawGoalUnderstanding } from "./understood-goal";
 
 const DAILY_MINUTES_LIMITS = { max: 1440, min: 5 };
 
@@ -12,14 +10,18 @@ const TODAY = "2026-09-26";
 
 function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal {
   return {
+    classTest: false,
     contentCountry: null,
     countryDependent: false,
     examDay: null,
     examMonth: null,
     examName: null,
+    examNotBooked: false,
+    examOption: null,
     examSubjects: null,
     examTarget: null,
     examYear: null,
+    followUps: [],
     institution: null,
     kind: "learn",
     level: null,
@@ -42,7 +44,6 @@ function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal 
 function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstanding {
   return {
     dailyMinutes: null,
-    followUps: [],
     goals: [rawGoal()],
     instrument: null,
     question: null,
@@ -52,6 +53,14 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
     studyTimeNote: null,
     ...overrides,
   };
+}
+
+function readGoals(goals: RawUnderstoodGoal[]) {
+  return normalizeGoalUnderstanding({
+    dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+    raw: raw({ goals }),
+    today: TODAY,
+  });
 }
 
 function readWithIntent(
@@ -109,6 +118,28 @@ describe(normalizeGoalUnderstanding, () => {
         { examSubjects: undefined },
         { examSubjects: undefined },
       ],
+    });
+  });
+
+  it("asks only what the main goal needs, since onboarding asks while setting that goal up", () => {
+    const finals = rawGoal({
+      followUps: ["  Which subjects do your finals cover?  "],
+      kind: "exam",
+      subject: "finals",
+      title: "Get ready for my finals",
+    });
+
+    expect(readGoals([rawGoal(), finals])).toMatchObject({ followUps: [] });
+
+    expect(readGoals([finals, rawGoal()])).toMatchObject({
+      followUps: ["Which subjects do your finals cover?"],
+    });
+
+    expect(
+      readGoals([rawGoal({ followUps: ["Lost with its goal"], title: " " }), finals]),
+    ).toMatchObject({
+      followUps: ["Which subjects do your finals cover?"],
+      goals: [expect.objectContaining({ title: "Get ready for my finals" })],
     });
   });
 
@@ -234,6 +265,41 @@ describe(normalizeGoalUnderstanding, () => {
     ]);
   });
 
+  it("never names a class test as a public exam, so nothing treats a school term's name as one", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            classTest: true,
+            examDay: "official",
+            examName: "기말고사",
+            examSubjects: ["국어", "수학", "영어"],
+            examTarget: "score",
+            kind: "exam",
+            subject: "기말고사",
+          }),
+          rawGoal({ classTest: false, examDay: "official", examName: "수능", kind: "exam" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        {
+          classTest: true,
+          examDay: undefined,
+          examName: undefined,
+          examSubjects: ["국어", "수학", "영어"],
+          examTarget: undefined,
+          subject: "기말고사",
+        },
+        { classTest: undefined, examDay: "official", examName: "수능" },
+      ],
+    });
+  });
+
   it("drops past or invalid dates, invalid times and out-of-range weekdays", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
@@ -344,14 +410,20 @@ describe(normalizeGoalUnderstanding, () => {
     });
   });
 
-  it("keeps a learn goal's country only as a real code, and only for learn goals", () => {
+  it("keeps a learn or exam goal's country only as a real code", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({ contentCountry: " de ", countryDependent: true, title: "Impostos" }),
           rawGoal({ contentCountry: "ZZ", countryDependent: true, title: "Finanças" }),
-          rawGoal({ contentCountry: "PT", examName: "Exame", kind: "exam", title: "Exame" }),
+          rawGoal({
+            contentCountry: "ca",
+            countryDependent: true,
+            examName: "PPL",
+            kind: "exam",
+            title: "Pilot licence",
+          }),
         ],
       }),
       today: TODAY,
@@ -361,26 +433,110 @@ describe(normalizeGoalUnderstanding, () => {
       goals: [
         { contentCountry: "DE", countryDependent: true },
         { contentCountry: undefined, countryDependent: true },
-        { contentCountry: undefined, countryDependent: false },
+        { contentCountry: "CA", countryDependent: true },
       ],
     });
   });
 
-  it("never marks an exam or a language as waiting for a country", () => {
+  it("drops the country named with an exam that is the same everywhere", () => {
     const result = normalizeGoalUnderstanding({
       dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
-          rawGoal({ countryDependent: true, examName: "ENEM", kind: "exam", title: "ENEM" }),
-          rawGoal({ countryDependent: true, kind: "language", targetLanguage: "en", title: "En" }),
+          rawGoal({
+            contentCountry: "KE",
+            countryDependent: false,
+            examName: "SAT",
+            kind: "exam",
+            title: "SAT",
+          }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ contentCountry: undefined, countryDependent: false }],
+    });
+  });
+
+  it("never gives a language a country or marks it as waiting for one", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            contentCountry: "US",
+            countryDependent: true,
+            kind: "language",
+            targetLanguage: "en",
+            title: "En",
+          }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [{ contentCountry: undefined, countryDependent: false }],
+    });
+  });
+
+  it("keeps an exam's stated option and not-booked reading only on exam goals", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            examDay: "booked",
+            examName: "FE",
+            examNotBooked: true,
+            examOption: " Mechanical ",
+            kind: "exam",
+            title: "FE",
+          }),
+          rawGoal({ examNotBooked: true, examOption: "Mechanical", title: "Mechanics" }),
+        ],
+      }),
+      today: TODAY,
+    });
+
+    expect(result).toMatchObject({
+      goals: [
+        { examNotBooked: true, examOption: "Mechanical" },
+        { examNotBooked: undefined, examOption: undefined },
+      ],
+    });
+  });
+
+  it("reads a booked exam with a date, or an official one, as not waiting for a booking", () => {
+    const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({
+        goals: [
+          rawGoal({
+            examDay: "booked",
+            examName: "IELTS",
+            examNotBooked: true,
+            kind: "exam",
+            targetDate: "2026-12-01",
+            title: "IELTS",
+          }),
+          rawGoal({
+            examDay: "official",
+            examName: "ENEM",
+            examNotBooked: true,
+            kind: "exam",
+            title: "ENEM",
+          }),
         ],
       }),
       today: TODAY,
     });
 
     expect(
-      result.route === "goals" && result.goals.map((goal) => goal.countryDependent),
-    ).toStrictEqual([false, false]);
+      result.route === "goals" && result.goals.map((goal) => goal.examNotBooked),
+    ).toStrictEqual([undefined, undefined]);
   });
 
   it("asks for more when nothing usable is left", () => {

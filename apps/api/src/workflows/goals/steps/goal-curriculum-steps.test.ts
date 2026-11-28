@@ -110,6 +110,34 @@ describe(decideGoalScopeStep, () => {
     expect(scope).toMatchObject({ generalGoal: "Spanish", ownerId: null, targetLanguage: "es" });
   });
 
+  it("keeps a class test private: only its class decides what it covers, so it never writes shared courses", async () => {
+    const user = await userFixture();
+
+    const finals = await goalFixture({
+      details: { classTest: true, subject: "기말고사" },
+      kind: "exam",
+      language: "ko",
+      prompt: "기말고사 국어, 수학, 영어 평균 90점",
+      title: "기말고사 준비",
+      userId: user.id,
+    });
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({
+        generalGoal: "기말고사 국어, 수학, 영어 대비",
+        personalDetails: [],
+        privateCourse: false,
+      }),
+    );
+
+    const scope = await decideGoalScopeStep({
+      inputs: await loadInputs(finals.id),
+      workflowRunId: "run",
+    });
+
+    expect(scope).toMatchObject({ generalGoal: null, ownerId: user.id });
+  });
+
   it("keeps a goal private when nothing general remains to share, instead of sharing its title", async () => {
     const user = await userFixture();
 
@@ -127,6 +155,39 @@ describe(decideGoalScopeStep, () => {
 
     const scope = await decideGoalScopeStep({
       inputs: await loadInputs(learnGoal.id),
+      workflowRunId: "run",
+    });
+
+    expect(scope).toMatchObject({ generalGoal: null, ownerId: user.id });
+  });
+
+  it("keeps a goal private when its reading asked the learner a question, since a shared plan never reads the answer", async () => {
+    const user = await userFixture();
+
+    const finals = await goalFixture({
+      details: {
+        followUps: [
+          { answer: "Chemistry, history", question: "Which subjects do your finals cover?" },
+        ],
+        subject: "end-of-semester exams",
+      },
+      kind: "exam",
+      language: "en",
+      prompt: "Help me get through my end-of-semester exams",
+      title: "Get through my end-of-semester exams",
+      userId: user.id,
+    });
+
+    vi.mocked(classifyGoalSpecificity).mockResolvedValue(
+      taskResult({
+        generalGoal: "Preparing for end-of-semester exams",
+        personalDetails: [],
+        privateCourse: false,
+      }),
+    );
+
+    const scope = await decideGoalScopeStep({
+      inputs: await loadInputs(finals.id),
       workflowRunId: "run",
     });
 

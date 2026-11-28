@@ -31,6 +31,7 @@
   "essay_grade_answer": "3c30215393fd17874c98bc2add2937f6d200a9c681b7c1ab4dc986c377d70d25",
   "essay_grade_rewrite": "ae26ebedb86cf94aff5faa9c84fdc8769cb7a4ccea0a968c986523f8738e7c0c",
   "essay_graded_by_level": "0991ca701ffbf70de77467dc404c2f76e68975ca21d01cc1e7a327141b6b858c",
+  "essay_graded_by_level_why": "ec79e021a816a02e5eef3141d63a4fe0e2cf512d04be3b4aa90f22f621bb5cd4",
   "essay_graded_earlier_version": "4810bf0e37d283ff7a263411331592c89617f8f55ae7bd5c685c8ab7e2a6b9ea",
   "essay_grading": "fa64b5a0685a04c38fe86a2d8f62b6bc70e432b84e5803b476197de486e71c85",
   "essay_grading_criteria": "04bb422276d0be85e422b99f4d55eac6c9d3f3ba9c345cdbb70c943c129123af",
@@ -312,6 +313,7 @@
     <string name="essay_no_points_in_notice">O edital da prova não informa quantos pontos vale cada critério.</string>
     <string name="essay_criteria_from_notice">Critérios e pontuação do edital da prova.</string>
     <string name="essay_criteria_from_notice_practice_key">Critérios e pontuação do edital da prova. O gabarito é nosso, para você praticar.</string>
+    <string name="essay_graded_by_level_why">Avaliado por nível. Ainda não há estimativa de pontuação disponível para esta resposta.</string>
     <string name="essay_see_comments">Ver comentários</string>
     <string name="essay_comments">Comentários</string>
     <string name="essay_your_text">Seu texto</string>

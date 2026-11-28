@@ -10,8 +10,11 @@ import {
   press,
 } from "../_test-utils/activity-player";
 import { atViewport } from "../_test-utils/browser-viewport";
+import { buildAdapters, renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { runProgram } from "../activities/_sandbox/run-program";
 import { REGEX_TIME_LIMIT_MS } from "../activities/_sandbox/sandbox-host";
+import { buildLesson } from "../preview/preview-lesson";
+import { activityStep } from "../preview/preview-steps";
 
 const javascriptRunner = {
   ...activityContentFixtures.codeRunner,
@@ -80,8 +83,13 @@ async function stepForward(times: number) {
 }
 
 describe("computing activities", () => {
-  it("code runner: fixing the loop in Python prints the expected output", async () => {
-    openActivity({ template: "codeRunner" });
+  it("completes the lesson after checking the final Python activity", async () => {
+    const lesson = buildLesson([activityStep({ content: activityContentFixtures.codeRunner })], {
+      summary: { ideas: [{ text: "Python ranges stop before the end value." }], shape: "hub" },
+    });
+
+    const adapters = buildAdapters(lesson);
+    renderLessonPlayer({ adapters, lesson });
     await page.getByRole("button", { name: "Run" }).click();
 
     await expect.element(page.getByText("range stops before its end.")).toBeVisible();
@@ -97,6 +105,17 @@ describe("computing activities", () => {
     await expectCount(page.getByText("5050", { exact: true }), 2);
     await checkActivity();
     await expectVerdict("Correct!");
+    await page.getByRole("button", { name: /^Continue/u }).click();
+
+    await expect
+      .element(page.getByRole("main").getByRole("heading", { name: "Lesson map" }))
+      .toBeVisible();
+
+    expect(adapters.completeLesson).not.toHaveBeenCalled();
+
+    await page.getByRole("button", { name: /^Continue/u }).click();
+    await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
+    expect(adapters.completeLesson).toHaveBeenCalledOnce();
   });
 
   it("code runner: JavaScript output that differs is wrong", async () => {

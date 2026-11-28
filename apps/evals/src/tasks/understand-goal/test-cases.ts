@@ -66,12 +66,107 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     goal: "I'm Nigerian and I want to learn Python for data analysis",
     language: "en",
   }),
-  testCase("en-exam-is-never-waiting-for-a-country", {
+  testCase("en-exam-named-with-its-country", {
     expected: {
-      goals: [{ contentCountry: null, countryDependent: false, kind: "exam" }],
+      goals: [{ contentCountry: "GB", countryDependent: true, kind: "exam" }],
       route: "goals",
     },
     goal: "Pass the UK driving theory test",
+    language: "en",
+  }),
+  testCase("en-pilot-licence-names-its-country", {
+    expected: {
+      goals: [{ contentCountry: "CA", countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Get my private pilot licence in Canada",
+    language: "en",
+  }),
+  testCase("en-pilot-licence-without-a-country-waits-for-one", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I want to get my private pilot licence this year",
+    language: "en",
+  }),
+  testCase("en-cpa-in-canada-is-canadas-exam", {
+    expected: {
+      goals: [{ contentCountry: "CA", countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the CPA in Canada",
+    language: "en",
+  }),
+  testCase("en-sat-in-another-country-keeps-no-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: false, examName: /SAT/u, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I'm taking the SAT in Kenya in March",
+    language: "en",
+  }),
+  testCase("en-ielts-where-they-sit-it-keeps-no-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: false, examName: /IELTS/u, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Band 7 on IELTS Academic, I'll take it in Toronto",
+    language: "en",
+  }),
+  testCase("en-faa-certificate-is-never-the-nationalitys", {
+    expected: { goals: [{ contentCountryNot: "CA", kind: "exam" }], route: "goals" },
+    goal: "I'm Canadian and I want to get an FAA private pilot certificate",
+    language: "en",
+  }),
+  testCase("pt-nationality-is-not-an-exams-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Sou português e quero passar no exame de condução",
+    language: "pt",
+  }),
+  testCase("en-nationality-is-not-an-exams-country", {
+    expected: {
+      goals: [{ contentCountry: null, countryDependent: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "I'm Nigerian and I want to pass the bar exam next year",
+    language: "en",
+  }),
+  testCase("en-fe-discipline-stated-as-theirs", {
+    expected: {
+      goals: [{ examName: /FE/u, examOption: /^mechanical$/iu, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Pass the FE Mechanical exam",
+    language: "en",
+  }),
+  testCase("en-fe-discipline-with-a-hedge-is-not-settled", {
+    expected: { goals: [{ examName: /FE/u, examOption: null, kind: "exam" }], route: "goals" },
+    goal: "Pass the FE exam, maybe mechanical",
+    language: "en",
+  }),
+  testCase("en-fe-two-disciplines-are-not-settled", {
+    expected: { goals: [{ examName: /FE/u, examOption: null, kind: "exam" }], route: "goals" },
+    goal: "Pass the FE exam, mechanical or civil, still deciding",
+    language: "en",
+  }),
+  testCase("en-booked-test-not-booked-yet", {
+    expected: {
+      goals: [{ examDay: "booked", examNotBooked: true, hasTargetDate: false, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Prepare for the GRE, I haven't booked a test date yet",
+    language: "en",
+  }),
+  testCase("en-booked-test-with-its-day", {
+    expected: {
+      goals: [{ examDay: "booked", examNotBooked: false, hasTargetDate: true, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "My TOEFL is booked for December 12",
     language: "en",
   }),
   testCase("pt-display-names-distinguish-public-exams", {
@@ -649,6 +744,118 @@ export const TEST_CASES: UnderstandGoalCase[] = [
     expected: { goals: [{ kind: "exam" }], route: "goals" },
     goal: "Prova de matemática na sexta sobre frações",
     language: "pt",
+  }),
+  testCase("ko-term-finals-with-a-target-average-asks-which-subjects", {
+    expected: {
+      followUp: /과목/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam", targetScore: /85/u }],
+      route: "goals",
+    },
+    goal: "이번 기말고사 평균 85점 넘기고 싶어요",
+    language: "ko",
+  }),
+  testCase("ko-term-midterms-asks-which-subjects", {
+    expected: {
+      followUp: /과목/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "다음 달 중간고사 준비",
+    language: "ko",
+  }),
+  testCase("en-end-of-semester-exams-asks-which-subjects", {
+    expected: {
+      followUp: /subject|class|course/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Help me get through my end-of-semester exams in December",
+    language: "en",
+  }),
+  testCase("pt-term-tests-asks-which-subjects", {
+    expected: {
+      followUp: /mat[ée]ria|disciplina/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Quero tirar notas boas nas provas do trimestre",
+    language: "pt",
+  }),
+  testCase("es-term-finals-asks-which-subjects", {
+    expected: {
+      followUp: /materia|asignatura|curso|clase/iu,
+      goals: [{ examName: null, examSubjects: null, kind: "exam" }],
+      route: "goals",
+    },
+    goal: "Aprobar los finales de este cuatrimestre",
+    language: "es",
+  }),
+  testCase("ja-term-test-with-a-target-average-asks-which-subjects", {
+    expected: {
+      followUp: /科目|教科/u,
+      goals: [{ examName: null, examSubjects: null, kind: "exam", targetScore: /80/u }],
+      route: "goals",
+    },
+    goal: "期末テストで平均80点を取りたい",
+    language: "ja",
+  }),
+  testCase("ko-term-finals-naming-its-subjects-asks-nothing", {
+    expected: {
+      followUp: null,
+      goals: [
+        {
+          examName: null,
+          examSubjects: [/국어/u, /수학/u, /영어/u],
+          kind: "exam",
+          targetScore: /90/u,
+        },
+      ],
+      route: "goals",
+    },
+    goal: "기말고사 국어, 수학, 영어 평균 90점",
+    language: "ko",
+  }),
+  testCase("ko-term-finals-in-one-subject-asks-nothing", {
+    expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
+    goal: "수학 기말고사 대비",
+    language: "ko",
+  }),
+  testCase("en-finals-as-a-second-goal-ask-nothing", {
+    expected: {
+      followUp: null,
+      goals: [
+        { kind: "language", targetLanguage: "fr" },
+        { examName: null, kind: "exam" },
+      ],
+      route: "goals",
+    },
+    goal: "I want to learn French and get ready for my finals",
+    language: "en",
+  }),
+  testCase("ja-term-test-with-subjects-names-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "期末テストの数学と英語で80点以上取りたい",
+    language: "ja",
+  }),
+  testCase("en-class-finals-name-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "Get through my calculus and physics finals next month",
+    language: "en",
+  }),
+  testCase("pt-term-tests-name-no-exam", {
+    expected: { goals: [{ examName: null, examTarget: null, kind: "exam" }], route: "goals" },
+    goal: "Passar nas provas do bimestre de química e física",
+    language: "pt",
+  }),
+  testCase("ko-national-exam-keeps-its-name", {
+    expected: { goals: [{ examName: /수능/u, kind: "exam" }], route: "goals" },
+    goal: "수능 국어 수학 1등급 받고 싶어요",
+    language: "ko",
+  }),
+  testCase("en-chemistry-final-asks-nothing", {
+    expected: { followUp: null, goals: [{ examName: null, kind: "exam" }], route: "goals" },
+    goal: "chemistry final next week",
+    language: "en",
   }),
   testCase("pt-learn-music-zero", {
     expected: { goals: [{ kind: "learn", ownLevel: "none" }], route: "goals" },

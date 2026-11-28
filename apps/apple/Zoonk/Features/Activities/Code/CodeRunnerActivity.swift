@@ -75,6 +75,7 @@ private struct CodeRunnerCanvas: View {
   @ActivityState("isStale") private var isStale = false
   @State private var runtime: CodeRuntimeStatus
   @State private var runtimeAttempt = 0
+  @FocusState private var editingLine: Int?
 
   init(context: ActivityCanvasContext, fields: CodeRunnerFields) {
     self.context = context
@@ -94,8 +95,13 @@ private struct CodeRunnerCanvas: View {
     context.phase == .explore
   }
 
+  /// A right answer opened again keeps only its output, so the program that prints it is the
+  /// solution, as main's is.
   private var lines: [String] {
-    (isExploring ? fields.solution : fields.starterCode).components(separatedBy: "\n").enumerated()
+    let reopenedRight = isChecked && matches && edits.isEmpty
+
+    return (isExploring || reopenedRight ? fields.solution : fields.starterCode)
+      .components(separatedBy: "\n").enumerated()
       .map { edits[$0.offset + 1] ?? $0.element }
   }
 
@@ -171,24 +177,21 @@ private struct CodeRunnerCanvas: View {
       .typeStyle(.data)
   }
 
+  /// Main's "Edit line 2": gone once checked, keeping its room so the header doesn't move.
   @ViewBuilder
   private var yourLines: some View {
     if !isExploring {
       let lines = fields.editableLines.map(String.init).formatted(.list(type: .and))
 
-      Label {
+      Group {
         if fields.editableLines.count == 1 {
-          Text(
-            "Line \(lines) is yours", tableName: "ActivitiesCode",
-            comment: "The one line of a program the learner edits")
+          Text("Edit line \(lines)", tableName: "ActivitiesCode")
         } else {
-          Text(
-            "Lines \(lines) are yours", tableName: "ActivitiesCode",
-            comment: "The lines of a program the learner edits, like “2 and 3”")
+          Text("Edit lines \(lines)", tableName: "ActivitiesCode")
         }
-      } icon: {
-        Image(systemName: "pencil")
       }
+      .opacity(isChecked ? 0 : 1)
+      .accessibilityHidden(isChecked)
     }
   }
 
@@ -202,28 +205,33 @@ private struct CodeRunnerCanvas: View {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
         let number = index + 1
 
-        let isEditable = fields.editableLines.contains(number) && !isChecked
+        let isYours = fields.editableLines.contains(number)
+        let isEditable = isYours && !isChecked
 
         CodeLine(
           number: number, digits: digits,
           tone: errorLine == number ? .error : isEditable ? .editable : .plain,
           spoken: isEditable ? nil : SpokenCode.line(line, number: number)
         ) {
-          if isEditable {
-            TextField(
+          if isYours {
+            // Wraps as main's does, and as the lines around it do; Return runs the program.
+            // Checked, it stays a field that can't change: as text, a line is a fraction shorter,
+            // and everything under it would move up.
+            MultilineTextField(
               text: Binding(get: { line }, set: { edit(number, $0) }),
-              prompt: nil
-            ) {
-              Text(
+              label: Text(
                 "Line \(number), yours to edit", tableName: "ActivitiesCode",
-                comment: "VoiceOver: a line of a program the learner edits")
-            }
+                comment: "VoiceOver: a line of a program the learner edits"),
+              onSubmit: startRun
+            )
             .textFieldStyle(.plain)
             .textInputAutocapitalization(.never)
             .autocorrectionDisabled()
             .keyboardType(.asciiCapable)
             .submitLabel(.go)
-            .onSubmit(startRun)
+            .focused($editingLine, equals: number)
+            .codeColors(line, language: fields.language.rawValue)
+            .disabled(isChecked)
           } else {
             CodeText(tokens: colored.indices.contains(index) ? colored[index] : [])
           }
@@ -232,8 +240,16 @@ private struct CodeRunnerCanvas: View {
     }
   }
 
+  /// A paste keeps to its line, as main's does. A field that stops editing writes its text back
+  /// unchanged, which mustn't mark the run it just started as stale.
   private func edit(_ number: Int, _ value: String) {
-    edits[number] = value
+    let line = value.filter { !$0.isNewline }
+
+    guard line != lines[number - 1] else {
+      return
+    }
+
+    edits[number] = line
     changed()
   }
 
@@ -258,6 +274,8 @@ private struct CodeRunnerCanvas: View {
     let started = revision
     let code = lines.joined(separator: "\n")
     activeRun = id
+    // As on main, where Run takes focus from the code, the keyboard goes so the output shows.
+    editingLine = nil
 
     Task {
       let result = await runner.run(code)
@@ -292,13 +310,7 @@ private struct CodeRunnerOutput: View {
     VStack(alignment: .leading, spacing: 12) {
       HStack(alignment: .top, spacing: 0) {
         cell {
-          if expectedOutput == nil {
-            Text("Output", tableName: "ActivitiesCode", comment: "What an explored program printed")
-          } else {
-            Text(
-              "Your output", tableName: "ActivitiesCode",
-              comment: "What the learner's program printed")
-          }
+          Text("Output", tableName: "ActivitiesCode")
         } content: {
           printed
         }
@@ -316,7 +328,7 @@ private struct CodeRunnerOutput: View {
         }
       }
       .fixedSize(horizontal: false, vertical: true)
-      .activityBox(cornerRadius: Radius.option)
+      .activityBox()
 
       if let run {
         if isStale {
@@ -338,16 +350,7 @@ private struct CodeRunnerOutput: View {
 
           if let mistake {
             Label {
-              VStack(alignment: .leading, spacing: 2) {
-                Text(
-                  "Not quite", tableName: "ActivitiesCode",
-                  comment:
-                    "Gentle verdict after a wrong answer, above the feedback on its likely mistake"
-                )
-                .typeWeight(.semibold)
-                .foregroundStyle(.destructiveText)
-                LessonRichText(mistake)
-              }
+              RichInlineText(Self.notQuite + LessonRichText.typeset(mistake))
             } icon: {
               Image(systemName: "xmark.circle")
                 .foregroundStyle(.destructive)
@@ -413,8 +416,19 @@ private struct CodeRunnerOutput: View {
 
   private func outputText(_ text: String) -> some View {
     Text(verbatim: text.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression))
-      .typeStyle(.section.monospaced())
+      .typeStyle(.programOutput)
       .textSelection(.enabled)
+  }
+
+  /// Main's `NotQuiteLead`: the feedback's own line starts with it.
+  private static var notQuite: RichInline {
+    var lead = AttributedString(
+      localized: LocalizedStringResource(
+        "Not quite:", table: "ActivitiesCode",
+        comment: "Before the feedback on the likely mistake behind a program's wrong output"))
+    lead.inlinePresentationIntent = .stronglyEmphasized
+    lead.foregroundColor = .destructiveText
+    return RichInline(text: lead + AttributedString(" "))
   }
 
   @ViewBuilder

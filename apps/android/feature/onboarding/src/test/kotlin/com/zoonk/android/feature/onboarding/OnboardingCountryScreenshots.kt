@@ -35,11 +35,11 @@ import com.zoonk.android.ui.testing.writeRender
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalContentCountry
-import com.zoonk.api.models.GoalExamCountry
 import com.zoonk.api.models.GoalUnderstandingOneOf
 import com.zoonk.api.models.LearningProfileSuggestedInner
 import com.zoonk.api.models.LearningProfileSuggestedInnerLessonVariety
 import com.zoonk.api.models.OnboardingContentCountry
+import com.zoonk.api.models.OnboardingContentCountryDefaultCountry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -83,7 +83,7 @@ class OnboardingCountryScreenshots {
     private val variety = LearningProfileSuggestedInnerLessonVariety("pt", "BR")
     private val question =
         OnboardingContentCountry(
-            GoalExamCountry("BR", "Brasil"),
+            OnboardingContentCountryDefaultCountry("BR", "Brasil"),
             listOf(
                 LearningProfileSuggestedInner("PT", "Portugal", variety, LearningProfileSuggestedInner.Tag.HOME),
                 LearningProfileSuggestedInner("BR", "Brasil", null, null),
@@ -154,7 +154,7 @@ class OnboardingCountryScreenshots {
                                     onOpenPlan = {},
                                 )
                             } else {
-                                CountryStep("Declarar o imposto de renda", question, "pt", pending = false, onAnswer = {})
+                                CountryStep("Declarar o imposto de renda", question, exam = false, "pt", pending = false, onAnswer = {})
                             }
                         }
                     }

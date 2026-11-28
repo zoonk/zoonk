@@ -120,8 +120,7 @@ fun TodayScreen(
             }
 
             LearnerAccess.Unavailable -> {
-                val scope = rememberCoroutineScope()
-                LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } }, modifier = Modifier.padding(padding))
+                LoadFailedMessage(onRetry = app::retrySessionRestore, modifier = Modifier.padding(padding))
             }
 
             LearnerAccess.Restoring -> {
