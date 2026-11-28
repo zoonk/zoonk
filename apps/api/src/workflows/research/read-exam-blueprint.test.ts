@@ -73,7 +73,12 @@ function reading(choiceGroup: string | null): BlueprintExtraction {
   return {
     choiceGroups: [],
     dates: [],
-    edition: { passages: [{ document: 1, passage: TOTAL_LINE }], questionCount: 110, year: 2026 },
+    edition: {
+      passages: [{ document: 1, passage: TOTAL_LINE }],
+      questionCount: 110,
+      timeZone: null,
+      year: 2026,
+    },
     formats: [],
     mock: null,
     reusePolicy: { document: null, passage: null, pastQuestions: "unknown" },
@@ -84,7 +89,7 @@ function reading(choiceGroup: string | null): BlueprintExtraction {
     ],
     testedLanguage: null,
     topicFrequency: [],
-  } as unknown as BlueprintExtraction;
+  };
 }
 
 const SAT_DOMAINS = [
@@ -110,7 +115,7 @@ const SAT_NOTICE = [
 function satReading(): BlueprintExtraction {
   return {
     ...reading(null),
-    edition: { passages: [], questionCount: null, year: 2026 },
+    edition: { passages: [], questionCount: null, timeZone: null, year: 2026 },
     subjects: [
       {
         ...discipline({
@@ -127,7 +132,7 @@ function satReading(): BlueprintExtraction {
         topics: SAT_DOMAINS.map((domain) => domain.topic),
       },
     ],
-  } as BlueprintExtraction;
+  };
 }
 
 async function storedExam({ extraction = reading("Discipline"), notice = NOTICE } = {}) {

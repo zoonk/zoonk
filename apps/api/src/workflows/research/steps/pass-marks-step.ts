@@ -16,7 +16,7 @@ export async function translateReadPassMarks({
   analytics: ResearchAnalytics;
   exam: string;
   extraction: BlueprintExtraction;
-  serviceTier: ServiceTier;
+  serviceTier: ServiceTier | undefined;
 }) {
   "use step";
 
