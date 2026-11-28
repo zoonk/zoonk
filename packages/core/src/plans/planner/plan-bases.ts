@@ -122,6 +122,7 @@ function listLessonMinutes({
   const own = lessons.filter((lesson) => teaching.get(lesson.lessonId) === skill.skillId);
 
   const standIn = countStandInLessons({
+    domain: skill.domain,
     lessons: skill.lessons,
     outlined: skill.outlined,
     taught: own.length,
