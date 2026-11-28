@@ -1,0 +1,14 @@
+{
+  "caseId": "pt-en-b1-doctor",
+  "costUsd": 0.04,
+  "name": "answer keys",
+  "passed": 9,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"a headache — RRÉD-eik\",\"kind\":\"factualError\",\"workedAnswer\":\"The pronunciation guide gives only “headache.” The full phrase is /ə ˈhɛdeɪk/, with an unstressed /ə/ for “a.”\"}",
+    "{\"itemLocator\":\"words[1]\",\"keyedAnswer\":\"a sore throat — SÓR THROUT\",\"kind\":\"factualError\",\"workedAnswer\":\"The pronunciation guide omits the article. The full phrase “a sore throat” begins with an unstressed /ə/ before “sore.”\"}",
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"I've had — ÁIV RRÉD\",\"kind\":\"factualError\",\"workedAnswer\":\"“I've had” is /aɪv hæd/. The guide uses the same vowel cue as for “head” /hɛd/, but “had” has the vowel of “bad,” not “bed.”\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 12
+}

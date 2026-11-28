@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-en-b1-interview-opening",
+  "costUsd": 0.029336,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[0]\",\"keyedAnswer\":\"Obrigado por me receber hoje\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Obrigado por me receber hoje” thanks the interviewer for hosting the candidate. The distractor “convidar” also yields a natural translation: “Obrigado por me convidar hoje” thanks the interviewer for the invitation. In this context, “Thanks for having me today” can express either nuance.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 11
+}

@@ -1,0 +1,13 @@
+{
+  "caseId": "pt-en-a1-th-sounds",
+  "challenger": {
+    "costUsd": 0.02169525,
+    "durationMs": 41107.810708000005,
+    "hash": "f0b61e1d53e368f7b7cd85f45a020605a3b26a1637026bd2a49423ff8352fa41",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "96dee6599a22c4289b117e29767eec51cd665f9e70c5eb63578924c0b708c718"
+  },
+  "failures": [],
+  "incumbent": null,
+  "run": 1
+}

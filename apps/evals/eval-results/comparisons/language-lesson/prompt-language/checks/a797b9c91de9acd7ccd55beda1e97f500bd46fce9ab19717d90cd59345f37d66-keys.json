@@ -1,0 +1,12 @@
+{
+  "caseId": "en-es-a2-renting",
+  "costUsd": 0.025456,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"LOS sehr-VEE-syohs\",\"kind\":\"factualError\",\"workedAnswer\":\"“VEE” cues an English /v/, made with the lower lip against the upper teeth. In Mexican Spanish, the v in servicios normally represents a soft b-like sound [β̞], made by bringing the lips close together.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 11
+}

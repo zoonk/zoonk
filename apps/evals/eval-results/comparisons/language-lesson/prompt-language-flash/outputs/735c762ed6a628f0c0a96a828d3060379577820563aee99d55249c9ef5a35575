@@ -1,0 +1,224 @@
+{
+  "words": [
+    {
+      "word": "el dolor",
+      "translation": "the pain",
+      "pronunciation": "ehl doh-LOHR",
+      "romanization": null,
+      "tip": "Tap the tip of your tongue quickly against the roof of your mouth for the 'r' at the end, without curling it back.",
+      "note": null,
+      "distractors": [
+        "el doctor",
+        "el olor",
+        "el calor"
+      ]
+    },
+    {
+      "word": "desde cuándo",
+      "translation": "since when",
+      "pronunciation": "DEHS-deh KWAHN-doh",
+      "romanization": null,
+      "tip": "The 'd' between vowels in 'desde' is very soft, like the 'th' in 'they'.",
+      "note": null,
+      "distractors": [
+        "hasta cuándo",
+        "por qué",
+        "de dónde"
+      ]
+    },
+    {
+      "word": "el medicamento",
+      "translation": "the medication",
+      "pronunciation": "ehl meh-dee-kah-MEHN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "el médico",
+        "la medicina",
+        "el tratamiento"
+      ]
+    },
+    {
+      "word": "me duele",
+      "translation": "it hurts me",
+      "pronunciation": "meh DWEH-leh",
+      "romanization": null,
+      "tip": "Glide smoothly from 'w' into 'eh' in 'duele' as a single syllable.",
+      "note": "Use 'me duele' before a singular body part, like 'la cabeza', and 'me duelen' before plural ones.",
+      "distractors": [
+        "me duermo",
+        "me cuesta",
+        "me queda"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Desde cuándo tiene este dolor?",
+      "translation": "Since when have you had this pain?",
+      "explanation": "Spanish uses the polite present tense 'tiene' (you have) to ask how long a symptom has been ongoing.",
+      "romanization": null,
+      "distractors": [
+        "hace",
+        "está",
+        "donde"
+      ],
+      "translationDistractors": [
+        "why",
+        "will",
+        "was"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Me duele mucho la cabeza desde ayer",
+      "translation": "My head has hurt a lot since yesterday",
+      "explanation": "Spanish says 'the head hurts me' using 'la cabeza' rather than a possessive word like 'my'.",
+      "romanization": null,
+      "distractors": [
+        "duelen",
+        "mi",
+        "tengo"
+      ],
+      "translationDistractors": [
+        "throat",
+        "stomach",
+        "tomorrow"
+      ],
+      "speakingPrompt": "Tell the doctor that your head has hurt a lot since yesterday"
+    },
+    {
+      "sentence": "¿Toma algún medicamento actualmente?",
+      "translation": "Do you currently take any medication?",
+      "explanation": "The polite form 'toma' directly asks what you take without an auxiliary verb like 'do'.",
+      "romanization": null,
+      "distractors": [
+        "toman",
+        "tomo",
+        "algo"
+      ],
+      "translationDistractors": [
+        "prescribe",
+        "buy",
+        "yesterday"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "No tomo ningún medicamento",
+      "translation": "I do not take any medication",
+      "explanation": "Spanish requires a double negative here: 'no' before the verb and 'ningún' before the noun.",
+      "romanization": null,
+      "distractors": [
+        "algún",
+        "nada",
+        "toma"
+      ],
+      "translationDistractors": [
+        "never",
+        "vitamins",
+        "pills"
+      ],
+      "speakingPrompt": "Tell the doctor that you do not take any medication"
+    }
+  ],
+  "tip": {
+    "title": "Saying what hurts with me duele and me duelen",
+    "text": "In Spanish, body parts are the subject that does the hurting to you. Use `me duele` for a single item (like `la cabeza` or `el estómago`) and `me duelen` for plurals (like `los ojos` or `los pies`). Also, use `el` or `la` instead of 'my'.",
+    "examples": [
+      {
+        "sentence": "Me duele el estómago",
+        "translation": "My stomach hurts"
+      },
+      {
+        "sentence": "Me duelen los ojos",
+        "translation": "My eyes hurt"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct form to say your throat hurts.",
+      "template": "Doctor, [BLANK] la garganta desde el lunes",
+      "answer": "me duele",
+      "distractors": [
+        "me duelen",
+        "tengo dolor",
+        "me duelo"
+      ],
+      "feedback": "Use 'me duele' because 'la garganta' is a singular body part."
+    },
+    {
+      "question": "Choose the correct form to say your ears hurt.",
+      "template": "Ahorita [BLANK] mucho los oídos",
+      "answer": "me duelen",
+      "distractors": [
+        "me duele",
+        "duelen me",
+        "le duele"
+      ],
+      "feedback": "Use 'me duelen' because 'los oídos' is plural."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The doctor asks about your current medications. What do you say?",
+    "scene": "A consultation room at a clinic in Mexico City",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenos días. Dígame, ¿qué molestia tiene?",
+        "translation": "Good morning. Tell me, what trouble are you having?"
+      },
+      {
+        "speaker": "you",
+        "text": "Buenos días, doctor. Me duele mucho la cabeza desde ayer",
+        "translation": "Good morning, doctor. My head has hurt a lot since yesterday"
+      },
+      {
+        "speaker": "them",
+        "text": "¿Está tomando algún medicamento para el dolor?",
+        "translation": "Are you taking any medication for the pain?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "No, no tomo ningún medicamento",
+        "translation": "No, I do not take any medication",
+        "isBest": true,
+        "why": "It answers the doctor's question clearly and uses correct negative agreement."
+      },
+      {
+        "text": "No tomo algún medicamento",
+        "translation": "I do not take some medication",
+        "isBest": false,
+        "why": "In a negative sentence, you must use 'ningún' instead of 'algún'."
+      },
+      {
+        "text": "Me duelen el medicamento",
+        "translation": "The medication hurt me",
+        "isBest": false,
+        "why": "'Me duelen' is used for body parts that ache, not for medications you take."
+      }
+    ],
+    "explanation": "Answer medical questions plainly using 'no tomo ningún...' when you do not take any prescriptions or over-the-counter drugs."
+  },
+  "writing": {
+    "prompt": "Write a message to your doctor in Spanish stating: 'My stomach hurts since yesterday.'",
+    "answers": [
+      "Me duele el estómago desde ayer.",
+      "Me duele la panza desde ayer."
+    ],
+    "keyPoints": [
+      "Uses 'me duele' with the singular body part",
+      "Uses 'el' or 'la' instead of 'mi'",
+      "Includes 'desde ayer' to state when it started"
+    ]
+  },
+  "summary": [
+    "Use 'me duele' or 'me duelen' to state what body part hurts.",
+    "Use 'desde ayer' or 'desde hace...' to explain how long symptoms have lasted.",
+    "Say 'no tomo ningún medicamento' to tell the doctor you aren't taking any medicine."
+  ]
+}

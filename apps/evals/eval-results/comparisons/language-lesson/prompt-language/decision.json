@@ -1,0 +1,760 @@
+{
+  "cases": [
+    {
+      "caseId": "pt-en-a2-renting",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-a1-th-sounds",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-b1-interview-repeat",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-b1-interview-opening",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-en-b1-doctor",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-pt-a1-restaurant",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-a2-renting",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-a2-doctor",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-de-a2-viewing",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "pt-it-a2-past-weather",
+      "language": "pt",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "es-en-a2-work",
+      "language": "es",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-en-a1-ielts-frequent-words",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-en-a1-ielts-consonant-contrasts",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-pl-a1-household-chores",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-es-a1-weekday-verbs",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    },
+    {
+      "caseId": "en-yue-a1-ordering",
+      "language": "en",
+      "owner": null,
+      "result": "unresolved",
+      "votes": {}
+    }
+  ],
+  "outcome": "retain",
+  "preferences": [],
+  "readers": [
+    {
+      "failedPackets": 0,
+      "family": "anthropic",
+      "model": "anthropic/claude-haiku-5.5",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "openai",
+      "model": "openai/gpt-6-luna",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    },
+    {
+      "failedPackets": 0,
+      "family": "owner",
+      "model": "owner",
+      "ownOpportunities": 0,
+      "ownWins": 0,
+      "ownerAgrees": 0,
+      "ownerCompared": 0
+    }
+  ],
+  "reason": "A pricier challenger needs owner judgment.",
+  "rows": [
+    {
+      "attempted": 32,
+      "casesByLanguage": {
+        "pt": 6,
+        "en": 9,
+        "es": 1
+      },
+      "costPer1000": 16.0111875,
+      "date": "2026-11-28T14:36:11.642Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 14.584258333333336,
+          "p50": 29.343316667000007,
+          "p95": 337.11632599999996,
+          "successful": 12
+        },
+        "en": {
+          "costPer1000": 16.856211111111115,
+          "p50": 32.49245808300003,
+          "p95": 53.13616562500014,
+          "successful": 18
+        },
+        "es": {
+          "costPer1000": 16.967550000000003,
+          "p50": 29.51995741599996,
+          "p95": 32.810986167000024,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 31.32747016699999,
+      "p95": 53.13616562500014,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-en-b1-doctor",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-a1-th-sounds",
+              "run": 1
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 2
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 1
+            },
+            {
+              "caseId": "pt-en-a1-th-sounds",
+              "run": 2
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-en-b1-doctor",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 2
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 1
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-es-a2-doctor",
+              "run": 2
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 1
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 1
+            },
+            {
+              "caseId": "en-de-a2-viewing",
+              "run": 2
+            },
+            {
+              "caseId": "en-pt-a1-restaurant",
+              "run": 1
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 2
+            },
+            {
+              "caseId": "en-en-a1-ielts-frequent-words",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 1
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 1
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "es-en-a2-work",
+              "run": 2
+            },
+            {
+              "caseId": "es-en-a2-work",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "es-en-a2-work",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        }
+      ],
+      "side": "incumbent",
+      "status": "trade",
+      "succeeded": 32,
+      "ties": 0,
+      "unresolved": 16,
+      "weightedMajorsByLanguage": {
+        "pt": 21,
+        "en": 24,
+        "es": 6
+      },
+      "wins": 0
+    },
+    {
+      "attempted": 32,
+      "casesByLanguage": {
+        "pt": 6,
+        "en": 9,
+        "es": 1
+      },
+      "costPer1000": 16.320925,
+      "date": "2026-11-28T14:36:11.642Z",
+      "deliveryByLanguage": {
+        "pt": {
+          "costPer1000": 16.212225,
+          "p50": 33.589194208,
+          "p95": 39.61524541600002,
+          "successful": 12
+        },
+        "en": {
+          "costPer1000": 16.37017777777778,
+          "p50": 34.653352167,
+          "p95": 42.18949012500001,
+          "successful": 18
+        },
+        "es": {
+          "costPer1000": 16.52985,
+          "p50": 30.395049209000078,
+          "p95": 30.47964283300005,
+          "successful": 2
+        }
+      },
+      "losses": 0,
+      "missingMatches": 0,
+      "p50": 34.291949666,
+      "p95": 39.61524541600002,
+      "quality": [
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "pt",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 1
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-a2-renting",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 1
+            },
+            {
+              "caseId": "pt-en-b1-doctor",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-repeat",
+              "run": 2
+            }
+          ],
+          "both": [
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 1
+            },
+            {
+              "caseId": "pt-it-a2-past-weather",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 2
+            },
+            {
+              "caseId": "pt-en-b1-interview-opening",
+              "run": 1
+            },
+            {
+              "caseId": "pt-en-b1-doctor",
+              "run": 2
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "pt",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "en",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "en-en-a1-ielts-consonant-contrasts",
+              "run": 1
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 1
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 2
+            },
+            {
+              "caseId": "en-yue-a1-ordering",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 1
+            },
+            {
+              "caseId": "en-es-a2-renting",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 2
+            },
+            {
+              "caseId": "en-pl-a1-household-chores",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "en",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "pairAwareness",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "situationAndLevel",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "practiceDesign",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "style",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [],
+          "both": [],
+          "criterion": "plainLanguage",
+          "language": "es",
+          "weight": 1
+        },
+        {
+          "affected": [
+            {
+              "caseId": "es-en-a2-work",
+              "run": 1
+            }
+          ],
+          "both": [
+            {
+              "caseId": "es-en-a2-work",
+              "run": 1
+            }
+          ],
+          "check": true,
+          "criterion": "accuracy",
+          "language": "es",
+          "weight": 3
+        }
+      ],
+      "side": "challenger",
+      "status": "eligible",
+      "succeeded": 32,
+      "ties": 0,
+      "unresolved": 16,
+      "weightedMajorsByLanguage": {
+        "pt": 21,
+        "en": 18,
+        "es": 3
+      },
+      "wins": 0
+    }
+  ]
+}

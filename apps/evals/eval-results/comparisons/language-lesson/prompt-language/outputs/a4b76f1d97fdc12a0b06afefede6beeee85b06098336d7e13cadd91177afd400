@@ -1,0 +1,238 @@
+{
+  "words": [
+    {
+      "word": "奶茶",
+      "translation": "milk tea",
+      "pronunciation": "NYE-chah",
+      "romanization": "naai5 caa4",
+      "tip": "The first syllable starts low and rises slightly; the second starts low and falls.",
+      "note": null,
+      "distractors": [
+        "咖啡",
+        "檸檬茶",
+        "熱水"
+      ]
+    },
+    {
+      "word": "菠蘿包",
+      "translation": "a pineapple bun",
+      "pronunciation": "BOH-law-bow",
+      "romanization": "bo1 lo4 baau1",
+      "tip": "The last syllable rhymes with English “how,” not “low.”",
+      "note": "A pineapple bun usually has a sweet, pineapple-patterned crust, not pineapple filling.",
+      "distractors": [
+        "蛋撻",
+        "三文治",
+        "西多士"
+      ]
+    },
+    {
+      "word": "我要",
+      "translation": "I’d like",
+      "pronunciation": "NGOH-yeew",
+      "romanization": "ngo5 jiu3",
+      "tip": "Start with the “ng” sound at the end of English “sing,” without adding a vowel before it.",
+      "note": "In a casual restaurant, this is a normal way to order; add 唔該 to be polite.",
+      "distractors": [
+        "我有",
+        "我識",
+        "我去"
+      ]
+    },
+    {
+      "word": "幾多錢",
+      "translation": "how much",
+      "pronunciation": "GAY-doh-tseen",
+      "romanization": "gei2 do1 cin2",
+      "tip": "Start the last syllable with an airy “ts” sound, keeping the tongue behind your front teeth.",
+      "note": null,
+      "distractors": [
+        "幾點鐘",
+        "幾多人",
+        "幾多歲"
+      ]
+    },
+    {
+      "word": "唔該",
+      "translation": "please",
+      "pronunciation": "MM-goy",
+      "romanization": "m4 goi1",
+      "tip": "Hum the first syllable with your lips closed, without adding a vowel.",
+      "note": "Use this to make a request polite or to thank someone for a service.",
+      "distractors": [
+        "多謝",
+        "你好",
+        "再見"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "我要一杯奶茶同一個菠蘿包，唔該",
+      "translation": "I’d like a milk tea and a pineapple bun, please",
+      "explanation": "Use 一杯 for a cup of milk tea and 一個 for a pineapple bun. 同 joins the two items, and 唔該 makes the order polite.",
+      "romanization": "ngo5 jiu3 jat1 bui1 naai5 caa4 tung4 jat1 go3 bo1 lo4 baau1, m4 goi1",
+      "distractors": [
+        "識",
+        "喺",
+        "冇"
+      ],
+      "translationDistractors": [
+        "coffee",
+        "but",
+        "had"
+      ],
+      "speakingPrompt": "Order a milk tea and a pineapple bun"
+    },
+    {
+      "sentence": "奶茶幾多錢?",
+      "translation": "How much is the milk tea?",
+      "explanation": "Put the item first and 幾多錢 after it. Unlike English, you don’t need a word for “is” here.",
+      "romanization": "naai5 caa4 gei2 do1 cin2?",
+      "distractors": [
+        "歲",
+        "食",
+        "邊"
+      ],
+      "translationDistractors": [
+        "when",
+        "coffee",
+        "many"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "菠蘿包幾多錢?",
+      "translation": "How much is the pineapple bun?",
+      "explanation": "The item comes before 幾多錢, even though “how much” comes first in English.",
+      "romanization": "bo1 lo4 baau1 gei2 do1 cin2?",
+      "distractors": [
+        "飲",
+        "歲",
+        "邊"
+      ],
+      "translationDistractors": [
+        "where",
+        "tea",
+        "many"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "一共幾多錢，唔該?",
+      "translation": "How much is it altogether, please?",
+      "explanation": "一共 means “altogether.” Add 唔該 to make the question polite.",
+      "romanization": "jat1 gung6 gei2 do1 cin2, m4 goi1?",
+      "distractors": [
+        "飲",
+        "歲",
+        "食"
+      ],
+      "translationDistractors": [
+        "each",
+        "when",
+        "tea"
+      ],
+      "speakingPrompt": "Ask how much your order costs altogether"
+    }
+  ],
+  "tip": {
+    "title": "Ask the price",
+    "text": "Put the item first, followed by `幾多錢` to ask its price. For the total, put `一共` before `幾多錢`. Don’t add a word for “is” as you would in English.",
+    "examples": [
+      {
+        "sentence": "奶茶幾多錢?",
+        "translation": "How much is the milk tea?"
+      },
+      {
+        "sentence": "一共幾多錢?",
+        "translation": "How much is it altogether?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Ask how much a cup of milk tea costs.",
+      "template": "一杯奶茶[BLANK]?",
+      "answer": "幾多錢",
+      "distractors": [
+        "幾多歲",
+        "幾高",
+        "幾長"
+      ],
+      "feedback": "Put 幾多錢 after the item to ask its price."
+    },
+    {
+      "question": "Ask how much the pineapple bun costs.",
+      "template": "[BLANK]幾多錢?",
+      "answer": "菠蘿包",
+      "distractors": [
+        "我要",
+        "唔該",
+        "食咗"
+      ],
+      "feedback": "Put 菠蘿包 before 幾多錢 to ask the bun’s price."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The server asks what else you’d like to eat. What do you say?",
+    "scene": "A cha chaan teng in Hong Kong, with a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "想飲啲乜?",
+        "translation": "What would you like to drink?"
+      },
+      {
+        "speaker": "you",
+        "text": "我要一杯奶茶，唔該",
+        "translation": "I’d like a milk tea, please"
+      },
+      {
+        "speaker": "them",
+        "text": "仲想食啲乜?",
+        "translation": "What else would you like to eat?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "我要一個菠蘿包，唔該",
+        "translation": "I’d like a pineapple bun, please",
+        "isBest": true,
+        "why": "This politely orders something to eat."
+      },
+      {
+        "text": "我要一杯菠蘿包，唔該",
+        "translation": "I’d like a cup of pineapple bun, please",
+        "isBest": false,
+        "why": "一杯 is for a cup, not a whole pineapple bun."
+      },
+      {
+        "text": "我要幾多錢菠蘿包?",
+        "translation": "I’d like how much pineapple bun?",
+        "isBest": false,
+        "why": "This puts the price question inside the order in an ungrammatical way."
+      }
+    ],
+    "explanation": "Use 一個 for a pineapple bun and 一杯 for a cup of milk tea."
+  },
+  "writing": {
+    "prompt": "Write a message asking: “How much is the pineapple bun?”",
+    "answers": [
+      "菠蘿包幾多錢？",
+      "一個菠蘿包幾多錢？",
+      "唔該，菠蘿包幾多錢？",
+      "菠蘿包幾多錢，唔該？"
+    ],
+    "keyPoints": [
+      "Put 菠蘿包 before 幾多錢.",
+      "You can add 唔該 to be polite."
+    ]
+  },
+  "summary": [
+    "“我要一杯奶茶同一個菠蘿包，唔該” orders a milk tea and a pineapple bun.",
+    "“菠蘿包幾多錢?” asks the price of a pineapple bun.",
+    "“一共幾多錢?” asks the total price."
+  ]
+}

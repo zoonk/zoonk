@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-en-b1-interview-repeat",
+  "costUsd": 0.028152,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[3]\",\"keyedAnswer\":\"AI DÍDNT KÉTCH THÉT\",\"kind\":\"factualError\",\"workedAnswer\":\"In standard careful US speech, “didn't” has two syllables: /ˈdɪd.ənt/, often with a syllabic n in the second syllable. “DÍDNT” does not show that second syllable; “DÍD-ənt” would.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

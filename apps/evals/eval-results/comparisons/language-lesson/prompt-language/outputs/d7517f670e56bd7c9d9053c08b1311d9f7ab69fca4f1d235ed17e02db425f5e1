@@ -1,0 +1,238 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "oo kar-DAH-pyoo",
+      "romanization": null,
+      "tip": "Stress the middle syllable, and keep the final vowel combination together in one syllable.",
+      "note": null,
+      "distractors": [
+        "a receita",
+        "o garfo",
+        "o guardanapo"
+      ]
+    },
+    {
+      "word": "o prato",
+      "translation": "the dish",
+      "pronunciation": "oo PRAH-too",
+      "romanization": null,
+      "tip": null,
+      "note": "A prato can also mean a plate.",
+      "distractors": [
+        "o copo",
+        "o talher",
+        "o guardanapo"
+      ]
+    },
+    {
+      "word": "eu gostaria de",
+      "translation": "I would like",
+      "pronunciation": "EHW gohs-tah-REE-ah jee",
+      "romanization": null,
+      "tip": "Say the last two vowels of gostaria separately, with the stress on the first of them.",
+      "note": null,
+      "distractors": [
+        "eu preciso de",
+        "eu tenho",
+        "eu gosto de"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "ah KOHN-tah",
+      "romanization": null,
+      "tip": "The vowel in conta is nasal: let some air flow through your nose rather than pronouncing a separate English n.",
+      "note": "At a restaurant, a conta is the bill, not the tip.",
+      "distractors": [
+        "o troco",
+        "a gorjeta",
+        "a mesa"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "POHR fah-VOHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "com licença",
+        "de nada",
+        "até logo"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Eu gostaria de ver o cardápio",
+      "translation": "I would like to see the menu",
+      "explanation": "Use `gostaria de` before a verb such as `ver` to say what you would like to do.",
+      "romanization": null,
+      "distractors": [
+        "da",
+        "sou",
+        "uma"
+      ],
+      "translationDistractors": [
+        "has",
+        "at",
+        "some"
+      ],
+      "speakingPrompt": "Ask to see the menu."
+    },
+    {
+      "sentence": "Eu gostaria de um prato de peixe",
+      "translation": "I would like a fish dish",
+      "explanation": "Portuguese uses `de` after `gostaria`, even when English says “would like” directly before a noun.",
+      "romanization": null,
+      "distractors": [
+        "do",
+        "sou",
+        "uma"
+      ],
+      "translationDistractors": [
+        "to",
+        "the",
+        "drink"
+      ],
+      "speakingPrompt": "Order a fish dish politely."
+    },
+    {
+      "sentence": "O prato custa trinta reais",
+      "translation": "The dish costs thirty reais",
+      "explanation": "`Custa` means “costs,” and the price follows it, just as in English.",
+      "romanization": null,
+      "distractors": [
+        "custam",
+        "uma",
+        "são"
+      ],
+      "translationDistractors": [
+        "cost",
+        "table",
+        "is"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "Like “The bill, please” in English, this is a polite request without a full verb.",
+      "romanization": null,
+      "distractors": [
+        "pelo",
+        "um",
+        "sou"
+      ],
+      "translationDistractors": [
+        "menu",
+        "a",
+        "are"
+      ],
+      "speakingPrompt": "Ask for the bill."
+    }
+  ],
+  "tip": {
+    "title": "Say what you would like",
+    "text": "Use `eu gostaria de` to make a polite request. Follow it with a verb, as in `Eu gostaria de ver o cardápio` (“I would like to see the menu”), or a thing, as in `Eu gostaria de um prato de peixe` (“I would like a fish dish”). Unlike English “would like,” Portuguese needs `de` before both.",
+    "examples": [
+      {
+        "sentence": "Eu gostaria de ver o cardápio",
+        "translation": "I would like to see the menu"
+      },
+      {
+        "sentence": "Eu gostaria de um prato de peixe",
+        "translation": "I would like a fish dish"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the polite request.",
+      "template": "Eu gostaria [BLANK] pedir a conta",
+      "answer": "de",
+      "distractors": [
+        "do",
+        "da",
+        "em"
+      ],
+      "feedback": "Use `de` after `gostaria` before the verb `pedir`."
+    },
+    {
+      "question": null,
+      "template": "Eu gostaria [BLANK] um prato de peixe",
+      "answer": "de",
+      "distractors": [
+        "do",
+        "da",
+        "em"
+      ],
+      "feedback": "Use `de` after `gostaria` before `um prato de peixe`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The server asks what you would like to order. What do you say?",
+    "scene": "A restaurant in Brazil, with a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Olá, aqui está o cardápio",
+        "translation": "Hello, here is the menu"
+      },
+      {
+        "speaker": "you",
+        "text": "Obrigado",
+        "translation": "Thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "O que você gostaria de pedir?",
+        "translation": "What would you like to order?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Eu gostaria de um prato de peixe",
+        "translation": "I would like a fish dish",
+        "isBest": true,
+        "why": "This politely orders a dish."
+      },
+      {
+        "text": "Eu gostaria em um prato de peixe",
+        "translation": "I would like in a fish dish",
+        "isBest": false,
+        "why": "Use `de`, not `em`, after `gostaria`."
+      },
+      {
+        "text": "Eu gostaria de um copo de peixe",
+        "translation": "I would like a glass of fish",
+        "isBest": false,
+        "why": "A glass of fish is not a natural way to order a fish dish."
+      }
+    ],
+    "explanation": "You can add `por favor` to a request to make it polite."
+  },
+  "writing": {
+    "prompt": "Write a polite request for the bill: “The bill, please.”",
+    "answers": [
+      "A conta, por favor.",
+      "A conta, por favor?",
+      "Pode trazer a conta, por favor?",
+      "Eu gostaria da conta, por favor."
+    ],
+    "keyPoints": [
+      "Asks for the bill using `a conta`.",
+      "Makes the request polite."
+    ]
+  },
+  "summary": [
+    "“Eu gostaria de ver o cardápio” asks to see the menu.",
+    "“Eu gostaria de um prato de peixe” orders a fish dish politely.",
+    "“A conta, por favor” asks for the bill."
+  ]
+}

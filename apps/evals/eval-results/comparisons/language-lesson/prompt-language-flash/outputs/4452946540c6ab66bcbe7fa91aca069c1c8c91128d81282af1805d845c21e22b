@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "passage",
+      "translation": "a short piece of written text",
+      "pronunciation": "PASS-ij",
+      "romanization": null,
+      "tip": "Stress the first syllable and say the second syllable with a short 'i' sound.",
+      "note": "On exams and in textbooks, this word refers to the reading selection you are asked to study.",
+      "distractors": [
+        "paragraph",
+        "chapter",
+        "message"
+      ]
+    },
+    {
+      "word": "topic",
+      "translation": "the central subject of a text or discussion",
+      "pronunciation": "TAH-pik",
+      "romanization": null,
+      "tip": "The vowel in the first syllable sounds like 'ah' as in 'hot'.",
+      "note": null,
+      "distractors": [
+        "title",
+        "opinion",
+        "reason"
+      ]
+    },
+    {
+      "word": "detail",
+      "translation": "a small fact or specific piece of information",
+      "pronunciation": "dee-TEIL",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "summary",
+        "outline",
+        "heading"
+      ]
+    },
+    {
+      "word": "main idea",
+      "translation": "the most important point an author makes",
+      "pronunciation": "MEIN eye-DEE-uh",
+      "romanization": null,
+      "tip": "Stress the second syllable of 'idea' so it sounds like 'eye-DEE-uh'.",
+      "note": null,
+      "distractors": [
+        "first draft",
+        "final result",
+        "key question"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Read the short passage carefully",
+      "translation": "Read the short passage carefully",
+      "explanation": "This imperative sentence starts with the base verb 'read' to give a direct study instruction.",
+      "romanization": null,
+      "distractors": [
+        "careful",
+        "reads",
+        "during"
+      ],
+      "translationDistractors": [
+        "careful",
+        "reads",
+        "during"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "What is the topic of the text?",
+      "translation": "What is the topic of the text?",
+      "explanation": "Questions asking about a singular subject place 'is' right before the noun phrase 'the topic'.",
+      "romanization": null,
+      "distractors": [
+        "which",
+        "are",
+        "by"
+      ],
+      "translationDistractors": [
+        "which",
+        "are",
+        "by"
+      ],
+      "speakingPrompt": "Ask what subject a text is discussing"
+    },
+    {
+      "sentence": "This detail supports the main idea",
+      "translation": "This detail supports the main idea",
+      "explanation": "The singular subject 'this detail' takes the verb form 'supports' ending in 's'.",
+      "romanization": null,
+      "distractors": [
+        "support",
+        "these",
+        "about"
+      ],
+      "translationDistractors": [
+        "support",
+        "these",
+        "about"
+      ],
+      "speakingPrompt": "State that a specific fact helps prove the primary point"
+    }
+  ],
+  "tip": {
+    "title": "Asking about subjects with What is",
+    "text": "Start with `What is` to ask about a singular noun phrase like `the topic` or `the main idea`. Keep the verb `is` right before the noun phrase. Avoid using `What are` when you ask about only one central subject.",
+    "examples": [
+      {
+        "sentence": "What is the topic of the text?",
+        "translation": "What is the topic of the text?"
+      },
+      {
+        "sentence": "What is the main idea of the passage?",
+        "translation": "What is the main idea of the passage?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the phrase that correctly starts the question.",
+      "template": "[BLANK] the main idea of this paragraph?",
+      "answer": "What is",
+      "distractors": [
+        "What are",
+        "Where do",
+        "How is"
+      ],
+      "feedback": "Use 'What is' because 'the main idea' is a single concept."
+    },
+    {
+      "question": "Pick the singular noun that fits after the article.",
+      "template": "What is the [BLANK] of this reading passage?",
+      "answer": "topic",
+      "distractors": [
+        "topics",
+        "topical"
+      ],
+      "feedback": "'Topic' is singular and agrees with the singular verb 'is'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your study partner asks about the subject of the reading. What do you say?",
+    "scene": "A study room in a college library",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Let's review this short passage together",
+        "translation": "Let us look at this short text together"
+      },
+      {
+        "speaker": "you",
+        "text": "Sounds good, I just finished reading it",
+        "translation": "That works well, I just finished it"
+      },
+      {
+        "speaker": "them",
+        "text": "What is the topic of the text?",
+        "translation": "What is the subject of the text?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "The topic is clean energy in cities",
+        "translation": "The subject is clean power in urban areas",
+        "isBest": true,
+        "why": "This directly answers the question using the correct singular noun."
+      },
+      {
+        "text": "The topics are clean energy in cities",
+        "translation": "The subjects are clean power in urban areas",
+        "isBest": false,
+        "why": "The text covers one subject, so use the singular 'topic'."
+      },
+      {
+        "text": "This detail supports the main idea",
+        "translation": "This specific fact helps prove the key point",
+        "isBest": false,
+        "why": "This makes an observation about evidence instead of naming the topic."
+      }
+    ],
+    "explanation": "Answer a question about the topic by stating the subject directly in a simple sentence."
+  },
+  "writing": {
+    "prompt": "State that a specific piece of information helps prove the text's central point.",
+    "answers": [
+      "This detail supports the main idea.",
+      "The detail supports the main idea."
+    ],
+    "keyPoints": [
+      "Uses the singular verb 'supports' with the noun 'detail'",
+      "Includes 'main idea' to refer to the central point"
+    ]
+  },
+  "summary": [
+    "'passage' refers to a short piece of written text",
+    "'topic' names the overall subject of a text",
+    "'main idea' identifies the key point the author wants to make",
+    "'What is the topic of the text?' asks what a reading is about"
+  ]
+}

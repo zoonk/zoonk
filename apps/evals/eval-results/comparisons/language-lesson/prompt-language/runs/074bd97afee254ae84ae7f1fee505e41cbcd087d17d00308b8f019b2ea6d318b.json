@@ -1,0 +1,19 @@
+{
+  "caseId": "en-yue-a1-ordering",
+  "challenger": {
+    "costUsd": 0.02085575,
+    "durationMs": 37477.70329099998,
+    "hash": "54a6089249678b692b9809809deedbb7a0e3f2fa95d9d6b835ecca1bc6afe5d8",
+    "systemPromptHash": "2fc2053a07175b1b345858ae782aa60a6221ba3ff233e822b3073f7c63d30940",
+    "userPromptHash": "0bf962f7f4ee793c4a0ccc9033250d919be054d1c0fbb0452d84efc21e0ae82f"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.026468250000000006,
+    "durationMs": 53136.16562500014,
+    "hash": "8ba0cb91ca5dcf3d8f893d9844a9374713f7fa1f267aa443fd424ad89f2d2ad3",
+    "systemPromptHash": "0b0d2eb184abb4004b2e743d2ce479e3f2e7c7844753b32d8debdf6be501e866",
+    "userPromptHash": "0bf962f7f4ee793c4a0ccc9033250d919be054d1c0fbb0452d84efc21e0ae82f"
+  },
+  "run": 1
+}

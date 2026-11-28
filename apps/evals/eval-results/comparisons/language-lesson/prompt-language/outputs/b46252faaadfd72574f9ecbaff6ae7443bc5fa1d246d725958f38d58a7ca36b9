@@ -1,0 +1,234 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "OO kahr-DAH-pyoo",
+      "romanization": null,
+      "tip": "Stress the middle syllable, DAH, and keep the final syllable short.",
+      "note": null,
+      "distractors": [
+        "o guardanapo",
+        "a mesa",
+        "o prato"
+      ]
+    },
+    {
+      "word": "eu gostaria de",
+      "translation": "I would like",
+      "pronunciation": "AYW gohs-tah-REE-ah djee",
+      "romanization": null,
+      "tip": "In Brazilian Portuguese, the final syllable of `de` often sounds like English “jee.”",
+      "note": "This is a polite way to say what you would like.",
+      "distractors": [
+        "eu preciso de",
+        "eu tenho",
+        "eu gosto de"
+      ]
+    },
+    {
+      "word": "o frango",
+      "translation": "the chicken",
+      "pronunciation": "OO FRAHNG-goo",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "o peixe",
+        "o arroz",
+        "a carne"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "AH KOHN-tah",
+      "romanization": null,
+      "tip": null,
+      "note": "At a restaurant, `a conta` is the bill you ask for when you are ready to pay.",
+      "distractors": [
+        "a reserva",
+        "o recibo",
+        "a gorjeta"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "POHR fah-VOHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "com licença",
+        "desculpe",
+        "obrigado"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "O cardápio, por favor?",
+      "translation": "The menu, please?",
+      "explanation": "As in English, you can make a polite request with just the item and “please.”",
+      "romanization": null,
+      "distractors": [
+        "os",
+        "da",
+        "um"
+      ],
+      "translationDistractors": [
+        "bill",
+        "your",
+        "some"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Eu gostaria do frango, por favor",
+      "translation": "I would like the chicken, please",
+      "explanation": "Portuguese combines `de` and `o` into `do` before `frango`. English uses “the” without an extra word here.",
+      "romanization": null,
+      "distractors": [
+        "da",
+        "dos",
+        "minha"
+      ],
+      "translationDistractors": [
+        "fish",
+        "menu",
+        "are"
+      ],
+      "speakingPrompt": "Order the chicken politely."
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "Use `a conta` for the bill. As in English, adding “please” makes this short request polite.",
+      "romanization": null,
+      "distractors": [
+        "os",
+        "do",
+        "uma"
+      ],
+      "translationDistractors": [
+        "menu",
+        "your",
+        "are"
+      ],
+      "speakingPrompt": "Ask for the bill."
+    },
+    {
+      "sentence": "Eu gostaria da conta, por favor",
+      "translation": "I would like the bill, please",
+      "explanation": "Before `conta`, `de` and `a` combine into `da`. English does not combine words this way.",
+      "romanization": null,
+      "distractors": [
+        "do",
+        "dos",
+        "meu"
+      ],
+      "translationDistractors": [
+        "chicken",
+        "menu",
+        "are"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Saying what you would like",
+    "text": "Use `eu gostaria de` to make a polite request. Before `o`, combine `de` and `o` into `do`; before `a`, combine `de` and `a` into `da`. Unlike in English, these words combine: say `do frango` and `da conta`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the request.",
+      "template": "Eu gostaria [BLANK] cardápio, por favor",
+      "answer": "do",
+      "distractors": [
+        "da",
+        "dos",
+        "das"
+      ],
+      "feedback": "Use `do` because `cardápio` takes `o`."
+    },
+    {
+      "question": "Choose the word that completes the request.",
+      "template": "Eu gostaria [BLANK] conta, por favor",
+      "answer": "da",
+      "distractors": [
+        "do",
+        "dos",
+        "das"
+      ],
+      "feedback": "Use `da` because `conta` takes `a`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The server asks what you would like to order. What do you say?",
+    "scene": "A restaurant in Brazil; the server brings your menu",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Aqui está o cardápio",
+        "translation": "Here is the menu"
+      },
+      {
+        "speaker": "you",
+        "text": "Obrigado",
+        "translation": "Thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "O que você gostaria de pedir?",
+        "translation": "What would you like to order?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Eu gostaria do frango, por favor",
+        "translation": "I would like the chicken, please",
+        "isBest": true,
+        "why": "This politely orders the chicken and uses `do` with `frango`."
+      },
+      {
+        "text": "Eu gostaria da frango, por favor",
+        "translation": "I would like the chicken, please",
+        "isBest": false,
+        "why": "`Frango` takes `o`, so `da` is not the right form."
+      },
+      {
+        "text": "Eu gostaria dos frango, por favor",
+        "translation": "I would like the chicken, please",
+        "isBest": false,
+        "why": "`Dos` is plural, but `frango` is singular."
+      },
+      {
+        "text": "Eu gostaria do cardápio, por favor",
+        "translation": "I would like the menu, please",
+        "isBest": false,
+        "why": "The server has already brought the menu and is asking for your order."
+      }
+    ],
+    "explanation": "Use `por favor` to make a short restaurant request polite."
+  },
+  "writing": {
+    "prompt": "Write a polite request to the server: “I would like the bill, please.”",
+    "answers": [
+      "Eu gostaria da conta, por favor.",
+      "Gostaria da conta, por favor."
+    ],
+    "keyPoints": [
+      "Uses `gostaria` to say what you would like",
+      "Combines `de` and `a` into `da` before `conta`",
+      "Includes `por favor`"
+    ]
+  },
+  "summary": [
+    "“O cardápio, por favor?” asks for the menu.",
+    "“Eu gostaria do frango, por favor” orders the chicken politely.",
+    "“A conta, por favor” asks for the bill."
+  ]
+}

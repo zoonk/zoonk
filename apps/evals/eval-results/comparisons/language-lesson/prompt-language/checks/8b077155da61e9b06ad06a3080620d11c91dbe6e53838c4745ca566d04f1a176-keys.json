@@ -1,0 +1,12 @@
+{
+  "caseId": "en-pl-a1-household-chores",
+  "costUsd": 0.036272,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"sprzątam — I clean; pronunciation: SPROHN-tahm\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but “SPROHN” suggests an English r. After voiceless p, Polish rz sounds like sz (roughly English “sh”). Sprzątam is pronounced [ˈspʂɔn.tam].\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

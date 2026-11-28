@@ -1,0 +1,216 @@
+{
+  "words": [
+    {
+      "word": "Thanks for having me",
+      "translation": "Obrigado por me receber",
+      "pronunciation": "THÉNKS FOR RÉ-vin MI",
+      "romanization": null,
+      "tip": "Para o som de `th`, coloque a ponta da língua levemente entre os dentes e sopre, sem fazer som de `f`.",
+      "note": "A expressão agradece pela oportunidade de participar da entrevista.",
+      "distractors": [
+        "Thanks for letting me know",
+        "Thanks for reaching out",
+        "Thanks for your patience"
+      ]
+    },
+    {
+      "word": "It's great to meet you",
+      "translation": "É um prazer conhecer você",
+      "pronunciation": "ITS GREIT TÂ MIT IU",
+      "romanization": null,
+      "tip": "Em `great`, curve a língua para trás sem encostar no céu da boca para fazer o `r` inglês.",
+      "note": null,
+      "distractors": [
+        "It's great to see you again",
+        "It's time to leave",
+        "It's good to be back"
+      ]
+    },
+    {
+      "word": "I'd be happy to",
+      "translation": "Ficaria feliz em",
+      "pronunciation": "AID BI RÉ-pi TÂ",
+      "romanization": null,
+      "tip": "Em `happy`, comece com um sopro leve, como no `r` de `rato`, e não com o som de `r` inglês.",
+      "note": null,
+      "distractors": [
+        "I'd be unable to",
+        "I'd rather not",
+        "I'd be reluctant to"
+      ]
+    },
+    {
+      "word": "my experience",
+      "translation": "minha experiência",
+      "pronunciation": "MAI ik-SPÍ-ri-âns",
+      "romanization": null,
+      "tip": "Em `experience`, não acrescente uma vogal antes de `sp`; comece a sílaba tônica diretamente com esses sons.",
+      "note": null,
+      "distractors": [
+        "my expectations",
+        "my education",
+        "my availability"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Thanks for having me today",
+      "translation": "Obrigado por me receber hoje",
+      "explanation": "Em inglês, `having me` expressa a ideia de receber alguém como participante. Agradecer com `Thanks for` é uma forma natural de começar a entrevista.",
+      "romanization": null,
+      "distractors": [
+        "has",
+        "of",
+        "were"
+      ],
+      "translationDistractors": [
+        "ontem",
+        "esperar",
+        "eles"
+      ],
+      "speakingPrompt": "Agradeça ao entrevistador por receber você"
+    },
+    {
+      "sentence": "It's great to meet you",
+      "translation": "É um prazer conhecer você",
+      "explanation": "Em inglês, `It's great to` vem antes da ação expressa por `meet`. Aqui, `meet you` significa conhecer a pessoa pela primeira vez.",
+      "romanization": null,
+      "distractors": [
+        "meeting",
+        "are",
+        "from"
+      ],
+      "translationDistractors": [
+        "reencontrar",
+        "ontem",
+        "nós"
+      ],
+      "speakingPrompt": "Diga ao entrevistador que é um prazer conhecê-lo"
+    },
+    {
+      "sentence": "I'd be happy to introduce myself",
+      "translation": "Ficaria feliz em me apresentar",
+      "explanation": "Depois de `I'd be happy to`, use o verbo na forma básica: `introduce`. `Myself` indica que você vai apresentar a si mesmo.",
+      "romanization": null,
+      "distractors": [
+        "introducing",
+        "me",
+        "are"
+      ],
+      "translationDistractors": [
+        "apresentando",
+        "você",
+        "ontem"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Would you like to hear about my experience?",
+      "translation": "Você gostaria de ouvir sobre minha experiência?",
+      "explanation": "`Would you like to` faz uma pergunta educada sobre o que a outra pessoa gostaria de fazer. Use `hear about` para perguntar se ela quer ouvir sobre um assunto.",
+      "romanization": null,
+      "distractors": [
+        "hearing",
+        "does",
+        "at"
+      ],
+      "translationDistractors": [
+        "ver",
+        "nossa",
+        "ontem"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Ofereça-se para falar com educação",
+    "text": "Use `I'd be happy to` antes de um verbo na forma básica para dizer que você ficará feliz em fazer algo. Por exemplo, `I'd be happy to introduce myself` significa “Ficaria feliz em me apresentar”. Diferentemente do português, não use a forma em `-ing` depois de `to` nessa expressão.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Complete a oferta de se apresentar.",
+      "template": "[BLANK] introduce myself",
+      "answer": "I'd be happy to",
+      "distractors": [
+        "I'd be happy",
+        "I'm happy for",
+        "I'd be happy at"
+      ],
+      "feedback": "Use `I'd be happy to` antes da forma básica `introduce`."
+    },
+    {
+      "question": "Complete a frase sobre sua experiência.",
+      "template": "I'd be happy to [BLANK] my experience",
+      "answer": "discuss",
+      "distractors": [
+        "discussing",
+        "discussed",
+        "discusses"
+      ],
+      "feedback": "Depois de `I'd be happy to`, use o verbo na forma básica: `discuss`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador pede que você comece se apresentando. O que você diz?",
+    "scene": "Início de uma entrevista de emprego",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome! It's great to meet you.",
+        "translation": "Boas-vindas! É um prazer conhecer você."
+      },
+      {
+        "speaker": "you",
+        "text": "It's great to meet you, too.",
+        "translation": "Também é um prazer conhecer você."
+      },
+      {
+        "speaker": "them",
+        "text": "Could you start by introducing yourself?",
+        "translation": "Você poderia começar se apresentando?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I'd be happy to tell you about my experience.",
+        "translation": "Ficaria feliz em contar sobre minha experiência.",
+        "isBest": true,
+        "why": "A resposta aceita o pedido com educação e introduz sua experiência."
+      },
+      {
+        "text": "I'd be happy to telling you about my experience.",
+        "translation": "Ficaria feliz em contando sobre minha experiência.",
+        "isBest": false,
+        "why": "Depois de `I'd be happy to`, use `tell`, não `telling`."
+      },
+      {
+        "text": "I'd be happy tell you about my experience.",
+        "translation": "Ficaria feliz contar sobre minha experiência.",
+        "isBest": false,
+        "why": "Falta `to` antes de `tell`."
+      }
+    ],
+    "explanation": "Após aceitar o pedido, continue com uma breve apresentação sobre você."
+  },
+  "writing": {
+    "prompt": "Escreva ao entrevistador: “Ficaria feliz em contar sobre minha experiência.”",
+    "answers": [
+      "I'd be happy to tell you about my experience.",
+      "I would be happy to tell you about my experience.",
+      "I'd be happy to talk about my experience.",
+      "I would be happy to talk about my experience."
+    ],
+    "keyPoints": [
+      "Use `I'd be happy to` ou `I would be happy to` para oferecer-se com educação.",
+      "Use um verbo na forma básica depois de `to` e mencione `my experience`."
+    ]
+  },
+  "summary": [
+    "“Thanks for having me” agradece por receber você na entrevista.",
+    "“It's great to meet you” expressa que é um prazer conhecer o entrevistador.",
+    "“I'd be happy to introduce myself” oferece uma apresentação com educação."
+  ]
+}

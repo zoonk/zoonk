@@ -1,0 +1,12 @@
+{
+  "caseId": "en-yue-a1-ordering",
+  "costUsd": 0.041408,
+  "name": "answer keys",
+  "passed": 11,
+  "problems": [
+    "{\"itemLocator\":\"practice[1]\",\"keyedAnswer\":\"菠蘿包\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"菠蘿包幾多錢？ names the bun explicitly. If the bun is already understood, 唔該幾多錢？ (“Excuse me, how much is it?”) also asks its price. The prompt does not require the learner to name the bun.\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 12
+}

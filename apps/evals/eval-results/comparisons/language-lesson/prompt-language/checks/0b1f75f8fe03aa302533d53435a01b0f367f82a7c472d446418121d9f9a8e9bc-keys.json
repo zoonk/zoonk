@@ -1,0 +1,12 @@
+{
+  "caseId": "en-es-a2-doctor",
+  "costUsd": 0.029040000000000003,
+  "name": "answer keys",
+  "passed": 11,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"No tomo ningún medicamento\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Yo no tomo ningún medicamento” also means “I don't take any medicine.” The subject pronoun “yo” is optional, so it is valid here rather than a distractor.\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 12
+}

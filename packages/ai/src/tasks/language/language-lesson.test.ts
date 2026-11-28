@@ -1,7 +1,7 @@
 import { generateText } from "ai";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createGenerateTextResult } from "../_test-utils/generate-text-result";
-import { generateLanguageLesson } from "./language-lesson";
+import { fixLanguageLesson, generateLanguageLesson } from "./language-lesson";
 import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
@@ -15,7 +15,9 @@ vi.mock("./language-lesson-respelling-pt.prompt.md", () => ({
   default: "- Portuguese readers.\n",
 }));
 
-vi.mock("./language-lesson-fix.prompt.md", () => ({ default: "Fix the problems." }));
+vi.mock("./language-lesson-fix.prompt.md", () => ({
+  default: "Fix the problems as a {{TARGET_LANGUAGE}} teacher.",
+}));
 
 vi.mock("./language-lesson-respelling-es.prompt.md", () => ({ default: "- Spanish readers.\n" }));
 vi.mock("./language-lesson-respelling-en.prompt.md", () => ({ default: "- English readers.\n" }));
@@ -76,5 +78,18 @@ describe(generateLanguageLesson, () => {
     const { systemPrompt } = await generateLanguageLesson(LESSON);
 
     expect(systemPrompt).toContain("Reply in US English, explain in Português Brasileiro.");
+  });
+
+  it("names the languages in the fix rules it appends to the writer's", async () => {
+    const { systemPrompt } = await fixLanguageLesson({
+      ...LESSON,
+      lesson: createGenerateTextResult({}).output,
+      problems: [],
+      screens: [],
+    });
+
+    expect(systemPrompt).toMatch(
+      /explain in Português Brasileiro\.\nFix the problems as a US English teacher\.$/u,
+    );
   });
 });

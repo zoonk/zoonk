@@ -1,0 +1,282 @@
+{
+  "words": [
+    {
+      "word": "trabajar",
+      "translation": "to work",
+      "pronunciation": "trah-bah-HAHR",
+      "romanization": null,
+      "tip": "The Spanish 'j' sounds like a raspy English 'h', produced slightly farther back in the throat.",
+      "note": null,
+      "distractors": [
+        "trabajo",
+        "viajar",
+        "manejar"
+      ]
+    },
+    {
+      "word": "estudiar",
+      "translation": "to study",
+      "pronunciation": "ehs-too-DYAR",
+      "romanization": null,
+      "tip": "Start cleanly on the 'eh' vowel; avoid adding an extra syllable or breath before the 's'.",
+      "note": null,
+      "distractors": [
+        "escuchar",
+        "enseñar",
+        "esperar"
+      ]
+    },
+    {
+      "word": "cocinar",
+      "translation": "to cook",
+      "pronunciation": "koh-see-NAHR",
+      "romanization": null,
+      "tip": "In Mexico, 'c' before 'i' is pronounced like a standard English 's'.",
+      "note": null,
+      "distractors": [
+        "caminar",
+        "cenar",
+        "comprar"
+      ]
+    },
+    {
+      "word": "temprano",
+      "translation": "early",
+      "pronunciation": "tehm-PRAH-noh",
+      "romanization": null,
+      "tip": "Tap the tip of your tongue once against the gum ridge behind your top teeth for the single 'r', like the 'dd' in 'ladder'.",
+      "note": null,
+      "distractors": [
+        "tarde",
+        "siempre",
+        "pronto"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Yo trabajo temprano el lunes",
+      "translation": "I work early on Monday",
+      "explanation": "Spanish uses the definite article 'el' before days of the week to mean 'on'.",
+      "romanization": null,
+      "distractors": [
+        "trabajas",
+        "en",
+        "tarde"
+      ],
+      "translationDistractors": [
+        "late",
+        "at",
+        "studies"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "¿Tú trabajas en la casa?",
+      "translation": "Do you work at home?",
+      "explanation": "Yes-no questions in Spanish follow the same word order as statements, marked by rising intonation and opening and closing question marks.",
+      "romanization": null,
+      "distractors": [
+        "trabajo",
+        "estudio",
+        "por"
+      ],
+      "translationDistractors": [
+        "early",
+        "cook",
+        "school"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Nosotros cocinamos en la casa",
+      "translation": "We cook at home",
+      "explanation": "Regular '-ar' verbs take the ending '-amos' when the subject is 'nosotros' (we).",
+      "romanization": null,
+      "distractors": [
+        "cocinan",
+        "temprano",
+        "estudiamos"
+      ],
+      "translationDistractors": [
+        "work",
+        "restaurant",
+        "they"
+      ],
+      "speakingPrompt": "Say that you and others cook at home"
+    },
+    {
+      "sentence": "Diego y Sofía estudian temprano",
+      "translation": "Diego and Sofía study early",
+      "explanation": "When talking about multiple people (they), regular '-ar' verbs take the ending '-an'.",
+      "romanization": null,
+      "distractors": [
+        "estudia",
+        "cocinar",
+        "el"
+      ],
+      "translationDistractors": [
+        "late",
+        "work",
+        "he"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Present tense endings for -ar verbs",
+    "text": "To talk about weekday routines, take off the `-ar` from the end of the verb and add the ending that matches the person doing the action. For `yo` (I) add `-o`, for `tú` (you) add `-as`, for `él/ella` (he/she) add `-a`, for `nosotros` (we) add `-amos`, and for `ellos/ustedes` (they/you all) add `-an`. In Mexico, `ustedes` is always used for plural 'you'.",
+    "examples": [
+      {
+        "sentence": "Yo cocino el lunes",
+        "translation": "I cook on Monday"
+      },
+      {
+        "sentence": "Tú estudias temprano",
+        "translation": "You study early"
+      },
+      {
+        "sentence": "Ellos trabajan en la casa",
+        "translation": "They work at home"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct verb form for 'we'.",
+      "template": "Sofía y yo [BLANK] en la casa",
+      "answer": "trabajamos",
+      "distractors": [
+        "trabajo",
+        "trabajan",
+        "trabajas"
+      ],
+      "feedback": "Because the subject is 'Sofía and I' (nosotros), regular `-ar` verbs take the ending `-amos`."
+    },
+    {
+      "question": "Choose the right form for 'tú'.",
+      "template": "¿Tú [BLANK] temprano el lunes?",
+      "answer": "cocinas",
+      "distractors": [
+        "cocino",
+        "cocina",
+        "cocinan"
+      ],
+      "feedback": "With the informal pronoun `tú`, regular `-ar` verbs end in `-as`."
+    }
+  ],
+  "patternTable": {
+    "prompt": "Use the pattern from trabajar to complete the forms of cocinar",
+    "modelWord": "trabajar",
+    "modelMeaning": "to work",
+    "newWord": "cocinar",
+    "newMeaning": "to cook",
+    "rows": [
+      {
+        "label": "yo",
+        "labelMeaning": "I",
+        "model": "trabajo",
+        "answer": "cocino",
+        "blank": false
+      },
+      {
+        "label": "tú",
+        "labelMeaning": "you",
+        "model": "trabajas",
+        "answer": "cocinas",
+        "blank": true
+      },
+      {
+        "label": "él / ella",
+        "labelMeaning": "he / she",
+        "model": "trabaja",
+        "answer": "cocina",
+        "blank": false
+      },
+      {
+        "label": "nosotros",
+        "labelMeaning": "we",
+        "model": "trabajamos",
+        "answer": "cocinamos",
+        "blank": true
+      },
+      {
+        "label": "ellos / ustedes",
+        "labelMeaning": "they / you all",
+        "model": "trabajan",
+        "answer": "cocinan",
+        "blank": true
+      }
+    ],
+    "choices": [
+      "as",
+      "amos",
+      "an",
+      "o",
+      "a",
+      "es"
+    ],
+    "explanation": "`cocinar` is a regular `-ar` verb and follows the exact same present tense endings as `trabajar`."
+  },
+  "dialogue": {
+    "prompt": "Your classmate asks if you and your family cook at home. What do you say?",
+    "scene": "Chatting between classes at a university in Guadalajara",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "¿Trabajas el lunes?",
+        "translation": "Do you work on Monday?"
+      },
+      {
+        "speaker": "you",
+        "text": "Sí, trabajo temprano en la casa",
+        "translation": "Yes, I work early at home"
+      },
+      {
+        "speaker": "them",
+        "text": "¿Y cocinan en la casa también?",
+        "translation": "And do you all cook at home too?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Sí, nosotros cocinamos en la casa",
+        "translation": "Yes, we cook at home",
+        "isBest": true,
+        "why": "This correctly uses the 'nosotros' ending `-amos` to answer for you and your household."
+      },
+      {
+        "text": "Sí, nosotros cocinan en la casa",
+        "translation": "Yes, we they cook at home",
+        "isBest": false,
+        "why": "The ending `-an` is for *ellos* or *ustedes*, not *nosotros*."
+      },
+      {
+        "text": "No, tú estudias temprano",
+        "translation": "No, you study early",
+        "isBest": false,
+        "why": "This uses the 'tú' form and answers about the other person rather than answering about yourselves."
+      }
+    ],
+    "explanation": "When answering for a group that includes you, use the subject pronoun `nosotros` with the verb ending `-amos`."
+  },
+  "writing": {
+    "prompt": "Write in Spanish: 'I study at home on Monday.'",
+    "answers": [
+      "Yo estudio en la casa el lunes.",
+      "Estudio en la casa el lunes.",
+      "El lunes estudio en la casa.",
+      "El lunes yo estudio en la casa."
+    ],
+    "keyPoints": [
+      "Uses the first-person ending '-o' on 'estudio'",
+      "Includes 'en la casa' for 'at home'",
+      "Uses 'el lunes' to say 'on Monday'"
+    ]
+  },
+  "summary": [
+    "Say what you do by adding '-o', like 'yo trabajo temprano' for 'I work early'",
+    "Talk about what you and others do using '-amos', like 'nosotros cocinamos en la casa'",
+    "Ask others about their schedule using '-as', such as '¿trabajas el lunes?'"
+  ]
+}

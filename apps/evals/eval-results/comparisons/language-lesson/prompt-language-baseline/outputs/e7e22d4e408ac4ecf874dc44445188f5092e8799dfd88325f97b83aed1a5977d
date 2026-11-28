@@ -1,0 +1,199 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "OO kahr-DAH-pyoo",
+      "romanization": null,
+      "tip": "Stress the DÁ syllable, not the end of the word.",
+      "note": null,
+      "distractors": [
+        "o guardanapo",
+        "o copo",
+        "o garçom"
+      ]
+    },
+    {
+      "word": "eu queria",
+      "translation": "I would like",
+      "pronunciation": "EHW keh-REE-ah",
+      "romanization": null,
+      "tip": "In queria, tap your tongue briefly behind your upper teeth for the r.",
+      "note": "Eu queria is a polite way to order something, even though queria is a past form.",
+      "distractors": [
+        "eu preciso",
+        "eu tenho",
+        "eu gosto"
+      ]
+    },
+    {
+      "word": "o frango",
+      "translation": "the chicken",
+      "pronunciation": "OO FRAHNG-goo",
+      "romanization": null,
+      "tip": "Say the first vowel through your nose; don't add a separate n syllable.",
+      "note": null,
+      "distractors": [
+        "o peixe",
+        "a carne",
+        "o arroz"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "AH KOHN-tah",
+      "romanization": null,
+      "tip": "Nasalize the first vowel of conta without adding a separate n syllable.",
+      "note": null,
+      "distractors": [
+        "a gorjeta",
+        "o troco",
+        "o recibo"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "POHR fah-VOHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "com licença",
+        "até logo",
+        "de nada"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "O cardápio, por favor",
+      "translation": "The menu, please",
+      "explanation": "As in English, you can name what you want and add “please” to make a polite request.",
+      "romanization": null,
+      "distractors": [
+        "a",
+        "os",
+        "querem"
+      ],
+      "translationDistractors": [
+        "bill",
+        "chicken",
+        "thanks"
+      ],
+      "speakingPrompt": "Ask the server for the menu."
+    },
+    {
+      "sentence": "Eu queria frango, por favor",
+      "translation": "I would like chicken, please",
+      "explanation": "Use “eu queria” before the food you want. As in English, you don't need an article before “frango” here.",
+      "romanization": null,
+      "distractors": [
+        "querem",
+        "querer",
+        "eles"
+      ],
+      "translationDistractors": [
+        "menu",
+        "bill",
+        "water"
+      ],
+      "speakingPrompt": "Order chicken politely."
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "“A conta” means “the bill.” The feminine article “a” goes before “conta,” unlike English “the,” which stays the same.",
+      "romanization": null,
+      "distractors": [
+        "o",
+        "os",
+        "querem"
+      ],
+      "translationDistractors": [
+        "menu",
+        "chicken",
+        "receipt"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Making a polite request",
+    "text": "Use `Eu queria` before what you would like, and add `por favor` for “please.” For example, `Eu queria frango, por favor` means “I would like chicken, please.” You can also name the thing you want: `A conta, por favor` means “The bill, please.”",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the polite order.",
+      "template": "Eu [BLANK] um suco, por favor",
+      "answer": "queria",
+      "distractors": [
+        "querem",
+        "quer",
+        "querer"
+      ],
+      "feedback": "Use “eu queria” to say “I would like” when ordering politely."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The server asks what you would like to order. What do you say?",
+    "scene": "A restaurant in São Paulo, with a server",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Boa noite!",
+        "translation": "Good evening!"
+      },
+      {
+        "speaker": "you",
+        "text": "O cardápio, por favor",
+        "translation": "The menu, please"
+      },
+      {
+        "speaker": "them",
+        "text": "Claro. O que você gostaria de pedir?",
+        "translation": "Of course. What would you like to order?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Eu queria frango, por favor",
+        "translation": "I would like chicken, please",
+        "isBest": true,
+        "why": "This politely orders a dish."
+      },
+      {
+        "text": "Eu quer frango, por favor",
+        "translation": "I wants chicken, please",
+        "isBest": false,
+        "why": "“Quer” does not go with “eu”; use “queria” for this polite request."
+      },
+      {
+        "text": "Eu queria a cozinha, por favor",
+        "translation": "I would like the kitchen, please",
+        "isBest": false,
+        "why": "This asks for the kitchen rather than a dish."
+      }
+    ],
+    "explanation": "Add “por favor” to make a restaurant request polite."
+  },
+  "writing": {
+    "prompt": "Write one sentence asking the server for the bill: “The bill, please.”",
+    "answers": [
+      "A conta, por favor.",
+      "A conta, por gentileza."
+    ],
+    "keyPoints": [
+      "Use “a conta” for the bill.",
+      "Include a polite phrase such as “por favor.”"
+    ]
+  },
+  "summary": [
+    "“O cardápio, por favor” asks for the menu.",
+    "“Eu queria frango, por favor” orders chicken politely.",
+    "“A conta, por favor” asks for the bill."
+  ]
+}

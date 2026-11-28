@@ -1,0 +1,270 @@
+{
+  "words": [
+    {
+      "word": "trabajar",
+      "translation": "to work",
+      "pronunciation": "trah-bah-HAR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "descansar",
+        "viajar",
+        "dormir"
+      ]
+    },
+    {
+      "word": "estudiar",
+      "translation": "to study",
+      "pronunciation": "ehs-too-DYAR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "enseñar",
+        "jugar",
+        "caminar"
+      ]
+    },
+    {
+      "word": "cocinar",
+      "translation": "to cook",
+      "pronunciation": "koh-see-NAR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "lavar",
+        "limpiar",
+        "comprar"
+      ]
+    },
+    {
+      "word": "entre semana",
+      "translation": "on weekdays",
+      "pronunciation": "EN-treh seh-MAH-nah",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "el fin de semana",
+        "por la noche",
+        "en vacaciones"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Trabaja usted entre semana?",
+      "translation": "Do you work on weekdays?",
+      "explanation": "Spanish uses the verb form `trabaja` with polite `usted`. Unlike English, it doesn't need a separate word for “do” in this question.",
+      "romanization": null,
+      "distractors": [
+        "trabajas",
+        "trabajamos",
+        "trabajan"
+      ],
+      "translationDistractors": [
+        "does",
+        "weekends",
+        "they"
+      ],
+      "speakingPrompt": "Ask someone politely if they work on weekdays."
+    },
+    {
+      "sentence": "Trabajo en casa entre semana",
+      "translation": "I work at home on weekdays",
+      "explanation": "The ending of `trabajo` shows that you're talking about yourself, so you can leave out `yo`, meaning “I.”",
+      "romanization": null,
+      "distractors": [
+        "trabajar",
+        "trabajando",
+        "trabajado"
+      ],
+      "translationDistractors": [
+        "she",
+        "weekends",
+        "school"
+      ],
+      "speakingPrompt": "Say that you work at home on weekdays."
+    },
+    {
+      "sentence": "Ella estudia en casa el lunes",
+      "translation": "She studies at home on Monday",
+      "explanation": "`Estudia` is the form used with `ella`, meaning “she.” Spanish uses `el lunes` where English says “on Monday.”",
+      "romanization": null,
+      "distractors": [
+        "estudias",
+        "estudiamos",
+        "estudian"
+      ],
+      "translationDistractors": [
+        "they",
+        "weekend",
+        "work"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Cocinamos en casa el lunes",
+      "translation": "We cook at home on Monday",
+      "explanation": "The ending of `cocinamos` shows that “we” cook. You can add `nosotros`, but it isn't necessary.",
+      "romanization": null,
+      "distractors": [
+        "cocinar",
+        "cocinando",
+        "cocinado"
+      ],
+      "translationDistractors": [
+        "she",
+        "study",
+        "Tuesday"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Change the ending to say who does it",
+    "text": "For these verbs, remove `-ar` and add an ending for the person: `-o` for `yo`, `-a` for `usted` or `ella`, and `-amos` for `nosotros`. For example, `Yo trabajo en casa` means “I work at home,” and `Nosotros trabajamos en casa` means “We work at home.” Unlike English, Spanish often leaves out the word for “I” or “we” because the verb ending already tells you who it is.",
+    "examples": [
+      {
+        "sentence": "Yo trabajo en casa",
+        "translation": "I work at home"
+      },
+      {
+        "sentence": "Nosotros trabajamos en casa",
+        "translation": "We work at home"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the right form of cocinar.",
+      "template": "Nosotros [BLANK] en casa los lunes",
+      "answer": "cocinamos",
+      "distractors": [
+        "cocino",
+        "cocinas",
+        "cocinan"
+      ],
+      "feedback": "With `nosotros`, use the ending `-amos`."
+    },
+    {
+      "question": "Choose the right form of trabajar.",
+      "template": "Usted [BLANK] entre semana",
+      "answer": "trabaja",
+      "distractors": [
+        "trabajas",
+        "trabajamos",
+        "trabajan"
+      ],
+      "feedback": "With polite singular `usted`, use the ending `-a`."
+    }
+  ],
+  "patternTable": {
+    "prompt": "Use the pattern from trabajar to finish cocinar.",
+    "modelWord": "trabajar",
+    "modelMeaning": "to work",
+    "newWord": "cocinar",
+    "newMeaning": "to cook",
+    "rows": [
+      {
+        "label": "yo",
+        "labelMeaning": "I",
+        "model": "trabajo",
+        "answer": "cocino",
+        "blank": true
+      },
+      {
+        "label": "tú",
+        "labelMeaning": "you, informal singular",
+        "model": "trabajas",
+        "answer": "cocinas",
+        "blank": false
+      },
+      {
+        "label": "usted",
+        "labelMeaning": "you, polite singular",
+        "model": "trabaja",
+        "answer": "cocina",
+        "blank": false
+      },
+      {
+        "label": "nosotros",
+        "labelMeaning": "we",
+        "model": "trabajamos",
+        "answer": "cocinamos",
+        "blank": true
+      },
+      {
+        "label": "ustedes",
+        "labelMeaning": "you, plural",
+        "model": "trabajan",
+        "answer": "cocinan",
+        "blank": true
+      }
+    ],
+    "choices": [
+      "o",
+      "as",
+      "a",
+      "amos",
+      "an"
+    ],
+    "explanation": "Both verbs drop `-ar` and use the same endings for each person."
+  },
+  "dialogue": {
+    "prompt": "The other person asks about you. What do you say?",
+    "scene": "A conversation with someone you've just met in Mexico",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "¿Trabaja usted entre semana?",
+        "translation": "Do you work on weekdays?"
+      },
+      {
+        "speaker": "them",
+        "text": "Sí, trabajo en casa. ¿Y usted?",
+        "translation": "Yes, I work at home. And you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Yo estudio en casa entre semana",
+        "translation": "I study at home on weekdays",
+        "isBest": true,
+        "why": "This answers the question and uses the correct form of `estudiar` with `yo`."
+      },
+      {
+        "text": "Yo estudia en casa entre semana",
+        "translation": "I study at home on weekdays",
+        "isBest": false,
+        "why": "`Estudia` doesn't match `yo`; use `estudio`."
+      },
+      {
+        "text": "Yo estudiamos en casa entre semana",
+        "translation": "I study at home on weekdays",
+        "isBest": false,
+        "why": "`Estudiamos` is the “we” form, so it doesn't match `yo`."
+      }
+    ],
+    "explanation": "The ending of the verb helps show who does the activity."
+  },
+  "writing": {
+    "prompt": "Write in Spanish: “We cook at home on weekdays.”",
+    "answers": [
+      "Cocinamos en casa entre semana.",
+      "Nosotros cocinamos en casa entre semana.",
+      "Nosotras cocinamos en casa entre semana."
+    ],
+    "keyPoints": [
+      "Use `cocinamos` for “we cook.”",
+      "Use `en casa` for “at home” and `entre semana` for “on weekdays.”"
+    ]
+  },
+  "summary": [
+    "“¿Trabaja usted entre semana?” asks politely if someone works on weekdays.",
+    "“Trabajo en casa” says you work at home; “estudia” says someone studies.",
+    "“Cocinamos en casa” says we cook at home."
+  ]
+}

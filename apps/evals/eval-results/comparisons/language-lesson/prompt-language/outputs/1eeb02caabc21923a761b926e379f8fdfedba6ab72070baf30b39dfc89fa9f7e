@@ -1,0 +1,188 @@
+{
+  "words": [
+    {
+      "word": "plants",
+      "translation": "living things such as flowers and trees",
+      "pronunciation": "PLANTS",
+      "romanization": null,
+      "tip": "At the end, say the t and s close together.",
+      "note": null,
+      "distractors": [
+        "animals",
+        "rocks",
+        "seeds"
+      ]
+    },
+    {
+      "word": "need",
+      "translation": "to have to have something",
+      "pronunciation": "NEED",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "want",
+        "like",
+        "have"
+      ]
+    },
+    {
+      "word": "water",
+      "translation": "the clear liquid that people drink",
+      "pronunciation": "WAW-ter",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "juice",
+        "milk",
+        "oil"
+      ]
+    },
+    {
+      "word": "sunlight",
+      "translation": "light from the sun",
+      "pronunciation": "SUHN-lyt",
+      "romanization": null,
+      "tip": "Stress the first syllable more than the second.",
+      "note": null,
+      "distractors": [
+        "moonlight",
+        "lamplight",
+        "starlight"
+      ]
+    },
+    {
+      "word": "grow",
+      "translation": "to become bigger over time",
+      "pronunciation": "GROH",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "shrink",
+        "bloom",
+        "sprout"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Plants need water and sunlight",
+      "translation": "Plants need water and sunlight",
+      "explanation": "Plants are the living things the sentence is about. Water and sunlight are the things they need.",
+      "romanization": null,
+      "distractors": [
+        "needs",
+        "needing",
+        "to"
+      ],
+      "translationDistractors": [
+        "needs",
+        "needing",
+        "to"
+      ],
+      "speakingPrompt": "Read aloud what plants need."
+    },
+    {
+      "sentence": "Sunlight helps plants grow",
+      "translation": "Sunlight helps plants grow",
+      "explanation": "After helps, plants tells us what grows.",
+      "romanization": null,
+      "distractors": [
+        "help",
+        "growing",
+        "is"
+      ],
+      "translationDistractors": [
+        "help",
+        "growing",
+        "is"
+      ],
+      "speakingPrompt": "Read aloud how sunlight helps plants."
+    },
+    {
+      "sentence": "A plant needs water to grow",
+      "translation": "A plant needs water to grow",
+      "explanation": "A plant means one plant, so use needs. To grow tells us why it needs water.",
+      "romanization": null,
+      "distractors": [
+        "need",
+        "needing",
+        "are"
+      ],
+      "translationDistractors": [
+        "need",
+        "needing",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Plants grow in many places",
+      "translation": "Plants grow in many places",
+      "explanation": "In many places tells us where plants grow.",
+      "romanization": null,
+      "distractors": [
+        "grows",
+        "growing",
+        "is"
+      ],
+      "translationDistractors": [
+        "grows",
+        "growing",
+        "is"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Need with one or more things",
+    "text": "Use `need` after `plants` when you mean more than one: `Plants need water`. Use `needs` after `a plant` when you mean one: `A plant needs water`. Don't use `needs` after `plants`.",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the right word.",
+      "template": "Plants [BLANK] sunlight to grow.",
+      "answer": "need",
+      "distractors": [
+        "needs",
+        "to need",
+        "needing"
+      ],
+      "feedback": "Use need after plants when you mean more than one."
+    },
+    {
+      "question": "Choose the right word.",
+      "template": "A plant [BLANK] sunlight to grow.",
+      "answer": "needs",
+      "distractors": [
+        "need",
+        "to need",
+        "needing"
+      ],
+      "feedback": "Use needs after a plant when you mean one."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write one sentence saying that plants must have both water and light from the sun.",
+    "answers": [
+      "Plants need water and sunlight.",
+      "Plants need sunlight and water.",
+      "A plant needs water and sunlight.",
+      "A plant needs sunlight and water."
+    ],
+    "keyPoints": [
+      "Uses need with plants or needs with a plant",
+      "Names both water and sunlight"
+    ]
+  },
+  "summary": [
+    "“Plants need water and sunlight” tells you what plants must have.",
+    "“Sunlight helps plants grow” tells you how sunlight helps.",
+    "Use “need” with plants and “needs” with a plant."
+  ]
+}

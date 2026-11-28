@@ -1,0 +1,9 @@
+{
+  "model": "google/gemini-3.8-flash",
+  "pipeline": [
+    "google/gemini-3.8-flash"
+  ],
+  "reasoning": "provider-default",
+  "settingsHash": "e5d81ebaea3cbb760da11fe22547ba31b3d82934a2899aa76b4a8f5e16f362b9",
+  "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca"
+}

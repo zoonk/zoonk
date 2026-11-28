@@ -1,0 +1,164 @@
+{
+  "words": [
+    {
+      "word": "passage",
+      "translation": "a short section of a written text",
+      "pronunciation": "PA-sidge",
+      "romanization": null,
+      "tip": "The second syllable sounds like 'idge', not 'age'.",
+      "note": null,
+      "distractors": [
+        "message",
+        "passenger",
+        "page"
+      ]
+    },
+    {
+      "word": "topic",
+      "translation": "the subject that someone writes or talks about",
+      "pronunciation": "TAH-pik",
+      "romanization": null,
+      "tip": "Stress the first syllable with an open 'ah' sound.",
+      "note": null,
+      "distractors": [
+        "token",
+        "title",
+        "traffic"
+      ]
+    },
+    {
+      "word": "main",
+      "translation": "most important or central",
+      "pronunciation": "MEIN",
+      "romanization": null,
+      "tip": "The letters 'ai' make a long 'a' sound, rhyming with 'rain'.",
+      "note": "'main' is an adjective, while 'mainly' is an adverb.",
+      "distractors": [
+        "mine",
+        "mean",
+        "many"
+      ]
+    },
+    {
+      "word": "detail",
+      "translation": "a small piece of specific information",
+      "pronunciation": "di-TEIL",
+      "romanization": null,
+      "tip": "Stress the second syllable: di-TEIL.",
+      "note": null,
+      "distractors": [
+        "delay",
+        "daily",
+        "deal"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "This short passage explains plant growth",
+      "translation": "This short passage explains plant growth",
+      "explanation": "'This short passage' is the singular subject, so the verb 'explains' ends with 's'.",
+      "romanization": null,
+      "distractors": [
+        "explain",
+        "passages",
+        "grow"
+      ],
+      "translationDistractors": [
+        "explain",
+        "passages",
+        "grow"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "What is the main topic of the text?",
+      "translation": "What is the main topic of the text?",
+      "explanation": "Question word order places the verb 'is' before the subject noun phrase 'the main topic'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "topics",
+        "maining"
+      ],
+      "translationDistractors": [
+        "are",
+        "topics",
+        "maining"
+      ],
+      "speakingPrompt": "Ask your study partner what the reading is mostly about"
+    },
+    {
+      "sentence": "Each sentence gives an important detail",
+      "translation": "Each sentence gives an important detail",
+      "explanation": "'Each' takes the singular noun 'sentence' and the singular verb form 'gives'.",
+      "romanization": null,
+      "distractors": [
+        "give",
+        "details",
+        "a"
+      ],
+      "translationDistractors": [
+        "give",
+        "details",
+        "a"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Using 'main' before a noun",
+    "text": "Place `main` directly in front of a noun to identify the central focus or primary idea. Because `main` is an adjective describing importance, it does not change form for singular or plural nouns. Avoid saying `the most main` or adding endings like `-er` or `-est`.",
+    "examples": [
+      {
+        "sentence": "Look for the main topic first",
+        "translation": "Look for the main topic first"
+      },
+      {
+        "sentence": "The main idea is in the first paragraph",
+        "translation": "The main idea is in the first paragraph"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that describes the primary point.",
+      "template": "The [BLANK] reason for the study is clear",
+      "answer": "main",
+      "distractors": [
+        "mainly",
+        "mains"
+      ],
+      "feedback": "'Main' is an adjective that sits directly before the noun 'reason'."
+    },
+    {
+      "question": "Choose the word that fits after 'every small'.",
+      "template": "Scientists look at every small [BLANK] in the report",
+      "answer": "detail",
+      "distractors": [
+        "details",
+        "detailed"
+      ],
+      "feedback": "The word 'every' requires the singular count noun 'detail'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a sentence stating that this short text explains the main topic.",
+    "answers": [
+      "This short text explains the main topic.",
+      "This short passage explains the main topic."
+    ],
+    "keyPoints": [
+      "Begins with 'This short text' or 'This short passage'",
+      "Uses the singular verb 'explains'",
+      "Ends with 'the main topic'"
+    ]
+  },
+  "summary": [
+    "'passage' identifies a short section of written material",
+    "'What is the main topic?' asks about the central subject of a text",
+    "'Each sentence gives an important detail' refers to specific facts that support an idea"
+  ]
+}

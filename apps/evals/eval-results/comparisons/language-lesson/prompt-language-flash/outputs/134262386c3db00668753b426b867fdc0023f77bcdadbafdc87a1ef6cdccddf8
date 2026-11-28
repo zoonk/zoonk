@@ -1,0 +1,215 @@
+{
+  "words": [
+    {
+      "word": "rephrase",
+      "translation": "reformular",
+      "pronunciation": "ri-FREIZ",
+      "romanization": null,
+      "tip": "Para o 'r' em 'rephrase', curve a ponta da língua para trás sem tocar o céu da boca, diferente do 'r' da garganta em português.",
+      "note": null,
+      "distractors": [
+        "respond",
+        "replace",
+        "remember"
+      ]
+    },
+    {
+      "word": "more slowly",
+      "translation": "mais devagar",
+      "pronunciation": "MÓR SLOU-li",
+      "romanization": null,
+      "tip": "Em 'slowly', comece a palavra diretamente no som de 's' sem colocar um 'i' ou 'e' antes.",
+      "note": null,
+      "distractors": [
+        "more quickly",
+        "too quiet",
+        "less often"
+      ]
+    },
+    {
+      "word": "catch that",
+      "translation": "entender aquilo",
+      "pronunciation": "KÉTCH THÉT",
+      "romanization": null,
+      "tip": "No 'th' de 'that', coloque a ponta da língua levemente entre os dentes da frente e solte o ar com vibração das cordas vocais.",
+      "note": "Nesse contexto, 'catch' não significa pegar um objeto com as mãos, mas sim ouvir ou compreender a informação.",
+      "distractors": [
+        "throw that",
+        "lose that",
+        "keep that"
+      ]
+    },
+    {
+      "word": "clarify",
+      "translation": "esclarecer",
+      "pronunciation": "CLÉ-ri-fai",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "classify",
+        "qualify",
+        "cleanse"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Could you repeat that please?",
+      "translation": "Você poderia repetir isso, por favor?",
+      "explanation": "Usamos 'could you' para fazer uma solicitação formal e educada, seguido pelo verbo principal em sua forma básica.",
+      "romanization": null,
+      "distractors": [
+        "repeating",
+        "did",
+        "to"
+      ],
+      "translationDistractors": [
+        "escrever",
+        "explicar",
+        "rapidamente"
+      ],
+      "speakingPrompt": "Peça para o entrevistador repetir o que acabou de falar"
+    },
+    {
+      "sentence": "Could you speak a little more slowly?",
+      "translation": "Você poderia falar um pouco mais devagar?",
+      "explanation": "A expressão 'a little' suaviza o pedido, tornando a frase natural e respeitosa em uma entrevista.",
+      "romanization": null,
+      "distractors": [
+        "slower",
+        "speaks",
+        "much"
+      ],
+      "translationDistractors": [
+        "alto",
+        "rápido",
+        "depois"
+      ],
+      "speakingPrompt": "Peça para o entrevistador falar um pouco mais devagar"
+    },
+    {
+      "sentence": "Could you rephrase that question?",
+      "translation": "Você poderia reformular essa pergunta?",
+      "explanation": "O verbo 'rephrase' é usado quando você precisa que a ideia seja explicada com outras palavras para facilitar o entendimento.",
+      "romanization": null,
+      "distractors": [
+        "rephrasing",
+        "the",
+        "ask"
+      ],
+      "translationDistractors": [
+        "responder",
+        "ignorar",
+        "cancelar"
+      ],
+      "speakingPrompt": "Peça para o entrevistador reformular a pergunta com outras palavras"
+    },
+    {
+      "sentence": "I didn't quite catch that",
+      "translation": "Eu não entendi direito aquilo",
+      "explanation": "A palavra 'quite' funciona como um atenuador educado para indicar que você não conseguiu captar tudo o que foi dito.",
+      "romanization": null,
+      "distractors": [
+        "not",
+        "caught",
+        "nothing"
+      ],
+      "translationDistractors": [
+        "nunca",
+        "ouvir",
+        "gostei"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Pedidos educados com could you",
+    "text": "Em entrevistas de emprego em inglês, evite usar comandos diretos como `repeat` ou fórmulas informais como `what?`. Use `Could you` no início da frase para soar profissional e confiante. Depois de `Could you`, use sempre o verbo em sua forma básica, sem `to` e sem `-ing`.",
+    "examples": [
+      {
+        "sentence": "Could you clarify that point?",
+        "translation": "Você poderia esclarecer esse ponto?"
+      },
+      {
+        "sentence": "Could you speak more slowly?",
+        "translation": "Você poderia falar mais devagar?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase para fazer um pedido polido ao entrevistador:",
+      "template": "[BLANK] you rephrase the question?",
+      "answer": "Could",
+      "distractors": [
+        "Do",
+        "Are",
+        "Would like"
+      ],
+      "feedback": "'Could' é o verbo auxiliar adequado para formular um pedido respeitoso e profissional em uma entrevista."
+    },
+    {
+      "question": "Escolha a forma correta do verbo para completar o pedido:",
+      "template": "Could you [BLANK] that more slowly?",
+      "answer": "repeat",
+      "distractors": [
+        "repeating",
+        "to repeat",
+        "repeated"
+      ],
+      "feedback": "Após 'could you', o verbo principal deve ficar na sua forma básica, sem 'to' e sem terminação em '-ing'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador fez uma pergunta longa e rápida. Como você pede para ele reformular de maneira profissional?",
+    "scene": "Uma sala de entrevista em Chicago",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Could you tell me how you prioritize competing deadlines across different departments?",
+        "translation": "Você poderia me dizer como você prioriza prazos concorrentes entre diferentes departamentos?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Could you rephrase that question please?",
+        "translation": "Você poderia reformular essa pergunta, por favor?",
+        "isBest": true,
+        "why": "Essa resposta usa uma estrutura polida que demonstra profissionalismo e foco em responder com clareza."
+      },
+      {
+        "text": "What did you say?",
+        "translation": "O que você disse?",
+        "isBest": false,
+        "why": "Essa opção soa informal e abrupta demais para uma entrevista de emprego."
+      },
+      {
+        "text": "Repeat again please",
+        "translation": "Repita de novo por favor",
+        "isBest": false,
+        "why": "Além de soar como uma ordem direta, o uso conjunto de 'repeat' e 'again' é redundante."
+      }
+    ],
+    "explanation": "Pedir esclarecimentos em uma entrevista não é fraqueza: demonstra controle da situação e garantia de alinhamento com o entrevistador."
+  },
+  "writing": {
+    "prompt": "Escreva uma frase em inglês pedindo polidamente para o entrevistador falar um pouco mais devagar: \"Você poderia falar um pouco mais devagar?\"",
+    "answers": [
+      "Could you speak a little more slowly?",
+      "Could you please speak a little more slowly?",
+      "Could you speak a bit more slowly?"
+    ],
+    "keyPoints": [
+      "Inicia com 'Could you' para manter a formalidade",
+      "Usa a forma básica 'speak' sem 'to'",
+      "Emprega 'more slowly' para se referir ao ritmo da fala"
+    ]
+  },
+  "summary": [
+    "'Could you repeat that?' pede educadamente para a pessoa repetir o que acabou de dizer.",
+    "'Could you rephrase that?' solicita que a pergunta seja explicada com outras palavras.",
+    "'Could you speak more slowly?' pede ao interlocutor que reduza o ritmo da fala sem perder a cordialidade."
+  ]
+}

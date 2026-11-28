@@ -1,0 +1,194 @@
+{
+  "words": [
+    {
+      "word": "sprzątać",
+      "translation": "to clean up",
+      "pronunciation": "SPSHON-tach",
+      "romanization": null,
+      "tip": "Keep the consonants at the start together, without adding a vowel between them.",
+      "note": null,
+      "distractors": [
+        "gotować",
+        "odpoczywać",
+        "pracować"
+      ]
+    },
+    {
+      "word": "odkurzać",
+      "translation": "to vacuum",
+      "pronunciation": "ot-KOO-zhach",
+      "romanization": null,
+      "tip": "The final sound is a softer version of English “ch”: raise the middle of your tongue toward the roof of your mouth.",
+      "note": null,
+      "distractors": [
+        "zamiatać",
+        "wycierać",
+        "myć"
+      ]
+    },
+    {
+      "word": "prać",
+      "translation": "to wash clothes",
+      "pronunciation": "PRACH",
+      "romanization": null,
+      "tip": "Make the final sound softer than English “ch” by raising the middle of your tongue toward the roof of your mouth.",
+      "note": null,
+      "distractors": [
+        "prasować",
+        "suszyć",
+        "składać"
+      ]
+    },
+    {
+      "word": "co tydzień",
+      "translation": "every week",
+      "pronunciation": "TSOH TIH-jyen",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "codziennie",
+        "co miesiąc",
+        "co roku"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Co tydzień sprzątam mieszkanie",
+      "translation": "I clean the apartment every week",
+      "explanation": "Polish often leaves out the word for “I”: the ending of `sprzątam` already tells you who is cleaning.",
+      "romanization": null,
+      "distractors": [
+        "sprzątasz",
+        "mieszkaniu",
+        "tygodniu"
+      ],
+      "translationDistractors": [
+        "you",
+        "month",
+        "office"
+      ],
+      "speakingPrompt": "Say that you clean the apartment every week."
+    },
+    {
+      "sentence": "Odkurzam w sobotę",
+      "translation": "I vacuum on Saturdays",
+      "explanation": "Polish uses `w` before the day, where English uses “on.” The form `sobotę` follows `w` here.",
+      "romanization": null,
+      "distractors": [
+        "odkurzasz",
+        "sobota",
+        "na"
+      ],
+      "translationDistractors": [
+        "you",
+        "Sundays",
+        "clean"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Piorę ubrania w niedzielę",
+      "translation": "I wash clothes on Sundays",
+      "explanation": "`Piorę` means “I wash” and comes from `prać`. As in English, the clothes being washed follow the verb.",
+      "romanization": null,
+      "distractors": [
+        "piorą",
+        "niedziela",
+        "na"
+      ],
+      "translationDistractors": [
+        "they",
+        "Saturdays",
+        "dishes"
+      ],
+      "speakingPrompt": "Say that you wash clothes on Sundays."
+    },
+    {
+      "sentence": "Czy co tydzień odkurzasz mieszkanie?",
+      "translation": "Do you vacuum the apartment every week?",
+      "explanation": "`Czy` marks a yes-or-no question. Unlike English, Polish does not need a separate word for “do” here.",
+      "romanization": null,
+      "distractors": [
+        "odkurzam",
+        "tygodniu",
+        "mieszkaniu"
+      ],
+      "translationDistractors": [
+        "I",
+        "month",
+        "house"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Saying how often with co tydzień",
+    "text": "Use `co tydzień` to say something happens every week. It can come before or after the action: `Co tydzień sprzątam` means “I clean every week,” and `Odkurzam co tydzień` means “I vacuum every week.” Unlike English “every week,” the Polish phrase uses `co`, not a word meaning “every.”",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the phrase meaning “every week.”",
+      "template": "Odkurzam [BLANK].",
+      "answer": "co tydzień",
+      "distractors": [
+        "co tygodniu",
+        "co tygodnia",
+        "w tygodnia"
+      ],
+      "feedback": "The fixed phrase `co tydzień` means “every week.”"
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Your housemate asks what you do on Saturdays. What do you say?",
+    "scene": "At home with a housemate in Kraków",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Co robisz w sobotę?",
+        "translation": "What do you do on Saturdays?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Co tydzień sprzątam mieszkanie",
+        "translation": "I clean the apartment every week",
+        "isBest": true,
+        "why": "This naturally describes a regular chore you do."
+      },
+      {
+        "text": "Co tydzień sprzątać mieszkanie",
+        "translation": "Every week to clean the apartment",
+        "isBest": false,
+        "why": "The infinitive `sprzątać` does not say “I clean.”"
+      },
+      {
+        "text": "Co tydzień sprzątam mieszkaniu",
+        "translation": "Every week I clean in the apartment",
+        "isBest": false,
+        "why": "Here the thing being cleaned needs the form `mieszkanie`, not `mieszkaniu`."
+      }
+    ],
+    "explanation": "Use `co tydzień` to describe something you do every week."
+  },
+  "writing": {
+    "prompt": "Write: “I clean the apartment every week.”",
+    "answers": [
+      "Co tydzień sprzątam mieszkanie.",
+      "Sprzątam mieszkanie co tydzień.",
+      "Sprzątam co tydzień mieszkanie."
+    ],
+    "keyPoints": [
+      "Use `sprzątam` to say that you clean.",
+      "Use `co tydzień` for “every week” and `mieszkanie` for the apartment."
+    ]
+  },
+  "summary": [
+    "“Co tydzień sprzątam mieszkanie” says you clean the apartment every week.",
+    "“Odkurzam w sobotę” says you vacuum on Saturdays.",
+    "“Piorę ubrania w niedzielę” says you wash clothes on Sundays."
+  ]
+}

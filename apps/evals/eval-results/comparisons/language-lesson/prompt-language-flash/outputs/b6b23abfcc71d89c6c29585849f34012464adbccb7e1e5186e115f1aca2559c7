@@ -1,0 +1,174 @@
+{
+  "words": [
+    {
+      "word": "pat",
+      "translation": "a gentle tap with an open hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Release a small burst of air from your lips without vibrating your vocal cords at the start.",
+      "note": null,
+      "distractors": [
+        "bat",
+        "tap",
+        "pit"
+      ]
+    },
+    {
+      "word": "bat",
+      "translation": "a wooden or metal club used in sports",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Start vibrating your vocal cords immediately as your lips open, with no puff of air.",
+      "note": null,
+      "distractors": [
+        "pat",
+        "tab",
+        "bit"
+      ]
+    },
+    {
+      "word": "pack",
+      "translation": "to put items into a bag or container",
+      "pronunciation": "PAK",
+      "romanization": null,
+      "tip": "Begin with an unvoiced burst of air from the lips before the vowel.",
+      "note": null,
+      "distractors": [
+        "back",
+        "pick",
+        "tack"
+      ]
+    },
+    {
+      "word": "back",
+      "translation": "the rear surface of the human body",
+      "pronunciation": "BAK",
+      "romanization": null,
+      "tip": "Turn your voice on right away as your lips part.",
+      "note": null,
+      "distractors": [
+        "pack",
+        "beck",
+        "sack"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "He swung the bat",
+      "translation": "He swung the bat",
+      "explanation": "The noun 'bat' refers to the athletic tool used to strike a ball.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "mat"
+      ],
+      "translationDistractors": [
+        "pat",
+        "mat"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Give the dog a gentle pat",
+      "translation": "Give the dog a gentle pat",
+      "explanation": "'Pat' functions here as a noun meaning a light stroke with the flat hand.",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "rat"
+      ],
+      "translationDistractors": [
+        "bat",
+        "rat"
+      ],
+      "speakingPrompt": "Tell someone to stroke the dog lightly"
+    },
+    {
+      "sentence": "Pack your bag before the trip",
+      "translation": "Pack your bag before the trip",
+      "explanation": "The imperative verb 'pack' means loading personal items into luggage.",
+      "romanization": null,
+      "distractors": [
+        "back",
+        "rack"
+      ],
+      "translationDistractors": [
+        "back",
+        "rack"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "My back hurts after work",
+      "translation": "My back hurts after work",
+      "explanation": "Here 'back' is the subject of the sentence and names the body part.",
+      "romanization": null,
+      "distractors": [
+        "pack",
+        "sack"
+      ],
+      "translationDistractors": [
+        "pack",
+        "sack"
+      ],
+      "speakingPrompt": "Say that the rear part of your body aches"
+    }
+  ],
+  "tip": {
+    "title": "Voiced and voiceless initial consonants",
+    "text": "The sounds `p` and `b` share the same mouth position, but `b` uses your voice while `p` uses a silent puff of air. Notice whether your throat vibrates immediately at the start of the word. Confusing these initial sounds changes the entire word, such as turning `pat` into `bat`.",
+    "examples": [
+      {
+        "sentence": "The player dropped the bat",
+        "translation": "The player dropped the bat"
+      },
+      {
+        "sentence": "Give him a friendly pat",
+        "translation": "Give him a friendly pat"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that describes touching an animal gently.",
+      "template": "You can give the friendly dog a [BLANK] on the head",
+      "answer": "pat",
+      "distractors": [
+        "bat",
+        "back"
+      ],
+      "feedback": "A 'pat' is a gentle touch with an open hand, whereas a 'bat' is a sports club."
+    },
+    {
+      "question": "Choose the word that refers to putting belongings into luggage.",
+      "template": "Please [BLANK] your clothes into the suitcase tonight",
+      "answer": "pack",
+      "distractors": [
+        "back",
+        "pat"
+      ],
+      "feedback": "'Pack' is the verb meaning to fill luggage, contrasting with the noun 'back'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a sentence saying that you need to fill your suitcase with your clothes.",
+    "answers": [
+      "I need to pack my suitcase.",
+      "I have to pack my suitcase.",
+      "I need to pack my bag.",
+      "I have to pack my bag."
+    ],
+    "keyPoints": [
+      "Uses the verb 'pack' rather than 'back'",
+      "Uses 'need to' or 'have to' before the verb"
+    ]
+  },
+  "summary": [
+    "Words like 'pat' and 'bat' differ only by vocal cord vibration on the first sound",
+    "'Pack' begins with a voiceless puff of air, while 'back' begins with voice",
+    "Identifying the opening consonant prevents confusing entirely different everyday words"
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "words": [
+    {
+      "word": "me duele",
+      "translation": "my ... hurts",
+      "pronunciation": "meh DWEH-leh",
+      "romanization": null,
+      "tip": "Glide the 'ue' quickly together like 'weh' without pausing between the vowels.",
+      "note": null,
+      "distractors": [
+        "me gusta",
+        "me cuesta",
+        "me parece"
+      ]
+    },
+    {
+      "word": "el dolor",
+      "translation": "the pain",
+      "pronunciation": "ehl doh-LOHR",
+      "romanization": null,
+      "tip": "Tap the final 'r' once lightly against the ridge behind your upper teeth.",
+      "note": null,
+      "distractors": [
+        "el doctor",
+        "el olor",
+        "el ardor"
+      ]
+    },
+    {
+      "word": "desde hace",
+      "translation": "for",
+      "pronunciation": "DEHS-deh AH-seh",
+      "romanization": null,
+      "tip": "Remember that 'h' in 'hace' is completely silent.",
+      "note": "Use 'desde hace' to say how long something has been going on, equivalent to English 'for two days'.",
+      "distractors": [
+        "hasta que",
+        "después de",
+        "antes de"
+      ]
+    },
+    {
+      "word": "el medicamento",
+      "translation": "the medication",
+      "pronunciation": "ehl meh-dee-kah-MEHN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "el médico",
+        "el tratamiento",
+        "el movimiento"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "¿Desde cuándo tiene este dolor?",
+      "translation": "How long have you had this pain?",
+      "explanation": "Doctors in Mexico address adult patients with the polite form 'usted', using 'tiene' rather than 'tienes'. '¿Desde cuándo...?' literally asks 'Since when...?'",
+      "romanization": null,
+      "distractors": [
+        "hace",
+        "tienes",
+        "duele"
+      ],
+      "translationDistractors": [
+        "where",
+        "why",
+        "which"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Me duele mucho el estómago desde hace dos días",
+      "translation": "My stomach has been hurting a lot for two days",
+      "explanation": "Spanish uses 'me duele' followed by the body part with the definite article 'el', never a possessive like 'mi'.",
+      "romanization": null,
+      "distractors": [
+        "mi",
+        "duelen",
+        "para"
+      ],
+      "translationDistractors": [
+        "head",
+        "weeks",
+        "since"
+      ],
+      "speakingPrompt": "Tell the doctor that your stomach has been hurting a lot for two days"
+    },
+    {
+      "sentence": "¿Toma algún medicamento actualmente?",
+      "translation": "Are you currently taking any medication?",
+      "explanation": "'Actualmente' is a false friend that means 'currently' or 'at present', not 'actually'.",
+      "romanization": null,
+      "distractors": [
+        "tomo",
+        "ningún",
+        "realmente"
+      ],
+      "translationDistractors": [
+        "yesterday",
+        "actually",
+        "vitamins"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "No tomo ningún medicamento",
+      "translation": "I don't take any medication",
+      "explanation": "Spanish uses a double negative: 'no' before the verb and 'ningún' before the masculine noun 'medicamento'.",
+      "romanization": null,
+      "distractors": [
+        "toma",
+        "algún",
+        "nada"
+      ],
+      "translationDistractors": [
+        "never",
+        "some",
+        "always"
+      ],
+      "speakingPrompt": "Tell the doctor that you don't take any medication"
+    }
+  ],
+  "tip": {
+    "title": "Using doler to say what hurts",
+    "text": "The verb `doler` works backwards compared to English: the body part is the subject doing the hurting. Use `me duele` before a singular noun like `el estómago` or `la cabeza`, and `me duelen` before plural body parts like `los ojos` or `los pies`. Never use possessives like `mi`; always use the article `el`, `la`, `los`, or `las`.",
+    "examples": [
+      {
+        "sentence": "Me duele la garganta",
+        "translation": "My throat hurts"
+      },
+      {
+        "sentence": "Me duelen las piernas",
+        "translation": "My legs hurt"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct form to say your head hurts.",
+      "template": "Me [BLANK] la cabeza desde ayer",
+      "answer": "duele",
+      "distractors": [
+        "duelen",
+        "dolen"
+      ],
+      "feedback": "'La cabeza' is singular, so it requires 'duele', not 'duelen'."
+    },
+    {
+      "question": "Choose the correct form to say your feet hurt.",
+      "template": "Doctor, me [BLANK] mucho los pies",
+      "answer": "duelen",
+      "distractors": [
+        "duele",
+        "dulo"
+      ],
+      "feedback": "'Los pies' is plural, so the verb must match in the plural form 'duelen'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The doctor asks about your symptoms. Answer by explaining what hurts and for how long.",
+    "scene": "A clinic consultation room in Mexico City",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Buenos días. Cuénteme, ¿qué molestias tiene?",
+        "translation": "Good morning. Tell me, what symptoms do you have?"
+      },
+      {
+        "speaker": "them",
+        "text": "¿Desde cuándo tiene este dolor?",
+        "translation": "How long have you had this pain?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Me duele el estómago desde hace dos días",
+        "translation": "My stomach has been hurting for two days",
+        "isBest": true,
+        "why": "It directly answers when the pain started using 'desde hace' and correctly uses 'me duele' with the singular body part."
+      },
+      {
+        "text": "Me duelen el estómago desde dos días",
+        "translation": "My stomach hurts since two days",
+        "isBest": false,
+        "why": "'Me duelen' is plural and does not agree with 'el estómago', and 'desde' alone cannot replace 'desde hace' for a duration."
+      },
+      {
+        "text": "Tomo ningún medicamento actualmente",
+        "translation": "I take no medication currently",
+        "isBest": false,
+        "why": "This doesn't answer the doctor's question about how long the pain has lasted, and it incorrectly omits 'no' before the verb."
+      }
+    ],
+    "explanation": "To state how long a symptom has lasted, pair your symptom with 'desde hace' followed by the number of hours or days."
+  },
+  "writing": {
+    "prompt": "Write a message in Spanish to your doctor explaining: 'My back hurts and I don't take any medication.' (Use 'la espalda' for back).",
+    "answers": [
+      "Me duele la espalda y no tomo ningún medicamento.",
+      "Me duele la espalda y no tomo medicamentos.",
+      "Me duele la espalda y no tomo ningún medicamento"
+    ],
+    "keyPoints": [
+      "Uses 'me duele' with 'la espalda'",
+      "Uses 'no tomo' for 'I don't take'",
+      "Uses 'ningún medicamento' or 'medicamentos'"
+    ]
+  },
+  "summary": [
+    "Say what hurts using 'me duele' for singular body parts and 'me duelen' for plural body parts.",
+    "Express how long you have felt sick with 'desde hace', as in 'desde hace dos días'.",
+    "Tell the doctor about current prescriptions with 'no tomo ningún medicamento'."
+  ]
+}

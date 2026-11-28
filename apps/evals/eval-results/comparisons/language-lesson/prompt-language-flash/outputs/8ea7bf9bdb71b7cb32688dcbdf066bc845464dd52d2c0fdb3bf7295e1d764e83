@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "o cardápio",
+      "translation": "the menu",
+      "pronunciation": "oo kar-DAH-pyoo",
+      "romanization": null,
+      "tip": "The stressed 'dá' has an open 'a' like in 'father', and the final 'o' sounds like a gentle 'oo'.",
+      "note": null,
+      "distractors": [
+        "o cartão",
+        "a carta",
+        "o caderno"
+      ]
+    },
+    {
+      "word": "eu quero",
+      "translation": "I want",
+      "pronunciation": "EH-oo KEH-roo",
+      "romanization": null,
+      "tip": "The 'qu' before 'e' sounds like a 'k' in English, not 'kw'.",
+      "note": "In Brazil, saying 'eu quero' with 'por favor' is completely polite when ordering.",
+      "distractors": [
+        "eu posso",
+        "eu tenho",
+        "eu peço"
+      ]
+    },
+    {
+      "word": "a conta",
+      "translation": "the bill",
+      "pronunciation": "ah KOHN-tah",
+      "romanization": null,
+      "tip": "Keep the 'on' nasal by letting the sound resonate in your nose without tapping the 'n' hard against your teeth.",
+      "note": "In a restaurant, 'a conta' is the check or bill, never 'o recibo' (the receipt).",
+      "distractors": [
+        "a cozinha",
+        "o copo",
+        "a comida"
+      ]
+    },
+    {
+      "word": "por favor",
+      "translation": "please",
+      "pronunciation": "poor fah-VOHR",
+      "romanization": null,
+      "tip": "In Brazilian Portuguese, the 'r' at the end of words like 'favor' is either lightly tapped or softened, never harsh.",
+      "note": null,
+      "distractors": [
+        "de nada",
+        "com licença",
+        "por enquanto"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "O cardápio, por favor",
+      "translation": "The menu, please",
+      "explanation": "In Brazil, you can ask for things directly by naming the item with its article followed by 'por favor'.",
+      "romanization": null,
+      "distractors": [
+        "com",
+        "muito",
+        "este"
+      ],
+      "translationDistractors": [
+        "check",
+        "plate",
+        "water"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Eu quero este prato, por favor",
+      "translation": "I want this dish, please",
+      "explanation": "Brazilians use 'eu quero' naturally when ordering food, made polite by adding 'por favor' at the end.",
+      "romanization": null,
+      "distractors": [
+        "para",
+        "sou",
+        "onde"
+      ],
+      "translationDistractors": [
+        "menu",
+        "bill",
+        "table"
+      ],
+      "speakingPrompt": "Tell the server which dish you want to order"
+    },
+    {
+      "sentence": "A conta, por favor",
+      "translation": "The bill, please",
+      "explanation": "Just like ordering the menu, requesting the bill only takes the noun 'a conta' plus 'por favor'.",
+      "romanization": null,
+      "distractors": [
+        "de",
+        "bom",
+        "olá"
+      ],
+      "translationDistractors": [
+        "food",
+        "service",
+        "menu"
+      ],
+      "speakingPrompt": "Ask the server for the bill"
+    }
+  ],
+  "tip": {
+    "title": "Ordering politely with por favor",
+    "text": "In Brazilian Portuguese, you do not need complicated indirect phrasing like 'could I possibly have'. Simply name what you need or say `Eu quero` followed by `por favor` at the end. English speakers often worry that `quero` sounds blunt, but adding `por favor` makes it perfectly polite and standard everywhere in Brazil.",
+    "examples": [
+      {
+        "sentence": "O cardápio, por favor",
+        "translation": "The menu, please"
+      },
+      {
+        "sentence": "Eu quero a conta, por favor",
+        "translation": "I want the bill, please"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete the request to ask for the menu politely.",
+      "template": "O cardápio, [BLANK]",
+      "answer": "por favor",
+      "distractors": [
+        "obrigado",
+        "olá",
+        "eu quero"
+      ],
+      "feedback": "'Por favor' turns the noun into a polite request."
+    },
+    {
+      "question": "Choose the right words to ask for the bill.",
+      "template": "Eu quero [BLANK], por favor",
+      "answer": "a conta",
+      "distractors": [
+        "o conta",
+        "da conta",
+        "um conta"
+      ],
+      "feedback": "'Conta' is a feminine noun, so it takes the feminine article 'a'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You finished your meal and want to pay. What do you say?",
+    "scene": "A casual restaurant in São Paulo",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Tudo bem por aqui?",
+        "translation": "Is everything fine here?"
+      },
+      {
+        "speaker": "you",
+        "text": "Tudo ótimo, obrigado",
+        "translation": "Everything was great, thank you"
+      },
+      {
+        "speaker": "them",
+        "text": "Deseja mais alguma coisa?",
+        "translation": "Would you like anything else?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "A conta, por favor",
+        "translation": "The bill, please",
+        "isBest": true,
+        "why": "It answers the server politely and asks for the check using the lesson's key phrase."
+      },
+      {
+        "text": "O cardápio, por favor",
+        "translation": "The menu, please",
+        "isBest": false,
+        "why": "This asks to see the menu again instead of asking to pay."
+      },
+      {
+        "text": "Eu quero o prato",
+        "translation": "I want the dish",
+        "isBest": false,
+        "why": "This orders another dish rather than asking to settle the bill."
+      }
+    ],
+    "explanation": "To finish your meal and ask to pay in Brazil, simply say 'A conta, por favor'."
+  },
+  "writing": {
+    "prompt": "Write a polite sentence ordering a dish: 'I want this dish, please'",
+    "answers": [
+      "Eu quero este prato, por favor",
+      "Eu quero esse prato, por favor"
+    ],
+    "keyPoints": [
+      "Uses 'eu quero' to say 'I want'",
+      "Includes 'por favor' at the end"
+    ]
+  },
+  "summary": [
+    "'O cardápio, por favor' asks to see the menu.",
+    "'Eu quero este prato, por favor' orders your chosen meal politely.",
+    "'A conta, por favor' asks the server for the bill when you are ready to pay."
+  ]
+}

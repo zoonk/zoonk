@@ -1,0 +1,175 @@
+{
+  "words": [
+    {
+      "word": "bat",
+      "translation": "a wooden or metal stick used to hit a ball in baseball",
+      "pronunciation": "BAT",
+      "romanization": null,
+      "tip": "Start vibrating your vocal cords right as your lips open so the sound is voiced.",
+      "note": "'bat' also refers to the nocturnal flying animal.",
+      "distractors": [
+        "pat",
+        "mat",
+        "cat"
+      ]
+    },
+    {
+      "word": "pat",
+      "translation": "a light, gentle touch with the flat of your hand",
+      "pronunciation": "PAT",
+      "romanization": null,
+      "tip": "Release a small burst of air from your lips without vibrating your throat.",
+      "note": "'pat' functions both as an action verb and a noun.",
+      "distractors": [
+        "bat",
+        "pet",
+        "pot"
+      ]
+    },
+    {
+      "word": "bin",
+      "translation": "a plastic or metal container used to store or throw away items",
+      "pronunciation": "BIN",
+      "romanization": null,
+      "tip": "Keep your vocal cords buzzing from the moment your lips part.",
+      "note": "In everyday American English, people often say 'trash can' or 'recycle bin'.",
+      "distractors": [
+        "pin",
+        "pan",
+        "tin"
+      ]
+    },
+    {
+      "word": "pin",
+      "translation": "a small, thin piece of metal with a sharp point used to fasten things",
+      "pronunciation": "PIN",
+      "romanization": null,
+      "tip": "Release a distinct puff of air without any vocal cord vibration on the first sound.",
+      "note": "'pin' and 'pen' sound identical in some regional southern US accents.",
+      "distractors": [
+        "bin",
+        "pen",
+        "pit"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Grab the baseball bat",
+      "translation": "Grab the baseball bat",
+      "explanation": "This imperative sentence starts with the base verb 'Grab' followed by the compound noun phrase 'baseball bat'.",
+      "romanization": null,
+      "distractors": [
+        "pat",
+        "pet"
+      ],
+      "translationDistractors": [
+        "pat",
+        "pet"
+      ],
+      "speakingPrompt": "Tell someone to pick up the baseball bat"
+    },
+    {
+      "sentence": "Give the puppy a gentle pat",
+      "translation": "Give the puppy a gentle pat",
+      "explanation": "The verb 'Give' takes an indirect object ('the puppy') followed by a direct object ('a gentle pat').",
+      "romanization": null,
+      "distractors": [
+        "bat",
+        "bit"
+      ],
+      "translationDistractors": [
+        "bat",
+        "bit"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Toss the paper into the bin",
+      "translation": "Toss the paper into the bin",
+      "explanation": "The preposition 'into' indicates movement toward the inside of the container.",
+      "romanization": null,
+      "distractors": [
+        "pin",
+        "pen"
+      ],
+      "translationDistractors": [
+        "pin",
+        "pen"
+      ],
+      "speakingPrompt": "Tell someone to throw the paper into the container"
+    },
+    {
+      "sentence": "Fasten the note with a pin",
+      "translation": "Fasten the note with a pin",
+      "explanation": "The preposition 'with' introduces the tool used to secure the paper note.",
+      "romanization": null,
+      "distractors": [
+        "bin",
+        "pan"
+      ],
+      "translationDistractors": [
+        "bin",
+        "pan"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Telling b and p apart at the start of words",
+    "text": "The consonants `b` and `p` are both formed by closing and opening your lips. The key difference is voicing: `b` is voiced, meaning your vocal cords vibrate immediately as your lips separate, while `p` is voiceless and releases a light puff of air before the vowel starts. Placing your fingers on your throat lets you feel the vibration that separates words like `bat` and `pat`.",
+    "examples": [
+      {
+        "sentence": "He hit the ball with a bat",
+        "translation": "He hit the ball with a bat"
+      },
+      {
+        "sentence": "She gave the cat a soft pat",
+        "translation": "She gave the cat a soft pat"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits the baseball context.",
+      "template": "Diego grabbed the baseball [BLANK] and walked up to the plate",
+      "answer": "bat",
+      "distractors": [
+        "pat",
+        "pin"
+      ],
+      "feedback": "A 'bat' is the wooden or metal stick used to hit a baseball, whereas a 'pat' is a gentle touch."
+    },
+    {
+      "question": "Choose the word that names a container for waste.",
+      "template": "Drop the empty soda can into the recycling [BLANK]",
+      "answer": "bin",
+      "distractors": [
+        "pin",
+        "pat"
+      ],
+      "feedback": "A 'bin' is a container used for trash or recyclables, whereas a 'pin' is a sharp metal fastener."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a short sentence instructing someone to place the trash into the container.",
+    "answers": [
+      "Put the trash in the bin.",
+      "Put the trash into the bin.",
+      "Throw the trash in the bin.",
+      "Throw the trash into the bin."
+    ],
+    "keyPoints": [
+      "Uses the noun 'bin'",
+      "Uses an imperative verb such as 'Put' or 'Throw'",
+      "Includes the object 'the trash'"
+    ]
+  },
+  "summary": [
+    "'bat' and 'pat' differ by whether your vocal cords vibrate on the initial consonant",
+    "'bin' refers to a waste or storage container, while 'pin' is a small metal fastener",
+    "Feeling for throat vibration helps you separate voiced 'b' from voiceless 'p'"
+  ]
+}

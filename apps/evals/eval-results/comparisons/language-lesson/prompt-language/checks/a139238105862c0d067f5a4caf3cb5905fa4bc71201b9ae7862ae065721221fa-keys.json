@@ -1,0 +1,12 @@
+{
+  "caseId": "en-pt-a1-restaurant",
+  "costUsd": 0.025248,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"oo kah-DAH-pyoo\",\"kind\":\"factualError\",\"workedAnswer\":\"The respelling drops the r in the first syllable of cardápio. Its sound varies by Brazilian region, but “oo kar-DAH-pyoo” is a closer guide.\"}"
+  ],
+  "run": 1,
+  "side": "incumbent",
+  "total": 11
+}

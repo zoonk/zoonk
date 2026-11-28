@@ -1,0 +1,208 @@
+{
+  "words": [
+    {
+      "word": "the bathroom",
+      "translation": "o banheiro",
+      "pronunciation": "tha BÉTH-rum",
+      "romanization": null,
+      "tip": "Para pronunciar o 'th', coloque a ponta da língua entre os dentes da frente e sopre de leve.",
+      "note": "Em casas nos EUA, diz-se sempre 'bathroom'; 'restroom' é mais comum em restaurantes ou lojas.",
+      "distractors": [
+        "the ballroom",
+        "the basement",
+        "the backyard"
+      ]
+    },
+    {
+      "word": "the bedroom",
+      "translation": "o quarto",
+      "pronunciation": "tha BED-rum",
+      "romanization": null,
+      "tip": "Não adicione som de 'i' ao final de 'bed'; termine suavemente no som de 'd'.",
+      "note": null,
+      "distractors": [
+        "the dining room",
+        "the living room",
+        "the laundry room"
+      ]
+    },
+    {
+      "word": "upstairs",
+      "translation": "no andar de cima",
+      "pronunciation": "ap-STÉRZ",
+      "romanization": null,
+      "tip": "Não coloque um 'i' antes do 's'; faça o som de 'st' de uma vez só.",
+      "note": null,
+      "distractors": [
+        "downstairs",
+        "outside",
+        "outdoors"
+      ]
+    },
+    {
+      "word": "on the left",
+      "translation": "à esquerda",
+      "pronunciation": "on tha LEFT",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "on the right",
+        "straight ahead",
+        "next door"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Where is the bathroom?",
+      "translation": "Onde fica o banheiro?",
+      "explanation": "Em inglês, 'Where is' equivale a 'onde fica' ou 'onde está'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "in",
+        "at"
+      ],
+      "translationDistractors": [
+        "quem",
+        "quando",
+        "como"
+      ],
+      "speakingPrompt": "Pergunte onde fica o banheiro"
+    },
+    {
+      "sentence": "The bathroom is upstairs",
+      "translation": "O banheiro fica no andar de cima",
+      "explanation": "Usamos o verbo 'is' para indicar localização, sem precisar de preposição antes de 'upstairs'.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "on",
+        "under"
+      ],
+      "translationDistractors": [
+        "embaixo",
+        "fora",
+        "longe"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "The bedroom is on the left",
+      "translation": "O quarto fica à esquerda",
+      "explanation": "Para dizer 'à esquerda', usa-se a preposição 'on' antes de 'the left'.",
+      "romanization": null,
+      "distractors": [
+        "in",
+        "at",
+        "to"
+      ],
+      "translationDistractors": [
+        "direita",
+        "frente",
+        "atrás"
+      ],
+      "speakingPrompt": "Diga que o quarto fica à esquerda"
+    }
+  ],
+  "tip": {
+    "title": "Perguntar e dizer onde ficam os cômodos",
+    "text": "Para perguntar a localização de um cômodo, use `Where is` com o nome do lugar. Para responder, use o cômodo ou `It's` seguido de palavras de direção, como `upstairs` ou `on the left`. Lembre-se de que o inglês usa o verbo `to be` (`is`) onde em português usamos 'fica'.",
+    "examples": [
+      {
+        "sentence": "Where is the kitchen?",
+        "translation": "Onde fica a cozinha?"
+      },
+      {
+        "sentence": "The kitchen is upstairs",
+        "translation": "A cozinha fica no andar de cima"
+      },
+      {
+        "sentence": "It is on the left",
+        "translation": "Fica à esquerda"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Escolha o verbo correto para completar a frase.",
+      "template": "The bathroom [BLANK] upstairs",
+      "answer": "is",
+      "distractors": [
+        "are",
+        "am"
+      ],
+      "feedback": "Usamos 'is' com sujeitos no singular, como 'the bathroom'."
+    },
+    {
+      "question": "Complete com a preposição correta de direção.",
+      "template": "The bedroom is [BLANK] the left",
+      "answer": "on",
+      "distractors": [
+        "in",
+        "at"
+      ],
+      "feedback": "Dizemos sempre 'on the left' para 'à esquerda'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Liam acabou de indicar onde fica o banheiro. Como você responde?",
+    "scene": "Você está visitando a nova casa de Liam em Chicago.",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Welcome to my new house!",
+        "translation": "Bem-vindo à minha nova casa!"
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks! Where is the bathroom?",
+        "translation": "Obrigado! Onde fica o banheiro?"
+      },
+      {
+        "speaker": "them",
+        "text": "It is upstairs, on the left",
+        "translation": "Fica no andar de cima, à esquerda"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Got it, thanks!",
+        "translation": "Entendi, obrigado!",
+        "isBest": true,
+        "why": "É uma resposta natural e educada para confirmar que você entendeu a direção."
+      },
+      {
+        "text": "Where is the kitchen?",
+        "translation": "Onde fica a cozinha?",
+        "isBest": false,
+        "why": "Mudar de assunto de repente sem agradecer soa pouco cortês."
+      },
+      {
+        "text": "It is upstairs",
+        "translation": "Fica no andar de cima",
+        "isBest": false,
+        "why": "Apenas repete o que Liam acabou de falar em vez de responder à indicação dele."
+      }
+    ],
+    "explanation": "Use 'Got it' para confirmar de forma rápida e informal que você entendeu uma orientação."
+  },
+  "writing": {
+    "prompt": "Escreva em inglês: 'Onde fica o quarto?'",
+    "answers": [
+      "Where is the bedroom?",
+      "Where's the bedroom?"
+    ],
+    "keyPoints": [
+      "Começa com 'Where is' ou a contração 'Where's'",
+      "Usa 'the bedroom' para 'o quarto'"
+    ]
+  },
+  "summary": [
+    "'Where is the bathroom?' pergunta onde fica o banheiro",
+    "'The bedroom is upstairs' diz que o quarto fica no andar de cima",
+    "'On the left' indica que algo fica à esquerda"
+  ]
+}

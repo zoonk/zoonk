@@ -1,0 +1,19 @@
+{
+  "caseId": "en-es-a1-weekday-verbs",
+  "challenger": {
+    "costUsd": 0.0128745,
+    "durationMs": 22237.26437499991,
+    "hash": "b6399608184fb26a6856cae1df9105f4034b3069d2d933aa8051f57b243a8735",
+    "systemPromptHash": "84b563b4eb2c544c314fbfbba7f74707b7ec6a9ad17437759cb16a4633909a4e",
+    "userPromptHash": "52281a9591498f7f2d6968d8a395e91c84baf0cf9e4ec9524824442526d77e72"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.013913249999999999,
+    "durationMs": 25321.280792000005,
+    "hash": "fb6fa2133ad607bc784767ab438f295533106f9301d251953aa4513aa752bb5b",
+    "systemPromptHash": "5a26ca5e5d9f6c0a3afa7017d25dc77177eb782bd6d7df5a9d04d364b5579648",
+    "userPromptHash": "52281a9591498f7f2d6968d8a395e91c84baf0cf9e4ec9524824442526d77e72"
+  },
+  "run": 1
+}

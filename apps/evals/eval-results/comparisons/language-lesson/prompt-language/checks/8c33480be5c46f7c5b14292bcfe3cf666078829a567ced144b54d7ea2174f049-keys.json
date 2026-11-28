@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-en-b1-interview-opening",
+  "costUsd": 0.034208,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[1]\",\"keyedAnswer\":\"It's great to meet you\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"The distractor “meeting” allows “It's great meeting you.” Both sentences express pleasure at meeting the interviewer and fit “É um prazer conhecer você.”\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 11
+}

@@ -1,0 +1,19 @@
+{
+  "caseId": "pt-en-a2-renting",
+  "challenger": {
+    "costUsd": 0.01958675,
+    "durationMs": 30692.889375,
+    "hash": "72c1483a231fda05771a666e08b1359c3f8ff5565a71434a2624d893eabf930e",
+    "systemPromptHash": "012cf90a6b84cb73d0048e0b6553ee7eaac58bd0cb1819b60dfd8ffc13bae5c9",
+    "userPromptHash": "25742a872c5f420e2f4e2f670265e33a5bdb97828acb1b17c048b9bb2915d370"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.01856425,
+    "durationMs": 28380.125458000002,
+    "hash": "f0259b7b3113868a87992b4030fdd840b7b3ebf4ad0bc8b6c00b7b5aed314208",
+    "systemPromptHash": "4f3597f7d64f22c2685313adf24afb310eef4260f925d17e142129e5aeb851ca",
+    "userPromptHash": "25742a872c5f420e2f4e2f670265e33a5bdb97828acb1b17c048b9bb2915d370"
+  },
+  "run": 1
+}

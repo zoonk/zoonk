@@ -1,0 +1,204 @@
+{
+  "words": [
+    {
+      "word": "die Besichtigung",
+      "translation": "the viewing",
+      "pronunciation": "dee beh-ZIKH-tee-goong",
+      "romanization": null,
+      "tip": "In '-zikh-', the 'ch' is a soft hiss made against the roof of the mouth, not a hard 'k'.",
+      "note": "Use 'die Besichtigung' specifically for touring or viewing an apartment or property.",
+      "distractors": [
+        "die Bestätigung",
+        "die Beleuchtung",
+        "die Bedingung"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "beh-ZIKH-tee-gen",
+      "romanization": null,
+      "tip": null,
+      "note": "Use 'besichtigen' for inspecting a place like an apartment or museum, not 'sehen' or 'schauen'.",
+      "distractors": [
+        "beschäftigen",
+        "berücksichtigen",
+        "beschuldigen"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "dehr tehr-MEEN",
+      "romanization": null,
+      "tip": "Stress falls on the second syllable: tehr-MEEN.",
+      "note": "'Der Termin' means a set date or appointment, not a school term or deadline.",
+      "distractors": [
+        "das Ticket",
+        "die Teilung",
+        "der Teller"
+      ]
+    },
+    {
+      "word": "Passt es Ihnen?",
+      "translation": "Does that work for you?",
+      "pronunciation": "PAHST ess EE-nen",
+      "romanization": null,
+      "tip": "Capitalize and pronounce 'Ihnen' with a long 'ee' sound to show formal politeness.",
+      "note": null,
+      "distractors": [
+        "Gefällt es Ihnen?",
+        "Geht es ihm?",
+        "Schmeckt es Ihnen?"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "In a question with a modal verb like 'kann', the modal verb comes first and the infinitive 'besichtigen' goes to the very end of the sentence.",
+      "romanization": null,
+      "distractors": [
+        "besichtigt",
+        "besichtige",
+        "sehen"
+      ],
+      "translationDistractors": [
+        "buy",
+        "paint",
+        "leave"
+      ],
+      "speakingPrompt": "Ask the landlord if you can view the apartment"
+    },
+    {
+      "sentence": "Haben Sie Zeit für eine Besichtigung?",
+      "translation": "Do you have time for a viewing?",
+      "explanation": "German uses 'für' with the accusative case ('eine Besichtigung') to indicate purpose.",
+      "romanization": null,
+      "distractors": [
+        "einen",
+        "einem",
+        "einer"
+      ],
+      "translationDistractors": [
+        "money",
+        "keys",
+        "contracts"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Passt es Ihnen am Dienstag um 15 Uhr?",
+      "translation": "Does Tuesday at 3 p.m. work for you?",
+      "explanation": "Use 'am' for days of the week and 'um' for specific clock times.",
+      "romanization": null,
+      "distractors": [
+        "im",
+        "an",
+        "bei"
+      ],
+      "translationDistractors": [
+        "Monday",
+        "Friday",
+        "morning"
+      ],
+      "speakingPrompt": "Ask if Tuesday at 3 p.m. works for the landlord"
+    }
+  ],
+  "tip": {
+    "title": "Using 'am' and 'um' for dates and times",
+    "text": "When scheduling an appointment, use `am` before days of the week and `um` before clock times. German speakers use the 24-hour clock for business and rental viewings, so 3 p.m. is expressed as `15 Uhr`.",
+    "examples": [
+      {
+        "sentence": "Der Termin ist am Mittwoch",
+        "translation": "The appointment is on Wednesday"
+      },
+      {
+        "sentence": "Wir treffen uns um 14 Uhr",
+        "translation": "We meet at 2 p.m."
+      },
+      {
+        "sentence": "Passt es am Freitag um 10 Uhr?",
+        "translation": "Does Friday at 10 a.m. work?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct preposition for the day of the week.",
+      "template": "Ich kann [BLANK] Donnerstag kommen.",
+      "answer": "am",
+      "distractors": [
+        "um",
+        "im",
+        "an"
+      ],
+      "feedback": "Use 'am' with days of the week like 'Donnerstag'."
+    },
+    {
+      "question": "Choose the correct preposition for the time of day.",
+      "template": "Die Besichtigung ist [BLANK] 16 Uhr.",
+      "answer": "um",
+      "distractors": [
+        "am",
+        "im",
+        "zu"
+      ],
+      "feedback": "Use 'um' when stating a specific hour like '16 Uhr'."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "You called about a flat in Berlin. The landlord asks when you can come. Suggest a time.",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Guten Tag, kann ich die Wohnung besichtigen?",
+        "translation": "Good day, can I view the apartment?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja, gern. Wann haben Sie Zeit für einen Termin?",
+        "translation": "Yes, gladly. When do you have time for an appointment?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Passt es Ihnen am Mittwoch um 14 Uhr?",
+        "translation": "Does Wednesday at 2 p.m. work for you?",
+        "isBest": true,
+        "why": "This is polite, uses 'am' for the day, 'um' for the time, and directly suggests a viewing slot."
+      },
+      {
+        "text": "Passt es Ihnen um Mittwoch am 14 Uhr?",
+        "translation": "Does Wednesday at 2 p.m. work for you?",
+        "isBest": false,
+        "why": "The prepositions are reversed: German requires 'am' before weekdays and 'um' before hours."
+      },
+      {
+        "text": "Ich will die Wohnung jetzt kaufen.",
+        "translation": "I want to buy the apartment now.",
+        "isBest": false,
+        "why": "This is inappropriate when trying to arrange a rental viewing and changes the topic entirely."
+      }
+    ],
+    "explanation": "To propose a viewing time formally, use 'Passt es Ihnen...' followed by 'am [day]' and 'um [time]'."
+  },
+  "writing": {
+    "prompt": "Write a message asking the landlord if you can view the apartment: 'Can I view the apartment?'",
+    "answers": [
+      "Kann ich die Wohnung besichtigen?"
+    ],
+    "keyPoints": [
+      "Begins with the modal verb 'Kann'",
+      "Places 'besichtigen' at the end"
+    ]
+  },
+  "summary": [
+    "'Kann ich die Wohnung besichtigen?' asks if you can view the apartment",
+    "'Haben Sie Zeit für eine Besichtigung?' asks if the landlord has time for a viewing",
+    "'Passt es Ihnen am... um...?' lets you suggest a specific day and time"
+  ]
+}

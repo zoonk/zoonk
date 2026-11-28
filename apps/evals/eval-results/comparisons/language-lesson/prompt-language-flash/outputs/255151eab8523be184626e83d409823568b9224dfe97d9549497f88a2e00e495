@@ -1,0 +1,269 @@
+{
+  "words": [
+    {
+      "word": "sprzątać",
+      "translation": "to clean",
+      "pronunciation": "SPZHON-tach",
+      "romanization": null,
+      "tip": "The combination 'rz' sounds like the 's' in 'measure', and 'ą' before 't' sounds like 'on'.",
+      "note": null,
+      "distractors": [
+        "spać",
+        "spotkać",
+        "szukać"
+      ]
+    },
+    {
+      "word": "prać",
+      "translation": "to do laundry",
+      "pronunciation": "PRACH",
+      "romanization": null,
+      "tip": "End with a soft 'ch' sound made by keeping the middle of your tongue against the roof of your mouth.",
+      "note": "Use 'prać' specifically for washing clothes or fabrics, not dishes or hands.",
+      "distractors": [
+        "brać",
+        "grać",
+        "pić"
+      ]
+    },
+    {
+      "word": "odkurzać",
+      "translation": "to vacuum",
+      "pronunciation": "ot-KOO-zhach",
+      "romanization": null,
+      "tip": "The 'd' in 'od-' sounds like an unvoiced 't' right before the 'k'.",
+      "note": null,
+      "distractors": [
+        "otwierać",
+        "odpoczywać",
+        "odchodzić"
+      ]
+    },
+    {
+      "word": "zmywać naczynia",
+      "translation": "to do the dishes",
+      "pronunciation": "ZMI-vach na-CHIN-ya",
+      "romanization": null,
+      "tip": "Stress the second-to-last syllable in each word: 'ZMI-vach na-CHIN-ya'.",
+      "note": null,
+      "distractors": [
+        "myć ręce",
+        "gotować obiad",
+        "robić zakupy"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "W sobotę sprzątam mieszkanie",
+      "translation": "On Saturday I clean the apartment",
+      "explanation": "Polish puts the time expression first for emphasis, and drops 'ja' (I) because the verb ending '-am' already shows who does the action.",
+      "romanization": null,
+      "distractors": [
+        "sprząta",
+        "piętro",
+        "czysty"
+      ],
+      "translationDistractors": [
+        "cook",
+        "Monday",
+        "house"
+      ],
+      "speakingPrompt": "Say that you clean the apartment on Saturday"
+    },
+    {
+      "sentence": "Czy często odkurzasz pokój?",
+      "translation": "Do you often vacuum the room?",
+      "explanation": "Questions begin with 'Czy' (whether / do), followed directly by the frequency word and the verb.",
+      "romanization": null,
+      "distractors": [
+        "odkurzacie",
+        "pokoju",
+        "dokąd"
+      ],
+      "translationDistractors": [
+        "rarely",
+        "kitchen",
+        "wash"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Dzisiaj piorę i zmywam naczynia",
+      "translation": "Today I do laundry and do the dishes",
+      "explanation": "The irregular verb 'prać' changes its stem vowel to 'io' in the first-person singular form 'piorę'.",
+      "romanization": null,
+      "distractors": [
+        "piorą",
+        "prać",
+        "talerz"
+      ],
+      "translationDistractors": [
+        "yesterday",
+        "iron",
+        "sweep"
+      ],
+      "speakingPrompt": "Tell someone that today you do laundry and do the dishes"
+    }
+  ],
+  "tip": {
+    "title": "Present tense endings for -ać verbs",
+    "text": "Most regular verbs ending in `-ać` follow the same pattern in the present tense: drop the `-ć` and add endings like `-m` for 'ja' (I) and `-sz` for 'ty' (you). Because the endings clearly identify the person, subject pronouns like `ja` and `ty` are usually omitted.",
+    "examples": [
+      {
+        "sentence": "Sprzątam kuchnię",
+        "translation": "I clean the kitchen"
+      },
+      {
+        "sentence": "Odkurzasz salon?",
+        "translation": "Are you vacuuming the living room?"
+      },
+      {
+        "sentence": "On sprząta pokój",
+        "translation": "He is cleaning the room"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Fill in the correct form of the verb for 'I'.",
+      "template": "W piątek regularnie [BLANK] całe mieszkanie.",
+      "answer": "odkurzam",
+      "distractors": [
+        "odkurzasz",
+        "odkurza",
+        "odkurzać"
+      ],
+      "feedback": "Use the ending '-am' when talking about what you yourself do ('ja')."
+    },
+    {
+      "question": "Choose the right form to ask your roommate what they are cleaning.",
+      "template": "Co dzisiaj [BLANK] w domu?",
+      "answer": "sprzątasz",
+      "distractors": [
+        "sprzątam",
+        "sprzątają",
+        "sprzątać"
+      ],
+      "feedback": "Use the ending '-asz' when asking someone directly ('ty')."
+    }
+  ],
+  "patternTable": {
+    "prompt": "Use the pattern from sprzątać to finish odkurzać",
+    "modelWord": "sprzątać",
+    "modelMeaning": "to clean",
+    "newWord": "odkurzać",
+    "newMeaning": "to vacuum",
+    "rows": [
+      {
+        "label": "ja",
+        "labelMeaning": "I",
+        "model": "sprzątam",
+        "answer": "odkurzam",
+        "blank": true
+      },
+      {
+        "label": "ty",
+        "labelMeaning": "you (singular)",
+        "model": "sprzątasz",
+        "answer": "odkurzasz",
+        "blank": false
+      },
+      {
+        "label": "on / ona",
+        "labelMeaning": "he / she",
+        "model": "sprząta",
+        "answer": "odkurza",
+        "blank": true
+      },
+      {
+        "label": "my",
+        "labelMeaning": "we",
+        "model": "sprzątamy",
+        "answer": "odkurzamy",
+        "blank": false
+      },
+      {
+        "label": "wy",
+        "labelMeaning": "you (plural)",
+        "model": "sprzątacie",
+        "answer": "odkurzacie",
+        "blank": false
+      },
+      {
+        "label": "oni / one",
+        "labelMeaning": "they",
+        "model": "sprzątają",
+        "answer": "odkurzają",
+        "blank": true
+      }
+    ],
+    "choices": [
+      "am",
+      "a",
+      "ają",
+      "em",
+      "ą"
+    ],
+    "explanation": "Both verbs follow the standard '-am, -asz' conjugation pattern by dropping '-ć' and adding the personal endings."
+  },
+  "dialogue": {
+    "prompt": "Your roommate Jakub asks about dividing chores today. Tell him what you plan to clean.",
+    "scene": "A shared apartment in Warsaw",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Cześć! Masz dzisiaj czas na porządki?",
+        "translation": "Hi! Do you have time for cleaning today?"
+      },
+      {
+        "speaker": "you",
+        "text": "Tak, chętnie pomogę w mieszkaniu",
+        "translation": "Yes, I'd gladly help around the apartment"
+      },
+      {
+        "speaker": "them",
+        "text": "Super! Ja biorę łazienkę. Co ty robisz?",
+        "translation": "Great! I'll take the bathroom. What are you doing?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Odkurzam salon i zmywam naczynia",
+        "translation": "I'll vacuum the living room and do the dishes",
+        "isBest": true,
+        "why": "This directly states your chores using the correct first-person singular forms."
+      },
+      {
+        "text": "Odkurzasz salon i zmywasz naczynia",
+        "translation": "You vacuum the living room and do the dishes",
+        "isBest": false,
+        "why": "This uses 'ty' (you) endings instead of saying what you will do."
+      },
+      {
+        "text": "Prać naczynia i sprzątasz",
+        "translation": "To wash dishes by laundry and you clean",
+        "isBest": false,
+        "why": "'Prać' is only for laundry, and mixing an infinitive with a 'ty' form is ungrammatical."
+      }
+    ],
+    "explanation": "Use first-person singular verb forms ending in '-am' or '-ę' when volunteering for household chores."
+  },
+  "writing": {
+    "prompt": "Write a message to your flatmate saying: 'Today I am cleaning and doing the dishes.'",
+    "answers": [
+      "Dzisiaj sprzątam i zmywam naczynia.",
+      "Dziś sprzątam i zmywam naczynia.",
+      "Dzisiaj sprzątam oraz zmywam naczynia."
+    ],
+    "keyPoints": [
+      "Uses 'sprzątam' for 'I am cleaning'",
+      "Uses the phrase 'zmywam naczynia' for doing the dishes"
+    ]
+  },
+  "summary": [
+    "'Sprzątam' means 'I clean' or 'I am cleaning'.",
+    "'Odkurzać' means 'to vacuum' and follows regular '-am, -asz' endings.",
+    "'Prać' is reserved for washing laundry, while 'zmywać naczynia' means 'to do the dishes'."
+  ]
+}

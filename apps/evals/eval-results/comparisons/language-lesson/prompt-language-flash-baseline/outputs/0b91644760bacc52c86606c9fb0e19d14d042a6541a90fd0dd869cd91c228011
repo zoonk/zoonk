@@ -1,0 +1,214 @@
+{
+  "words": [
+    {
+      "word": "the rent",
+      "translation": "o aluguel",
+      "pronunciation": "the RENT",
+      "romanization": null,
+      "tip": "Para o 'r' em 'rent', curve a ponta da língua para trás sem tocar o céu da boca, diferente do som de 'r' em 'rua'.",
+      "note": "Não confunda 'rent' com a palavra portuguesa 'renda'; em inglês, 'rent' é o aluguel pago.",
+      "distractors": [
+        "the rate",
+        "the roof",
+        "the rest"
+      ]
+    },
+    {
+      "word": "the deposit",
+      "translation": "a caução",
+      "pronunciation": "the di-PÓ-zit",
+      "romanization": null,
+      "tip": null,
+      "note": "Nos Estados Unidos, costuma referir-se ao 'security deposit', devolvido ao final do contrato.",
+      "distractors": [
+        "the discount",
+        "the debt",
+        "the deal"
+      ]
+    },
+    {
+      "word": "the utilities",
+      "translation": "as contas de consumo",
+      "pronunciation": "the iu-TI-li-tiz",
+      "romanization": null,
+      "tip": null,
+      "note": "'Utilities' refere-se aos serviços básicos de um imóvel, como água, luz e gás.",
+      "distractors": [
+        "the units",
+        "the utensils",
+        "the usages"
+      ]
+    },
+    {
+      "word": "included",
+      "translation": "incluído",
+      "pronunciation": "in-CLU-did",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "increased",
+        "intended",
+        "inspected"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "How much is the rent?",
+      "translation": "Quanto é o aluguel?",
+      "explanation": "Usamos 'How much is' antes de substantivos no singular para perguntar preços.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "many"
+      ],
+      "translationDistractors": [
+        "Quando",
+        "quantos"
+      ],
+      "speakingPrompt": "Pergunte quanto custa o aluguel do apartamento"
+    },
+    {
+      "sentence": "How much is the deposit?",
+      "translation": "Quanto é a caução?",
+      "explanation": "A estrutura de pergunta com 'How much is' continua a mesma para saber o valor da caução.",
+      "romanization": null,
+      "distractors": [
+        "does",
+        "costs"
+      ],
+      "translationDistractors": [
+        "Onde",
+        "qual"
+      ],
+      "speakingPrompt": "Pergunte o valor da caução"
+    },
+    {
+      "sentence": "Are utilities included in the rent?",
+      "translation": "As contas de consumo estão incluídas no aluguel?",
+      "explanation": "Como 'utilities' é uma palavra no plural, a pergunta começa com 'Are' antes do sujeito.",
+      "romanization": null,
+      "distractors": [
+        "Is",
+        "at"
+      ],
+      "translationDistractors": [
+        "fora",
+        "pagas"
+      ],
+      "speakingPrompt": "Pergunte se as contas de consumo estão incluídas no aluguel"
+    },
+    {
+      "sentence": "Water and gas are included",
+      "translation": "Água e gás estão incluídos",
+      "explanation": "Ao citar dois elementos juntos, o verbo vai para o plural 'are'.",
+      "romanization": null,
+      "distractors": [
+        "is",
+        "includes"
+      ],
+      "translationDistractors": [
+        "cobrados",
+        "separados"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Usar is ou are ao falar do aluguel",
+    "text": "Em inglês, use `is` com palavras no singular ou incontáveis, como `the rent` ou `the deposit` ('How much is the rent?'). Quando o sujeito for plural, como `utilities`, use `are` ('Are utilities included?'). O erro comum de brasileiros é usar `is` para tudo pensando nas contas como um pacote só.",
+    "examples": [
+      {
+        "sentence": "Is water included?",
+        "translation": "A água está incluída?"
+      },
+      {
+        "sentence": "Are utilities included?",
+        "translation": "As contas estão incluídas?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a pergunta com a forma correta do verbo:",
+      "template": "[BLANK] the deposit one month of rent?",
+      "answer": "Is",
+      "distractors": [
+        "Are",
+        "Does"
+      ],
+      "feedback": "Usamos 'Is' porque 'the deposit' é um substantivo no singular."
+    },
+    {
+      "question": "Complete com o verbo correspondente:",
+      "template": "Which utilities [BLANK] included?",
+      "answer": "are",
+      "distractors": [
+        "is",
+        "have"
+      ],
+      "feedback": "Usamos 'are' porque a palavra 'utilities' está no plural."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O proprietário informou o que está incluído. Pergunte agora sobre o valor da caução:",
+    "scene": "Em uma ligação com o proprietário de um apartamento em Chicago",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "The apartment is available, and rent is $1,600 a month",
+        "translation": "O apartamento está disponível, e o aluguel é $1.600 por mês"
+      },
+      {
+        "speaker": "you",
+        "text": "Are utilities included in the rent?",
+        "translation": "As contas de consumo estão incluídas no aluguel?"
+      },
+      {
+        "speaker": "them",
+        "text": "Water is included, but electricity is not",
+        "translation": "A água está incluída, mas a eletricidade não"
+      }
+    ],
+    "replies": [
+      {
+        "text": "How much is the deposit?",
+        "translation": "Quanto é a caução?",
+        "isBest": true,
+        "why": "É a pergunta natural e gramaticalmente correta para saber o valor da caução."
+      },
+      {
+        "text": "How much are the deposit?",
+        "translation": "Quanto são a caução?",
+        "isBest": false,
+        "why": "'Deposit' é uma palavra no singular, exigindo 'is' em vez de 'are'."
+      },
+      {
+        "text": "How many is the deposit?",
+        "translation": "Quantos é a caução?",
+        "isBest": false,
+        "why": "'How many' é usado para quantidades contáveis, não para valores em dinheiro."
+      }
+    ],
+    "explanation": "Para perguntar o valor de algo no singular, comece sempre com 'How much is'."
+  },
+  "writing": {
+    "prompt": "Escreva uma pergunta em inglês perguntando se as contas estão incluídas no aluguel:",
+    "answers": [
+      "Are utilities included in the rent?",
+      "Are the utilities included in the rent?"
+    ],
+    "keyPoints": [
+      "Começa a pergunta com 'Are'",
+      "Usa o termo 'utilities'",
+      "Termina com 'in the rent?'"
+    ]
+  },
+  "summary": [
+    "'How much is the rent?' pergunta o valor mensal do aluguel",
+    "'How much is the deposit?' pergunta o valor da caução necessária",
+    "'Are utilities included in the rent?' pergunta se contas como água e luz estão inclusas"
+  ]
+}

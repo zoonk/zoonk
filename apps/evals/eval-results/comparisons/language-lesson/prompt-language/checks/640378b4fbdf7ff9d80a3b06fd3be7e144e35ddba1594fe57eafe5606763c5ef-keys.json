@@ -1,0 +1,13 @@
+{
+  "caseId": "en-pl-a1-household-chores",
+  "costUsd": 0.037728,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"The ending of `robisz` shows that you're asking one person you know.\",\"kind\":\"factualError\",\"workedAnswer\":\"`Robisz` shows that you are addressing one person informally (`ty`), not that you know them. You can use it with a child you have just met.\"}",
+    "{\"itemLocator\":\"words[0]\",\"keyedAnswer\":\"SPRSHON-tahm\",\"kind\":\"factualError\",\"workedAnswer\":\"The respelling adds a separate r sound. In `sprzątam`, `rz` after the voiceless `p` represents a single sh-like sound: /ˈspʂɔn.tam/, roughly “SPSHON-tahm.”\"}"
+  ],
+  "run": 2,
+  "side": "incumbent",
+  "total": 12
+}

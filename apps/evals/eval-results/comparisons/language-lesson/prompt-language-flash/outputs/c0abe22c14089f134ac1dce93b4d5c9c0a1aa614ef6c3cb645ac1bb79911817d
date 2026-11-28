@@ -1,0 +1,219 @@
+{
+  "words": [
+    {
+      "word": "die Besichtigung",
+      "translation": "the viewing",
+      "pronunciation": "dee buh-ZICH-ti-goong",
+      "romanization": null,
+      "tip": "The German 'ch' in '-ich-' is a soft hiss made with the tongue flat against the roof of the mouth, not a hard 'k'.",
+      "note": null,
+      "distractors": [
+        "die Bestätigung",
+        "die Besprechung",
+        "die Rechnung"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "buh-ZICH-ti-gen",
+      "romanization": null,
+      "tip": "Stress falls on the second syllable '-zich-', while the prefix 'be-' is short and unstressed.",
+      "note": "Use 'besichtigen' when viewing apartments or visiting sights; do not use 'sehen' in this context.",
+      "distractors": [
+        "beschäftigen",
+        "beantragen",
+        "bezahlen"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "dair tair-MEEN",
+      "romanization": null,
+      "tip": "Stress the second syllable '-min', which has a clear long 'ee' sound as in 'seen'.",
+      "note": "In German, a 'Termin' refers to any scheduled appointment or meeting, not a deadline or transport terminal.",
+      "distractors": [
+        "die Miete",
+        "der Vertrag",
+        "der Schlüssel"
+      ]
+    },
+    {
+      "word": "passen",
+      "translation": "to suit",
+      "pronunciation": "PAH-sen",
+      "romanization": null,
+      "tip": "The 'a' in 'passen' is short and open, never stretched like the 'a' in 'father'.",
+      "note": "In scheduling contexts, 'passen' means to suit or fit someone's schedule; it does not mean 'to pass'.",
+      "distractors": [
+        "packen",
+        "lassen",
+        "zahlen"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung heute besichtigen?",
+      "translation": "Can I view the apartment today?",
+      "explanation": "With the modal verb `kann`, the action verb `besichtigen` must stay in its infinitive form and move all the way to the end of the sentence.",
+      "romanization": null,
+      "distractors": [
+        "besichtigt",
+        "besichtige",
+        "sehen"
+      ],
+      "translationDistractors": [
+        "buy",
+        "clean"
+      ],
+      "speakingPrompt": "Ask the landlord if you can view the apartment today"
+    },
+    {
+      "sentence": "Wann passt es Ihnen am besten?",
+      "translation": "When does it suit you best?",
+      "explanation": "The verb `passen` takes the polite dative pronoun `Ihnen` ('to you') when asking what time works for someone.",
+      "romanization": null,
+      "distractors": [
+        "Sie",
+        "dich",
+        "gut"
+      ],
+      "translationDistractors": [
+        "worst",
+        "later"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Passt Ihnen morgen um 14 Uhr?",
+      "translation": "Does tomorrow at 2 p.m. work for you?",
+      "explanation": "German uses the 24-hour clock for business and rental appointments, so `14 Uhr` is 2 p.m., introduced directly with `um`.",
+      "romanization": null,
+      "distractors": [
+        "am",
+        "im",
+        "Sie"
+      ],
+      "translationDistractors": [
+        "yesterday",
+        "midnight"
+      ],
+      "speakingPrompt": "Ask if tomorrow at 2 p.m. works for them"
+    },
+    {
+      "sentence": "Ich möchte einen Termin vereinbaren",
+      "translation": "I would like to arrange an appointment",
+      "explanation": "The polite phrase `ich möchte` ('I would like') sends the second verb `vereinbaren` ('to arrange') to the very end.",
+      "romanization": null,
+      "distractors": [
+        "vereinbart",
+        "vereinbare",
+        "haben"
+      ],
+      "translationDistractors": [
+        "cancel",
+        "delay"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Sending verbs to the end with kann",
+    "text": "When you use `kann` ('can') to ask to do something, the action verb moves to the very end of the sentence in its base infinitive form ending in `-en`. While English keeps the verb close ('Can I view the apartment?'), German places it last ('Kann ich die Wohnung besichtigen?'). Do not conjugate this final verb.",
+    "examples": [
+      {
+        "sentence": "Kann ich die Wohnung heute besichtigen?",
+        "translation": "Can I view the apartment today?"
+      },
+      {
+        "sentence": "Kann ich morgen um 14 Uhr anrufen?",
+        "translation": "Can I call tomorrow at 2 p.m.?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct form of the verb to complete the request.",
+      "template": "Kann ich die Wohnung morgen um 11 Uhr [BLANK]?",
+      "answer": "besichtigen",
+      "distractors": [
+        "besichtigt",
+        "besichtige"
+      ],
+      "feedback": "After the modal verb `kann`, the action verb must be in its base infinitive form `besichtigen` at the end."
+    },
+    {
+      "question": "Complete the request with the correct ending.",
+      "template": "Kann ich heute einen Termin [BLANK]?",
+      "answer": "vereinbaren",
+      "distractors": [
+        "vereinbare",
+        "vereinbart"
+      ],
+      "feedback": "Because the sentence starts with `kann`, the verb at the end remains in the infinitive `vereinbaren`."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord says today is not possible and offers tomorrow at 15:00. How do you accept?",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Guten Tag, die Wohnung in Berlin ist noch frei",
+        "translation": "Hello, the apartment in Berlin is still available"
+      },
+      {
+        "speaker": "you",
+        "text": "Kann ich die Wohnung heute besichtigen?",
+        "translation": "Can I view the apartment today?"
+      },
+      {
+        "speaker": "them",
+        "text": "Heute geht es leider nicht. Passt es Ihnen morgen um 15 Uhr?",
+        "translation": "Unfortunately, today doesn't work. Does tomorrow at 3 p.m. work for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ja, morgen um 15 Uhr passt mir gut",
+        "translation": "Yes, tomorrow at 3 p.m. works well for me",
+        "isBest": true,
+        "why": "This politely confirms the suggested time using the correct personal dative pronoun mir."
+      },
+      {
+        "text": "Ja, morgen um 15 Uhr passt Ihnen gut",
+        "translation": "Yes, tomorrow at 3 p.m. works well for you",
+        "isBest": false,
+        "why": "Ihnen means 'for you'; when confirming that the time works for yourself, you must say mir ('for me')."
+      },
+      {
+        "text": "Nein, ich kann heute um 15 Uhr besichtigen",
+        "translation": "No, I can view today at 3 p.m.",
+        "isBest": false,
+        "why": "The landlord just explained that today is not possible, so proposing today again makes no sense."
+      }
+    ],
+    "explanation": "When agreeing to a proposed appointment time, use 'passt mir' to indicate that the slot works for you."
+  },
+  "writing": {
+    "prompt": "Write a message asking the landlord: 'Can I view the apartment tomorrow at 14:00?'",
+    "answers": [
+      "Kann ich die Wohnung morgen um 14 Uhr besichtigen?",
+      "Kann ich morgen um 14 Uhr die Wohnung besichtigen?",
+      "Kann ich die Wohnung morgen um 14:00 Uhr besichtigen?"
+    ],
+    "keyPoints": [
+      "Starts with 'Kann ich'",
+      "Places the infinitive 'besichtigen' at the end of the sentence",
+      "Uses 'um 14 Uhr' to state the time"
+    ]
+  },
+  "summary": [
+    "'Kann ich die Wohnung besichtigen?' asks the landlord if you can view the apartment",
+    "'Wann passt es Ihnen?' asks what time suits the landlord best",
+    "'Passt Ihnen morgen um 14 Uhr?' checks if a specific day and time works for them"
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "words": [
+    {
+      "word": "rephrase",
+      "translation": "reformular",
+      "pronunciation": "ri-FREIZ",
+      "romanization": null,
+      "tip": "No 'r' inicial, curve a ponta da língua para trás sem encostar no céu da boca, sem fazer som de 'h'.",
+      "note": null,
+      "distractors": [
+        "replace",
+        "refuse",
+        "remind"
+      ]
+    },
+    {
+      "word": "catch that",
+      "translation": "entender aquilo",
+      "pronunciation": "KÉCH DHÉT",
+      "romanization": null,
+      "tip": "Em 'that', posicione a ponta da língua entre os dentes para produzir o som de 'th' com vibração.",
+      "note": "Literalmente significa 'pegar aquilo', mas em conversas é muito usado para dizer 'entender' ou 'ouvir bem'.",
+      "distractors": [
+        "watch that",
+        "bring that",
+        "drop that"
+      ]
+    },
+    {
+      "word": "more slowly",
+      "translation": "mais devagar",
+      "pronunciation": "MÓR SLOU-li",
+      "romanization": null,
+      "tip": "Comece 'slowly' diretamente com o som de 's', sem colocar uma vogal antes como em 'is-lowly'.",
+      "note": null,
+      "distractors": [
+        "more shortly",
+        "more softly",
+        "more lately"
+      ]
+    },
+    {
+      "word": "repeat that",
+      "translation": "repetir isso",
+      "pronunciation": "ri-PIT DHÉT",
+      "romanization": null,
+      "tip": "A sílaba forte de 'repeat' é a segunda: 'ri-PIT'.",
+      "note": null,
+      "distractors": [
+        "report that",
+        "repair that",
+        "review that"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Could you repeat that?",
+      "translation": "Você poderia repetir isso?",
+      "explanation": "Em entrevistas nos Estados Unidos, usa-se 'could you' para fazer um pedido educado e profissional em vez de 'can you'.",
+      "romanization": null,
+      "distractors": [
+        "should",
+        "repeating"
+      ],
+      "translationDistractors": [
+        "deveria",
+        "repetindo"
+      ],
+      "speakingPrompt": "Peça para o entrevistador repetir a última frase com educação"
+    },
+    {
+      "sentence": "I didn't catch that, could you speak more slowly?",
+      "translation": "Eu não peguei isso, você poderia falar mais devagar?",
+      "explanation": "A expressão 'I didn't catch that' é a forma mais natural e comum no ambiente corporativo para dizer que não ouviu ou não entendeu algo.",
+      "romanization": null,
+      "distractors": [
+        "don't",
+        "slow"
+      ],
+      "translationDistractors": [
+        "rápido",
+        "pegando"
+      ],
+      "speakingPrompt": "Diga que não entendeu direito e peça para a pessoa falar mais devagar"
+    },
+    {
+      "sentence": "Could you rephrase that question?",
+      "translation": "Você poderia reformular essa pergunta?",
+      "explanation": "O verbo 'rephrase' vai logo após 'could you' na sua forma base, sem a preposição 'to'.",
+      "romanization": null,
+      "distractors": [
+        "rephrasing",
+        "answer"
+      ],
+      "translationDistractors": [
+        "responder",
+        "reformulando"
+      ],
+      "speakingPrompt": "Peça para o entrevistador fazer a pergunta com outras palavras"
+    }
+  ],
+  "tip": {
+    "title": "Pedidos educados com could you",
+    "text": "Para pedir algo em uma entrevista sem soar seco ou inseguro, use `could you` seguido do verbo na forma básica. Em português costumamos dizer apenas 'pode repetir?', mas em inglês `could you` transmite profissionalismo e polidez imediata. Nunca adicione `to` depois de `could`.",
+    "examples": [
+      {
+        "sentence": "Could you repeat that?",
+        "translation": "Você poderia repetir isso?"
+      },
+      {
+        "sentence": "Could you rephrase that?",
+        "translation": "Você poderia reformular isso?"
+      },
+      {
+        "sentence": "Could you speak more slowly, please?",
+        "translation": "Você poderia falar mais devagar, por favor?"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete a frase para pedir educadamente que o entrevistador fale mais devagar.",
+      "template": "Could you [BLANK] more slowly, please?",
+      "answer": "speak",
+      "distractors": [
+        "to speak",
+        "speaking"
+      ],
+      "feedback": "Após 'could you', usamos o verbo em sua forma base, sem 'to' e sem sufixos."
+    },
+    {
+      "question": "Selecione o verbo que expressa o pedido de reformular a pergunta.",
+      "template": "I want to make sure I understand, could you [BLANK] that question?",
+      "answer": "rephrase",
+      "distractors": [
+        "remind",
+        "reply"
+      ],
+      "feedback": "'Rephrase' significa dizer o mesmo com outras palavras, o ideal quando você não compreendeu o sentido."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O entrevistador fez uma pergunta complexa e rápida demais. O que você diz para pedir esclarecimento com confiança?",
+    "scene": "Uma sala de reunião em Chicago durante uma entrevista com o gestor Diego",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "How did your cross-functional stakeholders impact that timeline?",
+        "translation": "Como os seus stakeholders multifuncionais impactaram esse cronograma?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I didn't catch that, could you rephrase that question?",
+        "translation": "Eu não peguei bem isso, você poderia reformular essa pergunta?",
+        "isBest": true,
+        "why": "É uma resposta confiante, educada e que pede esclarecimento de forma natural no ambiente de trabalho."
+      },
+      {
+        "text": "What? Talk again please.",
+        "translation": "O quê? Fale de novo por favor.",
+        "isBest": false,
+        "why": "Dizer 'what' e 'talk again' soa rude e informal demais para uma entrevista profissional."
+      },
+      {
+        "text": "Could you to repeat that slowly?",
+        "translation": "Você poderia para repetir isso devagar?",
+        "isBest": false,
+        "why": "Não se usa 'to' logo após o verbo modal 'could you'."
+      }
+    ],
+    "explanation": "Em entrevistas americanas, admitir que não entendeu e pedir esclarecimento demonstra segurança e boas habilidades de comunicação."
+  },
+  "writing": {
+    "prompt": "Em uma entrevista por chamada de vídeo, o áudio oscilou. Escreva uma mensagem educada no chat pedindo para a pessoa repetir a pergunta.",
+    "answers": [
+      "Could you repeat that question?",
+      "Could you repeat that, please?",
+      "Could you please repeat that question?"
+    ],
+    "keyPoints": [
+      "Usa 'Could you' para iniciar o pedido educado",
+      "Usa o verbo 'repeat' sem 'to'",
+      "Inclui 'that' ou 'that question'"
+    ]
+  },
+  "summary": [
+    "'Could you repeat that?' pede para a outra pessoa repetir o que acabou de dizer de forma profissional",
+    "'Could you rephrase that?' solicita que a pergunta seja feita com outras palavras quando a ideia não ficou clara",
+    "'I didn't catch that' é o jeito natural de dizer que você não conseguiu ouvir ou entender perfeitamente"
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "words": [
+    {
+      "word": "a headache",
+      "translation": "uma dor de cabeça",
+      "pronunciation": "a rrÉD-eik",
+      "romanization": null,
+      "tip": "O início de “headache” soa como o r de “rato”; não pronuncie o h como na palavra portuguesa “hora”.",
+      "note": null,
+      "distractors": [
+        "a fever",
+        "a cough",
+        "a stomachache"
+      ]
+    },
+    {
+      "word": "nauseous",
+      "translation": "com náusea",
+      "pronunciation": "NÓ-xas",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "dizzy",
+        "tired",
+        "hungry"
+      ]
+    },
+    {
+      "word": "since yesterday",
+      "translation": "desde ontem",
+      "pronunciation": "SINS IÉS-ter-dei",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "until yesterday",
+        "before yesterday",
+        "since last week"
+      ]
+    },
+    {
+      "word": "for three days",
+      "translation": "há três dias",
+      "pronunciation": "FÓR THRI DEIZ",
+      "romanization": null,
+      "tip": "Em “three”, coloque a ponta da língua entre os dentes e solte o ar, sem trocar o “th” por um som de t ou f.",
+      "note": null,
+      "distractors": [
+        "for three weeks",
+        "for three hours",
+        "in three days"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I've had a headache since yesterday",
+      "translation": "Estou com dor de cabeça desde ontem",
+      "explanation": "Em inglês, “I've had” indica que a dor começou no passado e continua. Em português, é natural usar “estou” nessa situação.",
+      "romanization": null,
+      "distractors": [
+        "for",
+        "has",
+        "at"
+      ],
+      "translationDistractors": [
+        "até",
+        "amanhã",
+        "tive"
+      ],
+      "speakingPrompt": "Diga ao médico que você está com dor de cabeça desde ontem"
+    },
+    {
+      "sentence": "I've felt nauseous for three days",
+      "translation": "Estou com náusea há três dias",
+      "explanation": "“I've felt” indica uma sensação que começou no passado e continua. Use “for” antes da duração, que em português pode vir depois de “há”.",
+      "romanization": null,
+      "distractors": [
+        "since",
+        "feels",
+        "at"
+      ],
+      "translationDistractors": [
+        "desde",
+        "semanas",
+        "ontem"
+      ],
+      "speakingPrompt": "Diga ao médico que você está com náusea há três dias"
+    },
+    {
+      "sentence": "When did your headache start?",
+      "translation": "Quando sua dor de cabeça começou?",
+      "explanation": "Na pergunta em inglês, “did” vem antes de “your headache” e o verbo principal fica na forma “start”. Em português, usamos “começou” para indicar o passado.",
+      "romanization": null,
+      "distractors": [
+        "started",
+        "does",
+        "starting"
+      ],
+      "translationDistractors": [
+        "minha",
+        "terminou",
+        "hoje"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "My headache started yesterday",
+      "translation": "Minha dor de cabeça começou ontem",
+      "explanation": "“Started” indica que a dor começou no passado. Assim como em português, a indicação de tempo pode vir no fim da frase.",
+      "romanization": null,
+      "distractors": [
+        "start",
+        "starting",
+        "tomorrow"
+      ],
+      "translationDistractors": [
+        "sua",
+        "terminou",
+        "amanhã"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Diga desde quando e há quanto tempo",
+    "text": "Para um sintoma que começou no passado e continua, use `I've had` ou `I've felt`. Use `since` com o momento em que começou, como `since yesterday`. Use `for` com a duração, como `for three days`: não troque `since` e `for` só porque ambos podem corresponder a “há” em português.",
+    "examples": [
+      {
+        "sentence": "I've had a headache since yesterday",
+        "translation": "Estou com dor de cabeça desde ontem"
+      },
+      {
+        "sentence": "I've felt nauseous for three days",
+        "translation": "Estou com náusea há três dias"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Complete com a palavra que indica quando o sintoma começou",
+      "template": "I've had a headache [BLANK] Monday",
+      "answer": "since",
+      "distractors": [
+        "for",
+        "at"
+      ],
+      "feedback": "Use “since” com o momento em que a dor começou, como “Monday”."
+    },
+    {
+      "question": "Complete com a palavra que indica a duração",
+      "template": "I've felt nauseous [BLANK] two days",
+      "answer": "for",
+      "distractors": [
+        "since",
+        "at"
+      ],
+      "feedback": "Use “for” antes de uma duração, como “two days”."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "O médico pergunta há quanto tempo você está com dor de cabeça. O que você responde?",
+    "scene": "Em uma consulta médica nos Estados Unidos",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "I've had a headache",
+        "translation": "Estou com dor de cabeça"
+      },
+      {
+        "speaker": "them",
+        "text": "How long have you had it?",
+        "translation": "Há quanto tempo você está com ela?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I've had it since yesterday",
+        "translation": "Estou com ela desde ontem",
+        "isBest": true,
+        "why": "A resposta indica naturalmente quando a dor começou."
+      },
+      {
+        "text": "I've had it for yesterday",
+        "translation": "Estou com ela por ontem",
+        "isBest": false,
+        "why": "“For” não é usado com “yesterday” para indicar o início do sintoma."
+      },
+      {
+        "text": "I've had it since three days",
+        "translation": "Estou com ela desde três dias",
+        "isBest": false,
+        "why": "Para indicar a duração “three days”, use “for”, não “since”."
+      },
+      {
+        "text": "I have it since yesterday",
+        "translation": "Eu tenho ela desde ontem",
+        "isBest": false,
+        "why": "Para um sintoma que começou no passado e continua, use “I've had”, não “I have”."
+      }
+    ],
+    "explanation": "Depois de mencionar a dor, você pode usar “it” para não repetir “headache”."
+  },
+  "writing": {
+    "prompt": "Escreva uma mensagem ao médico: “Estou com dor de cabeça desde ontem.”",
+    "answers": [
+      "I've had a headache since yesterday.",
+      "I have had a headache since yesterday."
+    ],
+    "keyPoints": [
+      "Use “have had” para indicar que a dor começou no passado e continua.",
+      "Use “since yesterday” para indicar quando a dor começou."
+    ]
+  },
+  "summary": [
+    "“I've had a headache” diz que você está com dor de cabeça.",
+    "“I've felt nauseous” diz que você está com náusea.",
+    "“Since yesterday” indica quando o sintoma começou; “for three days” indica há quanto tempo ele dura."
+  ]
+}

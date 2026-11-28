@@ -1,0 +1,14 @@
+{
+  "caseId": "pt-it-a2-past-weather",
+  "costUsd": 0.045672000000000004,
+  "name": "answer keys",
+  "passed": 8,
+  "problems": [
+    "{\"itemLocator\":\"practice[0]\",\"keyedAnswer\":\"faceva\",\"kind\":\"twoDefensible\",\"workedAnswer\":\"“Ieri faceva freddo” means “It was cold yesterday,” but “Ieri avevano freddo” means “They felt cold yesterday.” Both fit the prompt “sobre o frio de ontem,” which does not specify whether to describe the weather or how people felt.\"}",
+    "{\"itemLocator\":\"words[2]\",\"keyedAnswer\":\"faceva freddo — faz​ia frio; pronunciation: fa-TCHÊ-va FRÉD-do\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but standard Italian “freddo” has a closed stressed /e/. For a Brazilian Portuguese learner, “FRÊD-do” represents that vowel; “FRÉD-do” indicates open /ɛ/.\"}",
+    "{\"itemLocator\":\"words[3]\",\"keyedAnswer\":\"la settimana scorsa — a semana passada; pronunciation: la set-ti-MA-na SCÓR-sa\",\"kind\":\"factualError\",\"workedAnswer\":\"The translation is correct, but “scorsa” in this phrase has a closed stressed /o/. The Portuguese pronunciation guide should use “SCÔR-sa,” not “SCÓR-sa,” which indicates open /ɔ/.\"}"
+  ],
+  "run": 1,
+  "side": "challenger",
+  "total": 11
+}

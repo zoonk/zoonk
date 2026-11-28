@@ -1,0 +1,206 @@
+{
+  "words": [
+    {
+      "word": "die Besichtigung",
+      "translation": "the viewing",
+      "pronunciation": "dee beh-ZIKH-ti-goong",
+      "romanization": null,
+      "tip": "The 'ch' sound in 'sich' is a soft hiss made against the roof of your mouth, like the 'h' in 'huge', not a hard 'k'.",
+      "note": null,
+      "distractors": [
+        "die Bestätigung",
+        "die Beschreibung",
+        "die Beleuchtung"
+      ]
+    },
+    {
+      "word": "besichtigen",
+      "translation": "to view",
+      "pronunciation": "beh-ZIKH-ti-gen",
+      "romanization": null,
+      "tip": "Stress the second syllable 'sich', not the prefix 'be'.",
+      "note": "In German, 'besichtigen' is used specifically for touring or viewing places like apartments and sights, whereas 'sehen' just means 'to see'.",
+      "distractors": [
+        "beschäftigen",
+        "bestellen",
+        "berichtigen"
+      ]
+    },
+    {
+      "word": "der Termin",
+      "translation": "the appointment",
+      "pronunciation": "dair tair-MEEN",
+      "romanization": null,
+      "tip": "Stress falls on the second syllable 'MEEN', with a long 'ee' sound.",
+      "note": null,
+      "distractors": [
+        "das Thema",
+        "der Teller",
+        "die Technik"
+      ]
+    },
+    {
+      "word": "passt es Ihnen",
+      "translation": "does that work for you",
+      "pronunciation": "PAHST ess EE-nen",
+      "romanization": null,
+      "tip": "'Ihnen' starts with a long 'ee' sound and capital 'I' shows formal address to someone you don't know.",
+      "note": null,
+      "distractors": [
+        "kostet es Ihnen",
+        "fehlt es Ihnen",
+        "gehört es Ihnen"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Kann ich die Wohnung besichtigen?",
+      "translation": "Can I view the apartment?",
+      "explanation": "In German, modal verbs like 'kann' send the main action verb in its infinitive form ('besichtigen') to the very end of the question.",
+      "romanization": null,
+      "distractors": [
+        "besichtige",
+        "besichtigt"
+      ],
+      "translationDistractors": [
+        "buy",
+        "clean"
+      ],
+      "speakingPrompt": "Ask the landlord if you can view the apartment"
+    },
+    {
+      "sentence": "Wann haben Sie Zeit für einen Termin?",
+      "translation": "When do you have time for an appointment?",
+      "explanation": "German uses the polite pronoun 'Sie' when speaking with a landlord, and 'für' always takes the accusative masculine ending '-en' ('einen').",
+      "romanization": null,
+      "distractors": [
+        "einem",
+        "einer"
+      ],
+      "translationDistractors": [
+        "room",
+        "contract"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Passt es Ihnen am Freitag um 14 Uhr?",
+      "translation": "Does Friday at 2 p.m. work for you?",
+      "explanation": "German uses 'am' for days of the week ('am Freitag') and 'um' for specific times on the clock ('um 14 Uhr').",
+      "romanization": null,
+      "distractors": [
+        "im",
+        "von"
+      ],
+      "translationDistractors": [
+        "in",
+        "on"
+      ],
+      "speakingPrompt": "Ask if Friday at 2 p.m. works for the landlord"
+    }
+  ],
+  "tip": {
+    "title": "Using passen to ask if a time works",
+    "text": "To propose a time in German, use the verb `passen` with `es` and a dative pronoun. When talking politely to a landlord, use `Ihnen` ('to you'). To answer that it works for you, reply with `mir` ('to me'). Never use the subject pronoun `Sie` or `ich` here.",
+    "examples": [
+      {
+        "sentence": "Passt es Ihnen morgen?",
+        "translation": "Does tomorrow work for you?"
+      },
+      {
+        "sentence": "Ja, der Termin passt mir gut.",
+        "translation": "Yes, the appointment works well for me."
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the correct phrase to ask the landlord if the day works for them.",
+      "template": "Guten Tag, [BLANK] am Montag?",
+      "answer": "passt es Ihnen",
+      "distractors": [
+        "passen Sie",
+        "passt es Sie",
+        "passt Ihnen es"
+      ],
+      "feedback": "We use 'passt es' followed by the polite dative pronoun 'Ihnen' to ask if a time suits someone."
+    },
+    {
+      "question": "Select the correct prepositions for day and time.",
+      "template": "Ein Termin [BLANK] Dienstag um 15 Uhr passt mir gut.",
+      "answer": "am",
+      "distractors": [
+        "im",
+        "um",
+        "in"
+      ],
+      "feedback": "Days of the week always take the preposition 'am' in German."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The landlord offers a viewing slot. Confirm that this day and time suit you.",
+    "scene": "A phone call with a landlord in Berlin",
+    "lines": [
+      {
+        "speaker": "you",
+        "text": "Guten Tag, kann ich die Wohnung besichtigen?",
+        "translation": "Hello, can I view the apartment?"
+      },
+      {
+        "speaker": "them",
+        "text": "Ja, gerne. Wann haben Sie Zeit für einen Termin?",
+        "translation": "Yes, gladly. When do you have time for an appointment?"
+      },
+      {
+        "speaker": "you",
+        "text": "Ich habe diese Woche Zeit.",
+        "translation": "I have time this week."
+      },
+      {
+        "speaker": "them",
+        "text": "Passt es Ihnen am Donnerstag um 16 Uhr?",
+        "translation": "Does Thursday at 4 p.m. work for you?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "Ja, Donnerstag um 16 Uhr passt mir sehr gut",
+        "translation": "Yes, Thursday at 4 p.m. works very well for me",
+        "isBest": true,
+        "why": "This is natural, polite, confirms the exact time, and uses 'passt mir' correctly."
+      },
+      {
+        "text": "Ja, Donnerstag um 16 Uhr passe ich",
+        "translation": "Yes, Thursday at 4 p.m. I fit",
+        "isBest": false,
+        "why": "You cannot say 'ich passe' for an appointment; the time must be the subject ('es passt mir')."
+      },
+      {
+        "text": "Nein, ich besichtige den Termin",
+        "translation": "No, I view the appointment",
+        "isBest": false,
+        "why": "'Besichtigen' means to tour a physical place, not to attend an appointment."
+      }
+    ],
+    "explanation": "Remember to reply with 'passt mir' when accepting a time proposal."
+  },
+  "writing": {
+    "prompt": "Write a message to the landlord asking: 'Can I view the apartment on Friday?'",
+    "answers": [
+      "Kann ich die Wohnung am Freitag besichtigen?",
+      "Kann ich am Freitag die Wohnung besichtigen?"
+    ],
+    "keyPoints": [
+      "Uses the modal verb 'kann' at the beginning",
+      "Includes 'am Freitag' for on Friday",
+      "Places the infinitive 'besichtigen' at the end"
+    ]
+  },
+  "summary": [
+    "'Kann ich die Wohnung besichtigen?' asks if you can see the apartment",
+    "'Wann haben Sie Zeit für einen Termin?' asks when the landlord is free",
+    "'Passt es Ihnen am...?' asks if a proposed day works for them"
+  ]
+}

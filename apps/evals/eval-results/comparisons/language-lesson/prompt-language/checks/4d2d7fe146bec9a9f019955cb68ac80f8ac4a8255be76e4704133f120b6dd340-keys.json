@@ -1,0 +1,12 @@
+{
+  "caseId": "pt-en-a2-renting",
+  "costUsd": 0.030312,
+  "name": "answer keys",
+  "passed": 10,
+  "problems": [
+    "{\"itemLocator\":\"sentences[3]\",\"keyedAnswer\":\"O aluguel é de $1,500 por mês\",\"kind\":\"wrongKey\",\"workedAnswer\":\"The rent is fifteen hundred dollars. In Brazilian Portuguese, the comma is a decimal separator, so the translation should read “O aluguel é de 1.500 dólares por mês.”\"}"
+  ],
+  "run": 2,
+  "side": "challenger",
+  "total": 11
+}

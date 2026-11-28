@@ -1,0 +1,19 @@
+{
+  "caseId": "en-en-a1-ielts-frequent-words",
+  "challenger": {
+    "costUsd": 0.015123750000000002,
+    "durationMs": 27027.82362499996,
+    "hash": "d3c001b45f5688ddc08d1c6a66d83f1743ab001ecdc2d12bd78c03e7aeae2d0e",
+    "systemPromptHash": "ab839f3558e6f11c377f439c0bac9a050f062c9c83510a10a54af85c121be02d",
+    "userPromptHash": "7006d0f426992016f4d453f00bd48fedd9fc0c80107a6bfa5a9f40f2f49a679d"
+  },
+  "failures": [],
+  "incumbent": {
+    "costUsd": 0.01299075,
+    "durationMs": 22216.072999999975,
+    "hash": "15cb36b57608320289ea48e23a7458cfbf241003b0dc1a5380a94edbec932881",
+    "systemPromptHash": "3674b7807585fb23d18f9ca87354a40a63e538e4bb509b23edb001fb6477a357",
+    "userPromptHash": "7006d0f426992016f4d453f00bd48fedd9fc0c80107a6bfa5a9f40f2f49a679d"
+  },
+  "run": 1
+}

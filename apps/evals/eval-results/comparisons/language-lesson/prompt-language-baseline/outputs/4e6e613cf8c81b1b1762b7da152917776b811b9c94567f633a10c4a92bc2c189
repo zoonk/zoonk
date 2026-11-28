@@ -1,0 +1,237 @@
+{
+  "words": [
+    {
+      "word": "me duele",
+      "translation": "it hurts",
+      "pronunciation": "MEH DWEH-leh",
+      "romanization": null,
+      "tip": null,
+      "note": "Use this phrase to say that a single body part hurts.",
+      "distractors": [
+        "me pica",
+        "me gusta",
+        "me preocupa"
+      ]
+    },
+    {
+      "word": "la cabeza",
+      "translation": "the head",
+      "pronunciation": "LAH kah-BEH-sah",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "la espalda",
+        "el estómago",
+        "el brazo"
+      ]
+    },
+    {
+      "word": "desde ayer",
+      "translation": "since yesterday",
+      "pronunciation": "DEHS-deh ah-YEHR",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "desde hoy",
+        "hasta mañana",
+        "hace dos semanas"
+      ]
+    },
+    {
+      "word": "el medicamento",
+      "translation": "the medicine",
+      "pronunciation": "EHL meh-dee-kah-MEHN-toh",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "la receta",
+        "la vacuna",
+        "el tratamiento"
+      ]
+    },
+    {
+      "word": "tomar",
+      "translation": "to take",
+      "pronunciation": "toh-MAHR",
+      "romanization": null,
+      "tip": null,
+      "note": "Use tomar to talk about taking medicine.",
+      "distractors": [
+        "recetar",
+        "vender",
+        "comprar"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Me duele la cabeza",
+      "translation": "My head hurts",
+      "explanation": "Spanish puts me before duele and uses la with cabeza, where English uses “my.”",
+      "romanization": null,
+      "distractors": [
+        "duelen",
+        "yo",
+        "tu"
+      ],
+      "translationDistractors": [
+        "back",
+        "your",
+        "itchy"
+      ],
+      "speakingPrompt": "Tell the doctor that your head hurts."
+    },
+    {
+      "sentence": "Me duele desde ayer",
+      "translation": "It has hurt since yesterday",
+      "explanation": "Spanish can use the present tense duele for pain that started in the past and continues now.",
+      "romanization": null,
+      "distractors": [
+        "duelen",
+        "hasta",
+        "yo"
+      ],
+      "translationDistractors": [
+        "tomorrow",
+        "stopped",
+        "before"
+      ],
+      "speakingPrompt": "Tell the doctor that it has hurt since yesterday."
+    },
+    {
+      "sentence": "¿Toma algún medicamento?",
+      "translation": "Do you take any medicine?",
+      "explanation": "The doctor uses toma to address you politely. Algún comes before the singular noun medicamento.",
+      "romanization": null,
+      "distractors": [
+        "toman",
+        "tomo",
+        "alguna"
+      ],
+      "translationDistractors": [
+        "prescribe",
+        "vaccine",
+        "they"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "No tomo ningún medicamento",
+      "translation": "I don't take any medicine",
+      "explanation": "Tomo means “I take.” In a negative sentence, no comes before the verb and ningún comes before medicamento.",
+      "romanization": null,
+      "distractors": [
+        "toma",
+        "ninguna",
+        "yo"
+      ],
+      "translationDistractors": [
+        "prescribe",
+        "vaccine",
+        "she"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Saying what hurts",
+    "text": "Put `me duele` before one body part to say it hurts. Use `la` or `el` with the body part, rather than a word for “my.” For example, `Me duele la cabeza` means “My head hurts,” and `Me duele el estómago` means “My stomach hurts.”",
+    "examples": []
+  },
+  "practice": [
+    {
+      "question": "Choose the word that completes the sentence.",
+      "template": "[BLANK] duele el estómago",
+      "answer": "Me",
+      "distractors": [
+        "Yo",
+        "Tú",
+        "Usted"
+      ],
+      "feedback": "Use me before duele to say that your stomach hurts."
+    },
+    {
+      "question": null,
+      "template": "Me [BLANK] la espalda",
+      "answer": "duele",
+      "distractors": [
+        "duelen",
+        "dueles",
+        "duelo"
+      ],
+      "feedback": "Use duele with one body part, such as la espalda."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "The doctor asks about medicine. What do you say?",
+    "scene": "A doctor's office in Mexico",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "¿Qué le duele?",
+        "translation": "What hurts?"
+      },
+      {
+        "speaker": "you",
+        "text": "Me duele la cabeza",
+        "translation": "My head hurts."
+      },
+      {
+        "speaker": "them",
+        "text": "¿Desde cuándo le duele?",
+        "translation": "Since when has it hurt?"
+      },
+      {
+        "speaker": "you",
+        "text": "Desde ayer",
+        "translation": "Since yesterday."
+      },
+      {
+        "speaker": "them",
+        "text": "¿Toma algún medicamento?",
+        "translation": "Do you take any medicine?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "No, no tomo ningún medicamento",
+        "translation": "No, I don't take any medicine.",
+        "isBest": true,
+        "why": "This naturally tells the doctor that you don't take medicine."
+      },
+      {
+        "text": "No, no tomar ningún medicamento",
+        "translation": "No, not to take any medicine.",
+        "isBest": false,
+        "why": "Use tomo, not the dictionary form tomar, to say what you take."
+      },
+      {
+        "text": "No, no tomo ninguna medicamento",
+        "translation": "No, I don't take any medicine.",
+        "isBest": false,
+        "why": "Medicamento is masculine, so use ningún rather than ninguna."
+      }
+    ],
+    "explanation": "The doctor may use toma to ask you politely, while you use tomo to answer about yourself."
+  },
+  "writing": {
+    "prompt": "Write a message to the doctor saying: “My head has hurt since yesterday.”",
+    "answers": [
+      "Me duele la cabeza desde ayer.",
+      "Desde ayer me duele la cabeza."
+    ],
+    "keyPoints": [
+      "Use me duele with la cabeza.",
+      "Use desde ayer to say the pain started yesterday."
+    ]
+  },
+  "summary": [
+    "“Me duele la cabeza” says your head hurts.",
+    "“Desde ayer” tells the doctor the pain started yesterday.",
+    "“No tomo ningún medicamento” says you don't take any medicine."
+  ]
+}

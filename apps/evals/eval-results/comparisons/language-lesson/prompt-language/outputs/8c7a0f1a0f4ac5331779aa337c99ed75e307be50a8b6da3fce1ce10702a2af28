@@ -1,0 +1,183 @@
+{
+  "words": [
+    {
+      "word": "plant",
+      "translation": "a living thing such as a tree or a flower",
+      "pronunciation": "PLANT",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "animal",
+        "rock",
+        "cloud"
+      ]
+    },
+    {
+      "word": "root",
+      "translation": "the part of a plant that usually grows under the ground and takes in water",
+      "pronunciation": "ROOT",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "leaf",
+        "flower",
+        "branch"
+      ]
+    },
+    {
+      "word": "soil",
+      "translation": "the top layer of earth where plants can grow",
+      "pronunciation": "SOYL",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "air",
+        "sunlight",
+        "rain"
+      ]
+    },
+    {
+      "word": "grow",
+      "translation": "to become bigger over time",
+      "pronunciation": "GROH",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "shrink",
+        "hide",
+        "stop"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "Plants need water to grow",
+      "translation": "Plants need water to grow",
+      "explanation": "The words “to grow” tell you why plants need water.",
+      "romanization": null,
+      "distractors": [
+        "needs",
+        "grows",
+        "is"
+      ],
+      "translationDistractors": [
+        "needs",
+        "grows",
+        "is"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Roots take in water from soil",
+      "translation": "Roots take in water from soil",
+      "explanation": "“Take in” means that water goes into the roots. “From soil” tells you where the water comes from.",
+      "romanization": null,
+      "distractors": [
+        "takes",
+        "taking",
+        "are"
+      ],
+      "translationDistractors": [
+        "takes",
+        "taking",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Soil holds water for plants",
+      "translation": "Soil holds water for plants",
+      "explanation": "“Holds” tells you that water stays in the soil. “For plants” tells you which living things use it.",
+      "romanization": null,
+      "distractors": [
+        "hold",
+        "holding",
+        "are"
+      ],
+      "translationDistractors": [
+        "hold",
+        "holding",
+        "are"
+      ],
+      "speakingPrompt": null
+    },
+    {
+      "sentence": "Plants grow in the soil",
+      "translation": "Plants grow in the soil",
+      "explanation": "“In the soil” tells you where the plants grow.",
+      "romanization": null,
+      "distractors": [
+        "grows",
+        "is",
+        "on"
+      ],
+      "translationDistractors": [
+        "grows",
+        "is",
+        "on"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Use nearby words for meaning",
+    "text": "Read the nearby words to help you understand a word. For example: `Plants need water to grow. Roots take in water from soil.` The words `plants`, `water`, and `soil` give you clues about `roots`. Don't guess from just one word; read the whole passage.",
+    "examples": [
+      {
+        "sentence": "Plants need water to grow",
+        "translation": "Plants need water to grow"
+      },
+      {
+        "sentence": "Roots take in water from soil",
+        "translation": "Roots take in water from soil"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Choose the word that fits.",
+      "template": "A plant's [BLANK] take in water from the soil.",
+      "answer": "roots",
+      "distractors": [
+        "flowers",
+        "leaves",
+        "branches"
+      ],
+      "feedback": "Roots take in water from the soil for the plant."
+    },
+    {
+      "question": "Choose the word that fits.",
+      "template": "A seed can [BLANK] into a plant.",
+      "answer": "grow",
+      "distractors": [
+        "shrink",
+        "hide",
+        "swim"
+      ],
+      "feedback": "A seed can grow and become a plant."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": null,
+  "writing": {
+    "prompt": "Write a note about what plants require in order to grow.",
+    "answers": [
+      "Plants need water to grow.",
+      "To grow, plants need water.",
+      "Plants need water for growth."
+    ],
+    "keyPoints": [
+      "Says that plants need water",
+      "Connects water with plant growth"
+    ]
+  },
+  "summary": [
+    "“Plants need water to grow” tells you what helps plants get bigger.",
+    "“Roots take in water from soil” tells you how plants get water.",
+    "Nearby words can help you understand a word in a short passage."
+  ]
+}

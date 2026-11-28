@@ -1,0 +1,199 @@
+{
+  "words": [
+    {
+      "word": "work",
+      "translation": "trabajar",
+      "pronunciation": "WURK",
+      "romanization": null,
+      "tip": "Para la r en inglés, curva la punta de la lengua hacia atrás sin tocar el paladar, sin vibrar como la r de español.",
+      "note": null,
+      "distractors": [
+        "walk",
+        "word",
+        "week"
+      ]
+    },
+    {
+      "word": "schedule",
+      "translation": "el horario",
+      "pronunciation": "SKÉ-yul",
+      "romanization": null,
+      "tip": "Inicia directamente con el sonido de la s, sin agregar una e antes.",
+      "note": null,
+      "distractors": [
+        "school",
+        "scheme",
+        "screen"
+      ]
+    },
+    {
+      "word": "shift",
+      "translation": "el turno",
+      "pronunciation": "SHIFT",
+      "romanization": null,
+      "tip": "Pronuncia la sh expulsando aire de forma continua, como cuando pides silencio, no como la ch de español.",
+      "note": null,
+      "distractors": [
+        "shirt",
+        "sheet",
+        "short"
+      ]
+    },
+    {
+      "word": "full-time",
+      "translation": "de tiempo completo",
+      "pronunciation": "FUL-TAIM",
+      "romanization": null,
+      "tip": null,
+      "note": null,
+      "distractors": [
+        "part-time",
+        "overtime",
+        "on-time"
+      ]
+    }
+  ],
+  "sentences": [
+    {
+      "sentence": "I work from nine to five",
+      "translation": "Trabajo de nueve a cinco",
+      "explanation": "En inglés se usa la combinación from... to... para indicar el inicio y el fin de un horario.",
+      "romanization": null,
+      "distractors": [
+        "of",
+        "at"
+      ],
+      "translationDistractors": [
+        "hasta",
+        "en"
+      ],
+      "speakingPrompt": "Di que trabajas de nueve a cinco"
+    },
+    {
+      "sentence": "I have a morning shift",
+      "translation": "Tengo un turno en la mañana",
+      "explanation": "El tipo de turno se coloca antes de la palabra shift, funcionando como una descripción directa.",
+      "romanization": null,
+      "distractors": [
+        "on",
+        "shifts"
+      ],
+      "translationDistractors": [
+        "noche",
+        "tarde"
+      ],
+      "speakingPrompt": "Di que tienes turno en la mañana"
+    },
+    {
+      "sentence": "What is your work schedule?",
+      "translation": "¿Cuál es tu horario de trabajo?",
+      "explanation": "En preguntas abiertas con el verbo to be, colocas is antes del sujeto your work schedule.",
+      "romanization": null,
+      "distractors": [
+        "are",
+        "how"
+      ],
+      "translationDistractors": [
+        "dónde",
+        "cuándo"
+      ],
+      "speakingPrompt": null
+    }
+  ],
+  "tip": {
+    "title": "Decir horarios con from y to",
+    "text": "Para decir de qué hora a qué hora trabajas, usa `from` para la hora de inicio y `to` para la de salida. No traduzcas la preposición española «de» como `of` en este contexto.",
+    "examples": [
+      {
+        "sentence": "I work from 8 a.m. to 4 p.m.",
+        "translation": "Trabajo de 8 a.m. a 4 p.m."
+      },
+      {
+        "sentence": "My shift is from Monday to Friday",
+        "translation": "Mi turno es de lunes a viernes"
+      }
+    ]
+  },
+  "practice": [
+    {
+      "question": "Elige la palabra correcta para indicar el inicio del horario:",
+      "template": "I work [BLANK] eight to four",
+      "answer": "from",
+      "distractors": [
+        "of",
+        "since"
+      ],
+      "feedback": "Usas from para marcar el punto de partida en un rango de horas."
+    },
+    {
+      "question": "Completa la frase para indicar el fin de la jornada:",
+      "template": "My shift is from nine [BLANK] five",
+      "answer": "to",
+      "distractors": [
+        "until to",
+        "at"
+      ],
+      "feedback": "La estructura fija para rangos de tiempo es from... to..."
+    }
+  ],
+  "patternTable": null,
+  "dialogue": {
+    "prompt": "Un compañero te pregunta por tu horario de trabajo. ¿Qué le respondes?",
+    "scene": "La sala de descanso de la empresa",
+    "lines": [
+      {
+        "speaker": "them",
+        "text": "Hi! Welcome to the team",
+        "translation": "¡Hola! Bienvenido al equipo"
+      },
+      {
+        "speaker": "you",
+        "text": "Thanks! I am glad to be here",
+        "translation": "¡Gracias! Me da gusto estar aquí"
+      },
+      {
+        "speaker": "them",
+        "text": "What is your schedule?",
+        "translation": "¿Cuál es tu horario?"
+      }
+    ],
+    "replies": [
+      {
+        "text": "I work from nine to five",
+        "translation": "Trabajo de nueve a cinco",
+        "isBest": true,
+        "why": "Responde con naturalidad indicando tus horas de inicio y fin con from y to."
+      },
+      {
+        "text": "I work of nine to five",
+        "translation": "Trabajo de nueve a cinco",
+        "isBest": false,
+        "why": "En inglés no se usa of para marcar el inicio de un horario; se debe usar from."
+      },
+      {
+        "text": "My schedule is thirty",
+        "translation": "Mi horario es treinta",
+        "isBest": false,
+        "why": "Un número aislado no describe un horario laboral."
+      }
+    ],
+    "explanation": "Para responder sobre tu horario laboral, indica el rango completo usando la fórmula from [hora] to [hora]."
+  },
+  "writing": {
+    "prompt": "Escribe en inglés: Trabajo de 9 a.m. a 5 p.m.",
+    "answers": [
+      "I work from 9 a.m. to 5 p.m.",
+      "I work from 9 to 5",
+      "I work from 9:00 a.m. to 5:00 p.m."
+    ],
+    "keyPoints": [
+      "Usa el verbo work en presente",
+      "Usa from antes de la hora de entrada y to antes de la hora de salida"
+    ]
+  },
+  "summary": [
+    "Usa 'work from... to...' para decir de qué hora a qué hora trabajas",
+    "Usa 'shift' para referirte a tu turno laboral",
+    "Usa 'schedule' para hablar de tu horario en el trabajo"
+  ]
+}
