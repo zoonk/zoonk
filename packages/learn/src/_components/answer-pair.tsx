@@ -32,7 +32,7 @@ function ShownAnswer({
       data-result={result}
       data-slot="answer-option"
     >
-      <OptionMarker isChecked layout="row" marker={marker} picked={false} />
+      <OptionMarker layout="row" marker={marker} picked={false} />
 
       <TagBesideOrUnder tag={tag}>
         {label && <span className="sr-only">{label}</span>}
