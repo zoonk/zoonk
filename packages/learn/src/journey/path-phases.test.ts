@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { findOpenPhase, findOwnChapter, isNamedLikeAChapter } from "./path-phases";
+import {
+  findOpenPhase,
+  findOwnChapter,
+  getMilestoneLabel,
+  isNamedLikeAChapter,
+} from "./path-phases";
 
 function chapter(
   title: string,
@@ -121,5 +126,19 @@ describe(findOpenPhase, () => {
         { chapters: [chapter("A", { state: "done" })], index: 0, state: "done" as const },
       ]),
     ).toBeNull();
+  });
+});
+
+describe(getMilestoneLabel, () => {
+  it("drops the period a milestone sentence ends with, since it names a row", () => {
+    expect(getMilestoneLabel("Write small programs that use values, input, and decisions.")).toBe(
+      "Write small programs that use values, input, and decisions",
+    );
+  });
+
+  it("keeps a milestone without one as it is", () => {
+    expect(getMilestoneLabel("Solve equations and use vectors")).toBe(
+      "Solve equations and use vectors",
+    );
   });
 });

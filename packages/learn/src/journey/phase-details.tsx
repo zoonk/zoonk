@@ -103,7 +103,6 @@ function ExamPhaseEvents({ links, phase }: { links: JourneyPathLinks; phase: Pla
   );
 }
 
-/** Named as its list row is: a band's short name opens onto the milestone it stands for. */
 export function PhaseDetails({ links, phase }: { links: JourneyPathLinks; phase: PlanPhaseView }) {
   const phaseName = usePhaseName();
   const phaseRowName = usePhaseRowName();

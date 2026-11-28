@@ -3,9 +3,8 @@
 import { type PlanPhaseView } from "@zoonk/core/plans/view-contract";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePlanScreen } from "../plan/plan-context";
-import { usePhaseName } from "../plan/use-phase-name";
 import { CurrentPhaseMark } from "./current-phase-mark";
+import { usePhaseRowName } from "./path-phase-row";
 import { BandTodayTick, EndDateSizer } from "./roadmap-lane";
 import { BAND_CHECK_CLASS, BandName, splitBandName } from "./roadmap-styles";
 import { getLessonShare } from "./use-roadmap";
@@ -22,9 +21,8 @@ export function BandFace({
   todayShare?: number | null;
 }) {
   const t = useExtracted();
-  const phaseName = usePhaseName();
-  const { plan } = usePlanScreen();
-  const name = phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+  const phaseRowName = usePhaseRowName();
+  const name = phaseRowName(phase);
 
   return (
     <>

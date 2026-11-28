@@ -11,6 +11,7 @@ import { usePhaseName } from "../plan/use-phase-name";
 import { namesModules } from "../syllabus/names-modules";
 import { ReasonText } from "../syllabus/topic-note";
 import { CurrentPhaseMark } from "./current-phase-mark";
+import { getMilestoneLabel } from "./path-phases";
 
 /** A row's end: when the phase ends, on the edge every row's value ends on. */
 export const PHASE_END_CLASS = "text-muted-foreground text-right text-xs";
@@ -118,15 +119,17 @@ function usePhaseState() {
 }
 
 /**
- * A list row has room for a sentence, so a phase with a milestone is named by what the learner can
- * do once it's done; a band keeps the phase's short name.
+ * A phase with a milestone is named by what the learner can do once it's done, on its band, its
+ * row and its sheet alike, so a screen never shows a phase under two names.
  */
 export function usePhaseRowName() {
   const phaseName = usePhaseName();
   const { plan } = usePlanScreen();
 
   return (phase: PlanPhaseView): string =>
-    phase.milestone ?? phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
+    phase.milestone
+      ? getMilestoneLabel(phase.milestone)
+      : phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus });
 }
 
 /**
@@ -134,12 +137,10 @@ export function usePhaseRowName() {
  * read "Phase 3 , you are here".
  */
 export function usePhaseLabel() {
-  const phaseName = usePhaseName();
+  const phaseRowName = usePhaseRowName();
   const phaseState = usePhaseState();
-  const { plan } = usePlanScreen();
 
-  return (phase: PlanPhaseView): string =>
-    `${phaseName(phase, { mocksRequirePlus: plan.access.mocksRequirePlus })}${phaseState(phase)}`;
+  return (phase: PlanPhaseView): string => `${phaseRowName(phase)}${phaseState(phase)}`;
 }
 
 export function PhaseName({
