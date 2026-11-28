@@ -290,17 +290,88 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
-  func testAResultOpenedFromThePlanGoesBackWithDone() async throws {
+  func testAResultOpenedFromThePlanGoesBackWithDoneAndOffersTheTestAgain() async throws {
     var revisited = Self.startedPast
     revisited.revisited = true
 
     try await capture(
-      "placement-result-revisited", title: "Why prices move", detail: "Done",
+      "placement-result-revisited", title: "Why prices move", detail: "Take the test again",
       absent: ["Start lesson"]
+    ) {
+      PlacementTestResultView(
+        end: revisited, onboarding: false, pressed: nil, failed: false, onRetake: {},
+        onDone: {})
+    }
+    try await capture(
+      "placement-result-revisited-nothing-to-start", title: "Why prices move", detail: "Done",
+      absent: ["Take the test again", "Start lesson"]
     ) {
       PlacementTestResultView(
         end: revisited, onboarding: false, pressed: nil, failed: false, onDone: {})
     }
+  }
+
+  func testAResultThatSkippedNothingHasNoCountLine() async throws {
+    let nothing = PlacementTestEnd(
+      lessonsSkipped: 0, chapter: "What a stock is",
+      course: PlacementCourse(
+        lessons: 9,
+        chapters: [
+          .init(lessons: 4, done: 0, skipped: 0, start: true),
+          .init(lessons: 5, done: 0, skipped: 0, start: false),
+        ]),
+      nextLesson: .init(id: goalID, title: "Why companies sell shares", estimatedMinutes: 5))
+
+    try await capture(
+      "placement-result-nothing-skipped", title: "What a stock is",
+      detail: "Why companies sell shares", absent: ["lessons", "lessons skipped"]
+    ) {
+      PlacementTestResultView(
+        end: nothing, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testAFailedMessagesNoteKeepsItsSentenceAndLeavesTheRetryToTheRow() async throws {
+    try await capture(
+      "listening-failed-note", title: "The audio didn't play.", detail: "The audio didn't play.",
+      absent: ["Try again"]
+    ) {
+      ListeningFailedNote(limit: nil)
+    }
+  }
+
+  func testTheOffersCardsAreNamedByWhatTheyShow() async throws {
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        TestOffer(
+          cards: [
+            TestCopy.courseCard(CoursePlacementOffer(estimatedMinutes: 4, questions: 8)),
+            TestCopy.firstLessonCard(title: "Why companies sell shares"),
+          ],
+          title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
+          preselected: .quick,
+          context: .init(goalID: goalID, test: .course, surface: .onboarding), isSaving: false,
+          failed: false, onStart: { _ in })
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("The cards didn't show: \(spoken(in: window))") {
+      spoken(in: window).contains { $0.hasPrefix("First lesson") }
+    }
+    let elements = accessibilityElements(in: window)
+    let test = try XCTUnwrap(
+      elements.first { $0.accessibilityLabel?.hasPrefix("Test") == true },
+      "\(spoken(in: window))")
+    let firstLesson = try XCTUnwrap(
+      elements.first { $0.accessibilityLabel?.hasPrefix("First lesson") == true })
+
+    XCTAssertTrue(test.accessibilityLabel?.contains("Up to 8 questions") == true)
+    XCTAssertTrue(firstLesson.accessibilityLabel?.contains("Why companies sell shares") == true)
+    XCTAssertTrue(test.accessibilityTraits.contains(.selected), "The picked card says so")
+    XCTAssertFalse(firstLesson.accessibilityTraits.contains(.selected))
+    XCTAssertTrue(test.accessibilityTraits.contains(.button))
   }
 
   func testRetakeHeldUntilTomorrow() async throws {

@@ -20,8 +20,8 @@ struct PlacementTestEnd: Equatable {
   var course: PlacementCourse?
   var nextLesson: PlacementTestResult.NextLesson?
   var attemptId: String?
-  /// The plan's last result, opened from its row when there's no test to start: Done goes back,
-  /// since its next lesson is where the plan stood then.
+  /// The plan's last result, opened from its row: Done goes back, since its next lesson is where
+  /// the plan stood then, and a new test is taken from it.
   var revisited = false
 }
 
@@ -57,31 +57,30 @@ enum PlacementTestPhase: Equatable {
   }
 
   /// An open test goes on at its next question. With nothing open, the result shows when it's the
-  /// test the learner was just in (`attemptID`), in onboarding, or on a plan that has no test to
-  /// start (`canStart` false), where it's the row's last result; otherwise the test is offered, or
+  /// test the learner was just in (`attemptID`), in onboarding, or on the plan, where it's the
+  /// row's last result whether or not a new test could start; otherwise the test is offered, or
   /// waited for when the learner already `asked` for it.
   init(
-    _ placement: GoalPlacement, onboarding: Bool, asked: Bool = false, attemptID: String? = nil,
-    canStart: Bool = true
+    _ placement: GoalPlacement, onboarding: Bool, asked: Bool = false, attemptID: String? = nil
   ) {
     self.init(
       attempt: placement.activeTestAttempt, result: placement.savedTestResult,
       status: placement.status,
       next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
       labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
-      onboarding: onboarding, asked: asked, attemptID: attemptID, canStart: canStart)
+      onboarding: onboarding, asked: asked, attemptID: attemptID)
   }
 
   init(
     attempt: PlacementAttempt?, result: PlacementTestResult?,
     status: Components.Schemas.PlacementStatus, next: PracticeQuestion?,
     labels: PracticeTrueFalseLabels, onboarding: Bool, asked: Bool = false,
-    attemptID: String? = nil, canStart: Bool = true
+    attemptID: String? = nil
   ) {
     guard let attempt else {
       if let result, let id = result.attemptId, onboarding || id == attemptID {
         self = .result(PlacementTestEnd(read: result))
-      } else if let result, !canStart, !asked {
+      } else if let result, !asked {
         var end = PlacementTestEnd(read: result)
         end.revisited = true
         self = .result(end)

@@ -63,11 +63,12 @@ enum PlacementTestCopy {
     )
   }
 
-  /// "9 lessons", under the course's line when the test skipped none.
-  static func lessons(_ count: Int) -> LocalizedStringResource {
-    LocalizedStringResource(
-      "\(count) lessons", table: "Onboarding", locale: .appLanguage)
-  }
+  /// The plan's last course result, when a new test can start.
+  static let takeTestAgain = LocalizedStringResource(
+    "Take the test again", table: "Onboarding",
+    comment:
+      "A quiet action on the result of a placement test opened again from the plan: it offers a new test."
+  )
 
   static func skillRange(_ skill: LevelTest.Skill, _ range: LevelRange) -> String {
     switch skill {
