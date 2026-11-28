@@ -1,4 +1,5 @@
 import "server-only";
+import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type Item, prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleaveByWeight } from "@zoonk/utils/interleave";
@@ -20,7 +21,7 @@ const FULL_REVIEW_QUESTIONS = 30;
 const FOCUS_TURNS = 2;
 
 /** Recent answers test short-term recognition, so wait a full day before repeating them in practice. */
-const RECENTLY_ANSWERED_MS = MS_PER_DAY;
+export const RECENTLY_ANSWERED_MS = MS_PER_DAY;
 
 type PracticeCandidate = Pick<
   Item,
@@ -172,41 +173,6 @@ function orderPracticeSkills({
     .map((row) => row.skillId);
 }
 
-/** Listening-only skills without a voiced recording not heard in the last day release their reserved subject time. */
-export async function loadIdleListeningSkillIds({
-  examBlueprintId,
-  listeningSkillIds,
-  now,
-  userId,
-}: {
-  examBlueprintId: string | null;
-  listeningSkillIds: ReadonlySet<string>;
-  now: Date;
-  userId: string;
-}): Promise<Set<string>> {
-  if (listeningSkillIds.size === 0) {
-    return new Set();
-  }
-
-  const sets = await listItemSetsForSkills({
-    examBlueprintId,
-    skillIds: [...listeningSkillIds],
-    userId,
-  });
-
-  const askable = sets.filter(
-    (set) =>
-      set.kind === "audio" &&
-      (set.lastAnsweredAt?.getTime() ?? 0) <= now.getTime() - RECENTLY_ANSWERED_MS,
-  );
-
-  return new Set(
-    [...listeningSkillIds].filter(
-      (skillId) => !askable.some((set) => set.skillIds.includes(skillId)),
-    ),
-  );
-}
-
 /** Never repeats an answer from the last day; review days prioritize unseen questions and repeat only misses. */
 export async function loadPracticeItems({
   claims = NO_PRACTICE_CLAIMS,
@@ -221,6 +187,7 @@ export async function loadPracticeItems({
   listeningSkillIds = new Set(),
   maxMinutes,
   now,
+  picks,
   repeatOnlyMissed = false,
   skillIds,
   skillAreaShares = null,
@@ -245,6 +212,7 @@ export async function loadPracticeItems({
   listeningSkillIds?: ReadonlySet<string>;
   maxMinutes: number;
   now: Date;
+  picks: readonly OptionSelect[];
   /** Prefer unseen questions and repeat only previously missed ones. */
   repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
@@ -283,10 +251,10 @@ export async function loadPracticeItems({
       where: {
         ...getPracticeItemFilter({ typed }),
         skillId: { in: candidates.filter((skillId) => !listeningSkillIds.has(skillId)) },
-        ...getItemAudienceFilter({ examBlueprintId, field, userId }),
+        ...getItemAudienceFilter({ examBlueprintId, field, picks, userId }),
       },
     }),
-    listItemSetsForSkills({ examBlueprintId, skillIds: candidates, userId }),
+    listItemSetsForSkills({ examBlueprintId, picks, skillIds: candidates, userId }),
   ]);
 
   const itemIds = [...items, ...sets.flatMap((set) => set.items)].map((item) => item.id);

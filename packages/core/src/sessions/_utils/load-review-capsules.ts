@@ -1,4 +1,5 @@
 import "server-only";
+import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type Goal, type PlanItem, prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { isInFinalStretch } from "../../exams/final-stretch/final-stretch-rules";
@@ -244,6 +245,7 @@ export async function loadReviewCapsules({
   horizon,
   listeningSkillIds = new Set(),
   netScoring,
+  picks,
   planLessons,
   repeatOnlyMissed = false,
   reserved = new Set(),
@@ -262,6 +264,7 @@ export async function loadReviewCapsules({
   /** Listening-only capsules require recordings; text cannot substitute. */
   listeningSkillIds?: ReadonlySet<string>;
   netScoring: boolean;
+  picks: readonly OptionSelect[];
   /** Prefer completed lessons when naming a capsule. */
   planLessons: readonly PlanLesson[];
   repeatOnlyMissed?: boolean;
@@ -291,11 +294,11 @@ export async function loadReviewCapsules({
       where: {
         format: { in: [...SESSION_ITEM_FORMATS] },
         skillId: { in: dueSkillIds.filter((skillId) => !listeningSkillIds.has(skillId)) },
-        ...getItemAudienceFilter({ examBlueprintId, field, userId }),
+        ...getItemAudienceFilter({ examBlueprintId, field, picks, userId }),
       },
     }),
     dueListeningIds.length > 0
-      ? listItemSetsForSkills({ examBlueprintId, skillIds: dueListeningIds, userId })
+      ? listItemSetsForSkills({ examBlueprintId, picks, skillIds: dueListeningIds, userId })
       : [],
   ]);
 

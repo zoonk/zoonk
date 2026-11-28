@@ -8,8 +8,8 @@ import { buildReviewBlock } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadUnreservedCapsules } from "./day-capsules";
 import { loadDayPlan } from "./day-plan";
+import { toReviewInput } from "./day-queries";
 import { buildExtraPractice } from "./extra-blocks";
-import { toReviewInput } from "./load-build-inputs";
 import { loadReviewCapsules } from "./load-review-capsules";
 
 export async function planPreparingMockReview({

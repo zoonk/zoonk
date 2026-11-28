@@ -1,3 +1,4 @@
+import { type OptionSelect } from "@zoonk/ai/tasks/items/schemas";
 import { type ItemSet, type ItemSetKind, type MediaAsset, prisma } from "@zoonk/db";
 import { logError } from "@zoonk/utils/logger";
 import { toListeningSetView } from "../listening/listening-set-view";
@@ -16,10 +17,12 @@ export type ItemSetPick = {
 
 export async function listItemSetsForSkills({
   examBlueprintId,
+  picks,
   skillIds,
   userId,
 }: {
   examBlueprintId: string | null;
+  picks?: readonly OptionSelect[];
   skillIds: readonly string[];
   userId: string | null;
 }): Promise<ItemSetPick[]> {
@@ -34,7 +37,7 @@ export async function listItemSetsForSkills({
         select: { id: true, skillId: true },
         where: {
           AND: [
-            getItemAudienceFilter({ examBlueprintId, inSets: true, userId }),
+            getItemAudienceFilter({ examBlueprintId, inSets: true, picks, userId }),
             ...(userId ? [] : [getPublicItemFilter()]),
           ],
         },

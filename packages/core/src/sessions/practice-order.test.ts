@@ -59,6 +59,7 @@ function loadPractice({
     field: null,
     maxMinutes,
     now: NOW,
+    picks: [1],
     skillAreaShares,
     skillIds,
     typed: false,
