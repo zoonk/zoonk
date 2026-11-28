@@ -24,6 +24,14 @@ struct AnswerOption: View {
   /// Without one, the answer is shown after the fact: the same look, with nothing to press.
   let action: (() -> Void)?
 
+  @Environment(\.hasHardwareKeyboard) private var hasKeyboard
+
+  /// A number key shows only while a keyboard can press it, as main's shows only with a fine
+  /// pointer; a number that isn't a key, such as an order step's place, always shows.
+  private var shownMarker: Int? {
+    action == nil || hasKeyboard ? marker : nil
+  }
+
   var body: some View {
     if let action {
       button(action)
@@ -36,7 +44,7 @@ struct AnswerOption: View {
 
   private func button(_ action: @escaping () -> Void) -> some View {
     Button(action: action) {
-      if let marker {
+      if let marker = shownMarker {
         ViewThatFits(in: .horizontal) {
           markedContent
 
@@ -57,7 +65,7 @@ struct AnswerOption: View {
 
   private var markedContent: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
-      if let marker {
+      if let marker = shownMarker {
         KeyMarker(number: marker, isPicked: isPicked && result == nil)
       }
       answerContent
@@ -67,7 +75,7 @@ struct AnswerOption: View {
   private var answerContent: some View {
     TagBesideOrUnder(
       text: text, detail: detail, tag: hasTag ? AnyView(tagContent) : nil,
-      hasMarker: marker != nil)
+      hasMarker: shownMarker != nil)
   }
 
   @ViewBuilder

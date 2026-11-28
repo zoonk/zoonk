@@ -102,6 +102,7 @@ struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
     AccessibilityStack(alignment: .firstTextBaseline, spacing: 10, stackedSpacing: 0) {
       title
         .typeStyle(.pageTitle)
+        .balancedLines()
         .foregroundStyle(Color(.foreground))
         .accessibilityAddTraits(.isHeader)
         .heroTitle()

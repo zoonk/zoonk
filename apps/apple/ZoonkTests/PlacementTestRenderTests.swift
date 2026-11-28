@@ -107,7 +107,7 @@ final class PlacementTestRenderTests: XCTestCase {
         AnyView(
           PlacementTestResultView(
             end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
-        "Why prices move", ["4 of 9 lessons skipped", "Up next"]
+        "Why prices move", ["4 lessons skipped", "Up next"]
       ),
     ] {
       let window = try show(
@@ -159,6 +159,48 @@ final class PlacementTestRenderTests: XCTestCase {
 
     XCTAssertEqual(
       heights[0], heights[1], accuracy: 1, "The icon took a line of its own: \(heights)")
+  }
+
+  /// The topic over a question is one line, centered on the screen and cut when it's long, so a
+  /// long topic never moves the question.
+  func testALongTopicNeverMovesTheQuestion() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+    try await readsWhatVoiceOverReads()
+    var questionTops: [CGFloat] = []
+
+    for subject in ["Fractions", "Investing for the long run while paying off your student loans"] {
+      let window = try show(
+        NavigationStack {
+          PlacementQuestionScreen(
+            subject: subject, number: 1, total: 8, question: question, labels: .trueFalse,
+            isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in }, onStop: {}
+          )
+          .testTask(name: Text(verbatim: "Test what you know")) {}
+        }
+        .environment(AppRouter())
+        .zoonkStyles())
+
+      try await waitForTestCondition("The question didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains(subject)
+          && spoken(in: window).contains { $0.contains("Which fraction is smaller?") }
+      }
+      try await waitForLayout(in: window)
+      let elements = accessibilityElements(in: window)
+      let title = try XCTUnwrap(elements.first { $0.accessibilityLabel == subject })
+      let line = UIFont.preferredFont(forTextStyle: .headline).lineHeight
+      XCTAssertLessThan(title.accessibilityFrame.height, line * 1.5, "\(subject) took two lines")
+      XCTAssertEqual(
+        title.accessibilityFrame.midX, window.bounds.midX, accuracy: 1,
+        "\(subject) sits off the screen's middle")
+      questionTops.append(
+        elements.first { $0.accessibilityLabel?.contains("Which fraction is smaller?") == true }?
+          .accessibilityFrame.minY ?? -1)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(Set(questionTops).count, 1, "The question moved: \(questionTops)")
   }
 
   func testAListeningQuestionsSecondButtonChangesWithoutMovingConfirm() async throws {
@@ -278,7 +320,8 @@ final class PlacementTestRenderTests: XCTestCase {
     let undo = PlacementResultUndo(
       goalId: goalID, changeId: goalID, lessons: 4, request: request, plans: store, disabled: false)
     try await capture(
-      "placement-result", title: "Why prices move", detail: "4 of 9 lessons skipped"
+      "placement-result", title: "Why prices move", detail: "4 lessons skipped",
+      absent: ["of 9"]
     ) {
       PlacementTestResultView(
         end: Self.startedPast, onboarding: false, pressed: nil,
@@ -422,8 +465,7 @@ final class PlacementTestRenderTests: XCTestCase {
     unnamed.chapter = nil
 
     try await capture(
-      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here",
-      absent: ["4 lessons skipped"]
+      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here"
     ) {
       PlacementTestResultView(
         end: unnamed, onboarding: false, pressed: nil, failed: false, onDone: {})
@@ -570,6 +612,53 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  /// Every lesson skipped leaves no start to name, so the title is the count and nothing repeats it.
+  func testAResultThatSkippedEveryLessonSaysItsCountOnce() async throws {
+    let everything = PlacementTestEnd(
+      lessonsSkipped: 9,
+      course: PlacementCourse(
+        lessons: 9,
+        chapters: [
+          .init(lessons: 4, done: 0, skipped: 4, start: false),
+          .init(lessons: 5, done: 0, skipped: 5, start: false),
+        ]))
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        PlacementTestResultView(
+          end: everything, onboarding: false, pressed: nil, failed: false, onDone: {})
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("The result didn't show: \(spoken(in: window))") {
+      spoken(in: window).contains("9 lessons skipped")
+    }
+    // The tree reads an element more than once; each place on the screen counts once.
+    let places = Set(
+      accessibilityElements(in: window).filter {
+        $0.accessibilityLabel?.contains("lessons skipped") == true
+      }.map { $0.accessibilityFrame.minY.rounded() })
+    XCTAssertEqual(places.count, 1, "The count shows at \(places.sorted())")
+  }
+
+  func testALanguageResultThatSkippedLessonsCaptionsItsLevels() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 12)
+    result.ranges = [
+      "reading": LevelRange(high: "B2", low: "B1"),
+      "listening": LevelRange(high: "B1", low: "A2"),
+    ]
+
+    try await capture(
+      "language-result-skipped", title: "Your English level", detail: "12 lessons skipped",
+      absent: ["you already know"]
+    ) {
+      LanguageTestResultView(
+        result: result, targetLanguage: "en", testOutLevel: "B2", pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
+    }
+  }
+
   func testResultsAfterUndo() async throws {
     let undo = try restored()
     let result = LevelTestOut.Result(changeId: goalID, finishedAt: .now, lessonsSkipped: 6)
@@ -579,14 +668,15 @@ final class PlacementTestRenderTests: XCTestCase {
 
     try await capture(
       "placement-undo", title: "No lessons skipped", detail: "The lessons are back in your plan.",
-      absent: ["You start here", "Why prices move", "of 9 lessons skipped"]
+      absent: ["You start here", "Why prices move", "4 lessons skipped"]
     ) {
       PlacementTestResultView(
         end: Self.startedPast, onboarding: false, pressed: nil,
         failed: false, undo: undo, onDone: {})
     }
     try await capture(
-      "placement-level-undo", title: "No lessons skipped", detail: "back in your plan"
+      "placement-level-undo", title: "No lessons skipped", detail: "back in your plan",
+      absent: ["6 lessons skipped"]
     ) {
       LanguageTestResultView(
         result: .init(finishedAt: .now, lessonsSkipped: 6), targetLanguage: "en",

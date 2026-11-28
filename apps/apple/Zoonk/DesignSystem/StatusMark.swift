@@ -12,7 +12,8 @@ struct StatusMark: View {
 
   let status: Status
 
-  @ScaledMetric(relativeTo: .body) private var nextSize = 12.0
+  @ScaledMetric(relativeTo: .body) private var nextDot = 8.0
+  @ScaledMetric(relativeTo: .body) private var nextRing = 3.0
   @ScaledMetric(relativeTo: .body) private var currentDot = 10.0
   @ScaledMetric(relativeTo: .body) private var currentRing = 4.0
 
@@ -36,13 +37,12 @@ struct StatusMark: View {
         .fontWeight(.bold)
         .foregroundStyle(.success)
     case .next:
-      // Resizable, so its ink centers in its box rather than sitting on a text baseline's.
-      Image(systemName: "smallcircle.filled.circle.fill")
-        .resizable()
-        .scaledToFit()
-        .symbolRenderingMode(.hierarchical)
-        .frame(width: nextSize, height: nextSize)
-        .foregroundStyle(.success)
+      // Main's: a dot in a faint ring of its own color.
+      Circle()
+        .fill(.success)
+        .frame(width: nextDot, height: nextDot)
+        .padding(nextRing)
+        .background(Circle().fill(Color.success.opacity(0.25)))
     case .skipped:
       Image(systemName: "forward.fill")
         .imageScale(.small)

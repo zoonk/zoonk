@@ -134,6 +134,8 @@ struct TestOutcome<Lead: View>: View {
   var secondary: Secondary?
   var undo: PlacementResultUndo?
   var failureMessage: LocalizedStringResource?
+  /// What belongs to the title, under it in the heading, such as a result's course line.
+  var underTitle: AnyView?
   let isSaving: Bool
   let failed: Bool
   let onContinue: () -> Void
@@ -141,7 +143,7 @@ struct TestOutcome<Lead: View>: View {
 
   var body: some View {
     ZoonkList {
-      StepHeader(subject: subject, title: title, description: description)
+      StepHeader(subject: subject, title: title, description: description, below: underTitle)
 
       // Main's facts are what the test found, under the heading rather than in it.
       if !facts.isEmpty || footnote != nil {

@@ -25,16 +25,25 @@ struct LanguageTestResultView: View {
           ? Text(PlacementTestCopy.lessonsSkipped(0))
           : Text(
             "Your \(Locale.current.languageName(targetLanguage)) level", tableName: "Onboarding"),
-        description: undo?.restored ?? Text(lead))
+        description: undo?.restored ?? lead.map { Text(verbatim: $0) })
 
       Section {
-        Grid(horizontalSpacing: 16, verticalSpacing: 0) {
-          ForEach(Array(skills.enumerated()), id: \.element) { index, skill in
-            if index > 0 {
-              Divider()
-            }
+        VStack(alignment: .leading, spacing: 0) {
+          Grid(horizontalSpacing: 16, verticalSpacing: 0) {
+            ForEach(Array(skills.enumerated()), id: \.element) { index, skill in
+              if index > 0 {
+                Divider()
+              }
 
-            row(skill)
+              row(skill)
+            }
+          }
+
+          // As a course's result says it under its course line.
+          if let lessons = result?.lessonsSkipped, lessons > 0, !restored {
+            Text(verbatim: PlacementTestCopy.lessonsSkipped(lessons))
+              .typeStyle(.data)
+              .foregroundStyle(.mutedForeground)
           }
         }
       }
@@ -53,8 +62,7 @@ struct LanguageTestResultView: View {
           Text(verbatim: PlacementTestCopy.testOut(testOutLevel))
             .underline()
         }
-        .buttonStyle(.borderless)
-        .listRowSeparator(.hidden)
+        .resultLinkRow()
         .disabled(pressed == .main || undo?.request.isRunning == true)
       }
     }
@@ -113,13 +121,10 @@ struct LanguageTestResultView: View {
     }
   }
 
-  private var lead: String {
-    let lessons = result?.lessonsSkipped ?? 0
-
-    if lessons > 0 {
-      return String(
-        localized: "Skipped \(lessons) lessons you already know.", table: "Onboarding",
-        locale: .appLanguage)
+  /// None when the test skipped lessons: the caption under the levels says so.
+  private var lead: String? {
+    if result?.lessonsSkipped ?? 0 > 0 {
+      return nil
     }
 
     if result?.ranges?[LevelTest.Skill.reading.rawValue] != nil, result?.listeningUntested == true {

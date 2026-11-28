@@ -182,8 +182,7 @@ struct AppLanguageAction: View {
         )
         .underline()
       }
-      .buttonStyle(.borderless)
-      .listRowSeparator(.hidden)
+      .resultLinkRow()
     }
   }
 

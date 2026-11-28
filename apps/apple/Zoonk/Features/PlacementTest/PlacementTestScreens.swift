@@ -32,14 +32,19 @@ struct PlacementTestResultView: View {
         ? nil
         : end.nextLesson == nil || end.revisited || restored
           ? Text(TestCopy.done) : Text(TestCopy.startLesson),
-      undo: undo, isSaving: isSaving, failed: failed, onContinue: onDone
+      undo: undo,
+      underTitle: restored
+        ? nil
+        : end.course.map { course in
+          // A title that already is the count, with no start to name, isn't repeated under it.
+          AnyView(
+            PlacementCourseLine(
+              course: course, lessonsSkipped: place == nil ? 0 : end.lessonsSkipped))
+        },
+      isSaving: isSaving, failed: failed, onContinue: onDone
     ) {
-      if let course = end.course, !restored {
-        PlacementCourseLine(course: course, lessonsSkipped: end.lessonsSkipped)
-
-        if let nextLesson = end.nextLesson {
-          UpNextLessonRow(lesson: nextLesson)
-        }
+      if let nextLesson = end.nextLesson, end.course != nil, !restored {
+        UpNextLessonRow(lesson: nextLesson)
       }
 
       if let onRetake {
@@ -47,8 +52,7 @@ struct PlacementTestResultView: View {
           Text(PlacementTestCopy.takeTestAgain)
             .underline()
         }
-        .buttonStyle(.borderless)
-        .listRowSeparator(.hidden)
+        .resultLinkRow()
         .disabled(isSaving)
       }
     }
@@ -57,8 +61,8 @@ struct PlacementTestResultView: View {
 }
 
 /// The course on a test's result: one line of chapters in plan order, each as wide as its
-/// lessons and filled as far as its lessons are behind the learner, and how many lessons the
-/// learner starts past.
+/// lessons and filled as far as its lessons are behind the learner, and how many lessons the test
+/// skipped; none draws no count.
 struct PlacementCourseLine: View {
   /// The lessons behind the learner, studied or started past, in progress blue as the language
   /// result's level meters draw a level reached.
@@ -83,15 +87,16 @@ struct PlacementCourseLine: View {
 
       // A result that skipped nothing says so by its line alone.
       if lessonsSkipped > 0 {
-        Text(PlacementTestCopy.lessonsSkipped(lessonsSkipped, of: course.lessons))
+        Text(verbatim: PlacementTestCopy.lessonsSkipped(lessonsSkipped))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }
     }
-    .padding(.vertical, 4)
+    // Main's line sits closer to the title than to what follows: with the heading's own room
+    // under it, a section's step.
+    .padding(.top, 8)
+    .padding(.bottom, 12)
     .accessibilityElement(children: .combine)
-    .listRowBackground(Color.clear)
-    .listRowSeparator(.hidden)
   }
 }
 
@@ -115,8 +120,16 @@ struct UpNextLessonRow: View {
       .currentRow()
       .listRowBackground(Color.clear)
     }
-    // A row's room from what's around it, as when it shared their section.
-    .listSectionSpacing(0)
+  }
+}
+
+extension View {
+  /// A quiet link under a test's result, such as "Take the test again": a section's step from what's
+  /// above it, as main's column puts it.
+  func resultLinkRow() -> some View {
+    buttonStyle(.borderless)
+      .listRowSeparator(.hidden)
+      .listRowInsets(.top, 0)
   }
 }
 
