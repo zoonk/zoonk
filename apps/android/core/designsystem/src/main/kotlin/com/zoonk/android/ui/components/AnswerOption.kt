@@ -476,3 +476,6 @@ private val STACKED_CORNER_INSET = 4.dp
 
 /** The disc under a mark over a picture. */
 private val MARK_DISC = 28.dp
+
+/** How far words on a stacked card's picture keep from its top, clear of the key and the mark. */
+val StackedCornerClearance = STACKED_CORNER_INSET + MARK_DISC + STACKED_CORNER_INSET

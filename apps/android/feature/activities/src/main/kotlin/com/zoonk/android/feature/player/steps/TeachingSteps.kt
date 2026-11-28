@@ -102,6 +102,7 @@ import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.ButtonSize
 import com.zoonk.android.ui.components.Eyebrow
 import com.zoonk.android.ui.components.LessonSummaryIdeas
+import com.zoonk.android.ui.components.MissingPicture
 import com.zoonk.android.ui.components.ObserveEdits
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedTextField
@@ -109,6 +110,7 @@ import com.zoonk.android.ui.components.PendingPicture
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PictureShape
 import com.zoonk.android.ui.components.PrivatePicture
+import com.zoonk.android.ui.components.StackedCornerClearance
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.fitTo
 import com.zoonk.android.ui.components.isWideLayout
@@ -1005,7 +1007,10 @@ private data class ShownOption(
     val result: AnswerResult?,
 )
 
-/** Main's `PictureOptionContent`: the option's picture, drawn or still drawing, and its name only once checked. */
+/**
+ * Main's `PictureOptionContent`: the option's picture, drawn, still drawing or described where it never came, and its
+ * name only once checked.
+ */
 @Composable
 private fun PictureOption(
     step: LessonStep,
@@ -1049,12 +1054,13 @@ private fun PictureOption(
             }
 
             else -> {
-                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.medium) {
+                MissingPicture(PictureFrame.Question, Modifier.fillMaxWidth(), PictureShape.Square) {
                     Text(
                         alt,
-                        modifier = Modifier.padding(12.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = StackedCornerClearance),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center,
+                        onTextLayout = { if (it.hasVisualOverflow) onDescriptionOverflow() },
                     )
                 }
             }

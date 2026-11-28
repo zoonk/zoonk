@@ -47,7 +47,7 @@ import org.robolectric.annotation.GraphicsMode
 import java.io.File
 
 /**
- * Review screenshots of pictures still being drawn, written only on demand:
+ * Review screenshots of pictures still being drawn, drawn and never drawn, written only on demand:
  * `./gradlew :feature:player:testDebugUnitTest --tests '*LessonPicturesScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -129,6 +129,21 @@ class LessonPicturesScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phonePictureChecked() = pickPicture("picture-checked-phone", check = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi-qwerty")
+    fun phonePictureDescribed() = capture("picture-described-phone", pictureCheckStep("arch"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phonePictureDescribedDark() = capture("picture-described-phone-dark", pictureCheckStep("arch"))
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun phonePictureDescribedAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("picture-described-phone-font200", pictureCheckStep("arch"))
+    }
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
