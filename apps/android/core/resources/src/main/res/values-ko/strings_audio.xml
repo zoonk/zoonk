@@ -37,7 +37,7 @@
     <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
     <string name="audio_say_after_cue">‘지금 말해 보세요’가 나오면 이어서 말해 보세요</string>
     <string name="audio_microphone_getting_ready">준비하고 있어요…</string>
-    <!-- Shown the moment the microphone is on, telling the learner to start talking. -->
+    <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
     <string name="audio_speak_now">지금 말해 보세요</string>
     <string name="audio_missed_start">처음 부분을 놓쳤을 수도 있어요. 다시 말해 보세요.</string>
     <string name="audio_microphone_off_title">마이크가 꺼져 있어요</string>

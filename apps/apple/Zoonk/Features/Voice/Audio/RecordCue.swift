@@ -68,7 +68,7 @@ struct RecordCue: View {
       track(
         label: Text(
           "Speak now", tableName: "Voice",
-          comment: "Shown the moment the microphone is on, telling the learner to start talking."
+          comment: "Shown the moment the microphone is on: an instruction to start talking now, not a button."
         )
         .fontWeight(.medium),
         levels: phase == .live && !reduceMotion ? levels : [],

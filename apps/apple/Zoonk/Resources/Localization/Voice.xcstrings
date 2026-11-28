@@ -6326,7 +6326,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dilo después de “Hablar ahora”"
+            "value" : "Dilo después de “Habla ahora”"
           }
         },
         "fr" : {
@@ -6846,7 +6846,7 @@
       }
     },
     "Speak now" : {
-      "comment" : "Shown the moment the microphone is on, telling the learner to start talking.",
+      "comment" : "Shown the moment the microphone is on: an instruction to start talking now, not a button.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -6857,7 +6857,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hablar ahora"
+            "value" : "Habla ahora"
           }
         },
         "fr" : {

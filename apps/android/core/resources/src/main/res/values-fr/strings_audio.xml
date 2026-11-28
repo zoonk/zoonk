@@ -37,7 +37,7 @@
     <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
     <string name="audio_say_after_cue">Dis-le après « Parle maintenant »</string>
     <string name="audio_microphone_getting_ready">Préparation en cours…</string>
-    <!-- Shown the moment the microphone is on, telling the learner to start talking. -->
+    <!-- Shown the moment the microphone is on: an instruction to start talking now, not a button. -->
     <string name="audio_speak_now">Parle maintenant</string>
     <string name="audio_missed_start">On a peut-être raté le début. Dis-le encore.</string>
     <string name="audio_microphone_off_title">Le microphone est désactivé</string>

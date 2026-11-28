@@ -133,7 +133,7 @@ export function RecordCue({
             {status === "recording"
               ? t({
                   description:
-                    "Shown the moment the microphone is on, telling the learner to start talking.",
+                    "Shown the moment the microphone is on: an instruction to start talking now, not a button.",
                   message: "Speak now",
                 })
               : t("Getting ready…")}

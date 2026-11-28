@@ -13045,11 +13045,11 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Grabar"
 
-#. Shown the moment the microphone is on, telling the learner to start talking.
+#. Shown the moment the microphone is on: an instruction to start talking now, not a button.
 #: src/speech/record-cue.tsx
 msgctxt "NQsS5y"
 msgid "Speak now"
-msgstr "Hablar ahora"
+msgstr "Habla ahora"
 
 #: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
@@ -13063,7 +13063,7 @@ msgstr "Preparando…"
 #: src/speech/record-cue.tsx
 msgctxt "p9c99m"
 msgid "Say it after “Speak now”"
-msgstr "Dilo después de “Hablar ahora”"
+msgstr "Dilo después de “Habla ahora”"
 
 #: src/speech/record-note.tsx
 msgctxt "pvPbx0"
