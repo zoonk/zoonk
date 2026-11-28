@@ -117,7 +117,11 @@ export function RecordCue({
   const busy = status === "acquiring" || status === "recording";
 
   return (
-    <div aria-hidden="true" className="flex h-6 items-center gap-3 text-sm" data-slot="record-cue">
+    <div
+      aria-hidden="true"
+      className="flex h-6 w-full items-center gap-3 text-sm"
+      data-slot="record-cue"
+    >
       {busy && (
         <>
           <span
