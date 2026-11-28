@@ -1,6 +1,7 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
+import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -13,7 +14,10 @@ import {
 } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { languageLevelTestResultSchema } from "../src/lib/openapi/schemas/language";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { readBody } from "./helpers/response";
 
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
@@ -436,7 +440,9 @@ test.describe("Language goal API", () => {
 
     const answered = await apiContext.post(`${path}/answers`, { data: right });
 
-    expect(await answered.json()).toMatchObject({ answered: 1, canStop: false, lastCorrect: true });
+    await expect(
+      readBody({ response: answered, schema: languageLevelTestViewSchema }),
+    ).resolves.toMatchObject({ answered: 1, canStop: false, lastCorrect: true });
 
     const stale = await apiContext.post(`${path}/answers`, { data: right });
 
@@ -499,7 +505,10 @@ test.describe("Language goal API", () => {
     });
 
     const loaded = await apiContext.get(path, { params: { attemptId: open.attemptId } });
-    expect(await loaded.json()).toStrictEqual(open);
+
+    await expect(
+      readBody({ response: loaded, schema: languageLevelTestViewSchema }),
+    ).resolves.toStrictEqual(open);
 
     const firstRetakeAnswer = await apiContext.post(`${path}/answers`, {
       data: {
@@ -512,7 +521,7 @@ test.describe("Language goal API", () => {
     expect(firstRetakeAnswer.status()).toBe(200);
     const row = await apiContext.get(`/v1/goals/${goal.id}/plan`);
 
-    expect(await row.json()).toMatchObject({
+    await expect(readBody({ response: row, schema: planResponseSchema })).resolves.toMatchObject({
       placementTest: { answered: 1, kind: "language", state: "continue", total: 12 },
     });
 
@@ -526,7 +535,9 @@ test.describe("Language goal API", () => {
       data: { attemptId: open.attemptId },
     });
 
-    expect(await explicit.json()).toMatchObject({
+    await expect(
+      readBody({ response: explicit, schema: languageLevelTestResultSchema }),
+    ).resolves.toMatchObject({
       levels: [],
       result: { attemptId: open.attemptId, levelsSkipped: [], ranges: {} },
     });

@@ -1,5 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { nextPlanLessonQuery } from "../../../plans/_utils/next-plan-lesson";
 import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
@@ -31,7 +32,7 @@ export function readPlacementChange({
 
 export async function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
   const item = await tx.planItem.findFirst({
-    orderBy: [{ position: "asc" }, { id: "asc" }],
+    ...nextPlanLessonQuery(goalId),
     select: {
       chapterId: true,
       lesson: {
@@ -43,7 +44,6 @@ export async function readPlacementNextLesson(goalId: string, tx: TransactionCli
         },
       },
     },
-    where: { kind: "lesson", plan: { goalId }, status: "todo" },
   });
 
   const lesson = item?.lesson ?? null;
