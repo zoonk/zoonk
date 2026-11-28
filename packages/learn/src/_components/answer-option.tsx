@@ -96,8 +96,8 @@ export function AnswerOptionGroup({
 
 /**
  * The word an option shows. The right option says "Correct" when the learner missed it. A pick
- * needs no word of its own: its color and the verdict say it. Only a guess, which counts as
- * neither right nor wrong, says so, from the pick on, in the words its verdict keeps.
+ * needs no word of its own: its mark, its color and the verdict say it. Only a guess, which counts
+ * as neither right nor wrong, says so once it's checked; before, its mark shows the pick.
  */
 export function useAnswerTag({
   guessed,
@@ -110,18 +110,13 @@ export function useAnswerTag({
 }): React.ReactNode {
   const t = useExtracted();
 
-  if (result === "guess" || (picked && guessed)) {
-    const yourGuess = t({
-      description: "Tags the learner's pick when it counts as neither right nor wrong.",
-      message: "Your guess",
-    });
-
-    return result ? (
-      <AnswerTag className={ANSWER_TAG_TONE[result]}>{yourGuess}</AnswerTag>
-    ) : (
-      // Unspoken: the radio is checked.
-      <AnswerTag aria-hidden="true" className="text-foreground">
-        {yourGuess}
+  if (result === "guess" || (result && picked && guessed)) {
+    return (
+      <AnswerTag className={ANSWER_TAG_TONE[result]}>
+        {t({
+          description: "Tags the learner's pick when it counts as neither right nor wrong.",
+          message: "Your guess",
+        })}
       </AnswerTag>
     );
   }
