@@ -92,7 +92,7 @@
     "typecheck": "tsrs --noEmit"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.10.1",
+    "@formatjs/intl-localematcher": "0.10.3",
     "decode-named-character-reference": "1.3.0",
     "mdast-util-from-markdown": "2.1.0",
     "mdast-util-gfm": "3.1.0",
