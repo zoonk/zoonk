@@ -11,6 +11,7 @@ import kotlinx.datetime.toJavaLocalDate
 import java.text.Normalizer
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -94,11 +95,30 @@ fun Plan.finish(
     }
     val end = forecast as? PlanForecast.On ?: return null
     if (goalKind == LearnerSummaryGoal.Kind.EXAM || paused) return null
-    return PlanEnd(end.date, estimate = true, month = estimateNamesMonth(end.date), year = end.year)
+    return finishEnd(end.date)
 }
 
-/** An estimated end more than six weeks past this week's start is written as its month (main's `NEAR_ESTIMATE_DAYS`). */
-fun Plan.estimateNamesMonth(end: LocalDate): Boolean = ChronoUnit.DAYS.between(week.startDate.toJavaLocalDate(), end) > NEAR_ESTIMATE_DAYS
+/** Main's `isNearEstimate`: an estimate within six weeks of [today] is said by its day, a later one by its month. */
+fun isNearEstimate(
+    date: LocalDate,
+    today: LocalDate,
+): Boolean = abs(ChronoUnit.DAYS.between(today, date)) <= NEAR_ESTIMATE_DAYS
+
+private fun Plan.isNearEstimate(date: LocalDate): Boolean = isNearEstimate(date, week.startDate.toJavaLocalDate())
+
+/** Main's `getEstimatePrecision`: by its year when core dates it only by that, else by its day near and its month far. */
+private fun Plan.estimateEnd(
+    date: LocalDate,
+    year: Boolean,
+): PlanEnd = PlanEnd(date, estimate = true, month = !year && !isNearEstimate(date), year = year)
+
+/** The plan's finish, said as precisely as core forecasts it. */
+private fun Plan.finishEnd(date: LocalDate): PlanEnd =
+    when (estimate.precision) {
+        PlanFinishPrecision.YEAR -> PlanEnd(date, estimate = true, month = false, year = true)
+        PlanFinishPrecision.MONTH -> PlanEnd(date, estimate = true, month = true)
+        else -> estimateEnd(date, year = false)
+    }
 
 /**
  * Main's `getPhaseEnd`: the one date a phase is named by, wherever it shows: when it ends. A learning phase ends
@@ -119,27 +139,22 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
             // A last phase without a day of its own ends with the plan.
             val last = phases.lastOrNull { it.kind != PlanPhase.Kind.AFTER_EXAM }?.index
             val planEnd = estimate.endDate?.toJavaLocalDate()?.takeIf { phase.index == last } ?: return null
-            return PlanEnd(
-                planEnd,
-                estimate = true,
-                month = estimateNamesMonth(planEnd),
-                year =
-                    estimate.precision == PlanFinishPrecision.YEAR,
-            )
+            return finishEnd(planEnd)
         }
     val learns = phase.kind == PlanPhase.Kind.LEARN || phase.kind == PlanPhase.Kind.AFTER_EXAM
     val ahead = phase.state == PlanPhase.State.UPCOMING
     val endsOnChallenge = lastDay != phase.end
-    val estimate =
+    val estimated =
         endsOnChallenge ||
             schedule.targetDateEstimated ||
             (learns && (ahead || phase.checkpoint?.state == PlanPhaseCheckpoint.State.UPCOMING))
-    return PlanEnd(
-        lastDay,
-        estimate,
-        month = estimate && ahead && estimateNamesMonth(lastDay),
-        year = estimate && phase.precision == PlanFinishPrecision.YEAR,
-    )
+    val year = phase.precision == PlanFinishPrecision.YEAR
+    return when {
+        !estimated -> PlanEnd(lastDay, estimate = false, month = false)
+        schedule.targetDate == null && estimate.precision != null && lastDay == estimate.endDate?.toJavaLocalDate() -> finishEnd(lastDay)
+        ahead || year -> estimateEnd(lastDay, year)
+        else -> PlanEnd(lastDay, estimate = true, month = false)
+    }
 }
 
 /** A phase is behind the learner on its challenge's day, which can come after its last lesson. */

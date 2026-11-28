@@ -156,6 +156,25 @@ class PhaseDatesTest {
     }
 
     @Test
+    fun usesTheSavedFinishPrecisionForTheFinishRowAndThePhaseEndingOnThatDate() {
+        val end = "2026-12-12"
+        val shaped = planOf(phase(0, "current", end, checkpoint = challenge(end)), planEnd = end, precision = "month")
+        val expected = PlanEnd(day(end), estimate = true, month = true)
+
+        assertEquals(expected, shaped.finish(LEARN))
+        assertEquals(expected, shaped.phaseEnd(shaped.phases[0]))
+    }
+
+    @Test
+    fun aPhaseUnderWayKeepsItsDayUnlessCoreDatesItByItsYear() {
+        val byDay = planOf(phase(0, "current", "2027-02-23", checkpoint = challenge("2027-02-23"), precision = "month"))
+        val byYear = planOf(phase(0, "current", "2029-02-23", checkpoint = challenge("2029-02-23"), precision = "year"))
+
+        assertEquals(PlanEnd(day("2027-02-23"), estimate = true, month = false), byDay.phaseEnd(byDay.phases[0]))
+        assertEquals(PlanEnd(day("2029-02-23"), estimate = true, month = false, year = true), byYear.phaseEnd(byYear.phases[0]))
+    }
+
+    @Test
     fun aPausedGoalHasNoFinishFromItsPaceButKeepsItsOwnDates() {
         assertNull(planOf(phase(0), planEnd = "2026-12-12").finish(LEARN, paused = true))
         assertEquals(day(EXAM_DAY), planOf(phase(0), target = EXAM_DAY).finish(LEARN, paused = true)?.date)
@@ -307,6 +326,7 @@ class PhaseDatesTest {
     private fun planOf(
         vararg phases: String,
         planEnd: String? = null,
+        precision: String? = null,
         target: String? = null,
         targetEstimated: Boolean = false,
         shortPlan: Boolean = false,
@@ -316,7 +336,7 @@ class PhaseDatesTest {
             """
             "phases":[${phases.joinToString(",")}],
             "end":$end,
-            "estimate":{"remainingHours":10,"totalHours":12,"endDate":${planEnd.json()}},
+            "estimate":{"remainingHours":10,"totalHours":12,"endDate":${planEnd.json()},"precision":${precision.json()}},
             "schedule":{"dailyMinutes":20,"dailyTimes":[15,30,45],"fullCourse":false,"lightWeeks":[],"studyDays":5,"targetDate":${target.json()},
               "targetDateEstimated":$targetEstimated,"targetDateNamedMonth":false,"shape":{"canDiffer":false,"weekdayDays":[1,2,3,4,5],"weekdays":20,"weekend":null,"weekendDays":[]},"weekdayMinutes":[0,20,20,20,20,20,0]},
             "shortPlan":${if (shortPlan) """{"days":5,"mockDate":null}""" else "null"},
@@ -332,10 +352,11 @@ class PhaseDatesTest {
         checkpoint: String? = null,
         short: String? = null,
         start: String? = null,
+        precision: String? = null,
     ) =
         """{"chapterCount":0,"chapters":[],"checkpoint":${checkpoint ?: "null"},"startDate":${start.json()},"endDate":${end.json()},"hours":10,
         "index":$index,"kind":"$kind","lessonsDone":0,"lessonsTotal":0,"mocks":{"count":0},"name":"Phase $index","notPlannedReason":${if (state == "leftOut") "\"time\"" else "null"},"state":"$state",
-        "short":${short ?: "null"}}"""
+        "short":${short ?: "null"},"precision":${precision.json()}}"""
 
     private fun challenge(
         date: String = "2026-11-22",
