@@ -188,7 +188,7 @@ async function attemptRun({
   return { result: executed.data, sandboxName };
 }
 
-async function runClaimedProgram({
+async function runInSandboxes({
   claim,
   input,
   onPhase,
@@ -196,7 +196,7 @@ async function runClaimedProgram({
   claim: ClaimedRun;
   input: CodeRunInput;
   onPhase: (phase: CodeRunPhase) => void;
-}): Promise<CodeRunResult> {
+}): Promise<Attempt> {
   const { row, reuseName } = claim;
   const runId = row.id;
   const timeoutMs = runBudgetMs(input.language) + SANDBOX_IDLE_MS;
@@ -220,24 +220,21 @@ async function runClaimedProgram({
       })
     : { started: false };
 
-  const attempt =
-    "result" in reused || reused.started
-      ? reused
-      : await attemptRun({
-          input,
-          onPhase,
-          open: () =>
-            sandboxDriver.fork({
-              deadline,
-              language: input.language,
-              name: row.sandboxName,
-              timeoutMs,
-            }),
-          runId,
-          sandboxName: row.sandboxName,
-        });
-
-  return finishRun({ attempt, row });
+  return "result" in reused || reused.started
+    ? reused
+    : attemptRun({
+        input,
+        onPhase,
+        open: () =>
+          sandboxDriver.fork({
+            deadline,
+            language: input.language,
+            name: row.sandboxName,
+            timeoutMs,
+          }),
+        runId,
+        sandboxName: row.sandboxName,
+      });
 }
 
 /** A run no sandbox ever started gives its charge back; any other run keeps it. */
@@ -266,6 +263,26 @@ async function finishRun({ attempt, row }: { attempt: Attempt; row: CodeRun }) {
 
   if (!charged) {
     revalidateCacheTags([getAllowanceCacheTag(row.userId)]);
+  }
+
+  return result;
+}
+
+/** The run's row finishes whatever happens to the run, so it never holds the learner's next one. */
+async function runClaimedProgram({
+  claim,
+  input,
+  onPhase,
+}: {
+  claim: ClaimedRun;
+  input: CodeRunInput;
+  onPhase: (phase: CodeRunPhase) => void;
+}): Promise<CodeRunResult> {
+  const attempt = await safeAsync(() => runInSandboxes({ claim, input, onPhase }));
+  const result = await finishRun({ attempt: attempt.data ?? { started: false }, row: claim.row });
+
+  if (attempt.error) {
+    throw attempt.error;
   }
 
   return result;

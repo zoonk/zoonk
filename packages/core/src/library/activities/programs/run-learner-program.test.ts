@@ -162,6 +162,29 @@ describe("learner code run admission", () => {
     expect(sandboxDriver.fork).toHaveBeenCalledTimes(2);
   });
 
+  it("finishes the run when its delivery fails", async () => {
+    const user = await userFixture();
+    mockSession(user.id);
+    const admission = await runLearnerProgram(program());
+
+    if (admission.status !== "start") {
+      throw new Error(`Expected an admission, got ${admission.status}`);
+    }
+
+    await expect(
+      admission.run(() => {
+        throw new Error("Stream closed");
+      }),
+    ).rejects.toThrow("Stream closed");
+
+    await expect(prisma.codeRun.findFirst({ where: { userId: user.id } })).resolves.toMatchObject({
+      finishedAt: expect.any(Date),
+      stop: "unavailable",
+    });
+
+    await expect(runLearnerProgram(program())).resolves.toMatchObject({ status: "start" });
+  });
+
   it("lets a lost run expire and replays its request as unavailable", async () => {
     const user = await userFixture();
     mockSession(user.id);

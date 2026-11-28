@@ -1,10 +1,16 @@
 import { readFile } from "node:fs/promises";
 import { runLearnerProgram } from "@zoonk/core/library/activities/run-learner-program";
+import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
 import { POST as postCodeRun } from "./route";
 
 vi.mock("@zoonk/core/library/activities/run-learner-program", () => ({
   runLearnerProgram: vi.fn(),
+}));
+
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  after: vi.fn(),
 }));
 
 const requestId = "afff9e26-a25b-4dba-adb3-18673729ab25";
@@ -52,6 +58,17 @@ describe("POST /v1/code-runs", () => {
 
     const expected: unknown = JSON.parse(fixture);
     await expect(response.text()).resolves.toBe(expected);
+  });
+
+  it("keeps the run going after the learner's connection drops", async () => {
+    const { promise: running, resolve } = Promise.withResolvers<typeof result>();
+    vi.mocked(runLearnerProgram).mockResolvedValueOnce({ run: () => running, status: "start" });
+
+    const response = await postCodeRun(request());
+    await response.body?.cancel();
+    resolve(result);
+
+    expect(after).toHaveBeenCalledWith(running);
   });
 
   it("streams a replay as a sole result frame", async () => {

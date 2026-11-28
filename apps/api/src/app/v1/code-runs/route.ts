@@ -8,6 +8,7 @@ import {
   type CodeRunResult,
   codeRunInputSchema,
 } from "@zoonk/core/library/activities/sandbox-contract";
+import { after } from "next/server";
 
 type RunAdmission = Awaited<ReturnType<typeof runLearnerProgram>>;
 
@@ -26,12 +27,14 @@ function streamRun(admission: Extract<RunAdmission, { status: "replay" | "start"
         }
       }
 
-      const result =
-        admission.status === "replay"
-          ? admission.result
-          : await admission.run((phase) => send("phase", { phase }));
-
-      send("result", result);
+      if (admission.status === "replay") {
+        send("result", admission.result);
+      } else {
+        // A dropped connection must not stop a paid run before its row finishes.
+        const running = admission.run((phase) => send("phase", { phase }));
+        after(running);
+        send("result", await running);
+      }
 
       if (!delivery.signal.aborted) {
         controller.close();
