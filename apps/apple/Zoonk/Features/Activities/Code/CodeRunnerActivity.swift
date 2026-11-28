@@ -95,8 +95,13 @@ private struct CodeRunnerCanvas: View {
     context.phase == .explore
   }
 
+  /// A right answer opened again keeps only its output, so the program that prints it is the
+  /// solution, as main's is.
   private var lines: [String] {
-    (isExploring ? fields.solution : fields.starterCode).components(separatedBy: "\n").enumerated()
+    let reopenedRight = isChecked && matches && edits.isEmpty
+
+    return (isExploring || reopenedRight ? fields.solution : fields.starterCode)
+      .components(separatedBy: "\n").enumerated()
       .map { edits[$0.offset + 1] ?? $0.element }
   }
 
@@ -226,6 +231,7 @@ private struct CodeRunnerCanvas: View {
             .submitLabel(.go)
             .focused($editingLine, equals: number)
             .codeColors(line, language: fields.language.rawValue)
+            .disabled(isChecked)
           } else {
             CodeText(tokens: colored.indices.contains(index) ? colored[index] : [])
           }
