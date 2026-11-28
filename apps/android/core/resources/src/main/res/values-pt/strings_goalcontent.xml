@@ -24,13 +24,13 @@
   "goalcontent_from_material": "fe94522b1288bf7be55d5bea8fcc25064d939a87f944f14003d7b0e098f37734",
   "goalcontent_known": "48f7621ce80de3fd13d3c633415b9de39fedd1ee8181aa54d82e9fae973d603c",
   "goalcontent_known_before": "9bfa95abe3455f967ff9519ac17dfa3140a92b845b94c2ac94999b0a8ab4b329",
+  "goalcontent_left_out_why": "05e3d15518d4d59eff02477b2de04f0ebc8e1cadf5b4a86822992d585eb724cb",
   "goalcontent_lesson_count": "8ccf70eaa72a2888a67ac2a41a5b6c70409dda5528e42da4f4239c845df6af56",
   "goalcontent_lessons_done": "6bcdf489e3444a00658f8fe89659397008ccc26a15eaabc123beb5b7f5893e0d",
   "goalcontent_lessons_known_skipped": "cbcbbebc6023be819656ab4a0051c7fa5428922c8322c7c3a3acb42b0dd46edb",
   "goalcontent_lessons_skipped": "735268d2922bb770d0b289fa2b1c094452f44787b31bc54cf8ddc03cfac326b4",
   "goalcontent_matrix_title": "46bcaa0e747857251f532bcf886bb2296bee27486689465d630d9208136c56dd",
   "goalcontent_module_missing": "1148c17990710b4eaf12acc4c59d9c0315ca74785c8a990908d0519e5d3ee73d",
-  "goalcontent_module_part_time": "33478be072f1c62d540f722c0265d722d6ae036efc3d290293d2828823057217",
   "goalcontent_module_skipped": "a258fae66094dd9d8e412a231ad812793fa54a1e4df9c003a0f1c3d2831c3735",
   "goalcontent_module_time": "a5f3dbddabc1742d7d93b8fa87dcfb5d4999bc01e05a87ee5fc54d547d3e376b",
   "goalcontent_modules": "6aef8881d3a9d9196ac7da255b66bb596c41bdf909c84ea82d5016e259d661ff",
@@ -67,7 +67,6 @@
   "goalcontent_start": "a83f67753ed1c32971bc608c090cb57a52df47ab51f38ea0c3a3cb5a3c995a9c",
   "goalcontent_studied": "74527812f61c4e113cb1addf5cab6e556c60bb7e019beb14b91b6caffb52ad9c",
   "goalcontent_subject_missing": "901db95bbdcfd02a7e798e5a23db656059b68ca32ac4ad2b3fb67f520ff9f076",
-  "goalcontent_subject_part_time": "2c394dedcf13da597c66b6e85d55ae1dd569d3d9651c19aebf77071d80c7c7c1",
   "goalcontent_subject_skipped": "203c04e7d2e47a3c6ba7ce6715b2faac912f59438a78bf02e8b2a297ef6d6d68",
   "goalcontent_subject_time": "99bdf2bc2447ba4d62651f639922b6b81f0b043a7e76b3351ba2bed19e63d636",
   "goalcontent_subjects": "b538496e9ae30dda7aa4aa45c3abe518db0b61590554c5d39dfb853f2fef4368",
@@ -223,15 +222,13 @@
     <string name="goalcontent_module_skipped">Você tirou este módulo do seu plano.</string>
     <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
     <string name="goalcontent_module_time">Este módulo não está no seu plano. Outros módulos vêm primeiro.</string>
-    <!-- On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
-    <string name="goalcontent_module_part_time">Parte deste módulo não está no seu plano. Outros tópicos vêm primeiro.</string>
-    <!-- On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
-    <string name="goalcontent_subject_part_time">Parte desta matéria não está no seu plano. Outros tópicos vêm primeiro.</string>
     <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">Este módulo ainda não está no seu plano.</string>
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">O que inclui</string>
     <string name="goalcontent_adjust_plan">Ajustar plano</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">Não dá para estudar tudo até a data que você definiu.</string>
     <string name="goalcontent_add_back">Adicionar de novo</string>
     <string name="goalcontent_save_failed">Não foi possível salvar. Tente de novo.</string>
     <plurals name="goalcontent_chapters_done">

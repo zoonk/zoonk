@@ -52,6 +52,7 @@ import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.TextButton
 import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.glyphScale
 import com.zoonk.android.ui.components.listRowDescription
 import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
@@ -170,6 +171,7 @@ private fun PhaseItem(
             paused = page.isPaused,
             onClick = { expanded = !expanded },
             expanded = expanded,
+            leftOutTopics = leftOutLine(phase),
             // The current phase keeps its name open, as main's does.
             byPlace = byPlace && expanded && phase.state != PlanPhase.State.CURRENT,
         )
@@ -192,6 +194,7 @@ internal fun PhaseRow(
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
     paused: Boolean = false,
+    leftOutTopics: Int = 0,
 ) {
     // A paused plan's phases end when the learner resumes, so no date says otherwise, as main's `usePhaseEnd`.
     val date = if (paused) null else phaseEnd(plan, phase, plan.today)
@@ -217,10 +220,26 @@ internal fun PhaseRow(
         highlighted = highlighted,
         expanded = expanded,
         leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
-        supporting = line?.let { { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) } },
+        // Open, the fold under it names what the left-out line counts.
+        supporting =
+            if (line == null && (leftOutTopics == 0 || expanded == true)) {
+                null
+            } else {
+                {
+                    line?.let { Text(it.text, Modifier.semantics { contentDescription = it.spoken }) }
+                    if (expanded != true) LeftOutTopicsLine(leftOutTopics)
+                }
+            },
         meta = date?.let { { TrailingText(it) } },
     )
 }
+
+/** How many of a phase's topics its row's line says the plan's date leaves out: none when another reason speaks for it, as main's `PhaseLeftOut`. */
+internal fun leftOutLine(phase: PlanPhase): Int =
+    when {
+        phase.state == PlanPhase.State.LEFT_OUT || phase.state == PlanPhase.State.UNFINISHED || phase.challengeLeftOut -> 0
+        else -> phase.leftOut.size
+    }
 
 /** Main's `usePhaseEnd`: when a phase ends ([phaseEnd]'s rule), the same wherever it shows: a short plan's days or its end ("~Nov 10", "~Jan"). */
 @Composable
@@ -286,11 +305,8 @@ private fun phaseMeta(
         )
     }
     if (phase.challengeLeftOut) return sameWords(challengeNotInPlan(page))
-    if (phase.leftOut.isNotEmpty()) {
-        return sameWords(
-            pluralStringResource(R.plurals.plan_left_out_topics, phase.leftOut.size, phase.leftOut.size),
-        )
-    }
+    // Its left-out line says so, drawn with the fold's mark ([LeftOutTopicsLine]).
+    if (phase.leftOut.isNotEmpty()) return null
     // Main's `PhaseResume`: nothing continues while the goal is paused.
     if (phase.state != PlanPhase.State.CURRENT || open || page.isPaused) return null
 
@@ -459,11 +475,43 @@ internal fun LeftOutTopicsRow(
             onClick = { open = !open },
             indent = indent,
             expanded = open,
-            leading = { Icon(painterResource(R.drawable.ic_do_not_disturb_on), contentDescription = null, tint = muted) },
+            leading = { LeftOutMark(FOLD_MARK) },
         )
         if (open) FoldedNames(names, indent)
     }
 }
+
+/**
+ * Main's `LeftOutTopicsLine`: under a module's or a phase's name, how many of its topics the plan's date leaves out,
+ * after the fold's mark so it reads as a different line from what the row holds.
+ */
+@Composable
+internal fun LeftOutTopicsLine(count: Int) {
+    if (count == 0) return
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
+        LeftOutMark(LINE_MARK)
+        Text(
+            pluralStringResource(R.plurals.plan_left_out_topics, count, count),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+/** Main's `CircleMinusIcon` at 70% of the muted ink, as a topic left out of the plan is marked. */
+@Composable
+private fun LeftOutMark(size: Dp) {
+    Icon(
+        painterResource(R.drawable.ic_do_not_disturb_on),
+        contentDescription = null,
+        modifier = Modifier.size(size * glyphScale()),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+    )
+}
+
+/** The glyph's ink is 20/24 of its box: 16dp draws main's 13dp list mark, 12dp its 10dp line mark. */
+private val FOLD_MARK = 16.dp
+private val LINE_MARK = 12.dp
 
 /** Main's `FoldedNames`: names a fold opens to, which open nothing themselves, as one quiet list of bullets hanging off the rows' title edge. */
 @Composable

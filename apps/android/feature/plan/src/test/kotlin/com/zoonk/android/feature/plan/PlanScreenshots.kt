@@ -24,6 +24,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -1140,7 +1141,8 @@ class PlanScreenshots {
             }
         show(exam = original.copy(plan = original.plan.copy(phases = phases)))
         val omittedTopics = hasText("2 topics not in your plan") and SemanticsMatcher.keyIsDefined(SemanticsActions.Expand)
-        compose.onNode(omittedTopics).performClick()
+        // Opened through its expand action, as TalkBack does, so the render shows the row at rest, without a tap's ripple.
+        compose.onNode(omittedTopics).performSemanticsAction(SemanticsActions.Expand)
         compose.onNodeWithText("Cleaning messy data").assertExists()
         write("path-left-out-open-phone", compose.onRoot().captureRender().asAndroidBitmap())
     }

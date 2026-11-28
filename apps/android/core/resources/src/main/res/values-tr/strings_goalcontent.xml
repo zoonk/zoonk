@@ -24,13 +24,13 @@
   "goalcontent_from_material": "9c8bdaaeeb73f07372b89e95af3c53bea91a9ba3b178a3f74fac325ba151b355",
   "goalcontent_known": "1f206163056a1fba12ac3c9108f5b3c003f9482878c8d27ac975555f33609914",
   "goalcontent_known_before": "710de6d91f587772af03772c5fceb92b1963b407aca01486421efb53e910abb4",
+  "goalcontent_left_out_why": "9f1f05d3d139dd0bbe0495d357836c5e37cbfb814f53d75a1b7bd9c55340d04c",
   "goalcontent_lesson_count": "ed1c00225660e57f2ffd1b241baaa909631dc5ac99a9c8693553150a0768f959",
   "goalcontent_lessons_done": "c4328df30c173ebf89560dca1350b53a74c4e2cba29e45aade515d928337dbb8",
   "goalcontent_lessons_known_skipped": "6c697764c918a0b386c79e055e3b3a13e7f486520c9fb789a9e89fd0c7035d2f",
   "goalcontent_lessons_skipped": "ae0c80232a723983083b00e0df9129a82c420741076831dae59003432881394b",
   "goalcontent_matrix_title": "70a62fcd8fa9b6f8a93c4fd81b8c2c8a5bbfcbdac2913caaba0424de09570e88",
   "goalcontent_module_missing": "018c379c7e7ab239fb8b160cb461b94557a09b56d9c015a5637d16e3695d00af",
-  "goalcontent_module_part_time": "d28f36e0a803c697bdef951ea9e2d6bc7b3f493c1a9fa6e9082dff81966983eb",
   "goalcontent_module_skipped": "774ea409b136aa621701b24ad72e6bc1ca82eadbe20d2d679601bb0c8b396134",
   "goalcontent_module_time": "594899d998c336095a0e04e779de28833a95eb1968b58fcb659d18dce7ba9960",
   "goalcontent_modules": "fd5ee7a77628ff793c52a7856d78007b0c660186b8c6b8085c05f0001ae5b9c3",
@@ -67,7 +67,6 @@
   "goalcontent_start": "f7ad2965f13dfc17a2aed81b6d6b8ced8eaee68137dd71c1be689ab332628eaa",
   "goalcontent_studied": "a343b22f5e86829b4b3d93f9c2a2a496302d3015a7b7923743b6ae5650212739",
   "goalcontent_subject_missing": "d6e9e46409cc37e5c8edb8b49336d3be41be7056b34e4c58268eb449cac77f21",
-  "goalcontent_subject_part_time": "5cd65504bfb7cd922bcee7b404b8a1a6fff48206108d425cae5d09af2da32816",
   "goalcontent_subject_skipped": "6a0a79650c550a312d99f69590ee5205ccc6a32bce19973b0b3a176f0fde841c",
   "goalcontent_subject_time": "3e3f99757b2bf2ee618c17b6a59291cdaf0d5a1b3d2a92b4d46fc32db2fa8fe1",
   "goalcontent_subjects": "a3fade2e499bdb9dced80de11c7d81bf4136dfa987d1442796dbb9426bfe81b2",
@@ -211,15 +210,13 @@
     <string name="goalcontent_module_skipped">Bu modülü planından çıkardın.</string>
     <!-- Why a module isn't in the learner's plan, on a plan that isn't for an exam: their study time goes to modules that matter more first. Followed by a link to change the plan. -->
     <string name="goalcontent_module_time">Bu modül planında yok. Önce diğer modüllere yer veriliyor.</string>
-    <!-- On a module's page, on a plan that isn't for an exam: the plan teaches some of the module, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
-    <string name="goalcontent_module_part_time">Bu modülün bir kısmı planında yok. Önce başka konular var.</string>
-    <!-- On a subject's page: the plan teaches some of the subject, but the rest of its topics don't fit before the plan's date. Followed by a link to change the plan. -->
-    <string name="goalcontent_subject_part_time">Bu konunun bir kısmı planında yok. Önce başka konular var.</string>
     <!-- On a module's page, on a plan that isn't for an exam: no lesson of the plan teaches this module yet. -->
     <string name="goalcontent_module_missing">Bu modül henüz planında yok.</string>
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">Kapsamı</string>
     <string name="goalcontent_adjust_plan">Planı ayarla</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">Belirlediğin tarihe kadar yetişmiyorlar.</string>
     <string name="goalcontent_add_back">Geri ekle</string>
     <string name="goalcontent_save_failed">Kaydedilemedi. Tekrar dene.</string>
     <plurals name="goalcontent_chapters_done">

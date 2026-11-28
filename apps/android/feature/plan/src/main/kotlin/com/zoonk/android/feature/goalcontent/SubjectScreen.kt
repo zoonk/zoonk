@@ -294,7 +294,6 @@ internal fun SubjectPage(
         written?.let { subjectWritten(it, actions.openAnswer, standing = !asideBeside) }
 
         subjectChapters(subject, today, actions)
-        subjectLeftOut(subject.leftOut)
 
         item(key = "written", contentType = "written") { SubjectWrittenPractice(syllabus, subject, writes, actions) }
 

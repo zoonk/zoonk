@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
+import com.zoonk.android.feature.plan.LeftOutTopicsRow
 import com.zoonk.android.feature.plan.MoreChaptersRow
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.farTopicLine
@@ -194,37 +195,16 @@ internal fun NotPlannedNotice(
 ) {
     val words =
         when (subject.notPlannedReason) {
-            "skipped" -> {
-                if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
-            }
-
-            "time" -> {
-                if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
-            }
-
-            "missing" -> {
-                if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
-            }
-
-            null -> {
-                if (subject.leftOut.isEmpty()) {
-                    return
-                } else if (module) {
-                    R.string.goalcontent_module_part_time
-                } else {
-                    R.string.goalcontent_subject_part_time
-                }
-            }
-
-            else -> {
-                return
-            }
+            "skipped" -> if (module) R.string.goalcontent_module_skipped else R.string.goalcontent_subject_skipped
+            "time" -> if (module) R.string.goalcontent_module_time else R.string.goalcontent_subject_time
+            "missing" -> if (module) R.string.goalcontent_module_missing else R.string.goalcontent_subject_missing
+            else -> return
         }
 
     val sentence = stringResource(words)
     // Main's `NotPlannedCallout`: for time, the sentence ends with the way to change the plan.
     val text =
-        if (subject.notPlannedReason == "time" || subject.notPlannedReason == null) {
+        if (subject.notPlannedReason == "time") {
             buildAnnotatedString {
                 append(sentence + spaceAfterSentence(sentence))
                 append(statusLink(stringResource(R.string.goalcontent_adjust_plan), actions.adjustPlan))
@@ -409,7 +389,28 @@ internal fun LazyListScope.subjectChapters(
                 ListDivider()
                 MoreChaptersRow(pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden)) { showAll = true }
             }
+            if (subject.leftOut.isNotEmpty()) {
+                ListDivider()
+                LeftOutTopicsRow(subject.leftOut, indent = 0.dp)
+            }
         }
+    }
+
+    if (subject.leftOut.isNotEmpty()) {
+        item(key = "left-out-why", contentType = "left-out-why") { LeftOutWhy(actions.adjustPlan) }
+    }
+}
+
+/** Main's `LeftOutWhy`: why the fold above leaves topics out, and the way to fit them in. */
+@Composable
+private fun LeftOutWhy(adjustPlan: () -> Unit) {
+    Column(Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            stringResource(R.string.goalcontent_left_out_why),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        OutlinedButton(onClick = adjustPlan) { Text(stringResource(R.string.goalcontent_adjust_plan)) }
     }
 }
 
@@ -785,34 +786,15 @@ private fun TopicFrequencySource(
 
 /** What a subject out of the plan would teach, by name, when it has no chapters or topics to show it. */
 internal fun LazyListScope.subjectCovers(covers: List<String>) {
-    skillNames(key = "covers", names = covers, title = { stringResource(R.string.goalcontent_covers) })
-}
+    if (covers.isEmpty()) return
 
-/** The topics of a subject in the plan that its date leaves out, by name, after the chapters it keeps. */
-internal fun LazyListScope.subjectLeftOut(leftOut: List<String>) {
-    skillNames(
-        key = "left-out",
-        names = leftOut,
-        title = { stringResource(R.string.goalcontent_not_in_plan) },
-        detail = { formatNumber(leftOut.size.toDouble(), currentLocale()) },
-    )
-}
+    sectionTitle(key = "covers-title", title = { stringResource(R.string.goalcontent_covers) })
 
-private fun LazyListScope.skillNames(
-    key: String,
-    names: List<String>,
-    title: @Composable () -> String,
-    detail: @Composable () -> String? = { null },
-) {
-    if (names.isEmpty()) return
-
-    sectionTitle(key = "$key-title", title = title, detail = detail)
-
-    item(key = key, contentType = "skill-names") {
+    item(key = "covers", contentType = "covers") {
         Column {
-            names.forEachIndexed { index, name ->
+            covers.forEachIndexed { index, name ->
                 if (index > 0) ListDivider()
-                ListRow(headline = { Text(name, color = MaterialTheme.colorScheme.onSurfaceVariant) })
+                ListRow(headline = { Text(name) })
             }
         }
     }
