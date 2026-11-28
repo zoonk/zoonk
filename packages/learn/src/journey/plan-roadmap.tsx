@@ -60,7 +60,7 @@ function RoadmapCompact({
             <MeterPart
               as="span"
               className={cn(
-                "relative min-w-6 overflow-hidden",
+                "relative min-w-0 basis-6 overflow-hidden",
                 phase.state === "current" && BAND_STATE_CLASS.current,
               )}
               key={phase.index}

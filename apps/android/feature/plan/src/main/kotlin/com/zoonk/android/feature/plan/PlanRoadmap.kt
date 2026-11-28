@@ -243,8 +243,9 @@ private fun RoadmapMeter(
             .height(6.dp)
             .clearAndSetSemantics {},
     ) {
-        val gap = 2.dp.toPx()
-        val minimum = 24.dp.toPx()
+        val gap = minOf(2.dp.toPx(), size.width / (phases.size * 2))
+        val available = size.width - (phases.size - 1) * gap
+        val minimum = minOf(24.dp.toPx(), available / phases.size)
         val radius = CornerRadius(size.height / 2)
         val widths = weightedWidths(phases.map { it.weight() }, size.width, List(phases.size) { minimum }, gap)
         var start = 0f
