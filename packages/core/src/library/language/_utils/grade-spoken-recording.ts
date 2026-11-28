@@ -38,12 +38,12 @@ export async function gradeSpokenRecording({
     userId,
   });
 
-  if (!match.normalizedHeard) {
-    return { status: "noSpeech" };
-  }
-
   if (hasMissedStart({ micStartupMs, words: match.words })) {
     return { status: "missedStart" };
+  }
+
+  if (!match.normalizedHeard) {
+    return { status: "noSpeech" };
   }
 
   const wordsToPractice = await loadPracticeWords({

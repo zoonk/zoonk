@@ -62,6 +62,12 @@ describe(hasMissedStart, () => {
       statuses: ["different", "missed", "missed", "missed"],
     },
     {
+      expected: true,
+      name: "a silent take after a slow start",
+      startup: 1000,
+      statuses: ["missed", "missed", "missed"],
+    },
+    {
       expected: false,
       name: "a sentence longer than the start can hide",
       startup: 450,

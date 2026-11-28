@@ -842,6 +842,20 @@ describe(gradeSpokenAnswer, () => {
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(0);
   });
 
+  it("asks again as a missed start when the mic started too late to hear any of the sentence", async () => {
+    const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
+    mockSession(user.id);
+    mockTranscript("");
+
+    await expect(
+      gradeSpokenAnswer({
+        audio: AUDIO,
+        fields: { ...FIELDS, micStartupMs: 1000 },
+        stepId: step.id,
+      }),
+    ).resolves.toStrictEqual({ status: "missedStart" });
+  });
+
   it("replays a missed start without saving progress or generating an explanation", async () => {
     const [step, user] = await Promise.all([createSpokenStep(), userFixture()]);
     mockSession(user.id);

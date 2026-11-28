@@ -32,7 +32,7 @@ export const languagePaths = {
         "422": {
           ...unprocessableEntityResponse,
           description:
-            "`NO_SPEECH` when no words were heard. `MISSED_START` when `micStartupMs` indicates a slow mic start and only the opening words were missed or different. Neither outcome records or scores the take.",
+            "`NO_SPEECH` when no words were heard. `MISSED_START` when `micStartupMs` shows the microphone started too late to hear the opening words, or the whole short sentence. Neither outcome records or scores the take.",
         },
         ...smallAiHelpRefusalResponses,
       },
