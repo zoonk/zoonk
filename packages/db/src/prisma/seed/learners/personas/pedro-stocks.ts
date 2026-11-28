@@ -153,7 +153,7 @@ export const pedroStocks: SeedLearner = {
   name: "Pedro Lima",
   session: { finished: 1 },
   skills: [
-    { memory: "solid", skill: "share-ownership" },
+    { memory: "fading", skill: "share-ownership" },
     { memory: "learning", skill: "shareholder-rights" },
     { memory: "learning", skill: "ipo" },
     { memory: "learning", skill: "dividends" },

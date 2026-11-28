@@ -88,7 +88,7 @@ describe("a persona's seeded day", () => {
     vi.useRealTimers();
   });
 
-  it("records the completed placement questions in today's study history", async () => {
+  it("records the review and placement questions Ana finished before pausing at her mistakes", async () => {
     const { today } = await readSeededDay("exam", "en");
 
     const review = today.blocks.find(
@@ -101,6 +101,7 @@ describe("a persona's seeded day", () => {
 
     const payload = readBlockPayload(review);
     expect(payload.placementItemIds).toHaveLength(1);
+    expect(payload.capsules).toHaveLength(1);
 
     const [answers, events, progress] = await Promise.all([
       prisma.attempt.findMany({
@@ -132,6 +133,12 @@ describe("a persona's seeded day", () => {
       seconds: expect.any(Number),
     });
 
+    expect(events).toContainEqual({
+      correctAnswers: 1,
+      lessonKind: "capsule",
+      seconds: expect.any(Number),
+    });
+
     expect(progress?.timeSpentSeconds).toBeGreaterThan(0);
   });
 
@@ -156,10 +163,12 @@ describe("a persona's seeded day", () => {
     },
   );
 
-  it("language: its pattern takes the day's teaching slot, as no skill is stuck", async () => {
+  it("language: its mistakes lead and its pattern takes the day's teaching slot", async () => {
     const { rows, stuck } = await readSeededDay("language");
 
     expect(stuck).toStrictEqual([]);
+    expect(rows[0]).toMatchObject({ mistakes: 1, status: "active" });
+    expect(rows[1]).toMatchObject({ pattern: true, status: "pending" });
     expect(rows.filter((row) => row.pattern)).toHaveLength(1);
     expect(rows.filter((row) => row.returning)).toStrictEqual([]);
   });

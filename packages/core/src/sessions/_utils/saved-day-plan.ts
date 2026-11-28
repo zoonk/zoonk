@@ -129,7 +129,7 @@ export async function readSavedDayPlan({
 }: {
   goal: Goal;
   now: Date;
-  saved: SavedPlan | null;
+  saved?: SavedPlan | null;
   timeZone: string;
 }): Promise<SelectedDayPlan | null> {
   const context = await loadPlanContext({ goal, now, saved, timeZone });

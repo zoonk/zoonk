@@ -48,6 +48,7 @@ export type BuiltDay = {
   freshStart: StudyFreshStart | null;
   missions: Prisma.InputJsonObject;
   planVersion: number | null;
+  plannedMinutes: number;
 };
 
 export type FinishedBlock = BuiltBlock & {
@@ -242,7 +243,7 @@ async function writeDay(
       localDate: scopeDay(scope, 0),
       missions: day.missions,
       planVersion: day.planVersion,
-      plannedMinutes: day.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0),
+      plannedMinutes: day.plannedMinutes,
       startSnapshot: startedAt ? toStartSnapshot(scope, earnedToday) : Prisma.DbNull,
       startedAt,
       status,
