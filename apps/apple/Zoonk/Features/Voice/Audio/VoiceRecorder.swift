@@ -5,6 +5,9 @@ struct VoiceRecording: Sendable {
   let attemptId = UUID().uuidString
   let audio: Data
   let durationMs: Int
+  /// How long the microphone took to start after the learner pressed Record (and answered the
+  /// permission prompt, if one showed): the grader reads a long wait as a first word likely lost.
+  var micStartupMs: Int? = nil
 }
 
 /// Each recording lives in a temporary file that's read and deleted as soon as it stops, so nothing
@@ -15,6 +18,7 @@ struct VoiceRecording: Sendable {
 final class VoiceRecorder {
   enum Status: Equatable {
     case idle
+    /// From the press until the recorder's own clock moves: the learner waits for "Speak now".
     case acquiring
     case recording(startedAt: Date)
     case denied
@@ -22,11 +26,16 @@ final class VoiceRecorder {
 
   /// A spoken answer is one sentence; a longer recording is a microphone left on.
   static let maxDuration: TimeInterval = 30
+  private static let meterInterval = Duration.milliseconds(100)
+  /// More than the widest cue row draws.
+  private static let levelHistory = 160
+  /// The contract's bound: a longer startup isn't a measurement.
+  private static let maxStartup = Duration.seconds(60)
 
   private(set) var status = Status.idle
-  /// From 0 to 1.
-  private(set) var level: Double = 0
-
+  /// From 0 to 1, oldest first, one every `meterInterval` since the take went live.
+  private(set) var recentLevels: [Double] = []
+  @ObservationIgnored private var micStartupMs: Int?
   @ObservationIgnored private var recorder: AVAudioRecorder?
   @ObservationIgnored private var delegate: RecorderDelegate?
   @ObservationIgnored private var meter: Task<Void, Never>?
@@ -47,13 +56,16 @@ final class VoiceRecorder {
     status == .denied || AVAudioApplication.shared.recordPermission == .denied
   }
 
-  /// False when the microphone is off or couldn't start.
+  /// False when the microphone is off or couldn't start. True once the recorder started, while
+  /// the take still waits to go live (`.acquiring`).
   @discardableResult
   func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async -> Bool {
     guard status == .idle || status == .denied else {
       return false
     }
 
+    var pressedAt = ContinuousClock.now
+    let wasAsked = AVAudioApplication.shared.recordPermission == .undetermined
     status = .acquiring
     acquisition += 1
     let mine = acquisition
@@ -68,9 +80,20 @@ final class VoiceRecorder {
       return false
     }
 
-    guard let recorder = makeRecorder() else {
-      SharedAudioSession.release(for: self)
-      status = .idle
+    // Time spent answering the permission prompt isn't the microphone's.
+    if wasAsked {
+      pressedAt = .now
+    }
+
+    guard await openSession(), acquisition == mine, let recorder = makeRecorder() else {
+      if acquisition == mine {
+        SharedAudioSession.release(for: self)
+        status = .idle
+      } else if status == .idle {
+        // Cancelled while the session opened, and no other take has it since.
+        SharedAudioSession.release(for: self)
+      }
+
       return false
     }
 
@@ -88,9 +111,8 @@ final class VoiceRecorder {
     self.recorder = recorder
     self.delegate = delegate
     self.onRecorded = onRecorded
-    status = .recording(startedAt: .now)
     observeInterruptions()
-    startMeter()
+    watch(recorder, pressedAt: pressedAt)
     return true
   }
 
@@ -109,17 +131,23 @@ final class VoiceRecorder {
     recorder?.stop()
   }
 
-  private func makeRecorder() -> AVAudioRecorder? {
-    let session = AVAudioSession.sharedInstance()
-
+  /// Off the main actor: switching to a headset's microphone can take a second, and "Getting
+  /// ready…" has to draw meanwhile.
+  private func openSession() async -> Bool {
     do {
-      try session.setCategory(
-        .playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
-      try SharedAudioSession.activate(for: self)
+      try await SharedAudioSession.activate(for: self) { session in
+        try session.setCategory(
+          .playAndRecord, mode: .default, options: [.defaultToSpeaker, .allowBluetoothHFP])
+        // Without it, the tap that says the take is live never plays.
+        try session.setAllowHapticsAndSystemSoundsDuringRecording(true)
+      }
+      return true
     } catch {
-      return nil
+      return false
     }
+  }
 
+  private func makeRecorder() -> AVAudioRecorder? {
     let url = FileManager.default.temporaryDirectory
       .appending(path: "voice-\(UUID().uuidString).m4a")
 
@@ -148,19 +176,21 @@ final class VoiceRecorder {
 
     let audio = try? Data(contentsOf: recorder.url)
     let deliver = onRecorded
+    let startup = micStartupMs
     discard(recorder)
     self.recorder = nil
     delegate = nil
     onRecorded = nil
     meter?.cancel()
     meter = nil
-    level = 0
+    recentLevels = []
+    micStartupMs = nil
     status = .idle
     stopObservingInterruptions()
     SharedAudioSession.release(for: self)
 
     if let audio, !audio.isEmpty, let deliver {
-      deliver(VoiceRecording(audio: audio, durationMs: durationMs))
+      deliver(VoiceRecording(audio: audio, durationMs: durationMs, micStartupMs: startup))
     }
   }
 
@@ -168,18 +198,29 @@ final class VoiceRecorder {
     recorder.deleteRecording()
   }
 
-  private func startMeter() {
+  /// The take goes live when the recorder's own clock moves, not when `record` returns: until then
+  /// the microphone may still be switching on, and a word said then is lost.
+  private func watch(_ recorder: AVAudioRecorder, pressedAt: ContinuousClock.Instant) {
     meter = Task { [weak self] in
       while !Task.isCancelled {
-        guard let self, let recorder = self.recorder else {
+        guard let self, self.recorder === recorder else {
           return
         }
 
-        recorder.updateMeters()
-        // -50 dB is silence for speech; 0 dB is the loudest.
-        let power = Double(recorder.averagePower(forChannel: 0))
-        self.level = min(1, max(0, (power + 50) / 50))
-        try? await Task.sleep(for: .milliseconds(100))
+        if isRecording {
+          recorder.updateMeters()
+          // -50 dB is silence for speech; 0 dB is the loudest.
+          let power = Double(recorder.averagePower(forChannel: 0))
+          recentLevels.append(min(1, max(0, (power + 50) / 50)))
+          recentLevels.removeFirst(max(0, recentLevels.count - Self.levelHistory))
+          try? await Task.sleep(for: Self.meterInterval)
+        } else if recorder.currentTime > 0 {
+          let startup = ContinuousClock.now - pressedAt
+          micStartupMs = startup <= Self.maxStartup ? Int(startup / .milliseconds(1)) : nil
+          status = .recording(startedAt: .now)
+        } else {
+          try? await Task.sleep(for: .milliseconds(10))
+        }
       }
     }
   }

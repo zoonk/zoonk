@@ -147,8 +147,15 @@ private struct PronunciationRoundView: View {
         } stimulus: {
           RoundMeter(round: round)
 
-          PronunciationWordView(word: word, language: reviews.language, owner: reviews.goalId)
-            .id(word.id)
+          PronunciationWordView(
+            word: word, language: reviews.language, owner: reviews.goalId,
+            canListen: !isTakeOn
+          )
+          .id(word.id)
+
+          if case .ready = state, !recorder.isDenied {
+            RecordCue(recorder: recorder, isChecking: round.isPending)
+          }
         } response: {
           wordStatus(state)
         } actions: {
@@ -194,7 +201,11 @@ private struct PronunciationRoundView: View {
         Image(systemName: "forward.end")
       }
     }
-    .disabled(round.isPending || recorder.isRecording || recorder.status == .acquiring)
+    .disabled(round.isPending || isTakeOn)
+  }
+
+  private var isTakeOn: Bool {
+    recorder.isRecording || recorder.status == .acquiring
   }
 
   @ViewBuilder
@@ -223,8 +234,8 @@ private struct PronunciationRoundView: View {
           table: "Voice", comment: "How to say a word when the microphone is off"))
     }
 
-    if let active = RecordNote(active: recorder.status) {
-      return active
+    if isTakeOn {
+      return nil
     }
 
     if round?.isPending == true {
@@ -233,9 +244,9 @@ private struct PronunciationRoundView: View {
 
     switch notice {
     case .noSpeech: return .noSpeech
+    case .missedStart: return .missedStart
     case .failed: return .failed
-    case .limit: return nil
-    case nil: return .ready
+    case .limit, nil: return nil
     }
   }
 
@@ -301,7 +312,7 @@ private struct PronunciationRoundView: View {
       } else {
         RecordButton(recorder: recorder, isChecking: round.isPending) {
           Task {
-            voice.player.stop(owner: reviews.goalId)
+            voice.player.stopAny()
             await recorder.start { recording in
               Task { await round.record(recording) }
             }

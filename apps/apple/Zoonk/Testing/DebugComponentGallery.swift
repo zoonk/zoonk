@@ -67,6 +67,7 @@
           GallerySection(id: "panels", title: "Panels and tiles") { Panels() }
           GallerySection(id: "meters", title: "Meters") { Meters() }
           GallerySection(id: "waits", title: "Waits") { Waits() }
+          GallerySection(id: "recordCue", title: "Record cue") { RecordCues() }
           GallerySection(id: "marks", title: "Marks, kinds and belts") { Marks() }
           GallerySection(id: "options", title: "Answer options") { Options() }
           GallerySection(id: "match", title: "Match cards") { MatchCards() }
@@ -622,6 +623,24 @@
         GenerationTimeline(
           wait: DebugLessonWait.sample(reported: 3), failure: .connection, act: {})
         GenerationTimeline(wait: DebugLessonWait.sample(reported: 3).finished)
+      }
+      .padding(.vertical, 8)
+    }
+  }
+
+  /// Each state of the row under a sentence to say, as the simulator often has no microphone to
+  /// reach them: before a take, getting ready, live in silence, live with a voice, checking (empty).
+  private struct RecordCues: View {
+    private let voice = (0..<60).map { abs(sin(Double($0) * 0.55)) * (0.35 + Double($0 % 7) / 10) }
+
+    var body: some View {
+      VStack(alignment: .leading, spacing: 16) {
+        RecordCue(phase: .before)
+        RecordCue(phase: .gettingReady)
+        RecordCue(phase: .live)
+        RecordCue(phase: .live, levels: voice)
+        RecordCue(phase: .checking)
+          .border(Color.border)
       }
       .padding(.vertical, 8)
     }

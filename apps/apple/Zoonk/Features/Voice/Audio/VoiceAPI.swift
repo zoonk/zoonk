@@ -30,6 +30,10 @@ struct VoiceAPI: Sendable {
         parts.insert(.studySessionId(.init(payload: .init(body: HTTPBody(studySessionId)))), at: 0)
       }
 
+      if let micStartupMs = recording.micStartupMs {
+        parts.append(.micStartupMs(.init(payload: .init(body: HTTPBody(String(micStartupMs))))))
+      }
+
       if let mistake {
         parts.append(.mistakeId(.init(payload: .init(body: HTTPBody(mistake.mistakeId)))))
         parts.append(

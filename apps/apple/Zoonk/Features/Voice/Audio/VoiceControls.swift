@@ -64,42 +64,27 @@ final class RecordInBar {
   }
 }
 
-/// Main's `RecordNote`: the one line about recording, right over Record, in the same words on every
-/// screen that records. A check that isn't slow yet has none: Record's busy button says it.
+/// Main's `RecordNote`: the bar's line right over Record when a take ran into a problem, in the same
+/// words on every screen that records. When to speak is the `RecordCue`'s, under what's said, and a
+/// check that isn't slow yet has no line: Record's busy button says it.
 enum RecordNote: Equatable {
-  case ready
-  case acquiring
-  /// Not read as it shows: VoiceOver's speech would end up in the take.
-  case recording
   case noSpeech
+  /// The take likely lost its first words while the microphone started.
+  case missedStart
   case failed
   case slow
   /// The microphone is off where skipping is the other way on: how to turn it back on.
   case microphoneOff(String)
 
-  init?(active status: VoiceRecorder.Status) {
-    switch status {
-    case .acquiring: self = .acquiring
-    case .recording: self = .recording
-    case .idle, .denied: return nil
-    }
-  }
-
   @MainActor
   var note: BarNote {
     switch self {
-    case .ready:
+    case .missedStart:
       BarNote(
         LocalizedStringResource(
-          "Tap Record and say it out loud", table: "Voice",
-          comment: "Asks the learner to record their answer"), tone: .status)
-    case .acquiring:
-      BarNote(LocalizedStringResource("Getting ready…", table: "Today"), tone: .hint)
-    case .recording:
-      BarNote(
-        LocalizedStringResource(
-          "Listening… Tap Stop to check.", table: "Voice",
-          comment: "Shown while the learner records an answer"), tone: .hint)
+          "We may have missed the start. Say it again.", table: "Voice",
+          comment: "A recording likely lost its first words while the microphone started"),
+        tone: .status)
     case .noSpeech:
       BarNote(
         LocalizedStringResource(

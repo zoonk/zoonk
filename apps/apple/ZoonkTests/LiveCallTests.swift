@@ -133,6 +133,8 @@ final class LiveCallTests: XCTestCase {
       .usedUp(tier: .free, availableAt: nil))
     XCTAssertNil(refusal(422, "NO_SPEECH").limit)
     XCTAssertTrue(refusal(422, "NO_SPEECH").isNoSpeech)
+    XCTAssertNil(refusal(422, "MISSED_START").limit)
+    XCTAssertTrue(refusal(422, "MISSED_START").isMissedStart)
   }
 
   func testACallGoesLiveOpensAndEndsWhenTheServerClosesIt() async {

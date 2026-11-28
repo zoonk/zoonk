@@ -4362,65 +4362,6 @@
         }
       }
     },
-    "Listening… Tap Stop to check." : {
-      "comment" : "Shown while the learner records an answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wir hören zu… Tippe auf „Stopp“, um deine Antwort zu prüfen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escuchando… Toca Detener para comprobar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Écoute en cours… Appuie sur Arrêter pour vérifier."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stiamo ascoltando… Tocca Interrompi per controllare."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "聞いています…答え合わせをするには「停止」をタップしてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "듣고 있어요… 확인하려면 중지를 누르세요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Słuchamy… Naciśnij „Stop”, aby sprawdzić."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvindo… Toque em Parar para conferir."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dinliyoruz… Kontrol etmek için Durdur’a dokun."
-          }
-        }
-      }
-    },
     "Microphone on" : {
       "comment" : "The learner unmuted themselves",
       "localizations" : {
@@ -7667,65 +7608,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acele etme."
-          }
-        }
-      }
-    },
-    "Tap Record and say it out loud" : {
-      "comment" : "Asks the learner to record their answer",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tippe auf „Aufnehmen“ und sprich deine Antwort laut aus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toca Grabar y dilo en voz alta"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Appuie sur Enregistrer et dis-le à voix haute"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tocca Registra e dillo ad alta voce"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "「録音」をタップして、答えを声に出して言ってください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "녹음 버튼을 누르고 소리 내어 말해 보세요"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stuknij „Nagraj” i powiedz to na głos"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toque em Gravar e fale em voz alta"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kaydet düğmesine dokun ve sesli söyle"
           }
         }
       }
@@ -11222,6 +11104,15 @@
           }
         }
       }
+    },
+    "Say it after “Speak now”" : {
+      "comment" : "Before recording: wait for the “Speak now” cue, then say the sentence"
+    },
+    "Speak now" : {
+      "comment" : "Shown once the microphone is on: the learner says the sentence now"
+    },
+    "We may have missed the start. Say it again." : {
+      "comment" : "A recording likely lost its first words while the microphone started"
     }
   },
   "version" : "1.0"

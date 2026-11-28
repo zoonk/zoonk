@@ -22,6 +22,27 @@ final class StudyAPITests: XCTestCase {
     }
   }
 
+  /// The grader reads a slow microphone start as a likely lost first word, so only a measured start
+  /// is sent.
+  func testASpokenAnswerSendsItsMicrophoneStartOnlyWhenMeasured() async throws {
+    let transport = StudyRecordingTransport()
+    let api = VoiceAPI(clients: APIClientFactory(baseURL: Self.baseURL, transport: transport))
+    let measured = VoiceRecording(audio: Data([1]), durationMs: 800, micStartupMs: 640)
+    let unmeasured = VoiceRecording(audio: Data([1]), durationMs: 800)
+
+    for recording in [measured, unmeasured] {
+      _ = try? await api.answerSpokenStep(
+        stepId: UUID().uuidString, studySessionId: nil, recording: recording, token: "token")
+    }
+
+    let bodies = transport.sent.value.map { String(decoding: $0.body, as: UTF8.self) }
+    XCTAssertEqual(bodies.count, 2)
+    let part = bodies[0].components(separatedBy: "name=\"micStartupMs\"").dropFirst().first
+    let value = part?.components(separatedBy: "\r\n\r\n").dropFirst().first
+    XCTAssertEqual(value?.components(separatedBy: "\r\n").first, "640")
+    XCTAssertFalse(bodies[1].contains("micStartupMs"))
+  }
+
   func testReviewMatchDecodesItsKeyAndKeepsTheOrderOfMisses() throws {
     let question = #"""
       {"answered":null,"capsuleKey":"review","citation":null,"context":null,"drill":null,

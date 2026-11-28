@@ -13,6 +13,7 @@ final class PronunciationRound {
   enum Notice: Equatable {
     case failed
     case noSpeech
+    case missedStart
     case limit(HelpLimit)
   }
 
@@ -87,6 +88,8 @@ final class PronunciationRound {
       step = .word(index: index, state: .graded(grade))
     case .noSpeech:
       step = .word(index: index, state: .ready(.noSpeech))
+    case .missedStart:
+      step = .word(index: index, state: .ready(.missedStart))
     case .limit(let limit):
       step = .word(index: index, state: .ready(.limit(limit)))
     case .failed:

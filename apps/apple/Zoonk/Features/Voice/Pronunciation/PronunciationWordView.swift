@@ -7,6 +7,8 @@ struct PronunciationWordView: View {
   let language: String
   /// So leaving the round stops the word's sound.
   let owner: AnyHashable
+  /// False while a take is getting ready or recording: the microphone would record the word.
+  var canListen = true
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -31,6 +33,7 @@ struct PronunciationWordView: View {
       }
 
       ListenButtons(word: word, language: language, owner: owner)
+        .disabled(!canListen)
 
       if let tip = word.tip {
         Text(tip)

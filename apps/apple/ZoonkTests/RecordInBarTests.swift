@@ -48,7 +48,7 @@ private struct SpokenStepHost: View {
       Text(verbatim: "Say it out loud")
         .recordsInBar(
           bar, recorder: step.recorder, isChecking: step.isChecking,
-          note: step.isChecking ? .slow : .ready, start: {})
+          note: step.isChecking ? .slow : nil, start: {})
     }
   }
 }

@@ -510,6 +510,7 @@ extension LessonStep {
 
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
+  @Environment(RecordInBar.self) private var recordInBar: RecordInBar?
   @FocusState private var isFocused: Bool
 
   let step: LessonStep
@@ -563,6 +564,11 @@ private struct SpokenAnswerStepView: View {
         }
       }
       if mode == .speak {
+        // Right under the sentence, where the learner looks before saying it.
+        if !context.isLocked {
+          RecordCue(
+            recorder: recordInBar?.recorder, isChecking: recordInBar?.isChecking == true)
+        }
         modeSwitch
       }
     }

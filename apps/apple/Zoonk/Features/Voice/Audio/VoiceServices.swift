@@ -36,6 +36,10 @@ final class VoiceServices {
         return .noSpeech
       }
 
+      if refusal.isMissedStart {
+        return .missedStart
+      }
+
       return refusal.limit.map(GradeOutcome.limit) ?? .failed
     case .failed:
       return .failed
