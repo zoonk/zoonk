@@ -497,6 +497,40 @@ describe(startCourseGoal, () => {
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
+  it.each([
+    ["a subject course the exam reuses", "core", false],
+    ["the exam's own course", "exam", true],
+  ] as const)(
+    "gives an exam goal back from its primary course only when that's the exam's own: %s",
+    async (_label, format, givenBack) => {
+      const [course, user, blueprint] = await Promise.all([
+        publicCourse({ format }),
+        userFixture(),
+        examBlueprintFixture(),
+      ]);
+
+      const exam = await goalFixture({
+        examBlueprintId: blueprint.id,
+        kind: "exam",
+        primaryCourseId: course.id,
+        userId: user.id,
+      });
+
+      mockSession(user.id);
+
+      const found = await findCourseGoalStart(course.id);
+      expect(found?.goalId ?? null).toBe(givenBack ? exam.id : null);
+
+      const started = await startCourseGoal({ courseId: course.id, input: {} });
+
+      expect(started).toMatchObject(
+        givenBack
+          ? { goal: { id: exam.id }, status: "existing" }
+          : { goal: { kind: "learn", primaryCourseId: course.id }, status: "created" },
+      );
+    },
+  );
+
   it("finds the learner's own goal on the course for its start page, and nobody else's", async () => {
     const [{ course }, user, other] = await Promise.all([
       outlinedCourse(),
