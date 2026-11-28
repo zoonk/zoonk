@@ -32,7 +32,11 @@ extension PlanPhase {
   }
 
   /// The phase by its place in the plan, "Phase 2".
-  var placeName: String {
+  var placeName: String { Self.placeName(at: index) }
+
+  /// A phase with no name of its own, by its place in the plan (from 0), wherever it's named: the
+  /// plan and a test's result that starts the learner in it.
+  static func placeName(at index: Int) -> String {
     String(
       localized: "Phase \(index + 1)", table: "Plan",
       locale: .appLanguage, comment: "Name of an unnamed phase by its number")

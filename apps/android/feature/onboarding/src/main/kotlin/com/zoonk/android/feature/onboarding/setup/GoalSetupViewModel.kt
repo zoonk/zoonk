@@ -15,6 +15,7 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
+import com.zoonk.android.feature.placementtest.Sitting
 import com.zoonk.android.feature.profile.ProfileDraft
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.profile.profileSkipAll
@@ -278,8 +279,8 @@ internal class GoalSetupViewModel(
     var isStartingOver by mutableStateOf(false)
         private set
 
-    /** How far a placement test is while it asks, which takes the step dots' place and Back's. */
-    var placementProgress by mutableStateOf<Float?>(null)
+    /** A placement test's question on screen: its bar takes the step dots' place, and its ✕ Back's. */
+    var placementProgress by mutableStateOf<Sitting?>(null)
 
     val goalId: String get() = flow.goalId
 

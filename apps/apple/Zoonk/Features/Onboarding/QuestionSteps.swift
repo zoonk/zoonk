@@ -173,6 +173,8 @@ struct StepHeader: View {
   var position: Text?
   let title: Text
   var description: Text?
+  /// What belongs to the title, drawn under it in the heading, such as a result's course line.
+  var below: AnyView?
   /// The plan's reveal ends setup: no step after it has a title to line up with.
   var linesUpWithSteps = true
 
@@ -187,13 +189,17 @@ struct StepHeader: View {
 
   var body: some View {
     Section {
-      PageHeader(
-        title,
-        chip: subject.map { Chip(Text(verbatim: $0)) },
-        position: position,
-        keepsChipRoom: keepsChipRoom,
-        supporting: description
-      )
+      VStack(alignment: .leading, spacing: 0) {
+        PageHeader(
+          title,
+          chip: subject.map { Chip(Text(verbatim: $0)) },
+          position: position,
+          keepsChipRoom: keepsChipRoom,
+          supporting: description
+        )
+
+        below
+      }
       .listRowBackground(Color.clear)
     }
     // Main's step reads on from its heading, a row's room below it, not a section's.
@@ -1267,8 +1273,15 @@ private struct LevelQuestion: View {
     }
   }
 
+  /// "Not sure, give me a short test" asks for the test, so onboarding opens it without offering it
+  /// again.
   private func answer(_ level: String) {
-    onAnswer(["level": LevelChoices.answer(level) ?? NSNull(), "question": "level"])
+    guard let level = LevelChoices.answer(level) else {
+      onAnswer(["level": NSNull(), "question": "level", "requestPlacement": true])
+      return
+    }
+
+    onAnswer(["level": level, "question": "level"])
   }
 }
 
@@ -1325,8 +1338,7 @@ enum LevelChoices {
           comment: "Level choice"),
         detail: testMinutes.map { minutes in
           Text(
-            "About \(studyDuration(minutes: minutes))", tableName: "Onboarding",
-            comment: "Level choice detail: how long the short test takes, such as \"4 min\"")
+            "About \(studyDuration(minutes: minutes))", tableName: "Onboarding")
         }),
     ]
   }

@@ -29,9 +29,7 @@ function getFollowUpKey(followUp: FollowUp): string {
     case "prepareLevelTestOut":
       return followUp.input.attemptId;
     case "preparePlacementItems":
-      return followUp.input.placementPart
-        ? `whole-course:${followUp.input.goalId}`
-        : followUp.input.goalId;
+      return followUp.input.goalId;
     case "writeSecondTake":
       return followUp.input.skillId;
     case "writeLesson":

@@ -1,5 +1,3 @@
-import HTTPTypes
-import OpenAPIRuntime
 import SwiftUI
 import XCTest
 
@@ -9,91 +7,336 @@ import XCTest
 final class PlacementTestRenderTests: XCTestCase {
   private let goalID = "00000000-0000-4000-8000-0000000000a1"
 
-  func testStopAppearsOnlyOnceAnAnswerIsSaved() async throws {
+  func testCloseAsksForTheWaysOutOnlyOnceStoppingGivesAResult() async throws {
     let question = PracticeQuestion(
       itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
       options: ["1/2", "1/3"])
+    try await readsWhatVoiceOverReads()
 
     for number in 1...2 {
-      try await capture(
-        "placement-question-\(number)", title: "Question \(number)",
-        detail: number == 1 ? "Which fraction is smaller?" : "Stop and use my answers",
-        absent: number == 1 ? ["Stop and use my answers"] : []
-      ) {
-        PlacementQuestionScreen(
-          subject: "Fractions", number: number, progress: Double(number - 1) / 4,
-          question: question, labels: .trueFalse, isSaving: false, failures: 0,
-          onReport: {}, onAnswer: { _ in }, onStop: {})
-      }
-    }
-  }
-
-  func testBackFromLanguageResultReturnsToThePreviousQuestionWithoutWriting() async throws {
-    let server = LevelTestBackServer(goalID: goalID)
-    let dependencies = AppDependencies(
-      clients: APIClientFactory(baseURL: URL(string: "https://api.zoonk.test")!, transport: server),
-      session: .preview(account: .planTestAccount), imageLoader: .live(),
-      subscriptionStore: .live())
-    let store = dependencies.onboardingStore
-    let onboarding = store.onboarding(goalID: goalID)
-    await onboarding.load()
-    XCTAssertEqual(try XCTUnwrap(onboarding.value).steps.first, .placement)
-    let result = try await store.languageTest(goalID: goalID)
-    XCTAssertEqual(result.result?.attemptId, result.attemptId)
-
-    try await readsWhatVoiceOverReads()
-    let window = try show(
-      GoalSetupScreen(goalId: goalID)
-        .appDependencies(dependencies)
+      var left = 0
+      let window = try show(
+        NavigationStack {
+          PlacementQuestionScreen(
+            subject: "Fractions", number: number, total: 8, question: question,
+            labels: .trueFalse, isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in },
+            onStop: {}
+          )
+          .testTask(name: Text(verbatim: "Test what you know")) { left += 1 }
+        }
         .environment(AppRouter())
         .zoonkStyles())
 
-    try await waitForTestCondition("The saved language result did not open: \(spoken(in: window))")
-    {
-      spoken(in: window).contains { $0.contains("Your English level") }
+      try await waitForTestCondition("Missing the task's top: \(spoken(in: window))") {
+        spoken(in: window).contains("Fractions")
+          && spoken(in: window).contains("Question \(number) of 8")
+      }
+      XCTAssertFalse(
+        spoken(in: window).contains { $0.contains("Stop and use my answers") },
+        "Stopping lives behind ✕, never under the options")
+
+      try await pressBarButton("Close", in: window)
+
+      if number == 1 {
+        XCTAssertEqual(left, 1, "Before stopping gives a result, ✕ just leaves")
+        XCTAssertNil(presentedAlert(in: window))
+      } else {
+        try await waitForTestCondition("✕ didn't ask for the ways out") {
+          presentedAlert(in: window) != nil
+        }
+        let titles = presentedAlert(in: window)?.actions.compactMap(\.title) ?? []
+        XCTAssertTrue(titles.contains("Finish later"), "\(titles)")
+        XCTAssertTrue(titles.contains("Stop and use my answers"), "\(titles)")
+        XCTAssertEqual(left, 0, "Asking leaves nothing yet")
+        presentedAlert(in: window)?.dismiss(animated: false)
+      }
+
+      window.isHidden = true
     }
-    let back = try XCTUnwrap(
-      requestViews(UIView.self, in: window)
-        .filter { $0.accessibilityLabel == "Back" }
-        .lazy.compactMap { self.requestViews(UIControl.self, in: $0).first }.first)
-    back.sendActions(
-      for: back.allControlEvents.contains(.primaryActionTriggered)
-        ? .primaryActionTriggered : .touchUpInside)
-    try await waitForTestCondition(
-      "Back did not return to the previous question: \(spoken(in: window))"
-    ) {
-      spoken(in: window).contains { $0.contains("How much do you already know?") }
-    }
-    let writes = await server.writes
-    XCTAssertEqual(writes, [])
   }
 
-  func testLengthChoiceAndResult() async throws {
+  func testTheFocusTestsHintComesWithItsWaysOut() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+    let hint = LocalizedStringResource(
+      "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
+      table: "FocusTest")
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        PlacementQuestionScreen(
+          subject: "Fractions", number: 3, total: 6, question: question, labels: .trueFalse,
+          isSaving: false, failures: 0, stopHint: hint, onReport: {}, onAnswer: { _ in },
+          onStop: {}
+        )
+        .testTask(name: Text(verbatim: "Focus test")) {}
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("Missing the question: \(spoken(in: window))") {
+      spoken(in: window).contains("Fractions")
+    }
+    try await pressBarButton("Close", in: window)
+    try await waitForTestCondition("✕ didn't ask for the ways out") {
+      presentedAlert(in: window) != nil
+    }
+    let alert = try XCTUnwrap(presentedAlert(in: window))
+    XCTAssertEqual(
+      [alert.title, alert.message].compactMap { $0 }.joined(), String(localized: hint),
+      "The hint says why stopping now is fine, over the two ways out")
+    alert.dismiss(animated: false)
+  }
+
+  func testAResultsRowsAreEachReadOnce() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
+    result.nextLesson = .init(id: goalID, title: "There is, there are")
+    try await readsWhatVoiceOverReads()
+
+    for (screen, title, rows) in [
+      (
+        AnyView(
+          LanguageTestResultView(
+            result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+            onboarding: true, onContinue: {}, onTestOut: {})),
+        "Your English level", ["Reading B1–B2", "Listening · Not tested yet", "Up next"]
+      ),
+      (
+        AnyView(
+          PlacementTestResultView(
+            end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
+        "Why prices move", ["4 lessons skipped", "Up next"]
+      ),
+    ] {
+      let window = try show(
+        NavigationStack { screen }
+          .environment(AppRouter())
+          .zoonkStyles())
+      try await waitForTestCondition("The result didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains(title)
+      }
+      try await waitForLayout(in: window)
+      let words = plainFacts(spoken(in: window))
+      // The tree is walked more than once over; each row is read as often as the title is.
+      let passes = words.filter { $0 == title }.count
+
+      for row in rows {
+        XCTAssertEqual(words.filter { $0 == row }.count, passes, "\(row): \(words)")
+      }
+      for part in ["B1–B2", "Not tested yet", "Reading", "Listening"] {
+        XCTAssertFalse(words.contains(part), "\(part) is read on its own: \(words)")
+      }
+      window.isHidden = true
+    }
+  }
+
+  func testAButtonsIconStaysBesideItsWordsWhenTheyWrap() async throws {
+    try await readsWhatVoiceOverReads()
+    var heights: [CGFloat] = []
+
+    for icon in [ActionIcon.play, nil] {
+      let window = try show(
+        BusyButton(isBusy: false, icon: icon) {
+        } label: {
+          Text(verbatim: "Responder mais perguntas")
+        }
+        .buttonStyle(.outline)
+        .controlSize(.large)
+        .frame(width: 300)
+        .dynamicTypeSize(.accessibility3)
+        .zoonkStyles())
+      try await waitForTestCondition("The button didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains("Responder mais perguntas")
+      }
+      heights.append(
+        accessibilityElements(in: window).first {
+          $0.accessibilityLabel == "Responder mais perguntas"
+        }?.accessibilityFrame.height ?? -1)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(
+      heights[0], heights[1], accuracy: 1, "The icon took a line of its own: \(heights)")
+  }
+
+  /// The topic over a question is one line, centered on the screen and cut when it's long, so a
+  /// long topic never moves the question.
+  func testALongTopicNeverMovesTheQuestion() async throws {
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "Which fraction is smaller?",
+      options: ["1/2", "1/3"])
+    try await readsWhatVoiceOverReads()
+    var questionTops: [CGFloat] = []
+
+    for subject in ["Fractions", "Investing for the long run while paying off your student loans"] {
+      let window = try show(
+        NavigationStack {
+          PlacementQuestionScreen(
+            subject: subject, number: 1, total: 8, question: question, labels: .trueFalse,
+            isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in }, onStop: {}
+          )
+          .testTask(name: Text(verbatim: "Test what you know")) {}
+        }
+        .environment(AppRouter())
+        .zoonkStyles())
+
+      try await waitForTestCondition("The question didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains(subject)
+          && spoken(in: window).contains { $0.contains("Which fraction is smaller?") }
+      }
+      try await waitForLayout(in: window)
+      let elements = accessibilityElements(in: window)
+      let title = try XCTUnwrap(elements.first { $0.accessibilityLabel == subject })
+      let line = UIFont.preferredFont(forTextStyle: .headline).lineHeight
+      XCTAssertLessThan(title.accessibilityFrame.height, line * 1.5, "\(subject) took two lines")
+      XCTAssertEqual(
+        title.accessibilityFrame.midX, window.bounds.midX, accuracy: 1,
+        "\(subject) sits off the screen's middle")
+      questionTops.append(
+        elements.first { $0.accessibilityLabel?.contains("Which fraction is smaller?") == true }?
+          .accessibilityFrame.minY ?? -1)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(Set(questionTops).count, 1, "The question moved: \(questionTops)")
+  }
+
+  func testAListeningQuestionsSecondButtonChangesWithoutMovingConfirm() async throws {
+    XCTAssertEqual(
+      LevelTestQuestionScreen.listeningLabel(skips: false, heard: false), TestCopy.cantListen)
+    XCTAssertEqual(
+      LevelTestQuestionScreen.listeningLabel(skips: false, heard: true),
+      LevelTestQuestionScreen.didntUnderstand)
+    XCTAssertEqual(
+      LevelTestQuestionScreen.listeningLabel(skips: true, heard: true),
+      LevelTestQuestionScreen.skipQuestion)
+
+    let question = PracticeQuestion(
+      itemId: goalID, format: .multipleChoice, question: "When does the train leave?",
+      options: ["Monday", "Tuesday"])
+    try await readsWhatVoiceOverReads()
+    var confirmEdges: [CGFloat] = []
+
+    for label in LevelTestQuestionScreen.listeningLabels {
+      let window = try show(
+        PlacementQuestionScreen(
+          subject: "Listening", number: 5, total: 12, groups: [4, 4, 4], question: question,
+          second: QuestionSecondAction(
+            label: label, steadyAmong: LevelTestQuestionScreen.listeningLabels),
+          isSaving: false, failures: 0, onReport: {}, onAnswer: { _ in }, onStop: nil,
+          media: { EmptyView() }
+        )
+        .environment(AppRouter())
+        .zoonkStyles())
+      let shown = String(localized: label)
+
+      try await waitForTestCondition("Missing \(shown): \(spoken(in: window))") {
+        spoken(in: window).contains(shown)
+      }
+      try await waitForLayout(in: window)
+      confirmEdges.append(
+        accessibilityElements(in: window).first { $0.accessibilityLabel == "Confirm" }?
+          .accessibilityFrame.minX ?? -1)
+      window.isHidden = true
+    }
+
+    XCTAssertEqual(Set(confirmEdges).count, 1, "Confirm moved: \(confirmEdges)")
+  }
+
+  func testALevelTestOffersToStopOnlyOnceStoppingSavesALevel() async throws {
+    let cache = AppCache(session: SessionStore.preview())
+    let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
+    let reading = LevelTest.Question(
+      id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
+      question: "When does the train leave?", skill: .reading, audio: nil, audioPending: false)
+    try await readsWhatVoiceOverReads()
+
+    for (number, canStop) in [(2, false), (5, true)] {
+      var left = 0
+      let window = try show(
+        NavigationStack {
+          LevelTestQuestionScreen(
+            question: reading, number: number, total: 12, canStop: canStop,
+            targetLanguage: "en", isSaving: false, failures: 0, onReport: {},
+            onAnswer: { _, _ in }, onDeferAudio: {}, onStop: {}
+          )
+          .testTask(name: Text(verbatim: "Level test")) { left += 1 }
+        }
+        .environment(VoiceServices(clients: clients, cache: cache))
+        .environment(AppRouter())
+        .zoonkStyles())
+
+      try await waitForTestCondition("Missing the question: \(spoken(in: window))") {
+        spoken(in: window).contains("Reading")
+      }
+      try await pressBarButton("Close", in: window)
+
+      if canStop {
+        try await waitForTestCondition("✕ didn't ask for the ways out") {
+          presentedAlert(in: window) != nil
+        }
+        presentedAlert(in: window)?.dismiss(animated: false)
+      } else {
+        XCTAssertEqual(left, 1)
+        XCTAssertNil(presentedAlert(in: window))
+      }
+
+      window.isHidden = true
+    }
+  }
+
+  func testOfferAndResult() async throws {
+    let offer = CoursePlacementOffer(estimatedMinutes: 4, questions: 8)
     try await capture(
-      "placement-length", title: "Skip what you already know",
-      detail: "Choose a test"
+      "placement-offer-onboarding", title: "Where would you like to start?",
+      detail: "Why companies sell shares"
     ) {
-      PlacementLengthChoice(
-        wholeCourseMinutes: 25, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+      TestOffer(
+        cards: [
+          TestCopy.courseCard(offer),
+          TestCopy.firstLessonCard(title: "Why companies sell shares"),
+        ],
+        title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
+        preselected: .quick,
+        context: .init(goalID: goalID, test: .course, surface: .onboarding), isSaving: false,
+        failed: false, onStart: { _ in })
     }
 
     try await capture(
-      "placement-length-quick-only", title: "Skip what you already know",
-      detail: "A quick test finds the lessons you can skip.",
-      absent: ["Choose a test"]
+      "placement-offer-plan", title: "Skip what you already know", detail: "Up to 8 questions",
+      absent: ["First lesson"]
     ) {
-      PlacementLengthChoice(
-        wholeCourseMinutes: 0, isSaving: false, failed: false, onSkip: {}, onStart: { _ in })
+      TestOffer(
+        cards: [TestCopy.courseCard(offer)], title: Text(TestCopy.skipWhatYouKnow),
+        description: Text(TestCopy.findsSkips), preselected: .quick,
+        context: .init(goalID: goalID, test: .course, surface: .plan), isSaving: false,
+        failed: false, onNotNow: {}, onStart: { _ in })
     }
 
     let request = VisitRequest<Bool>()
     let store = PlanStore(api: PlanAPIStub(), cache: AppCache(session: .preview()))
     let undo = PlacementResultUndo(
-      goalId: goalID, changeId: goalID, lessons: 6, request: request, plans: store, disabled: false)
-    try await capture("placement-result", title: "6 lessons skipped", detail: "Fractions") {
+      goalId: goalID, changeId: goalID, lessons: 4, request: request, plans: store, disabled: false)
+    try await capture(
+      "placement-result", title: "Why prices move", detail: "4 lessons skipped",
+      absent: ["of 9"]
+    ) {
       PlacementTestResultView(
-        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
-        undo: undo, onDone: {})
+        end: Self.startedPast, onboarding: false, pressed: nil,
+        failed: false, undo: undo, onDone: {})
+    }
+
+    try await capture(
+      "placement-result-no-course", title: "Why prices move", detail: "Start lesson",
+      absent: ["lessons skipped", "Up next"]
+    ) {
+      PlacementTestResultView(
+        end: PlacementTestEnd(
+          lessonsSkipped: 0, chapter: "Why prices move",
+          nextLesson: .init(id: goalID, title: "News, results and expectations")),
+        onboarding: false, pressed: nil, failed: false, onDone: {})
     }
   }
 
@@ -102,16 +345,18 @@ final class PlacementTestRenderTests: XCTestCase {
     let cache = AppCache(session: session)
     let clients = APIClientFactory.live(baseURL: URL(string: "https://api.zoonk.test")!)
     try await capture(
-      "placement-listening", title: "When does the train leave?", detail: "Play the message",
-      absent: ["Fine-tuning your plan", "Question 2"]
+      "placement-listening", title: "When does the train leave?", detail: "Can't listen now",
+      absent: ["You got a voice message", "Fine-tuning your plan"]
     ) {
       LevelTestQuestionScreen(
         question: .init(
           id: goalID, options: ["Monday", "Tuesday"], passage: "The train leaves on Monday.",
-          question: "When does the train leave?", skill: .listening, audio: nil, audioPending: false
+          question: "When does the train leave?", skill: .listening,
+          audio: .init(url: URL(string: "https://api.zoonk.test/a.mp3")!, durationMs: 9000),
+          audioPending: false
         ),
-        number: 2, progress: 0.25, targetLanguage: "en", isSaving: false, failures: 0,
-        onReport: {}, onAnswer: { _, _ in }, onStop: {}
+        number: 6, total: 12, canStop: true, targetLanguage: "en", isSaving: false, failures: 0,
+        onReport: {}, onAnswer: { _, _ in }, onDeferAudio: {}, onStop: {}
       )
       .environment(VoiceServices(clients: clients, cache: cache))
     }
@@ -139,7 +384,7 @@ final class PlacementTestRenderTests: XCTestCase {
     try await readsWhatVoiceOverReads()
     let window = try show(
       PlacementQuestionScreen(
-        subject: "Cooking", number: 1, progress: 0, question: question, labels: .trueFalse,
+        subject: "Cooking", number: 1, total: 12, question: question, labels: .trueFalse,
         isSaving: false, failures: 0, onReport: {}, onAnswer: { submitted.append($0) }, onStop: {}
       )
       .environment(AppRouter())
@@ -194,27 +439,125 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
-  func testRetakeHeldUntilTomorrow() async throws {
+  func testAResultOpenedFromThePlanGoesBackWithDoneAndOffersTheTestAgain() async throws {
+    var revisited = Self.startedPast
+    revisited.revisited = true
+
     try await capture(
-      "placement-retake-tomorrow", title: "No lessons skipped",
-      detail: "You undid these today. Answer again tomorrow to skip them.",
-      absent: ["Your plan stays as it is."]
+      "placement-result-revisited", title: "Why prices move", detail: "Take the test again",
+      absent: ["Start lesson"]
     ) {
       PlacementTestResultView(
-        lessonsSkipped: 0, nextTopic: "Fractions", isSaving: false, failed: false,
-        heldUntilTomorrow: true, onDone: {})
+        end: revisited, onboarding: false, pressed: nil, failed: false, onRetake: {},
+        onDone: {})
+    }
+    try await capture(
+      "placement-result-revisited-nothing-to-start", title: "Why prices move", detail: "Done",
+      absent: ["Take the test again", "Start lesson"]
+    ) {
+      PlacementTestResultView(
+        end: revisited, onboarding: false, pressed: nil, failed: false, onDone: {})
     }
   }
 
-  func testRetakeThatSkipsOtherLessonsSaysWhatItSkipped() async throws {
+  func testAResultWhoseStartStopHasNoNameUsesThePlansName() async throws {
+    var unnamed = Self.startedPast
+    unnamed.chapter = nil
+
     try await capture(
-      "placement-retake-skipped-others", title: "23 lessons skipped",
-      detail: "You already know them. They stay in your practice.",
-      absent: ["You undid these today. Answer again tomorrow to skip them."]
+      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here"
     ) {
       PlacementTestResultView(
-        lessonsSkipped: 23, nextTopic: "Fractions", isSaving: false,
-        failed: false, heldUntilTomorrow: true, onDone: {})
+        end: unnamed, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testALanguageResultWithNoLessonUpNextHasNoRow() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    result.ranges = ["reading": LevelRange(high: "B1", low: "A1")]
+
+    try await capture(
+      "language-result-no-next-lesson", title: "Your English level", detail: "Done",
+      absent: ["Up next", "Start lesson"]
+    ) {
+      LanguageTestResultView(
+        result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
+    }
+  }
+
+  func testAResultThatSkippedNothingHasNoCountLine() async throws {
+    let nothing = PlacementTestEnd(
+      lessonsSkipped: 0, chapter: "What a stock is",
+      course: PlacementCourse(
+        lessons: 9,
+        chapters: [
+          .init(lessons: 4, done: 0, skipped: 0, start: true),
+          .init(lessons: 5, done: 0, skipped: 0, start: false),
+        ]),
+      nextLesson: .init(id: goalID, title: "Why companies sell shares", estimatedMinutes: 5))
+
+    try await capture(
+      "placement-result-nothing-skipped", title: "What a stock is",
+      detail: "Why companies sell shares", absent: ["lessons", "lessons skipped"]
+    ) {
+      PlacementTestResultView(
+        end: nothing, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
+  func testAFailedMessagesNoteKeepsItsSentenceAndLeavesTheRetryToTheRow() async throws {
+    try await capture(
+      "listening-failed-note", title: "The audio didn't play.", detail: "The audio didn't play.",
+      absent: ["Try again"]
+    ) {
+      ListeningFailedNote(limit: nil)
+    }
+  }
+
+  func testTheOffersCardsAreNamedByWhatTheyShow() async throws {
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        TestOffer(
+          cards: [
+            TestCopy.courseCard(CoursePlacementOffer(estimatedMinutes: 4, questions: 8)),
+            TestCopy.firstLessonCard(title: "Why companies sell shares"),
+          ],
+          title: Text(TestCopy.whereToStart), description: Text(TestCopy.findsSkips),
+          preselected: .quick,
+          context: .init(goalID: goalID, test: .course, surface: .onboarding), isSaving: false,
+          failed: false, onStart: { _ in })
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("The cards didn't show: \(spoken(in: window))") {
+      spoken(in: window).contains { $0.hasPrefix("First lesson") }
+    }
+    let elements = accessibilityElements(in: window)
+    let test = try XCTUnwrap(
+      elements.first { $0.accessibilityLabel?.hasPrefix("Test") == true },
+      "\(spoken(in: window))")
+    let firstLesson = try XCTUnwrap(
+      elements.first { $0.accessibilityLabel?.hasPrefix("First lesson") == true })
+
+    XCTAssertTrue(test.accessibilityLabel?.contains("Up to 8 questions") == true)
+    XCTAssertTrue(firstLesson.accessibilityLabel?.contains("Why companies sell shares") == true)
+    XCTAssertTrue(test.accessibilityTraits.contains(.selected), "The picked card says so")
+    XCTAssertFalse(firstLesson.accessibilityTraits.contains(.selected))
+    XCTAssertTrue(test.accessibilityTraits.contains(.button))
+  }
+
+  func testRetakeHeldUntilTomorrow() async throws {
+    try await capture(
+      "placement-retake-tomorrow", title: "What a stock is",
+      detail: "You undid these today. Answer again tomorrow to skip them."
+    ) {
+      PlacementTestResultView(
+        end: PlacementTestEnd(
+          lessonsSkipped: 0, heldUntilTomorrow: true, chapter: "What a stock is"),
+        onboarding: false, pressed: nil, failed: false, onDone: {})
     }
   }
 
@@ -253,8 +596,66 @@ final class PlacementTestRenderTests: XCTestCase {
       "language-result-ranges", title: "Your English level", detail: "Reading B1–B2"
     ) {
       LanguageTestResultView(
-        length: .quick, result: result, targetLanguage: "en", testOutLevel: "B2",
-        pressed: nil, failed: false, onContinue: {}, onTestOut: {})
+        result: result, targetLanguage: "en", testOutLevel: "B2", pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
+    }
+
+    var readingOnly = PlacementTestResult(finishedAt: .now, lessonsSkipped: 0)
+    readingOnly.ranges = ["reading": LevelRange(high: "B2", low: "B1")]
+    try await capture(
+      "language-result-listening-not-tested", title: "Not tested yet",
+      detail: "You can take the test again later, from your plan."
+    ) {
+      LanguageTestResultView(
+        result: readingOnly, targetLanguage: "en", testOutLevel: nil, pressed: nil,
+        failed: false, onboarding: true, onContinue: {}, onTestOut: {})
+    }
+  }
+
+  /// Every lesson skipped leaves no start to name, so the title is the count and nothing repeats it.
+  func testAResultThatSkippedEveryLessonSaysItsCountOnce() async throws {
+    let everything = PlacementTestEnd(
+      lessonsSkipped: 9,
+      course: PlacementCourse(
+        lessons: 9,
+        chapters: [
+          .init(lessons: 4, done: 0, skipped: 4, start: false),
+          .init(lessons: 5, done: 0, skipped: 5, start: false),
+        ]))
+    try await readsWhatVoiceOverReads()
+    let window = try show(
+      NavigationStack {
+        PlacementTestResultView(
+          end: everything, onboarding: false, pressed: nil, failed: false, onDone: {})
+      }
+      .environment(AppRouter())
+      .zoonkStyles())
+
+    try await waitForTestCondition("The result didn't show: \(spoken(in: window))") {
+      spoken(in: window).contains("9 lessons skipped")
+    }
+    // The tree reads an element more than once; each place on the screen counts once.
+    let places = Set(
+      accessibilityElements(in: window).filter {
+        $0.accessibilityLabel?.contains("lessons skipped") == true
+      }.map { $0.accessibilityFrame.minY.rounded() })
+    XCTAssertEqual(places.count, 1, "The count shows at \(places.sorted())")
+  }
+
+  func testALanguageResultThatSkippedLessonsCaptionsItsLevels() async throws {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 12)
+    result.ranges = [
+      "reading": LevelRange(high: "B2", low: "B1"),
+      "listening": LevelRange(high: "B1", low: "A2"),
+    ]
+
+    try await capture(
+      "language-result-skipped", title: "Your English level", detail: "12 lessons skipped",
+      absent: ["you already know"]
+    ) {
+      LanguageTestResultView(
+        result: result, targetLanguage: "en", testOutLevel: "B2", pressed: nil, failed: false,
+        onContinue: {}, onTestOut: {})
     }
   }
 
@@ -265,24 +666,20 @@ final class PlacementTestRenderTests: XCTestCase {
       answered: 8, attemptId: goalID, level: "B2", next: nil, preparing: false, result: result,
       total: 8)
 
-    try await capture("placement-undo", title: "No lessons skipped", detail: "back in your plan") {
-      PlacementTestResultView(
-        lessonsSkipped: 6, nextTopic: "Fractions", isSaving: false, failed: false,
-        undo: undo, onDone: {})
-    }
     try await capture(
-      "placement-part-undo", title: "No lessons skipped", detail: "back in your plan"
+      "placement-undo", title: "No lessons skipped", detail: "The lessons are back in your plan.",
+      absent: ["You start here", "Why prices move", "4 lessons skipped"]
     ) {
-      PlacementBetweenParts(
-        lessonsSkipped: 6, minutesLeft: 25, pressed: nil, failed: false, onKeepGoing: {},
-        undo: undo,
-        onFinishForToday: {})
+      PlacementTestResultView(
+        end: Self.startedPast, onboarding: false, pressed: nil,
+        failed: false, undo: undo, onDone: {})
     }
     try await capture(
-      "placement-level-undo", title: "No lessons skipped", detail: "back in your plan"
+      "placement-level-undo", title: "No lessons skipped", detail: "back in your plan",
+      absent: ["6 lessons skipped"]
     ) {
       LanguageTestResultView(
-        length: .quick, result: .init(finishedAt: .now, lessonsSkipped: 6), targetLanguage: "en",
+        result: .init(finishedAt: .now, lessonsSkipped: 6), targetLanguage: "en",
         testOutLevel: "B2", pressed: nil, failed: false, undo: undo, onContinue: {}, onTestOut: {})
     }
     try await capture(
@@ -323,6 +720,37 @@ final class PlacementTestRenderTests: XCTestCase {
       .environment(WarmUpStore(api: WarmUpAPI(clients: clients), cache: cache))
       .environment(OnboardingStore(clients: clients, cache: cache, session: session))
     }
+  }
+
+  /// A result that starts the learner in the third of four chapters, past four of nine lessons.
+  static let startedPast = PlacementTestEnd(
+    lessonsSkipped: 4, changeId: "00000000-0000-4000-8000-0000000000a1",
+    chapter: "Why prices move",
+    course: PlacementCourse(
+      lessons: 9,
+      chapters: [
+        .init(lessons: 2, done: 0, skipped: 2, start: false),
+        .init(lessons: 2, done: 0, skipped: 2, start: false),
+        .init(lessons: 2, done: 0, skipped: 0, start: true),
+        .init(lessons: 3, done: 0, skipped: 0, start: false),
+      ]),
+    nextLesson: .init(
+      id: "00000000-0000-4000-8000-0000000000a1", title: "News, results and expectations",
+      estimatedMinutes: 5, chapter: "Why prices move"),
+    attemptId: "00000000-0000-4000-8000-0000000000a1")
+
+  private func presentedAlert(in window: UIWindow) -> UIAlertController? {
+    var shown = window.rootViewController?.presentedViewController
+
+    while let controller = shown {
+      if let alert = controller as? UIAlertController {
+        return alert
+      }
+
+      shown = controller.presentedViewController
+    }
+
+    return nil
   }
 
   private func restored() throws -> PlacementResultUndo {
@@ -368,37 +796,22 @@ final class PlacementTestRenderTests: XCTestCase {
   }
 }
 
-private actor LevelTestBackServer: ClientTransport {
-  let goalID: String
-  private(set) var writes: [String] = []
-
-  init(goalID: String) { self.goalID = goalID }
-
-  func send(
-    _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String
-  ) async throws -> (HTTPResponse, HTTPBody?) {
-    if request.method != .get {
-      writes.append(operationID)
+extension XCTestCase {
+  /// Presses a bar button as a tap does: the bar's control under what VoiceOver reads as `label`.
+  @MainActor
+  func pressBarButton(_ label: String, in window: UIWindow) async throws {
+    var control: UIControl?
+    try await waitForTestCondition("No bar button reads \(label): \(spoken(in: window))") {
+      control =
+        requestViews(UIView.self, in: window)
+        .filter { $0.accessibilityLabel == label }
+        .lazy.compactMap { self.requestViews(UIControl.self, in: $0).first ?? ($0 as? UIControl) }
+        .first
+      return control != nil
     }
-
-    let payload: String
-    switch operationID {
-    case "getOnboarding":
-      payload = #"""
-        {"profile":{"memoryEnabled":true,"questions":[]},"bookedExam":false,"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":[],"examDays":null,"examSubjects":[],"firstLesson":null,"followUps":[],"generationId":null,"goal":{"contentCountry":null,"countryDependent":false,"createdAt":"2026-11-08T00:00:00.000Z","dailyMinutes":15,"details":{"answered":["level","followUps"]},"examBlueprintId":null,"examCountry":null,"examplesCountry":null,"id":"\#(goalID)","isActive":true,"kind":"language","language":"en","languageCountry":{"code":"US","name":"United States"},"languageFlag":null,"plan":null,"primaryCourseId":null,"prompt":"Learn English","regionChoices":[],"status":"active","studyDays":[],"studyTime":null,"suggested":[],"targetDate":null,"targetLanguage":"en","targetRegion":null,"timezone":null,"title":"Learn English","displayName":"Learn English"},"goalIds":[],"languageAim":null,"libraryCourse":null,"planReadiness":{"readingNotice":false,"ready":false},"planRevealed":false,"quickTestMinutes":4,"recommendedMinutes":15,"startsOnRecommended":false,"steps":["placement","plan"],"timeChoices":[],"warmUp":null}
-        """#
-    case "getGoalPlacement":
-      payload =
-        #"{"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],"next":null,"phases":[],"started":false,"status":"unavailable","trueFalseLabels":"trueFalse","focusTest":null}"#
-    case "getLanguageLevelTest":
-      payload = #"""
-        {"status":"ready","answered":4,"lastCorrect":null,"levels":[],"next":{"kind":"done"},"showAlphabetNote":false,"targetLanguage":"en","total":4,"attemptId":"\#(goalID)","length":"quick","result":{"attemptId":"\#(goalID)","finishedAt":"2026-11-21T16:23:39.000Z","lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"A2","high":"B1"}}}}
-        """#
-    default: return (HTTPResponse(status: .notFound), nil)
-    }
-
-    var response = HTTPResponse(status: .ok)
-    response.headerFields[.contentType] = "application/json"
-    return (response, HTTPBody(payload))
+    let button = try XCTUnwrap(control)
+    button.sendActions(
+      for: button.allControlEvents.contains(.primaryActionTriggered)
+        ? .primaryActionTriggered : .touchUpInside)
   }
 }

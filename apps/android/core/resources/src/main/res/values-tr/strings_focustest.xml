@@ -3,12 +3,11 @@
 {
   "focustest_also_skips": "941c3cad057b7ed1eda4ceff26aec4ac0e9644480108e9cf551322e6ca351ceb",
   "focustest_answer_more": "1a4343a539e09b111c5eb7d92364d059512cf3766e7dec95b250d1c536555fe0",
-  "focustest_answers_saved_line": "55292df6c41b755f49946afb78e53c6e0454f7dc005384351206456b70fff893",
   "focustest_answers_saved_title": "56bcf6be9f2c3ae946cd467618be39d4a1c7dbb1dd9b0ae715553401c00d4774",
   "focustest_change_focus": "a231425c19d31fe6817733ea5c6ca1e8eae388ae9e3423ad0b330fea2915c701",
   "focustest_continue": "e72a50678daf56478778207bb7646fee4cfe21e14d868b67f065de5fc6e54ea2",
   "focustest_done": "e15addfe2cb2e3ced70db8af97ff5d91835db3a4b5cbf9dff12c50a825ea6e22",
-  "focustest_find_focus": "fcfb52009e5372988f53887cae5b9f34410ff40055f2b99921ed8dd63a93e541",
+  "focustest_find_focus": "6930e1d30f1c8369c434e3a3f69157700cb5c6d949d929014e092e00f6d754fc",
   "focustest_find_start": "4cc6a7b681fbce894da16553bcd34b61010786744c14c44f7cdde114a6076d4d",
   "focustest_from_basics": "8b4108ea463d5160a117097914290e069937bccf8c32e22136a9c41a3996041c",
   "focustest_in_progress": "85387194816fb572883f0a5576339ffb6f01e0c0a8fb048d33e0233e6c8c50e8",
@@ -17,40 +16,36 @@
   "focustest_many_unknown": "77e7ffc43f603a90e7f8e18d631ef7ae0c3aef63513adad8da6f2d5a5c692971",
   "focustest_not_known_yet": "004f73400d2279699da23f5e0aef2544712fcb1f9165cb85fee3a2369414ad13",
   "focustest_not_now": "af4c8034fb27dc411d987bd00473df897b1ae0c336d71ef9328511c3a26f539c",
-  "focustest_not_today": "3fc78286effb52d39b49ff35083f477ad2b54f20bdac9734b700153640a00a81",
+  "focustest_not_today": "5179c71f07e9ef9d23c5520ecd040fe6b318db1b1a34a77fd7d9f53aff54c91b",
   "focustest_not_today_failed": "d03e1a326741384284a1a18734c75008a596ef7584481fea82663e809bee7a72",
   "focustest_offer_line": "8282b28293a0ee92eecb3594ec9ebd76e8c876ca919168a92ff8d79c3130cfc7",
-  "focustest_offer_line_focus": "210e9be03892851b4affa234ec6e549e4cbc9080174d852974c5b634a2d74628",
+  "focustest_offer_sentence": "bd4933f3b17e16c046b5c5d025de92d718b32437e063a246664356478de25a86",
   "focustest_practical_not_checked": "cc4cf6ba3e0a917d27a270aec4a559d23ee3ac14a0579cd1e6902a4aa9d1cb4c",
   "focustest_proposal_applied": "be855d0681da6cec1ffa0a27b040ae2f27a616d47ddddcf2b940684118883bd5",
   "focustest_proposal_declined": "a8d107680aa407e046d2071571f61e2978a03b0db74613fe4306ab8455768240",
   "focustest_proposal_picked": "8116b354ad25b02bbabfd79a0bf2446a543f9abe2518959acd7e7e3fec17bb6a",
   "focustest_proposal_title": "1edc49b237d2f647471004e0bf643720f73beae3b3f70d2560c83462788a9b3e",
   "focustest_proposal_undone": "aeb4a9de4e06a6428e1fee3d485a11c2fa511c1ef58c20895dc6bd1d7aa9ee69",
-  "focustest_question_number": "81de4b331c785dd940dc08df886b97f9e91187a5ee113952bca639c41dac1ac4",
   "focustest_result_current": "525f510e60512da7d81e9ac46dd83a8e5abad07572f2a36bd8a9751605e527ef",
   "focustest_result_declined": "d35ced93655e48486d44492fffec0f718828322b021e22b4e465e869d63a90cb",
   "focustest_result_description": "95eafced20f4bf12fe48635f1c3558b167732760c79eb89c76b957615083bf75",
   "focustest_result_hand_picked": "87085c2f8e23e9ff5979cb74cac992bb1f32062116cb7fc335afcfd975f5be33",
   "focustest_result_title": "7c7de4d9c8955ff270e534ebee64ea5f89c3da7827d933b95041e908d6b01082",
-  "focustest_resume_title": "5e0de0e7049aae1a3d6648ba88286f4e77d63873231ed934d406c280f23300a4",
   "focustest_see_all_subjects": "a4a72dad5a5ad4affe0d18da1428789415c68fd9878aea4e209b1946c89d7136",
   "focustest_see_my_result": "914b3fcd4f66021086ff7cc0be1b4eacd8fcd2eb7008fbeedf9ad1ce8d9b0dd0",
   "focustest_see_your_result": "4720f6a30d3c33a4f16ed6368d2b975e7faeefd146952748d9d24140e85d26d7",
-  "focustest_session_questions": "c9df23abfa01bbaf311e12a005c5d31a92cd46e86b48aee04f184f03366ef932",
+  "focustest_session_questions": "bce89da9cf3414c3690f10048b80b5547a9d67c13d95e48dc75e26daec41c427",
   "focustest_session_questions_when": "60c7d40967538293f4962498c7c88eafbfa1e7d50802a4fd826161593cbdb203",
   "focustest_skip_note": "ac83484e4b22c65dc511e2435159c6f213d5c98aea546c86bacbf9b0c15e67b6",
   "focustest_speaking_not_checked": "87676ccbcf6d89c7a3bc7af5b356e5c89d51c2837916529dd6c6890659940101",
   "focustest_start": "4ab9c05dc69e281186fe3fcafeadde580d66a38c885e89ca09ddafb4795bf7a9",
   "focustest_starting_point_title": "130658eb4101d0dc8b94d717101a3b0ef7df71f3c490add2e08ac30b193c59b1",
-  "focustest_stop": "400a92fd3efd4663eb8c7e6bbdc4449b9ed96ebbb73ec53d369ffe7e82e13d89",
   "focustest_subject_right": "dd9ae875db6708a3719d58b0368431bf861080627403069f98fa61a30787cc8e",
   "focustest_subjects": "c812afb6dfda2e49a1c6b915d0f34894c2f0ef1f5ccd615ba504d15d36c7cc63",
   "focustest_suggestion_body": "6bde3d8007cff10917b48a35cfe69a53aa030b71670010cba46cec96f49ea8e3",
   "focustest_suggestion_dismissed": "271a42b1b05dae6f68bd1ae7bfee102b1bbee6c253631442e7d2a8ebd10614c3",
   "focustest_suggestion_line": "db14df5e7aee36571dffebd8875c4e7c9d436c73cdab888a9c30a5d21153a984",
   "focustest_take_test": "e26753e8c0f1f53fbde6997bd7a9c5b148f0c5d9e002b5ba5c7d73f3665a7776",
-  "focustest_time_left": "75fb462672302babb2963448eb2935bbc49f7fd82ac7a693208602f38aab91d8",
   "focustest_title": "8afc5c17406a8b2bf621b336641d6131cd50b35754357f2f084a56af5a93add6",
   "focustest_undo": "efa5d5e01fc1676d4e4dce902f235c6f6af084da573cd62a08740f9563270a86",
   "focustest_update_plan": "4819c5f34950b937ddf4ea7155df03df15b0821172bb029df3b0470141fd4b3c",
@@ -58,30 +53,17 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Odak testi</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">%1$s kaldı</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">En çok neye çalışman gerektiğini bul</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
+    <string name="focustest_find_focus">En çok çalışman gerekenleri bul</string>
     <string name="focustest_find_start">Bunların bir kısmını zaten biliyor musun?</string>
-    <string name="focustest_offer_line_focus">Bu test zaten bildiklerini gösterir, böylece en çok çalışman gereken konulara daha fazla zaman ayırırsın. Hiçbir branşı planından çıkarmaz.</string>
+    <string name="focustest_offer_sentence">Test, zaten bildiklerini gösterir; böylece zamanının çoğu en çok ihtiyaç duyduğun konulara ayrılır.</string>
     <string name="focustest_offer_line">Bu test zaten bildiklerini gösterir, böylece planın bunları atlayabilir.</string>
     <string name="focustest_start">Testi başlat</string>
     <string name="focustest_skip_note">Testi daha sonra planından çözebilirsin.</string>
     <string name="focustest_not_now">Sonraya bırak</string>
-    <string name="focustest_resume_title">Testine devam et</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="one">%d cevabın kaydedildi.</item>
-        <item quantity="other">%d cevabın kaydedildi.</item>
-    </plurals>
     <string name="focustest_continue">Devam et</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Sonucumu gör</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">Soru %1$d / %2$d</string>
-    <string name="focustest_stop">Durdur ve cevaplarımı kullan</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Bu konuların çoğuna henüz çalışmadın mı? Sorun değil. Burada durup öğrenmeye başlayabilirsin.</string>
     <string name="focustest_answers_saved_title">Cevapların kaydedildi</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
@@ -103,14 +85,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">Planını olduğu gibi bıraktın. Testin önerdiği branşlar bunlar.</string>
     <string name="focustest_change_focus">Odağını değiştir</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">Tüm branşları gör</string>
     <string name="focustest_subjects">Branşlar</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
-    <string name="focustest_session_questions">Çalışırken birkaç soru daha sor</string>
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
+    <string name="focustest_session_questions">Çalışırken bana birkaç soru daha sor</string>
     <string name="focustest_session_questions_when">İlk haftan boyunca</string>
     <string name="focustest_done">Tamamlandı</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">Daha fazla soru cevapla</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">Bu branşlara daha fazla zaman ayıralım mı?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">Bu seçim, verdiğin cevaplara ve sınavında her branştan kaç soru çıktığına dayanıyor.</string>
@@ -131,17 +115,15 @@
     <string name="focustest_listening_not_checked">Dinleme: bu testte yok</string>
     <string name="focustest_speaking_not_checked">Konuşma: bu testte yok</string>
     <string name="focustest_practical_not_checked">Uygulamalı bölüm: bu testte yok</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">Devam ediliyor</string>
     <string name="focustest_see_your_result">Sonucunu gör</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">Odak testini çöz</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">Odak testi en çok neye çalışman gerektiğini gösterir.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">%1$s süren bir seviye tespit testi, zaten bildiklerini gösterir; böylece zamanının daha fazlasını en çok ihtiyacın olan konulara ayırırsın. Hiçbir konuyu plandan çıkarmaz.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Tamam. Testi planından çözebilirsin.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
-    <string name="focustest_not_today">Bugünlük atla</string>
+    <string name="focustest_not_today">Bugün atla</string>
     <string name="focustest_not_today_failed">Kaydedilemedi. Tekrar dene.</string>
 </resources>

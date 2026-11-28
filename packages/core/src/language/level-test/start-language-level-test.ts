@@ -1,21 +1,21 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { type TransactionClient } from "@zoonk/db";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { oweFollowUps } from "../../follow-ups/owe-follow-ups";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
-import { readPendingTopicWalkAssessmentId } from "../../learner/placement/_utils/placement-attempt-record";
 import { readGoalDetails } from "../_utils/language-goal";
 import { loadCurrentLanguageLevel } from "../levels/current-language-level";
 import { type LanguagePair, findBankRow, readBank } from "./_utils/level-test-bank";
-import { getLevelTestStartScore } from "./_utils/level-test-start-score";
+import { getLevelTestStart } from "./_utils/level-test-start-score";
 import { levelTestDetailsWithProgress, readLevelTestProgress } from "./_utils/level-test-state";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import { type LevelTestLength, type LevelTestProgress } from "./level-test-contract";
+import { LANGUAGE_LEVEL_TEST_OFFER, type LevelTestProgress } from "./level-test-contract";
 import { isOpenLevelTestOut } from "./level-test-out-contract";
-import { hasOpenLanguageTopicWalk, readLevelTestAttempts } from "./read-level-test-summary";
+import { readLevelTestAttempts } from "./read-level-test-summary";
 
 async function oweLevelTestPreparation({
   db,
@@ -40,13 +40,7 @@ async function oweLevelTestPreparation({
   });
 }
 
-export async function startLanguageLevelTest({
-  goalId,
-  length,
-}: {
-  goalId: string;
-  length: LevelTestLength;
-}) {
+export async function startLanguageLevelTest({ goalId }: { goalId: string }) {
   const owned = await findOwnedGoal(goalId);
 
   if (owned.status !== "ready") {
@@ -64,38 +58,28 @@ export async function startLanguageLevelTest({
     const current = await db.goal.findUniqueOrThrow({ where: { id: goalId, userId } });
     const { attempt, testOut } = readLevelTestAttempts(current);
 
-    if (hasOpenLanguageTopicWalk(current) || isOpenLevelTestOut(testOut)) {
+    if (isOpenLevelTestOut(testOut)) {
       return unchanged(null);
     }
 
-    const pendingAssessment = readPendingTopicWalkAssessmentId(current);
-
-    if (pendingAssessment) {
-      return unchanged({ attemptId: pendingAssessment, opened: false });
-    }
-
     if (attempt?.attemptId && !attempt.result) {
-      return unchanged({ attemptId: attempt.attemptId, opened: false });
+      return unchanged({ attemptId: attempt.attemptId, opened: false as const });
     }
 
     const legacy = readLevelTestProgress(current);
-    const level = await loadCurrentLanguageLevel(current, db);
+    const level = await loadCurrentLanguageLevel(current, { db });
 
-    const start = getLevelTestStartScore({
-      length,
-      level: level ?? readGoalDetails(current).level,
-    });
+    const start = getLevelTestStart(level ?? readGoalDetails(current).level);
 
     const continueOnboarding =
       !attempt && !legacy.result && !legacy.placement && legacy.answers.length > 0;
 
-    const fresh: LevelTestProgress = { answers: [], counted: 0, speaking: null, start };
+    const fresh: LevelTestProgress = { answers: [], counted: 0, speaking: null, ...start };
     const id = randomUUID();
 
     const progress: LevelTestProgress = {
       ...(continueOnboarding ? legacy : fresh),
       attemptId: id,
-      length,
       startedAt: (continueOnboarding && legacy.startedAt) || new Date().toISOString(),
     };
 
@@ -116,7 +100,7 @@ export async function startLanguageLevelTest({
 
     await oweLevelTestPreparation({ db, goalId, pair: { language, targetLanguage }, userId });
 
-    return { attemptId: id, opened: true };
+    return { attemptId: id, opened: true as const, resumed: continueOnboarding };
   });
 
   if (!selected) {
@@ -127,6 +111,24 @@ export async function startLanguageLevelTest({
 
   if (opened) {
     revalidateCacheTags([getGoalsCacheTag(userId)]);
+
+    trackTestEvents(goal, [
+      {
+        name: "Test Started",
+        properties: {
+          ...testEventContext(goal, {
+            attemptId,
+            questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+            test: "language",
+          }),
+          resumed: selected.resumed,
+          row:
+            readGoalDetails(goal).placementRequested === true && !goal.planRevealedAt
+              ? "direct"
+              : "quick",
+        },
+      },
+    ]);
   }
 
   return getLanguageLevelTest(goalId, attemptId);

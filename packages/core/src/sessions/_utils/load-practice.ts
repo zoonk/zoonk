@@ -9,6 +9,7 @@ import { type AreaShare } from "../../plans/_utils/exam-subject-shares";
 import { type DifficultyBias } from "../../plans/planner/plan-state";
 import { PRACTICE_MINUTES_PER_QUESTION } from "../block-minutes";
 import { type PracticeItem } from "../session-builder";
+import { mixCourseStartPractice } from "./course-start-practice";
 import { loadLastAnswers, loadRightAnswers } from "./load-review-capsules";
 import { NO_PRACTICE_CLAIMS, type PracticeClaims } from "./practice-claims";
 import { listAskedSets, takePracticeQuestions, toSetUnits } from "./practice-sets";
@@ -172,40 +173,7 @@ function orderPracticeSkills({
     .map((row) => row.skillId);
 }
 
-/** Listening-only skills without a voiced recording not heard in the last day release their reserved subject time. */
-export async function loadIdleListeningSkillIds({
-  examBlueprintId,
-  listeningSkillIds,
-  now,
-  userId,
-}: {
-  examBlueprintId: string | null;
-  listeningSkillIds: ReadonlySet<string>;
-  now: Date;
-  userId: string;
-}): Promise<Set<string>> {
-  if (listeningSkillIds.size === 0) {
-    return new Set();
-  }
-
-  const sets = await listItemSetsForSkills({
-    examBlueprintId,
-    skillIds: [...listeningSkillIds],
-    userId,
-  });
-
-  const askable = sets.filter(
-    (set) =>
-      set.kind === "audio" &&
-      (set.lastAnsweredAt?.getTime() ?? 0) <= now.getTime() - RECENTLY_ANSWERED_MS,
-  );
-
-  return new Set(
-    [...listeningSkillIds].filter(
-      (skillId) => !askable.some((set) => set.skillIds.includes(skillId)),
-    ),
-  );
-}
+export { loadIdleListeningSkillIds } from "./idle-listening-skills";
 
 /** Never repeats an answer from the last day; review days prioritize unseen questions and repeat only misses. */
 export async function loadPracticeItems({
@@ -353,11 +321,18 @@ export async function loadPracticeItems({
     })),
   );
 
-  return takePracticeQuestions({
-    practice: units.flatMap((unit) => unit.questions),
-    room: Math.max(
-      Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
-      everySkill ? FULL_REVIEW_QUESTIONS : 0,
-    ),
+  const room = Math.max(
+    Math.floor(maxMinutes / PRACTICE_MINUTES_PER_QUESTION),
+    everySkill ? FULL_REVIEW_QUESTIONS : 0,
+  );
+
+  const practice = mixCourseStartPractice({
+    courseStarts: claims.courseStarts ?? [],
+    prerequisites: claims.prerequisites,
+    room,
+    studied: new Set(studiedBySkill.keys()),
+    units,
   });
+
+  return takePracticeQuestions({ practice, room });
 }

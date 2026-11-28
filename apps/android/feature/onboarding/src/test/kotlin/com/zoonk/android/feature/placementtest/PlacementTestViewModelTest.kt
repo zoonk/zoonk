@@ -14,13 +14,12 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.orderQuestion
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -32,6 +31,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -68,32 +68,166 @@ class PlacementTestViewModelTest {
     }
 
     @Test
-    fun anOpenAttemptGoesOnAtItsQuestionAndOneClosedOnAnotherDeviceWaitsBetweenParts() {
+    fun anOpenAttemptGoesOnAtItsQuestionAndOneWithNothingLeftToAskIsOver() {
         assertEquals(PlacementTestPhase.Choose, placementTestPhase(LoadState.Loaded(placement(attempt = null)), closed = null))
-        assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE)), closed = null) is PlacementTestPhase.Question)
+        assertTrue(placementTestPhase(LoadState.Loaded(placement(OPEN)), closed = null) is PlacementTestPhase.Question)
         assertEquals(
             PlacementTestPhase.Waiting,
-            placementTestPhase(LoadState.Loaded(placement(PART_ONE, status = "waitingForQuestions")), closed = null),
+            placementTestPhase(LoadState.Loaded(placement(OPEN, status = "waitingForQuestions")), closed = null),
         )
-        assertTrue(placementTestPhase(LoadState.Loaded(placement(PART_ONE, next = null)), closed = null) is PlacementTestPhase.PartOver)
-        val between = placementTestPhase(LoadState.Loaded(placement(PART_ONE_CLOSED)), closed = null)
-        assertEquals(null, (between as PlacementTestPhase.Between).lessonsSkipped)
+        assertTrue(
+            placementTestPhase(LoadState.Loaded(placement(OPEN, next = null, status = "done")), closed = null) is PlacementTestPhase.Over,
+        )
     }
 
     @Test
-    fun anOpenPartWithNoAvailableQuestionsCanFinish() {
-        val read = placement(PART_ONE, next = null, status = "unavailable")
-        assertTrue(placementTestPhase(LoadState.Loaded(read), closed = null) is PlacementTestPhase.PartOver)
-    }
+    fun aTestTheLearnerAskedForWaitsWhileTheCourseIsBuiltThenOpensAtItsFirstQuestion() =
+        runTest {
+            val cold = placement(attempt = null, next = null, status = "preparing")
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = cold
+                    sitting = { placement }
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+
+            vm.start()
+            assertEquals(PlacementTestPhase.Waiting, shown(vm, store))
+
+            api.placement = placement(attempt = null)
+            store.placements[GOAL_ID].refresh()
+            assertEquals(PlacementTestPhase.Arrived, shown(vm, store))
+
+            api.sitting = { placement(OPEN) }
+            vm.start()
+            runCurrent()
+            assertEquals(2, api.sittingsStarted)
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
+        }
 
     @Test
-    fun theLastAnswerOfAPartClosesThatPartAndSaysWhatItSkipped() =
+    fun aStartThatDidNotGoThroughKeepsTheOfferAndSaysSo() =
         runTest {
             val api =
                 FakeOnboardingApi().apply {
-                    placement = placement(PART_ONE)
-                    answered = { placement(PART_ONE, next = null) }
-                    completion = completion(attempt = PART_TWO, skipped = 6, heldUntilTomorrow = true)
+                    placement = placement(attempt = null, next = null, status = "preparing")
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+
+            vm.start()
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertTrue(vm.failed)
+
+            api.writeFailure = null
+            api.sitting = { placement(OPEN) }
+            vm.start()
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
+            assertFalse(vm.failed)
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheAppComesBackFromProcessDeath() =
+        askedStartFailed { _, handle, store ->
+            PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheLearnerComesBack() = askedStartFailed { vm, _, _ -> vm.also { it.visit.end() } }
+
+    /** A learner who asked for the test on the level question never comes back to a spinner with nothing on its way. */
+    private fun askedStartFailed(comeBack: (PlacementTestViewModel, SavedStateHandle, OnboardingStore) -> PlacementTestViewModel) =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(attempt = null)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val handle = SavedStateHandle()
+            val (vm, store) = viewModel(api, handle)
+            store.placements[GOAL_ID].load()
+            vm.startAsked()
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertTrue(vm.failed)
+
+            api.writeFailure = null
+            api.sitting = { placement(OPEN) }
+            val back = comeBack(vm, handle, store)
+            back.startAsked()
+
+            assertTrue(shown(back, store) is PlacementTestPhase.Question)
+            assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun anAskedStartStillOnItsWayWhenTheLearnerCameBackStartsAgainOnceItFails() =
+        runTest {
+            val fake = FakeOnboardingApi().apply { placement = placement(attempt = null) }
+            val answer = CompletableDeferred<Unit>()
+            val api =
+                object : OnboardingApi by fake {
+                    override suspend fun startPlacementSitting(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                    ): Placement {
+                        answer.await()
+                        return fake.startPlacementSitting(session, goalId)
+                    }
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            vm.startAsked()
+            runCurrent()
+
+            vm.visit.end()
+            vm.startAsked()
+            fake.writeFailure = ApiException(ApiError.Network)
+            answer.complete(Unit)
+            assertEquals(PlacementTestPhase.Choose, shown(vm, store))
+            assertFalse(vm.failed)
+
+            fake.writeFailure = null
+            fake.sitting = { placement(OPEN) }
+            vm.startAsked()
+            assertTrue(shown(vm, store) is PlacementTestPhase.Question)
+        }
+
+    @Test
+    fun aTestTheLearnerAskedForSaysWhenItsCourseCouldNotBeBuiltOrHasNothingToTest() =
+        runTest {
+            val api = FakeOnboardingApi().apply { placement = placement(attempt = null, next = null, status = "failed") }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            vm.start()
+            assertEquals(PlacementTestPhase.PreparationFailed(attempt = null), shown(vm, store))
+
+            api.placement = placement(attempt = null, next = null, status = "done")
+            vm.start()
+            assertEquals(PlacementTestPhase.Unavailable, shown(vm, store))
+        }
+
+    @Test
+    fun anOpenTestWhoseNextQuestionCannotBeHadOrFailedIsNeverClosedAsOver() {
+        val unavailable = placement(OPEN, next = null, status = "unavailable")
+        val failed = placement(OPEN, next = null, status = "failed")
+
+        assertEquals(PlacementTestPhase.Unavailable, placementTestPhase(LoadState.Loaded(unavailable), closed = null))
+        assertTrue(placementTestPhase(LoadState.Loaded(failed), closed = null) is PlacementTestPhase.PreparationFailed)
+        assertNull(unavailable.over())
+        assertNull(failed.over())
+    }
+
+    @Test
+    fun theLastAnswerClosesTheTestAndShowsWhereTheLearnerStarts() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN)
+                    answered = { placement(OPEN, next = null, status = "done") }
+                    completion = completion(skipped = 4, result = RESULT)
                 }
             val (vm, store) = viewModel(api)
             val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
@@ -101,143 +235,262 @@ class PlacementTestViewModelTest {
             vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
             runCurrent()
 
-            assertEquals(PlacementPart(ATTEMPT, 1), api.placementAnswers.single().let { PlacementPart(it.attemptId!!, it.part!!) })
-            assertEquals(listOf(PlacementPart(ATTEMPT, 1)), api.finishedParts)
-            val between = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Between
-            assertEquals(6, between.lessonsSkipped)
-            assertEquals(2L, between.attempt.part)
-            assertTrue(between.heldUntilTomorrow)
+            assertEquals(ATTEMPT, api.placementAnswers.single().attemptId)
+            assertNull(api.placementAnswers.single().part)
+            assertEquals(listOf<UUID?>(ATTEMPT), api.finishedAttempts)
+            val result = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Result
+            assertEquals("Why prices move", result.chapter)
+            assertEquals("News, results and expectations", result.nextLesson)
+            assertEquals(5, result.nextMinutes)
+            assertEquals(CHANGE, result.changeId)
+            assertEquals(
+                PlacementTestPhase.Course(
+                    lessons = 9,
+                    chapters =
+                        listOf(
+                            PlacementTestPhase.Chapter(2, 2, start = false),
+                            PlacementTestPhase.Chapter(3, 2, start = true),
+                            PlacementTestPhase.Chapter(4, 0, start = false, done = 1),
+                        ),
+                ),
+                result.course,
+            )
             assertFalse(vm.failed)
         }
 
     @Test
-    fun aPartAnotherDeviceClosedFirstShowsWhereTheTestIsInsteadOfAFailure() =
+    fun aCloseThatSavedButWhoseReplyWasLostStillShowsTheResultFromThePlan() =
         runTest {
-            val api =
+            val fake =
                 FakeOnboardingApi().apply {
-                    placement = placement(PART_ONE, next = null)
-                    writeFailure = ApiException(ApiError.Unavailable)
+                    placement = placement(attempt = null)
+                    sitting = { placement(OPEN) }
+                    answered = { placement(OPEN, next = null, status = "done") }
+                }
+            val api =
+                object : OnboardingApi by fake {
+                    override suspend fun finishPlacement(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                        fromScratch: Boolean,
+                        attemptId: UUID?,
+                        answered: Long?,
+                    ): PlacementCompletion {
+                        fake.placement = placement(attempt = null, next = null, status = "unavailable", result = RESULT)
+                        throw ApiException(ApiError.Network)
+                    }
                 }
             val (vm, store) = viewModel(api)
-            val over = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.PartOver
-            api.placement = placement(PART_ONE_CLOSED)
+            store.placements[GOAL_ID].load()
+            vm.start()
+            val question = shown(vm, store) as PlacementTestPhase.Question
 
-            vm.finishPart(over.attempt)
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
             runCurrent()
 
             assertFalse(vm.failed)
-            assertTrue(vm.phase(store.placements[GOAL_ID].state.value) is PlacementTestPhase.Between)
+            val result = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Result
+            assertEquals("Why prices move", result.chapter)
+            assertEquals(CHANGE, result.changeId)
         }
 
     @Test
-    fun aCloseThatFailsWhileThePartIsStillOpenSaysSo() =
+    fun anAnswerRefusedBecauseAnotherDeviceStoppedTheTestShowsThatTestsResult() =
         runTest {
             val api =
                 FakeOnboardingApi().apply {
-                    placement = placement(PART_ONE, next = null)
+                    placement = placement(OPEN_FOURTH)
+                    writeFailure = ApiException(ApiError.Unavailable, status = 409)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+            api.placement = placement(attempt = null, next = null, status = "unavailable", result = RESULT)
+            val reads = api.placementReads
+
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
+            runCurrent()
+
+            assertEquals(reads + 1, api.placementReads)
+            assertEquals(0, vm.saveFailures)
+            val read = store.placements[GOAL_ID].state.value
+            for (finished in listOf(false, true)) {
+                val result = vm.phase(read, finished = finished) as PlacementTestPhase.Result
+                assertEquals("Why prices move", result.chapter)
+                assertEquals(CHANGE, result.changeId)
+            }
+        }
+
+    @Test
+    fun anAnswerThatDidNotGoThroughWhileTheTestIsStillOpenSaysSo() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN_FOURTH)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
+            runCurrent()
+
+            assertEquals(1, vm.saveFailures)
+            assertEquals(4, (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question).number)
+        }
+
+    @Test
+    fun aResultThatSkippedNothingOffersNoUndo() {
+        val nothing = completion(skipped = 0, result = RESULT.replace("\"lessonsSkipped\":4", "\"lessonsSkipped\":0"))
+        val opened = placement(OPEN).attempt!!
+
+        assertNull(nothing.closed(opened).result.changeId)
+    }
+
+    @Test
+    fun stoppingClosesTheTestWithTheAnswersTheLearnerSaw() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN_FOURTH)
+                    completion = completion(skipped = 4, result = RESULT)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+
+            vm.stop(question)
+            runCurrent()
+
+            assertEquals(listOf(3L), api.finishedAnswered)
+            assertEquals("Why prices move", (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Result).chapter)
+        }
+
+    @Test
+    fun aTestAnotherDeviceClosedFirstShowsItsResultInsteadOfAFailure() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN, next = null, status = "done")
                     writeFailure = ApiException(ApiError.Unavailable)
                 }
             val (vm, store) = viewModel(api)
-            val over = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.PartOver
+            val over = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Over
+            api.placement = placement(attempt = null, next = null, status = "done", result = RESULT)
 
-            vm.finishPart(over.attempt)
+            vm.finish(over.attempt)
+            runCurrent()
+
+            assertFalse(vm.failed)
+            assertTrue(vm.phase(store.placements[GOAL_ID].state.value, finished = true) is PlacementTestPhase.Result)
+        }
+
+    @Test
+    fun aStopRefusedBecauseAnotherDeviceAnsweredMoreShowsWhereTheTestIsInsteadOfAFailure() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN_FOURTH)
+                    writeFailure = ApiException(ApiError.Unavailable, status = 409)
+                }
+            val (vm, store) = viewModel(api)
+            val question = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Question
+            api.placement = placement(attemptOf(answered = 5))
+
+            vm.stop(question)
+            runCurrent()
+
+            assertEquals(listOf(3L), api.finishedAnswered)
+            assertEquals(0, vm.saveFailures)
+            assertEquals(6, (vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Question).number)
+        }
+
+    @Test
+    fun aCloseThatFailsWhileTheTestIsStillOpenSaysSo() =
+        runTest {
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placement(OPEN, next = null, status = "done")
+                    writeFailure = ApiException(ApiError.Unavailable)
+                }
+            val (vm, store) = viewModel(api)
+            val over = shown(vm, store.also { it.placements[GOAL_ID].load() }) as PlacementTestPhase.Over
+
+            vm.finish(over.attempt)
             runCurrent()
 
             assertTrue(vm.failed)
         }
 
     @Test
-    fun aQuickTestThatClosesShowsItsResultWhileThePlanReadsAgain() =
+    fun aClosedTestStillShowsItsResultAfterTheProcessIsReclaimed() =
         runTest {
             val api =
                 FakeOnboardingApi().apply {
                     placement = placement(attempt = null)
-                    sitting = { placement(QUICK, next = null) }
-                    completion = completion(attempt = null, skipped = 3, result = true, heldUntilTomorrow = true)
-                }
-            val (vm, store) = viewModel(api)
-            store.placements[GOAL_ID].load()
-
-            vm.start(PlacementLength.QUICK)
-            runCurrent()
-            api.placement = placement(attempt = null)
-
-            assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK), api.sittingLengths)
-            assertEquals(
-                PlacementTestPhase.Result(PlacementLength.QUICK, 3, attemptId = ATTEMPT, heldUntilTomorrow = true),
-                vm.phase(store.placements[GOAL_ID].state.value),
-            )
-        }
-
-    @Test
-    fun aClosedPartStillShowsWhatItSkippedAfterTheProcessIsReclaimed() =
-        runTest {
-            val api =
-                FakeOnboardingApi().apply {
-                    placement = placement(attempt = null)
-                    sitting = { placement(PART_ONE, next = null) }
-                    completion = completion(attempt = null, skipped = 7, result = true)
+                    sitting = { placement(OPEN, next = null, status = "done") }
+                    completion = completion(skipped = 4, result = RESULT)
                 }
             val handle = SavedStateHandle()
             val (vm, store) = viewModel(api, handle)
             store.placements[GOAL_ID].load()
-            vm.start(PlacementLength.WHOLE_COURSE)
+            vm.start()
             runCurrent()
             val shown = vm.phase(store.placements[GOAL_ID].state.value)
 
             val restored =
                 PlacementTestViewModel(GOAL_ID, store, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
 
-            assertEquals(PlacementTestPhase.Result(PlacementLength.WHOLE_COURSE, 7, attemptId = ATTEMPT), shown)
-            assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null))))
+            assertEquals(4, (shown as PlacementTestPhase.Result).lessonsSkipped)
+            assertEquals(shown, restored.phase(LoadState.Loaded(placement(attempt = null, next = null, status = "done", result = RESULT))))
+            assertEquals(PlacementTestPhase.Loading, restored.phase(LoadState.Loading))
+            // Another device started a new test while the process was gone.
+            val newer = placement(OPEN.replace(ATTEMPT.toString(), "9a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"))
+            assertTrue(restored.phase(LoadState.Loaded(newer)) is PlacementTestPhase.Question)
         }
 
     private companion object {
         val ATTEMPT: UUID = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
+        val CHANGE: UUID = UUID.fromString("5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b")
 
-        fun attemptOf(
-            length: String,
-            part: Int,
-            complete: Boolean,
-        ) = """{"id":"$ATTEMPT","length":"$length","part":$part,"partComplete":$complete,"estimatedMinutes":20}"""
+        fun attemptOf(answered: Int = 0) =
+            """{"id":"$ATTEMPT","length":"quick","part":1,"partComplete":false,"estimatedMinutes":4,"answered":$answered,
+            |"chapter":"Loops","questions":8}
+            """.trimMargin()
 
-        val PART_ONE = attemptOf("wholeCourse", 1, complete = false)
-        val PART_ONE_CLOSED = attemptOf("wholeCourse", 1, complete = true)
-        val PART_TWO = attemptOf("wholeCourse", 2, complete = false)
-        val QUICK = attemptOf("quick", 1, complete = false)
+        val OPEN = attemptOf()
+        val OPEN_FOURTH = attemptOf(answered = 3)
+
+        const val RESULT =
+            """{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-27T14:00:00Z","lessonsSkipped":4,
+            "changeId":"5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b","chapter":"Why prices move",
+            "course":{"lessons":9,"chapters":[{"done":0,"lessons":2,"skipped":2,"start":false},{"done":0,"lessons":3,"skipped":2,"start":true},
+            {"done":1,"lessons":4,"skipped":0,"start":false}]},
+            "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"News, results and expectations","estimatedMinutes":5,
+            "chapter":"Why prices move"}}"""
 
         fun placement(
             attempt: String?,
             next: String? = orderQuestion(),
             status: String = "asking",
+            result: String? = null,
         ): Placement =
             ApiJson.decodeFromString(
                 Placement.serializer(),
                 """
                 {"answered":0,"areas":[],"complete":false,"dayBudgetSpent":0.2,"dayBudgetUsed":false,"knownSkillIds":[],"needsItems":[],
                  "next":${next ?: "null"},"phases":[],"started":true,"status":"$status","trueFalseLabels":"trueFalse","focusTest":null,
-                 "attempt":${attempt ?: "null"}}
+                 "attempt":${attempt ?: "null"},"result":${result ?: "null"}}
                 """.trimIndent(),
             )
 
         fun completion(
-            attempt: String?,
             skipped: Int,
-            result: Boolean = false,
-            heldUntilTomorrow: Boolean = false,
+            result: String?,
         ): PlacementCompletion =
             ApiJson.decodeFromString(
                 PlacementCompletion.serializer(),
                 """
                 {"areas":[],"complete":true,"knownSkillIds":[],"phases":[],"testedOutPlanItemIds":[],"focusTest":null,
-                 "attempt":${attempt ?: "null"},"lessonsSkipped":$skipped,"partLessonsSkipped":$skipped,
-                 ${if (heldUntilTomorrow && !result) """"heldUntilTomorrow":true,""" else ""}
-                 "result":${if (result) {
-                    val held = if (heldUntilTomorrow) ""","heldUntilTomorrow":true""" else ""
-                    """{"attemptId":"$ATTEMPT","finishedAt":"2026-11-21T14:00:00Z","lessonsSkipped":$skipped$held}"""
-                } else {
-                    "null"
-                }}}
+                 "attempt":null,"lessonsSkipped":$skipped,"changeId":"$CHANGE","result":${result ?: "null"}}
                 """.trimIndent(),
             )
     }

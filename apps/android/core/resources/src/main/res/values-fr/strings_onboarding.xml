@@ -104,21 +104,15 @@
   "onboarding_intent_understand_description": "6b2bd6e01af9c49dd115783a99170af4bbb78bda55f0add290ef05441d1297a3",
   "onboarding_join_waitlist": "8e025cd699b6c1f9e829bcb3235fe40239d97a74bf953ac9d30c143fd1ec5734",
   "onboarding_language_test_audio_on_its_way": "e0d3a8471f47b3a88cc3b1d21d84cb6dd47eea4374abd677de8bb50f352b0518",
-  "onboarding_language_test_did_not_understand": "aacf6a454ed21993eba534e2984613230ac254a6e3abedbc9f272f76ce234cfd",
+  "onboarding_language_test_cant_listen": "18ef8878681c15887ac14ec261077329a5103146d9b7fc0aeb0e54b77bbb5869",
+  "onboarding_language_test_did_not_understand": "88085501175f37ebe3f5542774a31e2a26e9f7a07798d9262c70e666f0c8dc4e",
   "onboarding_language_test_listening": "180bcb3621527f7a2343e6fd1344a709b08213dc1d93f544df50e47364bfb0b7",
-  "onboarding_language_test_message": "f8af4f755668834d8345c88cdc27eba65f5e9247fa749a5f93eabdcb9ed1f0a4",
-  "onboarding_language_test_message_loading": "3a4e64988d044b7b17778b09d28731597fd3fca93509d9090ec8358cae67b768",
-  "onboarding_language_test_new_alphabet": "47757ac1aac92b39a457fe92b5ec4c655a8c99fca51f99da2182804fa0bd9e03",
   "onboarding_language_test_play": "86f599e1efa1e7e5287740fe426ca9652f1a16af6c185c8ca04348b57e302e8a",
   "onboarding_language_test_play_again": "c80ceda520feeb9e582bda02496f72cd1043450aa0b802ca007d30f5e215ff78",
-  "onboarding_language_test_preparing_description": "02a7fcb516826a15c0ecb14a4c1a0060e9e9b08baa9859cf61923180a08bf6b3",
-  "onboarding_language_test_preparing_title": "03915811376bf0683656feb4eb3369455dfb584d48f6bd87f12d4e9d5af5ed56",
   "onboarding_language_test_reading": "db1071b1596bf52dddaf9fad28ef2bd643fb9e46a69396a5cbd071ef35cd23e6",
-  "onboarding_language_test_skip": "43812aa0e8847d57e19c223f13cb9bbca3f46e69327d069bed60bebd6fd0b8a0",
-  "onboarding_language_test_skip_note": "48935a50376b6c3a68a58f817aa89daf56296bf7b364de79927f451a73fdf0ef",
   "onboarding_language_test_skip_question": "0afb1cd286ff78fb94976faa65fd6771ea9b2ca0d6bd69d1b6afdd3e5d14fe33",
   "onboarding_language_test_speaking": "c22f997eb9cd1d4a560d9b4e35f94e2ed4dd30ed75e0544b36e14a79a5c37c26",
-  "onboarding_language_test_use_app_in": "192253f3ee1e0a2372a1a2bad9c580c3e9a71331bbafd8e1f1282094dd3d7454",
+  "onboarding_language_test_use_app_in": "65dd4268359e0344c537da2ce1d739465d87d08003bafe518a7c1d9ce3169521",
   "onboarding_language_test_writing": "dea74232637120d287c91724333a89b8fef1b89fd7e0b6a704c1a4879bf1daa1",
   "onboarding_level_advanced": "d43272b05349034e1b13c7eec8d273e4873b328515f48cdc4c02093584eebc47",
   "onboarding_level_advanced_description": "d81859d4e9174f9c43df6e356b16c13a6560d9f727cc5fe8ea3d411189e5cdcb",
@@ -165,13 +159,11 @@
   "onboarding_placement_answer_failed": "b97a0d588515833eda87682dde49d30e78d19f6630d4a9b0c045dce5b5db9070",
   "onboarding_placement_confirm": "262a6a0249caed36c29650e25890ff2284442f5271a6b7d769d66ef8ef11f660",
   "onboarding_placement_dont_know": "8c848bfbb1acf9bfdc9e0977aa88bd195396febe4ad5da17972bc2ba4672922d",
-  "onboarding_placement_progress": "b195391c3a82e06b591c66f33f76e4d4a4385ea412ee7b795bf4ff4ddd5f0103",
-  "onboarding_placement_question_number": "5e0f14885271be05b2970453e0f1bbb5a9a2fc8f3dfe55642d1f7eb4b20aeb41",
   "onboarding_placement_ready": "e866adb992b37db720d6beec66b1a024fd2b5e9c5fd2e29b89bd205e87996d0e",
   "onboarding_placement_stop": "827afd6644b168eead0a6d2d658a9f1f20bba442a632d85c4d819fb10e09ac5f",
   "onboarding_placement_unavailable_title": "44f46f3b3215c37f9a71ef85387a43273db48c7cd0ac3c4c83a9244ecd63a7f6",
   "onboarding_placement_waiting_material": "4d7cb5d1c9478c17ef0d25eecb96ef8364b80a9b79a5c4303e0f8d600facc5ec",
-  "onboarding_placement_waiting_time": "f6215f085d530f89c01ac3a8c1e0b9dc2fe5efaabeff7dd706b3317ef9e729a3",
+  "onboarding_placement_waiting_time": "abd23a4476c9ac8ed814d2eac43e334dfa95c065b27f4b8751e57bd0c5dd6a42",
   "onboarding_plan_answers_saved": "ff350bfc6d62fef652b807614e17a114fd87bb4548fbef520ac55c91228e4da7",
   "onboarding_plan_not_started": "9639c17f63a47cfa0a03213704b02184040660fde5bffe4dc128dd706e253660",
   "onboarding_plan_ready_goal": "4cdde6bf6e199f097695525ffe075f74ed9d97e7ea0b86615e5d1e754a85bca8",
@@ -561,39 +553,24 @@
     <string name="onboarding_question_failed">Nous n’avons pas pu répondre à ta question. Réessaie dans un instant.</string>
     <string name="onboarding_question_sign_in">Crée un compte pour poser des questions sur tes documents.</string>
     <string name="onboarding_question_slow_down">Tu poses des questions rapidement. Réessaie dans quelques minutes.</string>
-    <!-- Placement: a few questions that find where the plan starts. -->
     <string name="onboarding_placement_waiting_material">La lecture de tes documents prend quelques minutes.</string>
-    <!-- Shown while the learner waits for their first questions to be prepared. "This" is the wait. -->
-    <string name="onboarding_placement_waiting_time">Ça prend une minute ou deux.</string>
+    <!-- Shown while the learner waits for their first questions to be prepared. “This” is the wait. -->
+    <string name="onboarding_placement_waiting_time">Ça prend une ou deux minutes.</string>
     <string name="onboarding_placement_ready">Ton test est prêt</string>
-    <!-- Beside the subject, above a placement question. %1$d is its number. -->
-    <string name="onboarding_placement_question_number">Question %1$d</string>
-    <string name="onboarding_placement_progress">Questions répondues</string>
     <string name="onboarding_placement_dont_know">Je ne sais pas encore</string>
     <string name="onboarding_placement_confirm">Confirmer</string>
     <string name="onboarding_placement_stop">Arrêter et utiliser mes réponses</string>
     <string name="onboarding_placement_answer_failed">Ça n’a pas marché. Tes réponses sont conservées.</string>
     <string name="onboarding_placement_unavailable_title">On verra ce que tu sais pendant tes premiers jours</string>
-    <!-- The level test: a language goal's placement, in reading and listening. -->
-    <string name="onboarding_language_test_new_alphabet">Tu ne connais pas encore cet alphabet ? Saute le test. Ta première leçon t’apprend à le lire.</string>
-    <string name="onboarding_language_test_skip">Passer le test</string>
-    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
-    <string name="onboarding_language_test_use_app_in">Utiliser l’application en %1$s</string>
-    <string name="onboarding_language_test_preparing_title">Préparation de ton test de niveau</string>
-    <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
-    <string name="onboarding_language_test_preparing_description">Préparer le test de %1$s prend une ou deux minutes, et seulement cette fois-ci.</string>
-    <string name="onboarding_language_test_skip_note">Ton plan part du niveau que tu as indiqué, puis tes premiers jours permettent de l’ajuster.</string>
-    <!-- Answers a listening question without guessing. -->
-    <string name="onboarding_language_test_did_not_understand">Je n’ai pas compris l’audio</string>
-    <!-- Replaces "I didn't understand the audio" while a listening question's audio can't play yet or failed; skipping doesn't count toward the level. -->
+    <string name="onboarding_language_test_use_app_in">Utiliser l’app en %1$s</string>
+    <!-- Button on a listening question, after the learner played the message: they heard it and didn't understand it. -->
+    <string name="onboarding_language_test_did_not_understand">Je n’ai pas compris</string>
     <string name="onboarding_language_test_skip_question">Sauter cette question</string>
-    <!-- Shown while a listening question's recording is still being made. -->
+    <!-- Button on a listening question for a learner who can't play sound right now, such as on a bus. It ends the listening questions for this test. -->
+    <string name="onboarding_language_test_cant_listen">Je ne peux pas écouter maintenant</string>
     <string name="onboarding_language_test_audio_on_its_way">Le message vocal arrive…</string>
     <string name="onboarding_language_test_play">Écouter le message</string>
     <string name="onboarding_language_test_play_again">Réécouter le message</string>
-    <string name="onboarding_language_test_message_loading">Préparation du message. La première fois, cela peut prendre quelques secondes.</string>
-    <string name="onboarding_language_test_message">Tu as reçu un message vocal. Écoute-le et réponds.</string>
-    <!-- Language skills, each beside its level. -->
     <string name="onboarding_language_test_reading">Lecture</string>
     <string name="onboarding_language_test_listening">Écoute</string>
     <string name="onboarding_language_test_speaking">Expression orale</string>

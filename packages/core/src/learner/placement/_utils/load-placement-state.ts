@@ -2,7 +2,7 @@ import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { readDatabaseFacts } from "../../../_utils/read-database-facts";
 import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
-import { type GoalPlan } from "../../_utils/goal-skill-graph";
+import { type GoalPlan, loadPlacementPlan } from "../../_utils/goal-skill-graph";
 import { loadWritingSkillIds } from "../../writing-skills";
 import { type FocusTestView } from "../focus-test-contract";
 import { type PlacementStatus } from "../placement-contract";
@@ -19,16 +19,17 @@ import {
 } from "../placement-steps";
 import { countOpenSubjects, getTestStart, startTestTurn } from "./focus-test-setup";
 import { loadFocusTest } from "./load-focus-test";
-import { loadAttemptState } from "./load-placement-attempt-state";
+import { loadAttemptState, readIdleCourse } from "./load-placement-attempt-state";
 import { findNextQuestion } from "./next-placement-skill";
 import { countPlacementAnswers } from "./placement-answers";
 import { getAskingBudget } from "./placement-asking-budget";
 import { type PlacementAttemptView, type PlacementResult } from "./placement-attempt-record";
 import { loadPlacementItems } from "./placement-bank-items";
-import { loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
+import { loadCourseAnswers, loadEvidence, loadSeenPlacementItems } from "./placement-evidence";
 import { loadGoalExam } from "./placement-goal-exam";
 import { type PlacementQuestionView } from "./placement-items";
 import { loadPlanBuild } from "./placement-plan-build";
+import { readPlacementResult } from "./placement-result";
 import { getStatus, loadQuestion } from "./placement-state-view";
 import { readStatuses } from "./placement-statuses";
 
@@ -56,20 +57,19 @@ export type PlacementState = {
 };
 
 export type PlacementLoad = {
-  attemptFollowUps?: string[];
-  attemptHasMore: boolean;
-  attemptRemainingSkillIds?: string[];
+  firstQuestionReady?: boolean;
   /** What an exam goal's writes need beside the state; null for other goals. */
   focusTest: Awaited<ReturnType<typeof loadFocusTest>>;
   state: PlacementState;
 };
 
 type PlacementRead = {
+  checkReadiness?: boolean;
   ignoreAttempt?: boolean;
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
   ownLevel?: OwnLevel | null;
-  plan: GoalPlan;
+  plan?: GoalPlan;
   today?: Date | null;
   timeZone?: string;
   userId: string;
@@ -77,37 +77,40 @@ type PlacementRead = {
 };
 
 async function loadPlacementFacts({
+  exam,
   goalId,
   requestedLevel,
   skillIds,
   tx,
   userId,
 }: {
+  exam: Awaited<ReturnType<typeof loadGoalExam>>;
   goalId: string;
   requestedLevel: OwnLevel | null | undefined;
   skillIds: string[];
   tx: TransactionClient;
   userId: string;
 }) {
-  const exam = await loadGoalExam(goalId, tx);
   const ownLevel = requestedLevel ?? exam.goalLevel;
 
   const [answersRead, build, bankItems] = await readDatabaseFacts(
     tx,
-    () => loadEvidence({ sittingId: exam.test?.record?.sitting?.id ?? null, skillIds, tx, userId }),
+    () =>
+      loadEvidence({
+        attemptId: exam.placement?.attempt?.id,
+        sittingId: exam.test?.record?.sitting?.id ?? null,
+        skillIds,
+        tx,
+        userId,
+      }),
     () =>
       loadPlanBuild({
-        askedAt: exam.placement?.attempt
-          ? new Date(exam.placement.attempt.partStartedAt)
-          : getTestStart(exam.test),
+        askedAt: getTestStart(exam.test),
         everySkill: exam.answeredOnly,
         focusAreas: exam.focusAreas,
         goalId,
         knownAreas: exam.knownAreas,
         ownLevel,
-        partPrepared: exam.placement?.attempt?.partPrepared,
-        requestedSkillIds:
-          exam.placement?.attempt?.partSkillIds ?? exam.placement?.attempt?.skillIds,
         tx,
       }),
     () => loadPlacementItems({ examBlueprintId: exam.examBlueprintId, skillIds, tx }),
@@ -127,11 +130,12 @@ async function loadPlacementFacts({
   return { ...answersRead, build, exam, items, ownLevel };
 }
 
-export type PlacementFacts = Awaited<ReturnType<typeof loadPlacementFacts>>;
+type PlacementFacts = Awaited<ReturnType<typeof loadPlacementFacts>>;
 
 /** Uses all answers, not only placement's; today applies the learner-local daily budget. */
 export async function loadPlacementWithSummary({
   goalId,
+  checkReadiness = false,
   ignoreAttempt = false,
   ownLevel: requestedLevel,
   plan: goalPlan,
@@ -140,26 +144,60 @@ export async function loadPlacementWithSummary({
   userId,
   tx = prisma,
 }: PlacementRead): Promise<PlacementLoad> {
-  const written = await loadWritingSkillIds(goalId, tx);
-  const plan = { ...goalPlan, skills: goalPlan.skills.filter((skill) => !written.has(skill.id)) };
-  const skillIds = plan.skills.map((skill) => skill.id);
-  const facts = await loadPlacementFacts({ goalId, requestedLevel, skillIds, tx, userId });
-  const attempt = facts.exam.placement?.attempt;
+  const exam = await loadGoalExam(goalId, tx);
+  const attempt = exam.placement?.attempt;
 
   if (attempt && !ignoreAttempt) {
-    return loadAttemptState({ attempt, facts, plan, today, tx });
+    const attempts = await loadCourseAnswers(attempt.id, userId, tx);
+
+    return loadAttemptState({
+      attempt,
+      attempts,
+      goalId,
+      plan: attempt.search ? undefined : (goalPlan ?? (await loadPlacementPlan(goalId, tx))),
+      trueFalseLabels: exam.trueFalseLabels,
+      tx,
+    });
   }
 
-  return loadLegacyPlacement({ facts, plan, timeZone, today, tx });
+  if (!ignoreAttempt && exam.goalKind === "learn") {
+    return readIdleCourse({
+      goalId,
+      placement: exam.placement,
+      trueFalseLabels: exam.trueFalseLabels,
+      tx,
+    });
+  }
+
+  const livePlan = goalPlan ?? (await loadPlacementPlan(goalId, tx));
+  const written = await loadWritingSkillIds(goalId, tx);
+  const plan = { ...livePlan, skills: livePlan.skills.filter((skill) => !written.has(skill.id)) };
+  const skillIds = plan.skills.map((skill) => skill.id);
+  const facts = await loadPlacementFacts({ exam, goalId, requestedLevel, skillIds, tx, userId });
+  const read = await loadLegacyPlacement({ checkReadiness, facts, plan, timeZone, today, tx });
+  read.state.result = await readPlacementResult({ goalId, placement: facts.exam.placement, tx });
+  return read;
+}
+
+async function checkFirstFocusQuestion({
+  itemId,
+  tx,
+}: {
+  itemId: string | undefined;
+  tx: TransactionClient;
+}): Promise<boolean> {
+  return (await loadQuestion(itemId, tx)) !== null;
 }
 
 async function loadLegacyPlacement({
+  checkReadiness,
   facts,
   plan,
   timeZone,
   today,
   tx,
 }: {
+  checkReadiness: boolean;
   facts: PlacementFacts;
   plan: GoalPlan;
   timeZone?: string;
@@ -187,7 +225,7 @@ async function loadLegacyPlacement({
     ? startTestTurn({ setup: exam.test, sittingOutcomes, skills, testSkills })
     : null;
 
-  const budget = getAskingBudget({ attempts, today, turn });
+  const budget = getAskingBudget(turn);
 
   const { questionStatuses, statuses } = readStatuses({
     answeredOnly,
@@ -217,6 +255,7 @@ async function loadLegacyPlacement({
       skills: turn?.skills ?? skills,
       statuses: questionStatuses,
     },
+    firstSitting: turn?.progress.sitting?.kind === "first",
     items,
     preparingSkillIds: build.preparingSkillIds,
     quickFormat,
@@ -224,6 +263,10 @@ async function loadLegacyPlacement({
   });
 
   const next = budget.open ? await loadQuestion(found.item?.id, tx) : null;
+
+  const firstQuestionReady =
+    checkReadiness && (await checkFirstFocusQuestion({ itemId: found.item?.id, tx }));
+
   const answered = countPlacementAnswers({ attempts, since: exam.goalCreatedAt });
 
   const focusTest = await loadFocusTest({
@@ -243,7 +286,7 @@ async function loadLegacyPlacement({
   });
 
   return {
-    attemptHasMore: false,
+    firstQuestionReady,
     focusTest,
     state: {
       answered,
@@ -259,7 +302,7 @@ async function loadLegacyPlacement({
         .map((skill) => skill.id),
       next,
       phases: getPhaseStarts({ skills, statuses }),
-      result: exam.placement?.result ?? null,
+      result: null,
       started: turn ? (turn.progress.sitting?.answered ?? 0) > 0 : answered > 0,
       status: getStatus({
         buildFailed: build.failed,

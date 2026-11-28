@@ -3,8 +3,10 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadPlacementPlan } from "../_utils/goal-skill-graph";
 import { findOwnedGoal, getAnswerTimeZone } from "../_utils/owned-goal";
 import { completePlacement } from "./_utils/complete-placement";
+import { finishPlacementAttempt } from "./_utils/finish-placement-attempt";
 import { type PlacementState, loadPlacementWithSummary } from "./_utils/load-placement-state";
 import { openPlacementAttempt } from "./_utils/placement-attempt";
+import { readPlacementAttempt } from "./_utils/placement-attempt-record";
 import { openTestSitting, saveTestSummary } from "./_utils/test-sitting";
 import { type PlacementSittingInput } from "./focus-test-contract";
 
@@ -18,7 +20,7 @@ export type PlacementSittingResult =
  * Opens an exam goal's next sitting, the first or a further one, and marks its Focus test started.
  * Asking again while a sitting is open returns that sitting; one with nothing left to ask is
  * finished first. With nothing to ask at all, the state comes back with no sitting.
- * `unavailable`: the goal isn't an exam.
+ * `unavailable`: the goal does not use course placement or Focus.
  */
 export async function startPlacementSitting({
   goalId,
@@ -35,9 +37,7 @@ export async function startPlacementSitting({
 
   const { goal, userId } = owned;
 
-  const length = input.length;
-
-  if (goal.kind !== "exam" && length === undefined) {
+  if (goal.kind !== "learn" && goal.kind !== "exam") {
     return { status: "unavailable" };
   }
 
@@ -45,18 +45,17 @@ export async function startPlacementSitting({
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  if (goal.kind !== "exam" && length !== undefined) {
-    const opened = await openPlacementAttempt({ goalId, length, userId });
+  if (goal.kind === "learn") {
+    const previous = readPlacementAttempt(goal).attempt;
 
-    if (!opened) {
-      return { status: "unavailable" };
+    if (previous && !previous.search) {
+      await finishPlacementAttempt({ attemptId: previous.id, goal, part: previous.part, timeZone });
+    } else {
+      await openPlacementAttempt({ goalId, userId });
     }
-
-    const plan = await loadPlacementPlan(goalId);
 
     const { state: placement } = await loadPlacementWithSummary({
       goalId,
-      plan,
       timeZone,
       today,
       userId,

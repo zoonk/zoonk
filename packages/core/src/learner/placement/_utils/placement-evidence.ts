@@ -124,54 +124,71 @@ export async function loadSeenPlacementItems({
   return new Set(answered.map((attempt) => attempt.itemId));
 }
 
+export function loadCourseAnswers(attemptId: string, userId: string, tx: TransactionClient) {
+  return tx.attempt.findMany({
+    orderBy: [{ answeredAt: "asc" }, { id: "asc" }],
+    select: ATTEMPT_EVIDENCE_SELECT,
+    where: { ...SITTING_ANSWER_FILTER, focusTestId: attemptId, userId },
+  });
+}
+
 /** Returns evidence oldest first. */
 export async function loadEvidence({
+  attemptId,
   skillIds,
   sittingId = null,
   tx = prisma,
   userId,
 }: {
+  attemptId?: string;
   skillIds: string[];
   sittingId?: string | null;
   tx?: TransactionClient;
   userId: string;
 }) {
-  const [attempts, testSkills, sittingAnswers, testAnswers] = await readDatabaseFacts(
-    tx,
-    () =>
-      tx.attempt.findMany({
-        orderBy: { answeredAt: "desc" },
-        select: ATTEMPT_EVIDENCE_SELECT,
-        take: MAX_EVIDENCE,
-        where: { skillId: { in: skillIds }, userId },
-      }),
-    () => loadTestSkills({ sittingId, skillIds, tx, userId }),
-    () =>
-      sittingId
-        ? tx.attempt.findMany({
-            orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
-            select: { answer: true, isCorrect: true },
-            take: UNKNOWN_STREAK,
-            where: {
-              focusTestId: sittingId,
-              ...SITTING_ANSWER_FILTER,
-              skillId: { in: skillIds },
-              userId,
-            },
-          })
-        : [],
-    () =>
-      tx.attempt.findMany({
-        select: ATTEMPT_EVIDENCE_SELECT,
-        where: { ...COVERAGE_ANSWER_FILTER, skillId: { in: skillIds }, userId },
-      }),
-  );
-
-  const recentIds = new Set(attempts.map((attempt) => attempt.id));
+  const [attempts, testSkills, sittingAnswers, testAnswers, courseAnswers] =
+    await readDatabaseFacts(
+      tx,
+      () =>
+        tx.attempt.findMany({
+          orderBy: { answeredAt: "desc" },
+          select: ATTEMPT_EVIDENCE_SELECT,
+          take: MAX_EVIDENCE,
+          where: { skillId: { in: skillIds }, userId },
+        }),
+      () => loadTestSkills({ sittingId, skillIds, tx, userId }),
+      () =>
+        sittingId
+          ? tx.attempt.findMany({
+              orderBy: [{ answeredAt: "desc" }, { id: "desc" }],
+              select: { answer: true, isCorrect: true },
+              take: UNKNOWN_STREAK,
+              where: {
+                focusTestId: sittingId,
+                ...SITTING_ANSWER_FILTER,
+                skillId: { in: skillIds },
+                userId,
+              },
+            })
+          : [],
+      () =>
+        tx.attempt.findMany({
+          select: ATTEMPT_EVIDENCE_SELECT,
+          where: { ...COVERAGE_ANSWER_FILTER, skillId: { in: skillIds }, userId },
+        }),
+      () =>
+        attemptId
+          ? tx.attempt.findMany({
+              select: ATTEMPT_EVIDENCE_SELECT,
+              where: { ...SITTING_ANSWER_FILTER, focusTestId: attemptId, userId },
+            })
+          : [],
+    );
 
   const chronological = [
-    ...attempts,
-    ...testAnswers.filter((attempt) => !recentIds.has(attempt.id)),
+    ...new Map(
+      [...attempts, ...testAnswers, ...courseAnswers].map((row) => [row.id, row]),
+    ).values(),
   ].toSorted((a, b) => a.answeredAt.getTime() - b.answeredAt.getTime() || a.id.localeCompare(b.id));
 
   const evidence: PlacementEvidence[] = [];
@@ -191,6 +208,7 @@ export async function loadEvidence({
         !attempt.fromLesson &&
         attempt.mockExamId === null &&
         !("practiceMistakeId" in answerData) &&
+        answerData.courseSearch !== true &&
         answerData.placementPending !== true
       ) {
         confirmationAnswers.push(answer);

@@ -2,15 +2,16 @@
 
 import {
   type LanguageLevelTestView,
-  type LevelTestLength,
+  type LevelTestAnswerInput,
   type LevelTestResult,
 } from "@zoonk/core/language/level-test/contract";
-import { type LanguageLevelTestOutResult } from "@zoonk/core/language/level-test/test-out";
-import { useState, useTransition } from "react";
+import { type Dispatch, type SetStateAction, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
-import { type PlacementAnswer, type PlacementQuestion } from "../../onboarding/onboarding-actions";
-import { useReadOnOpen } from "../../onboarding/steps/use-read-on-open";
-import { type PlacementPressed } from "../../placement-test/use-placement-test";
+import { type PlacementAnswer } from "../../onboarding/onboarding-actions";
+import { useQuestionPoll } from "../../onboarding/steps/use-placement-question-poll";
+import { type TestPressed } from "../../placement-test/test-offer";
+import { type TestAnalytics } from "../../placement-test/use-test-analytics";
+import { useTestVisit } from "../../placement-test/use-test-visit";
 import {
   type BankWait,
   INITIAL_BANK_WAIT,
@@ -19,20 +20,19 @@ import {
   toBankRun,
   updateBankWait,
 } from "./level-test-bank";
-import { type LevelTestQuestionActions } from "./level-test-step";
+import {
+  type LevelTestPhase,
+  type TestOutView,
+  toOpenedLevelTestPhase,
+  toTestOutPhase,
+} from "./level-test-phase";
 
 const POLL_MS = 3000;
 
-type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
-
-export type TestOutView = Extract<LanguageLevelTestOutResult, { status: "ready" }>["test"];
-
-type TestOutQuestion = NonNullable<TestOutView["next"]>;
-type TestOutTapQuestion = TestOutQuestion & { format: PlacementQuestion["format"] };
-
 type TestOutAnswer = PlacementAnswer;
 
-export type LanguagePlanTestActions = LevelTestQuestionActions & {
+export type LanguagePlanTestActions = {
+  answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   /** Null when it wasn't saved. */
   finish: (
     attemptId: string,
@@ -41,7 +41,8 @@ export type LanguagePlanTestActions = LevelTestQuestionActions & {
   get: () => Promise<LanguageLevelTestView | null>;
   /** Only from the learner's tap, never when the screen opens; false when it couldn't start. */
   prepare: () => Promise<boolean>;
-  start: (length: LevelTestLength) => Promise<LanguageLevelTestView | null>;
+  /** Opens a test, or answers with the one already open. */
+  start: () => Promise<LanguageLevelTestView | null>;
   testOut: {
     answer: (input: {
       answer: TestOutAnswer;
@@ -55,136 +56,133 @@ export type LanguagePlanTestActions = LevelTestQuestionActions & {
     start: (level: string) => Promise<TestOutView | null>;
   };
   undo: (changeId: string) => Promise<boolean>;
-  /** Opens the whole-course test's walk through the course's topics; false when it didn't. */
-  walkTopics: () => Promise<boolean>;
 };
 
-type Phase =
-  | { kind: "loadFailed" | "loading" }
-  | { kind: "choose"; showAlphabetNote: boolean }
-  | { attemptId: string; kind: "waiting" }
-  | { attemptId: string; kind: "finish"; length: LevelTestLength }
-  | { attemptId: string; kind: "test"; test: ReadyTest }
+/** Where the flow runs. In onboarding a test the learner asked for (`direct`) starts as it opens. */
+export type LevelTestHost =
   | {
-      kind: "result";
-      length: LevelTestLength;
-      nextTestOutLevel: string | null;
-      result: LevelTestResult | null;
+      /** The learner told us their level, so the first lesson starts there. */
+      firstLessonTitle: string | null;
+      mode: "direct" | "offer" | "resume";
+      surface: "onboarding";
     }
-  | { failures: number; kind: "testOut"; question: TestOutTapQuestion; view: TestOutView }
-  | { attemptId: string; kind: "testOutFinish" }
-  | { kind: "testOutResult"; view: TestOutView }
-  /** A test-out whose questions are still being written. */
-  | { attemptId: string; kind: "testOutWaiting" };
+  | { surface: "plan" };
 
-/** A page load goes on with an open test; otherwise the learner chooses one. */
-function toOpenedPhase(view: LanguageLevelTestView | null, onboarding: boolean): Phase {
-  if (!view) {
-    return { kind: "loadFailed" };
-  }
+type Saves = Pick<ReturnType<typeof useTestVisit>, "run" | "save" | "setFailed">;
 
-  const ownResult =
-    view.attemptId && view.result?.attemptId === view.attemptId ? view.result : null;
+type TestPhase = Extract<LevelTestPhase, { kind: "test" }>;
 
-  if (onboarding && ownResult) {
-    return {
-      kind: "result",
-      length: view.length ?? "wholeCourse",
-      nextTestOutLevel: null,
-      result: ownResult,
-    };
-  }
-
-  if (!view.attemptId || view.length === undefined || ownResult) {
-    return { kind: "choose", showAlphabetNote: view.showAlphabetNote };
-  }
-
-  if (view.status === "preparing") {
-    return { attemptId: view.attemptId, kind: "waiting" };
-  }
-
-  if (view.next.kind === "done") {
-    return { attemptId: view.attemptId, kind: "finish", length: view.length };
-  }
-
-  return { attemptId: view.attemptId, kind: "test", test: view };
+/** A save that failed counts on the question on screen, where its retry is. */
+function countQuestionFailure(phase: LevelTestPhase): LevelTestPhase {
+  return phase.kind === "test" || phase.kind === "testOut"
+    ? { ...phase, failures: phase.failures + 1 }
+    : phase;
 }
 
-const TAP_FORMATS: readonly PlacementQuestion["format"][] = [
-  "matchPairs",
-  "multipleChoice",
-  "order",
-  "trueFalse",
-];
+/** A level's test-out, taken from the same screens: its questions can still be being written. */
+function useLevelTestOut({
+  actions,
+  phase,
+  saves: { run, save, setFailed },
+  setPhase,
+}: {
+  actions: LanguagePlanTestActions["testOut"];
+  phase: LevelTestPhase;
+  saves: Saves;
+  setPhase: Dispatch<SetStateAction<LevelTestPhase>>;
+}) {
+  const waiting = phase.kind === "testOutWaiting" ? phase : null;
 
-/** A test-out asks taps only; anything else would be a question its screen can't take. */
-function isTapQuestion(question: TestOutQuestion): question is TestOutTapQuestion {
-  return TAP_FORMATS.some((tap) => tap === question.format);
-}
+  // Questions that arrived while the learner waited show once the wait moves on.
+  const poll = useQuestionPoll({
+    onReply: (wait, view: TestOutView) => (view.preparing ? wait : { ...wait, arrived: view }),
+    read: (wait) => actions.get(wait.attemptId),
+    setPhase,
+    waiting,
+  });
 
-function toTestOutPhase(view: TestOutView): Phase {
-  if (view.preparing) {
-    return { attemptId: view.attemptId, kind: "testOutWaiting" };
-  }
+  const show = (view: TestOutView | null) => {
+    if (!view) {
+      setPhase(countQuestionFailure);
+      return false;
+    }
 
-  const question = view.next;
+    setPhase(toTestOutPhase(view));
+    return true;
+  };
 
-  if (!question && !view.result && view.total > 0) {
-    return { attemptId: view.attemptId, kind: "testOutFinish" };
-  }
+  const finish = (attemptId: string) =>
+    actions
+      .finish(attemptId)
+      .then(show)
+      .catch(() => show(null));
 
-  return question && isTapQuestion(question)
-    ? { failures: 0, kind: "testOut", question, view }
-    : { kind: "testOutResult", view };
-}
+  return {
+    arrivedTestOut: Boolean(waiting?.arrived),
+    continueTestOut: () => {
+      if (waiting?.arrived) {
+        setPhase(toTestOutPhase(waiting.arrived));
+      }
+    },
+    onTestOut: (level: string, button: Exclude<TestPressed, null>) =>
+      save(button, () => actions.start(level).then(show)),
+    onTestOutAnswer:
+      (from: Extract<LevelTestPhase, { kind: "testOut" }>) =>
+      (answer: TestOutAnswer, durationMs: number) =>
+        run(async () => {
+          const view = await actions
+            .answer({
+              answer,
+              attemptId: from.view.attemptId,
+              durationMs,
+              itemId: from.question.itemId,
+            })
+            .catch(() => null);
 
-function saveTestOutAnswer(
-  actions: LanguagePlanTestActions["testOut"],
-  from: Extract<Phase, { kind: "testOut" }>,
-  answer: TestOutAnswer,
-  durationMs: number,
-) {
-  return actions
-    .answer({ answer, attemptId: from.view.attemptId, durationMs, itemId: from.question.itemId })
-    .catch(() => null);
-}
+          if (!view) {
+            setPhase(countQuestionFailure);
+            return;
+          }
 
-function countQuestionFailure(phase: Phase): Phase {
-  return phase.kind === "testOut" ? { ...phase, failures: phase.failures + 1 } : phase;
+          const next = toTestOutPhase(view);
+          setPhase(next);
+
+          if (next.kind === "testOutFinish") {
+            setFailed(!(await finish(next.attemptId)));
+          }
+        }),
+    onTestOutStop: (attemptId: string) => save("other", () => finish(attemptId)),
+    testOutPoll: poll,
+  };
 }
 
 export function useLanguagePlanTest({
   actions,
-  onDone,
-  onboarding,
+  analytics,
+  host,
+  onLeave,
 }: {
   actions: LanguagePlanTestActions;
-  onDone: () => Promise<boolean>;
-  onboarding: boolean;
+  analytics: Pick<TestAnalytics, "markOpened" | "markStarted">;
+  host: LevelTestHost;
+  /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
+  onLeave: () => Promise<boolean>;
 }) {
-  const [phase, setPhase] = useState<Phase>({ kind: "loading" });
-  const [failed, setFailed] = useState(false);
-  const [pressed, setPressed] = useState<PlacementPressed>(null);
-  const [isPending, startTransition] = useTransition();
+  const { surface } = host;
+  const asked = host.surface === "onboarding" && host.mode === "direct";
+  const [phase, setPhase] = useState<LevelTestPhase>({ kind: "loading" });
   const [bank, setBank] = useState<BankWait>(INITIAL_BANK_WAIT);
-  // Test-out questions that arrived while the learner waited show once the wait moves on.
-  const [arrived, setArrived] = useState<TestOutView | null>(null);
 
-  const reopen = useReadOnOpen({
-    onRead: (view) => setPhase(toOpenedPhase(view, onboarding)),
-    read: actions.get,
-  });
-
-  const finish = async (attemptId: string, length: LevelTestLength) => {
+  const finish = async (attemptId: string) => {
     const finished = await actions.finish(attemptId).catch(() => null);
 
     if (!finished) {
-      setPhase({ attemptId, kind: "finish", length });
+      setPhase({ attemptId, kind: "finish" });
       setFailed(true);
       return false;
     }
 
-    setPhase({ kind: "result", length, ...finished });
+    setPhase({ kind: "result", ...finished });
     return true;
   };
 
@@ -196,77 +194,69 @@ export function useLanguagePlanTest({
       return true;
     }
 
-    if (view.next.kind === "done") {
-      return finish(attemptId, view.length ?? "quick");
+    if (view.next.kind !== "question" && view.next.kind !== "confirmation") {
+      return finish(attemptId);
     }
 
-    setPhase({ attemptId, kind: "test", test: view });
+    setPhase({ attemptId, failures: 0, kind: "test", test: view });
     return true;
   };
+
+  const start = async () => {
+    analytics.markStarted();
+    const view = await actions.start().catch(() => null);
+    return view?.attemptId ? show(view, view.attemptId) : false;
+  };
+
+  const open = async (view: LanguageLevelTestView | null) => {
+    const next = toOpenedLevelTestPhase({ surface, view });
+
+    if (next.kind === "offer" && asked) {
+      if (!(await start())) {
+        setPhase({ kind: "loadFailed" });
+      }
+
+      return;
+    }
+
+    if (view?.attemptId && (next.kind === "waiting" || next.kind === "finish")) {
+      await show(view, view.attemptId);
+      return;
+    }
+
+    setPhase(next);
+  };
+
+  const visit = useTestVisit({
+    onRead: (view) => open(view),
+    read: () => {
+      analytics.markOpened();
+      return actions.get();
+    },
+  });
+
+  const { failed, isPending, pressed, reopen, run, save, setFailed } = visit;
+  const testOut = useLevelTestOut({ actions: actions.testOut, phase, saves: visit, setPhase });
 
   const poll = usePoll({
     active: phase.kind === "waiting" && !isBankStopped(bank),
     intervalMs: POLL_MS,
-    onPoll: async () => {
+    onPoll: async (signal) => {
       const view = await actions.get();
 
       if (!view) {
         throw new Error("The level test couldn't be read");
       }
 
-      if (view.attemptId) {
+      if (view.attemptId && !signal.aborted) {
         await show(view, view.attemptId);
       }
     },
   });
 
-  const testOutPoll = usePoll({
-    active: phase.kind === "testOutWaiting" && arrived === null,
-    intervalMs: POLL_MS,
-    onPoll: async () => {
-      const view =
-        phase.kind === "testOutWaiting" ? await actions.testOut.get(phase.attemptId) : null;
-
-      if (!view) {
-        throw new Error("The test couldn't be read");
-      }
-
-      if (!view.preparing) {
-        setArrived(view);
-      }
-    },
-  });
-
-  const save = (button: PlacementPressed, action: () => Promise<boolean>) => {
-    setPressed(button);
-    setFailed(false);
-
-    startTransition(async () => {
-      const saved = await action().catch(() => false);
-      setFailed(!saved);
-      setPressed(null);
-    });
-  };
-
-  const showTestOut = (view: TestOutView | null) => {
-    if (!view) {
-      setPhase(countQuestionFailure);
-      return false;
-    }
-
-    setPhase(toTestOutPhase(view));
-    return true;
-  };
-
-  const finishTestOut = (attemptId: string) =>
-    actions.testOut
-      .finish(attemptId)
-      .then(showTestOut)
-      .catch(() => showTestOut(null));
-
   /** Writing the questions again, only from the learner's "Try again". */
   const retry = () =>
-    startTransition(async () => {
+    run(async () => {
       const started = await actions.prepare().catch(() => false);
 
       setBank((current) =>
@@ -275,54 +265,36 @@ export function useLanguagePlanTest({
     });
 
   return {
-    arrivedTestOut: arrived !== null,
+    ...testOut,
     bankRun: toBankRun({ poll: poll.status, recheck: poll.restart, retry, wait: bank }),
-    continueTestOut: () => {
-      if (arrived) {
-        setArrived(null);
-        setPhase(toTestOutPhase(arrived));
-      }
-    },
     failed,
     isPending,
-    onDone: () => save("main", () => onDone().catch(() => false)),
-    onLeave: () => save("other", () => onDone().catch(() => false)),
-    onSkip: (skip: () => Promise<boolean>) => save("other", skip),
-    onStart: (length: LevelTestLength) =>
-      save("main", async () => {
-        const view = await actions.start(length);
-        return view?.attemptId ? show(view, view.attemptId) : false;
+    /** Answers and Stop share one pending save, so the question waits while either saves. */
+    onAnswer: (from: TestPhase) => (input: Omit<LevelTestAnswerInput, "attemptId">) =>
+      run(async () => {
+        const view = await actions
+          .answer({ ...input, attemptId: from.attemptId })
+          .catch(() => null);
+
+        if (!view) {
+          setPhase(countQuestionFailure);
+          return;
+        }
+
+        await show(view, from.attemptId);
       }),
-    onStop: (attemptId: string, length: LevelTestLength) =>
-      save("other", () => finish(attemptId, length)),
-    onTestOut: (level: string) =>
-      save("other", () => actions.testOut.start(level).then(showTestOut)),
-    onTestOutAnswer:
-      (from: Extract<Phase, { kind: "testOut" }>) => (answer: TestOutAnswer, durationMs: number) =>
-        startTransition(async () => {
-          const view = await saveTestOutAnswer(actions.testOut, from, answer, durationMs);
-
-          if (!view) {
-            setPhase(countQuestionFailure);
-            return;
-          }
-
-          const next = toTestOutPhase(view);
-          setPhase(next);
-
-          if (next.kind === "testOutFinish") {
-            setFailed(!(await finishTestOut(next.attemptId)));
-          }
-        }),
-    onTestOutStop: (attemptId: string) => save("other", () => finishTestOut(attemptId)),
-    onView: (attemptId: string) => (view: LanguageLevelTestView) => {
-      void show(view, attemptId);
-    },
-    onWalkTopics: () => save("main", actions.walkTopics),
+    onLeave: (button: Exclude<TestPressed, null>) =>
+      save(button, () => onLeave().catch(() => false)),
+    onOpenLesson: (lessonId: string, openLesson?: (lessonId: string) => Promise<boolean>) =>
+      save("main", () => (openLesson ? openLesson(lessonId) : onLeave()).catch(() => false)),
+    onStart: () => save("main", start),
+    onStop: (attemptId: string) => save("other", () => finish(attemptId)),
+    onView: (attemptId: string) => (view: LanguageLevelTestView) =>
+      run(async () => {
+        await show(view, attemptId);
+      }),
     phase,
-    poll,
     pressed,
     reopen,
-    testOutPoll,
   };
 }

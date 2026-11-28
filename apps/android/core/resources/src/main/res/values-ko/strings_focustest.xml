@@ -3,37 +3,34 @@
 {
   "focustest_also_skips": "4a5c6786eec67affa0fbfcd48182e9ea03c9a4ea9bee7526c7f5097c52f08062",
   "focustest_answer_more": "5245e0382c102ffb2fc96b6b62ea8cd042f5029aca8a96223ea15141a54ee299",
-  "focustest_answers_saved_line": "e7ed769938b7cce37b3d2187580d04e7d43ab32b7f9d2e8c1e420c83784a5bfe",
   "focustest_answers_saved_title": "5f5dd4fc0e4791103bbbdec5fcf641154a3383bd08fada87e0916389ed23c347",
   "focustest_change_focus": "18ed0e3a7515be49ec375a13c08ea1bbaae90d0d202f95301c2fb315c12711b4",
   "focustest_continue": "f1c510b61ce95099d80789ca27e9d141ac99ac5ed1cd20deda1bf09154c47bdb",
   "focustest_done": "8a26606a547003eccd44f955ee77e5e86571376e16f059a7a476b518b7281c41",
-  "focustest_find_focus": "1b8decab7b6ddbad53f8bf37b939b51fac53ffc96d3ba1fdf0a8b5f407f4be45",
+  "focustest_find_focus": "dd2d9de8ef447253d1dd4139d1772aa1a1757491b46e89fff74784a9363523fd",
   "focustest_find_start": "f225b659917ca7eb038bcf2a1a12eb6f6cb4ce487dda886a989a0288016e93cd",
   "focustest_from_basics": "e5a6ad627f6e72e8bb71bfff658ab810a567e4cd16f8f3b9d83be1e4595ecb42",
   "focustest_in_progress": "a4ef6f1343e20c5f636f41a5351b6b11790c69b72b206200e43624f3bf877343",
   "focustest_lessons_skipped": "560ca5ba34c162eb1c657c8fcf9aa9fb45d1af2344f9357fec930613aa8c9565",
   "focustest_listening_not_checked": "87a49dc8d7fbbe05491d0c92032fd995d00099fbe6c669a0d63d5a120abf1b80",
-  "focustest_many_unknown": "2e5d52524c746d4dde359fe3da8478851cd1d78498c0edb519d1e87831e8c26a",
+  "focustest_many_unknown": "277cfbfca33ab35ebd7e0926316b1217cd4db2ae889753c6f8f684ae9e53ade4",
   "focustest_not_known_yet": "1b6525239d4953d7b11bf8852c8bf920781a86b92ae847e84f8aadfe53d344eb",
   "focustest_not_now": "3afdfb59d213354fea1c2d983369693f807ce0cf6346fb05e7fef04bd7dd6528",
   "focustest_not_today": "89561209651687d9195eb5feeae19f7ce0c3b6d23024e491d2cbdd1784eb950c",
   "focustest_not_today_failed": "2e7c713188e0a0b18237857d07ba0aeb74008a09e0b107f082838ecbe81273d5",
   "focustest_offer_line": "ca491ceb27c46c5a9baab9c8dfbe023a89bb6e6bc6c11b7224c167db59830afe",
-  "focustest_offer_line_focus": "4dd354cf7dc9a30a84c96d5ed28c39454dd0dcdc65f799449677405a01bca83b",
+  "focustest_offer_sentence": "27fcd0620bfa31662f758a1a047753d4571d3f97f44e77e593c2dd6600293ca6",
   "focustest_practical_not_checked": "58ec21c9f0a1025d6b94554ebcdc563cec00f3612ba30ad88455838bd5e1af82",
   "focustest_proposal_applied": "3b1bccff0c77b154ba74062b003e9006d4f4214d2b934175d455a600b18bcfc4",
   "focustest_proposal_declined": "b5f1cfe0a99b24d145626388727d4f198be53de5e5b9d0adffd5ef21922e81e5",
   "focustest_proposal_picked": "ceedee5a3cf4abbf9bc5f42461064307036fe54eb9b878bcc04dc45eb2db1a80",
   "focustest_proposal_title": "108728104ebb644a314e283c49ea09e7c9ad50e202e264824baade4875426d36",
   "focustest_proposal_undone": "e5c8103393cf54a9420b398dd3949e4bd5c2befe8ff7530028c33914ec529811",
-  "focustest_question_number": "96636433dd29419fb0e1d9acfad4c4b8cbe808066327072231b34db193382401",
   "focustest_result_current": "0e93091c7ecf0b18d31358f8fd00b3073758090917064d0878d10f2a9b59e253",
   "focustest_result_declined": "35d803048059f509a2536fa377de44351334533a4cb6a22d4b8d7a11b98382ca",
   "focustest_result_description": "872155bee41a8ded27b81df863933a300bb52e220d150a3dfc4a591bb40dae92",
   "focustest_result_hand_picked": "4848c97b59685d430f248c06691d2f582fd19c4a19519782ec24df45eea70287",
   "focustest_result_title": "bdb26143ad9cae8eadad35955aba91504ac9642c32baf9b8039f3c801866b5ae",
-  "focustest_resume_title": "b282379bc0cc2dcaa76de733e1941880b7627cbd41afdc3674fca213a5584690",
   "focustest_see_all_subjects": "82b7554562ac0f683cc5afe1b292dc62671c19c4e598d8c5acfca4027f01bea7",
   "focustest_see_my_result": "250c9531634f14d4891d0fa7496ee60ef068dc54d00b3d24d38279882fb037e1",
   "focustest_see_your_result": "5dfb1926eea291f109f29d125d1f0ade32521c3ae3c74b6332e4f9a99119c71b",
@@ -43,14 +40,12 @@
   "focustest_speaking_not_checked": "fef00e3e9c47ecc8c8f82aa9bfb6b8d266d389e6f34b6934b67b679dccc84bdd",
   "focustest_start": "0308074ec88cd75391ee099fe3ebffb26aab0a219c9e6aeaef32d6b8e439dc7e",
   "focustest_starting_point_title": "e4c3b569a66d398550089102cd29ba04cab6851efe7a43ed5b77e94ba6d5ff33",
-  "focustest_stop": "6d6f087ae7a44e3df57e22cbd81e797a43399f486bb273aa17e5ca9f61511f86",
-  "focustest_subject_right": "4bf88e4eb4cddb00b92491876576ad456ef3aca2c4ea7416e4f933b789bc85a2",
+  "focustest_subject_right": "b3e6c3db597bf4645d0aa3c3ca593248bb713fdaf244c2c3bc9675065c4030c9",
   "focustest_subjects": "070e03166d4f13df9930e82793b5616a350832412240de0b2d5f0332a008c9f2",
   "focustest_suggestion_body": "2b67c4358554aba1c0fa66d4424d2c146d8c0fc787dba8b0b6e0ec84ff9f53e4",
   "focustest_suggestion_dismissed": "63beaeab7e497fefd7e68e3399dfcf6d565d0ff09ad0704594cad515bb60c1a4",
   "focustest_suggestion_line": "262380fcfe4ff72c6df2e980f96c122a294b7fe71b5455e3588a07ab282ec332",
   "focustest_take_test": "c43ec0cd1bdfe9c74b5b3e7e6c1c0dd205296d4b1c700bccedd2ae9d5a793ea3",
-  "focustest_time_left": "f01de3128da06aea0967d7c37259ed7b3c58e3422741488348977dfd736560e8",
   "focustest_title": "d03784d9d4895f1ec12f7d101d08737ee23e551473ae55c6c2f6bc937d3ff68a",
   "focustest_undo": "0e2d31e1fd086c2ac5cd4aea25078ad68ea166d983643635c714043158cc192b",
   "focustest_update_plan": "cb2ef9e0885cecbf6f0f74eae0df59e1cfbc94f1c61e4d10d2dd4615925c2c41",
@@ -58,30 +53,18 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">집중 진단</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">%1$s 남음</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
-    <string name="focustest_find_focus">집중해서 공부할 과목 찾기</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
+    <string name="focustest_find_focus">집중해서 공부할 내용 찾기</string>
     <string name="focustest_find_start">이미 아는 내용이 있나요?</string>
-    <string name="focustest_offer_line_focus">이 진단으로 이미 아는 내용을 확인하고, 가장 필요한 내용에 시간을 더 쓸 수 있어요. 과목은 제외하지 않아요.</string>
+    <string name="focustest_offer_sentence">테스트를 보면 이미 아는 내용을 확인할 수 있어, 꼭 필요한 내용에 더 많은 시간을 쓸 수 있어요.</string>
     <string name="focustest_offer_line">이 진단으로 이미 아는 내용을 확인해서 계획에서 건너뛸 수 있어요.</string>
     <string name="focustest_start">테스트 시작하기</string>
     <string name="focustest_skip_note">나중에 계획에서 테스트를 볼 수 있어요.</string>
     <string name="focustest_not_now">나중에</string>
-    <string name="focustest_resume_title">테스트 이어서 풀기</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="other">답변 %d개가 저장되어 있어요.</item>
-    </plurals>
     <string name="focustest_continue">계속하기</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">내 결과 보기</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">%1$d번 문제 / 총 %2$d문제</string>
-    <string name="focustest_stop">그만 풀고 내 답변 반영하기</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
-    <string name="focustest_many_unknown">아직 공부하지 않은 내용이 대부분인가요? 괜찮아요. 여기서 멈추고 학습을 시작해도 돼요.</string>
+    <string name="focustest_many_unknown">아직 배우지 않은 내용이 대부분인가요? 괜찮아요. 여기서 멈추고 학습을 시작해도 돼요.</string>
     <string name="focustest_answers_saved_title">답변이 저장됐어요</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
     <string name="focustest_result_title">이 과목에 집중해 보세요</string>
@@ -100,14 +83,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">계획은 그대로 두었어요. 아래는 진단에서 추천하는 과목이에요.</string>
     <string name="focustest_change_focus">집중 과목 바꾸기</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">전체 과목 보기</string>
     <string name="focustest_subjects">과목</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">공부하면서 문제를 몇 개 더 풀기</string>
     <string name="focustest_session_questions_when">첫 주 동안만</string>
     <string name="focustest_done">완료</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">문제 더 풀기</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">이 과목들에 시간을 더 쓸까요?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">내 답변과 시험에서 각 과목이 얼마나 다뤄지는지를 바탕으로 선정했어요.</string>
@@ -120,24 +105,22 @@
     <string name="focustest_not_known_yet">아직 모름</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
-        <item quantity="other">정답 %1$d개 / 총 %2$d문제</item>
+        <item quantity="other">%1$d개 정답(총 %2$d개)</item>
     </plurals>
     <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
     <string name="focustest_written_not_checked">서술형: 이 진단에 포함되지 않음</string>
     <string name="focustest_listening_not_checked">듣기: 이 진단에 포함되지 않음</string>
     <string name="focustest_speaking_not_checked">말하기: 이 진단에 포함되지 않음</string>
     <string name="focustest_practical_not_checked">실기: 이 진단에 포함되지 않음</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">진행 중</string>
     <string name="focustest_see_your_result">결과 보기</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">집중 진단 받기</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">집중 진단으로 공부가 가장 필요한 과목을 알 수 있어요.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">%1$s 동안 집중 진단을 하면 이미 아는 내용을 확인할 수 있어, 가장 필요한 부분에 더 많은 시간을 쓸 수 있어요. 과목이 빠지는 일은 없어요.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">알겠어요. 계획에서 테스트를 볼 수 있어요.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">오늘은 건너뛰기</string>
     <string name="focustest_not_today_failed">저장하지 못했어요. 다시 시도해 보세요.</string>
 </resources>

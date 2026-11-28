@@ -32,6 +32,16 @@ final class SpeechPlayer {
     current?.owner == owner ? current?.state ?? .idle : .idle
   }
 
+  /// How far the owner's sound has played and how long it is, while it plays, in the clip's own
+  /// time. Not observed: a screen that shows it reads it on a timeline.
+  func playback(for owner: AnyHashable) -> (elapsed: TimeInterval, length: TimeInterval)? {
+    guard current?.owner == owner, current?.state == .playing, let player else {
+      return nil
+    }
+
+    return (player.currentTime, player.duration)
+  }
+
   @ObservationIgnored private let api: VoiceAPI
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private let files: VoiceFileCache
@@ -50,14 +60,16 @@ final class SpeechPlayer {
 
   /// A recording that won't play is read aloud instead when `fallback` text is given. An autoplayed
   /// sound, which the learner didn't ask for, is muted by Silent mode and plays over their music; a
-  /// sound they asked for plays through Silent mode and pauses their music.
+  /// sound they asked for plays through Silent mode and pauses their music. Returns the clip's
+  /// length once it played to its end; nil when it stopped or failed first.
+  @discardableResult
   func play(
     _ sound: SpokenSound,
     rate: Float = 1,
     owner: AnyHashable,
     fallback: (text: String, language: String)? = nil,
     autoplay: Bool = false
-  ) async {
+  ) async -> TimeInterval? {
     stopCurrent()
     run += 1
     let mine = run
@@ -67,34 +79,38 @@ final class SpeechPlayer {
       let file = try await file(for: sound)
 
       guard run == mine else {
-        return
+        return nil
       }
 
-      try await playFile(file, rate: rate, autoplay: autoplay, run: mine)
+      let length = try await playFile(file, rate: rate, autoplay: autoplay, run: mine)
 
       if run == mine {
         current = nil
         releaseSession()
       }
+
+      return length
     } catch is CancellationError {
       if run == mine {
         current = nil
         releaseSession()
       }
+
+      return nil
     } catch {
       guard run == mine else {
-        return
+        return nil
       }
 
       if case .recording = sound, let fallback {
-        await play(
+        return await play(
           .text(fallback.text, language: fallback.language), rate: rate, owner: owner,
           autoplay: autoplay)
-        return
       }
 
       current = (owner, .failed((error as? VoiceRefusal)?.limit))
       releaseSession()
+      return nil
     }
   }
 
@@ -171,7 +187,10 @@ final class SpeechPlayer {
     }
   }
 
-  private func playFile(_ file: URL, rate: Float, autoplay: Bool, run mine: Int) async throws {
+  /// Returns the clip's length once it played to its end.
+  private func playFile(_ file: URL, rate: Float, autoplay: Bool, run mine: Int) async throws
+    -> TimeInterval
+  {
     if autoplay {
       try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default)
     } else {
@@ -204,6 +223,8 @@ final class SpeechPlayer {
 
       current = (current?.owner ?? AnyHashable(0), .playing)
     }
+
+    return player.duration
   }
 }
 

@@ -2,7 +2,7 @@
 
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationKind } from "../../generation/generation-kinds";
 import { type GenerationRun, toHeldRun } from "../../generation/generation-run";
@@ -35,20 +35,7 @@ import { WAITING_RUN, getWaitRun } from "./wait-run";
 
 type PlacementWaitKind = Extract<GenerationKind, "placement" | "placementQuestions">;
 
-const PATIENCE_MS = 20_000;
-
 const FAILED_RUN: GenerationRun = { failure: "generation", status: "failed", steps: {} };
-
-function usePatience(): boolean {
-  const [patient, setPatient] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setPatient(true), PATIENCE_MS);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return patient;
-}
 
 function PlacementProgress({
   holding,
@@ -114,25 +101,32 @@ function PlacementStatus({
   );
 }
 
-type SkipCopy = { label: string; note: string | null };
+type WaitLeave = { label: string; note: string | null };
+
+/** The way on from a wait, there from the start: the test stays open and is taken later. */
+export function useWaitLeave(onboarding: boolean): WaitLeave {
+  const t = useExtracted();
+
+  return onboarding
+    ? { label: t("Skip"), note: t("You can take the test later, from your plan.") }
+    : { label: t("Not now"), note: null };
+}
 
 function PlacementBar({
-  canSkip,
   holding,
   onSkip,
   skip,
   skipFailed,
   skipping,
 }: {
-  canSkip: boolean;
   holding: boolean;
   onSkip: () => void;
-  skip?: SkipCopy;
+  skip: WaitLeave;
   skipFailed: boolean;
   skipping: boolean;
 }) {
   const t = useExtracted();
-  const { release, slotShown } = useWaitScreen();
+  const { release } = useWaitScreen();
 
   if (holding) {
     return (
@@ -142,25 +136,18 @@ function PlacementBar({
     );
   }
 
-  if (!canSkip && !slotShown) {
-    return null;
-  }
-
   return (
-    <WaitBar failed={skipFailed} note={canSkip ? skip?.note : null}>
+    <WaitBar failed={skipFailed} note={skip.note}>
       <WaitSlot />
 
-      {canSkip && (
-        <OnboardingSecondaryButton disabled={skipping} onClick={onSkip}>
-          {skip?.label ?? t("Skip")}
-        </OnboardingSecondaryButton>
-      )}
+      <OnboardingSecondaryButton busy={skipping} onClick={onSkip}>
+        {skip.label}
+      </OnboardingSecondaryButton>
     </WaitBar>
   );
 }
 
 function PlacementWaitPage({
-  canSkip,
   holding,
   kind,
   onSkip,
@@ -169,12 +156,11 @@ function PlacementWaitPage({
   skipFailed,
   skipping,
 }: {
-  canSkip: boolean;
   holding: boolean;
   kind: PlacementWaitKind;
   onSkip: () => void;
   run: GenerationRun;
-  skip?: SkipCopy;
+  skip: WaitLeave;
   skipFailed: boolean;
   skipping: boolean;
 }) {
@@ -187,7 +173,6 @@ function PlacementWaitPage({
       <OnboardingColumn
         bar={
           <PlacementBar
-            canSkip={canSkip}
             holding={holding}
             onSkip={onSkip}
             skip={skip}
@@ -219,6 +204,7 @@ export function PlacementWaiting({
   poll,
   questionsReady,
   readWarmUp,
+  retry,
   run,
   skip,
   skipFailed = false,
@@ -232,18 +218,25 @@ export function PlacementWaiting({
   poll: { restart: () => void; status: PollStatus };
   questionsReady: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
+  /** The test couldn't start, or its questions couldn't be written: the wait offers "Try again". */
+  retry?: () => void;
   run: GenerationRun | null;
-  /** What leaving the wait is called and does, when it isn't placement's own skip. */
-  skip?: SkipCopy;
+  /** What leaving the wait is called, and the line beside it. */
+  skip: WaitLeave;
   /** Leaving didn't save: said beside the control, which stays the retry. */
   skipFailed?: boolean;
   skipping: boolean;
 }) {
-  const patient = usePatience();
   const hold = useReadyHold(questionsReady);
   const aside = useOnboardingHost()?.kind === "page";
   useOnboardingWait("placementWait", hold.status !== "go");
-  const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
+  const stopped = retry ? { ...FAILED_RUN, retry } : null;
+
+  const shown = getWaitRun({
+    poll,
+    run: stopped ?? run ?? (buildFailed ? FAILED_RUN : WAITING_RUN),
+  });
+
   const { coming, deck } = useDeck({ readDeck: readWarmUp, run: shown });
   const showQuestions = useEffectEvent(onQuestions);
   const holding = hold.status === "hold";
@@ -257,7 +250,6 @@ export function PlacementWaiting({
   return (
     <WaitScreen aside={aside} coming={coming} deck={deck} hold={hold} surface="placementWait">
       <PlacementWaitPage
-        canSkip={!holding && (patient || shown.status === "failed")}
         holding={holding}
         kind={existingPlan ? "placementQuestions" : "placement"}
         onSkip={onSkip}

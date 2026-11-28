@@ -12,8 +12,8 @@ describe(getCourseQuickTestMinutes, () => {
     ] as const;
 
     expect(courses.map((course) => getCourseQuickTestMinutes(course))).toStrictEqual([
-      getQuickTestMinutes("language"),
-      DAY_PLACEMENT_MINUTES,
+      6,
+      getQuickTestMinutes("learn"),
       DAY_PLACEMENT_MINUTES,
     ]);
   });

@@ -13,7 +13,7 @@
   "listening_play_again": "acb58046876b73ce05cbe94993af123ad594a6e2250c9a7287feb44f9d3f0a58",
   "listening_playing": "2f398d651784dc97ab84c34fe2597cc08cbc9df1f7a9be89dc8df53658bbcce5",
   "listening_playing_note": "0896cc7b47254605ac1c01271398fcc06e2cb13ff65d82bcb20e49bca00daa33",
-  "listening_questions": "e959881d8b607d403cbc321a0e5becac71e0ed0b523b752670aa2ddcbf6dd001",
+  "listening_questions": "0944aa8a349ee525915849d47e0bbbb077c1fac7c310cc4bb4fa65547bc34bbe",
   "listening_recording": "7e2f26ab845a1fcbd2863e8472a62fcaa7becb30f6eed906c9886c9b2668a4f8",
   "listening_stop": "13c068ced23e6609dd5536bb2fc0f8c2ba2de8e15cc4ca76d36556c13d7bcd32",
   "listening_transcript": "c1a1fd1a8614f5ef5c3a1008aae030c166de91d29655063a518c3f1f821ded0d"
@@ -36,9 +36,9 @@
     <string name="listening_failed">Non siamo riusciti a caricare la registrazione. Controlla la connessione e riprova.</string>
     <string name="listening_playing_note">Riproduzione in corso. Come all’esame, non puoi mettere in pausa.</string>
     <plurals name="listening_questions">
-        <item quantity="one">Domanda su questa registrazione (%d)</item>
-        <item quantity="many">Domande su questa registrazione (%d)</item>
-        <item quantity="other">Domande su questa registrazione (%d)</item>
+        <item quantity="one">%d domanda su questa registrazione</item>
+        <item quantity="many">%d domande su questa registrazione</item>
+        <item quantity="other">%d domande su questa registrazione</item>
     </plurals>
     <string name="listening_transcript">Trascrizione</string>
 </resources>

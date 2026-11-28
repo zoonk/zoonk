@@ -14,7 +14,7 @@ export type GoalAnswerInput = Exclude<
 
 type Details = Record<string, unknown>;
 
-const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level"]);
+const LEVEL_ANSWER_KEYS = new Set(["knownSubjects", "level", "placementRequested"]);
 const REASON_ANSWER_KEYS = new Set(["reason", "targetScore"]);
 
 export function withoutReplacedAnswer({
@@ -85,12 +85,14 @@ export function getDetailChanges({
     case "level":
       return {
         ...(input.level ? { level: input.level } : {}),
+        ...(input.requestPlacement && { placementRequested: true }),
         ...(input.knownSubjects?.length ? { knownSubjects: input.knownSubjects } : {}),
       };
+    case "schedule":
+      return { placementPassed: true };
     case "buddy":
     case "examChoice":
     case "placement":
-    case "schedule":
     case "targetDate":
       return {};
     default:
@@ -111,6 +113,11 @@ export function isInvalidGoalAnswer({
 
   if (input.question === "placement" && input.attemptId) {
     const { attempt, finishedParts, result } = readPlacementAttempt(current);
+
+    if (!attempt && result?.courseStart) {
+      return result.attemptId !== input.attemptId;
+    }
+
     return (attempt?.id ?? result?.attemptId) !== input.attemptId || finishedParts.length === 0;
   }
 

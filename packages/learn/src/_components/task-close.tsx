@@ -8,12 +8,53 @@ import { shortcutKeys } from "@zoonk/ui/lib/shortcuts";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useRef, useState } from "react";
+import { createContext, use, useRef, useState } from "react";
 import { LearnLink } from "../learn-link";
 import { goBackTo, goBackToApp } from "../shell/app-history";
 import { type TaskExitConfirmation, type TaskExitDialog } from "../shell/task-exit-dialog";
 
 const exitDialog = createOnDemand(() => import("../shell/task-exit-dialog"));
+
+type TaskExitAsk = { onLeave: () => void; onOpenChange: (open: boolean) => void; open: boolean };
+
+const TaskExitAskContext = createContext<TaskExitAsk | null>(null);
+
+/** For the node a task passes as `TaskClose`'s `ask`: `onLeave` leaves as the ✕ would have. */
+export function useTaskExitAsk(): TaskExitAsk {
+  const ask = use(TaskExitAskContext);
+
+  if (!ask) {
+    throw new Error("useTaskExitAsk is for what a task passes as TaskClose's ask");
+  }
+
+  return ask;
+}
+
+function CloseMark({ label }: { label: string }) {
+  return (
+    <>
+      <XIcon aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+    </>
+  );
+}
+
+function TaskExitQuestion({
+  ask,
+  confirm,
+  dialog: ExitDialog,
+  ...controls
+}: TaskExitAsk & {
+  ask: React.ReactNode;
+  confirm: TaskExitConfirmation | null;
+  dialog: typeof TaskExitDialog | undefined;
+}) {
+  if (ask) {
+    return <TaskExitAskContext value={controls}>{ask}</TaskExitAskContext>;
+  }
+
+  return confirm && ExitDialog ? <ExitDialog confirmation={confirm} {...controls} /> : null;
+}
 
 type CloseLinkProps = {
   "aria-keyshortcuts"?: string;
@@ -39,6 +80,7 @@ const CLOSE_CLASS = "shrink-0";
  * return to a task the learner left.
  */
 export function TaskClose({
+  ask,
   beforeExit,
   className,
   confirm = null,
@@ -52,6 +94,8 @@ export function TaskClose({
   prefetch,
   toApp = false,
 }: {
+  /** The task's own ways out, which the ✕ and Esc open in place of leaving; it reads `useTaskExitAsk`. */
+  ask?: React.ReactNode;
   /** A promise for work still being saved, which leaving waits for; null when nothing is in flight. */
   beforeExit?: () => Promise<unknown> | null;
   className?: string;
@@ -90,11 +134,11 @@ export function TaskClose({
   };
 
   const asksFirst = () => {
-    if (!confirm || done.current) {
+    if ((!confirm && !ask) || done.current) {
       return false;
     }
 
-    if (!ExitDialog) {
+    if (confirm && !ExitDialog) {
       void exitDialog.load();
     }
 
@@ -137,21 +181,18 @@ export function TaskClose({
   };
 
   const shared = {
-    "aria-haspopup": confirm ? "dialog" : undefined,
+    "aria-haspopup": confirm || ask ? "dialog" : undefined,
     "aria-keyshortcuts": shortcutKeys("leave"),
     "data-slot": "task-close",
   } as const;
 
-  const content = (
-    <>
-      <XIcon aria-hidden="true" />
-      <span className="sr-only">{label ?? t("Leave")}</span>
-    </>
-  );
+  const content = <CloseMark label={label ?? t("Leave")} />;
 
-  const ask = confirm && ExitDialog && (
-    <ExitDialog
-      confirmation={confirm}
+  const asked = (
+    <TaskExitQuestion
+      ask={ask}
+      confirm={confirm}
+      dialog={ExitDialog}
       onLeave={() => {
         setAsking(false);
         pressAgain("asked");
@@ -185,7 +226,7 @@ export function TaskClose({
             {content}
           </Button>,
         )}
-        {ask}
+        {asked}
       </>
     );
   }
@@ -212,7 +253,7 @@ export function TaskClose({
           {content}
         </Link>,
       )}
-      {ask}
+      {asked}
     </>
   );
 }

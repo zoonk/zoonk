@@ -226,6 +226,43 @@ sealed class AnalyticsEvent(
             mapOf("surface" to surface.value, "card_id" to cardId, "position" to position, "correct" to correct),
         )
 
+    /** The offer shown, once per presentation: its rows in order and the one it opens with. */
+    data class TestOffered(
+        val test: TestContext,
+        val rows: List<TestRow>,
+        val preselected: TestRow,
+    ) : AnalyticsEvent(
+            "Test Offered",
+            test.properties + mapOf("rows" to rows.joinToString(",") { it.value }, "preselected" to preselected.value),
+        )
+
+    /** The first question a visit to a sitting shows, which can be past question 1 on a return, and how long it waited. */
+    data class TestFirstQuestionShown(
+        val test: TestContext,
+        val questionNumber: Long,
+        val waitMs: Long,
+        val resumed: Boolean,
+    ) : AnalyticsEvent(
+            "Test First Question Shown",
+            test.properties + mapOf("question_number" to questionNumber, "wait_ms" to waitMs, "resumed" to resumed),
+        )
+
+    /** ✕ during a sitting. */
+    data class TestLeft(
+        val test: TestContext,
+        val questionNumber: Long,
+    ) : AnalyticsEvent("Test Left", test.properties + mapOf("question_number" to questionNumber))
+
+    data class TestLessonStarted(
+        val test: TestContext,
+        val lessonId: String,
+    ) : AnalyticsEvent("Test Lesson Started", test.properties + mapOf("lesson_id" to lessonId))
+
+    /** "Not now" outside onboarding; onboarding's decline is the server's. */
+    data class TestSkipped(
+        val test: TestContext,
+    ) : AnalyticsEvent("Test Skipped", test.properties + mapOf("row" to TestRow.NotNow.value))
+
     enum class WarmUpSurface(
         val value: String,
     ) {
@@ -248,6 +285,62 @@ sealed class AnalyticsEvent(
         Chapter("chapter"),
         Lesson("lesson"),
     }
+}
+
+/**
+ * What every placement test event says about its test: the server's facts, each left out while there's none (main sends
+ * them as null, which PostHog reads the same).
+ */
+data class TestContext(
+    val goalId: String,
+    val test: Kind,
+    val surface: Surface,
+    val part: Long? = null,
+    val parts: Long? = null,
+    val questions: Long? = null,
+    val attemptId: String? = null,
+) {
+    val properties: Map<String, Any>
+        get() =
+            listOfNotNull(
+                "goal_id" to goalId,
+                "test" to test.value,
+                "surface" to surface.value,
+                part?.let { "part" to it },
+                parts?.let { "parts" to it },
+                questions?.let { "questions" to it },
+                attemptId?.let { "attempt_id" to it },
+            ).toMap()
+
+    enum class Kind(
+        val value: String,
+    ) {
+        Language("language"),
+        Course("course"),
+        Focus("focus"),
+        LevelTestOut("level_test_out"),
+    }
+
+    /** `plan` includes a test opened from Today. */
+    enum class Surface(
+        val value: String,
+    ) {
+        Onboarding("onboarding"),
+        Plan("plan"),
+    }
+}
+
+/** An offer's rows, by the ids analytics names them. */
+enum class TestRow(
+    val value: String,
+) {
+    FirstLesson("first_lesson"),
+    Quick("quick"),
+    WholeCourse("whole_course"),
+    Direct("direct"),
+    Continue("continue"),
+    TestOut("test_out"),
+    NotNow("not_now"),
 }
 
 fun interface EventTracker {

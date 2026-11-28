@@ -1,14 +1,16 @@
 import "server-only";
+import { gradedTestAnswer, testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { matchesExpectedAnswer } from "../../library/activities/templates/_utils/grade-interaction";
+import { saveLevelTestProgress } from "./_utils/level-test-records";
 import { toBankAnswer } from "./_utils/level-test-shown-order";
 import {
   canWriteLevelTest,
   isFixedDuringTest,
   loadLevelTestContext,
-  saveLevelTestProgress,
   toLevelTestView,
 } from "./_utils/level-test-state";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   type LanguageLevelTestView,
   type LevelTestAnswerInput,
   type LevelTestConfirmation,
@@ -28,7 +30,8 @@ function isValidLevelTestAnswer({ input, question }: Answer): boolean {
   const confirmation = "answerIndices" in question;
 
   return !(
-    (input.skipped && question.skill !== "listening") ||
+    (input.audioDeferred && (input.answerIndex !== null || indices || input.skipped)) ||
+    ((input.skipped || input.audioDeferred) && question.skill !== "listening") ||
     (confirmation && input.answerIndex !== null) ||
     (!confirmation && indices) ||
     indices?.some((index) => index >= question.options.length)
@@ -67,6 +70,7 @@ async function gradeCurrentQuestion({
   const correct = gradeLevelTestAnswer({ input, question });
 
   const skipped =
+    input.audioDeferred === true ||
     input.skipped === true ||
     (correct !== true &&
       (await isFixedDuringTest({
@@ -79,6 +83,8 @@ async function gradeCurrentQuestion({
   const answerIndex = skipped ? null : input.answerIndex;
 
   return {
+    answeredAt: new Date().toISOString(),
+    ...(input.audioDeferred && { audioDeferred: true }),
     answerIndex,
     ...(indices && !skipped && { answerIndices: indices }),
     correct: skipped ? null : correct,
@@ -86,6 +92,53 @@ async function gradeCurrentQuestion({
     id: input.questionId,
     ...(skipped && { skipped: true }),
   };
+}
+
+function trackAcceptedAnswer({
+  answer,
+  check,
+  goal,
+  progress,
+  question,
+  questionNumber,
+}: {
+  answer: Awaited<ReturnType<typeof gradeCurrentQuestion>>;
+  check: boolean;
+  goal: ReadyContext["owned"]["goal"];
+  progress: ReadyContext["progress"];
+  question: Answer["question"];
+  questionNumber: number;
+}) {
+  const properties = {
+    ...testEventContext(goal, {
+      attemptId: progress.attemptId,
+      questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+      test: "language",
+    }),
+    level: question.level,
+    question_number: questionNumber,
+  };
+
+  if (answer.audioDeferred) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Audio Deferred",
+        properties: { ...properties, kind: check ? "check" : "listening" },
+      },
+    ]);
+  } else if (!answer.skipped) {
+    trackTestEvents(goal, [
+      {
+        name: "Test Answered",
+        properties: {
+          ...properties,
+          answer: gradedTestAnswer({ correct: answer.correct }),
+          duration_ms: answer.durationMs,
+          kind: check ? "check" : question.skill,
+        },
+      },
+    ]);
+  }
 }
 
 export async function answerLanguageLevelTest({
@@ -169,6 +222,15 @@ export async function answerLanguageLevelTest({
   if (!saved) {
     return { status: "invalid" };
   }
+
+  trackAcceptedAnswer({
+    answer,
+    check: step.kind === "confirmation",
+    goal: owned.goal,
+    progress,
+    question: step.question,
+    questionNumber: next.answers.length,
+  });
 
   return {
     status: "ready",

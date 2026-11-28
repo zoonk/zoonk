@@ -15,6 +15,7 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.focusSittingOf
 import com.zoonk.android.feature.onboarding.focusTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.plan.FakePlanApi
@@ -27,7 +28,6 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.CompletableDeferred
@@ -64,11 +64,12 @@ class FocusTestViewModelTest {
         api: OnboardingApi,
         handle: SavedStateHandle,
         plans: PlanApi = FakePlanApi(),
+        asked: Boolean = false,
     ): FocusTestViewModel {
         val session = FakeSession(ana)
         val cache = AppCache(session, backgroundScope)
         val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
-        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), handle).also { models.put("$it", it) }
+        return FocusTestViewModel(GOAL_ID, store, PlanStore(plans, cache), handle, askedFor = asked).also { models.put("$it", it) }
     }
 
     /** The proposal the result of [vm] would ask about when the test's latest answers propose [next]. */
@@ -109,7 +110,6 @@ class FocusTestViewModelTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
-                        length: PlacementLength?,
                     ): Placement {
                         starts++
                         return answer.await()
@@ -145,6 +145,68 @@ class FocusTestViewModelTest {
             restored(api, handle)
 
             assertEquals(2, api.sittingsStarted)
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheAppComesBackFromProcessDeath() =
+        askedStartFailed { api, _, handle ->
+            models.clear()
+            viewModel(api, SavedStateHandle.createHandle(handle.savedStateProvider().saveState(), null))
+        }
+
+    @Test
+    fun anAskedStartThatFailedStartsAgainWhenTheLearnerComesBack() = askedStartFailed { _, vm, _ -> vm.also { it.visit.end() } }
+
+    /** A learner who asked for the test, on the level question or Today, never comes back to a spinner with nothing on its way. */
+    private fun askedStartFailed(comeBack: TestScope.(FakeOnboardingApi, FocusTestViewModel, SavedStateHandle) -> FocusTestViewModel) =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placementOf(next = null, focusTest = focusTestOf())
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val handle = SavedStateHandle()
+            val first = viewModel(api, handle)
+            first.startAsked()
+            runCurrent()
+            assertTrue(first.failed)
+
+            api.writeFailure = null
+            val back = comeBack(api, first, handle)
+            back.startAsked()
+            runCurrent()
+
+            assertEquals(2, api.sittingsStarted)
+            assertFalse(back.failed)
+        }
+
+    /** A learner who asked for the test before its questions were written never lands back on its offer. */
+    @Test
+    fun anAskedStartThatFailsOnceTheQuestionsArriveWaitsForTryAgain() =
+        runTest {
+            Dispatchers.setMain(StandardTestDispatcher(testScheduler))
+            val api =
+                FakeOnboardingApi().apply {
+                    placement = placementOf(status = "waitingForQuestions", next = null)
+                    writeFailure = ApiException(ApiError.Network)
+                }
+            val vm = viewModel(api, SavedStateHandle(), asked = true)
+            assertEquals(FocusTestPhase.Waiting(answered = false), vm.phase(LoadState.Loaded(api.placement)))
+
+            val arrived = LoadState.Loaded(placementOf(next = null, focusTest = focusTestOf()))
+            assertEquals(FocusTestPhase.Starting, vm.phase(arrived))
+            vm.startAsked()
+            runCurrent()
+            assertEquals(FocusTestPhase.StartFailed, vm.phase(arrived))
+
+            api.writeFailure = null
+            api.sitting = { placementOf(focusTest = focusTestOf(asked = 3, sitting = focusSittingOf(), offer = null)) }
+            vm.start()
+            runCurrent()
+
+            assertEquals(2, api.sittingsStarted)
+            assertTrue(vm.phase(LoadState.Loaded(api.placement)) is FocusTestPhase.Question)
         }
 
     @Test

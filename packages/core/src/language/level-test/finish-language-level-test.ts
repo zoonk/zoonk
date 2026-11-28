@@ -1,8 +1,8 @@
-import "server-only";
 import { type LanguageSkill, type TransactionClient } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
+import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
-import { trackLearnerEvents } from "../../analytics/track-learner-event";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -14,11 +14,17 @@ import { owePlanStartLessons } from "../../follow-ups/owe-goal-lessons";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { levelTestReceipt } from "../../plans/_utils/test-out-receipt";
+import { withPlanRetry } from "../../plans/plan-conflict";
 import { recordTestOutChange } from "../../plans/record-test-out-change";
+import { refreshTestedOutPlan } from "../../plans/refresh-tested-out-plan";
+import { replanAfterPlacement } from "../../plans/replan-after-placement";
 import { getCompletionEnergyContext } from "../../stats/completion-energy";
 import { readGoalDetails } from "../_utils/language-goal";
+import { getLevelTestEnd } from "./_utils/level-test-end";
 import { skipConfirmedLanguageLessons } from "./_utils/level-test-placement";
+import { getLevelTestPlanningStart } from "./_utils/level-test-planning-start";
 import { withLevelTestChange } from "./_utils/level-test-result-change";
+import { getLevelTestStart } from "./_utils/level-test-start-score";
 import {
   canWriteLevelTest,
   levelTestDetailsWithProgress,
@@ -27,6 +33,7 @@ import {
 } from "./_utils/level-test-state";
 import { recordLevelTestActivity } from "./_utils/record-level-test-activity";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   type LevelTestBank,
   type LevelTestProgress,
   type LevelTestResult,
@@ -37,7 +44,6 @@ import {
   getLevelTestConfirmation,
   getLevelTestFloors,
   getLevelTestRanges,
-  getNextLevelTestStep,
   listLevelTestLevels,
   toLevelLabels,
 } from "./level-test-rules";
@@ -106,13 +112,20 @@ async function recordLevelTestResult({
 
   const result = {
     attemptId: currentProgress.attemptId ?? null,
+    end: getLevelTestEnd(input),
     finishedAt: now.toISOString(),
     lessonsSkipped: itemIds.length,
     levelsSkipped: through && itemIds.length > 0 ? CEFR_LEVELS.slice(0, getBand(through) + 1) : [],
     ranges: getLevelTestRanges(input),
-    ...(currentProgress.length === "wholeCourse" &&
-      getNextLevelTestStep(input).kind === "done" && { wholeCourseReady: true as const }),
   };
+
+  const stated = getLevelTestStart(readGoalDetails(current).level);
+
+  const planningStart = getLevelTestPlanningStart(
+    input,
+    stated.firstBand ?? stated.start,
+    result.levelsSkipped.at(-1),
+  );
 
   const saved = { ...currentProgress, counted: currentProgress.answers.length, result, scores };
 
@@ -142,17 +155,22 @@ async function recordLevelTestResult({
         levelTest: {
           ...details.levelTest,
           lastResult: result,
+          ...(planningStart !== null && { planningStart }),
           usedConfirmations: [...usedConfirmations, ...checksUsed.map(({ id }) => id)],
         },
-        skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
+        ...(planningStart !== null && {
+          skillLevels: { ...readPreviousSkillLevels(current), ...toLevelLabels(scores) },
+        }),
       },
     },
     where: { id: goalId },
   });
 
-  await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+  if (planningStart !== null) {
+    await saveSkillLevels(transaction, { language: current.targetLanguage, scores, userId });
+  }
 
-  if (currentProgress.attemptId) {
+  if (levelsToRefill.size > 0 && bank.confirmations) {
     await oweFollowUps({
       db: transaction,
       followUps: [...levelsToRefill].map((level) => ({
@@ -267,19 +285,43 @@ export async function finishLanguageLevelTest(
       getUserProgressCacheTag(userId),
     ]);
 
-    await trackLearnerEvents({
-      events: [
+    const { result } = progress;
+
+    if (result?.end) {
+      const answers = progress.answers.filter((answer) => !answer.skipped && !answer.audioDeferred);
+
+      trackTestEvents(goal, [
         {
-          name: "Level Test Finished",
-          properties: { answered: progress.answers.length, target_language: goal.targetLanguage },
+          name: "Test Finished",
+          properties: {
+            ...testEventContext(goal, {
+              attemptId: result.attemptId,
+              questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+              test: "language",
+            }),
+            answered: answers.length,
+            duration_ms: answers.reduce((total, answer) => total + answer.durationMs, 0),
+            end: result.end,
+            lessons_skipped: result.lessonsSkipped,
+            levels_skipped: result.levelsSkipped.length,
+            parts_left: 0,
+            unknowns: answers.filter((answer) => answer.correct === null).length,
+          },
         },
-      ],
-      goalId,
-      userId,
-    });
+      ]);
+    }
   }
 
   const { result } = progress;
+
+  if (result?.ranges.reading && result.ranges.listening) {
+    if (result.lessonsSkipped > 0) {
+      await refreshTestedOutPlan({ goalId, userId });
+    } else {
+      const now = new Date();
+      await withPlanRetry(() => replanAfterPlacement({ goalId, now, timeZone }));
+    }
+  }
 
   return {
     levels: listLevelTestLevels(progress.scores ?? {}),

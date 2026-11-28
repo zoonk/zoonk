@@ -39,6 +39,8 @@ export function useReadyHold(ready: boolean): ReadyHoldControl {
 
     return () => {
       clearTimeout(quiet);
+      // A hidden Activity loses its timer and keeps its state.
+      setTouched(false);
       document.removeEventListener("pointerdown", touch, true);
       document.removeEventListener("keydown", touch, true);
     };

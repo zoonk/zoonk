@@ -4,7 +4,13 @@ import { expectHydrated } from "@zoonk/e2e/hydration";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
-import { ANSWERED, createMappedGoal, mapGoalSkills } from "./onboarding-fixtures";
+import {
+  ANSWERED,
+  addOrderQuestions,
+  createMappedGoal,
+  mapGoalSkills,
+  testQuestion,
+} from "./onboarding-fixtures";
 
 /** The page gives a run 45 s to appear. */
 const RUN_START_LIMIT_MS = 46_000;
@@ -12,17 +18,22 @@ const RUN_START_LIMIT_MS = 46_000;
 /** Placement checks every 3 s, and a check in flight as the questions land leaves them to the next. */
 const NEXT_CHECK_TIMEOUT_MS = 10_000;
 
+/** `askedForTest`: the learner chose the short test on the level question, so it opens unoffered. */
 async function createGoalBeingMapped({
   answered = ANSWERED,
+  askedForTest = false,
   runId,
   userId,
 }: {
   answered?: string[];
+  askedForTest?: boolean;
   runId: string | null;
   userId: string;
 }) {
   return goalFixture({
-    details: { answered, subject: "algebra" },
+    details: { answered, subject: "algebra", ...(askedForTest && { placementRequested: true }) },
+    // A test is only part of setup before the learner has seen the plan.
+    ...(askedForTest && { planRevealedAt: null }),
     generationRunId: runId,
     prompt: `learn algebra ${randomUUID()}`,
     title: "Learn algebra",
@@ -69,13 +80,18 @@ test.describe("Refreshing mid-onboarding", () => {
   });
 });
 
-test.describe("Waiting for placement's questions", () => {
-  test("survives a refresh and moves on when questions arrive", async ({
+test.describe("Waiting for a test the learner asked for", () => {
+  test("opens on the wait with a way on, survives a refresh, and Try again starts the test once its questions are there", async ({
     noProgressUser,
     userWithoutProgress: page,
   }) => {
     const runId = `e2e-steps-${randomUUID()}`;
-    const goal = await createGoalBeingMapped({ runId, userId: noProgressUser.id });
+
+    const goal = await createGoalBeingMapped({
+      askedForTest: true,
+      runId,
+      userId: noProgressUser.id,
+    });
 
     await followRun({
       events: [
@@ -89,19 +105,29 @@ test.describe("Waiting for placement's questions", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Skip" })).toBeVisible();
 
     await page.reload();
 
     await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
     await mapGoalSkills({ goalId: goal.id });
+    await addOrderQuestions(goal.id);
 
-    await expect(page.getByText("Question 1", { exact: true })).toBeVisible({
-      timeout: NEXT_CHECK_TIMEOUT_MS,
-    });
+    // Only the question writer's last step hands a waiting test its questions, and no writer runs
+    // here. So the wait ends as it does when that writer stops short, and the retry reads them.
+    await prisma.$executeRaw`
+      UPDATE goals SET details = jsonb_set(details, '{placementTest,attempt,search,failed}', 'true')
+      WHERE id = ${goal.id}::uuid
+    `;
+
+    const retry = page.getByRole("button", { exact: true, name: "Try again" });
+    await expect(retry).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
+    await retry.click();
+
+    await expect(testQuestion(page, 1)).toBeVisible();
   });
 });
 
@@ -147,7 +173,12 @@ test.describe("When a wait can't go on", () => {
     userWithoutProgress: page,
   }) => {
     const runId = `e2e-steps-${randomUUID()}`;
-    const goal = await createGoalBeingMapped({ runId, userId: noProgressUser.id });
+
+    const goal = await createGoalBeingMapped({
+      askedForTest: true,
+      runId,
+      userId: noProgressUser.id,
+    });
 
     await followRun({
       events: [
@@ -159,7 +190,6 @@ test.describe("When a wait can't go on", () => {
     });
 
     await page.goto(`/start/${goal.id}`);
-    await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     const failed = page.getByRole("alert").filter({ hasText: "Something went wrong on our side" });
     await expect(failed).toBeVisible();

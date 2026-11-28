@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,6 +39,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.TrackDeckReceived
@@ -55,6 +57,11 @@ import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.text
 import com.zoonk.android.feature.placementtest.PlacementSetup
 import com.zoonk.android.feature.placementtest.PlacementSetupEnd
+import com.zoonk.android.feature.placementtest.TestSegments
+import com.zoonk.android.feature.placementtest.TestTitle
+import com.zoonk.android.feature.placementtest.TestWaysOut
+import com.zoonk.android.feature.placementtest.closeTest
+import com.zoonk.android.feature.placementtest.rememberWaysOut
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.android.feature.session.DayStep
@@ -86,6 +93,7 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
 import com.zoonk.api.models.OnboardingAnswerInputOneOf10
+import com.zoonk.api.models.OnboardingPlacement
 import com.zoonk.api.models.OnboardingStep
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
@@ -198,19 +206,26 @@ fun GoalSetupScreen(
         }
     }
 
-    // A test's answers are final and saved: its Back leaves the setup as Finish later does, never a
+    // A test's answers are final and saved: its ✕ and Back leave the setup as Finish later does, never a
     // step back, and Start over waits until it ends.
-    val leave = { navigator.showRoot(AppTab.Today) }
-    BackHandler(enabled = back != null || testing != null) { if (testing != null) leave() else back?.invoke() }
+    val tracker = LocalEventTracker.current
+    val leave = {
+        testing?.asking?.let { tracker.track(it.left) }
+        navigator.showRoot(AppTab.Today)
+    }
+    val waysOut = rememberWaysOut()
+    val close = { closeTest(testing, waysOut, leave) }
+    BackHandler(enabled = back != null || testing != null) { if (testing != null) close() else back?.invoke() }
 
     PageScaffold(
         onBack = {
             if (backDispatcher?.hasEnabledCallbacks() == true) backDispatcher.onBackPressed() else navigator.back()
         },
+        closes = testing != null,
         middle = {
             when {
                 testing != null -> {
-                    TestProgress(testing)
+                    ProvideTextStyle(MaterialTheme.typography.titleSmall) { TestTitle(testing) }
                 }
 
                 else -> {
@@ -271,6 +286,7 @@ fun GoalSetupScreen(
                     ),
             ) {
                 Column(Modifier.fillMaxSize()) {
+                    TestSegments(testing)
                     when (val shown = state) {
                         is LoadState.Loaded -> {
                             step?.let {
@@ -311,6 +327,7 @@ fun GoalSetupScreen(
             ActivityAnnouncement(announced)
         }
     }
+    TestWaysOut(testing, waysOut, leave)
 }
 
 @Composable
@@ -524,8 +541,10 @@ private fun ColumnScope.QuestionStep(
                     plans = plans,
                     run = run,
                     onRetryRun = onRetryRun,
-                    onProgress = { vm.placementProgress = it },
+                    onSitting = { vm.placementProgress = it },
                     handBack = { placed()?.await() ?: WriteOutcome.Obsolete },
+                    asked = view.placement?.mode == OnboardingPlacement.Mode.DIRECT,
+                    firstLesson = view.firstLesson?.title,
                     onReportSaveFailure = onReportPlacement,
                 )
             } else {
@@ -537,8 +556,8 @@ private fun ColumnScope.QuestionStep(
                             .text("nativeLanguage")
                             ?.takeIf(String::isNotBlank) ?: view.goal.language,
                     targetLanguage = view.goal.targetLanguage.takeIf { view.goal.kind == Goal.Kind.LANGUAGE },
-                    run = run,
-                    onRetryRun = onRetryRun,
+                    placement = view.placement,
+                    firstLesson = view.firstLesson?.title,
                     store = store,
                     plans = plans,
                     navigator = navigator,
@@ -547,8 +566,7 @@ private fun ColumnScope.QuestionStep(
                             saving = pending,
                             continueWith = { vm.answer(placementAnswer(it), from = OnboardingStep.PLACEMENT) },
                         ),
-                    onProgress = { vm.placementProgress = it },
-                    onQuickDone = placed,
+                    onSitting = { vm.placementProgress = it },
                     onReportSaveFailure = if (view.goal.kind == Goal.Kind.LANGUAGE) onReportLevelTest else onReportPlacement,
                 )
             }

@@ -1,6 +1,7 @@
 import { skillStateCountsSchema } from "@zoonk/core/learner/contract";
 import {
   placementAttemptViewSchema,
+  placementFinishSchema,
   placementResultSchema,
   placementStatusSchema,
 } from "@zoonk/core/learner/placement/contract";
@@ -189,21 +190,13 @@ export const placementResponseSchema = z
       .number()
       .min(0)
       .max(1)
-      .meta({
-        description:
-          "How much of today's few minutes the day's answers used, from 0 to 1: the further along of its two limits, the answers and the answering time. Placement stops for the day at 1 (`dayBudgetUsed`), or sooner once it's sure, so it's how far along today's questions are at most, never a count still to come",
-      }),
-    dayBudgetUsed: z
-      .boolean()
-      .meta({
-        description:
-          "Today's few minutes of placement are used: no next question today; the first week's sessions ask the rest",
-      }),
+      .meta({ description: "The fraction of the question allowance answered, from 0 to 1" }),
+    dayBudgetUsed: z.boolean().meta({ description: "The question allowance is used" }),
     focusTest: focusTestViewSchema
       .nullable()
       .meta({
         description:
-          "An exam goal's placement is its Focus test: sittings of a promised number of questions instead of a few minutes a day. Then `next` is set only while a sitting is open with questions left, `dayBudgetSpent` is the sitting's share answered, `dayBudgetUsed` says it has none left, and `started` that it has answers. Null for other goals",
+          "An exam goal's placement is its Focus test: sittings of a fixed number of questions. Then `next` is set only while a sitting is open with questions left, `dayBudgetSpent` is the sitting's share answered, `dayBudgetUsed` says it has none left, and `started` that it has answers. Null for other goals",
       }),
     knownSkillIds: z.array(skillIdSchema),
     needsItems: z
@@ -242,6 +235,7 @@ export const placementCompletionResponseSchema = z
         description:
           "Every area of every phase had a confident start when placement finished. False when the plan had no skills yet: nothing was placed",
       }),
+    finish: placementFinishSchema.optional(),
     focusTest: focusTestViewSchema
       .nullable()
       .meta({
@@ -251,7 +245,6 @@ export const placementCompletionResponseSchema = z
     heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
     knownSkillIds: z.array(skillIdSchema),
     lessonsSkipped: z.number().int().nonnegative(),
-    partLessonsSkipped: z.number().int().nonnegative().optional(),
     phases: z.array(phaseStartSchema),
     result: placementResultSchema.nullable().optional(),
     testedOutPlanItemIds: z.array(uuidSchema()),

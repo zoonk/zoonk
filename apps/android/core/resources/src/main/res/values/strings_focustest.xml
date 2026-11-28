@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Focus test</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">%1$s left</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Find what to study most</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Already know some of this?</string>
-    <string name="focustest_offer_line_focus">This test shows what you already know, so more of your time goes to what you need most. It never removes a subject.</string>
+    <string name="focustest_offer_sentence">A test shows what you already know, so more of your time goes to what you need most.</string>
     <string name="focustest_offer_line">This test shows what you already know, so your plan can skip it.</string>
     <string name="focustest_start">Start the test</string>
     <string name="focustest_skip_note">You can take the test later, from your plan.</string>
     <string name="focustest_not_now">Not now</string>
-    <string name="focustest_resume_title">Continue your test</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="one">Your %d answer is saved.</item>
-        <item quantity="other">Your %d answers are saved.</item>
-    </plurals>
     <string name="focustest_continue">Continue</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">See my result</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">Question %1$d of %2$d</string>
-    <string name="focustest_stop">Stop and use my answers</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Haven\'t studied most of this yet? That\'s fine. You can stop here and start learning.</string>
     <string name="focustest_answers_saved_title">Your answers are saved</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
@@ -45,14 +32,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">You kept your plan as it is. This is what the test suggests.</string>
     <string name="focustest_change_focus">Change focus</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">See all subjects</string>
     <string name="focustest_subjects">Subjects</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">Ask a few more questions as I study</string>
     <string name="focustest_session_questions_when">During your first week</string>
     <string name="focustest_done">Done</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">Answer more questions</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">Give these subjects more time?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">Picked from your answers and how much your exam asks about each.</string>
@@ -73,17 +62,15 @@
     <string name="focustest_listening_not_checked">Listening: not in this test</string>
     <string name="focustest_speaking_not_checked">Speaking: not in this test</string>
     <string name="focustest_practical_not_checked">Practical part: not in this test</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">In progress</string>
     <string name="focustest_see_your_result">See your result</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">Take the Focus test</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">The Focus test shows what to study most.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">A %1$s test shows what you already know, so more of your time goes to what you need most. It never removes a subject.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Noted. You can take the test from your plan.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">Not today</string>
     <string name="focustest_not_today_failed">That didn\'t save. Try again.</string>
 </resources>

@@ -14,6 +14,7 @@
 - “lesson”: “aula”, not “lição”
 - “bookmark” (the icon that saves a lesson or a map): “ícone de salvar”, not “marcador”
 - “exam”: “prova”
+- the placement test, whatever the English calls it (“test”, “level test”, “placement”): “teste”, never “prova”, which is the exam
 - “subject”: “matéria”, not “disciplina”
 - “topic”: “tópico”, not “assunto” or “tema”
 - “notice” (official exam announcement): “edital”, never “edital oficial”

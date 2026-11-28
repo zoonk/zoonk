@@ -88,14 +88,10 @@ class SaveFailureScreenshots {
                                             question = "Which court hears appeals from state courts?",
                                             options = listOf("The Supreme Court", "A district court", "A county court"),
                                         ),
-                                    subject = "Bar exam",
-                                    position = "Question 3",
                                     labels = TrueFalseLabels.TRUE_FALSE,
                                     pending = false,
                                     saveFailures = 2,
                                     onAnswer = { _, _ -> },
-                                    onStop = {},
-                                    canStop = true,
                                 )
                             }
                         } else {

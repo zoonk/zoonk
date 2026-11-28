@@ -1,12 +1,15 @@
 import { FRAME_GUTTER_CLASS } from "@zoonk/ui/components/bottom-bar";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** These parts render on the server. */
+/**
+ * These parts render on the server. The frame leaves the screen while a task covers it
+ * (`TaskLayer`).
+ */
 export function LearnShell({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "bg-background text-foreground flex min-h-dvh flex-col lg:has-[>[data-slot=sidebar]]:flex-row",
+        "bg-background text-foreground flex min-h-dvh flex-col in-data-task-layer:hidden lg:has-[>[data-slot=sidebar]]:flex-row",
         className,
       )}
       data-slot="learn-shell"

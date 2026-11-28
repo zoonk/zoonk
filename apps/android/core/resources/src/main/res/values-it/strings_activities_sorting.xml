@@ -49,7 +49,7 @@
   "activities_sorting_spot_empty": "f7c85be90c2be7c22219f9e3b6d8f712a309b74fce90fef0bae0553a9f148424",
   "activities_sorting_spot_named": "d77d4e8ce8fcd53a03ac35dc062a05d92e389be5bfdf5bd8c3383be9469ad46d",
   "activities_sorting_spots_to_label": "cf1f2a11f6886e8361629486bf1d151eff826c70f2adb83e0f75e786a8f489dd",
-  "activities_sorting_steps_in_your_order": "4c3f833a955b2873fcbefdbd6ab3009bb566826c385d3cef6a95f8ddde84c41d",
+  "activities_sorting_steps_in_your_order": "4ac9c382ccc3147b8329f91ad399675e8378600d7ba8ae58c911e349728b53d7",
   "activities_sorting_tap_a_name": "1685d8f0693c98fabbf3c6bbf7f86b631627f651dcced3014b71df07d5e30438",
   "activities_sorting_time_between": "5f8f45f987b03d5677842c2c7d471588cb02460e5e4680afcb67c514cea68509",
   "activities_sorting_timeline_from": "507274eb3d7ed293ecb091a0bb5047c9c733bddf8f25b2687d30e955b2c9ae9c",
@@ -101,8 +101,7 @@
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s va nel gruppo %2$s.</string>
     <string name="activities_sorting_badge_put_in_order">Metti in ordine</string>
-    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
-    <string name="activities_sorting_steps_in_your_order">Passaggi nell’ordine che hai scelto</string>
+    <string name="activities_sorting_steps_in_your_order">Passaggi, nel tuo ordine</string>
     <string name="activities_sorting_drag_steps">Tieni premuto e trascina i passaggi per ordinarli.</string>
     <!-- Above a process's steps in their true order, once checked. -->
     <string name="activities_sorting_right_order">L’ordine giusto</string>

@@ -238,15 +238,14 @@ test.describe("Journey", () => {
     const sheet = page.getByRole("dialog", { name: "Rename goal" });
     await sheet.getByRole("textbox", { name: "Name" }).fill("Stars and planets");
 
-    const rename = await holdActionAnswer(page, "/plan");
-    await sheet.getByRole("button", { name: "Save" }).click();
-    await rename.held;
-
-    await page.keyboard.press("Escape");
-    await expect(sheet).toBeVisible();
-    await expect(sheet.getByRole("button", { name: "Cancel" })).toBeDisabled();
-
-    await rename.release(/\/today/u);
+    await holdActionAnswer(page, "/plan", {
+      start: () => sheet.getByRole("button", { name: "Save" }).click(),
+      whileHeld: async () => {
+        await page.keyboard.press("Escape");
+        await expect(sheet).toBeVisible();
+        await expect(sheet.getByRole("button", { name: "Cancel" })).toBeDisabled();
+      },
+    });
 
     await expect(sheet).toHaveCount(0);
 

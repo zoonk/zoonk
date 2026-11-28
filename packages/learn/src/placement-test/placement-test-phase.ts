@@ -3,72 +3,187 @@ import {
   type PlacementAttemptView,
   type PlacementOutcome,
   type PlacementQuestion,
+  type PlacementResult,
 } from "../onboarding/onboarding-actions";
-import { type PlacementPartOutcome } from "./placement-test-actions";
+import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
+import { type PlacementFinishOutcome } from "./placement-test-actions";
 
 export type PlacementQuestionPhase = {
-  answered: number;
   attempt: PlacementAttemptView;
   failures: number;
   kind: "question";
-  /** 0 to 1, of this part. */
-  progress: number;
   question: PlacementQuestion;
   trueFalseLabels: TrueFalseLabels;
 };
 
-type Finished = Extract<PlacementPartOutcome, { status: "finished" }>;
+type Finished = Extract<PlacementFinishOutcome, { status: "finished" }>;
+
+/**
+ * Where the test starts the learner. `course` draws the course's line and is null when the result
+ * exists before the plan does; `changeId` is null when nothing was skipped, so there is no Undo.
+ * `saved`: a past test's result opened from the Plan, whose main action only goes back.
+ */
+export type PlacementResultPhase = Pick<PlacementResult, "chapter" | "course" | "nextLesson"> & {
+  attemptId: string;
+  changeId: string | null;
+  heldUntilTomorrow: boolean;
+  kind: "result";
+  lessonsSkipped: number;
+  saved?: true;
+};
 
 export type PlacementTestPhase =
   | PlacementQuestionPhase
-  /** `waiting`: the open test's questions are still being written. */
-  | { kind: "choose" | "loadFailed" | "loading" | "waiting" }
-  /** This part asks nothing more and isn't closed yet: closing it is the next save. */
-  | { attempt: PlacementAttemptView; kind: "partOver" }
   /**
-   * A whole-course test between two parts. `lessonsSkipped` is the part that just closed, or null
-   * when the learner came back to a test whose part closed earlier.
+   * `retry`: the test couldn't start, or its questions couldn't be written, so the wait offers "Try
+   * again", which starts it again. `buildFailed`: the course itself is still being built and that
+   * stopped.
    */
-  | {
-      attempt: PlacementAttemptView;
-      changeId: string | null;
-      heldUntilTomorrow?: true;
-      kind: "between";
-      lessonsSkipped: number | null;
-    }
-  | {
-      attemptId: string;
-      changeId: string | null;
-      heldUntilTomorrow?: true;
-      kind: "result";
-      length: PlacementAttemptView["length"];
-      lessonsSkipped: number;
-      nextTopic: string | null;
-    };
+  | (PlacementQuestionWait & { buildFailed?: true; retry?: true })
+  | { kind: "loadFailed" }
+  | { kind: "loading" }
+  | { kind: "offer" }
+  | { kind: "unavailable" }
+  /** The test asks nothing more and isn't closed yet: closing it is the next save. */
+  | { attempt: PlacementAttemptView; kind: "over" }
+  | PlacementResultPhase;
 
-function readAttempt(outcome: PlacementOutcome): PlacementAttemptView | null {
-  return outcome.status === "ready" || outcome.status === "notReady"
-    ? (outcome.attempt ?? null)
-    : null;
+const FAILED: PlacementOutcome = { status: "failed" };
+
+/**
+ * Where an answer leaves the test, or null when it didn't save. Core refuses an answer to a question
+ * it no longer asks, such as one another device moved past, so a read says whether the test moved on:
+ * a read that still asks the question means the answer didn't save.
+ */
+export async function answerOrRead({
+  answer,
+  question,
+  read,
+}: {
+  answer: () => Promise<PlacementOutcome>;
+  question: PlacementQuestion;
+  read: () => Promise<PlacementOutcome>;
+}): Promise<PlacementOutcome | null> {
+  const answered = await answer().catch(() => FAILED);
+  const now = answered.status === "failed" ? await read().catch(() => FAILED) : answered;
+  const stillAsked = now.status === "ready" && now.next?.itemId === question.itemId;
+
+  return now.status === "failed" || stillAsked ? null : now;
+}
+
+function toResultPhase({
+  changeId,
+  heldUntilTomorrow,
+  result,
+}: {
+  changeId: string | null | undefined;
+  heldUntilTomorrow: boolean;
+  result: PlacementResult;
+}): PlacementResultPhase {
+  return {
+    attemptId: result.attemptId,
+    changeId: result.lessonsSkipped > 0 ? (changeId ?? null) : null,
+    chapter: result.chapter,
+    course: result.course,
+    heldUntilTomorrow,
+    kind: "result",
+    lessonsSkipped: result.lessonsSkipped,
+    nextLesson: result.nextLesson,
+  };
+}
+
+function toUnopenedPhase({
+  asked,
+  canStart,
+  outcome,
+}: {
+  asked: boolean;
+  canStart: boolean;
+  outcome: Exclude<PlacementOutcome, { status: "failed" }>;
+}): PlacementTestPhase {
+  if (!asked) {
+    return canStart ? { kind: "offer" } : { kind: "unavailable" };
+  }
+
+  if (outcome.status === "notReady") {
+    return { kind: "waiting" };
+  }
+
+  return outcome.status === "generationFailed"
+    ? { buildFailed: true, kind: "waiting" }
+    : { kind: "unavailable" };
+}
+
+function toClosedPhase({
+  asked,
+  attemptId,
+  canStart,
+  outcome,
+  result,
+  surface,
+}: {
+  asked: boolean;
+  attemptId: string | undefined;
+  canStart: boolean;
+  outcome: Exclude<PlacementOutcome, { status: "failed" }>;
+  result: PlacementResult | null;
+  surface: "onboarding" | "plan";
+}): PlacementTestPhase {
+  if (!result) {
+    return toUnopenedPhase({ asked, canStart, outcome });
+  }
+
+  const shown = toResultPhase({
+    changeId: result.changeId,
+    heldUntilTomorrow: result.heldUntilTomorrow === true,
+    result,
+  });
+
+  if (surface === "onboarding" || result.attemptId === attemptId) {
+    return shown;
+  }
+
+  return asked ? toUnopenedPhase({ asked, canStart, outcome }) : { ...shown, saved: true };
 }
 
 /**
- * Where a read of the test leaves the learner. With no test open, they choose how much to check;
- * an open one goes on where it stopped, after its questions are written.
+ * On the Plan, a learner who took a test and hasn't asked for another opens its result, where a
+ * new test is offered while one can start.
+ * `asked`: the learner already chose the test, so it's waited for instead of offered again.
+ * `attemptId`: the test the learner was in. A read that finds it closed, such as after another
+ * device stopped it, shows its result as just ended.
+ * `canStart`: false when the course has nothing a test could skip, so no start is offered.
  */
-export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPhase {
+export function toPlacementTestPhase({
+  asked = false,
+  attemptId,
+  canStart = true,
+  outcome,
+  surface,
+}: {
+  asked?: boolean;
+  attemptId?: string;
+  canStart?: boolean;
+  outcome: PlacementOutcome;
+  surface: "onboarding" | "plan";
+}): PlacementTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
   }
 
-  const attempt = readAttempt(outcome);
+  const attempt = ("attempt" in outcome && outcome.attempt) || null;
+  const result = ("result" in outcome && outcome.result) || null;
 
   if (!attempt) {
-    return { kind: "choose" };
+    return toClosedPhase({ asked, attemptId, canStart, outcome, result, surface });
   }
 
-  if (attempt.partComplete) {
-    return { attempt, changeId: null, kind: "between", lessonsSkipped: null };
+  if (outcome.status === "generationFailed") {
+    return { kind: "waiting", retry: true };
+  }
+
+  if (outcome.status === "unavailable") {
+    return { kind: "unavailable" };
   }
 
   if (outcome.status !== "ready") {
@@ -76,49 +191,44 @@ export function toPlacementTestPhase(outcome: PlacementOutcome): PlacementTestPh
   }
 
   if (!outcome.next) {
-    return { attempt, kind: "partOver" };
+    return { attempt, kind: "over" };
   }
 
   return {
-    answered: outcome.answered,
     attempt,
     failures: 0,
     kind: "question",
-    progress: outcome.dayBudgetSpent,
     question: outcome.next,
     trueFalseLabels: outcome.trueFalseLabels,
   };
 }
 
-/** A closed part goes on to the next one when the test has more; otherwise it's the result. */
 export function toFinishedPhase({
   attemptId,
   finished,
-  length,
 }: {
   attemptId: string;
   finished: Finished;
-  length: PlacementAttemptView["length"];
-}): PlacementTestPhase {
-  if (finished.attempt) {
-    return {
-      attempt: finished.attempt,
-      changeId: finished.changeId,
-      ...(finished.heldUntilTomorrow && { heldUntilTomorrow: finished.heldUntilTomorrow }),
-      kind: "between",
-      lessonsSkipped: finished.lessonsSkipped,
-    };
-  }
+}): PlacementResultPhase {
+  const heldUntilTomorrow =
+    (finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow) === true;
 
-  const heldUntilTomorrow = finished.result?.heldUntilTomorrow ?? finished.heldUntilTomorrow;
+  if (finished.result) {
+    return toResultPhase({
+      changeId: finished.changeId,
+      heldUntilTomorrow,
+      result: finished.result,
+    });
+  }
 
   return {
     attemptId,
-    changeId: finished.changeId,
-    ...(heldUntilTomorrow && { heldUntilTomorrow }),
+    changeId: finished.lessonsSkipped > 0 ? finished.changeId : null,
+    chapter: null,
+    course: null,
+    heldUntilTomorrow,
     kind: "result",
-    length,
-    lessonsSkipped: finished.result?.lessonsSkipped ?? finished.lessonsSkipped,
-    nextTopic: finished.nextTopic,
+    lessonsSkipped: finished.lessonsSkipped,
+    nextLesson: null,
   };
 }

@@ -143,33 +143,31 @@ export type PlacementAnswer = PlacementAnswerInput["answer"];
 
 type LearnPlacementTest = Extract<NonNullable<PlanView["placementTest"]>, { kind: "learn" }>;
 
-/** A test taken from the plan, open or between its parts. */
 export type PlacementAttemptView = NonNullable<LearnPlacementTest["attempt"]>;
 
 export type PlacementResult = NonNullable<LearnPlacementTest["result"]>;
 
 export type PlacementOutcome =
   | {
-      answered: number;
-      /** The test taken from the plan, when one is open; null for onboarding's and the Focus test. */
+      /** The course test, when one is open; null for the Focus test. */
       attempt: PlacementAttemptView | null;
-      complete: boolean;
-      /** 0 to 1. */
-      dayBudgetSpent: number;
-      dayBudgetUsed: boolean;
       /** An exam goal's placement is its Focus test; null for other goals. */
       focusTest: FocusTestView | null;
       next: PlacementQuestion | null;
-      /** The last finished test taken from the plan; it stays readable while another is open. */
       result: PlacementResult | null;
-      started: boolean;
       status: "ready";
       trueFalseLabels: TrueFalseLabels;
     }
   | { status: "failed" }
   | { attempt?: PlacementAttemptView | null; focusTest: FocusTestView | null; status: "notReady" }
-  | { status: "unavailable" }
-  | { status: "generationFailed" };
+  /** Nothing to ask: no test is open. `result` is the last test's, when one ended. */
+  | {
+      attempt?: PlacementAttemptView | null;
+      result?: PlacementResult | null;
+      status: "unavailable";
+    }
+  /** With an `attempt`, its questions couldn't be written: starting it again retries. */
+  | { attempt?: PlacementAttemptView | null; status: "generationFailed" };
 
 export type RevealedPlan = {
   plan: PlanView;
@@ -188,10 +186,9 @@ export type OnboardingActions = {
   /** The onboarding as it is after the aim moved; null when it couldn't be changed. */
   changeAim: (input: { aim: LanguageAim; goalId: string }) => Promise<OnboardingView | null>;
   createGoals: (input: GoalCreateInput) => Promise<CreateGoalsOutcome>;
+  /** `fromScratch`: the learner starts with a first lesson instead of a test. */
   finishPlacement: (input: { fromScratch: boolean; goalId: string }) => Promise<boolean>;
   focusTest: (goalId: string) => FocusTestActions;
-  getPlacement: (goalId: string) => Promise<PlacementOutcome>;
-  getPlacementMinutes: (goalId: string) => Promise<number>;
   getPlan: (goalId: string) => Promise<PlanOutcome>;
   /** `studyDays` count Sunday as 0. Null when it couldn't be read. */
   getTimeAdvice: (
@@ -202,21 +199,7 @@ export type OnboardingActions = {
     input: PlanTimeToCoverInput & { goalId: string; studyDays: number[] },
   ) => Promise<PlanTimeToCover | null>;
   joinWaitlist: (input: { instrument: string; language: string }) => Promise<WaitlistOutcome>;
-  answerPlacement: (input: {
-    answer: PlacementAnswer;
-    durationMs: number;
-    goalId: string;
-    itemId: string;
-  }) => Promise<PlacementOutcome>;
-  languageLevelTest: (goalId: string) => {
-    /** Ends a test that never opened, so a skip moves on; false when there was nothing to end. */
-    finish: () => Promise<boolean>;
-    switchLanguage: (language: string) => void;
-  };
-  languagePlanTest: (input: {
-    goalId: string;
-    walkTopics: () => Promise<boolean>;
-  }) => LanguagePlanTestActions;
+  languagePlanTest: (goalId: string) => LanguagePlanTestActions;
   placementTest: (goalId: string) => PlacementTestActions;
   askMaterial: (input: {
     language: string;
@@ -228,6 +211,8 @@ export type OnboardingActions = {
   /** Ends onboarding: until it's saved, Today and resume bring the learner back to the reveal. */
   markPlanRevealed: (goalId: string) => Promise<boolean>;
   startOver: (goalIds: string[]) => Promise<void>;
+  /** Shows the goal's setup in another language of the app, where the learner left it. */
+  switchAppLanguage: (input: { goalId: string; language: string }) => void;
   understanding: UnderstandingActions;
 };
 

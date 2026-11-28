@@ -1,29 +1,251 @@
 import "server-only";
-import { type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { testEventContext, trackTestEvents } from "../../../analytics/test-events";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../../cache/tags";
 import { owePlanStartLessons } from "../../../follow-ups/owe-goal-lessons";
-import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
-import { countLessons } from "../../../plans/_utils/stand-in-lessons";
+import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { recordTestOutChange } from "../../../plans/record-test-out-change";
 import { loadPlacementPlan } from "../../_utils/goal-skill-graph";
-import { loadSkillConfirmations } from "../../_utils/load-skill-claims";
-import { testOutKnownPlanItems } from "../../_utils/test-out-known-plan-items";
 import { unchanged, writeLearnerChange } from "../../_utils/write-learner-change";
+import { applyLegacyPlacement } from "./apply-legacy-placement";
 import { type PlacementCompletion } from "./complete-placement";
+import { makeReceipt, storeFinishedResult } from "./course-placement-receipt";
+import { applyCourseStart } from "./course-start-items";
 import { loadPlacementWithSummary } from "./load-placement-state";
-import { SITTING_ANSWER_SQL } from "./placement-answers";
 import { savePlacementAttempt } from "./placement-attempt";
-import { readPlacementAttempt } from "./placement-attempt-record";
+import { readAttemptQuestions } from "./placement-attempt-questions";
+import { type PlacementRecord, readPlacementAttempt } from "./placement-attempt-record";
+import { loadCourseAnswers } from "./placement-evidence";
+import { coursePreparationFailed } from "./placement-plan-build";
+import { readPlacementChange } from "./placement-result";
+
+function findAppliedReceipt({
+  answered,
+  complete,
+  receipts,
+}: {
+  answered: number;
+  complete: boolean;
+  receipts: PlacementRecord["finishedParts"];
+}) {
+  return receipts.findLast(
+    (receipt) =>
+      receipt.finish?.answered === answered && (receipt.finish.end !== "stopped" || !complete),
+  );
+}
+
+function currentAttemptId(record: PlacementRecord) {
+  return record.attempt?.id ?? record.result?.attemptId;
+}
+
+function isFinishedLegacyPart(attempt: PlacementRecord["attempt"]) {
+  return attempt && !attempt.search && attempt.partComplete;
+}
+
+async function readCompletedCourseReceipt({
+  goalId,
+  part,
+  result,
+  tx,
+}: {
+  goalId: string;
+  part: number;
+  result: NonNullable<PlacementRecord["result"]>;
+  tx: TransactionClient;
+}) {
+  const { attemptId, finish } = result;
+
+  if (!finish || part !== 1) {
+    return null;
+  }
+
+  const change = await readPlacementChange({ attemptId, db: tx, finish, goalId, part });
+  const active = parsePlanChangePayload(change?.payload);
+
+  const receipt: PlacementRecord["finishedParts"][number] = {
+    finish,
+    knownSkillIds: [],
+    lessonsSkipped: active.lessonsSkipped ?? 0,
+    part: 1,
+    testedOutPlanItemIds: active.planItemIds,
+  };
+
+  return receipt;
+}
+
+type FinishInput = {
+  answered?: number;
+  attemptId: string;
+  goal: Goal;
+  now: Date;
+  part: number;
+  timeZone: string;
+  today: Date;
+  tx: TransactionClient;
+};
+
+async function savePart(input: FinishInput) {
+  const { attemptId, goal, part, tx } = input;
+  const goalId = goal.id;
+  const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
+  const record = readPlacementAttempt(current);
+
+  if (currentAttemptId(record) !== attemptId) {
+    return unchanged(null);
+  }
+
+  if (!record.attempt && record.result?.courseStart) {
+    const receipt = await readCompletedCourseReceipt({ goalId, part, result: record.result, tx });
+    return unchanged({ event: null, receipt });
+  }
+
+  return finishActivePart(input, current, record);
+}
+
+async function finishActivePart(
+  { answered, attemptId, goal, now, part, timeZone, today, tx }: FinishInput,
+  current: Goal,
+  record: PlacementRecord,
+) {
+  const { id: goalId, userId } = goal;
+  const { attempt, finishedParts } = record;
+  const receipts = finishedParts.filter((finished) => finished.part === part);
+  const last = receipts.at(-1);
+
+  if (isFinishedLegacyPart(attempt)) {
+    await savePlacementAttempt({ goal: current, record: { ...record, attempt: null }, tx });
+    return { event: null, receipt: last ?? finishedParts.at(-1) ?? null };
+  }
+
+  if (attempt?.part !== part || attempt.partComplete) {
+    return unchanged({ event: null, receipt: last ?? null });
+  }
+
+  if (coursePreparationFailed(attempt)) {
+    return unchanged(null);
+  }
+
+  const legacyPlan = attempt.search ? undefined : await loadPlacementPlan(goalId, tx);
+  const attempts = await loadCourseAnswers(attempt.id, userId, tx);
+  const attemptQuestions = readAttemptQuestions({ attempt, attempts, plan: legacyPlan });
+
+  const previous = findAppliedReceipt({
+    answered: answered ?? attemptQuestions.answered,
+    complete: attemptQuestions.complete,
+    receipts,
+  });
+
+  if (previous) {
+    return unchanged({ event: null, receipt: previous });
+  }
+
+  if ((answered ?? attemptQuestions.answered) !== attemptQuestions.answered) {
+    return unchanged(null);
+  }
+
+  const receiptKey = placementPartReceipt(
+    attemptId,
+    part,
+    attemptQuestions.complete ? undefined : attemptQuestions.answered,
+  );
+
+  const { confirmed, heldUntilTomorrow, partLessonsSkipped, testedOutPlanItemIds, sharedItemIds } =
+    legacyPlan
+      ? await applyLegacyPlacement({
+          attempt,
+          goal,
+          now,
+          plan: legacyPlan,
+          skillIds: attemptQuestions.knownSkillIds,
+          timeZone,
+          today,
+          tx,
+        })
+      : await applyCourseStart({
+          goalId,
+          lineSkillIds: attempt.search?.topics?.map((topic) => topic.id),
+          now,
+          startedPastSkillIds: attemptQuestions.startedPastSkillIds,
+          tx,
+        });
+
+  const { finish, held, lessonsSkipped, receipt } = makeReceipt({
+    attempt,
+    attemptQuestions,
+    confirmed,
+    heldUntilTomorrow,
+    last,
+    part,
+    partLessonsSkipped,
+    testedOutPlanItemIds,
+  });
+
+  await storeFinishedResult({
+    attempt,
+    attemptQuestions,
+    current,
+    finish,
+    goalId,
+    held,
+    lessonsSkipped,
+    now,
+    receipt,
+    record,
+    testedOutPlanItemIds,
+    tx,
+  });
+
+  await recordTestOutChange({
+    goalId,
+    itemIds: [...testedOutPlanItemIds, ...sharedItemIds],
+    now,
+    receipt: receiptKey,
+    ...(attempt.search && {
+      lineSkillIds: attempt.search.topics?.map((topic) => topic.id),
+      startedPastSkillIds: attemptQuestions.startedPastSkillIds,
+    }),
+    timeZone,
+    tx,
+    userId,
+  });
+
+  await owePlanStartLessons({ db: tx, goalId, userId });
+
+  return {
+    event: {
+      name: "Test Finished" as const,
+      properties: {
+        ...testEventContext(current, {
+          attemptId,
+          part,
+          parts: 1,
+          questions: attemptQuestions.questions,
+          test: "course",
+        }),
+        answered: finish.answered,
+        duration_ms: attemptQuestions.durationMs,
+        end: finish.end,
+        lessons_skipped: finish.lessonsSkipped,
+        levels_skipped: 0,
+        parts_left: 0,
+        unknowns: finish.unknowns,
+      },
+    },
+    receipt,
+  };
+}
 
 export async function finishPlacementAttempt({
+  answered,
   attemptId,
   goal,
   part = 1,
   timeZone,
 }: {
+  answered?: number;
   attemptId: string;
   goal: Goal;
   part?: number;
@@ -33,139 +255,47 @@ export async function finishPlacementAttempt({
   const now = new Date();
   const today = getDateInTimeZone({ date: now, timeZone });
 
-  const receiptKey = placementPartReceipt(attemptId, part);
+  const { attempt: previous, result } = readPlacementAttempt(goal);
+  const courseStart = previous ? Boolean(previous.search) : result?.courseStart;
 
-  const saved = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
-    const current = await tx.goal.findUniqueOrThrow({ where: { id: goalId } });
-    const record = readPlacementAttempt(current);
-    const { attempt, finishedParts, result } = record;
+  const storedPart =
+    previous && previous.id === attemptId && !previous.search ? previous.part : part;
 
-    if ((attempt?.id ?? result?.attemptId) !== attemptId) {
-      return unchanged(null);
-    }
+  const finished = await writeLearnerChange({ planInputs: true, userId }, (tx) =>
+    savePart({ answered, attemptId, goal, now, part: storedPart, timeZone, today, tx }),
+  );
 
-    const finishedPart = finishedParts.find((finished) => finished.part === part);
-
-    if (finishedPart) {
-      return unchanged(finishedPart);
-    }
-
-    if (attempt?.id !== attemptId || attempt.part !== part || attempt.partComplete) {
-      return unchanged(null);
-    }
-
-    const plan = await loadPlacementPlan(goalId, tx);
-
-    const { attemptFollowUps, attemptHasMore, attemptRemainingSkillIds, state } =
-      await loadPlacementWithSummary({ goalId, plan, timeZone, today, tx, userId });
-
-    await tx.$executeRaw`
-      UPDATE attempts SET answer = answer - 'placementPending'
-      WHERE user_id = ${userId}::uuid AND focus_test_id = ${attemptId}::uuid AND ${SITTING_ANSWER_SQL}
-    `;
-
-    const { confirmed, heldUntilTomorrow } = await loadSkillConfirmations({
-      goalId,
-      skillIds: state.knownSkillIds,
-      timeZone,
-      today,
-      tx,
-      userId,
-    });
-
-    const changed = await testOutKnownPlanItems(tx, {
-      goalId,
-      items: plan.items,
-      knownSkillIds: confirmed,
-      placedSkills: plan.skills.filter((skill) => attempt.skillIds.includes(skill.id)),
-      testedOutAt: now,
-      timeZone,
-    });
-
-    const testedOutPlanItemIds = [...changed.itemIds, ...changed.standInIds];
-
-    const partLessonsSkipped = countLessons(
-      testedOutPlanItemIds.length > 0
-        ? await tx.planItem.findMany({
-            select: { chapterId: true, kind: true, lessonId: true, lessons: true, skillId: true },
-            where: { id: { in: testedOutPlanItemIds } },
-          })
-        : [],
-    );
-
-    const lessonsSkipped = attempt.lessonsSkipped + partLessonsSkipped;
-    const finishedAt = now.toISOString();
-    const held = heldUntilTomorrow ? { heldUntilTomorrow: true as const } : {};
-
-    const receipt = {
-      ...held,
-      knownSkillIds: [...confirmed],
-      lessonsSkipped: partLessonsSkipped,
-      part,
-      testedOutPlanItemIds,
-    };
-
-    const canContinue = attempt.length === "wholeCourse" && attemptHasMore;
-
-    await savePlacementAttempt({
-      goal: current,
-      record: {
-        ...record,
-        attempt: canContinue
-          ? {
-              ...attempt,
-              lessonsSkipped,
-              partComplete: true,
-              remainingSkillIds: attemptRemainingSkillIds,
-            }
-          : null,
-        finishedParts: [...finishedParts, receipt],
-        ...(attempt.length === "quick" && { quickFollowUpSkillIds: attemptFollowUps ?? [] }),
-        result: canContinue ? record.result : { ...held, attemptId, finishedAt, lessonsSkipped },
-      },
-      tx,
-    });
-
-    await recordTestOutChange({
-      goalId,
-      itemIds: [...testedOutPlanItemIds, ...changed.sharedItemIds],
-      now,
-      receipt: receiptKey,
-      timeZone,
-      tx,
-      userId,
-    });
-
-    await owePlanStartLessons({ db: tx, goalId, userId });
-
-    return receipt;
-  });
-
-  if (!saved) {
+  if (!finished?.receipt) {
     return null;
+  }
+
+  const { event, receipt: saved } = finished;
+
+  if (event) {
+    trackTestEvents(goal, [event]);
   }
 
   revalidateCacheTags([getGoalsCacheTag(userId)]);
 
-  const [change, plan] = await Promise.all([
-    saved.testedOutPlanItemIds.length > 0
-      ? readTestOutChange({ goalId, receipt: receiptKey })
-      : null,
-    loadPlacementPlan(goalId),
+  const [legacyChange, { state }] = await Promise.all([
+    courseStart
+      ? null
+      : readPlacementChange({ attemptId, finish: saved.finish, goalId, part: saved.part }),
+    loadPlacementWithSummary({ goalId, timeZone, today, userId }),
   ]);
 
-  const { state } = await loadPlacementWithSummary({ goalId, plan, timeZone, today, userId });
+  const courseResult = courseStart ? state.result : null;
 
   return {
     areas: state.areas,
     attempt: state.attempt,
-    changeId: change?.id ?? null,
+    changeId: courseResult?.changeId ?? legacyChange?.id ?? null,
     complete: !state.attempt,
+    finish: saved.finish,
     focusTest: null,
     ...(saved.heldUntilTomorrow && { heldUntilTomorrow: saved.heldUntilTomorrow }),
     knownSkillIds: saved.knownSkillIds,
-    lessonsSkipped: saved.lessonsSkipped,
-    partLessonsSkipped: saved.lessonsSkipped,
+    lessonsSkipped: courseResult?.lessonsSkipped ?? saved.lessonsSkipped,
     phases: state.phases,
     result: state.result,
     testedOutPlanItemIds: saved.testedOutPlanItemIds,

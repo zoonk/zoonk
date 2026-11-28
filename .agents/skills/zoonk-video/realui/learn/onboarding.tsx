@@ -130,6 +130,7 @@ function usePressedDontKnow(on: boolean) {
 
 function DiagnosticView({ lang, state, q }: ViewProps) {
   const c = S(lang).career;
+  const number = Number(q.get("number") ?? 3);
   usePressedDontKnow(state === "picked");
 
   return (
@@ -141,12 +142,11 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
         steps={["placement", "plan"]}
       >
         <PlacementQuestionScreen
+          answered={number - 1}
           failures={0}
-          number={Number(q.get("number") ?? 3)}
           onAnswer={noop}
           onStop={noop}
           pending={false}
-          progress={Number(q.get("progress") ?? 0.3)}
           question={{
             context: null,
             format: "multipleChoice",
@@ -158,6 +158,7 @@ function DiagnosticView({ lang, state, q }: ViewProps) {
             visual: null,
           }}
           subject={c.title}
+          total={12}
         />
       </StepsBar>
     </OnboardingShell>

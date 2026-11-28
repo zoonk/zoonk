@@ -2,7 +2,9 @@ package com.zoonk.android.feature.onboarding
 
 import com.zoonk.android.feature.profile.profileQuestion
 import com.zoonk.api.models.OnboardingStep
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -14,5 +16,13 @@ class ProfileSetupLeftTest {
         assertFalse(view.copy(steps = profile + OnboardingStep.PLAN).questionsLeft)
         profile.forEach { assertFalse(view.copy(steps = listOf(it, OnboardingStep.PLAN)).questionsLeft) }
         assertTrue(view.copy(steps = profile + OnboardingStep.SCHEDULE + OnboardingStep.PLAN).questionsLeft)
+    }
+
+    @Test
+    fun aTestHalfDoneOwesItsQuestionsEvenWhenThePlanIsAlreadyMade() {
+        assertEquals(OnboardingLeft.Questions, setupView(listOf("placement", "plan"), planReady = true).left())
+        assertEquals(OnboardingLeft.Reveal, setupView(listOf("plan"), planReady = true).left())
+        assertNull(setupView(listOf("plan"), planReady = true, planRevealed = true).left())
+        assertNull(setupView(listOf("plan"), planReady = false).left())
     }
 }

@@ -13,7 +13,7 @@
   "listening_play_again": "89e4b412a66e1c2962e175432f8b464fa2aaa008cdedbfc1486a19b97f6cef60",
   "listening_playing": "70de17e9d4bd77f81fc4eaf8e381754eb4fab357b13d37d1e1e3e420db0e81b5",
   "listening_playing_note": "1c6c507533502a2a445a67bd207b1fbc71b400450ae6789951153caf96fc58c0",
-  "listening_questions": "2e7238f4479c21ded11b55d21d36c32646fe41d839e01a1ca3c990faf10280d1",
+  "listening_questions": "5ef149249a7c8487c84c552e275379b9ef23dc44607f10f421153dcec85c5099",
   "listening_recording": "e14b0a682ba1ce34972d23f047d257cc1016d78feb7596b0d2d759e9e93cdfc4",
   "listening_stop": "fcaa7802421b11407a7d7651862a270fd0d1a38b37e7798cefe05843d7b39d1f",
   "listening_transcript": "fb0b2f40e7f699f39bd5b98361d9d61055cfa135d60d294c0f561c2c3ada1a4c"
@@ -36,7 +36,7 @@
     <string name="listening_failed">音声を読み込めませんでした。通信状況を確認して、もう一度試してください。</string>
     <string name="listening_playing_note">再生しています。試験と同じく、一時停止はできません。</string>
     <plurals name="listening_questions">
-        <item quantity="other">この音声の問題（%d）</item>
+        <item quantity="other">この音声の問題（%d問）</item>
     </plurals>
     <string name="listening_transcript">文字起こし</string>
 </resources>

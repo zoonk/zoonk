@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type PlanChange, prisma } from "@zoonk/db";
+import { type Goal, type PlanChange, sql } from "@zoonk/db";
 import { getExamDocument } from "../../exams/exam-document";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
@@ -8,6 +8,7 @@ import { latestLivingPlanChanges } from "./living-plan-change";
 import { waitingPlanProposal } from "./notice-graph-proposal";
 import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload";
 import { getPlanChangeQuote } from "./plan-change-quote";
+import { type PlanChangeRow, readPlanChanges } from "./read-plan-changes";
 
 const RECENT_CHANGE_DAYS = 14;
 const MAX_CHANGES = 10;
@@ -44,7 +45,7 @@ export function toPlanChangeView({
   goal,
   planVersion,
 }: {
-  change: PlanChange;
+  change: PlanChangeRow;
   goal: Pick<Goal, "kind" | "targetLanguage">;
   planVersion: number;
 }): PlanChangeView {
@@ -77,26 +78,21 @@ export async function loadPlanChangeViews({
   goal,
   now,
   planId,
-  planVersion,
 }: {
   goal: Pick<Goal, "kind" | "targetLanguage">;
   now: Date;
   planId: string;
-  planVersion: number;
 }): Promise<PlanChangeView[]> {
-  const changes = await prisma.planChange.findMany({
-    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
-    take: MAX_CHANGES,
-    where: {
-      OR: [
-        waitingPlanProposal,
-        { createdAt: { gte: addDays(now, -RECENT_CHANGE_DAYS) }, status: { not: "proposed" } },
-      ],
-      planId,
-    },
+  const changes = await readPlanChanges({
+    limit: MAX_CHANGES,
+    planId,
+    where: sql`
+      (${waitingPlanProposal})
+      OR (change.status <> 'proposed' AND change.created_at >= ${addDays(now, -RECENT_CHANGE_DAYS)})
+    `,
   });
 
   return latestLivingPlanChanges(changes)
     .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
-    .map((change) => toPlanChangeView({ change, goal, planVersion }));
+    .map((change) => toPlanChangeView({ change, goal, planVersion: change.planVersion }));
 }

@@ -1,295 +1,235 @@
 "use client";
 
+import { Button } from "@zoonk/ui/components/button";
+import { MeterParts } from "@zoonk/ui/components/meter";
+import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useState } from "react";
-import { Eyebrow } from "../_components/eyebrow";
-import { Surface } from "../_components/surface";
-import { useFormatDuration } from "../_utils/time-format";
-import { type Choice, ChoiceList } from "../onboarding/choice-list";
 import {
-  OnboardingActions,
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingPrimaryButton,
-  OnboardingSecondaryButton,
-  OnboardingTitle,
-} from "../onboarding/onboarding-frame";
+  ListGroup,
+  ListRow,
+  ListRowContent,
+  ListRowDescription,
+  ListRowLeading,
+  ListRowTitle,
+  ListRowTrailing,
+} from "../_components/list-group";
+import { StatusMark } from "../_components/status-mark";
+import { TaskMeta } from "../_components/task-meta";
+import { useFormatDuration } from "../_utils/time-format";
+import { OnboardingDescription } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { usePhaseName } from "../plan/use-phase-name";
 import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { type ResultUndo, useResultUndo } from "../questions/undo-button";
-import { type PlacementLength } from "./placement-test-actions";
-import { type PlacementPressed } from "./use-placement-test";
+import { DaySegment } from "../today/day-segments";
+import { toCourseSegments } from "./course-line";
+import { type PlacementResultPhase } from "./placement-test-phase";
+import { type TestPressed } from "./test-offer";
 
-const QUICK_TEST_MINUTES = 4;
+type Course = NonNullable<PlacementResultPhase["course"]>;
 
-function useMinutesLeft() {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-
-  return (minutes: number) =>
-    t({
-      description: "{time} is a duration with its unit, such as “15 min”.",
-      message: "About {time} left. Your answers are saved.",
-      values: { time: formatDuration(minutes) },
-    });
-}
-
-function useRetakeTomorrow() {
-  const t = useExtracted();
-  return t("You undid these today. Answer again tomorrow to skip them.");
-}
-
-type TestChoice = PlacementLength | "testOut";
-
-export function PlacementLengthChoice({
-  children,
-  failed,
-  initialChoice = "quick",
-  onSkip,
-  onStart,
-  onTestOut,
-  pressed,
-  testOutLevel = null,
-  wholeCourseMinutes,
-}: {
-  children?: React.ReactNode;
-  failed: boolean;
-  initialChoice?: TestChoice;
-  onSkip?: () => void;
-  onStart: (length: PlacementLength) => void;
-  onTestOut?: () => void;
-  pressed: PlacementPressed;
-  /** A language course's next level the learner can test out of, offered beside the two lengths. */
-  testOutLevel?: string | null;
-  wholeCourseMinutes: number;
-}) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const [choice, setChoice] = useState<TestChoice>(initialChoice);
-  const lengthLabel = t("Choose a test");
-
-  const choices: Choice<TestChoice>[] = [
-    {
-      description: t("About {time}", { time: formatDuration(QUICK_TEST_MINUTES) }),
-      label: t({
-        description: "The short placement test: about four minutes of questions.",
-        message: "Quick test",
-      }),
-      value: "quick",
-    },
-    ...(wholeCourseMinutes > 0
-      ? [
-          {
-            description: t({
-              description:
-                "{time} is a duration with its unit, such as “30 min”. The test is split into parts the learner can take on different days.",
-              message: "About {time}, in parts",
-              values: { time: formatDuration(wholeCourseMinutes) },
-            }),
-            label: t({
-              description:
-                "The long placement test: it checks every topic still ahead in the course.",
-              message: "Whole course",
-            }),
-            value: "wholeCourse" as const,
-          },
-        ]
-      : []),
-    ...(testOutLevel && onTestOut
-      ? [
-          {
-            description: t("Skip {level} if you already know it", { level: testOutLevel }),
-            label: t({
-              description: "A short test of one language level, such as “Test out of B2”.",
-              message: "Test out of {level}",
-              values: { level: testOutLevel },
-            }),
-            value: "testOut" as const,
-          },
-        ]
-      : []),
-  ];
-
-  const start = () => {
-    if (choice === "testOut") {
-      onTestOut?.();
-      return;
-    }
-
-    onStart(choice);
-  };
-
+function CourseLine({ course }: { course: Course }) {
   return (
-    <OnboardingColumn
-      bar={
-        <OnboardingActions failed={failed}>
-          {onSkip && (
-            <OnboardingSecondaryButton
-              busy={pressed === "other"}
-              disabled={pressed === "main"}
-              onClick={onSkip}
-            >
-              {t("Skip")}
-            </OnboardingSecondaryButton>
-          )}
-          <OnboardingPrimaryButton
-            busy={pressed === "main"}
-            disabled={pressed === "other"}
-            onClick={start}
-          >
-            {t("Start")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
-      }
-    >
-      <OnboardingHeading>
-        <OnboardingTitle>{t("Skip what you already know")}</OnboardingTitle>
-        <OnboardingDescription>
-          {choices.length > 1
-            ? t("A test finds the lessons you can skip.")
-            : t({
-                description: "{time} is a duration with its unit, such as “4 min”.",
-                message: "A quick test finds the lessons you can skip. It takes about {time}.",
-                values: { time: formatDuration(QUICK_TEST_MINUTES) },
-              })}
-        </OnboardingDescription>
-      </OnboardingHeading>
-
-      {choices.length > 1 && (
-        <div className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium">{lengthLabel}</h2>
-          <ChoiceList choices={choices} label={lengthLabel} onChange={setChoice} value={choice} />
-        </div>
-      )}
-      {children}
-    </OnboardingColumn>
+    <MeterParts data-slot="course-line">
+      {toCourseSegments(course.chapters).map((segment, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Chapters are positions in the plan.
+        <DaySegment key={index} {...segment} />
+      ))}
+    </MeterParts>
   );
 }
 
-/** A whole-course test between two parts: what the last one skipped, and the rest to do. */
-export function PlacementBetweenParts({
-  failed,
-  heldUntilTomorrow = false,
-  lessonsSkipped,
-  minutesLeft,
-  onContinueOnboarding,
-  onFinishForToday,
-  onKeepGoing,
-  pressed,
-  undo,
+/**
+ * What a result drew (the course's line, a language's level rows) with how many lessons the test
+ * skipped under it, which the picture can't say; nothing under it when none were.
+ */
+export function SkippedCaption({
+  children,
+  className,
+  lessons,
 }: {
-  failed: boolean;
-  heldUntilTomorrow?: boolean;
-  /** Null when the learner came back to a test whose part closed earlier. */
-  lessonsSkipped: number | null;
-  minutesLeft: number;
-  onContinueOnboarding?: () => void;
-  onFinishForToday: () => void;
-  onKeepGoing?: () => void;
-  pressed: PlacementPressed;
-  undo: ResultUndo;
+  children: React.ReactNode;
+  className?: string;
+  lessons: number;
+}) {
+  const { skipped } = useSkippedLessonsSentences();
+
+  return (
+    <div className={cn("flex flex-col gap-2.5", className)}>
+      {children}
+      {lessons > 0 && <TaskMeta facts={[skipped(lessons)]} />}
+    </div>
+  );
+}
+
+export function UpNextLesson({
+  estimatedMinutes,
+  title,
+}: {
+  estimatedMinutes?: number;
+  title: string;
+}) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+
+  return (
+    <ListGroup>
+      <ListRow data-highlighted="">
+        <ListRowLeading>
+          <StatusMark status="next" />
+        </ListRowLeading>
+        <ListRowContent>
+          <ListRowTitle>{title}</ListRowTitle>
+          <ListRowDescription>{t("Up next")}</ListRowDescription>
+        </ListRowContent>
+        {estimatedMinutes !== undefined && (
+          <ListRowTrailing>{formatDuration(estimatedMinutes)}</ListRowTrailing>
+        )}
+      </ListRow>
+    </ListGroup>
+  );
+}
+
+/** The main action a result offers on the Plan: the next lesson when it's known, else the way back. */
+export function useResultAction({
+  nextLesson,
+  onboarding,
+}: {
+  nextLesson: { id: string; title: string } | null | undefined;
+  onboarding: boolean;
+}): { label: string; lessonId: string | null } {
+  const t = useExtracted();
+
+  if (onboarding) {
+    return { label: t("Continue"), lessonId: null };
+  }
+
+  return nextLesson
+    ? { label: t("Start lesson"), lessonId: nextLesson.id }
+    : { label: t("Done"), lessonId: null };
+}
+
+/** What the result says under its title, only in the two states its picture can't show. */
+function ResultLead({
+  held,
+  lessons,
+  undone,
+}: {
+  held: boolean;
+  lessons: number;
+  undone: boolean;
 }) {
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
-  const left = useMinutesLeft();
-  const retakeTomorrow = useRetakeTomorrow();
-  const { button, pending, undone } = useResultUndo(undo);
+
+  if (!undone && !(held && lessons === 0)) {
+    return null;
+  }
 
   return (
-    <OnboardingColumn
-      bar={
-        <OnboardingActions failed={failed}>
-          {button(pressed !== null)}
-          {!onContinueOnboarding && (
-            <OnboardingSecondaryButton
-              busy={pressed === "other"}
-              disabled={pending || pressed === "main"}
-              onClick={onFinishForToday}
-            >
-              {t("Finish for today")}
-            </OnboardingSecondaryButton>
-          )}
-          <OnboardingPrimaryButton
-            autoFocus
-            busy={pressed === "main"}
-            disabled={pending || pressed === "other"}
-            onClick={onContinueOnboarding ?? onKeepGoing}
-          >
-            {onContinueOnboarding ? t("Continue") : t("Keep going")}
-          </OnboardingPrimaryButton>
-        </OnboardingActions>
-      }
-    >
-      <OnboardingHeading>
-        <OnboardingTitle>
-          {lessonsSkipped === null
-            ? t("Continue your test")
-            : sentences.skipped(undone ? 0 : lessonsSkipped)}
-        </OnboardingTitle>
-        <OnboardingDescription>{left(minutesLeft)}</OnboardingDescription>
-        {heldUntilTomorrow && lessonsSkipped === 0 && (
-          <OnboardingDescription>{retakeTomorrow}</OnboardingDescription>
-        )}
-      </OnboardingHeading>
-      {undone && <p role="status">{sentences.back(lessonsSkipped ?? 0)}</p>}
-      {onContinueOnboarding && (
-        <p className="text-muted-foreground text-sm text-pretty">
-          {t("You can finish the test from Plan.")}
-        </p>
-      )}
-    </OnboardingColumn>
+    <OnboardingDescription role="status">
+      {undone
+        ? sentences.back(lessons)
+        : t("You undid these today. Answer again tomorrow to skip them.")}
+    </OnboardingDescription>
   );
+}
+
+/** The stop the learner starts in, named as the Plan names it, also when it has no saved name. */
+function useStartStopName() {
+  const phaseName = usePhaseName();
+
+  return ({ chapter, course }: Pick<PlacementResultPhase, "chapter" | "course">) => {
+    const index = course?.chapters.findIndex((stop) => stop.start) ?? -1;
+
+    if (chapter || index === -1) {
+      return chapter;
+    }
+
+    // A course test runs only on a learn goal, whose stops are all of that kind.
+    return phaseName({ index, kind: "learn", name: "", short: null });
+  };
 }
 
 export function PlacementResult({
   failed,
-  heldUntilTomorrow = false,
-  lessonsSkipped,
-  nextTopic,
   onDone,
-  onboarding = false,
+  onRetake,
+  onStartLesson,
+  onboarding,
+  pending,
   pressed,
+  result,
   undo,
 }: {
   failed: boolean;
-  heldUntilTomorrow?: boolean;
-  lessonsSkipped: number;
-  nextTopic: string | null;
   onDone: () => void;
-  onboarding?: boolean;
-  pressed: PlacementPressed;
+  /** Opens the offer of a new test, from a past test's result; absent when none can start. */
+  onRetake?: () => void;
+  onStartLesson: (lessonId: string) => void;
+  onboarding: boolean;
+  /** The visit is still reading the test, or a save is out: a press now would be dropped. */
+  pending: boolean;
+  pressed: TestPressed;
+  result: PlacementResultPhase;
   undo: ResultUndo;
 }) {
   const t = useExtracted();
   const sentences = useSkippedLessonsSentences();
-  const { button, pending, undone } = useResultUndo(undo);
-  const retakeTomorrow = useRetakeTomorrow();
-
-  const unchangedPlan = heldUntilTomorrow ? retakeTomorrow : t("Your plan stays as it is.");
-
-  const description = lessonsSkipped > 0 ? sentences.known(lessonsSkipped) : unchangedPlan;
+  const { button, pending: undoing, undone } = useResultUndo(undo);
+  const stopName = useStartStopName();
+  const { course, lessonsSkipped } = result;
+  const nextLesson = undone ? null : result.nextLesson;
+  const action = useResultAction({ nextLesson: result.saved ? null : nextLesson, onboarding });
+  const { lessonId } = action;
+  // Undone, the start is back at the course's first lesson, which this result doesn't name.
+  const place = undone ? null : stopName(result);
 
   return (
     <TestOutcome
       busy={pressed === "main"}
-      continueLabel={onboarding ? t("Continue") : t("Done")}
-      disabled={pending}
+      continueLabel={action.label}
+      disabled={pending || undoing}
       failed={failed}
-      lead={
-        <OnboardingDescription role="status">
-          {undone ? sentences.back(lessonsSkipped) : description}
-        </OnboardingDescription>
+      lead={<ResultLead held={result.heldUntilTomorrow} lessons={lessonsSkipped} undone={undone} />}
+      onContinue={lessonId ? () => onStartLesson(lessonId) : onDone}
+      other={button(pending || pressed !== null)}
+      subject={
+        place
+          ? t({
+              description:
+                "Over the name of the chapter a course's placement test starts the learner in.",
+              message: "You start here",
+            })
+          : undefined
       }
-      onContinue={onDone}
-      other={button(pressed !== null)}
-      title={sentences.skipped(undone ? 0 : lessonsSkipped)}
+      title={place ?? sentences.skipped(undone ? 0 : lessonsSkipped)}
     >
-      {nextTopic && !undone && (
-        <Surface className="flex flex-col gap-1 p-4">
-          <Eyebrow className="self-start">{t("Up next")}</Eyebrow>
-          <p className="font-medium">{nextTopic}</p>
-        </Surface>
+      {/* With nothing skipped the line and its ring say it; with no start the title says it. */}
+      {course && !undone && (
+        <SkippedCaption className="-mt-1" lessons={place ? lessonsSkipped : 0}>
+          <CourseLine course={course} />
+        </SkippedCaption>
+      )}
+
+      {course && nextLesson && (
+        <UpNextLesson estimatedMinutes={nextLesson.estimatedMinutes} title={nextLesson.title} />
+      )}
+
+      {onRetake && (
+        <Button
+          className="self-start"
+          disabled={pending || undoing || pressed !== null}
+          onClick={onRetake}
+          type="button"
+          variant="link"
+        >
+          {t({
+            description:
+              "A quiet action on the result of a placement test opened again from the plan: it offers a new test.",
+            message: "Take the test again",
+          })}
+        </Button>
       )}
     </TestOutcome>
   );

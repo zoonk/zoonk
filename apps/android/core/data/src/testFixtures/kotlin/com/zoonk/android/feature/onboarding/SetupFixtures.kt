@@ -4,7 +4,12 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAttempt
 import com.zoonk.api.models.PlacementCompletion
+import com.zoonk.api.models.PlacementResult
+import com.zoonk.api.models.PlacementResultCourse
+import com.zoonk.api.models.PlacementResultCourseChaptersInner
+import com.zoonk.api.models.PlacementResultNextLesson
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
@@ -26,10 +31,12 @@ fun trueFalseQuestion(itemId: String = ITEM_ID) =
      "options":null,"question":"A contract needs consideration to be binding."}
     """.trimIndent()
 
-fun orderQuestion() =
-    """
+fun orderQuestion(
+    question: String = "Put a civil case's stages in order.",
+    options: List<String> = listOf("Complaint", "Answer", "Discovery", "Trial"),
+) = """
     {"context":null,"image":null,"itemId":"$ITEM_ID","skillId":"$SKILL_ID","visual":null,"format":"order",
-     "options":["Complaint","Answer","Discovery","Trial"],"question":"Put a civil case's stages in order."}
+     "options":[${options.joinToString(",") { "\"$it\"" }}],"question":"$question"}
     """.trimIndent()
 
 fun placementOf(
@@ -106,7 +113,62 @@ fun focusSittingOf(
      "subject":${subject?.let(::subjectRef) ?: "null"},"hint":${hint?.let { "\"$it\"" } ?: "null"}}
     """.trimIndent()
 
-fun focusOfferOf(minutes: Int = 15) = """{"minutes":$minutes}"""
+/** A course test's open attempt: a search of at most [questions] for where the learner starts. */
+fun placementAttemptOf(
+    answered: Long = 0,
+    questions: Long = 8,
+    chapter: String? = "Civil procedure",
+): PlacementAttempt =
+    PlacementAttempt(
+        answered = answered,
+        chapter = chapter,
+        estimatedMinutes = 4,
+        id = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+        length = PlacementAttempt.Length.QUICK,
+        part = PlacementAttempt.Part._1,
+        partComplete = false,
+        questions = questions,
+    )
+
+/**
+ * A course test's result: where it starts the learner, the course's line in plan order (4 of 9 lessons started past,
+ * the start in the third chapter) and the lesson that's next. [course] null is a result from before the plan existed.
+ */
+fun placementResultOf(
+    lessonsSkipped: Long = 4,
+    chapter: String? = "Why prices move",
+    course: PlacementResultCourse? =
+        PlacementResultCourse(
+            lessons = 9,
+            chapters =
+                listOf(
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 2, start = false),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 0, start = true),
+                    PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
+                ),
+        ),
+    changeId: java.util.UUID? = java.util.UUID.fromString("5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b"),
+) = PlacementResult(
+    attemptId = java.util.UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d"),
+    finishedAt = kotlin.time.Instant.parse("2026-11-27T10:00:00Z"),
+    lessonsSkipped = lessonsSkipped,
+    chapter = chapter,
+    course = course,
+    nextLesson =
+        PlacementResultNextLesson(
+            id = java.util.UUID.fromString("6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c"),
+            title = "News, results and expectations",
+            estimatedMinutes = 5,
+            chapter = "Reading company news",
+        ),
+    changeId = changeId,
+)
+
+fun focusOfferOf(
+    minutes: Int = 6,
+    questions: Int = 6,
+) = """{"minutes":$minutes,"questions":$questions}"""
 
 /** Suggested focus rows, the most needed first. */
 fun focusOf(
@@ -247,9 +309,10 @@ private fun readingQuestion() =
 fun listeningQuestion(
     audioUrl: String? = null,
     audioPending: Boolean = false,
+    durationMs: Long? = null,
 ): String {
     val audio =
-        audioUrl?.let { """{"durationMs":null,"id":"00000000-0000-4000-8000-0000000000c1","language":"it","url":"$it"}""" } ?: "null"
+        audioUrl?.let { """{"durationMs":$durationMs,"id":"00000000-0000-4000-8000-0000000000c1","language":"it","url":"$it"}""" } ?: "null"
     return """
         {"kind":"question","question":{"audio":$audio,"audioPending":$audioPending,"id":"listening-1","level":"A2","options":["At the station","At home"],
          "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}
@@ -267,18 +330,19 @@ fun skillLevelOf(
     score: Double,
 ) = """{"label":"$label","score":$score,"skill":"$skill"}"""
 
-/** [attemptId] is an open test's: a start answers with it, and a read of a test left open. */
+/** [attemptId] is an open test's: a start answers with it, and a read of a test left open. [canStop]: stopping would save a level. */
 fun levelTestOf(
     next: String = readingQuestion(),
     answered: Int = 0,
     total: Int = 12,
     levels: List<String> = emptyList(),
     attemptId: String? = null,
+    canStop: Boolean = false,
 ): LanguageLevelTest =
     ApiJson.decodeFromString(
         """
-        {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
-         "showAlphabetNote":false,"targetLanguage":"it","total":$total${attemptJson(attemptId)}}
+        {"answered":$answered,"canStop":$canStop,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
+         "showAlphabetNote":false,"targetLanguage":"it","total":$total,"estimatedMinutes":6${attemptJson(attemptId)}}
         """.trimIndent(),
     )
 
@@ -289,10 +353,10 @@ fun preparingTestOf(
     ApiJson.decodeFromString(
         """{"expectedSeconds":120,"showAlphabetNote":false,"startedAt":${startedAt?.let {
             "\"$it\""
-        } ?: "null"},"status":"preparing"${attemptJson(attemptId)}}""",
+        } ?: "null"},"status":"preparing","total":12,"estimatedMinutes":6${attemptJson(attemptId)}}""",
     )
 
-private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it","length":"quick"""" }.orEmpty()
+private fun attemptJson(attemptId: String?) = attemptId?.let { ""","attemptId":"$it"""" }.orEmpty()
 
 /** CGU 2026's specialty choice, with [subject] the option the plan follows or null until the learner picks. */
 fun specialtyChoice(subject: String? = null) =

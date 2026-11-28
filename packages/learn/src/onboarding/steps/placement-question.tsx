@@ -1,8 +1,6 @@
 "use client";
 
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
-import { Button } from "@zoonk/ui/components/button";
-import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import {
   QuestionActions,
@@ -23,7 +21,6 @@ import {
   OnboardingColumn,
   OnboardingHeading,
   OnboardingScreenTop,
-  OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
 
@@ -33,22 +30,28 @@ function toPlacementAnswer(answer: StudyQuestionAnswer): PlacementAnswer | null 
 
 type PlacementControl = "confirm" | "dontKnow" | "stop";
 
+type SecondAction = {
+  label: React.ReactNode;
+  /** Pressed in place of answering "I don't know yet". */
+  onPress?: () => void;
+};
+
 function PlacementActions({
   canConfirm,
-  dontKnowLabel,
   failures,
   onConfirm,
   onDontKnow,
   pending,
   pressed,
+  second,
 }: {
   canConfirm: boolean;
-  dontKnowLabel?: string;
   failures: number;
   onConfirm: () => void;
   onDontKnow: () => void;
   pending: boolean;
   pressed: PlacementControl | null;
+  second?: SecondAction;
 }) {
   const busy = pending ? pressed : null;
 
@@ -58,11 +61,12 @@ function PlacementActions({
     >
       <QuestionActions>
         <QuestionDontKnow busy={busy === "dontKnow"} disabled={pending} onPress={onDontKnow}>
-          {dontKnowLabel}
+          {second?.label}
         </QuestionDontKnow>
         <QuestionMainAction
           action="confirm"
-          busy={busy === "confirm"}
+          // A stop sent from the ways out has no button of its own on this screen.
+          busy={busy === "confirm" || busy === "stop"}
           disabled={!canConfirm || pending}
           onPress={onConfirm}
         />
@@ -71,76 +75,42 @@ function PlacementActions({
   );
 }
 
-function PlacementStop({
-  busy,
-  hint,
-  onStop,
-  pending,
-}: {
-  busy: boolean;
-  hint?: string;
-  onStop: () => void;
-  pending: boolean;
-}) {
-  const t = useExtracted();
-
-  return (
-    <>
-      {hint && (
-        <p className="text-muted-foreground text-sm" role="status">
-          {hint}
-        </p>
-      )}
-      <Button
-        busy={busy}
-        className="self-start"
-        disabled={pending}
-        focusableWhenDisabled
-        onClick={onStop}
-        type="button"
-        variant="link"
-      >
-        {t("Stop and use my answers")}
-      </Button>
-    </>
-  );
-}
-
 export function PlacementQuestionScreen({
-  dontKnowLabel,
+  answered,
+  canStop,
   failures,
+  groups,
   media,
-  number,
   onAnswer,
+  onClose,
   onStop,
   pending,
-  position,
-  progress,
   question,
+  second,
   stopHint,
   subject,
   total,
   trueFalseLabels = "trueFalse",
 }: {
-  dontKnowLabel?: string;
+  answered: number;
   /** Saves from this screen (answers and Stop) that failed in a row. */
   failures: number;
+  groups?: readonly number[];
   media?: React.ReactNode;
-  number?: number;
+  /** Whether stopping now uses the answers given; from the second question when the test doesn't say. */
+  canStop?: boolean;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
+  onClose?: () => void;
   onStop: () => void;
   pending: boolean;
-  /** Where the question sits, over its title; "Question n of m" by default. */
-  position?: string;
-  /** 0 to 1. */
-  progress: number;
   question: PlacementQuestion;
+  second?: SecondAction;
   stopHint?: string;
-  subject?: string;
-  total?: number;
+  /** What the question tests: a skill, a chapter, a subject. */
+  subject: string;
+  total: number;
   trueFalseLabels?: TrueFalseLabels;
 }) {
-  const t = useExtracted();
   const [value, setValue] = useState<PlacementAnswer | null>(() => initialOrderAnswer(question));
   // oxlint-disable-next-line react/hook-use-state -- Read once as the question opens, never updated.
   const [shownAt] = useState(() => Date.now());
@@ -152,7 +122,8 @@ export function PlacementQuestionScreen({
 
   const [pressed, setPressed] = useState<PlacementControl | null>(null);
   const title = useRef<HTMLDivElement>(null);
-  const titleProps = { heading: "h1", ref: title, tabIndex: -1 } as const;
+  // The header's title, what the question tests, is the screen's `h1`.
+  const titleProps = { heading: "h2", ref: title, tabIndex: -1 } as const;
   useScreenAtTop(question.itemId);
 
   // The control that sent the last answer is gone, so focus would fall to the page.
@@ -181,38 +152,49 @@ export function PlacementQuestionScreen({
   };
 
   return (
-    <OnboardingTestQuestion progress={progress}>
+    <OnboardingTestQuestion
+      answered={answered}
+      groups={groups}
+      onClose={onClose}
+      onStop={
+        (canStop ?? answered > 0)
+          ? () => {
+              setPressed("stop");
+              onStop();
+            }
+          : undefined
+      }
+      stopHint={stopHint}
+      stopWaits={pending}
+      title={subject}
+      total={total}
+    >
       <OnboardingScreenTop />
       <OnboardingColumn
         bar={
           <PlacementActions
             canConfirm={canConfirm}
-            dontKnowLabel={dontKnowLabel}
             failures={failures}
             onConfirm={confirm}
-            onDontKnow={() => send({ dontKnow: true }, "dontKnow")}
+            onDontKnow={() => {
+              if (second?.onPress) {
+                setPressed("dontKnow");
+                second.onPress();
+                return;
+              }
+
+              send({ dontKnow: true }, "dontKnow");
+            }}
             pending={pending}
             pressed={pressed}
+            second={second}
           />
         }
         // A question's title sits as far over its options as in a session and the wait's quiz.
         className="gap-5"
       >
         <OnboardingHeading>
-          {subject && number !== undefined && (
-            <OnboardingSubject
-              position={
-                position ??
-                (total === undefined
-                  ? t("Question {number, number}", { number })
-                  : t("Question {number, number} of {total, number}", { number, total }))
-              }
-            >
-              {subject}
-            </OnboardingSubject>
-          )}
-
-          <div className="flex flex-col gap-5 pb-4 not-first:pt-4 empty:hidden">
+          <div className="flex flex-col gap-5 pb-4 empty:hidden">
             {media}
             <ItemSupport
               context={question.context}
@@ -246,18 +228,6 @@ export function PlacementQuestionScreen({
           title={titleProps}
           trueFalseLabels={trueFalseLabels}
         />
-
-        {(number === undefined ? progress > 0 : number > 1) && (
-          <PlacementStop
-            busy={pending && pressed === "stop"}
-            hint={stopHint}
-            onStop={() => {
-              setPressed("stop");
-              onStop();
-            }}
-            pending={pending}
-          />
-        )}
       </OnboardingColumn>
     </OnboardingTestQuestion>
   );

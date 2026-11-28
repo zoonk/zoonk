@@ -45,7 +45,6 @@ import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -54,7 +53,6 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.SourceReadStatus
-import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TapAnswer
 import kotlinx.coroutines.async
@@ -140,6 +138,17 @@ private fun Source.attached() = AttachedSource(id.toString(), title, readStatus)
 
 /** Questions are left before the plan (`plan` alone: it's being built), so no plan is coming yet. */
 val Onboarding.questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN && it.profileQuestion == null }
+
+/** What a goal still owes before Today shows its day (main's `readOnboardingLeft`). */
+enum class OnboardingLeft { Questions, Reveal }
+
+/** Its questions first: a test half done can leave a plan already made, which isn't shown until they're answered. */
+fun Onboarding.left(): OnboardingLeft? =
+    when {
+        questionsLeft -> OnboardingLeft.Questions
+        planReadiness.ready && !planRevealed -> OnboardingLeft.Reveal
+        else -> null
+    }
 
 /** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
@@ -511,13 +520,13 @@ class OnboardingStore(
             session?.let { api.placement(it, goalId) }
         }
 
-    /** [attempt] is the part of the test taken from the plan the answer belongs to; onboarding's and the Focus test's have none. */
+    /** [attemptId] is the test taken from the plan the answer belongs to; onboarding's and the Focus test's have none. */
     suspend fun answerPlacement(
         goalId: String,
         itemId: String,
         answer: TapAnswer,
         durationMs: Long,
-        attempt: PlacementPart? = null,
+        attemptId: UUID? = null,
     ): WriteOutcome<PlacementAnswerResult> =
         write(
             setOf(DataDomain.LearnerModel),
@@ -528,35 +537,32 @@ class OnboardingStore(
                     answer = answer,
                     durationMs = durationMs,
                     itemId = UUID.fromString(itemId),
-                    attemptId = attempt?.attemptId,
-                    part = attempt?.part,
+                    attemptId = attemptId,
                     timeZone = TimeZone.getDefault().id,
                 )
             api.answerPlacement(session, goalId, input)
         }
 
     /**
-     * An exam's Focus test sitting turns its questions on in sessions, which the plan and Today say. With a [length],
-     * the test taken from the plan, or its next part.
+     * Opens an exam's Focus test sitting, whose questions turn on in sessions as the plan and Today say, or a course's
+     * test taken from the plan.
      */
-    suspend fun startPlacementSitting(
-        goalId: String,
-        length: PlacementLength? = null,
-    ): WriteOutcome<Placement> =
+    suspend fun startPlacementSitting(goalId: String): WriteOutcome<Placement> =
         write(setOf(DataDomain.Goals), replacing = { listOf(placements[goalId].replacing(it)) }) {
-            api.startPlacementSitting(it, goalId, length)
+            api.startPlacementSitting(it, goalId)
         }
 
     /**
-     * The API starts writing the lessons the plan now opens with, so nothing else prepares them. A part of the test
-     * taken from the plan ([attempt]) that another device closed first fails; the placement read then says where it is.
+     * The API starts writing the lessons the plan now opens with, so nothing else prepares them. A test taken from the
+     * plan ([attemptId]) that another device closed first fails; the placement read then says where it is.
      */
     suspend fun finishPlacement(
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart? = null,
+        attemptId: UUID? = null,
+        answered: Long? = null,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress)) {
-        api.finishPlacement(it, goalId, fromScratch, attempt)
+        api.finishPlacement(it, goalId, fromScratch, attemptId, answered)
     }
 
     /** A language goal's onboarding level test; each answer replies with its next step. */
@@ -579,16 +585,18 @@ class OnboardingStore(
 
     suspend fun prepareLevelTest(goalId: String) = write { api.prepareLevelTest(it, goalId) }
 
-    /** Opens a level test from the plan, or answers with the one already open. */
-    suspend fun startLevelTest(
-        goalId: String,
-        length: StartLanguageLevelTestInput.Length,
-    ) = write(
-        invalidating = setOf(DataDomain.Goals),
-        replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
-    ) { api.startLevelTest(it, goalId, length) }
+    /** Opens the level test, or answers with the one already open. */
+    suspend fun startLevelTest(goalId: String) =
+        write(
+            invalidating = setOf(DataDomain.Goals),
+            replacing = { test: LanguageLevelTest -> test.attemptId?.let { listOf(levelTest(goalId, it).replacing(test)) }.orEmpty() },
+        ) { api.startLevelTest(it, goalId) }
 
-    /** [answerIndices] answers a level's confirmation, where every right option is picked. */
+    /**
+     * [answerIndices] answers a level's confirmation, where every right option is picked. [audioDeferred] is "Can't listen
+     * now" on a listening question: it ends the test's listening without scoring the question. The plan's row counts the
+     * answer, so the plan reads again once it shows.
+     */
     suspend fun answerLevelTest(
         goalId: String,
         questionId: String,
@@ -597,7 +605,8 @@ class OnboardingStore(
         skipped: Boolean,
         attemptId: UUID? = null,
         answerIndices: List<Long>? = null,
-    ) = write(replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
+        audioDeferred: Boolean = false,
+    ) = write(setOf(DataDomain.LearnerModel), replacing = { listOf(levelTest(goalId, attemptId).replacing(it)) }) {
         api.answerLevelTest(
             it,
             goalId,
@@ -608,6 +617,7 @@ class OnboardingStore(
                 attemptId = attemptId,
                 durationMs = durationMs,
                 skipped = true.takeIf { skipped },
+                audioDeferred = true.takeIf { audioDeferred },
             ),
         )
     }

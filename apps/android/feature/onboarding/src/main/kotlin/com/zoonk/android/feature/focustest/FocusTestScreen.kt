@@ -16,12 +16,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.LocalEventTracker
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.setup.SetupColumn
-import com.zoonk.android.feature.onboarding.setup.TestProgress
+import com.zoonk.android.feature.placementtest.Sitting
+import com.zoonk.android.feature.placementtest.TestTask
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -59,65 +61,31 @@ internal fun FocusTestScreen(
 ) {
     val summary by summaries.collectShown()
     val goal = summary.value?.goals?.firstOrNull { goal -> route.goalId?.let { goal.id.toString() == it } ?: goal.isActive }
-    var progress by remember { mutableStateOf<Float?>(null) }
-    val scope = rememberCoroutineScope()
+    // Only an exam goal has the test; any other chooses its focus on the plan.
+    val elsewhere = AppRoute.Plan(focus = CHOOSE_FOCUS).takeIf { goal != null && goal.kind != LearnerSummaryGoal.Kind.EXAM }
 
-    // The screens name the test above their headlines; the bar shows the questions' progress.
-    TaskScaffold(
-        onClose = navigator::closeTask,
-        title = { progress?.let { TestProgress(it) } },
-    ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
-            when {
-                goal?.kind == LearnerSummaryGoal.Kind.EXAM -> {
-                    val questions = viewModel(key = "focus-test-questions:${goal.id}") { SessionQuestionsModel(focusTests, goal.id) }
-                    VisitOf(questions.visit)
-                    SetupColumn {
-                        FocusTestFlow(
-                            goalId = goal.id.toString(),
-                            subject = goal.displayName,
-                            store = store,
-                            plans = plans,
-                            run = remember { GenerationRun() },
-                            onRetryRun = null,
-                            onProgress = { progress = it },
-                            onLeft = navigator::closeTask,
-                            plan =
-                                OnPlan(
-                                    onChangeFocus = {
-                                        navigator.closeTask()
-                                        navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
-                                    },
-                                    questions = questions,
-                                    startOnOpen = route.start,
-                                ),
-                        )
-                    }
-                }
-
-                // Only an exam goal has the test; any other chooses its focus on the plan.
-                goal != null -> {
-                    LaunchedEffect(goal.id) {
+    TestTask(summaries, summary, goal, elsewhere, navigator) { goalId, onSitting ->
+        val questions = viewModel(key = "focus-test-questions:$goalId") { SessionQuestionsModel(focusTests, goalId) }
+        VisitOf(questions.visit)
+        FocusTestFlow(
+            goalId = goalId.toString(),
+            subject = goal?.displayName.orEmpty(),
+            store = store,
+            plans = plans,
+            run = remember { GenerationRun() },
+            onRetryRun = null,
+            onSitting = onSitting,
+            onLeft = navigator::closeTask,
+            plan =
+                OnPlan(
+                    onChangeFocus = {
                         navigator.closeTask()
                         navigator.open(AppRoute.Plan(focus = CHOOSE_FOCUS))
-                    }
-                    PageLoading()
-                }
-
-                summary is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = { scope.launch { summaries.refresh() } })
-                }
-
-                summary is LoadState.Loaded || summary == LoadState.Empty -> {
-                    LaunchedEffect(Unit) { navigator.showRoot(AppTab.Today) }
-                    PageLoading()
-                }
-
-                else -> {
-                    PageLoading()
-                }
-            }
-        }
+                    },
+                    questions = questions,
+                    startOnOpen = route.start,
+                ),
+        )
     }
 }
 

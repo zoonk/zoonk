@@ -52,6 +52,9 @@ struct FocusTestFlow: View {
   /// The goal's run while its questions are written, as the wait shows it.
   @State private var run: GenerationWait?
   @State private var waitStartedAt = Date.now
+  @State private var visit = TestVisit()
+  /// Sittings started in this visit, which tell one sitting's first question from the next's.
+  @State private var sittingsStarted = 0
 
   private var waitRun: GenerationWait {
     let kind: GenerationWait.Kind = host == .onboarding ? .placement : .placementQuestions
@@ -123,22 +126,7 @@ struct FocusTestFlow: View {
         StepLoading()
           .task { await startOnOpen() }
       } else {
-        FocusTestInvitation(focusTest: focusTest, host: host, pressed: pressed, failed: failed) {
-          save(.main, start)
-        } onSkip: {
-          // Only onboarding has a skip to save: a plan that's already there just goes back to
-          // itself.
-          save(.other) { try await leave(closing: host == .onboarding) }
-        }
-      }
-    case .resume(let asked, let answered):
-      FocusTestResume(
-        sitting: asked.sitting, answered: answered, pressed: pressed, failed: failed
-      ) {
-        failed = false
-        reached = .question(asked)
-      } onSeeResult: {
-        save(.other) { try await leave(closing: true) }
+        invitation(focusTest)
       }
     case .question(let asked):
       question(asked)
@@ -158,28 +146,72 @@ struct FocusTestFlow: View {
     }
   }
 
+  /// Onboarding's test or "First lesson"; the plan's one test with its facts.
+  private func invitation(_ focusTest: FocusTest) -> some View {
+    let findsFocus = focusTest.suggestsFocus
+    let test = TestCopy.testCard(
+      label: String(localized: FocusTestCopy.name), questions: focusTest.offer?.questions,
+      minutes: focusTest.offer?.minutes)
+    let onboarding = host == .onboarding
+
+    return TestOffer(
+      cards: onboarding
+        ? [test, TestCopy.firstLessonCard(title: self.onboarding?.firstLesson?.title)]
+        : [test],
+      title: onboarding
+        ? Text(TestCopy.whereToStart) : Text(FocusTestCopy.title(findsFocus: findsFocus)),
+      description: Text(FocusTestCopy.offerLine(findsFocus: findsFocus)),
+      preselected: .quick, context: context(questions: focusTest.offer?.questions),
+      isSaving: pressed != nil, failed: failed,
+      onNotNow: onboarding
+        ? nil
+        : {
+          UsageAnalytics.track(.testSkipped(context(questions: focusTest.offer?.questions)))
+          save(.other) { try await leave(closing: false) }
+        }
+    ) { row in
+      if row == .firstLesson {
+        // Onboarding saves its step's skip; the plan starts from the level the learner gave.
+        save(.main) { try await leave(closing: true) }
+      } else {
+        save(.main, start)
+      }
+    }
+  }
+
+  private func context(questions: Int?) -> AnalyticsEvent.TestContext {
+    AnalyticsEvent.TestContext(
+      goalID: goalID, test: .focus, surface: host == .onboarding ? .onboarding : .plan,
+      questions: questions)
+  }
+
   private func question(_ asked: FocusTestQuestion) -> some View {
     let sitting = asked.sitting
+    let analytics = context(questions: sitting.questions)
 
     return PlacementQuestionScreen(
       subject: sitting.subject?.shown ?? subject, number: sitting.answered + 1,
-      total: sitting.questions,
-      progress: sitting.questions > 0 ? Double(sitting.answered) / Double(sitting.questions) : 0,
-      question: asked.question, labels: asked.labels, isSaving: isAnswering,
-      failures: questionFailures,
+      total: sitting.questions, question: asked.question, labels: asked.labels,
+      isSaving: isAnswering, failures: questionFailures,
       stopHint: sitting.hint == .manyUnknown
         ? LocalizedStringResource(
           "Haven't studied most of this yet? That's fine. You can stop here and start learning.",
           table: "FocusTest",
-          comment: "Above Stop, after five \"I don't know yet\" in a row in the Focus test")
+          comment: "Above Stop, after several \"I don't know yet\" in a row in the Focus test")
         : nil,
+      context: analytics,
       onReport: { showsSaveReport = true },
       onAnswer: { submit($0, to: asked) },
       onStop: { stop() }
     )
     .id(asked.question.itemId)
     // A question held behind the wait is timed from when it shows.
-    .onAppear { shownAt = .now }
+    .onAppear {
+      shownAt = .now
+      visit.firstQuestion(
+        analytics, number: sitting.answered + 1, sitting: "sitting:\(sittingsStarted)"
+      ).map(UsageAnalytics.track)
+    }
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
@@ -190,7 +222,7 @@ struct FocusTestFlow: View {
 
     return PlacementWaitScreen(
       onboarding: onboarding, goalID: goalID, run: waitRun, failure: failure, holding: holding,
-      isActing: false,
+      isActing: pressed == .main,
       skip: .init(
         label: answered
           ? Text(FocusTestCopy.seeResult)
@@ -199,20 +231,22 @@ struct FocusTestFlow: View {
               "Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
             : Text(FocusTestCopy.notNow),
         note: !answered && host == .onboarding
-          ? Text(
-            "You can take the test later, from your plan.", tableName: "FocusTest",
-            comment: "Under Skip while the Focus test's questions are written")
-          : nil,
-        isBusy: pressed != nil, failed: failed
+          ? Text(PlacementWaitScreen.laterNote) : nil,
+        isBusy: pressed == .other, failed: failed
       ) {
         save(.other) { try await leave(closing: answered || host == .onboarding) }
       },
-      onRetry: { _ in
-        reached = .waiting(answered: answered, failure: nil)
-        waitRound += 1
+      onRetry: { failure in
+        // A writer that failed starts again from the sitting's start; a lost connection reads again.
+        if failure == .generation {
+          save(.main, start)
+        } else {
+          reached = .waiting(answered: answered, failure: nil)
+          waitRound += 1
+        }
       }
     )
-    .taskThroughPush(id: waitRound) { await waitForQuestions() }
+    .taskThroughPush(id: failure == nil ? waitRound : nil) { await waitForQuestions() }
   }
 
   // MARK: - Saves
@@ -240,6 +274,8 @@ struct FocusTestFlow: View {
 
   /// Opens the next sitting; asked again, it answers with the one already open.
   private func start() async throws {
+    sittingsStarted += 1
+    visit.started()
     try await show(try await store.startPlacementSitting(goalID: goalID))
   }
 
@@ -368,7 +404,7 @@ struct FocusTestFlow: View {
         run = updated
       },
       isWaiting: {
-        guard phase.isWaiting else {
+        guard phase.readsForQuestions else {
           return false
         }
 
@@ -377,15 +413,33 @@ struct FocusTestFlow: View {
           return true
         }
 
-        if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
-          try? await show(placement)
+        if let placement = try? await store.placement(goalID: goalID), phase.readsForQuestions {
+          await arrive(at: placement, answered: answered)
         }
 
-        return phase.isWaiting
+        return phase.readsForQuestions
       })
 
-    if !followed, phase.isWaiting {
+    if !followed, phase.readsForQuestions {
       reached = .waiting(answered: answered, failure: .connection)
+    }
+  }
+
+  /// What the wait read. Questions for a test the learner asked for start it, and a start that
+  /// fails waits for Try again instead of starting again on its own.
+  private func arrive(at placement: GoalPlacement, answered: Bool) async {
+    guard startsTest, case .invitation = FocusTestPhase(placement, opening: false) else {
+      try? await show(placement)
+      return
+    }
+
+    do {
+      try await start()
+    } catch is CancellationError {
+    } catch {
+      if phase.readsForQuestions {
+        reached = .waiting(answered: answered, failure: .generation)
+      }
     }
   }
 }

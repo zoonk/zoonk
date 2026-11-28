@@ -272,7 +272,12 @@ internal fun ColumnScope.LevelStep(
     val answer = { picked: LevelChoice ->
         onAnswer(
             OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
-                OnboardingAnswerInputOneOf8(OnboardingAnswerInputOneOf8.Question.LEVEL, level = (picked as? LevelChoice.Own)?.level),
+                OnboardingAnswerInputOneOf8(
+                    OnboardingAnswerInputOneOf8.Question.LEVEL,
+                    level = (picked as? LevelChoice.Own)?.level,
+                    // The learner asked for the test, so it starts without its offer.
+                    requestPlacement = true.takeIf { picked == LevelChoice.QuickTest },
+                ),
             ),
         )
     }

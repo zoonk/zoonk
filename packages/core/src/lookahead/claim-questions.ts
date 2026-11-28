@@ -6,6 +6,7 @@ import { claimUsageFor } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { loadSkillsToConfirm } from "../learner/_utils/load-skill-claims";
 import { findGoalFor } from "../learner/_utils/owned-goal";
+import { loadCourseStarts, priorityCourseStarts } from "../plans/_utils/course-starts";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getTestSkillIds } from "../sessions/_utils/review-skills";
 import { pickPlacementItemSkills } from "./placement-item-skills";
@@ -55,17 +56,38 @@ export async function requestClaimQuestionsFor({
     return { status: "ready" };
   }
 
+  const starts = owned.goal.kind === "learn" ? await loadCourseStarts(goalId) : new Map();
+  const nearest = await priorityCourseStarts(goalId, starts);
+
+  const ordered = [
+    ...new Set([
+      ...nearest.filter((id) => toConfirm.has(id)),
+      ...[...toConfirm].filter((id) => starts.has(id)).toReversed(),
+      ...toConfirm,
+    ]),
+  ];
+
   const { skills } = await pickPlacementItemSkills({
     exceptAnswered: true,
     formats: ["tap"],
     goalId,
-    skillIds: [...toConfirm],
+    skillIds: ordered,
   });
 
   const missing = skills.slice(0, MAX_TOPICS_PER_RUN).map((skill) => skill.id);
 
   if (missing.length === 0) {
     return { status: "ready" };
+  }
+
+  const courseMissing = missing.filter((id) => starts.has(id));
+
+  if (courseMissing.length > 0) {
+    return {
+      analytics: { distinctId: userId, goalId, platform: null },
+      skillIds: courseMissing,
+      status: "start",
+    };
   }
 
   const decision = await claimUsageFor({ kind: "assist", targetId: randomUUID(), userId });

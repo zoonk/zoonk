@@ -28,6 +28,8 @@ struct AnswerOption: View {
   /// mark, led by its marker (such as a step's place) in ink once picked, or else by its verdict's.
   let action: (() -> Void)?
 
+  @Environment(\.hasHardwareKeyboard) private var hasKeyboard
+
   var body: some View {
     if let action {
       button(action)
@@ -48,7 +50,7 @@ struct AnswerOption: View {
   /// The mark holds its room from the first draw, so a pick or a check moves no word. Words too
   /// wide to share their line go under the key and the mark.
   private func button(_ action: @escaping () -> Void) -> some View {
-    let key = HardwareKeyboard.shared.isConnected ? marker : nil
+    let key = hasKeyboard ? marker : nil
 
     return Button(action: action) {
       ViewThatFits(in: .horizontal) {

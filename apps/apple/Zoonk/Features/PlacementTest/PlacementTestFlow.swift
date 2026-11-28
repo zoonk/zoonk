@@ -1,55 +1,69 @@
 import SwiftUI
 
-/// The test of what the learner already knows, taken from the plan: its length choice, its
-/// questions, the stop between a whole-course test's parts and its result. Each answer saves at
-/// once; core decides what to ask and when a part is over. Main's `PlacementTestFlow`.
+/// A course's test, in onboarding and from the plan: the plan's offer, its questions and its
+/// result. Each answer saves at once; core decides what to ask and when the test is over. Main's
+/// `PlacementTestFlow`.
 struct PlacementTestFlow: View {
+  /// How the flow opens: on the test as it stands, or by starting the one the learner already chose.
+  enum Opening: Equatable {
+    case read
+    case start
+  }
+
   let goalID: String
-  /// The goal's name, over each question.
+  /// The goal's name, over a question with no chapter.
   let subject: String
-  /// The whole-course test's length before it starts.
-  let wholeCourseMinutes: Int
-  /// The topic the plan goes on with, read once a test is over.
-  let nextTopic: () -> String?
-  /// Goes back to the plan.
-  var initialPlacement: GoalPlacement?
-  var onOnboardingDone: ((String) async throws -> Void)?
+  var opening = Opening.read
+  /// The plan's offer before a test starts.
+  var offer: CoursePlacementOffer?
+  /// The goal being set up, for its wait's run and deck; nil on the plan.
+  var onboarding: GoalOnboarding?
+  /// Onboarding goes on with setup, with the test's attempt.
+  var onOnboardingDone: ((String?) async throws -> Void)?
+  /// The plan's result opens the next lesson.
+  var onStartLesson: ((String) -> Void)?
+  /// Leaves the test for the plan.
   let onDone: () async throws -> Void
 
   @Environment(OnboardingStore.self) private var store
   @Environment(PlanStore.self) private var plans
   @State private var undoRequest = VisitRequest<Bool>()
-  @State private var opening: Resource<GoalPlacement>?
+  @State private var read: Resource<GoalPlacement>?
   /// Where the learner's saves and the wait took the test; until then it shows the opening read.
   @State private var reached: PlacementTestPhase?
   @State private var pressed: FocusTestPress?
   @State private var failed = false
+  @State private var startFailed = false
   @State private var isAnswering = false
   @State private var questionFailures = 0
   @State private var failedAnswer: SentAnswer?
   @State private var shownAt = ContinuousClock.now
+  @State private var visit = TestVisit()
   @State private var showsSaveReport = false
   @State private var waitRound = 0
   @State private var waitStartedAt = Date.now
+  @State private var run: GenerationWait?
   /// The saves and answers: a test left during one does nothing when it answers.
   @State private var tasks = ScreenTasks()
 
+  private var isOnboarding: Bool { onOnboardingDone != nil }
+
   var body: some View {
     Group {
-      if let opening {
-        test(opening)
-          .loads(opening, refreshable: false)
-          .id(ObjectIdentifier(opening))
-      } else if let initialPlacement {
+      if let read {
+        test(read)
+          .loads(read, refreshable: false)
+          .id(ObjectIdentifier(read))
+      } else if startFailed {
+        PracticeLoadFailureView(error: .unavailable) {
+          startFailed = false
+          openOnAppear()
+        }
+      } else if reached != nil {
         testContent
-          .onAppear {
-            if reached == nil {
-              reached = phase(for: initialPlacement)
-            }
-          }
       } else {
         StepLoading()
-          .onAppear { opening = store.openingPlacement(goalID: goalID) }
+          .onAppear(perform: openOnAppear)
       }
     }
     .onDisappear {
@@ -63,17 +77,46 @@ struct PlacementTestFlow: View {
   }
 
   private var phase: PlacementTestPhase {
-    reached ?? (initialPlacement ?? opening?.value).map { phase(for: $0) } ?? .loading
+    reached ?? read?.value.map { phase(for: $0, asked: false) } ?? .loading
   }
 
-  private func phase(for placement: GoalPlacement) -> PlacementTestPhase {
-    PlacementTestPhase(placement, onboarding: onOnboardingDone != nil)
+  /// `asked`: the learner started the test in this visit, so a test that couldn't open waits.
+  /// `attemptID`: the test the learner was in, whose result shows once another save finished it.
+  private func phase(
+    for placement: GoalPlacement, asked: Bool = true, attemptID: String? = nil
+  ) -> PlacementTestPhase {
+    PlacementTestPhase(placement, onboarding: isOnboarding, asked: asked, attemptID: attemptID)
+  }
+
+  private func openOnAppear() {
+    switch opening {
+    case .read:
+      if read == nil {
+        read = store.openingPlacement(goalID: goalID)
+      }
+    case .start:
+      tasks.run {
+        do {
+          try await start()
+        } catch is CancellationError {
+        } catch {
+          startFailed = true
+        }
+      }
+    }
+  }
+
+  private var context: AnalyticsEvent.TestContext {
+    let attempt = phase.attempt
+    return AnalyticsEvent.TestContext(
+      goalID: goalID, test: .course, surface: isOnboarding ? .onboarding : .plan,
+      questions: attempt?.questions ?? offer?.questions, attemptID: attempt?.id)
   }
 
   @ViewBuilder
-  private func test(_ opening: Resource<GoalPlacement>) -> some View {
-    if reached == nil, case .failed(let error) = opening.state {
-      PracticeLoadFailureView(error: error) { Task { await opening.refresh() } }
+  private func test(_ read: Resource<GoalPlacement>) -> some View {
+    if reached == nil, case .failed(let error) = read.state {
+      PracticeLoadFailureView(error: error) { Task { await read.refresh() } }
     } else {
       testContent
     }
@@ -94,61 +137,59 @@ struct PlacementTestFlow: View {
   @ViewBuilder
   private var ready: some View {
     switch phase {
-    case .loading, .waiting:
+    case .loading, .waiting, .preparationFailed, .connectionLost:
       StepLoading()
-    case .choose:
-      PlacementLengthChoice(
-        wholeCourseMinutes: wholeCourseMinutes, isSaving: pressed != nil, failed: failed
-      ) { choice in
-        if case .length(let length) = choice {
-          save(.main) { try await start(length) }
+    case .offer:
+      if let offer {
+        TestOffer(
+          cards: [TestCopy.courseCard(offer)], title: Text(TestCopy.skipWhatYouKnow),
+          description: Text(TestCopy.findsSkips), preselected: .quick, context: context,
+          isSaving: pressed != nil, failed: failed, onNotNow: notNow
+        ) { _ in
+          save(.main) { try await start() }
         }
+      } else {
+        // Nothing is left ahead to check.
+        PlacementUnavailable(
+          continueLabel: Text(TestCopy.done), isSaving: pressed != nil, failed: failed
+        ) {
+          save(.main) { try await goOnUnlessLeft(onDone) }
+        }
+      }
+    case .unavailable:
+      PlacementUnavailable(
+        continueLabel: isOnboarding ? nil : Text(TestCopy.done), isSaving: pressed != nil,
+        failed: failed
+      ) {
+        save(.main) { try await leave(attemptId: nil) }
       }
     case .question(let asked):
       question(asked)
-    case .partOver(let attempt):
+    case .over(let attempt):
       TestOutcome(
-        title: Text(
-          "Your answers are saved", tableName: "Onboarding",
-          comment: "Title once the short test is over and its answers wait to be saved"),
-        isSaving: pressed != nil, failed: failed
+        title: Text(TestCopy.answersSaved), isSaving: pressed != nil, failed: failed
       ) {
-        save(.main) { try await close(attempt) }
+        save(.main) { try await finish(attempt) }
       }
-    case .between(let attempt, let lessonsSkipped, let changeId, let heldUntilTomorrow):
-      let onboarding = onOnboardingDone != nil
-      let undo = undo(changeId: changeId, lessons: lessonsSkipped ?? 0)
-      PlacementBetweenParts(
-        lessonsSkipped: lessonsSkipped, minutesLeft: attempt.estimatedMinutes,
-        pressed: undoRequest.isRunning ? .other : pressed,
-        failed: failed, heldUntilTomorrow: heldUntilTomorrow,
-        onKeepGoing: {
-          save(.main) {
-            if let onOnboardingDone {
-              try await goOnUnlessLeft { try await onOnboardingDone(attempt.id) }
-            } else {
-              try await start(attempt.length)
-            }
-          }
-        }, undo: undo, onboarding: onboarding,
-        onFinishForToday: onboarding ? nil : { save(.other) { try await goOnUnlessLeft(onDone) } })
-    case .result(
-      _, let lessonsSkipped, let attemptId, let changeId, let changeLessons,
-      let heldUntilTomorrow):
-      let undo = undo(changeId: changeId, lessons: changeLessons)
+    case .result(let end):
       PlacementTestResultView(
-        lessonsSkipped: lessonsSkipped, nextTopic: nextTopic(),
-        isSaving: pressed != nil || undoRequest.isRunning, failed: failed,
-        heldUntilTomorrow: heldUntilTomorrow, undo: undo, onboarding: onOnboardingDone != nil
-      ) {
-        save(.main) {
-          if let onOnboardingDone, let attemptId {
-            try await goOnUnlessLeft { try await onOnboardingDone(attemptId) }
-          } else {
-            try await goOnUnlessLeft(onDone)
-          }
-        }
-      }
+        end: end, onboarding: isOnboarding, pressed: pressed, failed: failed,
+        undo: undo(changeId: end.changeId, lessons: end.undoLessons),
+        // The plan's last result takes a new test from its offer, when one can start.
+        onRetake: end.revisited && offer != nil ? { reached = .offer } : nil,
+        onDone: { goOn(from: end) })
+    }
+  }
+
+  /// The result's way on: on the plan its next lesson when it's known, else back.
+  private func goOn(from end: PlacementTestEnd) {
+    if !isOnboarding, !end.revisited, undoRequest.outcome != true, let lesson = end.nextLesson,
+      let onStartLesson
+    {
+      UsageAnalytics.track(.testLessonStarted(context, lessonID: lesson.id))
+      onStartLesson(lesson.id)
+    } else {
+      save(.main) { try await leave(attemptId: end.attemptId) }
     }
   }
 
@@ -159,39 +200,56 @@ struct PlacementTestFlow: View {
   }
 
   private func question(_ asked: PlacementTestQuestion) -> some View {
-    PlacementQuestionScreen(
-      subject: subject, number: asked.answered + 1,
-      position: asked.attempt.length == .wholeCourse
-        ? Text(
-          "Part \(asked.attempt.part)", tableName: "Onboarding",
-          comment: "Over a whole-course test's question: which of its parts this is")
-        : nil,
-      progress: asked.progress,
-      question: asked.question, labels: asked.labels, isSaving: isAnswering,
-      failures: questionFailures, onReport: { showsSaveReport = true },
-      onAnswer: { submit($0, to: asked) }, onStop: { stop(asked.attempt) }
+    let attempt = asked.attempt
+
+    return PlacementQuestionScreen(
+      subject: attempt.chapter.map { $0.trimmingCharacters(in: .whitespaces) }
+        .flatMap { $0.isEmpty ? nil : $0 } ?? subject,
+      number: attempt.answered + 1, total: attempt.questions, question: asked.question,
+      labels: asked.labels, isSaving: isAnswering,
+      failures: questionFailures, context: context, onReport: { showsSaveReport = true },
+      onAnswer: { submit($0, to: asked) }, onStop: { stop(attempt) }
     )
     .id(asked.question.itemId)
     // A question held behind the wait is timed from when it shows.
-    .onAppear { shownAt = .now }
+    .onAppear {
+      shownAt = .now
+      visit.firstQuestion(context, number: attempt.answered + 1, sitting: attempt.id)
+        .map(UsageAnalytics.track)
+    }
+  }
+
+  private var waitRun: GenerationWait {
+    run
+      ?? GenerationWait(kind: isOnboarding ? .placement : .placementQuestions, since: waitStartedAt)
+      .started
   }
 
   private func waiting(holding: WaitHolding?) -> some View {
-    let kind: GenerationWait.Kind = onOnboardingDone == nil ? .placementQuestions : .placement
-    return PlacementWaitScreen(
-      onboarding: nil, goalID: goalID,
-      run: GenerationWait(kind: kind, since: waitStartedAt).started,
-      failure: nil,
+    PlacementWaitScreen(
+      onboarding: onboarding, goalID: goalID, run: waitRun, failure: phase.waitFailure,
       holding: holding,
-      isActing: false,
+      isActing: pressed == .main,
       skip: .init(
-        label: Text(PlacementTestCopy.notNow), note: nil, isBusy: pressed != nil, failed: failed
+        label: isOnboarding
+          ? Text("Skip", tableName: "Onboarding", comment: "Skips an optional onboarding question")
+          : Text(PlacementTestCopy.notNow),
+        note: isOnboarding ? Text(PlacementWaitScreen.laterNote) : nil,
+        isBusy: pressed == .other, failed: failed
       ) {
-        save(.other) { try await goOnUnlessLeft(onDone) }
+        save(.other) { try await leave(attemptId: nil) }
       },
-      onRetry: { _ in waitRound += 1 }
+      onRetry: { failure in
+        // A writer that failed starts the test again; a lost connection reads again.
+        if failure == .generation {
+          save(.main) { try await start() }
+        } else {
+          reached = .waiting
+          waitRound += 1
+        }
+      }
     )
-    .taskThroughPush(id: waitRound) { await waitForQuestions() }
+    .taskThroughPush(id: phase == .waiting ? waitRound : nil) { await waitForQuestions() }
   }
 
   // MARK: - Saves
@@ -217,36 +275,62 @@ struct PlacementTestFlow: View {
     }
   }
 
-  /// Opens a test of this length, or the next part of the open one.
-  private func start(_ length: PlacementLength) async throws {
-    try await show(try await store.startPlacementTest(goalID: goalID, length: length))
+  private func notNow() {
+    UsageAnalytics.track(.testSkipped(context))
+    save(.other) { try await goOnUnlessLeft(onDone) }
   }
 
-  /// A part that's over closes in the same save; if that fails, its screen holds the retry.
+  /// Leaves the test: onboarding goes on with setup, the plan goes back to itself.
+  private func leave(attemptId: String?) async throws {
+    if let onOnboardingDone {
+      try await goOnUnlessLeft { try await onOnboardingDone(attemptId) }
+    } else {
+      try await goOnUnlessLeft(onDone)
+    }
+  }
+
+  /// Opens the test, or goes on with the open one. `arrived`: the questions a wait was for came, so
+  /// the learner's earlier press still times the wait.
+  private func start(arrived: Bool = false) async throws {
+    undoRequest.leave()
+    if !arrived {
+      visit.started()
+    }
+
+    try await show(try await store.startPlacementTest(goalID: goalID))
+  }
+
+  /// A test that's over finishes in the same save; if that fails, its screen holds the retry.
   private func show(_ placement: GoalPlacement) async throws {
     let next = phase(for: placement)
 
-    guard case .partOver(let attempt) = next else {
+    guard case .over(let attempt) = next else {
       reached = next
       return
     }
 
     do {
-      try await close(attempt)
+      try await finish(attempt)
     } catch {
       reached = next
       throw error
     }
   }
 
-  /// Closing a part applies what it skipped; another device that closed it first wins.
-  private func close(_ attempt: PlacementAttempt) async throws {
-    switch try await store.finishPlacementPart(goalID: goalID, attempt: attempt) {
+  /// Finishing applies what the test skipped; another device that finished it first wins.
+  /// `stoppedAt`: a stop's answer count as the learner saw it, so a position another device moved
+  /// past is refused and read again.
+  private func finish(_ attempt: PlacementAttempt, stoppedAt: Int? = nil) async throws {
+    switch try await store.finishPlacementTest(
+      goalID: goalID, attempt: attempt, stoppedAt: stoppedAt)
+    {
     case .finished(let end):
       undoRequest.leave()
-      reached = PlacementTestPhase(finished: end, length: attempt.length, attemptId: attempt.id)
+      reached = .result(PlacementTestEnd(finished: end, attemptId: attempt.id))
     case .stale:
-      reached = phase(for: try await store.placement(goalID: goalID))
+      // A finish whose reply was lost, or another device's, already applied this test: its
+      // result shows.
+      reached = phase(for: try await store.placement(goalID: goalID), attemptID: attempt.id)
     }
   }
 
@@ -273,8 +357,7 @@ struct PlacementTestFlow: View {
       } catch is CancellationError {
         return
       } catch {
-        failedAnswer = sent
-        questionFailures += 1
+        await reread(after: sent, refused: asked)
         return
       }
 
@@ -290,7 +373,31 @@ struct PlacementTestFlow: View {
     }
   }
 
-  /// "Stop and use my answers": this part closes with what it has.
+  /// An answer that didn't save: a read says whether the test still asks the question, so it's
+  /// tried again, or moved on without it (another device stopped or answered it), so the screen
+  /// follows the read.
+  private func reread(after sent: SentAnswer, refused asked: PlacementTestQuestion) async {
+    guard let placement = try? await store.placement(goalID: goalID),
+      let moved = PlacementTestPhase(refused: asked, placement, onboarding: isOnboarding)
+    else {
+      failedAnswer = sent
+      questionFailures += 1
+      return
+    }
+
+    questionFailures = 0
+    failedAnswer = nil
+    undoRequest.leave()
+
+    reached = moved
+
+    // A test that asks nothing more finishes now; if that fails, its screen holds the retry.
+    if case .over(let attempt) = moved {
+      try? await finish(attempt)
+    }
+  }
+
+  /// "Stop and use my answers": the test finishes with what it has.
   private func stop(_ attempt: PlacementAttempt) {
     guard !isAnswering, pressed == nil else {
       return
@@ -302,7 +409,7 @@ struct PlacementTestFlow: View {
       defer { isAnswering = false }
 
       do {
-        try await close(attempt)
+        try await finish(attempt, stoppedAt: attempt.answered)
         questionFailures = 0
       } catch is CancellationError {
       } catch {
@@ -312,14 +419,19 @@ struct PlacementTestFlow: View {
   }
 
   private func waitForQuestions() async {
-    guard phase.isWaiting else {
+    guard phase == .waiting else {
       return
     }
 
-    _ = await PlacementWaitScreen.follow(
-      generationID: nil, store: store, apply: { _ in },
+    let followed = await PlacementWaitScreen.follow(
+      generationID: onboarding?.generationId, store: store,
+      apply: { event in
+        var updated = waitRun
+        updated.apply(event)
+        run = updated
+      },
       isWaiting: {
-        guard phase.isWaiting else {
+        guard phase == .waiting else {
           return false
         }
 
@@ -328,20 +440,62 @@ struct PlacementTestFlow: View {
           return true
         }
 
-        if let placement = try? await store.placement(goalID: goalID), phase.isWaiting {
-          try? await show(placement)
+        if let placement = try? await store.placement(goalID: goalID), phase == .waiting {
+          let arrived =
+            placement.activeTestAttempt == nil
+            && (placement.status == .asking || placement.status == .done)
+
+          if arrived {
+            await startArrived()
+          } else {
+            try? await show(placement)
+          }
         }
 
-        return phase.isWaiting
+        return phase == .waiting
       })
+
+    if !followed, phase == .waiting {
+      reached = .connectionLost
+    }
+  }
+
+  /// The questions of a test that couldn't open yet are written: the start the learner asked for
+  /// opens it now. One that fails waits for Try again instead of starting again on its own.
+  private func startArrived() async {
+    do {
+      try await start(arrived: true)
+    } catch is CancellationError {
+    } catch {
+      if phase == .waiting {
+        reached = .preparationFailed(nil)
+      }
+    }
   }
 }
 
-/// The test taken from a learn course's plan, or a language course's walk through its topics.
+extension PlacementTestPhase {
+  /// The open test, for the screen's analytics.
+  var attempt: PlacementAttempt? {
+    switch self {
+    case .over(let attempt):
+      attempt
+    case .preparationFailed(let attempt):
+      attempt
+    case .question(let asked):
+      asked.attempt
+    case .loading, .offer, .waiting, .connectionLost, .unavailable, .result:
+      nil
+    }
+  }
+}
+
+/// A course's test taken from the plan.
 struct PlacementTestScreen: View {
   let goalId: String
 
   @Environment(\.dismiss) private var dismiss
+  @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
@@ -351,31 +505,29 @@ struct PlacementTestScreen: View {
     let plan = plans.plan(goalId: goalId)
 
     NavigationStack {
-      PlacementTestFlow(
-        goalID: goalId, subject: goal?.displayName ?? "",
-        wholeCourseMinutes: plan.value?.plan.placementTest?.estimatedMinutes ?? 0,
-        nextTopic: { plan.value?.plan.nextTopic }
-      ) {
-        dismiss()
+      Group {
+        // The offer's facts are the plan's, so the test waits for it.
+        if let read = plan.value {
+          PlacementTestFlow(
+            goalID: goalId, subject: goal?.displayName ?? "",
+            offer: read.plan.placementTest?.offer,
+            onStartLesson: { lessonId in
+              dismiss()
+              router.open(.lesson(lessonId: lessonId))
+            }
+          ) {
+            dismiss()
+          }
+          // A new session opens the test again from its own read.
+          .id(session.authenticatedSession)
+        } else if case .failed(let error) = plan.state {
+          PracticeLoadFailureView(error: error) { Task { await plan.refresh() } }
+        } else {
+          StepLoading()
+        }
       }
-      // A new session opens the test again from its own read.
-      .id(session.authenticatedSession)
-      .navigationTitle(Text(PlacementTestCopy.learnName))
-      .navigationBarTitleDisplayMode(.inline)
-      .testBar()
-      .taskClose {
-        Button(role: .close) { dismiss() }
-          .leavesOnEscape()
-      }
+      .testTask(name: Text(PlacementTestCopy.learnName)) { dismiss() }
     }
     .loads(plan, refreshable: false)
-  }
-}
-
-extension GoalPlan {
-  /// The first topic still to study, where the plan goes on after a test; nil when none is left.
-  var nextTopic: String? {
-    let title = phases.lazy.flatMap(\.chapters).first { $0.state != .done && !$0.isSkipped }?.title
-    return title?.isEmpty == false ? title : nil
   }
 }

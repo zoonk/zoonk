@@ -4,7 +4,7 @@ description: Use when designing, building or reviewing a Zoonk screen on the web
 license: MIT
 metadata:
   author: zoonk
-  version: "7.1.0"
+  version: "7.2.0"
 ---
 
 # Zoonk design
@@ -72,6 +72,7 @@ The landing page, the catalog, public course, chapter and lesson pages, pricing,
 - **One main action per screen; structure stays visible.** A screen answers one question and has one main action, pinned in the bottom bar. A sheet does one job too: it holds only what that job needs (a sheet that adjusts the plan has no feedback question and no "tell the buddy"). Around it, the structure stays in sight: the page's name as its title, each block of content under its own header, lists as one kind of list. Clean comes from that order, not from removing titles and headers. When a result or summary has several things to say, lead with the numbers that matter on its first screen, put the rest in steps after it, and skip the steps with nothing to say.
 - **Visible structure.** Show what someone is learning in their own terms (an exam's subjects and topics, a course's chapters, a language's levels and units), with honest progress, so they can trust the plan covers everything. A long list of items without its structure reads as random.
 - **Honest progress.** Show progress as it is, from the person's own work, and never promise a result. Follow the [English style guide](../../../packages/i18n/.eloqnt/styleguide.en.md) for progress wording.
+- **Guided tasks.** A task shows where the learner is, what's left and that leaving keeps their work, with its frame (the bar's progress, a meter, the bottom bar's actions) before any line of text. Every place to stop has one next step.
 - **Kind motivation.** Rewards come from learning, and what earns one shows where it's earned (a mission's row, a challenge's "7 of 10 to win"). Nothing is random or sold, mistakes cost nothing, and nothing creates guilt or streak anxiety.
 - **Finished moments.** Short lessons end with a brief completion moment; the full summary waits for the end of the day's study.
 - **Learning is light; tests are tests.** In lessons, practice and review, the verdict comes at the smallest step the learner takes, and after a miss they try again at once. A verdict held until the end and an exam-hard question belong only on a screen that says it's a test.

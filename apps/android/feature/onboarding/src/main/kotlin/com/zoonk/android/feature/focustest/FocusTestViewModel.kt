@@ -13,6 +13,8 @@ import com.zoonk.android.data.Visit
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.setup.refreshed
+import com.zoonk.android.feature.placementtest.AskedStart
+import com.zoonk.android.feature.placementtest.TestVisit
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.tap
@@ -38,13 +40,15 @@ internal typealias LeaveTest = suspend () -> WriteOutcome<*>
 /**
  * An exam goal's Focus test, in onboarding or opened from the plan. Starting, answering and closing
  * are POSTs from the learner's taps; opening it only reads. Leaving saves [hostSave], then publishes
- * [left] for the host's screen to act on.
+ * [left] for the host's screen to act on. [askedFor]: the learner already asked for the test (the level
+ * question, Today's "Start the test"), so its offer starts on its own.
  */
 internal class FocusTestViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
     private val plans: PlanStore,
     handle: SavedStateHandle,
+    private val askedFor: Boolean = false,
     private val hostSave: LeaveTest = { WriteOutcome.Done(Unit) },
 ) : ViewModel() {
     /** This visit to the test: leaving it, and a save that fails, show only on it. */
@@ -53,12 +57,17 @@ internal class FocusTestViewModel(
     /** The learner left the test and the host saved it: the host goes on. */
     val left = visit.outcome<Unit>()
 
-    private val failure = visit.outcome<Unit>()
+    /** When this visit began and whether it opened a sitting, for the first question's analytics. */
+    val sitting = TestVisit()
+
+    /** The button whose save failed on this visit. */
+    private val failure = visit.outcome<Pressed>()
     private val saveFailure = visit.outcome<Int>()
+    private val askedStart = AskedStart(visit)
 
     private var savedEntered by handle.saved { false }
 
-    /** The learner started or resumed a sitting in this visit, so its questions show instead of its resume screen. */
+    /** The learner started a sitting in this visit, so its wait shows instead of the offer or the last result. */
     private var entered by mutableStateOf(savedEntered)
 
     private var closed by mutableStateOf<FocusTest?>(null)
@@ -66,10 +75,15 @@ internal class FocusTestViewModel(
     /** Sittings entered in this visit: a proposal's answer belongs to the result before the next one. */
     private var sittings = 0
 
+    /** Which sitting of this visit is open, for its first question's analytics. */
+    val sittingsEntered get() = sittings
+
     var pressed by mutableStateOf<Pressed?>(null)
         private set
 
     val failed get() = failure.value != null
+
+    fun failedOn(button: Pressed) = failure.value == button
 
     var answering by mutableStateOf(false)
         private set
@@ -94,13 +108,21 @@ internal class FocusTestViewModel(
 
     val busy get() = pressed != null || answering
 
-    fun phase(placement: LoadState<Placement>): FocusTestPhase = focusTestPhase(placement, entered, closed)
+    fun phase(placement: LoadState<Placement>): FocusTestPhase {
+        val phase = focusTestPhase(placement, entered, closed)
+        return when {
+            !askedFor || phase !is FocusTestPhase.Offer -> phase
+            failed -> FocusTestPhase.StartFailed
+            else -> FocusTestPhase.Starting
+        }
+    }
 
     /** One of the wait's reads: true when it came back. */
     suspend fun check(): Boolean = store.placements[goalId].refreshed()
 
     fun start() =
         save(Pressed.Main) { asked ->
+            sitting.started()
             when (val started = store.startPlacementSitting(goalId)) {
                 is WriteOutcome.Done -> {
                     enter()
@@ -120,12 +142,16 @@ internal class FocusTestViewModel(
     /** The result's "Answer more questions": the same start, from its other button. */
     fun continueTest() =
         save(Pressed.Other) {
+            sitting.started()
             val started = store.startPlacementSitting(goalId)
             if (started is WriteOutcome.Done) enter()
             started !is WriteOutcome.Failed && started !is WriteOutcome.Refused
         }
 
-    fun resume() = enter()
+    /** A learner who asked for the test on the level question, or pressed Today's "Start the test", goes straight in. */
+    fun startAsked() {
+        if (askedStart.take(busy)) start()
+    }
 
     fun answer(
         question: FocusTestPhase.Question,
@@ -142,7 +168,7 @@ internal class FocusTestViewModel(
                 is WriteOutcome.Done -> {
                     saveFailure.clear()
                     // A sitting that's over closes in the same save; if that fails, its screen holds the retry.
-                    if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Unit)
+                    if (sent.value.placement.sittingOver() != null && !close(asked)) failure.send(asked, Pressed.Main)
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -244,7 +270,7 @@ internal class FocusTestViewModel(
         failure.clear()
         val asked = visit.number
         viewModelScope.launch {
-            if (!action(asked)) failure.send(asked, Unit)
+            if (!action(asked)) failure.send(asked, button)
             pressed = null
         }
     }

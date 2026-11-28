@@ -15,11 +15,16 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.TestContext
+import com.zoonk.android.data.TestRow
 import com.zoonk.android.feature.onboarding.setup.FinishFailed
 import com.zoonk.android.feature.onboarding.setup.SetupContent
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.onboarding.start.OnboardingSubject
+import com.zoonk.android.feature.placementtest.TestOffer
+import com.zoonk.android.feature.placementtest.firstLessonCard
+import com.zoonk.android.feature.placementtest.testCard
 import com.zoonk.android.ui.components.Button
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.OutlinedButton
@@ -27,11 +32,10 @@ import com.zoonk.android.ui.components.TaskActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.FocusTest
-import com.zoonk.api.models.FocusTestSitting
 
 /**
- * A test screen's one headline, under the test's name with [position] (how long it takes, or what's left) at that row's
- * end, and at most one line under it, said again when [announced] and it changes.
+ * A test screen's one headline, under the test's name and [position] (how long it takes, or what's left), and at most one
+ * line under it, said again when [announced] and it changes.
  */
 @Composable
 internal fun TestHeader(
@@ -55,70 +59,41 @@ internal fun Note(
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. */
+/**
+ * The Focus test's offer: in onboarding, the test or the first lesson; on the plan, the test's card and "Not now".
+ * [onPlan]: the plan is already the learner's, so leaving it doesn't skip a step. [firstLesson]: onboarding's first
+ * lesson by its name, where it's known.
+ */
 @Composable
 internal fun ColumnScope.FocusTestOffer(
     test: FocusTest,
     minutes: Int,
     onPlan: Boolean,
+    firstLesson: String?,
     pressed: Pressed?,
     failed: Boolean,
     onStart: () -> Unit,
     onSkip: () -> Unit,
+    analytics: TestContext,
 ) {
     val focus = test.suggestsFocus
-    SetupContent {
-        TestHeader(
-            title = stringResource(if (focus) R.string.focustest_find_focus else R.string.focustest_find_start),
-            description = stringResource(if (focus) R.string.focustest_offer_line_focus else R.string.focustest_offer_line),
-            position = formatMinutes(minutes, currentLocale()),
-        )
-        OnboardingActions {
-            FinishFailed(failed)
-            TaskActions { main ->
-                OutlinedButton(
-                    busy = pressed == Pressed.Other,
-                    onClick = onSkip,
-                    enabled = pressed != Pressed.Main,
-                    leadingIcon = if (onPlan) null else ({ ButtonIcon(R.drawable.ic_skip_next) }),
-                ) {
-                    Text(stringResource(if (onPlan) R.string.focustest_not_now else R.string.onboarding_skip))
-                }
-                Button(busy = pressed == Pressed.Main, onClick = onStart, modifier = main, enabled = pressed != Pressed.Other) {
-                    Text(stringResource(R.string.focustest_start))
-                }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun ColumnScope.FocusTestResume(
-    sitting: FocusTestSitting,
-    answered: Int,
-    pressed: Pressed?,
-    failed: Boolean,
-    onContinue: () -> Unit,
-    onSeeResult: () -> Unit,
-) {
-    SetupContent {
-        TestHeader(
-            title = stringResource(R.string.focustest_resume_title),
-            description = pluralStringResource(R.plurals.focustest_answers_saved_line, answered, answered),
-            position = stringResource(R.string.focustest_time_left, formatMinutes(sitting.minutes.toInt(), currentLocale())),
-        )
-        OnboardingActions {
-            FinishFailed(failed)
-            TaskActions { main ->
-                OutlinedButton(busy = pressed == Pressed.Other, onClick = onSeeResult) {
-                    Text(stringResource(R.string.focustest_see_my_result))
-                }
-                Button(onClick = onContinue, modifier = main, enabled = pressed == null) {
-                    Text(stringResource(R.string.focustest_continue))
-                }
-            }
-        }
-    }
+    val card = testCard(TestRow.Quick, stringResource(R.string.focustest_title), test.offer?.questions?.toInt(), minutes)
+    TestOffer(
+        title =
+            when {
+                !onPlan -> stringResource(R.string.placementtest_where_to_start)
+                focus -> stringResource(R.string.focustest_find_focus)
+                else -> stringResource(R.string.focustest_find_start)
+            },
+        sentence = stringResource(if (focus) R.string.focustest_offer_sentence else R.string.focustest_offer_line),
+        cards = if (onPlan) listOf(card) else listOf(card, firstLessonCard(firstLesson)),
+        initial = TestRow.Quick,
+        pressed = pressed,
+        failed = failed,
+        onChoose = { if (it == TestRow.FirstLesson) onSkip() else onStart() },
+        test = analytics,
+        onNotNow = onSkip.takeIf { onPlan },
+    )
 }
 
 /** A sitting with nothing more to ask that isn't closed yet: the learner came back to it, or closing it failed. */

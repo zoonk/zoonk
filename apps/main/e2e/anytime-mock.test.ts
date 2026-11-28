@@ -473,14 +473,17 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.goto("/mock/new");
     const exam = page.getByRole("radiogroup", { name: "The exam" });
     await exam.getByText("The full exam", { exact: true }).click();
-    const start = await holdActionAnswer(page, "/mock/new");
 
-    await page.getByRole("button", { name: "Start" }).click();
-    await start.held;
-    await page.getByRole("link", { exact: true, name: "Your exam" }).click();
-    await expect(page).toHaveURL(/\/exam$/u);
+    const followed = await holdActionAnswer(page, "/mock/new", {
+      away: /\/mock\/[\da-f-]{36}$/u,
+      start: () => page.getByRole("button", { name: "Start" }).click(),
+      whileHeld: async () => {
+        await page.getByRole("link", { exact: true, name: "Your exam" }).click();
+        await expect(page).toHaveURL(/\/exam$/u);
+      },
+    });
 
-    expect(await start.release(/\/mock\/[\da-f-]{36}$/u)).toBe(false);
+    expect(followed).toBe(false);
     await expect(page).toHaveURL(/\/exam$/u);
 
     await page.context().close();

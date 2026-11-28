@@ -1,65 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ left" : {
-      "comment" : "How long the rest of an open Focus test takes, such as \"9 min left\"",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ para terminar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il reste %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ancora %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "残り%@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ 남음"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pozostało %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ para terminar"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ kaldı"
-          }
-        }
-      }
-    },
     "%lld of %lld right" : {
       "comment" : "How many of a subject's chosen Focus test answers were right; \"I don't know yet\" isn't counted",
       "localizations" : {
@@ -121,6 +62,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld / %2$lld doğru"
+          }
+        }
+      }
+    },
+    "A test shows what you already know, so more of your time goes to what you need most." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Test zeigt, was du schon kannst. So kannst du mehr Zeit für das nutzen, was du am meisten brauchst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una prueba muestra lo que ya sabes, para que dediques más tiempo a lo que más necesitas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test montre ce que tu connais déjà, pour consacrer plus de temps à ce dont tu as le plus besoin."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un test mostra cosa sai già, così puoi dedicare più tempo a ciò di cui hai più bisogno."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "テストで知っていることがわかるので、必要なことにもっと時間を使えます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "테스트를 보면 이미 아는 내용을 확인할 수 있어, 꼭 필요한 내용에 더 많은 시간을 쓸 수 있어요."
+          }
+        },
+        "pl" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test pokazuje, co już wiesz, dzięki czemu więcej czasu poświęcasz na to, czego najbardziej potrzebujesz."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test, zaten bildiklerini gösterir; böylece zamanının çoğu en çok ihtiyaç duyduğun konulara ayrılır."
           }
         }
       }
@@ -415,65 +414,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Devam et"
-          }
-        }
-      }
-    },
-    "Continue your test" : {
-      "comment" : "Title of an open Focus test sitting the learner came back to",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deinen Test fortsetzen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar tu prueba"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer ton test"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continua il test"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "テストを続ける"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "테스트 이어서 풀기"
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kontynuuj test"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue seu teste"
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testine devam et"
           }
         }
       }
@@ -947,7 +887,7 @@
       }
     },
     "Haven't studied most of this yet? That's fine. You can stop here and start learning." : {
-      "comment" : "Above Stop, after five \"I don't know yet\" in a row in the Focus test",
+      "comment" : "Above Stop, after several \"I don't know yet\" in a row in the Focus test",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2074,65 +2014,6 @@
         }
       }
     },
-    "This test shows what you already know, so more of your time goes to what you need most. It never removes a subject." : {
-      "comment" : "What the Focus test is and why, for an exam with a date and more than one subject",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieser Test zeigt, was du schon weißt. So bleibt mehr Zeit für das, was du am meisten brauchst. Dabei wird kein Fach entfernt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta prueba muestra lo que ya sabes para que dediques más tiempo a lo que más necesitas. No elimina ninguna materia."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce test montre ce que tu sais déjà pour que tu consacres plus de temps à ce dont tu as le plus besoin. Il ne retire jamais de matière."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo test mostra cosa sai già, così dedichi più tempo a ciò che ti serve di più. Non elimina mai nessuna materia."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このテストですでに知っていることがわかるので、特に必要な内容にもっと時間をかけられます。科目を学習計画から外すことはありません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 테스트로 이미 아는 내용을 확인해, 더 배워야 할 내용에 시간을 더 쓸 수 있어요. 어떤 과목도 제외하지 않아요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ten test pokazuje, co już umiesz, więc więcej czasu poświęcasz na to, czego najbardziej potrzebujesz. Nigdy nie usuwa z planu żadnego przedmiotu."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa estudar. Ele nunca tira uma matéria do plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu test zaten bildiklerini gösterir. Böylece en çok ihtiyacın olan konulara daha fazla zaman ayrılır. Hiçbir branşı planından çıkarmaz."
-          }
-        }
-      }
-    },
     "This test shows what you already know, so your plan can skip it." : {
       "comment" : "What the Focus test is and why, for an exam without a date or with one subject",
       "localizations" : {
@@ -2424,238 +2305,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Yazma: bu testte yok"
-          }
-        }
-      }
-    },
-    "You can take the test later, from your plan." : {
-      "comment" : "Under Skip while the Focus test's questions are written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst den Test später über deinen Plan machen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes hacer la prueba más adelante, desde tu plan."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux faire le test plus tard, depuis ton plan."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puoi fare il test più tardi, dal tuo piano."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "あとで学習計画からテストを受けられます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "나중에 계획에서 진단을 받을 수 있어요."
-          }
-        },
-        "pl" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test możesz zrobić później. Znajdziesz go w swoim planie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você pode fazer o teste depois, pelo seu plano."
-          }
-        },
-        "tr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Testi daha sonra planından çözebilirsin."
-          }
-        }
-      }
-    },
-    "Your %lld answers are saved." : {
-      "comment" : "Under \"Continue your test\": how many answers the open sitting saved",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Deine %lld Antwort ist gespeichert."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Deine %lld Antworten sind gespeichert."
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Your %lld answer is saved."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "Your %lld answers are saved."
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tienes %lld respuesta guardada."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tienes %lld respuestas guardadas."
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tu as %lld réponse enregistrée."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Tu as %lld réponses enregistrées."
-                }
-              }
-            }
-          }
-        },
-        "it" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Abbiamo salvato %lld risposta."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Abbiamo salvato %lld risposte."
-                }
-              }
-            }
-          }
-        },
-        "ja" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld問の回答が保存されています。"
-                }
-              }
-            }
-          }
-        },
-        "ko" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "답변 %lld개가 저장되어 있어요."
-                }
-              }
-            }
-          }
-        },
-        "pl" : {
-          "variations" : {
-            "plural" : {
-              "few" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz %lld zapisane odpowiedzi."
-                }
-              },
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz %lld zapisaną odpowiedź."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Masz %lld zapisanych odpowiedzi."
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Você tem %lld resposta salva."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Você tem %lld respostas salvas."
-                }
-              }
-            }
-          }
-        },
-        "tr" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld cevabın kaydedildi."
-                }
-              }
-            }
           }
         }
       }

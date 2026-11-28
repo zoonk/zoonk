@@ -1,6 +1,7 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
+import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
@@ -13,7 +14,10 @@ import {
 } from "@zoonk/testing/fixtures/language";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { MS_PER_DAY } from "@zoonk/utils/date";
+import { languageLevelTestResultSchema } from "../src/lib/openapi/schemas/language";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
+import { readBody } from "./helpers/response";
 
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
@@ -410,13 +414,19 @@ test.describe("Language goal API", () => {
       prefix: "language-level",
     });
 
-    const { goal } = await languageGoalFixture({ userId: user.id });
+    const { goal, lessons, plan } = await languageGoalFixture({ userId: user.id });
+
+    const previousListening = await prisma.languageSkillLevel.create({
+      data: { language: "en", score: 2, skill: "listening", startScore: 2, userId: user.id },
+    });
+
     const path = `/v1/goals/${goal.id}/language-level-test`;
 
     const firstResponse = await apiContext.get(path);
     const first = await firstResponse.json();
 
     expect(first).toMatchObject({
+      canStop: false,
       next: { kind: "question", question: { level: "A2", skill: "reading" } },
       status: "ready",
     });
@@ -430,21 +440,54 @@ test.describe("Language goal API", () => {
 
     const answered = await apiContext.post(`${path}/answers`, { data: right });
 
-    expect(await answered.json()).toMatchObject({ answered: 1, lastCorrect: true });
+    await expect(
+      readBody({ response: answered, schema: languageLevelTestViewSchema }),
+    ).resolves.toMatchObject({ answered: 1, canStop: false, lastCorrect: true });
 
     const stale = await apiContext.post(`${path}/answers`, { data: right });
 
     expect(stale.status()).toBe(200);
-    expect(await stale.json()).toMatchObject({ answered: 1, lastCorrect: null });
+    let view = await stale.json();
+    expect(view).toMatchObject({ answered: 1, lastCorrect: null });
 
+    for (let index = 1; index < 4; index += 1) {
+      expect(view.next.question.skill).toBe("reading");
+      // oxlint-disable-next-line no-await-in-loop -- The server chooses the next question from this answer.
+      const response = await apiContext.post(`${path}/answers`, {
+        data: {
+          answerIndex: view.next.question.options.indexOf("Certa"),
+          questionId: view.next.question.id,
+        },
+      });
+      // oxlint-disable-next-line no-await-in-loop -- The next POST needs this response's question ID.
+      view = await response.json();
+    }
+
+    expect(view).toMatchObject({ canStop: true, next: { question: { skill: "listening" } } });
+
+    const deferred = await apiContext.post(`${path}/answers`, {
+      data: { audioDeferred: true, questionId: view.next.question.id },
+    });
+
+    expect(await deferred.json()).toMatchObject({ next: { kind: "done" }, total: 12 });
     const finished = await apiContext.post(`${path}/completions`);
 
     expect(finished.status()).toBe(200);
 
     expect(await finished.json()).toMatchObject({
       levels: [{ skill: "reading" }],
-      result: { attemptId: null, levelsSkipped: [], ranges: { reading: expect.any(Object) } },
+      result: {
+        attemptId: null,
+        end: "audio_deferred",
+        levelsSkipped: [],
+        nextLesson: { id: lessons[0]!.id, title: lessons[0]!.title },
+        ranges: { reading: expect.any(Object) },
+      },
     });
+
+    expect(
+      await prisma.languageSkillLevel.findUniqueOrThrow({ where: { id: previousListening.id } }),
+    ).toStrictEqual(previousListening);
 
     const retake = await apiContext.post(`${path}/attempts`, { data: { length: "quick" } });
     expect(retake.status()).toBe(200);
@@ -454,13 +497,33 @@ test.describe("Language goal API", () => {
     expect(open).toMatchObject({
       answered: 0,
       attemptId: expect.any(String),
-      length: "quick",
+      canStop: false,
+      estimatedMinutes: 6,
       result: { attemptId: null, ranges: { reading: expect.any(Object) } },
       status: "ready",
+      total: 12,
     });
 
     const loaded = await apiContext.get(path, { params: { attemptId: open.attemptId } });
-    expect(await loaded.json()).toStrictEqual(open);
+
+    await expect(
+      readBody({ response: loaded, schema: languageLevelTestViewSchema }),
+    ).resolves.toStrictEqual(open);
+
+    const firstRetakeAnswer = await apiContext.post(`${path}/answers`, {
+      data: {
+        answerIndex: open.next.question.options.indexOf("Certa"),
+        attemptId: open.attemptId,
+        questionId: open.next.question.id,
+      },
+    });
+
+    expect(firstRetakeAnswer.status()).toBe(200);
+    const row = await apiContext.get(`/v1/goals/${goal.id}/plan`);
+
+    await expect(readBody({ response: row, schema: planResponseSchema })).resolves.toMatchObject({
+      placementTest: { answered: 1, kind: "language", state: "continue", total: 12 },
+    });
 
     const staleAttempt = await apiContext.post(`${path}/completions`, {
       data: { attemptId: randomUUID() },
@@ -472,11 +535,49 @@ test.describe("Language goal API", () => {
       data: { attemptId: open.attemptId },
     });
 
-    expect(await explicit.json()).toMatchObject({
+    await expect(
+      readBody({ response: explicit, schema: languageLevelTestResultSchema }),
+    ).resolves.toMatchObject({
       levels: [],
       result: { attemptId: open.attemptId, levelsSkipped: [], ranges: {} },
     });
 
+    const legacyResult = {
+      attemptId: open.attemptId,
+      finishedAt: new Date().toISOString(),
+      levelsSkipped: [],
+      ranges: { reading: { high: "B2", low: "A2" } },
+      wholeCourseReady: true,
+    };
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          levelTest: {
+            attempt: { attemptId: open.attemptId, length: "wholeCourse", result: legacyResult },
+            lastResult: legacyResult,
+          },
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { kind: "lesson", planId: plan.id },
+    });
+
+    const returning = await apiContext.get(path);
+    const restored = await returning.json();
+
+    expect(restored).toMatchObject({
+      attemptId: open.attemptId,
+      next: { kind: "done" },
+      result: { attemptId: open.attemptId, ranges: legacyResult.ranges },
+    });
+
+    expect(restored.result).not.toHaveProperty("nextLesson");
+    expect(restored.result).not.toHaveProperty("wholeCourseReady");
     await apiContext.dispose();
   });
 
@@ -542,10 +643,12 @@ test.describe("Language goal API", () => {
     const shown = await apiContext.get(path);
 
     expect(await shown.json()).toStrictEqual({
+      estimatedMinutes: 6,
       expectedSeconds: 120,
       showAlphabetNote: false,
       startedAt: null,
       status: "preparing",
+      total: 12,
     });
 
     await expect(prisma.languageLevelTest.count({ where: pair })).resolves.toBe(0);

@@ -583,7 +583,7 @@ describe(goalContentWorkflow, () => {
 
     await expect(
       loadPlacementState({ goalId: goal.id, plan, userId: goal.userId }),
-    ).resolves.toMatchObject({ status: "waitingForQuestions" });
+    ).resolves.toMatchObject({ next: null, status: "unavailable" });
 
     write.mockReset().mockResolvedValue(null);
     getStartMock().mockClear();
@@ -961,14 +961,24 @@ describe(goalContentWorkflow, () => {
 
     expect(placementCalls.length).toBeGreaterThan(0);
 
-    expect(placementCalls.filter((call) => call.serviceTier === "priority")).toHaveLength(2);
+    const priority = new Set(
+      placementCalls
+        .filter((call) => call.serviceTier === "priority")
+        .flatMap((call) => call.skills.map((skill) => skill.name)),
+    );
+
+    const written = new Set(
+      placementCalls.flatMap((call) => call.skills.map((skill) => skill.name)),
+    );
+
+    expect(priority.size).toBeGreaterThanOrEqual(Math.min(8, written.size));
 
     expect(
       placementCalls.every(
         (call) =>
           call.serviceTier !== "flex" &&
           call.skills.length <= 2 &&
-          call.skills.every((skill) => skill.quickCount <= 1 && [0, 3].includes(skill.tapCount)),
+          call.skills.every((skill) => skill.quickCount === 0 && skill.tapCount === 3),
       ),
     ).toBe(true);
 

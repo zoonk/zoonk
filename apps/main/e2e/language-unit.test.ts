@@ -70,21 +70,24 @@ test.describe("Language unit page", () => {
     const call = page.getByRole("dialog", { name: "Practice a conversation" });
     await call.getByText("1 min", { exact: true }).click();
     await expect(call.getByRole("radio", { exact: true, name: "1 min" })).toBeChecked();
-    const start = await holdActionAnswer(page, `/content/units/${learner.renting.id}`);
 
-    await call.getByRole("button", { name: "Continue" }).click();
-    await start.held;
-    await page.keyboard.press("Escape");
-    await expect(call).toBeHidden();
+    const followed = await holdActionAnswer(page, `/content/units/${learner.renting.id}`, {
+      away: /\/conversation\//u,
+      start: () => call.getByRole("button", { name: "Continue" }).click(),
+      whileHeld: async () => {
+        await page.keyboard.press("Escape");
+        await expect(call).toBeHidden();
 
-    await page
-      .getByRole("navigation", { name: "Learning tabs" })
-      .getByRole("link", { name: /^Today\b/u })
-      .click();
+        await page
+          .getByRole("navigation", { name: "Learning tabs" })
+          .getByRole("link", { name: /^Today\b/u })
+          .click();
 
-    await expect(page).toHaveURL(/\/today$/u);
+        await expect(page).toHaveURL(/\/today$/u);
+      },
+    });
 
-    expect(await start.release(/\/conversation\//u)).toBe(false);
+    expect(followed).toBe(false);
     await expect(page).toHaveURL(/\/today$/u);
 
     await context.close();

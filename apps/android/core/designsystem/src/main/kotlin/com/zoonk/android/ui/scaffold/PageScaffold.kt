@@ -70,6 +70,8 @@ fun PageScaffold(
     columnWidth: Dp = Dp.Unspecified,
     /** Off while a request that moves the learner on is out: Back waits with it. */
     backEnabled: Boolean = true,
+    /** The page is in a task for now, such as a test inside the setup: its way back is the task's ✕, which [onBack] does. */
+    closes: Boolean = false,
     content: @Composable (PaddingValues) -> Unit,
 ) {
     val focus = rememberTitleFocus()
@@ -102,11 +104,15 @@ fun PageScaffold(
                             }
                         val back =
                             @Composable {
-                                BackButton(
-                                    onClick = onBack,
-                                    modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
-                                    enabled = backEnabled,
-                                )
+                                if (closes) {
+                                    CloseButton(onClick = onBack, modifier = Modifier.offset(x = pageMargin() - CLOSE_INK_START))
+                                } else {
+                                    BackButton(
+                                        onClick = onBack,
+                                        modifier = Modifier.offset(x = pageMargin() - BACK_INK_START),
+                                        enabled = backEnabled,
+                                    )
+                                }
                             }
                         val insets = TopAppBarDefaults.windowInsets.add(WindowInsets(left = columnInset, right = columnInset))
                         if (middle == null) {
@@ -208,6 +214,9 @@ fun pageMargin(): Dp {
  * lines up by its ink with the page's margin, as the task bar's close button does.
  */
 private val BACK_INK_START = 4.dp + (48.dp - 24.dp) / 2 + 4.dp
+
+/** `ic_close` leaves 5dp blank before its ink. */
+private val CLOSE_INK_START = 4.dp + (48.dp - 24.dp) / 2 + 5.dp
 
 /** Where Material's bar starts its navigation slot, and the back button's width there. */
 private val BAR_INSET = 4.dp

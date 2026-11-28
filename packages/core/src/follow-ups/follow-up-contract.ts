@@ -114,7 +114,6 @@ export const followUpSchema = z.discriminatedUnion("kind", [
   z.object({
     input: z.object({
       goalId: uuidSchema(),
-      placementPart: z.object({ attemptId: uuidSchema(), part: z.int().positive() }).optional(),
       skillIds: z.array(uuidSchema()).optional(),
       waitsForNotice: z.boolean(),
     }),

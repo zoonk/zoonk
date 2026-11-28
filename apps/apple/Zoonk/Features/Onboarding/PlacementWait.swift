@@ -25,6 +25,10 @@ struct PlacementWaitScreen: View {
 
   @Environment(OnboardingStore.self) private var store
 
+  /// Under onboarding's Skip: where the test waits.
+  static let laterNote = LocalizedStringResource(
+    "You can take the test later, from your plan.", table: "Onboarding")
+
   static let questionsReady = LocalizedStringResource(
     "Your test is ready", table: "Onboarding",
     comment: "Title of placement's wait once its questions are ready, for a learner still guessing")
@@ -39,8 +43,7 @@ struct PlacementWaitScreen: View {
     let title =
       holding == nil
       ? Text(
-        "Getting your test ready", tableName: "Onboarding",
-        comment: "Title while placement questions are written")
+        "Getting your test ready", tableName: "Onboarding")
       : Text(Self.questionsReady)
 
     WaitScreen(
@@ -74,10 +77,14 @@ struct PlacementWaitScreen: View {
               comment: "How long placement questions take to write from the learner's material")
             : Text(
               "This takes a minute or two.", tableName: "Onboarding",
-              comment: "How long placement questions take to write. \"This\" is the wait."))
+              comment:
+                "Shown while the learner waits for their first questions to be prepared. “This” is the wait."
+            ))
 
       Section {
-        GenerationTimeline(wait: shown, failure: failure)
+        GenerationTimeline(
+          wait: shown, failure: failure, isActing: isActing || skip.isBusy,
+          act: failure.map { failure in { onRetry(failure) } })
       }
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
@@ -109,7 +116,8 @@ struct PlacementWaitScreen: View {
     }
     .measuresWait(
       surface: "placementWait", contentKind: "curriculum", goalID: goalID,
-      onboardingID: onboarding?.onboardingID)
+      onboardingID: onboarding?.onboardingID
+    ).testTop(.open)
   }
 
   /// Reads until the questions come: each event of the goal's run says when to read again, then a

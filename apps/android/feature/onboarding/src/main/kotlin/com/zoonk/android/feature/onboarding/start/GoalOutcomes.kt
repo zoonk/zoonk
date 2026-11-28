@@ -72,18 +72,17 @@ internal fun OnboardingHeading(
     }
 }
 
-/** Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) at the row's end, never in the chip. */
+/**
+ * Main's `OnboardingSubject`: the chip over a test's title, with where the learner is ([position]) on its own line under
+ * it, never in the chip, so a longer topic never moves the position or what follows.
+ */
 @Composable
 internal fun OnboardingSubject(
     subject: String,
     position: String? = null,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Box(Modifier.weight(1f)) { Eyebrow(subject) }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Eyebrow(subject)
         position?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.zoonkType.data) }
     }
 }

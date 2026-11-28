@@ -6,6 +6,6 @@ export function levelTestOutReceipt(attemptId: string) {
   return `levelTestOut:${attemptId}`;
 }
 
-export function placementPartReceipt(attemptId: string, part: number) {
-  return `${attemptId}:${part}`;
+export function placementPartReceipt(attemptId: string, part: number, answered?: number) {
+  return answered === undefined ? `${attemptId}:${part}` : `${attemptId}:${part}:${answered}`;
 }

@@ -12,25 +12,31 @@ import {
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
+import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   examBlueprintFixture,
   learnerSourceFixture,
   sourceFixture,
 } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
+import { after } from "next/server";
 import { describe, expect, it, vi } from "vitest";
 import { listOwed } from "../../_test-utils/follow-ups";
 import { mockSession } from "../../_test-utils/mock-session";
+import { analytics } from "../../_test-utils/test-boundaries";
 import { type GoalDraft } from "../../goals/goal-contract";
 import { recordGoalGeneration } from "../../goals/record-goal-generation";
+import { examTestGoalFixture } from "../../learner/_test-utils/exam-test-goal";
+import { lowGuessTapItems } from "../../learner/_test-utils/placement-tap-items";
 import { getCurrentUserMemory } from "../../memory/get-current-user-memory";
 import { proposeOnboardingMemory, rememberMemoryCandidate } from "../../memory/memory-follow-ups";
 import { findPlanFirstLessonId } from "../../plans/_utils/plan-first-lesson";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { PROFILE_QUESTIONS } from "../../profile/questions/profile-question-contract";
+import * as placementOffer from "./_utils/onboarding-placement";
 import { answerOnboardingQuestion } from "./answer-onboarding-question";
 import { createOnboardingGoals } from "./create-onboarding-goals";
 import { getOnboarding } from "./get-onboarding";
@@ -346,7 +352,7 @@ describe("onboarding a new goal", () => {
     ).resolves.toStrictEqual([{ sourceId: notes.id }]);
   });
 
-  it("lists only what's still missing, then the profile, placement, the time and the plan", async () => {
+  it("lists only what's still missing, then the profile, the time and the plan while placement is cold", async () => {
     await useLearner();
     const [goal] = await createGoal();
     const result = await getOnboarding({ goalId: goal?.id ?? "" });
@@ -363,7 +369,6 @@ describe("onboarding a new goal", () => {
           "targetDate",
           ...ENGLISH_PROFILE_STEPS,
           "buddy",
-          "placement",
           "schedule",
           "plan",
         ],
@@ -371,6 +376,181 @@ describe("onboarding a new goal", () => {
       },
       status: "ready",
     });
+  });
+
+  it("offers a ready course, and keeps a cold course when the learner asks for the test", async () => {
+    const user = await useLearner();
+
+    const goal = await goalFixture({
+      details: { answered: GOAL_QUESTIONS, level: "basic" },
+      kind: "learn",
+      planRevealedAt: null,
+      userId: user.id,
+    });
+
+    const skills = await Promise.all([skillFixture(), skillFixture()]);
+
+    await planFixture({
+      goalId: goal.id,
+      graph: { skills: plannedSkills(skills) },
+      items: skills.map((skill) => ({ skillId: skill.id })),
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { placement: null },
+    });
+
+    await expect(getSteps(goal.id)).resolves.not.toContain("placement");
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: null, question: "level", requestPlacement: true },
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { placement: { mode: "direct", test: { kind: "course" } } },
+    });
+
+    await expect(getSteps(goal.id)).resolves.toContain("placement");
+
+    await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { level: "basic", question: "level" },
+    });
+
+    await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: {
+        placement: {
+          mode: "offer",
+          test: { kind: "course", offer: { estimatedMinutes: 2, questions: 4 } },
+        },
+      },
+    });
+  });
+
+  it("offers Focus only when the opening subject can serve a question", async () => {
+    const { blueprint, goal, skills, user } = await examTestGoalFixture({
+      subjects: [
+        { items: 0, name: "Math", questions: 10 },
+        { items: 0, name: "History", questions: 5 },
+      ],
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { placement: null },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    await itemFixture({
+      content: choiceItemContent(),
+      examBlueprintId: blueprint.id,
+      skillId: skills[0]!.id,
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: {
+        placement: { mode: "offer", test: { kind: "focus", offer: { minutes: 6, questions: 6 } } },
+      },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+  });
+
+  it("records a cold offer once when a schedule moves onboarding past it", async () => {
+    const user = await useLearner();
+
+    const goal = await goalFixture({
+      details: { answered: GOAL_QUESTIONS, level: "basic" },
+      kind: "language",
+      language: "pt",
+      planRevealedAt: null,
+      targetLanguage: `en-x-${randomUUID().slice(0, 5)}`,
+      userId: user.id,
+    });
+
+    const offer = vi.spyOn(placementOffer, "readOnboardingPlacementOffer");
+
+    const save = () =>
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { dailyMinutes: 30, question: "schedule" },
+      });
+
+    await expect(save()).resolves.toMatchObject({ status: "saved" });
+    await expect(save()).resolves.toMatchObject({ status: "saved" });
+    expect(offer).not.toHaveBeenCalled();
+
+    await Promise.all(
+      vi.mocked(after).mock.calls.map(([task]) => (typeof task === "function" ? task() : task)),
+    );
+
+    const events = analytics.trackServerEvent.mock.calls.flat();
+
+    expect(events.filter((event) => event.name === "Test Offer Deferred")).toMatchObject([
+      {
+        properties: {
+          attempt_id: null,
+          goal_id: goal.id,
+          part: 1,
+          parts: 1,
+          questions: 12,
+          surface: "onboarding",
+          test: "language",
+        },
+      },
+    ]);
+  });
+
+  it("reads the learner's language bank without starting its writer", async () => {
+    const user = await useLearner();
+    const language = "pt";
+    const targetLanguage = `en-x-${randomUUID().slice(0, 5)}`;
+
+    const goal = await goalFixture({
+      details: { answered: GOAL_QUESTIONS, level: "basic" },
+      kind: "language",
+      language,
+      planRevealedAt: null,
+      targetLanguage,
+      userId: user.id,
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { placement: null },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
+
+    const questions = CEFR_LEVELS.map((level) => ({
+      answerIndex: 0,
+      id: `reading-${level}`,
+      level,
+      options: ["a", "b", "c", "d"],
+      passage: "An invitation",
+      question: "Where is the party?",
+      skill: "reading",
+    }));
+
+    await prisma.languageLevelTest.create({
+      data: {
+        content: { questions },
+        language,
+        model: "test",
+        promptVersion: "test",
+        runId: "test",
+        targetLanguage,
+      },
+    });
+
+    await expect(getOnboarding({ goalId: goal.id })).resolves.toMatchObject({
+      onboarding: { placement: { mode: "offer", test: { kind: "language" } } },
+    });
+
+    await expect(listOwed(user.id)).resolves.toStrictEqual([]);
   });
 
   it("shows the run writing the curriculum once it starts, to follow it live", async () => {
@@ -518,7 +698,6 @@ describe("onboarding a new goal", () => {
     await expect(getSteps(goalId)).resolves.toStrictEqual([
       ...ENGLISH_PROFILE_STEPS,
       "buddy",
-      "placement",
       "schedule",
       "plan",
     ]);
@@ -728,7 +907,7 @@ describe("onboarding a new goal", () => {
     ]);
 
     await expect(getOnboarding({ goalId: language.id })).resolves.toMatchObject({
-      onboarding: { quickTestMinutes: 4 },
+      onboarding: { quickTestMinutes: 6 },
     });
 
     await expect(getOnboarding({ goalId: learn.id })).resolves.toMatchObject({
@@ -909,7 +1088,6 @@ describe("onboarding a new goal", () => {
       "target",
       "level",
       ...ENGLISH_PROFILE_STEPS,
-      "placement",
       "schedule",
       "plan",
     ]);

@@ -22,6 +22,7 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.orderQuestion
+import com.zoonk.android.feature.onboarding.placementAttemptOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.feature.onboarding.trueFalseQuestion
@@ -56,7 +57,11 @@ class QuestionSpreadTest {
     @get:Rule(order = 1)
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val api = FakeOnboardingApi().apply { setup = { setupView(listOf("placement", "plan")) } }
+    private val api =
+        FakeOnboardingApi().apply {
+            setup = { setupView(listOf("placement", "plan")) }
+            sitting = { placement.copy(attempt = placementAttemptOf()) }
+        }
     private val restoration = StateRestorationTester(rule)
 
     private fun showQuestion() {

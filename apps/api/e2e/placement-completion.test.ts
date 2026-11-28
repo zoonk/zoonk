@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
@@ -28,24 +29,33 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
     const { goal, skills } = await learnerGoalFixture({
       challengesDone: true,
       itemsPerSkill: 1,
-      phases: [1],
+      phases: [2],
       userId: user.id,
     });
 
-    const [skill] = skills;
-
-    if (!skill) {
-      throw new Error("Expected a topic to confirm");
-    }
-
-    const taps = await lowGuessTapItems(skill.id);
+    const banks = await Promise.all(skills.map((skill) => lowGuessTapItems(skill.id)));
+    const taps = banks.flat();
     const answers = new Map(taps.map(({ item, answer }) => [item.id, answer] as const));
     const goalPath = `/v1/goals/${goal.id}`;
     const path = `${goalPath}/placement`;
 
+    const plan = async () =>
+      readBody({ response: await apiContext.get(`${goalPath}/plan`), schema: planResponseSchema });
+
+    await expect(plan()).resolves.toMatchObject({
+      placementTest: { kind: "learn", offer: expect.any(Object), state: "start" },
+    });
+
     const opened = await readBody({
       response: await apiContext.post(`${path}/sittings`, { data: { length: "quick" } }),
       schema: placementResponseSchema,
+    });
+
+    expect(opened.attempt).toMatchObject({
+      answered: 0,
+      part: 1,
+      partComplete: false,
+      questions: 4,
     });
 
     const attemptId = opened.attempt?.id;
@@ -86,11 +96,23 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       });
 
     const completed = await finish();
-    expect(completed).toMatchObject({ changeId: expect.any(String), lessonsSkipped: 1 });
-    const { changeId } = completed;
 
-    const plan = async () =>
-      readBody({ response: await apiContext.get(`${goalPath}/plan`), schema: planResponseSchema });
+    expect(completed).toMatchObject({
+      changeId: expect.any(String),
+      finish: { answered: expect.any(Number), lessonsSkipped: 1, unknowns: 0 },
+      lessonsSkipped: 1,
+      result: {
+        changeId: expect.any(String),
+        course: { chapters: [{ done: 0, lessons: 2, skipped: 1, start: true }], lessons: 2 },
+        nextLesson: { title: expect.any(String) },
+      },
+    });
+
+    await expect(plan()).resolves.toMatchObject({
+      placementTest: { kind: "learn", result: completed.result, state: "result" },
+    });
+
+    const { changeId } = completed;
 
     await expect(finish()).resolves.toMatchObject({ changeId, lessonsSkipped: 1 });
 
@@ -98,7 +120,7 @@ test("a finished placement returns an Undo ID accepted by Plan", async () => {
       data: { status: "undone" },
     });
 
-    expect(undone.status()).toBe(200);
+    await readBody({ response: undone, schema: planChangeSchema });
 
     await expect(plan()).resolves.toMatchObject({
       placementTest: { result: { lessonsSkipped: 0 } },
@@ -115,7 +137,7 @@ test("language placement keeps the level result and hides an unavailable test-ou
   });
 
   try {
-    const { goal, items, skills } = await languageGoalFixture({ userId: user.id });
+    const { goal, items, lessons, skills } = await languageGoalFixture({ userId: user.id });
     const attemptId = randomUUID();
     const pair = { language: `pt-x-${randomUUID().slice(0, 5)}`, targetLanguage: "en" };
     const ahead = items.slice(2);
@@ -173,12 +195,22 @@ test("language placement keeps the level result and hides an unavailable test-ou
       });
 
     const finished = await finish();
-    expect(finished).toMatchObject({ result: { attemptId, changeId: null, lessonsSkipped: 0 } });
+    const nextLesson = { id: lessons[0]!.id, title: lessons[0]!.title };
+
+    expect(finished.result).toMatchObject({
+      attemptId,
+      changeId: null,
+      lessonsSkipped: 0,
+      nextLesson,
+    });
+
     await expect(finish()).resolves.toStrictEqual(finished);
 
     await expect(
       readBody({ response: await apiContext.get(`${goalPath}/plan`), schema: planResponseSchema }),
-    ).resolves.toMatchObject({ placementTest: { nextTestOutLevel: null, result: { attemptId } } });
+    ).resolves.toMatchObject({
+      placementTest: { nextTestOutLevel: null, result: { attemptId, nextLesson } },
+    });
 
     const testOutPath = `${path}/test-outs`;
 

@@ -85,7 +85,7 @@ export function LevelStep({
     <StepForm
       canContinue={level !== null}
       subject={subject}
-      onContinue={() => level && onAnswer({ level: toLevelAnswer(level), question: "level" })}
+      onContinue={() => level && onAnswer({ ...toLevelAnswer(level), question: "level" })}
       pending={pending}
       title={t("How much do you already know?")}
     >

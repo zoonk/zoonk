@@ -17,6 +17,7 @@ struct LessonOption: Identifiable {
 /// picture.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
+  @Environment(\.hasHardwareKeyboard) private var hasKeyboard
 
   let options: [LessonOption]
   let selectedId: String?
@@ -70,7 +71,7 @@ struct LessonOptionList: View {
       } label: {
         pictureLabel(option)
           .overlay(alignment: .topLeading) {
-            if HardwareKeyboard.shared.isConnected {
+            if hasKeyboard {
               Group {
                 if let result = result(option) {
                   VerdictMark(result: result)

@@ -17,23 +17,23 @@ function firstSitting(quickSubjects: number, paceMs = MS_PER_MINUTE) {
 }
 
 describe("a sitting's promised count", () => {
-  it("fits a first sitting into about fifteen minutes at the starting pace", () => {
-    expect(firstSitting(24)).toStrictEqual({ minutes: 15, questions: 15 });
-    expect(firstSitting(40)).toStrictEqual({ minutes: 15, questions: 15 });
+  it("offers six questions at a minute each", () => {
+    expect(firstSitting(24)).toStrictEqual({ minutes: 6, questions: 6 });
+    expect(firstSitting(40)).toStrictEqual({ minutes: 6, questions: 6 });
   });
 
   it("asks at most four questions a subject when the exam has few", () => {
-    expect(firstSitting(3)).toStrictEqual({ minutes: 12, questions: 12 });
-    expect(firstSitting(2)).toStrictEqual({ minutes: 8, questions: 8 });
+    expect(firstSitting(3)).toStrictEqual({ minutes: 6, questions: 6 });
+    expect(firstSitting(2)).toStrictEqual({ minutes: 6, questions: 6 });
     expect(firstSitting(1)).toStrictEqual({ minutes: 4, questions: 4 });
   });
 
-  it("sizes a first sitting to the exam once the pace leaves room", () => {
+  it("keeps the first sitting at six for a fast learner", () => {
     const fast = 20_000;
 
-    expect(firstSitting(12, fast).questions).toBe(20);
-    expect(firstSitting(24, fast).questions).toBe(24);
-    expect(firstSitting(40, fast).questions).toBe(30);
+    expect(firstSitting(12, fast).questions).toBe(6);
+    expect(firstSitting(24, fast).questions).toBe(6);
+    expect(firstSitting(40, fast).questions).toBe(6);
   });
 
   it("offers a further sitting of up to ten questions, timed from the same count", () => {
@@ -80,8 +80,8 @@ describe("the learner's pace", () => {
 });
 
 describe('the hint after "I don\'t know yet" answers', () => {
-  it("shows after five in a row and goes once the learner answers", () => {
-    const unknown = Array.from({ length: 5 }, () => "dontKnow" as const);
+  it("shows after three in a row and goes once the learner answers", () => {
+    const unknown = Array.from({ length: 3 }, () => "dontKnow" as const);
 
     expect(hasUnknownStreak(unknown.slice(1))).toBe(false);
     expect(hasUnknownStreak(["correct", ...unknown])).toBe(true);

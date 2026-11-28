@@ -5,6 +5,7 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { type PlacementOutcome, type PlacementQuestion } from "../onboarding/onboarding-actions";
+import { type PlacementQuestionWait } from "../onboarding/steps/use-placement-question-poll";
 
 export type QuestionPhase = {
   failures: number;
@@ -17,12 +18,16 @@ export type QuestionPhase = {
 export type FocusTestPhase =
   | QuestionPhase
   /** `ended`: the open sitting asks nothing more and isn't closed yet. */
-  | { kind: "ended" | "loadFailed" | "loading" | "unavailable" }
-  /** `answered`: the learner has test answers, so leaving the wait uses them. */
-  | { answered: boolean; kind: "waiting" }
+  | { kind: "ended" }
+  | { kind: "loadFailed" }
+  | { kind: "loading" }
+  | { kind: "unavailable" }
+  /**
+   * `answered`: the learner has test answers, so leaving the wait uses them.
+   * `startFailed`: the questions came but the test couldn't start, so the wait offers "Try again".
+   */
+  | (PlacementQuestionWait & { answered: boolean; buildFailed?: boolean; startFailed?: true })
   | { focusTest: FocusTestView; kind: "invitation"; next: FocusTestOffer }
-  /** `answered`: every answer the learner has saved, earlier sittings included. */
-  | { answered: number; kind: "resume"; question: QuestionPhase }
   | { focusTest: FocusTestView; kind: "checkpoint" };
 
 /** Null when there's no result to show and nothing to offer. */
@@ -35,19 +40,17 @@ function toRestingPhase(focusTest: FocusTestView): FocusTestPhase | null {
 }
 
 /**
- * `opening` is a page load, which never drops the learner into a question: a sitting with answers
- * shows its resume screen, and one without is offered again, unless the learner `started` it on the
- * screen that led here. A test with no result and nothing to ask is `unavailable`, and a read that
- * failed is `loadFailed`.
+ * `opening` is a page load, which shows the test's result or its offer while questions are still
+ * being written, instead of a wait the learner didn't ask for. An open sitting goes on at its next
+ * question. A test with no result and nothing to ask is `unavailable`, and a read that failed is
+ * `loadFailed`.
  */
 export function toFocusTestPhase({
   opening,
   outcome,
-  started = false,
 }: {
   opening: boolean;
   outcome: PlacementOutcome;
-  started?: boolean;
 }): FocusTestPhase {
   if (outcome.status === "failed") {
     return { kind: "loadFailed" };
@@ -60,7 +63,14 @@ export function toFocusTestPhase({
   if (outcome.status !== "ready") {
     const focusTest = outcome.status === "notReady" ? outcome.focusTest : null;
     const resting = opening && focusTest && !focusTest.sitting ? toRestingPhase(focusTest) : null;
-    return resting ?? { answered: Boolean(focusTest?.checkpoint), kind: "waiting" };
+
+    return (
+      resting ?? {
+        answered: Boolean(focusTest?.checkpoint),
+        ...(outcome.status === "generationFailed" && { buildFailed: true }),
+        kind: "waiting",
+      }
+    );
   }
 
   const { focusTest, next } = outcome;
@@ -79,21 +89,11 @@ export function toFocusTestPhase({
     return { kind: "ended" };
   }
 
-  const question: QuestionPhase = {
+  return {
     failures: 0,
     kind: "question",
     question: next,
     sitting,
     trueFalseLabels: outcome.trueFalseLabels,
   };
-
-  if (!opening) {
-    return question;
-  }
-
-  if (sitting.answered > 0) {
-    return { answered: outcome.answered, kind: "resume", question };
-  }
-
-  return started ? question : (toRestingPhase(focusTest) ?? question);
 }

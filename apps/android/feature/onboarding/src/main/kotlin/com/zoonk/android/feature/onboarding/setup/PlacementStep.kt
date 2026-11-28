@@ -31,7 +31,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -46,9 +45,6 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
-import com.zoonk.android.feature.onboarding.start.OnboardingSubject
-import com.zoonk.android.feature.placementtest.LengthChoice
-import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.player.steps.StepPart
 import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.questions.Answer
@@ -63,112 +59,16 @@ import com.zoonk.android.feature.warmup.ReadyHold
 import com.zoonk.android.feature.warmup.rememberReadyHold
 import com.zoonk.android.ui.VisitOf
 import com.zoonk.android.ui.components.Button
-import com.zoonk.android.ui.components.ButtonEdge
 import com.zoonk.android.ui.components.ButtonIcon
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.TaskActions
-import com.zoonk.android.ui.components.TextButton
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.seconds
-
-/** A language goal with a target language takes its level test instead, which its caller picks before this. */
-@Composable
-internal fun ColumnScope.PlacementStep(
-    goalId: String,
-    subject: String,
-    run: GenerationRun,
-    onRetryRun: (() -> Unit)?,
-    store: OnboardingStore,
-    onProgress: (Float?) -> Unit,
-    onDone: suspend () -> WriteOutcome<*>,
-    onReportSaveFailure: () -> Unit = {},
-    lengthChoice: SetupTestChoice,
-) {
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle(), onDone) }
-    VisitOf(vm.visit)
-    val resource = store.placements[goalId]
-    val placement by resource.collectShown()
-    val phase = vm.phase(placement)
-    val scope = rememberCoroutineScope()
-    val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { vm.check() }
-    val hold = rememberReadyHold(ready = phase != PlacementPhase.Waiting)
-    val shown = if (hold.over) phase else PlacementPhase.Waiting
-    val finish = { fromScratch: Boolean -> vm.finish(fromScratch) }
-    val progress = (shown as? PlacementPhase.Question)?.spent?.toFloat()
-    LaunchedEffect(progress) { onProgress(progress) }
-    DisposableEffect(Unit) { onDispose { onProgress(null) } }
-
-    when (shown) {
-        PlacementPhase.Loading -> {
-            StepLoading()
-        }
-
-        PlacementPhase.LoadFailed -> {
-            SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
-        }
-
-        PlacementPhase.ChooseLength -> {
-            TrackOnboardingQuestion(goalId, "placement")
-            LengthChoice(
-                wholeCourseMinutes = lengthChoice.minutes,
-                pressed =
-                    when {
-                        vm.isStarting -> Pressed.Main
-                        vm.isSaving -> Pressed.Other
-                        else -> lengthChoice.pressed
-                    },
-                failed = vm.finishFailed || lengthChoice.failed,
-                onStart = { length -> if (length == PlacementLength.QUICK) vm.start() else lengthChoice.startWhole() },
-                onSkip = { finish(true) },
-            )
-        }
-
-        PlacementPhase.Waiting -> {
-            PlacementWaiting(
-                run = run.withPoll(poll.stopped),
-                onRetry = if (poll.stopped) poll::restart else onRetryRun,
-                hold = hold,
-                pending = vm.isSaving,
-                failed = vm.finishFailed,
-                onSkip = { finish(false) },
-            )
-        }
-
-        PlacementPhase.Unavailable -> {
-            PlacementUnavailable(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
-        }
-
-        is PlacementPhase.Question -> {
-            SetupContent {
-                FinishFailed(vm.finishFailed)
-                key(shown.item.itemId) {
-                    PlacementQuestion(
-                        item = shown.item,
-                        subject = subject.labelCase(),
-                        position = stringResource(R.string.onboarding_placement_question_number, shown.number),
-                        labels = shown.labels,
-                        pending = vm.isSaving,
-                        saveFailures = vm.saveFailures,
-                        onReportSaveFailure = onReportSaveFailure,
-                        onAnswer = { answer, durationMs -> vm.answer(shown, answer, durationMs) },
-                        onStop = { vm.finish(fromScratch = false, fromQuestion = true) },
-                        canStop = shown.number > 1,
-                    )
-                }
-            }
-        }
-
-        PlacementPhase.Done -> {
-            PlacementDone(pending = vm.isSaving, failed = vm.finishFailed, onContinue = { finish(false) })
-        }
-    }
-}
 
 @Composable
 internal fun ColumnScope.StepLoading() {
@@ -177,7 +77,11 @@ internal fun ColumnScope.StepLoading() {
     }
 }
 
-/** The Focus test passes its own way out of the wait: a learner with answers uses them, one on a plan just goes back. */
+/**
+ * The wait for a test's questions, with its way out there from the start: "Skip" with where the test waits in
+ * [onboarding], "Not now" on the plan. [skipLabel] replaces it where leaving does more, as the Focus test's "See my
+ * result" does for a learner with answers.
+ */
 @Composable
 internal fun ColumnScope.PlacementWaiting(
     run: GenerationRun,
@@ -186,16 +90,10 @@ internal fun ColumnScope.PlacementWaiting(
     pending: Boolean,
     failed: Boolean,
     onSkip: () -> Unit,
-    skipLabel: String = stringResource(R.string.onboarding_language_test_skip),
-    skipNote: String? = null,
-    existingPlan: Boolean = false,
+    onboarding: Boolean,
+    existingPlan: Boolean = !onboarding,
+    skipLabel: String? = null,
 ) {
-    var patient by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        delay(PATIENCE)
-        patient = true
-    }
-
     val shown = if (hold.holding) run.copy(status = GenerationRun.Status.Ready, failure = null) else run
     val title =
         stringResource(
@@ -211,31 +109,21 @@ internal fun ColumnScope.PlacementWaiting(
         hold,
         stringResource(R.string.onboarding_continue),
         onRetry,
-        skip =
-            if (patient || run.status == GenerationRun.Status.Failed) {
-                {
-                    FinishFailed(failed)
-                    OutlinedButton(
-                        busy = pending,
-                        onClick = onSkip,
-                        modifier = Modifier.fillMaxWidth(),
-                        leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
-                    ) {
-                        Text(skipLabel)
-                    }
-                    skipNote?.let {
-                        Text(
-                            text = it,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            } else {
-                null
-            },
+        skip = {
+            FinishFailed(failed)
+            OutlinedButton(busy = pending, onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+                Text(skipLabel ?: stringResource(if (onboarding) R.string.onboarding_skip else R.string.placementtest_not_now))
+            }
+            if (onboarding && skipLabel == null) {
+                Text(
+                    text = stringResource(R.string.focustest_skip_note),
+                    modifier = Modifier.fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        },
     ) { share ->
         GenerationWait(kind, shown, onRetry, share = share) {
             OnboardingHeading(
@@ -250,29 +138,34 @@ internal fun ColumnScope.PlacementWaiting(
     }
 }
 
-private enum class PlacementSender { Confirm, DontKnow, Stop }
+private enum class PlacementSender { Confirm, DontKnow }
 
 /**
- * Shared with the Focus test, the plan's tests and the language level test. Every format takes
- * practice's question and controls, so a test looks and answers like the lessons it places.
+ * The bar's second button where it does more than "I don't know yet": its [label] now, every label it can change to
+ * ([labels], so it holds the widest one's width), and what it does instead of answering ([onClick]).
+ */
+internal class SecondAction(
+    val label: String,
+    val labels: List<String> = emptyList(),
+    val busy: Boolean = false,
+    val onClick: (() -> Unit)? = null,
+)
+
+/**
+ * Shared with the Focus test, the plan's tests and the language level test. Every format takes practice's question and
+ * controls, so a test looks and answers like the lessons it places. What it tests and where the learner is are the
+ * test's top; a save that's out for the question ([pending]) with no button of its own, such as a stop, shows on
+ * Confirm.
  */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
     item: Question,
-    subject: String?,
     labels: TrueFalseLabels,
     pending: Boolean,
     saveFailures: Int,
     onAnswer: (Answer, Long) -> Unit,
-    onStop: () -> Unit,
-    canStop: Boolean,
     onReportSaveFailure: () -> Unit = {},
-    dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
-    stopLabel: String = stringResource(R.string.onboarding_placement_stop),
-    /** Said right above Stop, when stopping is worth suggesting. */
-    stopHint: String? = null,
-    /** Where the question sits, at the end of [subject]'s row, such as "Question 2" or a whole-course test's part. */
-    position: String? = null,
+    second: SecondAction = SecondAction(stringResource(R.string.onboarding_placement_dont_know)),
     media: @Composable () -> Unit = {},
 ) {
     var draftJson by rememberSaveable { mutableStateOf<String?>(null) }
@@ -304,38 +197,13 @@ internal fun ColumnScope.PlacementQuestion(
     QuestionPages(
         questionId = item.itemId,
         read = {
-            subject?.let { OnboardingSubject(it, position) }
             media()
             ItemSupport(item)
             if (item.format != QuestionFormat.TrueFalse) QuestionTitle(item.question)
             // Across an open book's fold a statement's card stays on the page before it, as in practice.
             if (LocalSetupPage.current?.fold != null) ask(StepPart.Screen)
         },
-        answer = {
-            ask(if (LocalSetupPage.current?.fold != null) StepPart.Turn else StepPart.Whole)
-            if (canStop) {
-                stopHint?.let {
-                    Text(
-                        text = it,
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-                TextButton(
-                    onClick = {
-                        sender = PlacementSender.Stop
-                        onStop()
-                    },
-                    busy = pending && sender == PlacementSender.Stop,
-                    enabled = !pending,
-                    focusableWhenDisabled = pending,
-                    edge = ButtonEdge.Start,
-                ) {
-                    Text(stopLabel, textDecoration = TextDecoration.Underline)
-                }
-            }
-        },
+        answer = { ask(if (LocalSetupPage.current?.fold != null) StepPart.Turn else StepPart.Whole) },
     ) {
         if (saveFailures > 0 && !pending) {
             SaveErrorText(
@@ -346,17 +214,18 @@ internal fun ColumnScope.PlacementQuestion(
         }
         TaskActions { main ->
             NotSureButton(
-                onClick = { send(Answer.DontKnow, PlacementSender.DontKnow) },
-                busy = pending && sender == PlacementSender.DontKnow,
-                enabled = !pending,
-                focusableWhenDisabled = pending,
-                label = dontKnowLabel,
+                onClick = { second.onClick?.invoke() ?: send(Answer.DontKnow, PlacementSender.DontKnow) },
+                busy = second.busy || (pending && sender == PlacementSender.DontKnow),
+                enabled = !pending && !second.busy,
+                focusableWhenDisabled = pending || second.busy,
+                label = second.label,
+                labels = second.labels,
             )
             Button(
                 onClick = { confirm() },
-                busy = pending && sender == PlacementSender.Confirm,
+                busy = pending && sender != PlacementSender.DontKnow && !second.busy,
                 modifier = main,
-                enabled = answer != null && !pending,
+                enabled = answer != null && !pending && !second.busy,
                 focusableWhenDisabled = pending,
             ) {
                 Text(stringResource(R.string.onboarding_placement_confirm))
@@ -380,11 +249,13 @@ internal fun ColumnScope.PlacementDone(
     )
 }
 
+/** [action] is "Done" where nothing is left to go on with, as on the plan when no test can open. */
 @Composable
 internal fun ColumnScope.PlacementUnavailable(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_continue),
 ) {
     PlacementOutcome(
         title = stringResource(R.string.onboarding_placement_unavailable_title),
@@ -392,6 +263,7 @@ internal fun ColumnScope.PlacementUnavailable(
         pending = pending,
         failed = failed,
         onContinue = onContinue,
+        action = action,
     )
 }
 
@@ -402,6 +274,7 @@ private fun ColumnScope.PlacementOutcome(
     pending: Boolean,
     failed: Boolean,
     onContinue: () -> Unit,
+    action: String = stringResource(R.string.onboarding_continue),
 ) {
     SetupContent {
         OnboardingHeading(title)
@@ -412,7 +285,7 @@ private fun ColumnScope.PlacementOutcome(
                 onClick = onContinue,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.onboarding_continue))
+                Text(action)
             }
         }
     }
@@ -434,5 +307,4 @@ internal fun FinishFailed(
 
 internal fun String.labelCase() = replaceFirstChar { it.uppercase() }
 
-private val PATIENCE = 20.seconds
 private const val READS_MATERIAL_STEP = "readExamNotice"

@@ -5,49 +5,78 @@ import {
   type LevelTestRanges,
 } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
-import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { MediaPending } from "@zoonk/ui/components/media-pending";
+import { Meter, MeterFill } from "@zoonk/ui/components/meter";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useAudioKey } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
-import { HeadphonesIcon, PlayIcon } from "lucide-react";
+import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { SURFACE_CLASS } from "../../_components/surface";
+import { formatClock } from "../../_utils/clock";
 import {
   SpeechFailedNote,
   SpeechStatusIcon,
+  canRetrySpeech,
   useSpeechActionLabel,
   withoutFailure,
 } from "../../speech/speech-parts";
+import { type PlaybackTime } from "../../speech/speech-player-provider";
 import { type useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LevelBar } from "../level-bar";
-
-/** Slower than normal, so a level test isn't a test of catching fast speech. */
-const LISTENING_RATE = 0.9;
-
-const MESSAGE_CLASS = cn(SURFACE_CLASS, "min-h-20");
+import { LISTENING_RATE, toHeardLengthMs } from "./level-test-phase";
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
 type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
 
+function MessageLine({
+  lengthMs,
+  played,
+}: {
+  lengthMs: number | null;
+  played: PlaybackTime | null;
+}) {
+  return (
+    <>
+      <Meter className="h-1 min-w-0 flex-1 rounded-xs">
+        <MeterFill
+          className="rounded-xs transition-[width] duration-200 ease-linear motion-reduce:transition-none"
+          share={played && played.totalMs > 0 ? played.elapsedMs / played.totalMs : 0}
+        />
+      </Meter>
+
+      {/* The length's room is kept while it isn't known yet, so the line never jumps. */}
+      <span className="text-muted-foreground min-w-[4ch] text-end font-mono text-xs tabular-nums">
+        {lengthMs !== null && formatClock(toHeardLengthMs(lengthMs))}
+      </span>
+    </>
+  );
+}
+
+/** `onHeard` fires only when the message played to its end, never on a stop or a failed play. */
 export function ListeningMessage({
   language,
+  onHeard,
   pending,
   question,
   speech,
 }: {
   language: string;
+  onHeard: () => void;
   pending: boolean;
   question: TestQuestion;
   speech: ReturnType<typeof useSpokenAudio>;
 }) {
   const t = useExtracted();
   const [played, setPlayed] = useState(false);
-  const buttonState = withoutFailure(speech.state);
+  const [time, setTime] = useState<PlaybackTime | null>(null);
+  // A limit a retry can't lift leaves the button as play: pressing it again wouldn't help.
+  const canRetry = speech.state.status !== "failed" || canRetrySpeech(speech.state.limit);
+  const buttonState = canRetry ? speech.state : withoutFailure(speech.state);
   const { status } = buttonState;
+  const playing = status === "playing";
 
   const label = useSpeechActionLabel(
     buttonState,
@@ -58,12 +87,14 @@ export function ListeningMessage({
     setPlayed(true);
 
     speech.speak({
+      onDone: onHeard,
+      onTime: setTime,
       rate: LISTENING_RATE,
       segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
     });
   };
 
-  const toggle = status === "loading" || status === "playing" ? speech.cancel : play;
+  const toggle = status === "loading" || playing ? speech.cancel : play;
 
   const audioKey = useAudioKey(() => (speech.isAvailable && !pending ? toggle() : false));
 
@@ -71,58 +102,67 @@ export function ListeningMessage({
     return <p lang={language}>{question.passage}</p>;
   }
 
-  if (pending) {
-    return (
-      <MediaPending
-        className={cn(MESSAGE_CLASS, "text-muted-foreground")}
-        icon={<HeadphonesIcon aria-hidden="true" className="size-5" />}
-      >
-        <p role="status">{t("The voice message is on its way…")}</p>
-      </MediaPending>
-    );
-  }
-
   return (
-    <div className={cn(MESSAGE_CLASS, "flex flex-col justify-center gap-3 p-4")}>
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3" data-slot="listening-message">
+      <div className="flex min-h-11 items-center gap-3">
         <Button
-          aria-busy={status === "loading"}
+          aria-busy={status === "loading" || pending}
+          disabled={pending}
+          focusableWhenDisabled
           onClick={toggle}
           size="icon-lg"
           type="button"
           {...audioKey}
         >
-          <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
+          {pending ? (
+            <Spinner aria-hidden="true" />
+          ) : (
+            <SpeechStatusIcon idle={<PlayIcon aria-hidden="true" />} state={buttonState} />
+          )}
           <span className="sr-only">{label}</span>
         </Button>
-        <p aria-live="polite" className="text-muted-foreground flex items-start gap-2 text-sm">
-          <LineMarker aria-hidden="true">
-            <HeadphonesIcon className="size-4" />
-          </LineMarker>
-          {status === "loading"
-            ? t("Getting the message ready. The first time can take a few seconds.")
-            : t("You got a voice message. Listen and answer.")}
-        </p>
+
+        {pending ? (
+          <p className="text-muted-foreground min-w-0 flex-1 text-sm" role="status">
+            {t("The voice message is on its way…")}
+          </p>
+        ) : (
+          <MessageLine
+            lengthMs={question.audio?.durationMs ?? time?.totalMs ?? null}
+            played={playing ? time : null}
+          />
+        )}
       </div>
 
+      {/* The row's button is the retry, so the note brings no second one. */}
       {speech.state.status === "failed" && (
-        <SpeechFailedNote language={language} limit={speech.state.limit} onRetry={play} />
+        <SpeechFailedNote language={language} limit={speech.state.limit} />
       )}
     </div>
   );
 }
 
+/**
+ * What follows the rows in their group (what the test skipped) is about every row, so a hairline
+ * closes the rows over it: right under the last row, it would read as that row's own line.
+ */
 function LevelRows({ children }: { children: React.ReactNode }) {
-  return <ul className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4">{children}</ul>;
+  return (
+    <ul className="border-border grid grid-cols-[auto_1fr_auto] items-center gap-x-4 not-last:border-b">
+      {children}
+    </ul>
+  );
 }
 
 function LevelRow({
   bar,
   label,
+  muted = false,
   skill,
 }: {
   bar: React.ReactNode;
   label: string;
+  muted?: boolean;
   skill: LevelView["skill"];
 }) {
   const skillName = useSkillName();
@@ -131,7 +171,14 @@ function LevelRow({
     <li className="border-border col-span-3 grid min-h-11 grid-cols-subgrid items-center border-t py-2.5 first:border-t-0">
       <span className="text-sm font-medium">{skillName(skill)}</span>
       {bar}
-      <span className="text-end text-xs font-medium whitespace-nowrap tabular-nums">{label}</span>
+      <span
+        className={cn(
+          "text-end text-xs whitespace-nowrap tabular-nums",
+          muted ? "text-muted-foreground" : "font-mono font-medium",
+        )}
+      >
+        {label}
+      </span>
     </li>
   );
 }
@@ -168,28 +215,33 @@ export function useLevelRangeFacts() {
 
 const RANGE_SKILLS = ["reading", "listening"] as const;
 
+const NO_BANDS = { high: -1, low: -1 };
+
+/** Both skills, always: one the test didn't finish says so instead of showing a level. */
 export function LevelRanges({ ranges }: { ranges: LevelTestRanges }) {
+  const t = useExtracted();
+
   return (
     <LevelRows>
       {RANGE_SKILLS.map((skill) => {
         const range = ranges[skill];
 
         return (
-          range && (
-            <LevelRow
-              bar={
-                <LevelBar
-                  range={{
-                    high: CEFR_LEVELS.indexOf(range.high),
-                    low: CEFR_LEVELS.indexOf(range.low),
-                  }}
-                />
-              }
-              key={skill}
-              label={formatLevelRange(range)}
-              skill={skill}
-            />
-          )
+          <LevelRow
+            bar={
+              <LevelBar
+                range={
+                  range
+                    ? { high: CEFR_LEVELS.indexOf(range.high), low: CEFR_LEVELS.indexOf(range.low) }
+                    : NO_BANDS
+                }
+              />
+            }
+            key={skill}
+            label={range ? formatLevelRange(range) : t("Not tested yet")}
+            muted={!range}
+            skill={skill}
+          />
         );
       })}
     </LevelRows>

@@ -49,7 +49,7 @@
   "activities_sorting_spot_empty": "1ab159e7c2f67945c722f6b745c9fc061e79a1e1e0164cf3b89b742693b5a38c",
   "activities_sorting_spot_named": "2757f095b267f3157a645c69cf23d97f0476d6afd087e25c89e2166d1fb2fa7a",
   "activities_sorting_spots_to_label": "c2f68187efbd62cccdc6bdad45b3d801f8ec490085a07cfffc6d55030fd7e958",
-  "activities_sorting_steps_in_your_order": "634166a46399c308eca04c40b0f8afea79031318f6b856360521a36a47ed4dd1",
+  "activities_sorting_steps_in_your_order": "d20ec1d5f363f9dc827280692d9806f6989e6684672ab7b9cb84b746d8d81f92",
   "activities_sorting_tap_a_name": "71ce382e3e66696d85af6fb48f4c960600b562e6cfcf55c374876d6346edcdae",
   "activities_sorting_time_between": "387852c754bbe9e2a96f155965096392f7aa7b339b20e604f07e66ee0f8b73f5",
   "activities_sorting_timeline_from": "cfcbea564900f7ca34e84975d99f64647b495e2d777b08ef04d48ad17f9da0fb",
@@ -99,8 +99,7 @@
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">「%1$s」が入るのは「%2$s」です。</string>
     <string name="activities_sorting_badge_put_in_order">順番に並べる</string>
-    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
-    <string name="activities_sorting_steps_in_your_order">並べ替えた手順</string>
+    <string name="activities_sorting_steps_in_your_order">手順（並べた順）</string>
     <string name="activities_sorting_drag_steps">手順を長押しし、ドラッグして順番に並べてください。</string>
     <!-- Above a process's steps in their true order, once checked. -->
     <string name="activities_sorting_right_order">正しい順番</string>

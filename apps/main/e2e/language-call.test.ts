@@ -1,10 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { type Page } from "@playwright/test";
+import { PROFILE_QUESTIONS } from "@zoonk/core/profile/questions/contract";
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
+import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
+import { holdActionAnswer } from "./held-action";
 import { createLanguageLearner } from "./language-learner";
 import {
   CHARACTER_CHECK_IN,
@@ -13,6 +16,7 @@ import {
   answerLiveCalls,
   blockMicrophone,
 } from "./live-peer";
+import { stopTest, testLeave, testQuestion } from "./onboarding-fixtures";
 import { openAs } from "./study-day";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
@@ -61,8 +65,9 @@ function onboardingGoal({
   userId: string;
 }) {
   return goalFixture({
-    details: { answered: ANSWERED, level: "A2", ...details },
+    details: { answered: [...ANSWERED, ...PROFILE_QUESTIONS], level: "A2", ...details },
     kind: "language",
+    planRevealedAt: null,
     targetDate: new Date(Date.now() + GOAL_DAYS_AHEAD * MS_PER_DAY),
     ...goal,
   });
@@ -115,11 +120,12 @@ async function ensureLevelTestBank() {
 const CLIP_URL = "https://audio.e2e.zoonk.test/listening.wav";
 const CLIP_SAMPLE_RATE = 8000;
 const CLIP_SAMPLES = 2400;
+const LONG_CLIP_SAMPLES = CLIP_SAMPLE_RATE * 8;
 
-function clipAudio(): Buffer {
+function clipAudio(samples = CLIP_SAMPLES): Buffer {
   const header = Buffer.alloc(44);
   header.write("RIFF", 0);
-  header.writeUInt32LE(36 + CLIP_SAMPLES, 4);
+  header.writeUInt32LE(36 + samples, 4);
   header.write("WAVEfmt ", 8);
   header.writeUInt32LE(16, 16);
   header.writeUInt16LE(1, 20);
@@ -129,12 +135,15 @@ function clipAudio(): Buffer {
   header.writeUInt16LE(1, 32);
   header.writeUInt16LE(8, 34);
   header.write("data", 36);
-  header.writeUInt32LE(CLIP_SAMPLES, 40);
+  header.writeUInt32LE(samples, 40);
 
-  return Buffer.concat([header, Buffer.alloc(CLIP_SAMPLES, 128)]);
+  return Buffer.concat([header, Buffer.alloc(samples, 128)]);
 }
 
-async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } = {}) {
+async function routeSpeechClips(
+  page: Page,
+  { file = CLIP_URL, samples = CLIP_SAMPLES, url = CLIP_URL } = {},
+) {
   const requests: unknown[] = [];
   let fileLoaded = false;
 
@@ -146,7 +155,7 @@ async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } 
 
   await page.route(file, async (route) => {
     fileLoaded = true;
-    await route.fulfill({ body: clipAudio(), contentType: "audio/wav" });
+    await route.fulfill({ body: clipAudio(samples), contentType: "audio/wav" });
   });
 
   return { fileLoaded: () => fileLoaded, requests };
@@ -358,10 +367,10 @@ test.describe("Language calls", () => {
 });
 
 test.describe("Language practice in the plan", () => {
-  test("onboarding's level test shows each skill's range, as from the plan", async ({
+  test("onboarding's level test says where the learner is and ends on reading alone when they can't listen", async ({
     noProgressUser,
     userWithoutProgress: page,
-  }) => {
+  }, testInfo) => {
     const [goal] = await Promise.all([
       onboardingGoal({
         details: { reason: "Trabalho" },
@@ -375,14 +384,38 @@ test.describe("Language practice in the plan", () => {
     ]);
 
     await page.goto(`/start/${goal.id}`);
+    await expect(page.getByRole("radio", { name: /Level test/u })).toBeChecked();
     await page.getByRole("button", { exact: true, name: "Start" }).click();
 
     await expect(page.getByText("A short reading text at A2.")).toBeVisible();
-    await page.getByRole("radio", { name: "Right A2" }).click();
-    await page.getByRole("button", { name: "Confirm" }).click();
+
+    const leave = testLeave(page);
+
+    for (const number of [1, 2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(testQuestion(page, number, 12)).toBeVisible();
+      // Stopping before a skill's questions are done would use no answer, so ✕ only leaves.
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(leave).not.toHaveAttribute("aria-haspopup");
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("button", { name: "Confirm" }).click();
+    }
+
+    await expect(testQuestion(page, 5, 12)).toBeVisible();
+    await expect(leave).toHaveAttribute("aria-haspopup", "dialog");
+    await expect(page.getByRole("button", { name: "Can't listen now" })).toBeVisible();
+
+    // A message that doesn't play leaves one way to try it again: the button that plays it.
+    await page.route("**/v1/speech-clips", (route) => route.fulfill({ status: 503 }), { times: 1 });
+    await page.getByRole("button", { name: "Play the message" }).click();
+    await expect(page.getByText("The audio didn't play.")).toBeVisible();
+    await expect(page.getByRole("button", { exact: true, name: "Try again" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Skip this question" })).toBeVisible();
 
     const clip = await routeSpeechClips(page);
-    await page.getByRole("button", { name: "Play the message" }).click();
+    await page.getByRole("button", { name: "Try the audio again" }).click();
     await expect(page.getByRole("button", { name: "Play the message again" })).toBeVisible();
 
     expect(clip.requests).toStrictEqual([
@@ -395,10 +428,26 @@ test.describe("Language practice in the plan", () => {
 
     expect(clip.fileLoaded()).toBe(true);
 
-    await page.getByRole("button", { name: "Stop and use my answers" }).click();
+    await page.getByRole("button", { name: "I didn't understand" }).click();
+    await expect(testQuestion(page, 6, 12)).toBeVisible();
+
+    // "Can't listen now" silences a message that is still playing, before its answer is saved.
+    await routeSpeechClips(page, { samples: LONG_CLIP_SAMPLES });
+    await page.getByRole("button", { name: "Play the message" }).click();
+    const stopAudio = page.getByRole("button", { name: "Stop the audio" });
+    await expect(stopAudio).toBeVisible();
+
+    await holdActionAnswer(page, `/start/${goal.id}`, {
+      start: () => page.getByRole("button", { name: "Can't listen now" }).click(),
+      whileHeld: () => expect(stopAudio).toBeHidden(),
+    });
 
     await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
-    await expect(page.getByText("Your lessons keep adjusting as you answer.")).toBeVisible();
+
+    await expect(
+      page.getByText("You can take the test again later, from your plan."),
+    ).toBeVisible();
+
     await expect(page.getByRole("button", { exact: true, name: "Continue" })).toBeEnabled();
 
     await page.reload();
@@ -409,7 +458,13 @@ test.describe("Language practice in the plan", () => {
       page.getByRole("listitem").filter({ hasText: /^Reading[ABC][12](?:–[ABC][12])?$/u }),
     ).toBeVisible();
 
-    await expect(page.getByRole("listitem").filter({ hasText: "Listening" })).toHaveCount(0);
+    await expect(
+      page.getByRole("listitem").filter({ hasText: /^ListeningNot tested yet$/u }),
+    ).toBeVisible();
+
+    // This goal's plan has no lesson yet, so the result names none.
+    await expect(page.getByText("Up next", { exact: true })).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath("level-result-no-next-lesson.png") });
 
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
@@ -421,14 +476,118 @@ test.describe("Language practice in the plan", () => {
       .toMatchObject({
         answered: expect.arrayContaining(["placement"]),
         levelTest: {
-          attempt: { answers: [{ answerIndex: 0, id: "reading-A2-0" }], length: "quick" },
+          attempt: {
+            answers: expect.arrayContaining([
+              expect.objectContaining({ answerIndex: 0, id: "reading-A2-0" }),
+              expect.objectContaining({ audioDeferred: true }),
+            ]),
+          },
         },
-        skillLevels: { reading: expect.any(String) },
       });
 
-    // A skill the learner answered nothing in gets no level.
+    // A test that didn't finish both skills shows what it found and moves no level the plan uses.
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
     expect(saved.details).not.toHaveProperty("skillLevels.listening");
     expect(saved.details).not.toHaveProperty("skillLevels.speaking");
+  });
+
+  test("a level test that skipped lessons says so under the levels, not under the title", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }, testInfo) => {
+    const goal = await onboardingGoal({
+      details: { reason: "Trabalho" },
+      language: "pt",
+      prompt: "quero melhorar meu inglês",
+      targetLanguage: "en",
+      title: "Inglês para o trabalho",
+      userId: noProgressUser.id,
+    });
+
+    // The learner's own finished test, which onboarding shows when it opens.
+    const attemptId = randomUUID();
+
+    await prisma.goal.update({
+      data: {
+        details: {
+          answered: [...ANSWERED, ...PROFILE_QUESTIONS],
+          level: "A2",
+          levelTest: {
+            attemptId,
+            result: {
+              attemptId,
+              finishedAt: new Date().toISOString(),
+              lessonsSkipped: 3,
+              levelsSkipped: ["A1"],
+              ranges: { listening: { high: "B1", low: "A2" }, reading: { high: "B2", low: "B1" } },
+            },
+          },
+          reason: "Trabalho",
+        },
+      },
+      where: { id: goal.id },
+    });
+
+    await page.goto(`/start/${goal.id}`);
+
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+    await expect(page.getByText("3 lessons skipped", { exact: true })).toBeVisible();
+    await expect(page.getByText(/you already know/u)).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath("level-result-skipped.png") });
+  });
+
+  test("the level test's question waits while Stop saves, and its result shows the plan's next lesson", async ({
+    noProgressUser,
+    userWithoutProgress: page,
+  }) => {
+    const lessonTitle = `Ordering at a cafe ${randomUUID().slice(0, 6)}`;
+
+    const [goal, { lesson }] = await Promise.all([
+      onboardingGoal({
+        details: { reason: "Trabalho" },
+        language: "pt",
+        prompt: "quero melhorar meu inglês",
+        targetLanguage: "en",
+        title: "Inglês para o trabalho",
+        userId: noProgressUser.id,
+      }),
+      playableLessonFixture({ lesson: { title: lessonTitle }, steps: ["check"] }),
+      ensureLevelTestBank(),
+    ]);
+
+    await planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] });
+
+    await page.goto(`/start/${goal.id}`);
+    await page.getByRole("button", { exact: true, name: "Start" }).click();
+
+    for (const number of [1, 2, 3, 4]) {
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await expect(testQuestion(page, number, 12)).toBeVisible();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("radio", { name: /^Right [ABC][12]$/u }).click();
+      // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
+      await page.getByRole("button", { name: "Confirm" }).click();
+    }
+
+    await expect(testQuestion(page, 5, 12)).toBeVisible();
+
+    await holdActionAnswer(page, `/start/${goal.id}`, {
+      start: () => stopTest(page),
+      whileHeld: async () => {
+        await expect(page.getByRole("button", { name: "Can't listen now" })).toBeDisabled();
+        await expect(page.getByRole("radio", { name: /^Right [ABC][12]$/u })).toBeDisabled();
+      },
+    });
+
+    await expect(page.getByRole("heading", { name: "Your English level" })).toBeVisible();
+
+    // The course result's row: the title, then "Up next", and no length, which this result doesn't have.
+    await expect(
+      page
+        .getByRole("main")
+        .locator("div")
+        .filter({ hasText: new RegExp(`^${lessonTitle}Up next$`, "u") })
+        .first(),
+    ).toBeVisible();
   });
 });

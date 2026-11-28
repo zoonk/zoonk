@@ -1,18 +1,17 @@
 import Foundation
 
-/// A part of the test taken from the plan that closed: what it skipped, and either the next part
-/// waiting (`attempt`) or the test's `result`.
-struct PlacementPartEnd: Equatable, Sendable {
-  let attempt: PlacementAttempt?
+/// A course's test that finished: what this finish skipped, which its Undo gives back, and the
+/// test's `result`.
+struct PlacementFinish: Equatable, Sendable {
   let lessonsSkipped: Int
   var changeId: String?
   var heldUntilTomorrow = false
   let result: PlacementTestResult?
 }
 
-enum PlacementPartOutcome: Equatable, Sendable {
-  case finished(PlacementPartEnd)
-  /// Another device already closed the part or started a newer test.
+enum PlacementFinishOutcome: Equatable, Sendable {
+  case finished(PlacementFinish)
+  /// Another device already finished the test or started a newer one.
   case stale
 }
 
@@ -50,19 +49,18 @@ struct LevelTestOut: Decodable, Equatable, Sendable {
 }
 
 private struct PlacementSittingBody: Encodable {
-  let length: PlacementLength
   let timeZone = TimeZone.current.identifier
 }
 
-private struct PlacementPartBody: Encodable {
+private struct PlacementFinishBody: Encodable {
   let attemptId: String
-  let part: Int
+  /// A stop's answers as the learner saw them, so core refuses a position another device moved past.
+  let answered: Int?
   let fromScratch = false
   let timeZone = TimeZone.current.identifier
 }
 
-private struct PlacementPartCompletion: Decodable {
-  let attempt: PlacementAttempt?
+private struct PlacementFinishCompletion: Decodable {
   let changeId: String?
   let heldUntilTomorrow: Bool?
   let lessonsSkipped: Int
@@ -78,13 +76,11 @@ private struct LevelTestOutAnswerBody: Encodable {
 }
 
 extension OnboardingAPI {
-  /// Opens a test of this length, or the next part of the open one; asked again, it answers with
-  /// the one already open.
-  func startPlacementTest(goalID: String, length: PlacementLength, token: String) async throws
-    -> GoalPlacement
-  {
+  /// Opens the test, or goes on with the open one. Asked again, it answers with the test already
+  /// open.
+  func startPlacementTest(goalID: String, token: String) async throws -> GoalPlacement {
     let body = try PracticeJSON.recode(
-      PlacementSittingBody(length: length), as: Components.Schemas.PlacementSittingInput.self)
+      PlacementSittingBody(), as: Components.Schemas.PlacementSittingInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.createPlacementSitting(path: .init(goalId: goalID), body: .json(body))
     }
@@ -99,12 +95,12 @@ extension OnboardingAPI {
     }
   }
 
-  /// Closes a part of the test taken from the plan and applies what it skipped.
-  func finishPlacementPart(goalID: String, attemptID: String, part: Int, token: String)
-    async throws -> PlacementPartOutcome
-  {
+  /// Finishes the course's test and applies what it skipped.
+  func finishPlacementTest(
+    goalID: String, attemptID: String, stoppedAt answered: Int?, token: String
+  ) async throws -> PlacementFinishOutcome {
     let body = try PracticeJSON.recode(
-      PlacementPartBody(attemptId: attemptID, part: part),
+      PlacementFinishBody(attemptId: attemptID, answered: answered),
       as: Components.Schemas.PlacementCompletionInput.self)
     let output = try await clients.perform(token: token) { client in
       try await client.completeGoalPlacement(path: .init(goalId: goalID), body: .json(body))
@@ -113,12 +109,11 @@ extension OnboardingAPI {
     switch output {
     case .ok(let response):
       let completion = try PracticeJSON.recode(
-        try response.body.json, as: PlacementPartCompletion.self)
+        try response.body.json, as: PlacementFinishCompletion.self)
       return .finished(
-        PlacementPartEnd(
-          attempt: completion.attempt, lessonsSkipped: completion.lessonsSkipped,
-          changeId: completion.changeId, heldUntilTomorrow: completion.heldUntilTomorrow == true,
-          result: completion.result))
+        PlacementFinish(
+          lessonsSkipped: completion.lessonsSkipped, changeId: completion.changeId,
+          heldUntilTomorrow: completion.heldUntilTomorrow == true, result: completion.result))
     case .conflict:
       return .stale
     case .unauthorized:
@@ -147,14 +142,10 @@ extension OnboardingAPI {
     }
   }
 
-  /// Opens a level test of this length taken from the plan; asked again, it answers with the open one.
-  func startLanguageTest(goalID: String, length: PlacementLength, token: String) async throws
-    -> LevelTest
-  {
+  /// Opens the level test; asked again, it answers with the open one.
+  func startLanguageTest(goalID: String, token: String) async throws -> LevelTest {
     let output = try await clients.perform(token: token) { client in
-      try await client.startLanguageLevelTest(
-        path: .init(goalId: goalID),
-        body: .json(.init(length: length == .quick ? .quick : .wholeCourse)))
+      try await client.startLanguageLevelTest(path: .init(goalId: goalID), body: .json(.init()))
     }
 
     switch output {

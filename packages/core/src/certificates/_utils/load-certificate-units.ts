@@ -1,6 +1,8 @@
 import "server-only";
 import { type Goal, type Plan, type PlanItem, type TransactionClient, prisma } from "@zoonk/db";
+import { loadSkillConfirmations } from "../../learner/_utils/load-skill-claims";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
+import { loadCourseStartFacts } from "../../plans/_utils/course-starts";
 import { loadPlanScope } from "../../plans/_utils/plan-scope";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
 import { LEARN_KINDS, isStandIn } from "../../plans/planner/plan-item-rules";
@@ -14,13 +16,14 @@ import { loadSkillCourseLevels } from "./skill-course-levels";
 
 export type UnitGoal = Pick<
   Goal,
-  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "userId"
+  "examBlueprintId" | "id" | "kind" | "primaryCourseId" | "targetDate" | "timezone" | "userId"
 >;
 
 export type UnitPlan = Pick<Plan, "createdAt" | "graph" | "phases" | "settings"> & {
   items: readonly Pick<
     PlanItem,
     | "chapterId"
+    | "id"
     | "completedAt"
     | "kind"
     | "lessonId"
@@ -40,6 +43,7 @@ export const UNIT_PLAN_SELECT = {
     select: {
       chapterId: true,
       completedAt: true,
+      id: true,
       kind: true,
       lessonId: true,
       lessons: true,
@@ -219,11 +223,14 @@ export async function loadCertificateUnits(
   { goal, plan }: UnitInput,
   db: TransactionClient = prisma,
 ) {
-  const [course, homeChapters, held, scope] = await Promise.all([
+  const [course, homeChapters, held, scope, startFacts] = await Promise.all([
     loadPrimaryCourse(db, goal),
     loadHomeChapters(db, plan),
     loadHeldCertificates(db, goal),
     loadPlanScope({ goal, plan }),
+    goal.kind === "learn" && plan.items.some((item) => item.status === "testedOut")
+      ? loadCourseStartFacts(goal.id, db)
+      : null,
   ]);
 
   const levels = new Map(course?.courseChapters.map((entry) => [entry.chapterId, entry.level]));
@@ -245,6 +252,39 @@ export async function loadCertificateUnits(
     scope,
   });
 
+  const unproven = new Set(startFacts?.starts.keys());
+
+  if (unproven.size > 0) {
+    const { confirmed } = await loadSkillConfirmations({
+      goalId: goal.id,
+      skillIds: [...unproven],
+      timeZone: goal.timezone ?? "UTC",
+      tx: db,
+      userId: goal.userId,
+    });
+
+    for (const skillId of confirmed) {
+      unproven.delete(skillId);
+    }
+  }
+
+  const pendingLessons =
+    unproven.size > 0
+      ? await db.lessonSkill.findMany({
+          select: { lessonId: true, skillId: true },
+          where: {
+            lessonId: {
+              in: plan.items.flatMap((item) =>
+                item.status === "testedOut" && item.lessonId ? [item.lessonId] : [],
+              ),
+            },
+            skillId: { in: [...unproven] },
+          },
+        })
+      : [];
+
+  const pendingByLesson = Map.groupBy(pendingLessons, (row) => row.lessonId);
+
   const items = plan.items.map((item): CertifiableItem => {
     if (!LEARN_KINDS.has(item.kind)) {
       return { ...item, chapterId: null, level: null };
@@ -254,7 +294,16 @@ export async function loadCertificateUnits(
     const standInLevel = isStandIn(item) ? skillLevels.get(item.skillId ?? "")?.at(0) : null;
     const level = chapterId ? (levels.get(chapterId) ?? null) : (standInLevel ?? null);
 
-    return { ...item, chapterId, level };
+    const line = startFacts?.itemLines.get(item.id);
+
+    const pending =
+      line &&
+      item.status === "testedOut" &&
+      ((item.skillId && unproven.has(item.skillId)) ||
+        (item.lessonId &&
+          pendingByLesson.get(item.lessonId)?.some((row) => line.has(row.skillId))));
+
+    return { ...item, chapterId, level, status: pending ? "todo" : item.status };
   });
 
   const taught = await findChaptersTaughtInPlan(db, { course, goal, items, plan });

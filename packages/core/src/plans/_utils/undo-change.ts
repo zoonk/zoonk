@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
+import { testEventContext, trackTestEvents } from "../../analytics/test-events";
 import { removeUnstartedMockBlocks } from "../../checkpoints/_utils/mock-schedule-blocks";
 import { oweGoalLessons } from "../../follow-ups/owe-goal-lessons";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
@@ -71,6 +72,29 @@ async function toUndone({ change, tx }: { change: PlanChange; tx: TransactionCli
   };
 }
 
+async function undoTestAnalytics({
+  goal,
+  payload,
+  tx,
+}: {
+  goal: PlanContext["goal"];
+  payload: ReturnType<typeof parsePlanChangePayload>;
+  tx: TransactionClient;
+}) {
+  if (payload.testReceipt) {
+    return undoTestOutResult({
+      goal,
+      lessonsSkipped: payload.lessonsSkipped ?? 0,
+      receipt: payload.testReceipt,
+      tx,
+    });
+  }
+
+  return payload.source === FOCUS_TEST_SOURCE
+    ? testEventContext(goal, { questions: null, test: "focus" })
+    : null;
+}
+
 export async function undoChange({
   change,
   context,
@@ -109,7 +133,7 @@ export async function undoChange({
     (item) => item.completedAt?.toISOString(),
   );
 
-  const restored = await prisma.$transaction(async (tx) => {
+  const { restored, test: testContext } = await prisma.$transaction(async (tx) => {
     const writeContext = { ...context, plan: await markPlanWrite(tx, context.plan) };
 
     const scheduled = payload.mockSchedule;
@@ -164,7 +188,10 @@ export async function undoChange({
       });
     }
 
-    await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
+    if (!payload.startedPastSkillIds) {
+      await forgetAssumedSkills({ skillIds, tx, userId: context.goal.userId });
+    }
+
     const undone = await toUndone({ change, tx });
 
     await tx.planChange.update({
@@ -178,14 +205,10 @@ export async function undoChange({
       where: { id: change.id },
     });
 
-    if (payload.testReceipt && undone.status === "undone") {
-      await undoTestOutResult({
-        goalId: context.goal.id,
-        lessonsSkipped: payload.lessonsSkipped ?? 0,
-        receipt: payload.testReceipt,
-        tx,
-      });
-    }
+    const test =
+      undone.status === "undone"
+        ? await undoTestAnalytics({ goal: context.goal, payload, tx })
+        : null;
 
     if (context.goal.kind === "exam" && readFocusTestRecord(context.goal)) {
       await keepTestFocus({
@@ -201,13 +224,30 @@ export async function undoChange({
 
     await oweGoalLessons({ db: tx, goalId: context.goal.id, userId: context.goal.userId });
 
-    return session && snapshot.todaySession
-      ? {
-          sessionId: session.id,
-          settle: await restoreDaySession({ session, snapshot: snapshot.todaySession, tx }),
-        }
-      : null;
+    return {
+      restored:
+        session && snapshot.todaySession
+          ? {
+              sessionId: session.id,
+              settle: await restoreDaySession({ session, snapshot: snapshot.todaySession, tx }),
+            }
+          : null,
+      test,
+    };
   });
+
+  if (testContext) {
+    trackTestEvents(context.goal, [
+      {
+        name: "Test Result Undone",
+        properties: {
+          ...testContext,
+          change_id: change.id,
+          lessons_restored: payload.lessonsSkipped ?? 0,
+        },
+      },
+    ]);
+  }
 
   if (payload.replannedSince) {
     await refreshGoalPlan({

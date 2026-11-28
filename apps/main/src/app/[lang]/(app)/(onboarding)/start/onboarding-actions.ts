@@ -18,8 +18,6 @@ import {
 } from "@zoonk/core/learner/placement/focus-test-contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { startPlacementSitting } from "@zoonk/core/learner/placement/sitting";
-import { getGoalPlan } from "@zoonk/core/plans/get";
-import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/contract";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import {
@@ -29,7 +27,7 @@ import {
   type PlanOutcome,
   type WaitlistOutcome,
 } from "@zoonk/learn/onboarding/actions";
-import { type PlacementPartOutcome } from "@zoonk/learn/placement-test/actions";
+import { type PlacementFinishOutcome } from "@zoonk/learn/placement-test/actions";
 import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
@@ -134,15 +132,14 @@ export async function getPlacementAction({
 }
 
 /**
- * Opens an exam goal's next sitting, or with a `length` the test taken from the plan (its next part
- * once one ended); asked again, it answers with the one already open.
+ * Opens an exam goal's next sitting, or a course's test; asked again, it answers with the one
+ * already open.
  */
 export async function startPlacementSittingAction({
   goalId,
   ...input
 }: {
   goalId: string;
-  length?: "quick" | "wholeCourse";
   timeZone: string;
 }): Promise<PlacementOutcome> {
   const parsed = placementSittingInputSchema.safeParse(input);
@@ -162,7 +159,6 @@ export async function answerPlacementAction({
 }: {
   answer: unknown;
   attemptId?: string;
-  part?: number;
   durationMs: number;
   goalId: string;
   itemId: string;
@@ -199,22 +195,15 @@ export async function finishPlacementAction({
   return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
 }
 
-/** The first topic still to study, where the plan goes on after a test; null when none is left. */
-function findNextTopic(plan: PlanView): string | null {
-  const chapters = plan.phases.flatMap((phase) => phase.chapters);
-  return chapters.find((chapter) => chapter.state !== "done" && !chapter.testedOut)?.title ?? null;
-}
-
-/** Closes a part of the test taken from the plan and applies what it skipped. */
-export async function finishPlacementPartAction({
+export async function finishPlacementTestAction({
   goalId,
   ...input
 }: {
+  answered?: number;
   attemptId: string;
   goalId: string;
-  part: number;
   timeZone: string;
-}): Promise<PlacementPartOutcome> {
+}): Promise<PlacementFinishOutcome> {
   const parsed = placementCompletionInputSchema.safeParse({ ...input, fromScratch: false });
 
   if (!parsed.success || !isUuid(goalId)) {
@@ -232,26 +221,14 @@ export async function finishPlacementPartAction({
   }
 
   const { completion } = finished;
-  const plan = await getGoalPlan(goalId);
 
   return {
-    attempt: completion.attempt ?? null,
     changeId: completion.changeId,
     ...(completion.heldUntilTomorrow && { heldUntilTomorrow: completion.heldUntilTomorrow }),
     lessonsSkipped: completion.lessonsSkipped,
-    nextTopic: plan.status === "ready" ? findNextTopic(plan.plan) : null,
     result: completion.result ?? null,
     status: "finished",
   };
-}
-
-export async function getPlacementMinutesAction(goalId: string): Promise<number> {
-  if (!isUuid(goalId)) {
-    return 0;
-  }
-
-  const result = await getGoalPlan(goalId);
-  return result.status === "ready" ? (result.plan.placementTest?.estimatedMinutes ?? 0) : 0;
 }
 
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {

@@ -1,24 +1,18 @@
 import {
   type PlacementAnswer,
-  type PlacementAttemptView,
   type PlacementOutcome,
   type PlacementResult,
 } from "../onboarding/onboarding-actions";
 
-export type PlacementLength = PlacementAttemptView["length"];
-
 /**
- * A part that closed: what it skipped, and either the next part waiting (`attempt`) or the test's
- * `result`. `stale` when another device already closed it or started a newer test.
+ * A finish that saved, with the test's result. `stale` when another device already closed the test
+ * or started a newer one.
  */
-export type PlacementPartOutcome =
+export type PlacementFinishOutcome =
   | {
-      attempt: PlacementAttemptView | null;
       changeId: string | null;
       heldUntilTomorrow?: true;
       lessonsSkipped: number;
-      /** The topic the plan goes on with; null when none is left. */
-      nextTopic: string | null;
       result: PlacementResult | null;
       status: "finished";
     }
@@ -32,11 +26,11 @@ export type PlacementTestActions = {
     attemptId: string;
     durationMs: number;
     itemId: string;
-    part: number;
   }) => Promise<PlacementOutcome>;
-  finish: (input: { attemptId: string; part: number }) => Promise<PlacementPartOutcome>;
+  /** `answered`: the answers a stop's question showed; a server that counts others refuses it. */
+  finish: (input: { answered?: number; attemptId: string }) => Promise<PlacementFinishOutcome>;
   get: () => Promise<PlacementOutcome>;
-  /** Opens a test of this length, or the next part of the open one; asked again, it returns it. */
-  start: (length: PlacementLength) => Promise<PlacementOutcome>;
+  /** Opens the test. Asked again, it returns the open one. */
+  start: () => Promise<PlacementOutcome>;
   undo: (changeId: string) => Promise<boolean>;
 };

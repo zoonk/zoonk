@@ -19,6 +19,8 @@ final class OnboardingStore {
   @ObservationIgnored private var onboardings: [String: Resource<GoalOnboarding>] = [:]
   @ObservationIgnored private var planLinks: [String: Resource<Components.Schemas.PlanLink>] = [:]
   @ObservationIgnored private var revealDays: [String: Resource<PlanRevealRead>] = [:]
+  /// A test's answers, which save even when the learner leaves while one is on its way.
+  @ObservationIgnored private let saves: LearnerSaves
 
   init(clients: APIClientFactory, cache: AppCache, session: SessionStore) {
     let api = OnboardingAPI(clients: clients)
@@ -26,6 +28,7 @@ final class OnboardingStore {
     self.cache = cache
     self.clients = clients
     self.session = session
+    saves = LearnerSaves(cache: cache)
     resume = cache.resource(
       audience: .signedIn, domains: [.goals], isEmpty: { $0.draft == nil },
       fetch: { session in
@@ -387,10 +390,10 @@ final class OnboardingStore {
       durationMs: Int(duration.components.seconds * 1000),
       itemId: itemID,
       attemptId: attempt?.id,
-      part: attempt?.part,
       timeZone: TimeZone.current.identifier)
 
-    return try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+    return try await cache.learnerAnswer(through: saves, invalidating: [.learnerModel]) {
+      [api] identity in
       try await api.answerPlacement(input, goalID: goalID, token: identity.bearerToken)
     }
   }
@@ -414,22 +417,23 @@ final class OnboardingStore {
     }
   }
 
-  /// The test taken from the plan: opens one of this length, or the next part of the open one.
-  func startPlacementTest(goalID: String, length: PlacementLength) async throws -> GoalPlacement {
+  /// A course's test: opens one of this length, or goes on with the open one.
+  func startPlacementTest(goalID: String) async throws -> GoalPlacement {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
-      try await api.startPlacementTest(goalID: goalID, length: length, token: identity.bearerToken)
+      try await api.startPlacementTest(goalID: goalID, token: identity.bearerToken)
     }
   }
 
-  /// Closing a part applies what it skipped to the plan.
-  func finishPlacementPart(goalID: String, attempt: PlacementAttempt) async throws
-    -> PlacementPartOutcome
+  /// Finishing the test applies what it skipped to the plan.
+  /// `stoppedAt`: a stop's answer count, as the learner saw it.
+  func finishPlacementTest(goalID: String, attempt: PlacementAttempt, stoppedAt: Int? = nil)
+    async throws -> PlacementFinishOutcome
   {
     try await cache.onboardingWrite(
       invalidating: [.goals, .learnerModel, .learningProfile, .userProgress]
     ) { [api] identity in
-      try await api.finishPlacementPart(
-        goalID: goalID, attemptID: attempt.id, part: attempt.part, token: identity.bearerToken)
+      try await api.finishPlacementTest(
+        goalID: goalID, attemptID: attempt.id, stoppedAt: stoppedAt, token: identity.bearerToken)
     }
   }
 
@@ -543,22 +547,27 @@ final class OnboardingStore {
     }
   }
 
-  /// `answerIndices` answers a confirmation, where every right option is picked.
+  /// `answerIndices` answers a confirmation, where every right option is picked. `audioDeferred`:
+  /// "Can't listen now", which ends the listening questions without scoring this one.
   func answerLevelTest(
     goalID: String,
     questionID: String,
     answerIndex: Int?,
     answerIndices: [Int]? = nil,
     skipped: Bool,
+    audioDeferred: Bool = false,
     duration: Duration,
     attemptID: String
   ) async throws -> LevelTest {
     let input = Components.Schemas.LanguageLevelTestAnswerInput(
       answerIndex: answerIndex, answerIndices: answerIndices, attemptId: attemptID,
+      audioDeferred: audioDeferred ? true : nil,
       durationMs: Int(duration.components.seconds * 1000), questionId: questionID,
       skipped: skipped ? true : nil)
 
-    return try await cache.onboardingWrite { [api] identity in
+    // The plan's row says where the open test stands.
+    return try await cache.learnerAnswer(through: saves, invalidating: [.goals]) {
+      [api] identity in
       try await api.answerLevelTest(input, goalID: goalID, token: identity.bearerToken)
     }
   }
@@ -571,10 +580,10 @@ final class OnboardingStore {
     return try await api.languageTest(goalID: goalID, attemptID: attemptID, token: token)
   }
 
-  /// The level test taken from the plan, which starts writing its questions when they don't exist.
-  func startLanguageTest(goalID: String, length: PlacementLength) async throws -> LevelTest {
+  /// The level test, which starts writing its questions when they don't exist.
+  func startLanguageTest(goalID: String) async throws -> LevelTest {
     try await cache.onboardingWrite(invalidating: [.goals]) { [api] identity in
-      try await api.startLanguageTest(goalID: goalID, length: length, token: identity.bearerToken)
+      try await api.startLanguageTest(goalID: goalID, token: identity.bearerToken)
     }
   }
 
@@ -607,7 +616,8 @@ final class OnboardingStore {
   func answerLevelTestOut(
     goalID: String, attemptID: String, itemID: String, answer: PracticeAnswer, duration: Duration
   ) async throws -> LevelTestOut {
-    try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+    try await cache.learnerAnswer(through: saves, invalidating: [.learnerModel]) {
+      [api] identity in
       try await api.answerLevelTestOut(
         goalID: goalID, attemptID: attemptID, itemID: itemID, answer: answer,
         durationMs: Int(duration.components.seconds * 1000), token: identity.bearerToken)
@@ -674,9 +684,27 @@ extension AppCache {
     invalidating domains: Set<DataDomain> = [],
     _ write: (AuthenticatedSession) async throws -> Value
   ) async throws -> Value {
+    try Self.onboardingValue(await onboardingMutation(invalidating: domains, write))
+  }
+
+  /// A test's answer, which saves even when its screen closes first (`LearnerSaves`), so what it
+  /// changes is read again once the server has it, never by a leave that cut the request short.
+  func learnerAnswer<Value: Sendable>(
+    through saves: LearnerSaves, invalidating domains: Set<DataDomain>,
+    _ write: @escaping @MainActor (AuthenticatedSession) async throws -> Value
+  ) async throws -> Value {
+    try Self.onboardingValue(
+      await saves.save { await self.onboardingMutation(invalidating: domains, write) })
+  }
+
+  private func onboardingMutation<Value: Sendable>(
+    invalidating domains: Set<DataDomain>,
+    _ write: (AuthenticatedSession) async throws -> Value
+  ) async -> MutationResult<Result<Value, OnboardingError>> {
     // A refusal changed nothing, so nothing is read again for it.
     let wrote: (Result<Value, OnboardingError>) -> Bool = { (try? $0.get()) != nil }
-    let result = await mutate(invalidating: domains, wrote: wrote) {
+
+    return await mutate(invalidating: domains, wrote: wrote) {
       identity -> Result<Value, OnboardingError> in
       do {
         return .success(try await write(identity))
@@ -684,7 +712,11 @@ extension AppCache {
         return .failure(refusal)
       }
     }
+  }
 
+  private static func onboardingValue<Value: Sendable>(
+    _ result: MutationResult<Result<Value, OnboardingError>>
+  ) throws -> Value {
     switch result {
     case .done(let outcome):
       return try outcome.get()

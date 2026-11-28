@@ -1,12 +1,18 @@
 import "server-only";
 import { type Goal, type TransactionClient } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type LevelTestResult } from "../../language/level-test/level-test-contract";
+import { type TestEventContext } from "../../analytics/test-event-catalog";
+import { testEventContext } from "../../analytics/test-events";
+import {
+  LANGUAGE_LEVEL_TEST_OFFER,
+  type LevelTestResult,
+} from "../../language/level-test/level-test-contract";
 import {
   readLevelTestAttempts,
   readLevelTestDetails,
 } from "../../language/level-test/read-level-test-summary";
 import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
+import { readPlacementNextLesson } from "../../learner/placement/_utils/placement-result";
 import { levelTestOutReceipt, levelTestReceipt, placementPartReceipt } from "./test-out-receipt";
 
 function clearResult(result: LevelTestResult | undefined, receipt: string) {
@@ -48,19 +54,49 @@ function restoreLevelTest(details: Goal["details"], receipt: string) {
   };
 }
 
-function restorePlacement(details: unknown, receipt: string, lessonsSkipped: number) {
+async function restorePlacement({
+  details,
+  goalId,
+  lessonsSkipped,
+  receipt,
+  tx,
+}: {
+  details: unknown;
+  goalId: string;
+  lessonsSkipped: number;
+  receipt: string;
+  tx: TransactionClient;
+}) {
   const { attempt, finishedParts, result, ...rest } = readPlacementAttempt({ details });
   const attemptId = attempt?.id ?? result?.attemptId;
   const [receiptId] = receipt.split(":");
 
+  if (result?.courseStart && result.attemptId === receiptId) {
+    return null;
+  }
+
   const part =
     attemptId && attemptId === receiptId
-      ? finishedParts.find((finished) => placementPartReceipt(attemptId, finished.part) === receipt)
+      ? finishedParts.find(
+          (finished) =>
+            placementPartReceipt(
+              attemptId,
+              finished.part,
+              finished.finish?.end === "stopped" ? finished.finish.answered : undefined,
+            ) === receipt,
+        )
       : undefined;
+
+  const nextLesson =
+    result?.attemptId === receiptId ? await readPlacementNextLesson(goalId, tx) : null;
 
   const updatedResult =
     result && result.attemptId === receiptId
-      ? { ...result, lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped) }
+      ? {
+          ...result,
+          lessonsSkipped: Math.max(0, result.lessonsSkipped - lessonsSkipped),
+          nextLesson,
+        }
       : result;
 
   if (!part && updatedResult === result) {
@@ -80,31 +116,75 @@ function restorePlacement(details: unknown, receipt: string, lessonsSkipped: num
   };
 }
 
+function testContextFromReceipt({
+  details,
+  goal,
+  receipt,
+}: {
+  details: Goal["details"];
+  goal: Parameters<typeof testEventContext>[0];
+  receipt: string;
+}): TestEventContext {
+  const [kindOrId, value] = receipt.split(":");
+
+  if (kindOrId === "levelTestOut") {
+    const { testOut } = readLevelTestAttempts({ details });
+
+    return testEventContext(goal, {
+      attemptId: value,
+      questions: testOut && testOut.id === value ? testOut.questions.length : null,
+      test: "level_test_out",
+    });
+  }
+
+  if (kindOrId === "levelTest") {
+    return testEventContext(goal, {
+      attemptId: value === "onboarding" ? null : value,
+      questions: LANGUAGE_LEVEL_TEST_OFFER.total,
+      test: "language",
+    });
+  }
+
+  const { attempt } = readPlacementAttempt({ details });
+  const courseAttempt = attempt?.id === kindOrId ? attempt : null;
+  const part = Number(value) || 1;
+
+  return testEventContext(goal, {
+    attemptId: kindOrId,
+    part,
+    parts: courseAttempt ? 1 : null,
+    questions: courseAttempt?.search?.questions ?? null,
+    test: "course",
+  });
+}
+
 export async function undoTestOutResult({
-  goalId,
+  goal,
   receipt,
   lessonsSkipped,
   tx,
 }: {
-  goalId: string;
+  goal: Pick<Goal, "id" | "planRevealedAt" | "userId">;
   receipt: string;
   lessonsSkipped: number;
   tx: TransactionClient;
-}) {
+}): Promise<TestEventContext | null> {
+  const { id: goalId } = goal;
+
   const { details } = await tx.goal.findUniqueOrThrow({
     select: { details: true },
     where: { id: goalId },
   });
 
   if (!isJsonObject(details)) {
-    return;
+    return null;
   }
 
   const languageReceipt = receipt.startsWith("levelTest");
 
   const result = languageReceipt
     ? restoreLevelTest(details, receipt)
-    : restorePlacement(details, receipt, lessonsSkipped);
+    : await restorePlacement({ details, goalId, lessonsSkipped, receipt, tx });
 
   if (result) {
     await tx.goal.update({
@@ -112,4 +192,6 @@ export async function undoTestOutResult({
       where: { id: goalId },
     });
   }
+
+  return testContextFromReceipt({ details, goal, receipt });
 }

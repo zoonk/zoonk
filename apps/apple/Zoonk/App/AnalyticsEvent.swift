@@ -67,6 +67,43 @@ enum AnalyticsEvent: Equatable {
     let unansweredTurns: Int
   }
 
+  /// The placement tests' shared properties: which test, where it runs and the server's facts
+  /// about its sitting.
+  struct TestContext: Equatable {
+    enum Test: String {
+      case language, course, focus
+      case levelTestOut = "level_test_out"
+    }
+
+    enum Surface: String {
+      case onboarding, plan
+    }
+
+    let goalID: String
+    let test: Test
+    let surface: Surface
+    var part: Int?
+    var parts: Int?
+    var questions: Int?
+    var attemptID: String?
+
+    fileprivate var properties: [String: Any] {
+      [
+        "attempt_id": orNull(attemptID), "goal_id": goalID, "part": orNull(part),
+        "parts": orNull(parts), "questions": orNull(questions), "surface": surface.rawValue,
+        "test": test.rawValue,
+      ]
+    }
+  }
+
+  /// An offer row's stable id, as the test events name it.
+  enum TestRow: String {
+    case firstLesson = "first_lesson"
+    case quick
+    case testOut = "test_out"
+    case notNow = "not_now"
+  }
+
   case activityAbandoned(lessonID: String, screen: Int, stepKind: String, wrongInARow: Int)
   case activityUsed(lessonID: String, template: String)
   case callEnded(CallEnded)
@@ -82,6 +119,16 @@ enum AnalyticsEvent: Equatable {
   case publicPageViewed(contentID: String, page: PublicPage)
   case subscriptionCheckoutStarted(BillingPeriod)
   case subscriptionGateShown
+  /// A sitting's first question this visit: `waitMs` from the visit's start, `resumed` when the
+  /// sitting had answers before it.
+  case testFirstQuestionShown(TestContext, questionNumber: Int, waitMs: Int, resumed: Bool)
+  /// ✕ during a sitting.
+  case testLeft(TestContext, questionNumber: Int)
+  case testLessonStarted(TestContext, lessonID: String)
+  /// Once per presentation of the offer: its rows in order and the one picked for the learner.
+  case testOffered(TestContext, rows: [TestRow], preselected: TestRow)
+  /// "Not now" outside onboarding; onboarding's skips are the server's.
+  case testSkipped(TestContext)
   case todayViewed
   /// `position` counts from 1, the deck's first card.
   case warmUpAnswered(surface: WarmUpSurface, cardID: String, position: Int, correct: Bool)
@@ -107,6 +154,11 @@ enum AnalyticsEvent: Equatable {
     case .publicPageViewed: "Public Page Viewed"
     case .subscriptionCheckoutStarted: "Subscription Checkout Started"
     case .subscriptionGateShown: "Subscription Gate Shown"
+    case .testFirstQuestionShown: "Test First Question Shown"
+    case .testLeft: "Test Left"
+    case .testLessonStarted: "Test Lesson Started"
+    case .testOffered: "Test Offered"
+    case .testSkipped: "Test Skipped"
     case .todayViewed: "Today Viewed"
     case .warmUpAnswered: "Warm-Up Answered"
     case .warmUpShown: "Warm-Up Shown"
@@ -158,6 +210,21 @@ enum AnalyticsEvent: Equatable {
       ["content_id": contentID, "page": page.rawValue]
     case .subscriptionCheckoutStarted(let billingPeriod):
       ["billingPeriod": billingPeriod.rawValue, "plan": "plus"]
+    case .testFirstQuestionShown(let test, let questionNumber, let waitMs, let resumed):
+      test.properties.merging([
+        "question_number": questionNumber, "resumed": resumed, "wait_ms": waitMs,
+      ]) { first, _ in first }
+    case .testLeft(let test, let questionNumber):
+      test.properties.merging(["question_number": questionNumber]) { first, _ in first }
+    case .testLessonStarted(let test, let lessonID):
+      test.properties.merging(["lesson_id": lessonID]) { first, _ in first }
+    case .testOffered(let test, let rows, let preselected):
+      test.properties.merging([
+        "preselected": preselected.rawValue,
+        "rows": rows.map(\.rawValue).joined(separator: ","),
+      ]) { first, _ in first }
+    case .testSkipped(let test):
+      test.properties.merging(["row": TestRow.notNow.rawValue]) { first, _ in first }
     case .writingPromptWaitViewed(let generationID, let surface):
       ["generation_id": generationID, "surface": surface]
     case .warmUpAnswered(let surface, let cardID, let position, let correct):
@@ -273,5 +340,34 @@ extension LanguageConversation.KindPayload {
     case .examSpeaking: "exam_speaking"
     case .unrecognized: "unknown"
     }
+  }
+}
+
+/// One visit to a test, for its sittings' first questions: when the wait for one began (the visit,
+/// or the learner's start or "Keep going" in it), and whether the question picks up a sitting
+/// opened before. Main's `useTestAnalytics` visit.
+struct TestVisit {
+  private var since = ContinuousClock.now
+  private var startedHere = false
+  private var said: String?
+
+  /// The learner started or continued a sitting: the wait for its first question begins.
+  mutating func started() {
+    startedHere = true
+    since = .now
+  }
+
+  /// The first question this visit shows of `sitting` (a part, or a sitting of questions), once.
+  mutating func firstQuestion(
+    _ context: AnalyticsEvent.TestContext, number: Int, sitting: String
+  ) -> AnalyticsEvent? {
+    guard said != sitting else { return nil }
+    said = sitting
+    let waited = since.duration(to: .now).components
+
+    return .testFirstQuestionShown(
+      context, questionNumber: number,
+      waitMs: Int(waited.seconds * 1000 + waited.attoseconds / 1_000_000_000_000_000),
+      resumed: !startedHere)
   }
 }

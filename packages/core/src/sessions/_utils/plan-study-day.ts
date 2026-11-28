@@ -5,6 +5,7 @@ import { type MissionDocument } from "../missions/catalog";
 import { loadDayMissionFacts } from "../missions/day-facts";
 import { pickMissions } from "../missions/pick-missions";
 import { type PlannedBlock, type SessionBuildInput, buildSessionBlocks } from "../session-builder";
+import { getCourseOpeningLesson } from "./course-opening-lesson";
 import { loadDayPlan } from "./day-plan";
 import { loadSessionBuildInput } from "./load-build-inputs";
 import { planPreparingMockReview } from "./plan-preparing-mock-review";
@@ -32,8 +33,12 @@ export function getPlanAllocationBlocks(day: Pick<PlannedStudyDay, "blocks" | "i
 export async function planDayBlocks(
   context: SessionDayContext & { savedDay?: boolean; selection: SelectedDayPlan },
 ): Promise<Omit<PlannedStudyDay, "missions" | "preparing">> {
-  const plan = await loadDayPlan(context);
-  const input = await loadSessionBuildInput({ ...context, dayPlan: plan });
+  const [plan, courseOpeningLessonId] = await Promise.all([
+    loadDayPlan(context),
+    context.savedDay ? null : getCourseOpeningLesson(context),
+  ]);
+
+  const input = await loadSessionBuildInput({ ...context, courseOpeningLessonId, dayPlan: plan });
   return { ...buildSessionBlocks(input), input, plan };
 }
 

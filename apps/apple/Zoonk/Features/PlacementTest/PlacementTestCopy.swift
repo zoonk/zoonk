@@ -1,6 +1,7 @@
 import Foundation
 
-/// The words of the test taken from the plan, shared by its row, its screens and the lesson's offer.
+/// The words of a course's and a language's tests, shared by the plan's row, their screens and the
+/// lesson's offer.
 enum PlacementTestCopy {
   static func knownLessons(_ count: Int) -> LocalizedStringResource {
     count == 1
@@ -17,10 +18,9 @@ enum PlacementTestCopy {
   }
 
   static let learnName = LocalizedStringResource(
-    "Test what you know", table: "Onboarding",
-    comment: "The test of what the learner already knows in a course, taken from the plan")
+    "Test what you know", table: "Onboarding")
   static let languageName = LocalizedStringResource(
-    "Level test", table: "Onboarding", comment: "Over the level test's result")
+    "Level test", table: "Onboarding")
 
   static func name(_ kind: PlanPlacementTest.Kind) -> LocalizedStringResource {
     kind == .language ? languageName : learnName
@@ -37,17 +37,30 @@ enum PlacementTestCopy {
     "Not now", table: "Onboarding",
     comment: "Leaves the test taken from the plan, or a lesson's offer to check the level, for now")
 
-  /// "40 lessons skipped", the title after a test or a part of it.
+  /// "40 lessons skipped": the title after a test or a part of it, or the caption under a course's
+  /// line on its result.
   static func lessonsSkipped(_ count: Int) -> String {
     count == 0
       ? String(
         localized: "No lessons skipped", table: "Onboarding",
-        comment: "After a test of what the learner knows: it took no lesson out of the plan")
+        comment: "The title after a placement test: how many lessons it took out of the plan.")
       : String(
         localized: "\(count) lessons skipped", table: "Onboarding",
         locale: .appLanguage,
-        comment: "After a test of what the learner knows: how many lessons it took out of the plan")
+        comment: "The title after a placement test: how many lessons it took out of the plan.")
   }
+
+  /// Over the chapter's name on a course test's result.
+  static let youStartHere = LocalizedStringResource(
+    "You start here", table: "Onboarding",
+    comment: "Over the name of the chapter a course's placement test starts the learner in.")
+
+  /// The plan's last course result, when a new test can start.
+  static let takeTestAgain = LocalizedStringResource(
+    "Take the test again", table: "Onboarding",
+    comment:
+      "A quiet action on the result of a placement test opened again from the plan: it offers a new test."
+  )
 
   static func skillRange(_ skill: LevelTest.Skill, _ range: LevelRange) -> String {
     switch skill {
@@ -68,32 +81,46 @@ enum PlacementTestCopy {
       comment: "A short test of one language level, such as \"Test out of B2\"")
   }
 
-  /// The test's facts on the plan's row: what tapping it gives, how far an open one is, or what the
-  /// last one found and when.
+  static let inProgress = String(
+    localized: "In progress", table: "Onboarding",
+    comment: "The plan's test row while a test is open")
+
+  /// The test's facts on the plan's row: what tapping it gives, where an open one stands, or what
+  /// the last one found and when.
   static func planLine(_ test: PlanPlacementTest) -> [String] {
-    if test.state == .continue {
-      return [
-        String(
-          localized: "In progress", table: "Onboarding",
-          comment: "The plan's test row while a test is open"),
-        String(
-          localized: "\(studyDuration(minutes: test.estimatedMinutes)) left", table: "Onboarding",
-          comment: "How long the rest of an open test takes, such as \"9 min left\""),
-      ]
+    let open: (answered: Int, total: Int)? =
+      if let attempt = test.attempt {
+        (attempt.answered, attempt.questions)
+      } else if test.kind == .language, test.state == .continue {
+        test.answered.flatMap { answered in test.total.map { (answered, $0) } }
+      } else {
+        nil
+      }
+
+    // A question is named only while there's one to ask: at the ceiling the test is still open
+    // until it's finished.
+    if let open {
+      return open.answered < open.total
+        ? [inProgress, TestCopy.question(open.answered + 1, of: open.total)] : [inProgress]
     }
 
-    guard test.state == .result, let result = test.result else {
-      return [
-        test.kind == .language
-          ? String(
-            localized: "Find your level and skip what you know", table: "Onboarding",
-            comment: "The level test's line on a language plan")
-          : String(
-            localized: "Skip lessons you already know", table: "Onboarding",
-            comment: "The test's line on a plan before it's taken")
-      ]
+    if test.kind == .language, test.state == .continue {
+      return [inProgress]
     }
 
-    return [lessonsSkipped(result.lessonsSkipped), PlanDate.moment(result.finishedAt)]
+    if let result = test.result {
+      return [lessonsSkipped(result.lessonsSkipped), PlanDate.moment(result.finishedAt)]
+    }
+
+    return [
+      test.kind == .language
+        ? String(
+          localized: "Find your level and skip what you know", table: "Onboarding",
+          comment: "The level test's line on a language plan")
+        : String(
+          localized: "Skip lessons you already know", table: "Onboarding",
+          comment: "The test's line on a plan before it's taken"),
+      TestCopy.about(minutes: test.offer?.estimatedMinutes ?? test.estimatedMinutes),
+    ]
   }
 }

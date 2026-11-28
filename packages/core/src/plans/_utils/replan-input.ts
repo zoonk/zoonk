@@ -100,11 +100,18 @@ export async function loadReplanFacts({
   ComputePlanRequest,
   "carrySnapshot" | "context" | "mode" | "now" | "pace" | "todayShown"
 > & { state: PlanState }) {
-  const { extraSkills, getActiveItemIds, resolved } = await loadExtraPlanGraph({
-    context,
-    now,
-    state,
-  });
+  const {
+    extraSkills,
+    getActiveItemIds,
+    resolved: source,
+  } = await loadExtraPlanGraph({ context, now, state });
+
+  const resolved =
+    context.goal.kind === "learn" &&
+    state.graph.phases === context.state.graph.phases &&
+    source.phases.length < context.phases.length
+      ? { ...source, phases: context.phases.map(({ milestone, name }) => ({ milestone, name })) }
+      : source;
 
   const targetDate = getStateTargetDate(state);
 

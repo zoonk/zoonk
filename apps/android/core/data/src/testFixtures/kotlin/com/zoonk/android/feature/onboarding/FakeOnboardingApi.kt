@@ -35,7 +35,6 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -45,7 +44,6 @@ import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanTimeToCoverSuggested
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.SourceReadStatus
-import com.zoonk.api.models.StartLanguageLevelTestInput
 import com.zoonk.api.models.StartLanguageLevelTestOutInput
 import com.zoonk.api.models.TodayUploadRequest
 import kotlinx.coroutines.CompletableDeferred
@@ -137,11 +135,12 @@ fun setupView(
     planRevealed: Boolean = false,
     bookedExam: Boolean = false,
     languageAim: String = if (kind == "language") languageAimOf(targetLanguage = targetLanguage) else "null",
+    placement: String = "null",
 ): Onboarding =
     ApiJson.decodeFromString(
         """
         {"bookedExam":$bookedExam,"contentCountry":{"defaultCountry":{"code":"US","name":"United States"},"suggested":[]},"dateProblem":null,"examChoices":$examChoices,"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
-         "warmUp":$warmUp,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
+         "warmUp":$warmUp,"placement":$placement,"languageAim":$languageAim,"firstLesson":$firstLesson,"planRevealed":$planRevealed,"libraryCourse":null,"profile":{"memoryEnabled":true,"questions":[]},"planReadiness":{"readingNotice":false,"ready":$planReady},"quickTestMinutes":2,"recommendedMinutes":30,"startsOnRecommended":$startsOnRecommended,"steps":[${steps.joinToString(
             ",",
         ) { "\"$it\"" }}],
          "timeChoices":[${DAILY_TIMES.joinToString(",") { "{\"minutes\":$it,\"split\":null}" }}],
@@ -473,15 +472,12 @@ class FakeOnboardingApi : OnboardingApi {
 
     var sitting: () -> Placement = { placement }
     var sittingsStarted = 0
-    val sittingLengths = mutableListOf<PlacementLength?>()
 
     override suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
-        length: PlacementLength?,
     ): Placement {
         sittingsStarted++
-        sittingLengths += length
         writeFailure?.let { throw it }
         placement = sitting()
         return placement
@@ -489,15 +485,22 @@ class FakeOnboardingApi : OnboardingApi {
 
     var placementFinishGate: CompletableDeferred<Unit>? = null
     var completion: PlacementCompletion = completionOf()
-    val finishedParts = mutableListOf<PlacementPart?>()
+
+    /** The attempt each close named; null for onboarding's, which has none. */
+    val finishedAttempts = mutableListOf<UUID?>()
+
+    /** The answers each stop said the learner saw; null for a close that wasn't a stop. */
+    val finishedAnswered = mutableListOf<Long?>()
 
     override suspend fun finishPlacement(
         session: AuthenticatedSession,
         goalId: String,
         fromScratch: Boolean,
-        attempt: PlacementPart?,
+        attemptId: UUID?,
+        answered: Long?,
     ): PlacementCompletion {
-        finishedParts += attempt
+        finishedAttempts += attemptId
+        finishedAnswered += answered
         placementFinishGate?.await()
         writeFailure?.let { throw it }
         return completion
@@ -513,6 +516,9 @@ class FakeOnboardingApi : OnboardingApi {
 
     /** Holds the level test's reads until it completes, or fails them when it completes exceptionally. */
     var levelTestGate: CompletableDeferred<Unit>? = null
+
+    /** Holds the level test's answers and its close until it completes. */
+    var levelTestWriteGate: CompletableDeferred<Unit>? = null
 
     override suspend fun levelTest(
         session: AuthenticatedSession,
@@ -539,13 +545,14 @@ class FakeOnboardingApi : OnboardingApi {
         input: LanguageLevelTestAnswerInput,
     ): LanguageLevelTest {
         levelTestAnswers += input
+        levelTestWriteGate?.await()
         writeFailure?.let { throw it }
         levelTest = levelTestAnswered(input)
         if (replyLost) throw ApiException(ApiError.Network)
         return levelTest
     }
 
-    val levelTestLengths = mutableListOf<StartLanguageLevelTestInput.Length>()
+    var levelTestStarts = 0
 
     /** What a start answers: the test it opened. */
     var startedLevelTest: () -> LanguageLevelTest = { levelTest }
@@ -553,9 +560,8 @@ class FakeOnboardingApi : OnboardingApi {
     override suspend fun startLevelTest(
         session: AuthenticatedSession,
         goalId: String,
-        length: StartLanguageLevelTestInput.Length,
     ): LanguageLevelTest {
-        levelTestLengths += length
+        levelTestStarts++
         writeFailure?.let { throw it }
         return startedLevelTest()
     }
@@ -567,6 +573,7 @@ class FakeOnboardingApi : OnboardingApi {
         goalId: String,
         attemptId: UUID?,
     ): LanguageLevelTestResult {
+        levelTestWriteGate?.await()
         writeFailure?.let { throw it }
         finishedLevelTests++
         return levelTestResult

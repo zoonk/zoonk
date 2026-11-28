@@ -2,121 +2,102 @@
 <!-- eloqnt-fingerprints-v1
 {
   "placementtest_about": "33a3f038bd0b92a5645386a7a7eb23055ee2c87f7b0d78972c8f48a7f695da2f",
-  "placementtest_about_in_parts": "07a0fa735e574394f06f7fb6489a9ee10b7175fc7d6d0746da0eb1de111120c7",
   "placementtest_choose_description": "4a8fce2d8b9045471712ed3c83c8004d6427c6cffe9056695657415753711cc9",
-  "placementtest_choose_title": "e1f7c8538335b6b79b46a6c740b595165586b65cb1e17c637e123ca6fb34a97a",
-  "placementtest_continue_from_plan": "4891caf98462642109e3e6ee95cedff69346757e523b1237cf3bc8237828dc9f",
-  "placementtest_continue_title": "a4e294e1a0eba1b5907b91f53a7442e5f3f9477a94287b5ebf3609e73a19d3d4",
   "placementtest_done": "bb8db314e2fa91a25d8b39a4eb149141daf53a8e2088b9608a67e06564acbafe",
   "placementtest_find_level": "9f5e680a5b066fdb96b0844bfd80564440b6eb7a970f2ff99d055e620610ff29",
-  "placementtest_finish_for_today": "683d715ec4e8ec9995a99abf4ee513555abee1beab047c990c3500a363dc7fdd",
+  "placementtest_finish_later": "dcbfd24f3237e911c58917fb029f219e8addf9553f5584af9d81850da7fc107a",
+  "placementtest_first_lesson": "5609aed3c9bdf4ea5027f7d135b4d09c378e853646b728f65ba65ca3e9c9b3c5",
   "placementtest_in_progress": "325da7fb27924163488360523ae4582236185bacbcbac932927f01310619cf26",
-  "placementtest_keep_going": "8b7cf2e78b50d4cb6420a6e8ffd2e8e642abf3cd3ec9028ab8122f30b1c0f3e7",
   "placementtest_keeps_adjusting": "2f0c65956c97150e3480b7c33208761b3791781013408620a145a03642975c28",
   "placementtest_known_one": "333d2c86a94573a90429cff617c1f52a2b938ef26ffa7860ce808b7cbc8722dd",
   "placementtest_known_other": "70a19f98e54c8adab632045c8e9ec73b0d46b097cea116c717fc0b8584fdeead",
-  "placementtest_left_saved": "bf1b8b68dac9ee3d3b36dad5170c0f3af528cfa1ec406114b140ec7fa2ce95ec",
   "placementtest_lessons_skipped": "0fdb3f632713fc215f20e21e7a59c50cab014163e0672e4284e797b2a9577868",
   "placementtest_level_stays": "fd4a62131e1668dddced1dac1791301c31950636cca8bba99272c845ff57f045",
   "placementtest_level_title": "ad6f95ce0a1bed977cc6bae4748c6dbda7690a22caf2d9598da37bf422d969cf",
-  "placementtest_levels_skipped": "5497eb60f58f6fc6685745b8baf38af6363bbc6644a1b72d347590d0a4e8d580",
   "placementtest_listening_range": "0a465c45e3a0ca92010668600b680d95f411b14b1418011ca6e301a8b866f816",
   "placementtest_no_lessons_skipped": "4e57535eb14147b3342deb2cd85904458f6b9406a418e2048ee9e9b6aca23c18",
   "placementtest_not_now": "8ab20cdcace010d072fd36acdc9cfdad014f485ee5d97e9edebef21b82cf9ef1",
+  "placementtest_not_tested": "a8a52e11a61685c4ecb25be42f6a877fd8e4dcdb99710a9e953adeb9b486a535",
   "placementtest_offer_level": "8d38e4de01536b476d95256d4f55631cad9ad975e97653896a9202ce4acf853c",
   "placementtest_offer_quick": "dea0b00b667f14f1a75d9b39a81db54262d2173c2063d289b4e60b2b22ced09e",
   "placementtest_offer_title": "017cc16f08ba6a4c16a4c7aab6d3dcdcf27d9cd70a202d098d5f1cf5030f4465",
-  "placementtest_part": "400ae102b6da6a95a83d2bec52571b915ecea8117b7f94383fb28fa4d695130f",
-  "placementtest_plan_stays": "f68b8e9234f11cb68c67ebd31f1d049be5edb9f079cc875fde1565ee54e341df",
-  "placementtest_quick": "9f5924e76649f36569afd04345ff313fb52f2e7b38ad294c50151193d8b02c53",
-  "placementtest_quick_only_description": "7868d02964ec374450d9a2fbdeee2cdf78e6b5912c49cff9c9abe170001ba548",
   "placementtest_reading_range": "01755a61edf1cea8929366ff848bde3305170af5751f2b02cc34e36df94f99ee",
   "placementtest_retake_tomorrow": "588eda29eee573a3c59bbb133d42cbc5ed3ac9cf0d318947a7670ed9f12fbf79",
   "placementtest_skip_lessons": "cbf7a53c7ca3d57471fabab7a86d67170cb0d493b57af5a6937969eb2388a451",
   "placementtest_start": "3fa981ba5c86163cc534fd4fb3f1d74009066d4775f44eea317f3a0e4497f66c",
+  "placementtest_start_lesson": "02b1777a3fb88f2b4a0c0f97e98ac27ef503ddb97f18ec430f036fb3d3f653f8",
   "placementtest_start_title": "12dd3e425e77fcdee48cbb5c0adbd8ecdf414e0c5794ec7d7567df4eef54c6a7",
+  "placementtest_take_again_later": "7f7cefdbc06525d849a50948832ef65c079a77b7910b49c813d8735653614ef5",
+  "placementtest_take_test_again": "e94b863828f21a49cf92ed6c327c1b0e4d7dea2e271e2f2baae01743a579875a",
+  "placementtest_test": "14195149ea455a08ad637cef5e4661865e08567c473726521a0f877887f2a8a2",
   "placementtest_test_out": "d2251381e8fedb25af9b9c4944e79f106d4fab3c126a489f87272def30dac367",
   "placementtest_test_out_description": "d2fdda710997421d57fa9e0cd86f76e4fa6a3fb1cf9dea42de1d00e7cbe9d1e8",
   "placementtest_test_out_unavailable": "648c9616af1695202237fd3aedc0e956cb3f2647db42dec835bd7953f8894ce9",
-  "placementtest_time_left": "8fabc6927e2ea2a65d6595869df76c14600986e9cfd2d934dc598585b606d767",
   "placementtest_title": "cc5f17e9971bc0690fe402fbffeb009b300c30d72253991bdb15846d52909943",
   "placementtest_up_next": "ea4cca9e2439a9afec9ead58380b2d4d491479938b57563cbf164fced4679705",
-  "placementtest_whole_course": "d330866f7596b055dda19e985765e78426ee8d47e3751efa616213163907f950",
+  "placementtest_up_to_questions": "c524f6eee99f3768c5f5bcd60d41ed011c194d47e7483d7e930ec458fec5a58a",
+  "placementtest_where_to_start": "21a2c07feafacd494f1f0ccde0cf2d369b1fb458a4ea377a6da4725dda94e4d6",
+  "placementtest_you_start_here": "626e0115e09aa293e3da3a1afe269cdbd05c115d382da3955b9c7fa601c92186",
   "placementtest_your_level": "89336748f857044b5e7d41dc46a1475ad82da4319ccf7f02cd1f3c46554e63af"
 }
 -->
-<resources>
-    <!-- The plan's row and the screen's name for the test of what the learner already knows in a course. -->
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="placementtest_title">Verifica ciò che sai</string>
     <string name="placementtest_skip_lessons">Salta le lezioni che conosci già</string>
-    <!-- The plan's row and the screen's name for a language course's test. -->
     <string name="placementtest_level_title">Test di livello</string>
     <string name="placementtest_find_level">Trova il tuo livello e salta ciò che sai già</string>
     <string name="placementtest_in_progress">In corso</string>
-    <!-- What's left of a test the learner started; %1$s is a duration, such as "13 min". -->
-    <string name="placementtest_time_left">Ancora %1$s</string>
     <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
     <string name="placementtest_no_lessons_skipped">Nessuna lezione saltata</string>
+    <!-- The title after a placement test: how many lessons it took out of the plan. -->
     <plurals name="placementtest_lessons_skipped">
         <item quantity="one">%d lezione saltata</item>
         <item quantity="many">%d lezioni saltate</item>
         <item quantity="other">%d lezioni saltate</item>
     </plurals>
-    <!-- A CEFR level range the test found for reading; %1$s is a range such as "B1–B2". -->
+    <!-- A CEFR level range the test found for reading, such as “B1–B2”. -->
     <string name="placementtest_reading_range">Lettura %1$s</string>
-    <!-- A CEFR level range the test found for listening; %1$s is a range such as "B1–B2". -->
+    <!-- A CEFR level range the test found for listening, such as “B1–B2”. -->
     <string name="placementtest_listening_range">Ascolto %1$s</string>
     <string name="placementtest_start_title">Salta ciò che sai già</string>
     <string name="placementtest_choose_description">Un test individua le lezioni che puoi saltare.</string>
-    <string name="placementtest_quick_only_description">Un test veloce individua le lezioni che puoi saltare. Dura circa %1$s.</string>
-    <string name="placementtest_choose_title">Scegli un test</string>
-    <!-- The short placement test: about four minutes of questions. -->
-    <string name="placementtest_quick">Test breve</string>
-    <!-- %1$s is a duration with its unit, such as "4 min". -->
     <string name="placementtest_about">Circa %1$s</string>
-    <!-- The long placement test: it checks every topic still ahead in the course. -->
-    <string name="placementtest_whole_course">Intero corso</string>
-    <!-- %1$s is a duration with its unit, such as "30 min". The test is split into parts the learner can take on different days. -->
-    <string name="placementtest_about_in_parts">Circa %1$s, diviso in parti</string>
-    <!-- A short test of one language level, such as "Test out of B2". -->
+    <!-- A short test of one language level, such as “Test out of B2”. -->
     <string name="placementtest_test_out">Fai il test di %1$s</string>
-    <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_description">Salta %1$s se lo conosci già</string>
     <string name="placementtest_start">Inizia</string>
-    <!-- A whole-course test is split into parts; %1$d is the part's number. -->
-    <string name="placementtest_part">Parte %1$d</string>
-    <string name="placementtest_continue_title">Continua il test</string>
-    <!-- %1$s is a duration with its unit, such as "15 min". -->
-    <string name="placementtest_left_saved">Mancano circa %1$s. Le tue risposte sono salvate.</string>
-    <string name="placementtest_continue_from_plan">Puoi completare il test dal Piano.</string>
-    <string name="placementtest_finish_for_today">Concludi per oggi</string>
-    <string name="placementtest_keep_going">Continua</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_one">La conosci già. Resta nei tuoi ripassi.</string>
     <!-- After a test: "it" or "them" is the lessons the test skipped. They stay in the learner's practice reviews. -->
     <string name="placementtest_known_other">Le conosci già. Restano nei tuoi ripassi.</string>
-    <string name="placementtest_plan_stays">Il tuo piano resta com’è.</string>
     <string name="placementtest_retake_tomorrow">Oggi hai annullato queste lezioni. Rispondi di nuovo domani per saltarle.</string>
-    <!-- Over the topic the plan goes on with after the test. -->
     <string name="placementtest_up_next">A seguire</string>
     <string name="placementtest_done">Fatto</string>
     <string name="placementtest_not_now">Non ora</string>
-    <!-- %1$s is a language's name, such as "Italian". -->
     <string name="placementtest_your_level">Il tuo livello di %1$s</string>
-    <!-- %2$s is a list of language levels, such as "A1, A2". The plan no longer has their lessons. -->
-    <plurals name="placementtest_levels_skipped">
-        <item quantity="one">Abbiamo saltato %1$d lezione per %2$s.</item>
-        <item quantity="many">Abbiamo saltato %1$d lezioni per %2$s.</item>
-        <item quantity="other">Abbiamo saltato %1$d lezioni per %2$s.</item>
-    </plurals>
     <string name="placementtest_keeps_adjusting">Le tue lezioni si adattano man mano che rispondi.</string>
-    <!-- After a level test-out that skipped nothing; %1$s is a language level, such as "B2". -->
     <string name="placementtest_level_stays">%1$s resta nel tuo piano</string>
-    <!-- A level test-out whose level has too few questions to test yet; %1$s is a language level, such as "B2". -->
     <string name="placementtest_test_out_unavailable">Per %1$s non ci sono ancora abbastanza domande.</string>
-    <!-- A lesson's end, after a run of easy lessons. -->
     <string name="placementtest_offer_title">Sembra facile per te</string>
     <string name="placementtest_offer_quick">Con un breve test puoi saltare le lezioni che conosci già.</string>
-    <!-- %1$s is a language level, such as "B2". -->
     <string name="placementtest_offer_level">Con un breve test puoi saltare %1$s se lo conosci già.</string>
+    <string name="placementtest_where_to_start">Da dove vuoi iniziare?</string>
+    <string name="placementtest_first_lesson">Prima lezione</string>
+    <!-- The most questions a test asks. It can end sooner. -->
+    <plurals name="placementtest_up_to_questions">
+        <item quantity="one">Fino a %d domanda</item>
+        <item quantity="many">Fino a %d domande</item>
+        <item quantity="other">Fino a %d domande</item>
+    </plurals>
+    <string name="placementtest_finish_later">Completa più tardi</string>
+    <string name="placementtest_start_lesson">Inizia la lezione</string>
+    <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
+    <string name="placementtest_take_again_later">Puoi ripetere il test più tardi, dal tuo piano.</string>
+    <string name="placementtest_not_tested">Non ancora valutato</string>
+    <!-- The name of a course's placement test, on the card that offers it. -->
+    <string name="placementtest_test">Test</string>
+    <!-- Over the name of the chapter a course's placement test starts the learner in. -->
+    <string name="placementtest_you_start_here">Inizi da qui</string>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Ripeti il test</string>
 </resources>

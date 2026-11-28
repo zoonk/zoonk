@@ -102,7 +102,6 @@
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">Element „%1$s” należy do grupy: %2$s.</string>
     <string name="activities_sorting_badge_put_in_order">Ułóż w kolejności</string>
-    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
     <string name="activities_sorting_steps_in_your_order">Kroki w twojej kolejności</string>
     <string name="activities_sorting_drag_steps">Przytrzymaj i przeciągnij kroki, aby je uporządkować.</string>
     <!-- Above a process's steps in their true order, once checked. -->

@@ -1,36 +1,84 @@
 import { availableLevelTestOut } from "../../language/level-test/_utils/level-test-out-items";
 import { withLevelTestChange } from "../../language/level-test/_utils/level-test-result-change";
+import { LANGUAGE_LEVEL_TEST_OFFER } from "../../language/level-test/level-test-contract";
 import { readLevelTestSummary } from "../../language/level-test/read-level-test-summary";
-import { loadPlacementPlan } from "../../learner/_utils/goal-skill-graph";
+import { type GoalPlan, loadCoursePlacementPlan } from "../../learner/_utils/goal-skill-graph";
+import { readCourseProbes } from "../../learner/placement/_utils/course-placement-bank";
 import { loadPlacementState } from "../../learner/placement/_utils/load-placement-state";
 import {
-  type PlacementAttempt,
-  getPlacementEstimate,
-  isTopicAhead,
-  placementAttemptView,
-  readPendingTopicWalkAssessmentId,
+  type PlacementRecord,
+  getCourseOffer,
   readPlacementAttempt,
 } from "../../learner/placement/_utils/placement-attempt-record";
+import { readPlacementResult } from "../../learner/placement/_utils/placement-result";
 import { type PlanView } from "../plan-view-contract";
 import { type PlanContext } from "./plan-context";
 
-async function readAttemptView(
-  { goal, timeZone, today }: PlanContext,
-  attempt: PlacementAttempt | null,
-) {
-  if (attempt?.length !== "wholeCourse") {
-    return attempt && placementAttemptView(attempt);
-  }
+async function readLanguageRow(
+  context: PlanContext,
+  now: Date,
+): Promise<PlanView["placementTest"]> {
+  const { goal } = context;
+  const summary = readLevelTestSummary(goal);
+  const idleState = summary.result ? "result" : "start";
 
-  const placement = await loadPlacementState({
-    goalId: goal.id,
-    plan: await loadPlacementPlan(goal.id),
-    timeZone,
-    today,
-    userId: goal.userId,
-  });
+  const [nextTestOutLevel, levelResult] = await Promise.all([
+    summary.openTestOutLevel ??
+      availableLevelTestOut({
+        goalId: goal.id,
+        levels: summary.eligibleTestOutLevels,
+        now,
+        timeZone: context.timeZone,
+        userId: goal.userId,
+      }),
+    summary.result ? withLevelTestChange(goal.id, summary.result) : null,
+  ]);
 
-  return placement.attempt ?? null;
+  return {
+    ...(summary.attempt?.answered !== undefined && {
+      answered: summary.attempt.answered,
+      total: LANGUAGE_LEVEL_TEST_OFFER.total,
+    }),
+    attempt: null,
+    estimatedMinutes: LANGUAGE_LEVEL_TEST_OFFER.estimatedMinutes,
+    kind: "language",
+    nextTestOutLevel,
+    result: levelResult,
+    state: summary.attempt ? "continue" : idleState,
+  };
+}
+
+async function readCourseRow({
+  context: { goal, timeZone, today },
+  placement,
+  plan,
+}: {
+  context: PlanContext;
+  placement: PlacementRecord;
+  plan: GoalPlan;
+}): Promise<PlanView["placementTest"]> {
+  const attemptPlacement = placement.attempt
+    ? await loadPlacementState({ goalId: goal.id, plan, timeZone, today, userId: goal.userId })
+    : null;
+
+  const attemptView = attemptPlacement?.attempt ?? null;
+  const probes = attemptView ? null : await readCourseProbes(goal, undefined, plan);
+  const offer = probes?.possible ? getCourseOffer(probes.ahead.length) : null;
+
+  const result = attemptPlacement
+    ? (attemptPlacement.result ?? null)
+    : await readPlacementResult({ goalId: goal.id, placement });
+
+  const idleState = result ? "result" : "start";
+
+  return {
+    attempt: attemptView,
+    estimatedMinutes: attemptView?.estimatedMinutes ?? offer?.estimatedMinutes ?? 0,
+    kind: "learn",
+    offer,
+    result,
+    state: attemptView ? "continue" : idleState,
+  };
 }
 
 export async function readPlanPlacementTest(
@@ -43,56 +91,20 @@ export async function readPlanPlacementTest(
     return null;
   }
 
-  const placement = readPlacementAttempt(goal);
-  const { attempt, result } = placement;
-
-  const attemptView = await readAttemptView(context, attempt);
-
-  const lessonsBySkill = Map.groupBy(context.items, (item) => item.skillId);
-
-  const ahead = context.state.graph.skills.filter((skill) =>
-    isTopicAhead(lessonsBySkill.get(skill.skillId)),
-  );
-
-  const estimatedMinutes =
-    attemptView?.estimatedMinutes ??
-    getPlacementEstimate({ length: "wholeCourse", topics: ahead.length });
-
   if (goal.kind === "language") {
-    const summary = readLevelTestSummary(goal);
-    const waitingForTopicWalk = readPendingTopicWalkAssessmentId(goal, placement) !== null;
-    const continuing = attemptView || summary.attempt || waitingForTopicWalk;
-    const idleState = summary.result ? "result" : "start";
-
-    const [nextTestOutLevel, levelResult] = await Promise.all([
-      summary.openTestOutLevel ??
-        availableLevelTestOut({
-          goalId: goal.id,
-          levels: summary.eligibleTestOutLevels,
-          now,
-          timeZone: context.timeZone,
-          userId: goal.userId,
-        }),
-      summary.result ? withLevelTestChange(goal.id, summary.result) : null,
-    ]);
-
-    return {
-      attempt: attemptView,
-      estimatedMinutes,
-      kind: "language",
-      nextTestOutLevel,
-      result: levelResult,
-      state: continuing ? "continue" : idleState,
-    };
+    return readLanguageRow(context, now);
   }
 
-  const idleState = result ? "result" : "start";
+  const placement = readPlacementAttempt(goal);
 
-  return {
-    attempt: attemptView,
-    estimatedMinutes,
-    kind: "learn",
-    result,
-    state: attemptView ? "continue" : idleState,
-  };
+  const plan = await loadCoursePlacementPlan(goal.id, {
+    source: {
+      graph: context.state.graph,
+      items: context.items,
+      phases: context.phases,
+      settings: context.state.settings,
+    },
+  });
+
+  return readCourseRow({ context, placement, plan });
 }

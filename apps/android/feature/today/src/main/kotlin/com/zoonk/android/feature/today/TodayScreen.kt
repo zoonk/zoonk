@@ -41,7 +41,9 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.VisitorWelcome
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.onboarding.OnboardingLeft
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.left
 import com.zoonk.android.feature.onboarding.questionsLeft
 import com.zoonk.android.feature.plan.ResumeFailure
 import com.zoonk.android.navigation.AppNavigator
@@ -465,31 +467,34 @@ private fun Preparing(
 ) {
     val setup by app.onboarding.onboardings[read.goalId.toString()].collectShown()
 
-    if (setup.value?.planRevealed == false && setup.value?.planReadiness?.ready == true) {
-        TodayAtRest(
-            padding = padding,
-            icon = R.drawable.ic_check,
-            sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
-        ) { main ->
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
-                Text(stringResource(R.string.onboarding_see_plan))
+    when (setup.value?.left()) {
+        OnboardingLeft.Questions -> {
+            TodayAtRest(
+                padding = padding,
+                icon = R.drawable.ic_checklist,
+                sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
+            ) { main ->
+                Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
+                    Text(stringResource(R.string.today_continue_draft))
+                }
             }
+            return
         }
-        return
-    }
 
-    // A goal left halfway through its questions has no plan coming until they're answered.
-    if (setup.value?.questionsLeft == true) {
-        TodayAtRest(
-            padding = padding,
-            icon = R.drawable.ic_checklist,
-            sentence = stringResource(R.string.today_setting_up_goal, read.displayName),
-        ) { main ->
-            Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
-                Text(stringResource(R.string.today_continue_draft))
+        OnboardingLeft.Reveal -> {
+            TodayAtRest(
+                padding = padding,
+                icon = R.drawable.ic_check,
+                sentence = stringResource(R.string.onboarding_plan_ready_goal, read.displayName),
+            ) { main ->
+                Button(onClick = { navigator.open(AppRoute.GoalSetup(read.goalId.toString())) }, modifier = main) {
+                    Text(stringResource(R.string.onboarding_see_plan))
+                }
             }
+            return
         }
-        return
+
+        null -> {}
     }
 
     val scope = rememberCoroutineScope()

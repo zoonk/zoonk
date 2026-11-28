@@ -25,7 +25,7 @@
   "questions_invalid_fraction": "a1d683179047899bfc5373e0ea2aae0513be125cde81055fb1cdd98444f3db8d",
   "questions_invalid_integer": "0d730c0b6b166b59a9bfc3ac7af2f8a524b89c959f6fb9b5c1e7cb2983f6eb2b",
   "questions_invalid_number": "306a80144238cda9b372c362f1149caa10b0742f99351f6d8912feb1c0f2fba5",
-  "questions_leave_blank": "e32bed7f03eaede3bb9430d771f5cdb5e68d08637b6bc069d4750274f715db3d",
+  "questions_leave_blank": "1625358fa3309e8457b14614261a0e00d973609bdd6cecf3da1f11b2ae99703b",
   "questions_left_blank": "8ac8cf224f81bd13cd22c8fe4f07e6c0d262247d7db7f09e7658bd6cbed8748e",
   "questions_mark_correct": "65cfd73753298401b993883db432b03046084c9b596a1f6b42b75cba8ea5d900",
   "questions_mark_wrong": "2308b19eea69aa9d7371c5430f01c368fb54c2f227fc8e01732e423fde2dfef5",
@@ -34,7 +34,7 @@
   "questions_match_paired": "21a1d5dc2ce0054dc61d8dc3a93312f8e3080140d8d4dc2ee6114dca40d02b9b",
   "questions_match_unpaired": "f6d1a914222b43d9f66bc3c64f8f689057a876aabd19100bf17215b0c297225c",
   "questions_matched_with": "7232392de3bec39a29aa07d616dea1e0c2336ffd82cc68d8bcbed6a6bb666992",
-  "questions_mistake_fixed": "c61b55baa2c2924595aaf2481eb5232018ae33589fafc3fbd7499f554bc6a01c",
+  "questions_mistake_fixed": "d7e5c542443aea5ff25c2d7fdf86095133037db590aba392db10cc4dbbfb2dd5",
   "questions_mistakes_fixed": "2b132a3b72ac26ffc19971ffe92e33c6cdd6bc3e30051f109b075adc78222614",
   "questions_not_quite": "d07e50f2948994559cbc9bd689e60d905acd4a44602b14fa1786622f250577b2",
   "questions_pick_all": "591aabe79ea073ab12d821200e561488db0e99332d5a74f8751390dcd7138fce",
@@ -72,12 +72,10 @@
     <string name="questions_right">Vrai</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Faux</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
-    <string name="questions_leave_blank">Laisser vide</string>
+    <string name="questions_leave_blank">Ne pas répondre</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">Position %1$d, bonne place</string>
     <string name="questions_place_wrong">Position %1$d, mauvaise place</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, associé à %2$s</string>
     <string name="questions_match_paired">Tu as associé %1$s à %2$s. Paires associées : %3$d sur %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s et %2$s ne vont pas ensemble.</string>
@@ -95,14 +93,13 @@
     </plurals>
     <string name="questions_entry_fraction">Une fraction, comme 2/3, ou un nombre décimal.</string>
     <string name="questions_entry_integer">Un nombre entier.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">Saisis un nombre, comme %1$s.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Saisis une fraction, comme 2/3, ou un nombre, comme %1$s.</string>
     <string name="questions_invalid_integer">Saisis un nombre entier, comme 12.</string>
     <string name="questions_feedback_label">Retour sur ta réponse</string>
     <string name="questions_correct">Correct !</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
     <string name="questions_not_quite">Ce n’est pas ça</string>
     <string name="questions_left_blank">Sans réponse</string>
     <string name="questions_dont_know_yet">Je ne sais pas encore</string>
@@ -114,13 +111,14 @@
     <string name="questions_right_answer">Bonne réponse : %1$s</string>
     <!-- Names the last line of a worked solution for TalkBack, read before it as in "Result: x = 4". -->
     <string name="questions_result">Résultat</string>
-    <string name="questions_mistake_fixed">Erreur corrigée. Elle disparaît de ton carnet.</string>
+    <string name="questions_mistake_fixed">Erreur corrigée. Elle est retirée de ton carnet d’erreurs.</string>
     <!-- Always several: one fixed mistake reads questions_mistake_fixed. -->
     <plurals name="questions_mistakes_fixed">
         <item quantity="one">%d erreur corrigée. Elle disparaît de ton carnet.</item>
         <item quantity="many">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
         <item quantity="other">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">Ajouté à ton carnet d’erreurs</string>
     <string name="questions_show_less">Afficher moins</string>
     <string name="questions_read_again">Tout relire</string>

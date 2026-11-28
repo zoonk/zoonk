@@ -1,25 +1,14 @@
-import { MS_PER_MINUTE } from "@zoonk/utils/date";
+import { MS_PER_MINUTE, MS_PER_SECOND } from "@zoonk/utils/date";
 
-const DAY_PLACEMENT_ANSWERS = 12;
+const COURSE_ANSWER_SECONDS = 32;
+const COURSE_ANSWER_MS = COURSE_ANSWER_SECONDS * MS_PER_SECOND;
 
-/** Also what a learner is told the short test takes: it stops at this much answering. */
-export const DAY_PLACEMENT_MINUTES = 4;
+export function getCourseMinutes(questions: number): number {
+  return Math.round((questions * COURSE_ANSWER_MS) / MS_PER_MINUTE);
+}
 
-const DAY_PLACEMENT_MS = DAY_PLACEMENT_MINUTES * MS_PER_MINUTE;
-
-/** Idle time must not end a day's placement after one answer. */
-const MAX_COUNTED_ANSWER_MS = 60_000;
+export const DAY_PLACEMENT_MINUTES = 6;
 
 export const SESSION_PLACEMENT_QUESTIONS = 3;
 
 export const PLACEMENT_WEEK_DAYS = 7;
-
-/** Returns a fraction from 0 to 1, never a promise of remaining questions. */
-export function getPlacementBudgetSpent(answers: readonly { durationMs: number }[]): number {
-  const spent = answers.reduce(
-    (total, answer) => total + Math.min(answer.durationMs, MAX_COUNTED_ANSWER_MS),
-    0,
-  );
-
-  return Math.min(1, Math.max(answers.length / DAY_PLACEMENT_ANSWERS, spent / DAY_PLACEMENT_MS));
-}

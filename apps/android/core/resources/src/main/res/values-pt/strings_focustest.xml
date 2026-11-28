@@ -3,7 +3,6 @@
 {
   "focustest_also_skips": "2b1f55919f928997b8f97cd70704daf9fd98bce461de520664e7713a6ce1cf48",
   "focustest_answer_more": "b719c04bbe34f0c647342d5aea49edfb9561f264f0ee898d8e7e15587f31c154",
-  "focustest_answers_saved_line": "b11de79310afbc72ae5a039006cc7deebaac8c8115c80ea4657725ea38a74525",
   "focustest_answers_saved_title": "7938427867928839ee216d29cf0d9bc2584ba1414b096ed98f0cf9a5fb31091e",
   "focustest_change_focus": "0fd640f3d250b003c001fb7ec5f393053fc1e648b6ee09d49822f0c803ef8198",
   "focustest_continue": "ea63ce15562b8e2bb83236d2ea0f4f71ec7eede4edab4c40120a88c7ef0e4590",
@@ -20,20 +19,18 @@
   "focustest_not_today": "a09f69fc2bda826025d20217fe0dc5f177779d3bc07f021aeba26487d78480e5",
   "focustest_not_today_failed": "b58a48fba8d5391b1cdc068823d9503edad157a92c2a6b815807310d28c5de64",
   "focustest_offer_line": "ce280336ff20360b642dec51f12238b1a3b9ab6633e6046c64f4297743aef7d1",
-  "focustest_offer_line_focus": "a90b2754f522e1029530b7c8b8e921cecdc15f82b1075d744f377f6febec125f",
+  "focustest_offer_sentence": "69c99e568db4e2adfbce6b2e01214fa82bbf397e044585ec66e30bf37962d4af",
   "focustest_practical_not_checked": "3449cf629eaa0c40c7499ab34412fac286115eab7253153539da6ce0ef08c68a",
   "focustest_proposal_applied": "123000d6321e365d210186f657b1f2deca12fc11d59ac3e318dfd4d7820193e5",
   "focustest_proposal_declined": "dc174f8d810561f2718d4849fbf27612cc7f1297f263d748285a3e31dad50fce",
   "focustest_proposal_picked": "d486c793c84ac7c7de1d2744b93db77ffaf218aa63bcc1bf22583cf311018f9f",
   "focustest_proposal_title": "18137692fdda4fbf6a3e29e1bd08647166de74159753daf37d8a27bc58aca76e",
   "focustest_proposal_undone": "5ccdfdf2941a37870fe3f4c6e022057684e0ab7ce28919981f4a8e5703704e36",
-  "focustest_question_number": "9dee4062582baeba12b0da32489dc5d11e45d5579f124030879bd38cbea62615",
   "focustest_result_current": "8f5578df02d442f64dd66f31894a01513c46a81fbf73cb0ddf0072795e793f2e",
   "focustest_result_declined": "d17e93344da5cc4d85e0a6973bcb6d3245745f15811f413032b996990ca46cf8",
   "focustest_result_description": "5c0f688fab35ac3f682a727fde4a1b67b5b5d84026c1f9eb4a5fd452d8f2e123",
   "focustest_result_hand_picked": "ffa33ac820ae2a5d436bfad6ff063a339bdbb0fb508a4733aefa8c7f7f5ff09d",
   "focustest_result_title": "19a1c94f8d744f75119257b4132cebf2c67758ebacc45d86a912d4859ad7de35",
-  "focustest_resume_title": "00b70e37067e7abb05e6b0908cc7337b7986469bb773ec382d2b1465331f10cf",
   "focustest_see_all_subjects": "f4cc80afb505fd44ccc31feaf3c67550cfa0001230a248ab7a8570940dfa7372",
   "focustest_see_my_result": "54cf2da1766f4604ca148ac2305773a68498c2affcf9ec085eaf34c209a5f9b0",
   "focustest_see_your_result": "eec24df9826487e588eaa0c53fc7019c18d9f5a700f0a2a8540d70f9c7fc97db",
@@ -43,14 +40,12 @@
   "focustest_speaking_not_checked": "8ca64bea99c9da56176a09e0fc79534a225ba3d949f814f7ab2a5575a8600a3a",
   "focustest_start": "ba991c3960bbbe5908a3543ef78291355ae58367340c968e26259fe220de6850",
   "focustest_starting_point_title": "c6e4e43533b9ef39655592ca019c3ee5bb537f2cb59a519e417bf492050d8a8d",
-  "focustest_stop": "a330b3abb2948186f79078f1c414e7f518096d9855dd760296eb298697199436",
-  "focustest_subject_right": "85354bf32ab8758ebdc09fa3646893876be6995c4443651accba8fef26d6241d",
+  "focustest_subject_right": "5a507bfcac86c225d15fd1f910a18983e1c5b9e343036fb413c7db64a35b1e97",
   "focustest_subjects": "0937038f7bc9a1fc23df0fa39511f2b8a3a1eda1a93346ac0f3bf681e1a2f810",
   "focustest_suggestion_body": "0f072c9735c5deefc5414766b150d05c12662432f26ed0f9dcca517d3cda135f",
   "focustest_suggestion_dismissed": "9ee7789ae7e1c0bfd414370f0d97f14228b320f4b7691dff13bc99090ffff837",
   "focustest_suggestion_line": "4aba6999ca1718b2ebfef5fc6cda210936eb188f4afc6d592f0a061026a000b4",
   "focustest_take_test": "37f559d916c4e2411b18bad8fd46947e3e3bae08adb255931f8b57ae91adc8f0",
-  "focustest_time_left": "72230a2f57a356e619da4445bdce369e36ca985dfddeae5f7f843b706b594c33",
   "focustest_title": "6ad3a06fb0853f52dec4a81ce039cd9b6448aac533b093f7848d49a277e50b3f",
   "focustest_undo": "4257caf817592c8b6448f08032f60706edc22073b699f0443f1b7adee53d4e4f",
   "focustest_update_plan": "db12c62f3956ea0b658bdc3df30eaaa5561143e13503d274540387013b4d8a0a",
@@ -58,31 +53,17 @@
 }
 -->
 <resources>
-    <!-- The optional test of an exam goal: quick questions that find where the learner starts and where their study time should go. -->
     <string name="focustest_title">Teste de foco</string>
-    <!-- {time} is a duration with its unit, such as “9 min”. -->
-    <string name="focustest_time_left">Restam %1$s</string>
-    <!-- The test's headline for an exam with a date and several subjects: it shows which subjects need the most study time. -->
     <string name="focustest_find_focus">Descubra o que precisa estudar mais</string>
-    <!-- The test's headline for an exam without a date, or with one subject: it shows where the learner's level starts. -->
     <string name="focustest_find_start">Já sabe um pouco disso?</string>
-    <string name="focustest_offer_line_focus">Esse teste mostra o que você já sabe para você dedicar mais tempo ao que mais precisa estudar. Ele nunca remove uma matéria.</string>
+    <string name="focustest_offer_sentence">Um teste mostra o que você já sabe, para você dedicar mais tempo ao que mais precisa.</string>
     <string name="focustest_offer_line">Esse teste mostra o que você já sabe para seu plano poder pular essa parte.</string>
     <string name="focustest_start">Começar o teste</string>
     <string name="focustest_skip_note">Você pode fazer o teste depois, pelo seu plano.</string>
     <string name="focustest_not_now">Agora não</string>
-    <string name="focustest_resume_title">Continue seu teste</string>
-    <plurals name="focustest_answers_saved_line">
-        <item quantity="one">Você tem %d resposta salva.</item>
-        <item quantity="many">Você tem %d respostas salvas.</item>
-        <item quantity="other">Você tem %d respostas salvas.</item>
-    </plurals>
     <string name="focustest_continue">Continuar</string>
+    <!-- Button that ends the Focus test with the answers given so far and shows its result. -->
     <string name="focustest_see_my_result">Ver meu resultado</string>
-    <!-- Over a test question: its number and the count promised when the sitting started. -->
-    <string name="focustest_question_number">Pergunta %1$d de %2$d</string>
-    <string name="focustest_stop">Parar e usar minhas respostas</string>
-    <!-- Shown after several "I don't know yet" answers in a row. -->
     <string name="focustest_many_unknown">Ainda não estudou a maior parte disso? Tudo bem. Você pode parar por aqui e começar a aprender.</string>
     <string name="focustest_answers_saved_title">Suas respostas estão salvas</string>
     <!-- The test's result: the exam subjects that need the most study time, most needed first. -->
@@ -106,14 +87,16 @@
     <!-- The learner answered “Not now” to giving these subjects more time, or undid it. -->
     <string name="focustest_result_declined">Você deixou seu plano como está. Esta é a sugestão do teste.</string>
     <string name="focustest_change_focus">Mudar o foco</string>
+    <!-- Opens the list of every exam subject with how its Focus test questions went. -->
     <string name="focustest_see_all_subjects">Ver todas as matérias</string>
     <string name="focustest_subjects">Matérias</string>
-    <!-- A switch: the learner's study sessions also ask a few of the test's questions. -->
+    <!-- Label of an on/off switch on the Focus test's result: the test's questions keep coming, a few at a time, in the learner's lessons. -->
     <string name="focustest_session_questions">Receber mais algumas perguntas enquanto estudo</string>
     <string name="focustest_session_questions_when">Durante sua primeira semana</string>
     <string name="focustest_done">Concluído</string>
+    <!-- Button on the Focus test's result: continues the test with more questions. -->
     <string name="focustest_answer_more">Responder mais perguntas</string>
-    <!-- The test asks before changing a plan the learner already has. -->
+    <!-- Headline, above a short list of exam subjects: asks the learner whether their study plan should give those subjects more time. -->
     <string name="focustest_proposal_title">Dedicar mais tempo a essas matérias?</string>
     <!-- How the Focus test picked the subjects listed below it: from the learner's answers to its questions and how many of the exam's questions each subject has. -->
     <string name="focustest_proposal_picked">Com base nas suas respostas e no quanto cada matéria é cobrada na prova.</string>
@@ -126,26 +109,24 @@
     <string name="focustest_not_known_yet">Ainda não sabe</string>
     <!-- %1$d answers right of %2$d asked on one subject. -->
     <plurals name="focustest_subject_right">
-        <item quantity="one">Você acertou %1$d de %2$d</item>
-        <item quantity="many">Você acertou %1$d de %2$d</item>
-        <item quantity="other">Você acertou %1$d de %2$d</item>
+        <item quantity="one">Acertou %1$d de %2$d</item>
+        <item quantity="many">Acertou %1$d de %2$d</item>
+        <item quantity="other">Acertou %1$d de %2$d</item>
     </plurals>
     <!-- Parts of the exam the Focus test's questions can't ask about, such as the essay. -->
     <string name="focustest_written_not_checked">Escrita: fora deste teste</string>
     <string name="focustest_listening_not_checked">Escuta: fora deste teste</string>
     <string name="focustest_speaking_not_checked">Conversação: fora deste teste</string>
     <string name="focustest_practical_not_checked">Parte prática: fora deste teste</string>
-    <!-- The test's state on the plan: the learner started it and left before the end. -->
     <string name="focustest_in_progress">Em andamento</string>
     <string name="focustest_see_your_result">Ver seu resultado</string>
+    <!-- Link that opens the Focus test, for a learner who has not taken it. -->
     <string name="focustest_take_test">Fazer o Teste de foco</string>
-    <!-- Today's suggestion to take the test, in the goal's first week, when the learner's time can't cover everything. -->
     <string name="focustest_suggestion_line">O Teste de foco mostra o que você mais precisa estudar.</string>
     <!-- %1$s is a duration with its unit, such as "15 min". -->
     <string name="focustest_suggestion_body">Um teste de foco de %1$s mostra o que você já sabe, para que mais tempo seja dedicado ao que você mais precisa. Ele nunca remove uma matéria.</string>
     <!-- After "Not now" on Today's suggestion: it won't be suggested again. -->
     <string name="focustest_suggestion_dismissed">Tudo bem. Você pode fazer o teste pelo seu plano.</string>
-    <!-- On a session's test question: skips today's test questions; they're asked another day. -->
     <string name="focustest_not_today">Hoje não</string>
     <string name="focustest_not_today_failed">Não foi possível salvar. Tente de novo.</string>
 </resources>

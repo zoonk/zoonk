@@ -16,13 +16,13 @@
   "questions_drill_timed": "a469347123c96676296898b4fab2a60ab76771bcbc6cfe0481c555a578318384",
   "questions_drill_timed_out": "21bfb0b2f1d781cefb9e455bd6f0fbc9e9e7e0d23c1983b2d8c0a65aa407ffd0",
   "questions_drill_trap": "171c3390581acc2327b4296ae9f505c37275c388f9076d41603a25be3e953a40",
-  "questions_entry_decimals": "a584d730b7922685526ef9dae2ece32bb4888d323fa3d3295c96736b4fd9ef81",
+  "questions_entry_decimals": "00723458ae8e2f5d05e598cedff6a2b87c1c038234574e4601f01273b476e07c",
   "questions_entry_fraction": "73fa47cb2488a472a5981ff519b505fd4d1a94d4297700f42a3e8853ba06a183",
   "questions_entry_integer": "6d906c3462f1e5e134c7a4bb2a4046e4de1265808707017fc506aa00cf12a0ca",
   "questions_entry_round_to_whole": "8badea92aeabd11e6427490bbf14a42c73e40cc3e0cfa3f54814af5550ff9b8f",
   "questions_false": "0f42e0117cb2cf0eee51952fd5d10607b6776a15465af7c81a9b170a9a40311a",
   "questions_feedback_label": "ac6f368ec892fae7e0bc0542f215c89d0930db1188c297583736b670fe9ae745",
-  "questions_invalid_fraction": "03a9482ee857250ccb8239adbd9e1ee0f837a0dca30553e0463ac353277ca4ea",
+  "questions_invalid_fraction": "e5602db17cc324332d381540401928608b381fae989b8110f6dbc4327e6581c3",
   "questions_invalid_integer": "0ecfbd9bdb84237ca339c57cc7783678fbb8a7c5b996a70794963f2d7bb889f2",
   "questions_invalid_number": "15fade3da8c42f092727d7010bd4f6535fc6421ceedb2d2c9f5bf954a50a9812",
   "questions_leave_blank": "68eb248a0a1964c60b0d80b199966cb40869fe9e28e714045b1feee7acf7ca47",
@@ -36,7 +36,7 @@
   "questions_matched_with": "8250423926cbc872aeea77e2f38b93c7db59886fe04686360d266ac6622a53de",
   "questions_mistake_fixed": "56d8658e12db4f902bf4effac8604f086d49eeab70d8c3c99970fe46bda77914",
   "questions_mistakes_fixed": "a215ad447ac56c5a3b44536b82c747c9c747a58907a14c86057d3776d57fb70f",
-  "questions_not_quite": "73554ed2b99b75ac002c57ec525c0ce71ae0361f3975c0f8126257d46d05a004",
+  "questions_not_quite": "8aab8a3d64bdc087cc3d8bfd98a51d9b79ce7a6475ff62ba6c3f09c138ced92c",
   "questions_pick_all": "b00b8afaacce418cbbe2ccbb3253b9918c984e4471f38b5106327ba082b803a5",
   "questions_pick_count": "19c7e25d95bc10f24bda080bac04176be841890abbbe27f253c72db96f743c88",
   "questions_place_right": "ea40b8c702c32cb2469b90ecd499f9e770a6e98e0c4d488ef830e4499c0c4fdd",
@@ -48,10 +48,10 @@
   "questions_right": "1e3c407b6ace6503bf082bbfb70206b014fb72077ce04d5c9cdc1f02dc1714b0",
   "questions_right_answer": "55435b8a3886ea9caed7c09d88879bda07a6bba22c3a52e7d1b70528b5da08c9",
   "questions_saved": "464d9fc72b75f9fcb6fa942d2fce644496f6fcb644bc4520685fcf50901056d2",
-  "questions_set_place_audio": "2c1a7442f1e1aafda92ec96c87062eaea317d2de70f6149adb5bc7d981165dfb",
-  "questions_set_place_case": "5d8e66fcbfc06d670417cf53db81e40472020c20ccb7ec10a610c7cf50c190b8",
-  "questions_set_place_chart": "e4d04c0f8083e9ceacc071d2ee85eaf00888410c688b366bfe590db999691415",
-  "questions_set_place_text": "435bdfb9da7a7a3154d787423e00588c7eba1529ed6a86ba067ed96c2d2525f1",
+  "questions_set_place_audio": "3bf9c5ff0b9a5533309cb5f5828d130df3b260163174e102ee6133b0b84ad9ac",
+  "questions_set_place_case": "6a614fb114c019314752e92657b242c8772e01f76421b4f05b78f19d8d68edbe",
+  "questions_set_place_chart": "bb0906ec016e1263890be3cdc9879356a12f2619193f8b9af06c1bf10f9f95b2",
+  "questions_set_place_text": "de72b030a8aa1ee016c3da9878124515dafce5b9a5fb5c608cf3f0861769b4f9",
   "questions_show_less": "9eb9c828cce4b683b85ef27369121caab6a014fdddca73cbb226a4226d25a1dd",
   "questions_streak": "68e98de84609efb586ecd3f196493f0ab4aae5ab0d86ccd23f96d8d79e36d2bc",
   "questions_true": "5dc23f411a4689da2c5cf3678a1c56ccc988fbc5831d80a51fc402dbded4b14d",
@@ -71,12 +71,10 @@
     <string name="questions_right">Doğru</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Yanlış</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Boş bırak</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">%1$d. sıra, doğru yerde</string>
     <string name="questions_place_wrong">%1$d. sıra, yanlış yerde</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
     <string name="questions_matched_with">%1$s, %2$s ile eşleştirildi</string>
     <string name="questions_match_paired">%1$s ile %2$s eşleşti. Eşleşen çiftler: %3$d / %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s ile %2$s eşleşmiyor.</string>
@@ -88,20 +86,19 @@
     <string name="questions_mark_wrong">Yanlış</string>
     <string name="questions_entry_round_to_whole">En yakın tam sayıya yuvarla.</string>
     <plurals name="questions_entry_decimals">
-        <item quantity="one">%d ondalık basamağa yuvarla.</item>
-        <item quantity="other">%d ondalık basamağa yuvarla.</item>
+        <item quantity="one">Virgülden sonra %d basamağa yuvarla.</item>
+        <item quantity="other">Virgülden sonra %d basamağa yuvarla.</item>
     </plurals>
     <string name="questions_entry_fraction">2/3 gibi bir kesir ya da ondalık sayı.</string>
     <string name="questions_entry_integer">Bir tam sayı.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">%1$s gibi bir sayı yaz.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
-    <string name="questions_invalid_fraction">2/3 gibi bir kesir veya %1$s gibi bir sayı yaz.</string>
+    <string name="questions_invalid_fraction">2/3 gibi bir kesir ya da %1$s gibi bir sayı yaz.</string>
     <string name="questions_invalid_integer">12 gibi bir tam sayı yaz.</string>
     <string name="questions_feedback_label">Cevap değerlendirmesi</string>
     <string name="questions_correct">Doğru!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
-    <string name="questions_not_quite">Doğru değil</string>
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
+    <string name="questions_not_quite">Tam olmadı</string>
     <string name="questions_left_blank">Boş bırakıldı</string>
     <string name="questions_dont_know_yet">Henüz bilmiyorum</string>
     <plurals name="questions_streak">
@@ -117,13 +114,14 @@
         <item quantity="one">%d yanlış düzeltildi. Artık defterinde değiller.</item>
         <item quantity="other">%d yanlış düzeltildi. Artık defterinde değiller.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">Yanlış defterine kaydedildi</string>
     <string name="questions_show_less">Daha az göster</string>
     <string name="questions_read_again">Tamamını tekrar oku</string>
-    <string name="questions_set_place_audio">Bu ses kaydındaki %1$d. soru (toplam %2$d)</string>
-    <string name="questions_set_place_case">Bu vakadaki %1$d. soru (toplam %2$d)</string>
-    <string name="questions_set_place_chart">Bu grafikteki %1$d. soru (toplam %2$d)</string>
-    <string name="questions_set_place_text">Bu metindeki %1$d. soru (toplam %2$d)</string>
+    <string name="questions_set_place_audio">Bu ses kaydıyla ilgili %1$d. soru, toplam %2$d soru</string>
+    <string name="questions_set_place_case">Bu vakayla ilgili %1$d. soru, toplam %2$d soru</string>
+    <string name="questions_set_place_chart">Bu grafikle ilgili %1$d. soru, toplam %2$d soru</string>
+    <string name="questions_set_place_text">Bu metinle ilgili %1$d. soru, toplam %2$d soru</string>
     <string name="questions_placement_note">Planını sana göre ayarlıyoruz. Buradaki yanlışlar yanlış defterine kaydedilmez.</string>
     <!-- %1$s names the exam and year the question was printed in. -->
     <string name="questions_quoted_source">Çıkmış sınav sorusu · %1$s</string>

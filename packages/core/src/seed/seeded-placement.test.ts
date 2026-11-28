@@ -103,7 +103,7 @@ describe("a reseed of a language course's level test", () => {
     });
 
     mockSession(user.id);
-    const started = await startLanguageLevelTest({ goalId: goal.id, length: "quick" });
+    const started = await startLanguageLevelTest({ goalId: goal.id });
 
     const owed = await prisma.followUp.count({
       where: { kind: "prepareLevelTestBank", userId: user.id },

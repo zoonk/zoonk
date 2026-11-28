@@ -44,12 +44,6 @@ async function LevelTestContent({ searchParams }: Props) {
     return null;
   }
 
-  // A whole-course test past its level check goes on through the course's topics.
-  if (test.attempt) {
-    redirect({ href: "/placement-test", locale });
-    return null;
-  }
-
   return (
     <OnboardingPage backHref="/plan">
       <LevelTestClient
@@ -57,7 +51,6 @@ async function LevelTestContent({ searchParams }: Props) {
         testOutFirst={query[LEVEL_TEST_OUT_PARAM] !== undefined}
         targetLanguage={goal.targetLanguage}
         testOutLevel={test.nextTestOutLevel}
-        wholeCourseMinutes={test.estimatedMinutes}
       />
     </OnboardingPage>
   );

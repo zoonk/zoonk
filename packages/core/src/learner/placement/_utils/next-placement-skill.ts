@@ -40,12 +40,14 @@ function chooseNextSkill({
 /** The question to ask next: the item when one is ready, or its skill while it's still being written. */
 export function findNextQuestion({
   choice,
+  firstSitting = false,
   items,
   preparingSkillIds,
   quickFormat,
   waitsForExam,
 }: {
   choice: SkillChoice;
+  firstSitting?: boolean;
   items: readonly PlacementItemCandidate[];
   preparingSkillIds: ReadonlySet<string>;
   quickFormat: PlacementQuickFormat;
@@ -58,6 +60,7 @@ export function findNextQuestion({
   const last = evidence.at(-1);
 
   const confirmingSkillId =
+    !firstSitting &&
     last?.outcome === "correct" &&
     choice.statuses.get(last.skillId) !== "known" &&
     skills.some((skill) => skill.id === last.skillId) &&
@@ -65,24 +68,28 @@ export function findNextQuestion({
       ? last.skillId
       : undefined;
 
-  const skillId = chooseNextSkill({
-    askableSkillIds,
-    choice,
-    confirmingSkillId,
-    preparingSkillIds,
-    quickSkillIds: new Set(
-      unseen.filter((item) => item.format === quickFormat).map((item) => item.skillId),
-    ),
-  });
+  const readySkill = firstSitting ? chooseNextPlacementSkill({ ...choice, askableSkillIds }) : null;
+
+  const skillId =
+    readySkill ??
+    chooseNextSkill({
+      askableSkillIds,
+      choice,
+      confirmingSkillId,
+      preparingSkillIds,
+      quickSkillIds: new Set(
+        unseen.filter((item) => item.format === quickFormat).map((item) => item.skillId),
+      ),
+    });
 
   const waiting = skillId !== null && !askableSkillIds.has(skillId);
 
   const item =
     skillId && !waiting && !waitsForExam
       ? pickPlacementItem({
-          confirming: evidence.some(
-            (answer) => answer.skillId === skillId && answer.outcome === "correct",
-          ),
+          confirming:
+            !firstSitting &&
+            evidence.some((answer) => answer.skillId === skillId && answer.outcome === "correct"),
           items,
           quickFormat,
           skillId,

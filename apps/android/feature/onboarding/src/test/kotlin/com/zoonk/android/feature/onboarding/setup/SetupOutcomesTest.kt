@@ -16,10 +16,9 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.PlacementPart
 import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
-import com.zoonk.android.feature.placementtest.LevelTestPlanViewModel
+import com.zoonk.android.feature.placementtest.PlacementTestViewModel
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
@@ -82,7 +81,8 @@ class SetupOutcomesTest {
                         session: AuthenticatedSession,
                         goalId: String,
                         fromScratch: Boolean,
-                        attempt: PlacementPart?,
+                        attemptId: java.util.UUID?,
+                        answered: Long?,
                     ): PlacementCompletion {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
@@ -219,114 +219,47 @@ class SetupOutcomesTest {
         }
 
     @Test
-    fun aLevelTestSkipContinuesOnceAndStaysPressedUntilTheStepSaves() =
+    fun firstLessonStartsFromScratchThenTheSetupGoesOnOnce() =
         check { store, _ ->
-            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
-            val answer = CompletableDeferred<WriteOutcome<Unit>>()
+            val vm = PlacementTestViewModel(GOAL_ID, store, SavedStateHandle()).kept()
             var saves = 0
 
-            vm.skip()
+            vm.decline()
             runCurrent()
-            assertEquals(Pressed.Other, vm.pressed)
-            assertNull(vm.skipped.value)
+            assertEquals(Pressed.Main, vm.pressed)
+            assertNull(vm.declined.value)
 
             gate.complete(Unit)
             runCurrent()
-            assertEquals(Pressed.Other, vm.pressed)
-            repeat(2) {
-                vm.skipped.act {
-                    saves++
-                    vm.completeSkip(answer)
-                }
-            }
-            runCurrent()
-            assertEquals(1, saves)
-            assertEquals(Pressed.Other, vm.pressed)
+            repeat(2) { vm.declined.act { saves++ } }
 
-            answer.complete(WriteOutcome.Done(Unit))
-            runCurrent()
+            assertEquals(1, saves)
             assertNull(vm.pressed)
             assertFalse(vm.failed)
         }
 
     @Test
-    fun aLevelTestSkipThatFailsToFinishDoesNotContinue() =
+    fun firstLessonThatFailsToSaveStaysAndSaysSo() =
         check(fails = true) { store, _ ->
-            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
-            vm.skip()
+            val vm = PlacementTestViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.decline()
             gate.complete(Unit)
             runCurrent()
 
-            assertNull(vm.skipped.value)
-            assertNull(vm.pressed)
+            assertNull(vm.declined.value)
             assertTrue(vm.failed)
         }
 
     @Test
-    fun aLevelTestSkipThatFailsToSaveTheStepShowsTheSkipFailure() =
+    fun firstLessonThatSavesAfterTheSetupWasLeftGoesNowhere() =
         check { store, _ ->
-            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
-            vm.skip()
-            gate.complete(Unit)
-            runCurrent()
-            vm.skipped.act { vm.completeSkip(CompletableDeferred(WriteOutcome.Failed)) }
-            runCurrent()
-
-            assertNull(vm.pressed)
-            assertTrue(vm.failed)
-        }
-
-    @Test
-    fun aLevelTestSkipThatFinishesAfterLeavingDoesNotContinue() =
-        check { store, _ ->
-            val vm = LevelTestPlanViewModel(GOAL_ID, store, SavedStateHandle()).kept()
-            vm.skip()
+            val vm = PlacementTestViewModel(GOAL_ID, store, SavedStateHandle()).kept()
+            vm.decline()
             runCurrent()
             vm.visit.end()
             gate.complete(Unit)
             runCurrent()
 
-            assertNull(vm.skipped.value)
-        }
-
-    @Test
-    fun aPlacementFinishThatFailsAfterTheSetupWasLeftSaysNothingOnReturn() =
-        check(fails = true) { store, _ ->
-            val vm = PlacementViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
-            vm.finish(fromScratch = false)
-            runCurrent()
-            vm.visit.end()
-            gate.complete(Unit)
-            runCurrent()
-
-            assertFalse(vm.finishFailed)
-        }
-
-    @Test
-    fun aPlacementStopThatFailsWhileTheSetupIsRecreatedSaysSoOnItsQuestion() =
-        check(fails = true) { store, _ ->
-            val vm = PlacementViewModel(GOAL_ID, store, SavedStateHandle()) { WriteOutcome.Done(Unit) }.kept()
-            vm.finish(fromScratch = false, fromQuestion = true)
-            gate.complete(Unit)
-            runCurrent()
-
-            assertEquals(1, vm.saveFailures)
-        }
-
-    @Test
-    fun aPlacementFinishSavesTheSetupsStepItWasGiven() =
-        check { store, _ ->
-            var saved = 0
-            val vm =
-                PlacementViewModel(GOAL_ID, store, SavedStateHandle()) {
-                    saved++
-                    WriteOutcome.Done(Unit)
-                }.kept()
-            vm.finish(fromScratch = true)
-            gate.complete(Unit)
-            runCurrent()
-
-            assertEquals(1, saved)
-            assertFalse(vm.finishFailed)
+            assertNull(vm.declined.value)
         }
 }

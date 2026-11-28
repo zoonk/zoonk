@@ -11,7 +11,7 @@ import SwiftUI
 struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
   let title: Text
   var chip: Chip?
-  /// Where the learner is, at the chip's row's end: a test's time.
+  /// Where the learner is, on its own line under the chip: a test's time.
   var position: Text?
   /// A step keeps its chip's room without one, so every step's title sits at one height.
   var keepsChipRoom = false
@@ -82,13 +82,15 @@ struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
         }
       }
 
+      if let supporting {
+        supporting
+          .typeStyle(supportingIsFacts ? .data : .body)
+          .foregroundStyle(.mutedForeground)
+      }
+
       if !facts.isEmpty {
         FactSegments(facts)
           .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-      } else if let supporting {
-        supporting
-          .typeStyle(supportingIsFacts ? .data : .body)
           .foregroundStyle(.mutedForeground)
       }
     }
@@ -100,6 +102,7 @@ struct PageHeader<Mark: View, Beside: View, Trailing: View>: View {
     AccessibilityStack(alignment: .firstTextBaseline, spacing: 10, stackedSpacing: 0) {
       title
         .typeStyle(.pageTitle)
+        .balancedLines()
         .foregroundStyle(Color(.foreground))
         .accessibilityAddTraits(.isHeader)
         .heroTitle()

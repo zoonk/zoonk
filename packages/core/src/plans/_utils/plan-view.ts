@@ -194,7 +194,7 @@ export async function buildPlanView({
     placementTest,
     writing,
   ] = await Promise.all([
-    loadPlanChangeViews({ goal, now, planId: context.plan.id, planVersion: context.plan.version }),
+    loadPlanChangeViews({ goal, now, planId: context.plan.id }),
     getAccess(context),
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),

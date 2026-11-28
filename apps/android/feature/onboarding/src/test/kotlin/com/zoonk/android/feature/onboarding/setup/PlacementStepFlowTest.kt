@@ -1,48 +1,38 @@
 package com.zoonk.android.feature.onboarding.setup
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.zoonk.android.data.ApiError
-import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
-import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
+import com.zoonk.android.feature.onboarding.OnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.PlacementPart
-import com.zoonk.android.feature.onboarding.WriteOutcome
 import com.zoonk.android.feature.onboarding.completionOf
 import com.zoonk.android.feature.onboarding.orderQuestion
+import com.zoonk.android.feature.onboarding.placementAttemptOf
 import com.zoonk.android.feature.onboarding.placementOf
+import com.zoonk.android.feature.onboarding.placementResultOf
 import com.zoonk.android.feature.onboarding.setupView
-import com.zoonk.android.feature.placementtest.SetupTestChoice
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.plan.plan
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
-import com.zoonk.api.models.PlacementAttempt
-import com.zoonk.api.models.PlacementLength
-import com.zoonk.api.models.TapAnswer
+import com.zoonk.api.models.PlacementAnswerInput
+import com.zoonk.api.models.PlacementAnswerResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,6 +44,10 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import java.util.UUID
 
+/**
+ * Onboarding's course test, as the server's `placement` sets it up: its offer, a start the learner asked for, the ways
+ * out behind ✕, and its result.
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class PlacementStepFlowTest {
@@ -61,36 +55,19 @@ class PlacementStepFlowTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private val api = FakeOnboardingApi()
-    private val planApi = FakePlanApi()
 
-    private fun show(inSetup: Boolean = false) {
+    private fun show(
+        mode: String = "offer",
+        through: OnboardingApi = api,
+    ) {
+        api.setup = { setupView(steps = listOf("placement", "plan"), placement = placementView(mode)) }
+        api.reply = { _, _ -> setupView(steps = listOf("plan")) }
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
-        val store = OnboardingStore(api, cache, session) { SignInResult.SignedIn }
+        val store = OnboardingStore(through, cache, session) { SignInResult.SignedIn }
         rule.setContent {
             ZoonkTheme {
-                if (inSetup) {
-                    GoalSetupScreen(
-                        AppRoute.GoalSetup(GOAL_ID),
-                        store,
-                        PlanStore(planApi, cache),
-                        false,
-                        rememberAppNavigator(),
-                    )
-                } else {
-                    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                        PlacementStep(
-                            GOAL_ID,
-                            "bar exam",
-                            GenerationRun(),
-                            onRetryRun = null,
-                            store,
-                            onProgress = {},
-                            onDone = { WriteOutcome.Done(Unit) },
-                            lengthChoice = SetupTestChoice(0, null, false) {},
-                        )
-                    }
-                }
+                GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, PlanStore(FakePlanApi(), cache), false, rememberAppNavigator())
             }
         }
     }
@@ -101,219 +78,132 @@ class PlacementStepFlowTest {
         node.performClick()
     }
 
+    /** The test's open at its question [number]; [answered] questions are behind it. */
+    private fun asking(answered: Long) = placementOf(next = orderQuestion()).copy(attempt = placementAttemptOf(answered = answered))
+
     @Test
-    fun anAnswerThatDidNotGoThroughIsSentAgainAsItWas() {
-        api.writeFailure = ApiException(ApiError.Network)
+    fun theOfferStartsTheTestUnderItsChapterAtItsFirstQuestion() {
+        api.placement = placementOf(next = null, status = "done")
+        api.sitting = { asking(0) }
         show()
+
+        rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
+        rule.onNodeWithText("Up to 8 questions").assertIsDisplayed()
         tap("Start")
-        tap("The Supreme Court")
-        tap("Confirm")
 
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        api.writeFailure = null
-        tap("Confirm")
-
-        assertEquals(2, api.placementAnswers.size)
-        assertEquals(api.placementAnswers[0], api.placementAnswers[1])
-        rule.onNodeWithText("Your answers are saved").assertIsDisplayed()
+        assertEquals(1, api.sittingsStarted)
+        rule.onNodeWithText("Civil procedure").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Question 1 of 8").assertIsDisplayed()
     }
 
     @Test
-    fun startReadsThePlacementFirstSoQuestionsWrittenMeanwhileOpenWithoutTheWait() {
-        api.placement = placementOf(status = "preparing", next = null)
-        show()
-        api.placement = placementOf()
-        val read = CompletableDeferred<Unit>()
-        api.placementGate = read
-        tap("Start")
+    fun aLearnerWhoAskedForTheTestStartsItWithoutTheOffer() {
+        api.placement = placementOf(next = null, status = "done")
+        api.sitting = { asking(0) }
+        show(mode = "direct")
 
-        rule.onNodeWithText("Getting your test ready").assertDoesNotExist()
-        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
-        rule.onNodeWithText("Start").assertIsNotEnabled()
-        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
-
-        read.complete(Unit)
-
-        rule.onNodeWithText("Question 1").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Question 1 of 8").assertIsDisplayed()
+        rule.onNodeWithText("Where would you like to start?").assertDoesNotExist()
+        assertEquals(1, api.sittingsStarted)
     }
 
     @Test
-    fun aStartWhoseReadFailedWaitsAndReadsAgainInsteadOfOpeningQuestionsReadBefore() {
+    fun firstLessonStartsFromScratchAndGoesOnWithoutATest() {
+        api.placement = placementOf(next = null, status = "done")
         show()
-        api.placementGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
-        tap("Start")
+        tap("First lesson")
+        tap("Continue")
+        rule.waitUntil(WAIT_MS) { api.answers.isNotEmpty() }
 
-        rule.onNodeWithText("Getting your test ready").assertIsDisplayed()
-        rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
-
-        api.placementGate = null
-        api.placement = placementOf(next = orderQuestion())
-        rule.mainClock.advanceTimeBy(POLL_MS)
-
-        rule.onNodeWithText("Put a civil case's stages in order.").assertIsDisplayed()
+        assertEquals(listOf<UUID?>(null), api.finishedAttempts)
+        assertEquals(0, api.sittingsStarted)
+        val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+        assertEquals(null, answer.value.attemptId)
     }
 
     @Test
-    fun stopOnlyAppearsAfterAnAnswerIsSaved() {
-        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
-        show()
-        tap("Start")
+    fun beforeAnyAnswerTheCloseLeavesWithoutAskingHowToStop() {
+        api.placement = asking(0)
+        show(mode = "resume")
+        rule.onNodeWithContentDescription("Question 1 of 8").assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Leave").performClick()
 
         rule.onNodeWithText("Stop and use my answers").assertDoesNotExist()
-        tap("I don't know yet")
-        rule.onNodeWithText("Stop and use my answers").assertIsDisplayed()
+        rule.onNodeWithText("Finish later").assertDoesNotExist()
     }
 
     @Test
-    fun aStopWhoseOnboardingSaveFailsUsesTheQuestionFailureCount() {
-        api.setup = { setupView(steps = listOf("placement")) }
-        api.reply = { _, _ -> throw ApiException(ApiError.Network) }
-        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
-        show(inSetup = true)
-        tap("Start")
-        tap("I don't know yet")
+    fun withAnswersTheCloseOffersToStopAndStoppingShowsWhereTheLearnerStarts() {
+        api.placement = asking(1)
+        api.completion = completionOf().copy(lessonsSkipped = 4, result = placementResultOf())
+        show(mode = "resume")
+        rule.onNodeWithContentDescription("Question 2 of 8").assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Leave").performClick()
+        rule.onNodeWithText("Finish later").assertIsDisplayed()
         tap("Stop and use my answers")
+        rule.waitUntil(WAIT_MS) { api.finishedAttempts.isNotEmpty() }
 
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        tap("Stop and use my answers")
-
-        rule.onNodeWithText("Still not going through. You can come back later.").assertIsDisplayed()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-        assertEquals(2, api.answers.size)
-        api.reply = { _, _ -> setupView(steps = listOf("plan")) }
-        tap("Stop and use my answers")
-
-        assertEquals(3, api.answers.size)
-        rule.onNodeWithText("Which court hears appeals from state courts?").assertDoesNotExist()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
-    }
-
-    @Test
-    fun wholeCourseContinuesSetupWithTheFinishedPartsAttempt() {
-        val id = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
-        val part = PlacementAttempt(estimatedMinutes = 20, id = id, length = PlacementLength.WHOLE_COURSE, part = 1, partComplete = false)
-        api.setup = { setupView(steps = listOf("placement", "plan")) }
-        api.reply = { _, _ -> setupView(steps = listOf("plan")) }
-        api.sitting = { placementOf(next = orderQuestion()).copy(attempt = part) }
-        api.answered = { placementOf(status = "done", next = null, answered = 1).copy(attempt = part) }
-        api.completion = completionOf().copy(attempt = part.copy(partComplete = true), lessonsSkipped = 3)
-        planApi.shownPlan =
-            plan(""" "placementTest":{"kind":"learn","state":"start","estimatedMinutes":20,"attempt":null,"result":null} """)
-
-        show(inSetup = true)
-        tap("Whole course")
-        tap("Start")
-        assertEquals(0, api.placementAnswers.size)
-        tap("Confirm")
-        val order = api.placementAnswers.single().answer as TapAnswer.OrderAnswerValue
-        assertEquals(listOf(0L, 1L, 2L, 3L), order.value.order)
-
-        assertEquals(listOf(PlacementPart(id, 1)), api.finishedParts)
-        assertEquals(emptyList<Pair<String, OnboardingAnswerInput>>(), api.answers)
+        assertEquals(listOf<UUID?>(ID), api.finishedAttempts)
+        assertEquals(listOf<Long?>(1), api.finishedAnswered)
+        rule.onNodeWithText("You start here").assertIsDisplayed()
+        rule.onNodeWithText("Why prices move").assertIsDisplayed()
+        rule.onNodeWithContentDescription("4 lessons skipped").assertIsDisplayed()
+        rule.onNodeWithText("News, results and expectations").assertIsDisplayed()
+        rule.onNodeWithText("Undo").assertIsDisplayed()
         tap("Continue")
+        rule.waitUntil(WAIT_MS) { api.answers.isNotEmpty() }
 
         val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
-        assertEquals(id, answer.value.attemptId)
-        assertEquals(listOf(PlacementLength.WHOLE_COURSE), api.sittingLengths)
+        assertEquals(ID, answer.value.attemptId)
     }
 
     @Test
-    fun stopStaysBusyUntilItsOnboardingAnswerSettles() {
-        api.setup = { setupView(steps = listOf("placement")) }
-        api.answered = { placementOf(next = orderQuestion(), answered = 1) }
-        val save = CompletableDeferred<Unit>()
-        api.answerGate = save
-        show(inSetup = true)
-        tap("Start")
-        tap("I don't know yet")
-        tap("Stop and use my answers")
+    fun whileAnAnswerSavesTheWaysOutCannotStopUntilItSettles() {
+        val reply = CompletableDeferred<Unit>()
+        val gated =
+            object : OnboardingApi by api {
+                override suspend fun answerPlacement(
+                    session: AuthenticatedSession,
+                    goalId: String,
+                    input: PlacementAnswerInput,
+                ): PlacementAnswerResult {
+                    reply.await()
+                    return api.answerPlacement(session, goalId, input)
+                }
+            }
+        api.placement = asking(1)
+        api.answered = { asking(2) }
+        show(mode = "resume", through = gated)
+        tap("Confirm")
 
+        rule.onNodeWithContentDescription("Leave").performClick()
         rule.onNodeWithText("Stop and use my answers").assertIsNotEnabled()
-        rule.onNodeWithText("Confirm").assertIsNotEnabled()
-        rule.onNodeWithText("I don't know yet").assertIsNotEnabled()
-        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate), useUnmergedTree = true).assertExists()
-        save.completeExceptionally(ApiException(ApiError.Network))
+        rule.onNodeWithText("Finish later").assertIsEnabled()
 
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+        reply.complete(Unit)
+        rule.waitForIdle()
+        rule.onNodeWithText("Stop and use my answers").assertIsEnabled()
     }
 
     @Test
-    fun aFailedWaitingSkipDoesNotCountAsAQuestionFailure() {
-        api.placement = placementOf(status = "preparing", next = null)
-        show()
-        tap("Start")
-        api.writeFailure = ApiException(ApiError.Network)
-        rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip the test")
-        api.writeFailure = null
-        api.placement = placementOf()
-        rule.mainClock.advanceTimeBy(POLL_MS)
+    fun aResultFromBeforeThePlanSaysOnlyWhereTheLearnerStarts() {
+        api.placement = placementOf(status = "done", next = null).copy(attempt = placementAttemptOf(answered = 7))
+        api.completion = completionOf().copy(result = placementResultOf(lessonsSkipped = 0, course = null, changeId = null))
+        show(mode = "resume")
+        tap("Continue")
+        rule.waitUntil(WAIT_MS) { api.finishedAttempts.isNotEmpty() }
 
-        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
-        api.writeFailure = ApiException(ApiError.Network)
-        tap("The Supreme Court")
-        tap("Confirm")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
-    }
-
-    @Test
-    fun aWaitingSkipWhoseSaveFailsAfterTheQuestionsOpenStillSaysSo() {
-        api.setup = { setupView(steps = listOf("placement")) }
-        api.placement = placementOf(status = "preparing", next = null)
-        val save = CompletableDeferred<Unit>()
-        api.answerGate = save
-        show(inSetup = true)
-        tap("Start")
-        rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip the test")
-        api.placement = placementOf()
-        rule.mainClock.advanceTimeBy(POLL_MS)
-        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
-        save.completeExceptionally(ApiException(ApiError.Network))
-
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
-        api.writeFailure = ApiException(ApiError.Network)
-        tap("The Supreme Court")
-        tap("Confirm")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
-    }
-
-    @Test
-    fun aWaitingSkipWhoseFinishFailsAfterTheQuestionsOpenStillSaysSo() {
-        api.setup = { setupView(steps = listOf("placement")) }
-        api.placement = placementOf(status = "preparing", next = null)
-        val finish = CompletableDeferred<Unit>()
-        api.placementFinishGate = finish
-        show(inSetup = true)
-        tap("Start")
-        rule.mainClock.advanceTimeBy(30_000)
-        tap("Skip the test")
-        api.placement = placementOf()
-        rule.mainClock.advanceTimeBy(POLL_MS)
-        rule.onNodeWithText("Which court hears appeals from state courts?").assertIsDisplayed()
-        finish.completeExceptionally(ApiException(ApiError.Network))
-
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertDoesNotExist()
-        api.writeFailure = ApiException(ApiError.Network)
-        tap("The Supreme Court")
-        tap("Confirm")
-
-        rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
-        rule.onNodeWithText("Still not going through. You can come back later.").assertDoesNotExist()
-        rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
+        rule.onNodeWithText("Why prices move").assertIsDisplayed()
+        rule.onNodeWithText("News, results and expectations").assertDoesNotExist()
+        rule.onNodeWithText("Undo").assertDoesNotExist()
     }
 
     private companion object {
-        const val POLL_MS = 3_500L
+        const val WAIT_MS = 5_000L
+        val ID: UUID = UUID.fromString("0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d")
+
+        fun placementView(mode: String) = """{"mode":"$mode","test":{"kind":"course","offer":{"estimatedMinutes":4,"questions":8}}}"""
     }
 }

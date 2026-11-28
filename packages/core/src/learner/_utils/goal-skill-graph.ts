@@ -32,6 +32,7 @@ export { type GoalPlanSource } from "./goal-plan-source";
 export type GoalSkillNode = PlacementSkill & {
   areaId: string;
   areaTitle: string;
+  topicTitle?: string;
   memberSkillIds: string[];
   /** In a subject the learner took out of the plan; its lessons stay in the plan's history. */
   removed: boolean;
@@ -224,6 +225,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
   );
 
   const graph = parsePlanGraph(plan.graph);
+  const names = new Map(graph.skills.map((skill) => [skill.skillId, skill.name]));
   const sections = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
 
   const removed = listRemovedSkillIds({
@@ -271,6 +273,7 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
       prerequisiteIds: prerequisites.get(entry.skillId) ?? [],
       removed: removed.has(entry.skillId),
       sectionTitle: sections.get(entry.skillId) ?? itemSections.get(entry.planItemId) ?? null,
+      topicTitle: names.get(entry.skillId),
     })),
   };
 }
@@ -311,6 +314,14 @@ export function loadPlacementPlan(
   tx: TransactionClient = prisma,
 ): Promise<GoalPlan> {
   return loadTextTestPlan({ goalId, tx, withLeftOut: true });
+}
+
+/** Includes course topics beyond the laid-out lessons, using the saved plan on render paths. */
+export function loadCoursePlacementPlan(
+  goalId: string,
+  { source, tx }: { source?: GoalPlanSource; tx?: TransactionClient } = {},
+): Promise<GoalPlan> {
+  return loadPlan({ goalId, sharedLibrary: source !== undefined, source, tx, withLeftOut: true });
 }
 
 /** Preserves plan order. */

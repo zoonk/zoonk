@@ -28,13 +28,14 @@ final class LevelTestAudioTests: XCTestCase {
   ) -> LevelTest.Question {
     LevelTest.Question(
       id: id, options: ["A", "B"], passage: "Hallo, hier ist Anna.", question: "Who calls?",
-      skill: .listening, audio: audio.map(LevelTest.Question.Audio.init), audioPending: pending)
+      skill: .listening, audio: audio.map { LevelTest.Question.Audio(url: $0) },
+      audioPending: pending)
   }
 
   private func test(showing question: LevelTest.Question) -> LevelTest {
     LevelTest(
-      status: .ready, showAlphabetNote: false, startedAt: nil, answered: 2, total: 10, levels: [],
-      next: LevelTest.Next(kind: "question", question: question, speaking: nil))
+      status: .ready, startedAt: nil, answered: 2, total: 12, estimatedMinutes: 6, levels: [],
+      next: LevelTest.Next(kind: "question", question: question))
   }
 
   func testTheQuestionTakesItsClipOnceAReadHasIt() async throws {
@@ -69,8 +70,28 @@ final class LevelTestAudioTests: XCTestCase {
       try reads.next()
     }
 
-    XCTAssertEqual(shown, question())
+    XCTAssertEqual(shown?.audioPending, false, "The play button can ask for the message")
+    XCTAssertEqual(shown?.audioUnconfirmed, true, "Nothing said whether a clip is coming")
     XCTAssertEqual(reads.calls, 3)
+  }
+
+  func testAMessageShowsTheTimeItTakesToHearRoundedToTheSecond() {
+    XCTAssertEqual(heardSeconds(clip: 8.5), 9)
+    XCTAssertEqual(heardSeconds(clip: 8.0), 9)
+    XCTAssertEqual(heardSeconds(clip: 3.0), 3)
+  }
+
+  func testAMessageNotConfirmedYetIsSkippedOnlyUntilItsHeard() {
+    var unconfirmed = question()
+    unconfirmed.audioUnconfirmed = true
+
+    XCTAssertTrue(
+      LevelTestQuestionScreen.skips(unconfirmed, audioFailed: false, heard: false),
+      "A learner who never got a recording skips this question, never the test's listening")
+    XCTAssertFalse(LevelTestQuestionScreen.skips(unconfirmed, audioFailed: false, heard: true))
+    XCTAssertTrue(
+      LevelTestQuestionScreen.skips(question(pending: true), audioFailed: false, heard: false))
+    XCTAssertFalse(LevelTestQuestionScreen.skips(question(), audioFailed: false, heard: false))
   }
 
   func testAReadThatWorksStartsTheFailuresOver() async throws {

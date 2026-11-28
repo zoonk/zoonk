@@ -46,18 +46,12 @@ class FocusTestPhaseTest {
     }
 
     @Test
-    fun neverOpensOnAQuestionASittingWithAnswersWaitsOnItsResumeScreenCountingEverySavedAnswer() {
-        val test = focusTestOf(asked = 6, sitting = focusSittingOf(answered = 1), offer = null, checkpoint = focusCheckpointOf())
-        val shown = phase(placementOf(next = QUESTION, answered = 7, focusTest = test))
+    fun aLearnerComingBackToAnOpenSittingGoesOnAtItsNextQuestion() {
+        val answered = focusTestOf(asked = 6, sitting = focusSittingOf(answered = 1), offer = null, checkpoint = focusCheckpointOf())
+        val unanswered = focusTestOf(sitting = focusSittingOf(questions = 6), offer = focusOfferOf(minutes = 6))
 
-        assertEquals(7L, (shown as FocusTestPhase.Resume).answered)
-    }
-
-    @Test
-    fun offersASittingLeftBeforeItsFirstAnswerAgainWithItsOwnTime() {
-        val shown = phase(ready(focusTestOf(sitting = focusSittingOf(questions = 12), offer = focusOfferOf(minutes = 12)), next = QUESTION))
-
-        assertEquals(12, (shown as FocusTestPhase.Offer).minutes)
+        assertTrue(phase(placementOf(next = QUESTION, answered = 7, focusTest = answered)) is FocusTestPhase.Question)
+        assertTrue(phase(ready(unanswered, next = QUESTION)) is FocusTestPhase.Question)
     }
 
     @Test

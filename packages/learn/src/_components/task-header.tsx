@@ -166,8 +166,9 @@ export function TaskHeaderTitle({
   }
 
   return (
-    <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
-      <h1 className={TASK_TITLE_CLASS}>{title}</h1>
+    // One line, so a long title never moves what's under the bar.
+    <div className="flex max-w-full min-w-0 flex-col items-center text-center">
+      <h1 className={cn(TASK_TITLE_CLASS, "max-w-full truncate")}>{title}</h1>
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}
@@ -211,18 +212,37 @@ const SEGMENT_CLASS: Record<TaskSegment, string> = {
   wrong: "bg-destructive",
 };
 
+function groupSegments<Item>(items: readonly Item[], groups: readonly number[] | undefined) {
+  const sizes = groups && groups.length > 0 ? groups : [items.length];
+
+  const starts = sizes.map((_, index) =>
+    sizes.slice(0, index).reduce((sum, size) => sum + size, 0),
+  );
+
+  return starts
+    .map((start, index) => ({ items: items.slice(start, start + (sizes[index] ?? 0)), start }))
+    .filter((group) => group.items.length > 0);
+}
+
+/**
+ * `done` is answered with no verdict, for a test that never says right or wrong. `groups` are the
+ * sizes of the task's sections in order, drawn with a wider gap between them.
+ */
 export function TaskHeaderSegments({
+  groups,
   label,
   segments,
   value,
   weights,
 }: {
+  groups?: readonly number[];
   label: string;
   segments: readonly TaskSegment[];
   value: number;
   weights?: readonly number[];
 }) {
   const locale = useAppLocale();
+  const gap = segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-0.5";
 
   return (
     <ProgressRoot
@@ -232,21 +252,30 @@ export function TaskHeaderSegments({
       locale={getFormattingLocale(locale)}
       value={Math.min(100, Math.max(0, value))}
     >
-      <span
-        aria-hidden="true"
-        className={cn("flex h-1 w-full", segments.length > DENSE_SEGMENTS ? "gap-px" : "gap-0.5")}
-      >
-        {segments.map((segment, index) => (
+      <span aria-hidden="true" className="flex h-1 w-full gap-1.5">
+        {groupSegments(segments, groups).map((group) => (
           <span
-            className={cn(
-              "flex min-w-0 flex-1 overflow-hidden rounded-xs transition-colors motion-reduce:transition-none",
-              SEGMENT_CLASS[segment],
-            )}
-            data-segment={segment}
-            // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
-            key={index}
-            style={weights ? { flexGrow: Math.max(1, weights[index] ?? 1) } : undefined}
-          />
+            className={cn("flex min-w-0 basis-0", gap)}
+            key={group.start}
+            style={{ flexGrow: group.items.length }}
+          >
+            {group.items.map((segment, offset) => (
+              <span
+                className={cn(
+                  "flex min-w-0 flex-1 overflow-hidden rounded-xs transition-colors motion-reduce:transition-none",
+                  SEGMENT_CLASS[segment],
+                )}
+                data-segment={segment}
+                // oxlint-disable-next-line react/no-array-index-key -- Segments are positions, not items.
+                key={offset}
+                style={
+                  weights
+                    ? { flexGrow: Math.max(1, weights[group.start + offset] ?? 1) }
+                    : undefined
+                }
+              />
+            ))}
+          </span>
         ))}
       </span>
     </ProgressRoot>

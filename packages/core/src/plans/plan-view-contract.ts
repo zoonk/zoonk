@@ -11,6 +11,7 @@ import {
 } from "../language/level-test/level-test-contract";
 import { type FocusTestSummary } from "../learner/placement/focus-test-contract";
 import {
+  coursePlacementOfferSchema,
   placementAttemptViewSchema,
   placementResultSchema,
 } from "../learner/placement/placement-contract";
@@ -196,14 +197,17 @@ export const planPlacementTestSchema = z
       ...placementRowShape,
       attempt: placementAttemptViewSchema.nullable(),
       kind: z.literal("learn"),
+      offer: coursePlacementOfferSchema.nullable(),
       result: placementResultSchema.nullable(),
     }),
     z.object({
       ...placementRowShape,
+      answered: z.int().nonnegative().optional(),
       attempt: placementAttemptViewSchema.nullable(),
       kind: z.literal("language"),
       nextTestOutLevel: levelTestOutLevelSchema.nullable(),
       result: levelTestResultSchema.nullable(),
+      total: z.int().positive().optional(),
     }),
   ])
   .meta({ id: "PlanPlacementTest" });

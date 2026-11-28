@@ -389,6 +389,8 @@ struct PracticeSecondaryButton: View {
 
   let title: LocalizedStringResource
   let icon: ActionIcon?
+  /// Every label the button shows in turn, so it keeps the widest one's width.
+  var steadyAmong: [LocalizedStringResource] = []
   var isTight = false
   var isBusy = false
   var isDisabled = false
@@ -396,7 +398,7 @@ struct PracticeSecondaryButton: View {
 
   var body: some View {
     BusyButton(isBusy: isBusy, icon: icon, action: action) {
-      Text(title)
+      SteadyLabel(title, among: steadyAmong)
     }
     .buttonStyle(isTight && !isWide ? .outline.tight : .outline)
     .controlSize(.large)
@@ -410,14 +412,16 @@ struct PracticeSecondaryButton: View {
 /// phone's bar, with tighter padding, so the main action beside it keeps the larger part of the row.
 struct QuestionDontKnowButton: View {
   let title: LocalizedStringResource
+  /// Every label it shows in turn, as a listening question's.
+  var steadyAmong: [LocalizedStringResource] = []
   var isBusy = false
   var isDisabled = false
   let action: () -> Void
 
   var body: some View {
     PracticeSecondaryButton(
-      title: title, icon: nil, isTight: true, isBusy: isBusy, isDisabled: isDisabled,
-      action: action)
+      title: title, icon: nil, steadyAmong: steadyAmong, isTight: true, isBusy: isBusy,
+      isDisabled: isDisabled, action: action)
   }
 }
 

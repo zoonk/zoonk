@@ -39,23 +39,28 @@ struct Chip: View {
   }
 }
 
-/// Main's `OnboardingSubject`: where the learner is sits at the chip's row's end, never inside it.
+/// Main's `OnboardingSubject`: where the learner is sits on its own line under the chip, never
+/// inside it, so a topic's name never moves it or what follows from one screen to the next.
 struct ChipRow: View {
   let chip: Chip
   var position: Text?
 
   var body: some View {
-    HStack(spacing: 12) {
+    VStack(alignment: .leading, spacing: 4) {
       chip
-        .frame(maxWidth: .infinity, alignment: .leading)
 
       if let position {
-        position
-          .typeStyle(.data)
-          .foregroundStyle(.mutedForeground)
-          .fixedSize()
+        styled(position)
+          .fixedSize(horizontal: false, vertical: true)
       }
     }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  private func styled(_ position: Text) -> some View {
+    position
+      .typeStyle(.data)
+      .foregroundStyle(.mutedForeground)
   }
 }
 

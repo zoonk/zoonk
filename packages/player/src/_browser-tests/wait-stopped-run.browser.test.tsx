@@ -10,7 +10,10 @@ import { type DayStep, type LessonReadiness } from "@zoonk/learn/session/types";
 import { createContext, use } from "react";
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest";
 import { page } from "vitest/browser";
-import { PlacementWaiting } from "../../../learn/src/onboarding/steps/placement-waiting";
+import {
+  PlacementWaiting,
+  useWaitLeave,
+} from "../../../learn/src/onboarding/steps/placement-waiting";
 import { render } from "../_test-utils/render";
 
 const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
@@ -117,19 +120,29 @@ function UpNext({
   );
 }
 
+/** Onboarding's placement wait, with the way on its screens give it. */
+function OnboardingPlacementWait({ deck, run }: { deck: WarmUpDeck; run: GenerationRun }) {
+  const skip = useWaitLeave(true);
+
+  return (
+    <PlacementWaiting
+      buildFailed={false}
+      onQuestions={vi.fn()}
+      onSkip={vi.fn()}
+      poll={{ restart: vi.fn(), status: "polling" }}
+      questionsReady={false}
+      readWarmUp={async () => deck}
+      run={{ ...run, warmUpId: deck.id }}
+      skip={skip}
+      skipping={false}
+    />
+  );
+}
+
 function Placement({ deck, run }: { deck: WarmUpDeck; run: GenerationRun }) {
   return (
     <LearnProvider adapters={ADAPTERS}>
-      <PlacementWaiting
-        buildFailed={false}
-        onQuestions={vi.fn()}
-        onSkip={vi.fn()}
-        poll={{ restart: vi.fn(), status: "polling" }}
-        questionsReady={false}
-        readWarmUp={async () => deck}
-        run={{ ...run, warmUpId: deck.id }}
-        skipping={false}
-      />
+      <OnboardingPlacementWait deck={deck} run={run} />
     </LearnProvider>
   );
 }

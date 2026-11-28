@@ -302,6 +302,8 @@ struct LevelTest: Decodable, Equatable, Sendable {
   struct Question: Decodable, Equatable, Sendable {
     struct Audio: Decodable, Equatable, Sendable {
       let url: URL
+      /// How long the clip plays, when known.
+      var durationMs: Int?
     }
 
     let id: String
@@ -314,34 +316,39 @@ struct LevelTest: Decodable, Equatable, Sendable {
     let audio: Audio?
     /// The bank's run may still be voicing the message.
     var audioPending: Bool
-  }
+    /// The wait for the message's clip stopped hearing back, so nothing said whether one is coming:
+    /// the play button asks for the message, and skipping still skips this question only.
+    var audioUnconfirmed = false
 
-  struct Sentence: Decodable, Equatable, Sendable {
-    let sentence: String
-    let translation: String
+    private enum CodingKeys: String, CodingKey {
+      case id, options, passage, question, skill, audio, audioPending
+    }
   }
 
   struct Next: Decodable, Equatable, Sendable {
     /// `question`; `confirmation`, a question at the level the answers propose, where every right
-    /// option is picked; `speaking`; or `done`.
+    /// option is picked; or `done`.
     let kind: String
     let question: Question?
-    let speaking: Sentence?
 
     var isQuestion: Bool { kind == "question" || kind == "confirmation" }
   }
 
-  /// The test taken from the plan; nil for onboarding's.
+  /// The open test; nil before one starts.
   var attemptId: String?
-  var length: PlacementLength?
-  /// The last finished test taken from the plan.
+  /// The last finished test.
   var result: PlacementTestResult?
   let status: Status
-  let showAlphabetNote: Bool
   /// Set while a run writes the pair's questions.
   let startedAt: Date?
   let answered: Int?
-  let total: Int?
+  /// Whether stopping now saves something: at least one skill's questions are done. Only a ready
+  /// test that's still open says so.
+  var canStop: Bool?
+  /// The test's ceiling, its check included, fixed before the first question.
+  let total: Int
+  /// About how long its questions take.
+  let estimatedMinutes: Int
   let levels: [Level]?
   let next: Next?
 }

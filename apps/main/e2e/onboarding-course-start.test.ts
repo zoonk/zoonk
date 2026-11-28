@@ -276,14 +276,17 @@ test.describe("Starting a course from its page", () => {
     await page.goto(coursePath);
     await startFromHero(page, { name: course.title });
     await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
-    const start = await holdActionAnswer(page, `/start/course/${course.id}*`);
 
-    await startCourseWithLevel(page);
-    await start.held;
-    await page.goBack();
-    await expect(page).toHaveURL((url) => url.pathname === coursePath);
+    const followed = await holdActionAnswer(page, `/start/course/${course.id}*`, {
+      away: GOAL_URL,
+      start: () => startCourseWithLevel(page),
+      whileHeld: async () => {
+        await page.goBack();
+        await expect(page).toHaveURL((url) => url.pathname === coursePath);
+      },
+    });
 
-    expect(await start.release(GOAL_URL)).toBe(false);
+    expect(followed).toBe(false);
     await expect(page).toHaveURL((url) => url.pathname === coursePath);
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(1);
   });

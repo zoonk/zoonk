@@ -130,12 +130,32 @@ describe("the Focus test on a plan whose time is short", () => {
     await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
       plan: {
         focusTest: {
-          offer: { minutes: 15 },
+          offer: { minutes: 6, questions: 6 },
           sessionQuestions: "off",
           state: "notStarted",
           suggestsFocus: true,
         },
       },
+    });
+  });
+
+  it("reports the open Focus sitting's answer count and ceiling on Plan", async () => {
+    const { goal } = await shortPlanExamGoalFixture({ goal: PLAN_SHOWN });
+    const opened = await startSitting(goal.id);
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { focusTest: { sitting: { answered: 0, questions: 6 }, state: "sitting" } },
+    });
+
+    const itemId = opened.next?.itemId ?? "";
+
+    await answerPlacementQuestion({
+      goalId: goal.id,
+      input: { answer: await pickInPlacement({ itemId }), durationMs: 20_000, itemId },
+    });
+
+    await expect(getGoalPlan(goal.id)).resolves.toMatchObject({
+      plan: { focusTest: { sitting: { answered: 1, questions: 6 }, state: "sitting" } },
     });
   });
 

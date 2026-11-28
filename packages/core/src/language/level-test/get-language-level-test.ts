@@ -14,7 +14,7 @@ export async function getLanguageLevelTest(
   goalId: string,
   attemptId?: string,
 ): Promise<LanguageLevelTestResult> {
-  const context = await loadLevelTestContext(goalId, attemptId);
+  const context = await loadLevelTestContext(goalId, attemptId ?? { latest: true });
 
   if (context.status !== "ready") {
     return context;

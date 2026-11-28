@@ -5,6 +5,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { oweFollowUps } from "../../../follow-ups/owe-follow-ups";
 import { hasCountryReading } from "../../../goals/_utils/goal-content-country";
 import { saveMetadataInTransaction } from "../../../goals/_utils/goal-metadata";
+import { readCourseProbes } from "../../../learner/placement/_utils/course-placement-bank";
 import { oweExamCountryResearch } from "../../../library/exams/exam-country";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { type OnboardingAnswerInput } from "../onboarding-contract";
@@ -12,7 +13,11 @@ import { getAnsweredQuestions } from "../onboarding-steps";
 
 function withoutAnswered(details: unknown) {
   return isJsonObject(details)
-    ? Object.fromEntries(Object.entries(details).filter(([key]) => key !== "answered"))
+    ? Object.fromEntries(
+        Object.entries(details).filter(
+          ([key]) => key !== "answered" && key !== "placementRequested",
+        ),
+      )
     : {};
 }
 
@@ -91,13 +96,20 @@ async function saveGoalAnswer({ current, data, input, own, tx }: AnswerGoal): Pr
     await tx.plan.update({ data: { placementPreparedAt: null }, where: { id: placement.id } });
   }
 
+  const placementTopics =
+    placement && current.kind === "learn" ? await readCourseProbes(current, tx) : null;
+
   await oweFollowUps({
     db: tx,
     followUps: [
       ...(placement
         ? [
             {
-              input: { goalId: current.id, waitsForNotice: current.kind === "exam" },
+              input: {
+                goalId: current.id,
+                ...(placementTopics && { skillIds: placementTopics.ids }),
+                waitsForNotice: current.kind === "exam",
+              },
               kind: "preparePlacementItems" as const,
             },
           ]

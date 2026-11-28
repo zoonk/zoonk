@@ -152,7 +152,7 @@ export async function loadPlannerInputs({
     ),
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
     findWrittenStartLessonId(goal),
-    loadCurrentLanguageLevel({ ...goal, userId }),
+    loadCurrentLanguageLevel({ ...goal, userId }, { forPlanning: true }),
     isExam ? loadPlanMockMisses({ goalId: goal.id, mockReplan, now }) : new Map<string, MockMiss>(),
   ]);
 

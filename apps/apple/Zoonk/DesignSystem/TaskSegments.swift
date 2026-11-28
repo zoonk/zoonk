@@ -4,6 +4,8 @@ import SwiftUI
 enum TaskSegment: Equatable {
   case ahead
   case current
+  /// Answered, in a test that never says right or wrong.
+  case done
   /// Read, or not graded right or wrong (a placement question, a statement left blank).
   case read
   case right
@@ -13,12 +15,19 @@ enum TaskSegment: Equatable {
 /// Main's `TaskHeaderSegments`: a task's progress under its bar, one segment per screen.
 struct TaskSegments: View {
   let segments: [TaskSegment]
+  /// The sizes of the task's sections in order (a level test's reading, listening and check), a
+  /// wider gap between them; without sizes, one run.
+  var groups: [Int] = []
   let label: Text
   var value: Text?
 
   var body: some View {
-    HStack(spacing: segments.count > 40 ? 1 : 3) {
-      ForEach(Array(segments.enumerated()), id: \.offset) { _, segment in
+    HStack(spacing: spacing) {
+      ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
+        if index > 0, groupStarts.contains(index) {
+          Color.clear.frame(width: 8 - 2 * spacing, height: 4)
+        }
+
         mark(segment)
           .frame(height: 4)
       }
@@ -28,12 +37,22 @@ struct TaskSegments: View {
     .accessibilityValue(value ?? Text(verbatim: ""))
   }
 
+  private var spacing: CGFloat { segments.count > 40 ? 1 : 3 }
+
+  /// Where each section after the first starts, so a wider gap goes before it.
+  private var groupStarts: Set<Int> {
+    Set(
+      groups.dropLast().reduce(into: [Int]()) { starts, size in
+        starts.append((starts.last ?? 0) + size)
+      })
+  }
+
   @ViewBuilder
   private func mark(_ segment: TaskSegment) -> some View {
     let shape = RoundedRectangle(cornerRadius: 2, style: .continuous)
 
     switch segment {
-    case .right: shape.fill(.success)
+    case .right, .done: shape.fill(.success)
     case .wrong: shape.fill(.destructive)
     case .read: shape.fill(Color(.foreground).opacity(0.25))
     case .current: shape.fill(Color.success.opacity(0.4))

@@ -158,7 +158,6 @@ function StepScreen({
   isGuest,
   onAnswer,
   onPlacementDone,
-  onPlacementFinishFailed,
   onViewChange,
   pending,
   plan,
@@ -174,7 +173,6 @@ function StepScreen({
   isGuest: boolean;
   onAnswer: (input: OnboardingAnswerInput) => Promise<boolean>;
   onPlacementDone: (attemptId?: string) => Promise<boolean>;
-  onPlacementFinishFailed: (failed: boolean) => void;
   /** A change made on a screen without answering it, such as the aim, read back. */
   onViewChange: (view: OnboardingView) => void;
   pending: boolean;
@@ -268,7 +266,6 @@ function StepScreen({
         <PlacementStepScreen
           actions={actions}
           onDone={onPlacementDone}
-          onFinishFailed={onPlacementFinishFailed}
           run={run}
           subject={subject}
           view={view}

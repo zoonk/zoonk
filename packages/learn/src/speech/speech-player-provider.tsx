@@ -21,16 +21,22 @@ type PlaybackEnd = "ended" | "failed" | "stopped";
 
 type PlaybackOwner = object;
 
+/** Where a clip is, in the clip's own time: a slower `rate` stretches both alike. */
+export type PlaybackTime = { elapsedMs: number; totalMs: number };
+
 type SpeechPlayer = {
   load: VoiceText;
   play: (input: {
     onStart: () => void;
+    onTime?: (time: PlaybackTime) => void;
     owner: PlaybackOwner;
     rate: number;
     url: string;
   }) => Promise<PlaybackEnd>;
   stop: (owner: PlaybackOwner) => void;
 };
+
+const MS_PER_SECOND = 1000;
 
 const SpeechPlayerContext = createContext<SpeechPlayer | null>(null);
 
@@ -79,14 +85,24 @@ function createSpeechPlayer(
     playing?.finish("stopped");
   };
 
-  const play: SpeechPlayer["play"] = ({ onStart, owner, rate, url }) => {
+  const play: SpeechPlayer["play"] = ({ onStart, onTime, owner, rate, url }) => {
     stopCurrent();
     const element = getAudio();
 
     return new Promise<PlaybackEnd>((resolve) => {
+      const tell = () => {
+        if (onTime && current === playback && Number.isFinite(element.duration)) {
+          onTime({
+            elapsedMs: element.currentTime * MS_PER_SECOND,
+            totalMs: element.duration * MS_PER_SECOND,
+          });
+        }
+      };
+
       const finish = (end: PlaybackEnd) => {
         element.removeEventListener("ended", onEnded);
         element.removeEventListener("error", onError);
+        element.removeEventListener("timeupdate", tell);
 
         if (current?.finish === finish) {
           current = null;
@@ -102,6 +118,7 @@ function createSpeechPlayer(
       current = playback;
       element.addEventListener("ended", onEnded);
       element.addEventListener("error", onError);
+      element.addEventListener("timeupdate", tell);
       element.src = url;
       element.preservesPitch = true;
       // Loading a source resets the rate to the default one, so both are set.
@@ -112,6 +129,7 @@ function createSpeechPlayer(
         () => {
           if (current === playback) {
             onStart();
+            tell();
           }
         },
         () => {

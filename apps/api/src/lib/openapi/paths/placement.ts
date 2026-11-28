@@ -152,7 +152,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement": {
     get: {
       description:
-        "Each phase's and each area's starting point, and what to do next (`status`). Placement asks the plan's areas in turns, starts each where the learner's own level points, asks harder questions after right answers and easier ones after wrong ones, and stops when every area of every phase has a confident starting point, not after a set number of questions. Before the goal's skill map exists, `status` is `preparing` and `complete` is false.",
+        "Each phase's and each area's starting point, and what to do next (`status`). A course attempt follows fixed parts in plan order, with up to twelve questions in each part. An exam's Focus test asks questions in a separate sitting. Before the goal's skill map exists, `status` is `preparing` and `complete` is false.",
       operationId: "getGoalPlacement",
       requestParams: { path: goalPathParamsSchema, query: placementQuerySchema },
       responses: {
@@ -237,7 +237,7 @@ export const placementPaths = {
   "/goals/{goalId}/placement/sittings": {
     post: {
       description:
-        "Starts or resumes a learn goal's placement attempt with length quick or wholeCourse. A language goal can start its whole-course topic walk after the Whole-course level assessment. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 when the goal has no test available or an attempt requires a length.",
+        "Starts or resumes a course placement attempt. The default is quick. A quick attempt can continue as the whole course without repeating its first part. For an exam goal, opens the sitting `focusTest.offer` describes, whose number of questions is fixed then (`sitting.questions`), and turns the test's session questions on. Asking again while a sitting is open returns that sitting. A learner whose plan wrote no test questions (they started from scratch) gets them written now, free: the state comes back `waitingForQuestions`; ask GET /goals/{goalId}/placement again soon. Every sitting is included in every plan, so it never answers a usage refusal. 404 when the goal has no test available.",
       operationId: "createPlacementSitting",
       requestBody: {
         content: { "application/json": { schema: placementSittingInputSchema } },

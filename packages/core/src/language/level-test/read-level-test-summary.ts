@@ -2,7 +2,6 @@ import { type Goal } from "@zoonk/db";
 import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
-import { readPlacementAttempt } from "../../learner/placement/_utils/placement-attempt-record";
 import { getTestStartingLevel } from "../levels/skill-level-rules";
 import {
   levelTestOutLevelSchema,
@@ -28,21 +27,17 @@ export function readLevelTestAttempts(goal: Pick<Goal, "details">) {
   return attemptStateSchema.safeParse(readLevelTestDetails(goal)).data ?? { usedConfirmations: [] };
 }
 
-export function hasOpenLanguageTopicWalk(goal: Pick<Goal, "details">): boolean {
-  return readPlacementAttempt(goal).attempt !== null;
-}
-
 function readOpenAttempt({ attempt, testOut }: ReturnType<typeof readLevelTestAttempts>) {
   if (attempt?.attemptId && !attempt.result) {
     return {
+      answered: attempt.answers.length,
       id: attempt.attemptId,
-      length: attempt.length ?? "quick",
       testOutLevel: attempt.testOutLevel,
     };
   }
 
   return testOut && !testOut.result && (testOut.preparingUntil || testOut.questions.length > 0)
-    ? { id: testOut.id, length: "quick" as const, testOutLevel: testOut.level }
+    ? { id: testOut.id, testOutLevel: testOut.level }
     : null;
 }
 

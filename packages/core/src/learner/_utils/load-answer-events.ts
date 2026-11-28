@@ -31,6 +31,7 @@ export async function loadAnswerEvents({
     where: {
       AND: [
         { answer: { equals: DbNull, path: ["placementPending"] } },
+        { answer: { equals: DbNull, path: ["courseSearch"] } },
         { answer: { equals: DbNull, path: ["practiceMistakeId"] } },
         { mockExamId: null },
       ],

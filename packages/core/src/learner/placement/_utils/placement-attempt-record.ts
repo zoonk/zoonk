@@ -1,22 +1,22 @@
-import { MS_PER_MINUTE } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
-import { isUuid } from "@zoonk/utils/uuid";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { LOW_GUESS_ANSWERS_TO_SKIP } from "../../_utils/placement-guess-rate";
-import { DAY_PLACEMENT_MINUTES } from "../placement-budget";
+import { COURSE_QUESTION_LIMIT } from "../course-search";
+import { getCourseMinutes } from "../placement-budget";
 import {
-  placementAttemptViewSchema,
-  type placementLengthSchema,
+  type coursePlacementOfferSchema,
+  type placementAttemptViewSchema,
+  placementFinishSchema,
+  placementLengthSchema,
   placementResultSchema,
 } from "../placement-contract";
 
 export type PlacementAttemptView = z.infer<typeof placementAttemptViewSchema>;
-export type PlacementLength = z.infer<typeof placementLengthSchema>;
 export type PlacementResult = z.infer<typeof placementResultSchema>;
 
 const partReceiptSchema = z.object({
+  finish: placementFinishSchema.optional(),
   heldUntilTomorrow: placementResultSchema.shape.heldUntilTomorrow,
   knownSkillIds: z.array(uuidSchema()),
   lessonsSkipped: z.number().int().nonnegative(),
@@ -24,25 +24,58 @@ const partReceiptSchema = z.object({
   testedOutPlanItemIds: z.array(uuidSchema()),
 });
 
-const attemptSchema = placementAttemptViewSchema.extend({
-  lessonsSkipped: z.number().int().nonnegative(),
-  partPrepared: z.boolean().optional(),
-  partSkillIds: z.array(uuidSchema()).optional(),
+const frozenTopicSchema = z.object({
+  askable: z.boolean(),
+  chapter: z.string().nullable(),
+  id: uuidSchema(),
+  itemIds: z.array(uuidSchema()).max(2),
+  lessons: z.int().nonnegative(),
+  sectionTitle: z.string().nullable(),
+});
+
+const attemptSchema = z.object({
+  id: uuidSchema(),
+  length: placementLengthSchema.default("quick"),
+  lessonsSkipped: z.number().int().nonnegative().default(0),
+  part: z.int().positive().default(1),
+  partComplete: z.boolean().default(false),
   partStartedAt: z.iso.datetime(),
-  remainingSkillIds: z.array(uuidSchema()).optional(),
-  skillIds: z.array(uuidSchema()),
+  search: z
+    .object({
+      failed: z.boolean().optional(),
+      position: z.number().min(0).max(1),
+      questions: z.int().min(1).max(COURSE_QUESTION_LIMIT),
+      topics: z.array(frozenTopicSchema).nullable(),
+    })
+    .optional(),
+  skillIds: z.array(uuidSchema()).default([]),
 });
 
 const recordSchema = z.object({
-  assessmentId: uuidSchema().optional(),
   attempt: attemptSchema.nullable(),
   finishedParts: z.array(partReceiptSchema).default([]),
-  quickFollowUpSkillIds: z.array(uuidSchema()).optional(),
-  result: placementResultSchema.nullable(),
+  result: placementResultSchema
+    .extend({
+      chapter: placementResultSchema.shape.chapter.default(null),
+      course: placementResultSchema.shape.course.default(null),
+      courseStart: z.boolean().optional(),
+      lessonsSkipped: placementResultSchema.shape.lessonsSkipped.default(0),
+      nextLesson: z
+        .object({
+          chapter: z.string().nullable().optional(),
+          estimatedMinutes: z.int().positive().optional(),
+          id: uuidSchema(),
+          title: z.string(),
+        })
+        .nullable()
+        .optional(),
+    })
+    .nullable(),
 });
 
 export type PlacementAttempt = z.infer<typeof attemptSchema>;
 export type PlacementRecord = z.infer<typeof recordSchema>;
+export type StoredPlacement = z.input<typeof recordSchema>;
 
 export function readPlacementAttempt(goal: { details: unknown }): PlacementRecord {
   const details = isJsonObject(goal.details) ? goal.details : {};
@@ -50,65 +83,17 @@ export function readPlacementAttempt(goal: { details: unknown }): PlacementRecor
   return record.data ?? { attempt: null, finishedParts: [], result: null };
 }
 
-export function readReadyAssessmentId(details: unknown): string | null {
-  const levelTest = isJsonObject(details) ? details.levelTest : null;
-  const attempt = isJsonObject(levelTest) ? levelTest.attempt : null;
-
-  if (
-    !isJsonObject(attempt) ||
-    !isJsonObject(attempt.result) ||
-    attempt.result.wholeCourseReady !== true ||
-    typeof attempt.attemptId !== "string" ||
-    !isUuid(attempt.attemptId)
-  ) {
+export function getCourseOffer(topics: number): z.infer<typeof coursePlacementOfferSchema> | null {
+  if (topics < 2) {
     return null;
   }
 
-  return attempt.attemptId;
-}
-
-export function readPendingTopicWalkAssessmentId(
-  goal: { details: unknown },
-  record = readPlacementAttempt(goal),
-): string | null {
-  const assessmentId = readReadyAssessmentId(goal.details);
-  return record.assessmentId === assessmentId ? null : assessmentId;
-}
-
-export function placementAttemptView(attempt: PlacementAttempt): PlacementAttemptView {
-  const { estimatedMinutes, id, length, part, partComplete } = attempt;
-  return { estimatedMinutes, id, length, part, partComplete };
-}
-
-const PART_MINUTES = 10;
-
-const QUESTIONS_PER_TOPIC = 1 + LOW_GUESS_ANSWERS_TO_SKIP;
-export const TOPICS_PER_PART = PART_MINUTES;
-
-export function getWholeCourseMinutes({
-  questions,
-  paceMs = MS_PER_MINUTE / QUESTIONS_PER_TOPIC,
-}: {
-  questions: number;
-  paceMs?: number;
-}) {
-  return Math.ceil((questions * paceMs) / MS_PER_MINUTE);
-}
-
-export function getPlacementEstimate({
-  length,
-  topics,
-}: {
-  length: PlacementLength;
-  topics: number;
-}) {
-  return length === "quick"
-    ? DAY_PLACEMENT_MINUTES
-    : getWholeCourseMinutes({ questions: topics * QUESTIONS_PER_TOPIC });
+  const questions = Math.min(COURSE_QUESTION_LIMIT, topics * 2);
+  return { estimatedMinutes: getCourseMinutes(questions), questions };
 }
 
 /** A topic is still ahead while one of its lessons is to do, or before it has any. */
-export function isTopicAhead(lessons: readonly { status: string }[] | undefined): boolean {
+function isTopicAhead(lessons: readonly { status: string }[] | undefined): boolean {
   return lessons?.some((lesson) => lesson.status === "todo") ?? true;
 }
 
@@ -121,4 +106,21 @@ export function getTopicsAhead(plan: GoalPlan) {
   );
 
   return plan.skills.filter((skill) => !skill.removed && isTopicAhead(itemsBySkill.get(skill.id)));
+}
+
+export function matchesAttempt({
+  attempt,
+  attemptId,
+  part,
+}: {
+  attempt: PlacementAttempt | null;
+  attemptId?: string;
+  part?: number;
+}): boolean {
+  if (!attemptId) {
+    // Released Android starts onboarding's quick course test without a sitting.
+    return attempt === null;
+  }
+
+  return attempt?.id === attemptId && !attempt.partComplete && (part ?? 1) === attempt.part;
 }

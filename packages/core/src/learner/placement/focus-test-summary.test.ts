@@ -33,7 +33,7 @@ describe(readTodayFocusTest, () => {
 
   it("suggests the test in the first week of a short plan that hasn't started it", () => {
     expect(readTodayFocusTest({ ...DAY_THREE, goal: examGoal(untouched) })).toStrictEqual({
-      minutes: 15,
+      minutes: 6,
     });
   });
 

@@ -1,5 +1,4 @@
 import "server-only";
-import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 import { parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -8,10 +7,10 @@ import { findSpeechClip, toSpeechClip } from "../../../audio/_utils/speech-clips
 import { type SpeechClip } from "../../../audio/speech-clip-contract";
 import { getSpeechClipKey } from "../../../audio/speech-clip-key";
 import { findOwnedGoal } from "../../../learner/_utils/owned-goal";
-import { unchanged, writeLearnerChange } from "../../../learner/_utils/write-learner-change";
 import { findRowsFixedSince } from "../../../staff/content-fixes/fixed-since";
 import { readGoalDetails } from "../../_utils/language-goal";
 import {
+  LANGUAGE_LEVEL_TEST_OFFER,
   LEVEL_TEST_PREPARING_SECONDS,
   type LanguageLevelTestView,
   type LevelTestBank,
@@ -20,22 +19,16 @@ import {
   type LevelTestQuestion,
   levelTestProgressSchema,
 } from "../level-test-contract";
-import {
-  getLevelTestFloors,
-  getNextLevelTestStep,
-  levelTestTotal,
-  listLevelTestLevels,
-} from "../level-test-rules";
+import { getLevelTestFloors, getNextLevelTestStep, listLevelTestLevels } from "../level-test-rules";
 import {
   readLevelTestAttempts,
   readLevelTestDetails,
   readLevelTestSummary,
 } from "../read-level-test-summary";
 import { type LevelTestBankState, loadLevelTestBank } from "./level-test-bank";
-import { type LevelTestAnswerRecord, recordLevelTestAnswer } from "./level-test-records";
 import { withLevelTestChange } from "./level-test-result-change";
 import { showLevelTestOptions } from "./level-test-shown-order";
-import { getLevelTestStartScore } from "./level-test-start-score";
+import { getLevelTestStart } from "./level-test-start-score";
 
 /** About how long the bank's run takes to voice its clips, retries included, after the questions. */
 const AUDIO_PENDING_MS = 90_000;
@@ -100,7 +93,7 @@ export function readLevelTestProgress(
   return {
     ...stored,
     ...(scores && { scores }),
-    start: stored.start ?? getLevelTestStartScore({ level: details.level }),
+    ...(stored.start === undefined ? getLevelTestStart(details.level) : { start: stored.start }),
   };
 }
 
@@ -135,53 +128,16 @@ function bankForAttempt(
 
   return {
     ...bank,
-    confirmations: progress.attemptId
-      ? bank.confirmations?.filter(
-          ({ addedAt, id }) =>
-            !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
-        )
-      : [],
+    confirmations: bank.confirmations?.filter(
+      ({ addedAt, id }) =>
+        !used.has(id) && (!addedAt || !progress.startedAt || addedAt <= progress.startedAt),
+    ),
   };
-}
-
-/** Returns false if progress changed since `from`; callers must reload rather than overwrite it. */
-export async function saveLevelTestProgress({
-  from,
-  goal,
-  progress,
-  record,
-}: {
-  from: LevelTestProgress;
-  goal: Pick<Goal, "id" | "userId">;
-  progress: LevelTestProgress;
-  record?: LevelTestAnswerRecord;
-}): Promise<boolean> {
-  return writeLearnerChange({ userId: goal.userId }, async (tx) => {
-    const current = await tx.goal.findUniqueOrThrow({ where: { id: goal.id } });
-
-    if (
-      !canWriteLevelTest(current, from) ||
-      !isDeepStrictEqual(readLevelTestProgress(current, from.attemptId), from)
-    ) {
-      return unchanged(false);
-    }
-
-    await tx.goal.update({
-      data: { details: levelTestDetailsWithProgress(current, progress) },
-      where: { id: goal.id },
-    });
-
-    if (record) {
-      await recordLevelTestAnswer(tx, record);
-    }
-
-    return true;
-  });
 }
 
 export async function loadLevelTestContext(
   goalId: string,
-  attemptId?: string,
+  attempt?: string | { latest: true },
 ): Promise<LevelTestContext> {
   const owned = await findOwnedGoal(goalId);
 
@@ -195,6 +151,9 @@ export async function loadLevelTestContext(
   if (goal.kind !== "language" || !targetLanguage) {
     return { status: "notLanguage" };
   }
+
+  const attemptId =
+    typeof attempt === "object" ? readLevelTestAttempts(goal).attempt?.attemptId : attempt;
 
   const progress = readLevelTestProgress(goal, attemptId);
 
@@ -261,18 +220,21 @@ export async function toLevelTestView({
   lastCorrect?: boolean | null;
   progress: LevelTestProgress;
 }): Promise<LanguageLevelTestView> {
-  const result = progress.attemptId && (progress.result ?? readLevelTestSummary(goal).result);
+  const result = progress.result ?? (progress.attemptId && readLevelTestSummary(goal).result);
 
-  const attempt = progress.attemptId && {
-    attemptId: progress.attemptId,
-    length: progress.length,
-    result: result ? await withLevelTestChange(goal.id, result) : null,
-    testOutLevel: progress.testOutLevel,
+  const attempt = {
+    ...(progress.attemptId && {
+      attemptId: progress.attemptId,
+      result: null,
+      testOutLevel: progress.testOutLevel,
+    }),
+    ...(result && { result: await withLevelTestChange(goal.id, result) }),
   };
 
   if (!bank) {
     return {
       ...attempt,
+      ...LANGUAGE_LEVEL_TEST_OFFER,
       expectedSeconds: LEVEL_TEST_PREPARING_SECONDS,
       showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
       startedAt: bankStartedAt?.toISOString() ?? null,
@@ -310,14 +272,18 @@ export async function toLevelTestView({
 
   return {
     ...attempt,
+    ...LANGUAGE_LEVEL_TEST_OFFER,
     answered: progress.answers.length + (progress.speaking ? 1 : 0),
+    canStop:
+      !progress.result &&
+      !progress.placement &&
+      (scores.reading !== undefined || scores.listening !== undefined),
     lastCorrect,
     levels: listLevelTestLevels(scores),
     next,
     showAlphabetNote: usesNonLatinScript(goal.targetLanguage),
     status: "ready",
     targetLanguage: goal.targetLanguage,
-    total: levelTestTotal(progress.length),
   };
 }
 

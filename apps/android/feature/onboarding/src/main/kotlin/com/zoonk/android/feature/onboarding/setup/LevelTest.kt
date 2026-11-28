@@ -9,6 +9,7 @@ import com.zoonk.api.models.LanguageLevelTestOneOf
 import com.zoonk.api.models.LanguageLevelTestOneOf1
 import com.zoonk.api.models.LanguageLevelTestOneOf1Next
 import com.zoonk.api.models.LanguageLevelTestOneOf1NextOneOfQuestion
+import kotlin.math.roundToLong
 
 internal typealias LevelTestQuestion = LanguageLevelTestOneOf1NextOneOfQuestion
 
@@ -17,7 +18,10 @@ internal sealed interface LevelTestPhase {
 
     data object Waiting : LevelTestPhase
 
-    /** [confirmation]: a level's check, where every right option is picked so a guess rarely passes. */
+    /**
+     * [confirmation]: a level's check, where every right option is picked so a guess rarely passes. [canStop]: stopping
+     * now would save a level, so "Stop and use my answers" shows.
+     */
     data class Question(
         val question: LevelTestQuestion,
         /** 0 to 1. */
@@ -25,6 +29,7 @@ internal sealed interface LevelTestPhase {
         val number: Int = 1,
         val total: Int = 1,
         val confirmation: Boolean = false,
+        val canStop: Boolean = false,
     ) : LevelTestPhase
 
     data object Done : LevelTestPhase
@@ -46,14 +51,6 @@ internal fun levelTestPhase(
     }
 }
 
-internal val LanguageLevelTest.showAlphabetNote: Boolean
-    get() =
-        when (this) {
-            is LanguageLevelTest.LanguageLevelTestOneOf2Value -> false
-            is LanguageLevelTest.LanguageLevelTestOneOfValue -> value.showAlphabetNote
-            is LanguageLevelTest.LanguageLevelTestOneOf1Value -> value.showAlphabetNote
-        }
-
 private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     val progress = answered.toFloat() / total.coerceAtLeast(1)
     return when (val next = next) {
@@ -62,11 +59,18 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
         }
 
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOfValue -> {
-            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt())
+            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), canStop = canStop)
         }
 
         is LanguageLevelTestOneOf1Next.LanguageLevelTestOneOf1NextOneOf1Value -> {
-            LevelTestPhase.Question(next.value.question, progress, (answered + 1).toInt(), total.toInt(), confirmation = true)
+            LevelTestPhase.Question(
+                next.value.question,
+                progress,
+                (answered + 1).toInt(),
+                total.toInt(),
+                confirmation = true,
+                canStop = canStop,
+            )
         }
 
         // An older test's spoken sentence isn't asked anymore: its levels come from reading and listening.
@@ -77,6 +81,24 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
         }
     }
 }
+
+internal val LevelTestQuestion.isListening get() = skill == LanguageLevelTestOneOf1NextOneOfQuestion.Skill.LISTENING
+
+/** The test's reading, listening and check as runs of its [total] questions, drawn apart on its bar. */
+internal fun levelTestGroups(total: Int): List<Int> {
+    val reading = minOf(LEVEL_TEST_BLOCK, total)
+    val listening = minOf(LEVEL_TEST_BLOCK, total - reading)
+    return listOf(reading, listening, total - reading - listening).filter { it > 0 }
+}
+
+/** A voice message is read a little slower than normal, so the test isn't one of catching fast speech. */
+internal const val LISTENING_RATE = 0.9f
+
+/** How long a message of [durationMs] takes to hear at [LISTENING_RATE], to the second, as its row shows it. */
+internal fun heardLengthMs(durationMs: Long): Long = (durationMs / LISTENING_RATE / 1000f).roundToLong() * 1000
+
+/** Core's `LEVEL_TEST_BLOCK_SIZE`: the questions each skill's block asks. */
+private const val LEVEL_TEST_BLOCK = 4
 
 /** What the wait for a language pair's questions has seen since the learner's Start. */
 internal data class BankWait(

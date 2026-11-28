@@ -9,6 +9,7 @@ import {
 } from "./focus-test-contract";
 import { type SubjectProgress, type TestProgress } from "./focus-test-progress";
 import {
+  START_PACE_MS,
   type SittingKind,
   getSittingMinutes,
   getSittingQuestions,
@@ -231,7 +232,10 @@ function toSitting({
   return {
     answered: sitting.answered,
     hint: sitting.manyUnknown ? "manyUnknown" : null,
-    minutes: getSittingMinutes({ paceMs, questions: sitting.left }),
+    minutes: getSittingMinutes({
+      paceMs: sitting.kind === "first" ? START_PACE_MS : paceMs,
+      questions: sitting.left,
+    }),
     questions: sitting.questions,
     subject: next ? toSubjectName(next) : null,
   };
@@ -271,7 +275,11 @@ export function getOffer({
     return null;
   }
 
-  return { kind, minutes: getSittingMinutes({ paceMs, questions }), questions };
+  return {
+    kind,
+    minutes: getSittingMinutes({ paceMs: kind === "first" ? START_PACE_MS : paceMs, questions }),
+    questions,
+  };
 }
 
 function listUnasked(subjects: readonly SubjectProgress[]): SubjectProgress[] {
@@ -340,7 +348,7 @@ export function toFocusTestView({
       progress.answers > 0
         ? { focus: dated ? toFocus({ plan, rows, subjects }) : null, lessonsSkipped }
         : null,
-    offer: offer && { minutes: offer.minutes },
+    offer: offer && { minutes: offer.minutes, questions: offer.questions },
     sessionQuestions,
     sitting: toSitting({ asking, progress }),
     subjects: subjects.map((subject) => toSubjectView(subject)),

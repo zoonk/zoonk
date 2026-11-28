@@ -122,6 +122,7 @@ export async function savePlanSnapshot({
 
   await tx.planChangeSnapshot.create({
     data: { changeId, plan: toPlanSnapshot({ context, todaySession }) },
+    select: { id: true },
   });
 }
 

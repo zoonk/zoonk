@@ -110,6 +110,8 @@ private struct ZoonkButton: View {
       cornerRadius: isSmall && !isIcon ? Radius.md : Radius.lg, style: .continuous)
 
     configuration.label
+      // A button's icon stays at its words when they wrap, never above them as a row's does.
+      .environment(\.labelIconStacks, false)
       // A list would set the icon in a column of its own, far from its words.
       .labelReservedIconWidth(16)
       .labelIconToTitleSpacing(ZoonkButtonStyle.iconGap(controlSize))

@@ -33,7 +33,7 @@
   "questions_match_not_a_pair": "2169a76f81eaced5bba3e4aab7216fd1f1f00be5b30cbe9dcdc42086b7399e2d",
   "questions_match_paired": "271c71654f53546ee988a295c19f276686212404c7a0ec0a76ac84f8bad9dcde",
   "questions_match_unpaired": "b9c1dd8d06a8f81143cae098ebb524d7f44acf3a10583feefae4375777e19df6",
-  "questions_matched_with": "f4b3e5acaa767112be164fa7405e78e95b8ddbe5ec77735ef14d8291f830b4e6",
+  "questions_matched_with": "30fe585ff578af641af86bd41602b66f9d3584a90f926abdfec9e367250fda23",
   "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
   "questions_mistakes_fixed": "5f606109f5b12ffc939e7e243493dfa22b6d7812a225e3cce0c9cefb2cea5f75",
   "questions_not_quite": "f1db16257f3131d0e5ec5e0e1a8b28fa0d8ff9c291ed92d3bf50762fbc0571c7",
@@ -43,7 +43,7 @@
   "questions_place_wrong": "20de412472a81696e160d0cef8b1833d22536ea5a2bcc2b7ea286f3990dbac59",
   "questions_placement_note": "a00b9f1f7645b53b66481e81ddd8d5431495874042a76944211d12bc88e6a2af",
   "questions_quoted_source": "591f5bb40369d9fa526f33e9fe80c120c53ca4f55066e654a2a012b0067096c8",
-  "questions_read_again": "aeedfc4c7f5c3c3e616fd3d76d64319f11bb751b605e98c9e89ae63a2025d67b",
+  "questions_read_again": "03e35336b3ebbe43047ff9acda2f3dcb08892638c4d8624d9511b6dea0b00270",
   "questions_result": "062e76836c422c5dbe4995293e30c49be647430dfeaa18c695b528a96e46f9fc",
   "questions_right": "0601a4a91208cd71a19c1daf83a6776bc43876f25ab9dc41267fb5cea3fe2476",
   "questions_right_answer": "3d2e7b1d7d0877cc89a93f189dab71007eff1ae74777ed782c581cd44176d4dc",
@@ -72,13 +72,11 @@
     <string name="questions_right">Certo</string>
     <!-- An answer option judging a statement wrong, as exams like Cebraspe word it. Not feedback on the learner's answer. -->
     <string name="questions_wrong">Errado</string>
-    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
     <string name="questions_leave_blank">Deixar em branco</string>
     <!-- The place a step was put in, read aloud. -->
     <string name="questions_place_right">Posição %1$d, lugar certo</string>
     <string name="questions_place_wrong">Posição %1$d, lugar errado</string>
-    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
-    <string name="questions_matched_with">%1$s, combinado com %2$s</string>
+    <string name="questions_matched_with">%1$s, em par com %2$s</string>
     <string name="questions_match_paired">Você combinou %1$s com %2$s. Pares combinados: %3$d de %4$d.</string>
     <string name="questions_match_not_a_pair">%1$s e %2$s não formam um par.</string>
     <string name="questions_match_unpaired">Desfez o par entre %1$s e %2$s.</string>
@@ -95,14 +93,13 @@
     </plurals>
     <string name="questions_entry_fraction">Uma fração, como 2/3, ou um número decimal.</string>
     <string name="questions_entry_integer">Um número inteiro.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_number">Digite um número, como %1$s.</string>
-    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
     <string name="questions_invalid_fraction">Digite uma fração, como 2/3, ou um número, como %1$s.</string>
     <string name="questions_invalid_integer">Digite um número inteiro, como 12.</string>
     <string name="questions_feedback_label">Feedback da resposta</string>
     <string name="questions_correct">Correto!</string>
-    <!-- Gentle verdict on a wrong answer: it isn't right. Not "not this time" or "almost right". -->
+    <!-- Verdict on a wrong answer, said gently: not “almost right”, which is a separate verdict, and not “not this time”.
+Marks the learner's answer as wrong. -->
     <string name="questions_not_quite">Não é bem isso</string>
     <string name="questions_left_blank">Deixou em branco</string>
     <string name="questions_dont_know_yet">Ainda não sei</string>
@@ -121,9 +118,10 @@
         <item quantity="many">%d erros corrigidos. Eles saem do seu caderno.</item>
         <item quantity="other">%d erros corrigidos. Eles saem do seu caderno.</item>
     </plurals>
+    <!-- "Your mistakes" is the learner's Mistakes notebook. -->
     <string name="questions_saved">Salvo no seu caderno de erros</string>
     <string name="questions_show_less">Mostrar menos</string>
-    <string name="questions_read_again">Leia tudo de novo</string>
+    <string name="questions_read_again">Ler tudo de novo</string>
     <string name="questions_set_place_audio">Pergunta %1$d de %2$d sobre esta gravação</string>
     <string name="questions_set_place_case">Pergunta %1$d de %2$d sobre este caso</string>
     <string name="questions_set_place_chart">Pergunta %1$d de %2$d sobre este gráfico</string>

@@ -2,6 +2,8 @@ package com.zoonk.android.feature.onboarding.setup
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -20,6 +22,7 @@ import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
+import com.zoonk.android.feature.onboarding.DONE_NEXT
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -32,9 +35,11 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
-import com.zoonk.api.models.StartLanguageLevelTestInput
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -61,7 +66,7 @@ class LevelTestStepFlowTest {
 
     private val api =
         FakeOnboardingApi().apply {
-            setup = { setupView(steps = listOf("placement", "plan"), kind = "language", targetLanguage = "it") }
+            setup = { setupView(steps = listOf("placement", "plan"), kind = "language", targetLanguage = "it", placement = OFFER) }
             levelTest = levelTestOf()
         }
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
@@ -106,28 +111,30 @@ class LevelTestStepFlowTest {
     fun openingItOnlyReads() {
         show()
 
-        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
-        rule.onNodeWithText("New to its alphabet?", substring = true).assertDoesNotExist()
+        rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
+        rule.onNodeWithText("Level test").assertIsDisplayed()
+        rule.onNodeWithText("Up to 12 questions").assertIsDisplayed()
         assertEquals(1, api.levelTestReads)
-        assertEquals(emptyList<Any>(), api.levelTestLengths)
+        assertEquals(0, api.levelTestStarts)
         assertEquals(0, api.prepared)
         assertEquals(emptyList<Any>(), api.levelTestAnswers)
         assertEquals(0, api.finishedLevelTests)
     }
 
     @Test
-    fun quickOpensTheSameTestThePlanOpens() {
+    fun startOpensTheTestAtItsFirstReadingQuestionOfTwelve() {
         show()
         tap("Start")
 
-        assertEquals(listOf(StartLanguageLevelTestInput.Length.QUICK), api.levelTestLengths)
+        assertEquals(1, api.levelTestStarts)
+        rule.onNodeWithContentDescription("Question 1 of 12").assertIsDisplayed()
+        rule.onNodeWithText("Reading").assertIsDisplayed()
         rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
         tap("Every Saturday")
         tap("Confirm")
 
         assertEquals(listOf(ATTEMPT), api.levelTestAnswers.map { it.attemptId?.toString() })
         rule.onNodeWithText("Your Italian level").assertIsDisplayed()
-        rule.onNodeWithText("Your lessons keep adjusting as you answer.").assertIsDisplayed()
         assertEquals(1, api.finishedLevelTests)
         assertEquals(0, placementAnswers)
 
@@ -137,22 +144,40 @@ class LevelTestStepFlowTest {
     }
 
     @Test
-    fun skippingBeforeAnyQuestionsWereWrittenStillMovesOn() {
-        api.writeFailure = ApiException(ApiError.Unavailable, "LEVEL_TEST_PREPARING", status = 409)
+    fun aLearnerWhoAskedForTheTestStartsItWithoutTheOffer() {
+        api.setup = { setupView(steps = listOf("placement", "plan"), kind = "language", targetLanguage = "it", placement = DIRECT) }
         show()
-        tap("Skip")
 
-        rule.runOnIdle { assertEquals(1, placementAnswers) }
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+        rule.onNodeWithText("Where would you like to start?").assertDoesNotExist()
+        assertEquals(1, api.levelTestStarts)
     }
 
     @Test
-    fun aSkipThatFailedKeepsTheLearnerHere() {
-        api.writeFailure = ApiException(ApiError.Network)
+    fun firstLessonGoesOnWithoutATest() {
         show()
-        tap("Skip")
+        tap("First lesson")
+        tap("Continue")
 
-        rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        assertEquals(0, placementAnswers)
+        rule.runOnIdle { assertEquals(1, placementAnswers) }
+        assertEquals(0, api.levelTestStarts)
+        assertEquals(0, api.finishedLevelTests)
+    }
+
+    @Test
+    fun cantListenNowEndsTheListeningUnscoredAndSaysListeningWasNotTested() {
+        api.levelTestResult = READING_ONLY
+        api.levelTestAnswered = { levelTestOf(next = DONE_NEXT, answered = 5, attemptId = ATTEMPT) }
+        show(opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 4, attemptId = ATTEMPT), speech = speech())
+        tap("Start")
+        rule.onNodeWithText("Listening").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Question 5 of 12").assertIsDisplayed()
+        tap("Can't listen now")
+
+        assertEquals(listOf(true), api.levelTestAnswers.map { it.audioDeferred })
+        assertEquals(listOf<Long?>(null), api.levelTestAnswers.map { it.answerIndex })
+        rule.onNodeWithText("You can take the test again later, from your plan.").assertIsDisplayed()
+        rule.onNodeWithText("Not tested yet").assertIsDisplayed()
     }
 
     @Test
@@ -161,9 +186,9 @@ class LevelTestStepFlowTest {
         show(opened = preparingTestOf(attemptId = ATTEMPT))
         tap("Start")
 
-        rule.onNodeWithText("Preparing your level test").assertIsDisplayed()
-        rule.onNodeWithText("Getting the Italian test ready", substring = true).assertIsDisplayed()
-        rule.onNodeWithText("Skip the test").assertIsDisplayed()
+        rule.onNodeWithText("Getting your test ready").assertIsDisplayed()
+        rule.onNodeWithText("This takes a minute or two.").assertIsDisplayed()
+        rule.onNodeWithText("You can take the test later, from your plan.").assertIsDisplayed()
 
         api.levelTest = levelTestOf(attemptId = ATTEMPT)
         rule.mainClock.advanceTimeBy(POLL_MS)
@@ -177,7 +202,7 @@ class LevelTestStepFlowTest {
         api.levelTest = preparingTestOf()
         show(opened = preparingTestOf(attemptId = ATTEMPT))
         tap("Start")
-        tap("Skip the test")
+        tap("Skip")
 
         assertEquals(1, placementAnswers)
     }
@@ -203,7 +228,7 @@ class LevelTestStepFlowTest {
         tap("Start")
 
         rule.onNodeWithText("We couldn't save that. Try again.").assertIsDisplayed()
-        rule.onNodeWithText("Skip what you already know").assertIsDisplayed()
+        rule.onNodeWithText("Where would you like to start?").assertIsDisplayed()
     }
 
     @Test
@@ -225,7 +250,78 @@ class LevelTestStepFlowTest {
     private val asked = mutableListOf<Pair<String, String>>()
     private val downloads = mutableListOf<String>()
 
-    private fun speech(): SpeechPlayer {
+    @Test
+    fun aPressThatEndsAListeningQuestionSilencesItsMessageBeforeItsSaveIsBack() {
+        val gate = CompletableDeferred<Unit>()
+        api.levelTestWriteGate = gate
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.onNodeWithContentDescription("Stop the audio").assertIsDisplayed()
+
+        tap("Can't listen now")
+
+        rule.onNodeWithContentDescription("Stop the audio").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message again").assertIsDisplayed()
+        assertEquals(1, api.levelTestAnswers.size)
+        gate.complete(Unit)
+    }
+
+    @Test
+    fun stoppingTheTestSilencesAPlayingMessageAtThePress() {
+        val gate = CompletableDeferred<Unit>()
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 4, attemptId = ATTEMPT, canStop = true),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.onNodeWithContentDescription("Stop the audio").assertIsDisplayed()
+
+        api.levelTestWriteGate = gate
+        rule.onNodeWithContentDescription("Leave").performClick()
+        tap("Stop and use my answers")
+
+        rule.onNodeWithContentDescription("Stop the audio").assertDoesNotExist()
+        assertEquals(0, api.finishedLevelTests)
+        gate.complete(Unit)
+    }
+
+    @Test
+    fun aMessageThatDidNotPlayIsTriedAgainFromItsOwnButton() {
+        show(opened = levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT), speech = speech())
+        tap("Start")
+        rule.onNodeWithContentDescription("Play the message").performClick()
+
+        rule.onNodeWithText("The audio didn't play.").assertIsDisplayed()
+        rule.onNodeWithText("Try again").assertDoesNotExist()
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Try the audio again").performClick()
+
+        assertEquals(2, asked.size)
+    }
+
+    @Test
+    fun aMessageShowsTheSameLengthBeforeDuringAndAfterAPlay() {
+        show(
+            opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL, durationMs = 8_500), answered = 1, attemptId = ATTEMPT),
+            speech = speech(HeldOutput()),
+        )
+        tap("Start")
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+
+        rule.onNodeWithContentDescription("Play the message").performClick()
+        rule.mainClock.advanceTimeBy(3_000)
+
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Stop the audio").performClick()
+        rule.onNodeWithText("0:09").assertIsDisplayed()
+    }
+
+    private fun speech(output: AudioOutput = SilentOutput): SpeechPlayer {
         val http =
             OkHttpClient
                 .Builder()
@@ -246,21 +342,29 @@ class LevelTestStepFlowTest {
                 throw ApiException(ApiError.Unavailable)
             },
             files = VoiceFiles(folder.root, http, { false }, session, Dispatchers.Main.immediate),
-            output = SilentOutput,
+            output = output,
             sessions = session,
             scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
     }
 
     @Test
-    fun aStoredRecordingPlaysWithoutAskingForAClip() {
+    fun aStoredRecordingPlaysWithoutAskingForAClipAndOncePlayedTheWayAroundItBecomesTheMiss() {
         show(opened = levelTestOf(next = listeningQuestion(audioUrl = CLIP_URL), answered = 1, attemptId = ATTEMPT), speech = speech())
         tap("Start")
+        rule.onNodeWithText("Can't listen now").assertIsDisplayed()
         rule.onNodeWithContentDescription("Play the message").performClick()
 
         assertEquals(listOf(CLIP_URL), downloads)
         assertEquals(emptyList<Pair<String, String>>(), asked)
         rule.onNodeWithContentDescription("Play the message again").assertIsDisplayed()
+        rule.onNodeWithText("Can't listen now").assertDoesNotExist()
+        tap("I didn't understand")
+
+        assertEquals(
+            listOf(Triple("listening-1", null, null)),
+            api.levelTestAnswers.map { Triple(it.questionId, it.answerIndex, it.audioDeferred) },
+        )
     }
 
     @Test
@@ -269,7 +373,7 @@ class LevelTestStepFlowTest {
         show(speech = speech())
 
         rule.onNodeWithText("The voice message is on its way…").assertIsDisplayed()
-        rule.onNodeWithContentDescription("Play the message").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsNotEnabled()
         rule.onNodeWithText("Skip this question").assertIsDisplayed()
         val reads = api.levelTestReads
 
@@ -278,8 +382,22 @@ class LevelTestStepFlowTest {
 
         assertEquals(reads + 1, api.levelTestReads)
         rule.onNodeWithText("The voice message is on its way…").assertDoesNotExist()
-        rule.onNodeWithContentDescription("Play the message").assertIsDisplayed()
-        rule.onNodeWithText("I didn't understand the audio").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Play the message").assertIsEnabled()
+        rule.onNodeWithText("Can't listen now").assertIsDisplayed()
+    }
+
+    @Test
+    fun aRecordingStillOnItsWayAfterTheReadsGiveUpIsStillSkippedOneQuestionAtATime() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1, attemptId = ATTEMPT)
+        show(speech = speech())
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+
+        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        repeat(4) { rule.mainClock.advanceTimeBy(POLL_MS) }
+
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        rule.onNodeWithText("Can't listen now").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsEnabled()
     }
 
     @Test
@@ -313,21 +431,43 @@ class LevelTestStepFlowTest {
 
     @Test
     fun stoppingThatFailedSaysSoOnTheQuestionThenShowsTheRanges() {
-        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1, attemptId = ATTEMPT) }
+        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 4, attemptId = ATTEMPT, canStop = true) }
         show()
         tap("Start")
         tap("Every Saturday")
         tap("Confirm")
 
         api.writeFailure = ApiException(ApiError.Network)
+        rule.onNodeWithContentDescription("Leave").performClick()
         tap("Stop and use my answers")
 
         rule.onNodeWithText("That didn't go through. Your answers are kept.").assertIsDisplayed()
         rule.onNodeWithText("We couldn't save that. Try again.").assertDoesNotExist()
         api.writeFailure = null
+        rule.onNodeWithContentDescription("Leave").performClick()
         tap("Stop and use my answers")
 
         rule.onNodeWithText("Your Italian level").assertIsDisplayed()
+    }
+
+    /** A message that plays until something stops it. */
+    private class HeldOutput : AudioOutput {
+        private var playing: CompletableDeferred<Unit>? = null
+
+        override suspend fun play(
+            file: File,
+            rate: Float,
+            onStart: () -> Unit,
+        ): PlaybackEnd {
+            val play = CompletableDeferred<Unit>().also { playing = it }
+            onStart()
+            play.await()
+            return PlaybackEnd.Stopped
+        }
+
+        override fun stop() {
+            playing?.complete(Unit)
+        }
     }
 
     private object SilentOutput : AudioOutput {
@@ -342,6 +482,15 @@ class LevelTestStepFlowTest {
 
     private companion object {
         const val ATTEMPT = "6f1c2e2a-6d1b-4c8e-9a51-2f4b8f0c7a11"
+        const val OFFER = """{"mode":"offer","test":{"kind":"language"}}"""
+        const val DIRECT = """{"mode":"direct","test":{"kind":"language"}}"""
+        val READING_ONLY: LanguageLevelTestResult =
+            ApiJson.decodeFromString(
+                """
+                {"levels":[],"result":{"attemptId":"$ATTEMPT","changeId":null,"end":"audio_deferred","finishedAt":"2026-11-26T10:00:00Z",
+                 "lessonsSkipped":0,"levelsSkipped":[],"ranges":{"reading":{"low":"B1","high":"B2"}}}}
+                """.trimIndent(),
+            )
         const val POLL_MS = 3_500L
         const val CLIP_URL = "https://clips.test/level-test/stazione.mp3"
     }

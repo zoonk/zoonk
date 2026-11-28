@@ -17,6 +17,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockSession } from "../../_test-utils/mock-session";
+import { tapInLevelTest } from "../../_test-utils/shown-choice";
 import * as speechClips from "../../audio/_utils/speech-clips";
 import { requestSpeechClip } from "../../audio/request-speech-clip";
 import { getSpeechClipKey } from "../../audio/speech-clip-key";
@@ -29,7 +30,7 @@ import {
 } from "./check-level-test-bank";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
-import { levelTestBankSchema } from "./level-test-contract";
+import { LANGUAGE_LEVEL_TEST_OFFER, levelTestBankSchema } from "./level-test-contract";
 import { prepareLanguageLevelTest } from "./prepare-language-level-test";
 import { listLevelTestPassagesToVoice, voiceLevelTestPassage } from "./prepare-level-test-audio";
 import {
@@ -164,18 +165,44 @@ function voiceBank(pair: Pair) {
   );
 }
 
-async function answerFirstQuestion(goalId: string) {
-  const view = await getLanguageLevelTest(goalId);
+async function answerReadingQuestions(goalId: string, count = 1) {
+  let view = await getLanguageLevelTest(goalId);
 
-  const questionId =
-    view.status === "ready" && view.test.status === "ready" && view.test.next.kind === "question"
-      ? view.test.next.question.id
-      : "";
+  for (let answered = 0; answered < count; answered += 1) {
+    if (
+      view.status !== "ready" ||
+      view.test.status !== "ready" ||
+      view.test.next.kind !== "question" ||
+      view.test.next.question.skill !== "reading"
+    ) {
+      throw new Error("Expected a reading question");
+    }
 
-  return answerLanguageLevelTest({
-    goalId,
-    input: { answerIndex: 0, durationMs: 30_000, questionId },
-  });
+    const { attemptId, next } = view.test;
+
+    // oxlint-disable-next-line no-await-in-loop -- Each answer determines the next question.
+    const result = await answerLanguageLevelTest({
+      goalId,
+      input: {
+        answerIndex: tapInLevelTest({
+          answerIndex: 0,
+          attemptId,
+          goalId,
+          questionId: next.question.id,
+        }),
+        durationMs: 30_000,
+        questionId: next.question.id,
+      },
+    });
+
+    if (result.status !== "ready") {
+      throw new Error("Expected the answer to be accepted");
+    }
+
+    view = result;
+  }
+
+  return view;
 }
 
 function findRow(pair: Pair) {
@@ -192,7 +219,13 @@ describe("the level test's question bank", () => {
 
     await expect(getLanguageLevelTest(goalId)).resolves.toStrictEqual({
       status: "ready",
-      test: { expectedSeconds: 120, showAlphabetNote: true, startedAt: null, status: "preparing" },
+      test: {
+        ...LANGUAGE_LEVEL_TEST_OFFER,
+        expectedSeconds: 120,
+        showAlphabetNote: true,
+        startedAt: null,
+        status: "preparing",
+      },
     });
 
     await expect(prisma.languageLevelTest.count({ where: pair })).resolves.toBe(0);
@@ -467,7 +500,7 @@ describe("placement listening audio", () => {
     mockWriter(passage);
     await writeLevelTestBank({ pair });
 
-    await expect(answerFirstQuestion(goalId)).resolves.toMatchObject({
+    await expect(answerReadingQuestions(goalId, 4)).resolves.toMatchObject({
       test: { next: { question: { audio: null, audioPending: true, skill: "listening" } } },
     });
 
@@ -496,7 +529,7 @@ describe("placement listening audio", () => {
       where: pair,
     });
 
-    await expect(answerFirstQuestion(goalId)).resolves.toMatchObject({
+    await expect(answerReadingQuestions(goalId, 4)).resolves.toMatchObject({
       test: { next: { question: { audio: null, audioPending: false, skill: "listening" } } },
     });
   });
@@ -646,7 +679,7 @@ describe("checking a bank's questions", () => {
       data: { ...pair, content, model: "test", promptVersion: "test", runId: "old-bank" },
     });
 
-    const answered = await answerFirstQuestion(goalId);
+    const answered = await answerReadingQuestions(goalId);
     const firstId = content.questions.find((question) => question.passage.endsWith("A2"))?.id;
     expect(answered).toMatchObject({ status: "ready" });
 
@@ -692,7 +725,7 @@ describe("checking a bank's questions", () => {
         data: { ...pair, content, model: "test", promptVersion: "test", runId: "old-bank" },
       });
 
-      await answerFirstQuestion(goalId);
+      await answerReadingQuestions(goalId);
       const finished = await finishLanguageLevelTest(goalId);
 
       if (saved !== "its scores") {

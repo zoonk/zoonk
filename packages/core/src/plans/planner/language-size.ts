@@ -2,7 +2,11 @@ import { type CourseLevel, type GoalKind } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
 import { CEFR_LEVELS, type CefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
-import { getCefrHours, getStartHours } from "../../language/aims/language-aims";
+import {
+  getCefrHours,
+  getLanguageStartBand,
+  getStartHours,
+} from "../../language/aims/language-aims";
 import { getBandRank } from "../../learner/placement/placement-graph";
 import { getLearningShare } from "./plan-phases";
 import {
@@ -80,12 +84,15 @@ function listLeftOut({
   const isAboveAim = (skill: PlanGraphSkill) =>
     stopsAtAim && getBandRank(bandOf(skill)) > ceiling && !settledSkillIds.has(skill.skillId);
 
+  const startBand = start === null ? null : AIM_BANDS[getLanguageStartBand(start)];
+
   const isCovered = (skill: PlanGraphSkill) => {
     const band = bandOf(skill);
 
     return (
-      start !== null &&
-      getBandHours(band).to <= start &&
+      startBand !== null &&
+      band !== "overview" &&
+      getBandRank(band) < getBandRank(startBand) &&
       hasLaterBand(getBandRank(band)) &&
       !coveredKept.has(skill.skillId)
     );

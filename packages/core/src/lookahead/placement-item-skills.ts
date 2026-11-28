@@ -8,6 +8,7 @@ import {
   isLowGuessTap,
   isQuickChoice,
 } from "../learner/_utils/placement-guess-rate";
+import { readCourseProbes } from "../learner/placement/_utils/course-placement-bank";
 import { readPlacementAttempt } from "../learner/placement/_utils/placement-attempt-record";
 import { wantsPlacementQuestions } from "../learner/placement/focus-test-state";
 import { getKnownSubjects, getOwnLevel } from "../learner/placement/placement-contract";
@@ -80,6 +81,7 @@ export type PlacementItemFormat = PlacementQuickFormat | "tap";
 export type PlacementItemPick = PlacementItemSkill & { needsQuick: boolean; tapsNeeded: number };
 
 export type PlacementItemPicks = {
+  prioritySkillIds: string[];
   /** The quick questions each picked skill gets beyond the first (`getConfirmingCount`). */
   confirmingCount: number;
   quickFormat: PlacementQuickFormat;
@@ -182,6 +184,43 @@ function getUnansweredFilter({
   return {};
 }
 
+async function loadPlacementPicks({
+  forPlacement,
+  goalId,
+  skillIds,
+}: {
+  forPlacement: boolean;
+  goalId: string;
+  skillIds?: string[];
+}) {
+  const goal = await prisma.goal.findUnique({
+    select: {
+      details: true,
+      examBlueprint: true,
+      examBlueprintId: true,
+      id: true,
+      kind: true,
+      plan: { select: { graph: true, settings: true } },
+      targetLanguage: true,
+      userId: true,
+    },
+    where: { id: goalId },
+  });
+
+  const nonObjectiveSkillIds = getNonObjectiveSkillIds(goal);
+
+  const course = goal?.kind === "learn" && forPlacement;
+
+  const probes = course && wantsPlacementQuestions(goal) ? await readCourseProbes(goal) : null;
+
+  const picked =
+    !skillIds && probes
+      ? probes.ids
+      : await readPickedSkillIds({ forPlacement, goal, nonObjectiveSkillIds, skillIds });
+
+  return { course, goal, picked, probes };
+}
+
 /** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
 export async function pickPlacementItemSkills({
   choice,
@@ -203,24 +242,14 @@ export async function pickPlacementItemSkills({
   quickNeeded?: number;
   skillIds?: string[];
 }): Promise<PlacementItemPicks> {
-  const goal = await prisma.goal.findUnique({
-    select: {
-      details: true,
-      examBlueprint: true,
-      kind: true,
-      plan: { select: { graph: true, settings: true } },
-      targetLanguage: true,
-      userId: true,
-    },
-    where: { id: goalId },
+  const { goal, course, picked, probes } = await loadPlacementPicks({
+    forPlacement,
+    goalId,
+    skillIds,
   });
 
-  const nonObjectiveSkillIds = getNonObjectiveSkillIds(goal);
-
-  const picked = await readPickedSkillIds({ forPlacement, goal, nonObjectiveSkillIds, skillIds });
-
   const blueprint = goal?.examBlueprint ?? null;
-  const writesQuick = !formats || formats.some((format) => isQuickFormat(format));
+  const writesQuick = !course && (!formats || formats.some((format) => isQuickFormat(format)));
   const writesTaps = formats ? formats.includes("tap") : forPlacement;
 
   /**
@@ -294,6 +323,7 @@ export async function pickPlacementItemSkills({
 
   return {
     confirmingCount,
+    prioritySkillIds: probes?.prioritySkillIds ?? [],
     quickFormat,
     skills: picks.map((pick) => ({ ...pick, usedSituations: usedSituations.get(pick.id) ?? [] })),
   };
@@ -304,30 +334,4 @@ export async function readPlacementPlanRunId(goalId: string): Promise<string | n
   return plan?.runId ?? null;
 }
 
-/** A previous curriculum's question writer cannot finish waiting for the rebuilt curriculum. */
-export async function recordPlacementPrepared({
-  goalId,
-  placementPart,
-  planRunId,
-}: {
-  goalId: string;
-  placementPart?: { attemptId: string; part: number };
-  planRunId: string | null;
-}): Promise<void> {
-  if (placementPart) {
-    await prisma.$executeRaw`
-      UPDATE goals
-      SET details = jsonb_set(details, '{placementTest,attempt,partPrepared}', 'true'::jsonb)
-      WHERE id = ${goalId}::uuid
-        AND details #>> '{placementTest,attempt,id}' = ${placementPart.attemptId}
-        AND details #>> '{placementTest,attempt,part}' = ${String(placementPart.part)}
-    `;
-
-    return;
-  }
-
-  await prisma.plan.updateMany({
-    data: { placementPreparedAt: new Date() },
-    where: { goalId, runId: planRunId },
-  });
-}
+export { recordPlacementPrepared } from "../learner/placement/_utils/record-placement-prepared";

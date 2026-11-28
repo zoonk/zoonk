@@ -64,13 +64,11 @@ export async function readPlacementPlanRunIdStep(goalId: string): Promise<string
 export async function recordPlacementPreparedStep({
   failed,
   goalId,
-  placementPart,
   planRunId,
   written,
 }: {
   failed: number;
   goalId: string;
-  placementPart?: { attemptId: string; part: number };
   planRunId: string | null;
   written: number;
 }): Promise<void> {
@@ -84,7 +82,7 @@ export async function recordPlacementPreparedStep({
     });
   }
 
-  await recordPlacementPrepared({ goalId, placementPart, planRunId });
+  await recordPlacementPrepared({ goalId, planRunId });
 }
 
 export async function isPlanPreparedStep(goalId: string): Promise<boolean> {

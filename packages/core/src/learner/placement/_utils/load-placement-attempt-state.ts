@@ -1,59 +1,95 @@
 import { type TransactionClient } from "@zoonk/db";
+import { type TrueFalseLabels } from "../../../library/exams/true-false-labels";
 import { type GoalPlan } from "../../_utils/goal-skill-graph";
-import { getAreaStarts, getPhaseStarts } from "../placement-steps";
-import { type PlacementFacts, type PlacementLoad } from "./load-placement-state";
+import { type PlacementLoad } from "./load-placement-state";
 import { readAttemptQuestions } from "./placement-attempt-questions";
-import { type PlacementAttempt, placementAttemptView } from "./placement-attempt-record";
-import { getStatus, loadQuestion } from "./placement-state-view";
+import { type PlacementAttempt, type PlacementRecord } from "./placement-attempt-record";
+import { type loadCourseAnswers } from "./placement-evidence";
+import { coursePreparationFailed } from "./placement-plan-build";
+import { readPlacementResult } from "./placement-result";
+import { loadQuestion } from "./placement-state-view";
 
 export async function loadAttemptState({
   attempt,
-  facts,
+  attempts,
+  trueFalseLabels,
   plan,
-  today,
   tx,
 }: {
   attempt: PlacementAttempt;
-  facts: PlacementFacts;
-  plan: GoalPlan;
-  today: Date | null;
+  attempts: Awaited<ReturnType<typeof loadCourseAnswers>>;
+  trueFalseLabels: TrueFalseLabels;
+  goalId: string;
+  plan?: GoalPlan;
   tx: TransactionClient;
 }): Promise<PlacementLoad> {
-  const { attempts, build, exam, items } = facts;
-  const questions = readAttemptQuestions({ attempt, attempts, build, items, plan, today });
-  const next = await loadQuestion(questions.item?.id, tx);
-  const statuses = new Map(questions.knownSkillIds.map((id) => [id, "known" as const]));
+  const questions = readAttemptQuestions({ attempt, attempts, plan });
+  const next = await loadQuestion(questions.itemId ?? undefined, tx);
+
+  const idle = next ? "asking" : "done";
+  const pending = coursePreparationFailed(attempt) ? "failed" : "waitingForQuestions";
+  const status = questions.waiting ? pending : idle;
 
   return {
-    attemptFollowUps: questions.followUpSkillIds,
-    attemptHasMore: questions.hasMore,
-    attemptRemainingSkillIds: questions.remainingSkillIds,
     focusTest: null,
     state: {
       answered: questions.answered,
-      areas: getAreaStarts({ skills: plan.skills, statuses }),
-      attempt: placementAttemptView({ ...attempt, estimatedMinutes: questions.estimatedMinutes }),
+      areas: [],
+      attempt: {
+        answered: questions.answered,
+        chapter: questions.chapter,
+        estimatedMinutes: questions.estimatedMinutes,
+        id: attempt.id,
+        length: "quick",
+        part: 1,
+        partComplete: false,
+        questions: questions.questions,
+      },
       complete: questions.complete,
-      dayBudgetSpent: questions.spent,
-      dayBudgetUsed: questions.spent >= 1,
+      dayBudgetSpent: Math.min(1, questions.answered / questions.questions),
+      dayBudgetUsed: questions.answered >= questions.questions,
       focusTest: null,
       knownSkillIds: questions.knownSkillIds,
       needsItems: [],
       next,
-      phases: getPhaseStarts({ skills: plan.skills, statuses }),
-      result: exam.placement?.result ?? null,
+      phases: [],
+      result: null,
       started: true,
-      status: getStatus({
-        buildFailed: build.failed,
-        complete: questions.complete,
-        dayBudgetUsed: attempt.partComplete || questions.spent >= 1,
-        hasEvidence: questions.answered > 0,
-        hasNext: next !== null,
-        hasSkills: plan.skills.length > 0,
-        tested: false,
-        waitsForQuestions: questions.waiting,
-      }),
-      trueFalseLabels: exam.trueFalseLabels,
+      status,
+      trueFalseLabels,
+    },
+  };
+}
+
+export async function readIdleCourse({
+  goalId,
+  placement,
+  trueFalseLabels,
+  tx,
+}: {
+  goalId: string;
+  placement: PlacementRecord | null;
+  trueFalseLabels: TrueFalseLabels;
+  tx: TransactionClient;
+}): Promise<PlacementLoad> {
+  return {
+    focusTest: null,
+    state: {
+      answered: 0,
+      areas: [],
+      attempt: null,
+      complete: false,
+      dayBudgetSpent: 0,
+      dayBudgetUsed: false,
+      focusTest: null,
+      knownSkillIds: [],
+      needsItems: [],
+      next: null,
+      phases: [],
+      result: await readPlacementResult({ goalId, placement, tx }),
+      started: false,
+      status: "unavailable",
+      trueFalseLabels,
     },
   };
 }

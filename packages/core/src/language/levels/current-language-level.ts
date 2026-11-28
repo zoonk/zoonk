@@ -2,11 +2,13 @@ import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { formatCefrScore } from "@zoonk/utils/cefr";
 import { type JsonObject, isJsonObject } from "@zoonk/utils/json";
+import { languagePlanningBand } from "../aims/language-aims";
+import { readLevelTestDetails } from "../level-test/read-level-test-summary";
 import { TAP_ASSESSED_SKILLS, getMeasuredSkillScore } from "./skill-level-rules";
 
 export async function loadCurrentLanguageLevel(
   goal: Pick<Goal, "details" | "kind" | "targetLanguage" | "userId">,
-  db: TransactionClient = prisma,
+  { db = prisma, forPlanning = false }: { db?: TransactionClient; forPlanning?: boolean } = {},
 ): Promise<string | null> {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return null;
@@ -23,18 +25,32 @@ export async function loadCurrentLanguageLevel(
 
   const details = isJsonObject(goal.details) ? goal.details : {};
 
+  const { planningStart } = readLevelTestDetails(goal);
+
+  const start =
+    forPlanning && typeof planningStart === "number" ? Math.max(0, planningStart - 1) : null;
+
   const scores = TAP_ASSESSED_SKILLS.flatMap((skill) => {
     const row = rows.find((candidate) => candidate.skill === skill);
     const tested = getMeasuredSkillScore(details, skill);
 
     if (row && (tested !== null || row.raisedAt !== null || row.score !== row.startScore)) {
-      return [row.score];
+      return [
+        start !== null && tested !== null
+          ? Math.max(row.score, start + Math.min(0, row.score - tested))
+          : row.score,
+      ];
     }
 
-    return tested ?? [];
+    return tested === null ? [] : Math.max(tested, start ?? 0);
   });
 
-  return scores.length > 0 ? formatCefrScore(Math.min(...scores)) : null;
+  if (scores.length === 0) {
+    return null;
+  }
+
+  const weaker = Math.min(...scores);
+  return formatCefrScore(start === null ? weaker : languagePlanningBand(weaker));
 }
 
 export async function loadGoalLevelDetails(

@@ -41,13 +41,7 @@ struct FocusTestScreen: View {
           .id(session.authenticatedSession)
         }
       }
-      .navigationTitle(Text(FocusTestCopy.name))
-      .navigationBarTitleDisplayMode(.inline)
-      .testBar()
-      .taskClose {
-        Button(role: .close) { dismiss() }
-          .leavesOnEscape()
-      }
+      .testTask(name: Text(FocusTestCopy.name)) { dismiss() }
     }
     .loads(plan, refreshable: false)
     .sheet(isPresented: $choosesFocus) {
