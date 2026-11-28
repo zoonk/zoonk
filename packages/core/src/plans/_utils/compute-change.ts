@@ -14,6 +14,7 @@ import {
 } from "../planner/plan-effect";
 import { type PlanState } from "../planner/plan-state";
 import { isShortExam } from "../planner/short-exam-plan";
+import { getCourseFinish } from "./course-finish";
 import { planPhaseDatesMove } from "./moved-phase-dates";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getGoalUpdate, hasSameItems } from "./plan-unchanged";
@@ -93,8 +94,15 @@ function hasNoEffect({
   );
 }
 
-function toIsoOrNull(date: Date | null): string | null {
-  return date ? toIsoDate(date) : null;
+function getChangeEnd(plan: ComputedPlan): string | null {
+  const finish = getCourseFinish(plan);
+
+  if (finish) {
+    return finish.date;
+  }
+
+  const { endDate } = plan.feasibility;
+  return endDate ? toIsoDate(endDate) : null;
 }
 
 function getEventWeekday(plan: ComputedPlan): number {
@@ -174,8 +182,8 @@ function getChangeEffect({
       reviewDate && { reviewFirst: { areas: focus.areas, date: reviewDate } }),
     ...(weeklyEvents && { weeklyEvents }),
     ...(nextMock && { nextMock }),
-    endDateAfter: toIsoOrNull(computed.feasibility.endDate),
-    endDateBefore: toIsoOrNull(baseline.feasibility.endDate),
+    endDateAfter: getChangeEnd(computed),
+    endDateBefore: getChangeEnd(baseline),
   };
 }
 
