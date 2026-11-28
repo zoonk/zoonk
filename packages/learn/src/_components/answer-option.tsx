@@ -145,7 +145,7 @@ const RESULT_MARK: Record<AnswerOptionResult, React.ReactNode> = {
  * A number is the row's key, so a touch screen gives up its room (craft E1, B2). On a row without a
  * pick mark, the picked row's key turns ink, as a radio's dot does. Once checked the key does
  * nothing, so its room shows the verdict's mark and the answer stays put; a locked row without one
- * hides its key.
+ * hides its key. A verdict's mark stands bare, so it never reads as a ticked checkbox.
  */
 export function OptionMarker({
   isLocked = false,
@@ -163,6 +163,7 @@ export function OptionMarker({
   showsPick?: boolean;
 }) {
   const isKey = typeof marker === "number";
+  const verdict = isKey ? result && RESULT_MARK[result] : marker;
 
   return (
     <LineMarker
@@ -173,16 +174,20 @@ export function OptionMarker({
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
-      <Kbd
-        className={cn(
-          "[&_svg]:size-3",
-          showsPick &&
-            "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
-          showsPick && picked && "bg-selected text-selected-foreground ring-0",
-        )}
-      >
-        {isKey && result ? RESULT_MARK[result] : marker}
-      </Kbd>
+      {verdict ? (
+        <span className="flex size-5 items-center justify-center [&_svg]:size-4">{verdict}</span>
+      ) : (
+        <Kbd
+          className={cn(
+            "[&_svg]:size-3",
+            showsPick &&
+              "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
+            showsPick && picked && "bg-selected text-selected-foreground ring-0",
+          )}
+        >
+          {marker}
+        </Kbd>
+      )}
     </LineMarker>
   );
 }
