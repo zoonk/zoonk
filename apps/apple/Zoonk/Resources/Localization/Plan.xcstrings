@@ -28472,7 +28472,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige hasta %lld para incluirlas en tu plan."
+            "value" : "Elige hasta %lld opciones para incluirlas en tu plan."
           }
         },
         "fr" : {

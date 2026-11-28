@@ -1241,7 +1241,7 @@ msgstr "{belt}, nivel {level}"
 #: src/_utils/use-choice-left-out.ts
 msgctxt "Wu7pJv"
 msgid "Pick up to {take, number} so your plan includes them."
-msgstr "Elige hasta {take, number} para incluirlas en tu plan."
+msgstr "Elige hasta {take, number} opciones para incluirlas en tu plan."
 
 #. Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options.
 #: src/_utils/use-choice-left-out.ts
