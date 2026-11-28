@@ -134,18 +134,17 @@ function savedYesterdayOn(device: Device): { day: string; savedAt: Date } {
 
 const SCENARIOS = [
   // The zone the browser wrote is the one the server draws in, whatever the server's own zone.
-  {
-    device: deviceOnAnotherDayThan(getLocalTimeZone()),
-    name: "with the zone cookie",
-    withCookie: true,
-  },
+  { name: "with the zone cookie", serverZone: getLocalTimeZone(), withCookie: true },
   // With no cookie and no Vercel header, the server draws in UTC until the browser writes one.
-  { device: deviceOnAnotherDayThan("UTC"), name: "without the zone cookie", withCookie: false },
+  { name: "without the zone cookie", serverZone: "UTC", withCookie: false },
 ] as const;
 
-for (const { device, name, withCookie } of SCENARIOS) {
-  test.describe(`Learner dates in ${device.timeZone}, ${name}`, () => {
+// The device is picked inside each test: picked at load, its zone in a title could differ between
+// Playwright listing the tests and a worker running them.
+for (const { name, serverZone, withCookie } of SCENARIOS) {
+  test.describe(`Learner dates ${name}`, () => {
     test("the plan reveal hydrates with the server's day count", async ({ browser }) => {
+      const device = deviceOnAnotherDayThan(serverZone);
       const { goal, user } = await createRevealDay();
       const page = await openIn({ browser, device, user, withCookie });
 
@@ -168,6 +167,7 @@ for (const { device, name, withCookie } of SCENARIOS) {
     });
 
     test("a remembered fact hydrates with the server's date", async ({ browser }) => {
+      const device = deviceOnAnotherDayThan(serverZone);
       const user = await createE2EUser(getBaseURL());
       const { day, savedAt } = savedYesterdayOn(device);
       await memoryFactFixture({ createdAt: savedAt, userId: user.id });
