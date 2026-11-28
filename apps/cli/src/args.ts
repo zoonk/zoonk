@@ -1,10 +1,8 @@
-import { readFileSync } from "node:fs";
 import { parseArgs } from "node:util";
-import { isJsonObject } from "../../../packages/utils/src/json.ts";
 import { auditClipsCommand } from "./audit-clips.ts";
 import { describeParseError, usageError } from "./errors.ts";
+import { fixTarget, readJsonObject, requireReason } from "./fix-arguments.ts";
 import { commandUsage } from "./help.ts";
-import { parseJson } from "./http.ts";
 import { type Note, proposalNote, revertNote, withdrawalNote } from "./notes.ts";
 import { type OutputShape } from "./output.ts";
 import { parseFields, parseOrder, parseWhereOptions, parseWholeNumber } from "./query-options.ts";
@@ -47,54 +45,6 @@ export const WHOAMI_REQUEST: ApiRequest = { method: "GET", path: "/staff/me" };
 
 const LONGEST_COMMAND_WORDS = 3;
 
-function readText(path: string): string {
-  try {
-    return readFileSync(path, "utf8");
-  } catch {
-    throw usageError(`Can't read ${path}.`);
-  }
-}
-
-function readJsonObject(path: string): Record<string, unknown> {
-  const body = parseJson(readText(path));
-
-  if (!isJsonObject(body)) {
-    throw usageError(
-      `${path} must hold one JSON object: { reason, feedbackId?, changes } or { reason, fixes: [{ changes }] }.`,
-    );
-  }
-
-  return body;
-}
-
-function requireReason(reason: string | undefined): string {
-  if (!reason?.trim()) {
-    throw usageError(`"staff fixes revert" needs a reason: ${commandUsage("staff fixes revert")}`);
-  }
-
-  return reason;
-}
-
-function fixTarget({
-  args,
-  batch,
-  command,
-}: {
-  args: string[];
-  batch: string | undefined;
-  command: string;
-}) {
-  const [fixId, ...extra] = args;
-
-  if (extra.length > 0 || (fixId === undefined) === (batch === undefined)) {
-    throw usageError(
-      `"staff fixes ${command}" takes one fix id or --batch <batchId>: ${commandUsage(`staff fixes ${command}`)}`,
-    );
-  }
-
-  return fixId === undefined ? { batchId: batch } : { fixId };
-}
-
 function get(path: string, shape?: OutputShape): RequestCommand {
   return { name: "request", request: { method: "GET", path }, shape };
 }
@@ -127,6 +77,14 @@ const COMMANDS = new Map<string, CommandSpec>([
   [
     "staff audit-clips",
     { arguments: 1, build: auditClipsCommand, options: ["after", "limit", "voiced-before"] },
+  ],
+  [
+    "staff lesson-activities",
+    {
+      arguments: "at least one",
+      build: (lessonIds) => post("/staff/lesson-activities", { lessonIds }),
+      options: [],
+    },
   ],
   [
     "staff models",

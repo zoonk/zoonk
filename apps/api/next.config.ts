@@ -78,6 +78,14 @@ const e2eAliases: Record<string, string> = isE2E
     }
   : {};
 
+/** Python, JavaScript and SQL, which lesson checks run activities' programs in. */
+const PROGRAM_RUNTIMES = [
+  "../../packages/core/node_modules/{pyodide,quickjs-wasi,sql.js}/package.json",
+  "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
+  "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
+  "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
+];
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
@@ -100,15 +108,14 @@ const nextConfig: NextConfig = {
   // The PDF renderer and lesson code checks load native and WebAssembly assets from disk.
   outputFileTracingIncludes: {
     "/.well-known/workflow/**": [
-      "../../packages/core/node_modules/{pdfjs-dist,pyodide,quickjs-wasi,sql.js}/package.json",
-      "../../node_modules/.pnpm/pyodide@*/node_modules/{pyodide,ws}/**",
+      "../../packages/core/node_modules/pdfjs-dist/package.json",
       "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/pdfjs-dist/{cmaps,standard_fonts,wasm}/**",
       "../../node_modules/.pnpm/pdfjs-dist@*/node_modules/@napi-rs/canvas",
       "../../node_modules/.pnpm/@napi-rs+canvas@*/node_modules/@napi-rs/**",
       "../../node_modules/.pnpm/@napi-rs+canvas-*@*/node_modules/@napi-rs/**",
-      "../../node_modules/.pnpm/quickjs-wasi@*/node_modules/quickjs-wasi/**",
-      "../../node_modules/.pnpm/sql.js@*/node_modules/sql.js/{package.json,dist/sql-wasm.*}",
+      ...PROGRAM_RUNTIMES,
     ],
+    "/staff/lesson-activities": PROGRAM_RUNTIMES,
   },
   partialPrefetching: true,
   reactCompiler: true,

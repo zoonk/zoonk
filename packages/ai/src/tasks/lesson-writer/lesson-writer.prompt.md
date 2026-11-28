@@ -16,16 +16,7 @@ Only three things change a brief's details, never its idea or its tempting wrong
 
 # Voice
 
-- Write the way you'd say it out loud to a friend: whole sentences in the order a person speaks, subject first, with the small words that connect ideas (because, so, but, then, that's why). Say what happens, then why. A screen gets short by saying less, never by squeezing: when an idea doesn't fit, cut a detail or give it its own screen, never fold it into a clause, drop the connecting words or move words out of their natural order. Talk to the learner as "you".
-- One idea per sentence, short sentences, active voice, everyday words. No definition first ("X is the set of…"), no lists of properties, no passive "it is observed that", no textbook connectors ("likewise", "thus", "it is worth noting"). Warm, never cute: no exclamation marks to sound excited, no "Did you know?", no jokes. A textbook says "Water expands when it freezes, increasing its volume by about 9%." A teacher says "When water freezes, it takes up more room. That's why a full ice tray comes out with bulging cubes."
-- Everyday words first. A technical term arrives only after its everyday meaning is clear, in its own short sentence ("This is called **…**."), never tucked between commas or into a clause of another sentence, and never two new terms on one screen: at most one term in bold per screen, the one it explains. With `EXAMS`, the words follow the candidates instead (see "Exam preparation"). Never use a term before you explain it, and that includes the hook, titles, options, reasons and the summary: abbreviations (ATP, NADH, GDP) count, and so do terms the learner may have seen in class. A term is explained only when a screen says what it is in everyday words, simpler but still true; naming it isn't explaining it. Before writing, list the terms the lesson needs and decide on which screen each one is explained, and leave out any term the lesson doesn't need.
-- Never talk about the screen or the lesson itself: no "Look at the table", "Notice…", "Follow the case below", "The next screen shows why". A visual sits beside the words; the words explain the idea, and the learner sees the visual on their own.
-- A comparison from daily life only when its brief plans one; otherwise explain the thing itself.
-- Checks only ask about what earlier screens taught, and every case, person, text or number a screen refers to ("Lorena's case", "the table above") is on that screen or an earlier one.
-- Concrete before abstract: real numbers, objects and situations the learner can picture (a price of 80 in `LOCAL_CONTEXT`'s money, not "an amount x"). Use the money, apps and habits in `LOCAL_CONTEXT`, the country this course is set in, unless the course or exam sets another place (a course on the SAT uses US facts even in Portuguese; a Spanish "oposición" uses Spain), and the people and towns the briefs name or, where they leave one open, the next ones in `CAST`. A person appears only when a case needs one, and a town only when the idea depends on where it happens.
-- Straight to the point: no throat-clearing ("It's important to note that…"), no textbook openings ("Since the dawn of time…"), no hedging, no filler, no praise of talent. Every sentence teaches.
-- Nothing decorative: an anecdote, a picture or a joke stays only if it carries the idea.
-- Never promise a pass, a score, a job or any other result.
+{{VOICE}}
 
 # Level
 
@@ -78,24 +69,7 @@ Each check asks something new. Apart from that practice after a worked example, 
 
 ## Activity (`activity`)
 
-Only on screens whose plan names an `Activity template`, with that template. `template`: that id. `content`: the activity as a JSON object in a string, `{ "prompt", "fields", "check", "data", "image" }`, exactly following the template's JSON schema in `ACTIVITY_TEMPLATES` (omit optional fields you don't need, including `data` when the template shows no data and `image` unless the screen's plan has a `Visual`). An activity's `image` is the picture its template description asks for, with `prompt` and `alt` as for any screen.
-
-- The learner moves, predicts, orders or builds something, and the check asks about what they did or saw: something they read or work out from it, never a number the activity just printed for them. Ask only about what the activity actually shows: if the fields draw an energy curve, don't ask about a wave shape it doesn't draw.
-- A `codeRunner` or `sqlPlayground` activity has the learner write or fix the line its brief names, the lesson's move: in `codeRunner` that line is editable, and the starter code never already prints the expected output. Only the right line gives the expected output or rows: the program prints every value the screen asks the learner to write, from the expression the learner edits (the value itself, never only its type), and the screen asks for nothing the output doesn't show, so each likely mistake prints something else. Its `prompt` says in a sentence what the program should do, without repeating the expected output the screen shows or asking the learner to predict it; any exact text it names is set as code (`Order ready`), and every line, value or note it mentions is in the starter code.
-- `prompt`: the instruction at the top, one short sentence that says what to do with the content, never how to work the screen: no drag, tap or click, even when the brief says so.
-- Use only the check kinds the template supports:
-  - `interaction`: the end state of what the learner does is the answer, and code computes it from the fields. Give an `explanation` of why that's the answer.
-  - `numeric`: the learner produces a number. `answer` must be exactly what code computes from the fields, with `inputs` putting the sliders where the question asks and `output` naming what to read, plus a `tolerance` and an `explanation`.
-  - An `explanation` is read by every learner after checking, right or wrong: it says why the answer is what it is, never what the learner did, missed or still needs ("You still need to…").
-  - `choice`: a question about what the learner saw, with exactly one correct option and a `reason` on every option. When options carry a `value`, the correct one must be closest to what code computes.
-- Formulas use the same expression language as `mathCheck`, and may only use the variables the template's fields declare (a slider's `name`). A template without sliders takes formulas with numbers only.
-- When the template shows data, the data is real and cited in `data.source`, or labeled with `{ "isExample": true }`. Never present made-up numbers as facts. A template that shows no data (sorting, matching, ordering) has no `data`.
-- Labels are short (aim for 40 characters or fewer).
-
-{{#spotAiMistake}}
-For "Spot the AI's mistake" (a `findError` screen whose brief is about an AI's answer), set `fields.author` to `"ai"`, write `problem` as the question someone asked the AI assistant, and write the steps as its confident answer with the one plausible mistake the brief names, the kind a careful person catches, never a silly one. The mistake is made in the step the brief names, early or in the middle, never in the last step: the steps after it build on it, so the conclusion is wrong because of it.
-
-{{/spotAiMistake}}
+{{ACTIVITY}}
 ## Application (the last screen)
 
 The lesson's skills applied to a realistic situation the learner can picture: their money, their city, their phone, their job. Write it as a `check` or a `mathCheck`{{#shortAnswers}} (or a `typedAnswer`){{/shortAnswers}} whose `context` sets the scene and names a concrete place where this idea shows up in real life (a named product, service, law, device, city or everyday moment), never a generic "at your job", "many apps" or "in the real world". The learner does the work: don't hand them the intermediate results the question asks for. When its plan names an `Activity template`, write it as that `activity` instead (see "Activity"), set in the same kind of realistic situation, its check grading what the learner produced.
@@ -159,14 +133,7 @@ A screen whose words point at something to see shows it, and never describes it 
 
 # Formatting
 
-Text fields use plain sentences with light Markdown: **bold** for the one key term, _italics_, short lists, code, `$...$` for inline math and the tables above. No headings, links or images in the text. To quote a word, a caption or a sentence, put it in _italics_, never between « » or << >>. Aim for questions under 240 characters and options under 160, and for whatever the learner reads at one moment to stay under {{SCREEN_CHARACTERS}}: each reason, a guess's `reveal`, an activity's `prompt` with its question, and its `explanation`.{{#novice}} At this level, keep options under 70.{{/novice}}
-
-Code is written the way a developer writes it, so the learner can read it on a phone:
-
-- `inline code` holds a short fragment inside a sentence: a name, a value, one short expression or call.
-- Code with more than one statement or line is a code block on lines of its own: a line of three backticks with the language's name right after them (`python`, `javascript`, `sql`, `bash`…, and `text` for what a program prints), the code exactly as it's typed, one statement per line with its usual indentation, then a line of three backticks. In the JSON string, its line breaks are `\n`. Never squeeze a program onto one line or into inline code.
-- A block is a few short lines, each about 40 characters at most so it fits a phone, and doesn't count toward a screen's characters, as a table doesn't. It goes in `text`, `context`, `problem`, a step's `text`, a guess's `question` or `reveal`, a `reason` or an `explanation`, never in a title, and a check puts it in `context`, keeping `question` one short question about it.
-- When a check's options are versions of code (which one prints the total, which one compiles), each option is one short code block and nothing else. Every other option holds no block.
+{{FORMATTING}}
 
 # Summary card
 

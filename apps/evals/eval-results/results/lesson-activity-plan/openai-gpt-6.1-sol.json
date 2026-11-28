@@ -1,0 +1,1498 @@
+{
+  "modelId": "openai/gpt-6.1-sol",
+  "results": [
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The Python codeRunners are appropriate on screens 8 and 13: learners produce the arithmetic expression after the worked example and fix the bill-splitting expression in the application. Changing screen 12 violates the requirement to change only the qualifying screens, since screen 8 already covers its skill.",
+          "score": 6,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "Both codeRunner briefs identify the editable line, the correct printed value and the outputs of tempting mistakes. The arithmetic checks out: screen 8 prints `-0.5`, and screen 13 prints `8.0` when the whole bill is divided, versus `28.0` when only the coupon is divided. The bill brief preserves the concrete situation and explains each mistake. Screen 8's mistake descriptions are sufficient but could be more directly actionable with the corresponding expressions.",
+          "score": 9,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1640,
+          "outputTokens": 450,
+          "reasoningTokens": 45
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 12 should not be in the change list. Screen 8 already practises both skills, and replacing the later check with a codeTracer adds another prediction task rather than filling a practice gap.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Screen 8 could make its feedback easier to implement by pairing `15 // 2 - 8` with `-1` and `8 - 15 / 2` with `0.5`, just as screen 13 pairs each mistaken expression with its output.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice right after the first worked example (screen 8, which covers both skills) becomes a Python codeRunner where the learner writes or fixes the expression the check asked about; screen 12 practises a skill screen 8 already did, so it may stay a check. The application can become one where they write the split-the-bill expression. Each brief names the line to edit, the output only the right edit prints, and the tempting mistake's output.",
+        "expected": {
+          "mustChange": [
+            8
+          ],
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "python-numeric-expressions-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The Python codeRunners are appropriate for screen 8, where the learner fixes an expression after the worked example, and screen 13, where the learner produces a bill-splitting calculation. Including screen 12 violates the requirement to change only the screens that need conversion.",
+          "score": 6,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "Both codeRunner briefs identify the editable expression and distinguish the correct output from the tempting mistake's output. On screen 8, reversing the subtraction changes `-0.5` to `0.5`. On screen 13, dividing the whole order gives `8.0`, while dividing only the coupon gives `28.0`. The bill-splitting task preserves Hannah's situation and asks for a parentheses edit using the lesson's numbers.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1649,
+          "outputTokens": 505,
+          "reasoningTokens": 164
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 12 is an unnecessary change. Screen 8 already practises both skills, so screen 12 should remain a check rather than become a codeTracer that asks the learner to predict a value.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice right after the first worked example (screen 8, which covers both skills) becomes a Python codeRunner where the learner writes or fixes the expression the check asked about; screen 12 practises a skill screen 8 already did, so it may stay a check. The application can become one where they write the split-the-bill expression. Each brief names the line to edit, the output only the right edit prints, and the tempting mistake's output.",
+        "expected": {
+          "mustChange": [
+            8
+          ],
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "python-numeric-expressions-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d52e-a56b-750a-ab5e-76eb91a3a555"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The result turns a values check and the shipping application into runnable Python edits. Both grade the values the learner supplies rather than asking for a prediction, and the change list leaves the categorize screen alone.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "Both briefs identify the editable literals and accurately specify the corrected output. Keeping repr fixed lets the learner focus on values while making the difference between 42 and '42' visible. The main omission is the exact mistaken output in both briefs; the application also prints one requested value from a line that needs no edit.",
+          "score": 7,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1476,
+          "outputTokens": 495,
+          "reasoningTokens": 83
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Neither brief gives the writer the exact output of the tempting mistake, as required. Screen 5 explains the type distinction but does not say that leaving 42 unquoted prints 42 without quotation marks. Screen 9 says the quoted weight is text but does not give the mistaken output: '2.5' on the first line and 'B52' on the second.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Screen 9 supplies the correct label literal and tells the learner to keep it. The weight output therefore demonstrates a learner edit, but the label output can pass without the learner producing the requested text value.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show the mistaken and corrected console output side by side so the writer can make the quotation marks visible in feedback. On screen 9, provide an editable slot for the label literal so both output lines reflect learner choices.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A Python values lesson practises on programs: at least one check becomes a codeRunner (or codeTracer) on the values the lesson taught. The existing categorize screen stays.",
+        "expected": {
+          "changes": true,
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "python-values-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d52e-a545-7717-a7c3-2632ad313de3"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Both the check and the shipping application use a Python runner to grade literals the learner edits. Those are productive tasks rather than output predictions, and the existing categorize screen is left unchanged.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "The briefs retain Tyler's digit misconception and Keisha's Boise package, identify the editable values, and specify accurate target outputs. Keeping `repr` fixed makes the type distinction visible without requiring the learner to write unfamiliar display code. The shipping brief is usable, though it gives away the edit and describes the all-string output less precisely than it shows the correct output.",
+          "score": 8,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1549,
+          "outputTokens": 433,
+          "reasoningTokens": 65
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Screen 9 tells the learner exactly which quotes to remove and add. The edit still tests Python literal syntax, but it does less to check whether the learner can choose the right type for each shipping value.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Use the shipping tool's requirements as the initial prompt and save the quote edits for a hint. In the feedback for quoting both values, show the two output lines explicitly: `'2.5'` followed by `'B52'`. That makes the contrast with the correct weight output, `2.5`, visible.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "A Python values lesson practises on programs: at least one check becomes a codeRunner (or codeTracer) on the values the lesson taught. The existing categorize screen stays.",
+        "expected": {
+          "changes": true,
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "python-values-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d52e-a545-7717-a7c3-2632ad313de3"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Only screen 9 changes. A Python codeTracer can grade the middle position at each round, and the data-structure application remains a check.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "The brief specifies the target, list, zero-based indexing and correct sequence of middle positions: 2, 0, 1. It places the rounding-up distractor at the round where it matters, when the bounds are 0 and 1. The only weakness is asking for bound predictions rather than using the bounds solely to support the requested middle-position predictions.",
+          "score": 8,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1421,
+          "outputTokens": 325,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Asking learners to predict the updated bounds as well as the middle positions adds a graded demand beyond the screen’s focus: which positions the search examines.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Show início and fim as trace state, but ask for meio only. Keep 1 as the second-round distractor: rounding up would find 17 early and skip the check at position 0.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice right after the worked binary search (screen 9, which positions it examines) becomes a codeTracer of that search in a language the tracer runs, asking for the middle position at each round, with the round-the-middle-up mistake as a wrong option. The application, a choice between data structures, stays a check.",
+        "expected": {
+          "mustChange": [
+            9
+          ],
+          "templates": [
+            "codeTracer",
+            "codeRunner"
+          ]
+        },
+        "id": "binary-search-tracer-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc07-924d-7e56-a5e7-d49b6abb2e32"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Only screen 9 changes, and it becomes a codeTracer in Python, a suitable language for the tracer. The data-structure application remains a check.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "The brief specifies the target, list, zero-based bounds, and midpoint calculation. Its trace is correct: the search examines positions 2, 0, and 1. The upper-middle distractor targets the intended mistake. The only scope issue is asking for boundary updates as answers rather than using them as feedback.",
+          "score": 8,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1428,
+          "outputTokens": 387,
+          "reasoningTokens": 61
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The brief also asks learners to predict boundary changes. Those changes explain the trace, but the requested learner response is the middle position at each round.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Ask only for `meio` at each pause, then reveal the updated bounds as feedback for the next round. Keep `1` as the second-round distractor: it tests rounding up when the bounds are 0 and 1.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice right after the worked binary search (screen 9, which positions it examines) becomes a codeTracer of that search in a language the tracer runs, asking for the middle position at each round, with the round-the-middle-up mistake as a wrong option. The application, a choice between data structures, stays a check.",
+        "expected": {
+          "mustChange": [
+            9
+          ],
+          "templates": [
+            "codeTracer",
+            "codeRunner"
+          ]
+        },
+        "id": "binary-search-tracer-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc07-924d-7e56-a5e7-d49b6abb2e32"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Screen 12 uses a JavaScript codeRunner for the requested post-example practice. Screen 15 also fits the application criterion: the learner produces a working code change whose effect can be graded by execution. Neither change turns a conceptual screen into a coding task.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "Both briefs name a concrete edit and the correct output order. Screen 15 also gives the exact faulty output and explains why returning a value from `.finally()` does not fix it. Screen 12 is less useful: its starter already recovers, and it leaves the writer to infer `falha1`, the output that distinguishes the starter from the solution.",
+          "score": 7,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1563,
+          "outputTokens": 538,
+          "reasoningTokens": 78
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "Screen 12’s starter chain already recovers: `.catch(() => 'falha')` fulfills the promise, so the next `.then()` runs. Changing `'falha'` to `4` fixes the printed value, but does not make the learner repair a failure to recover.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Screen 12 gives the correct target output but omits what the starter prints: `segue`, then `falha1`. The feedback describes expecting the `.then()` to be skipped, which is not what the faulty line demonstrates.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "To practice recovery itself, start screen 12 with a `.catch()` that logs `falha` and rethrows it, and add a terminal handler that logs any remaining rejection. Have the learner replace the rethrowing handler with `.catch(() => 4)`. Specify both traces: `segue`, `falha`, `falha` before the fix and `segue`, `5` afterward.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice after the worked promise chain (screen 12) becomes a JavaScript activity: a codeRunner where the learner fixes the chain so it recovers and prints the expected lines, or a codeTracer of the order the lines print.",
+        "expected": {
+          "mustChange": [
+            12
+          ],
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "javascript-promises-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc07-9497-7920-9a63-2bcc5f9ee360"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Screen 12 uses the requested JavaScript codeRunner to grade a repair, not an output prediction. Screen 15 also fits the application criterion: the learner produces a working recovery handler for a failed save. Neither change targets an idea-only screen.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "Both briefs specify the handler to edit, a working fix, and the correct output in order. Screen 15 also gives the complete faulty output and accurately explains why returning a value from `.finally()` would not replace the result. Screen 12 identifies the faulty final value but does not state the complete faulty trace as directly.",
+          "score": 8,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1577,
+          "outputTokens": 534,
+          "reasoningTokens": 181
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Screen 12 explains why the empty handler produces `NaN`, but leaves the writer to infer the full starter output: `segue` followed by `NaN`. Stating it explicitly would distinguish the actual behavior from the misconception that the rejection skips the final `.then()`.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Lay out each starter chain with `.catch()` on its own line so the writer can make precisely that line editable without exposing the rest of the chain.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The practice after the worked promise chain (screen 12) becomes a JavaScript activity: a codeRunner where the learner fixes the chain so it recovers and prints the expected lines, or a codeTracer of the order the lines print.",
+        "expected": {
+          "mustChange": [
+            12
+          ],
+          "templates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "javascript-promises-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc07-9497-7920-9a63-2bcc5f9ee360"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving the screens unchanged avoids both unsupported C++ templates. The expectations permit existing checks to stay checks and do not require adding a findError. No specific screen is identified as needing a change.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen change calls for a new brief, so there are no missing writer instructions or unsupported additions to the lesson case.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1137,
+          "outputTokens": 233,
+          "reasoningTokens": 42
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "C++ doesn't run in the code runner or the code tracer, so neither is planned. Checks may stay checks; a findError on a worked answer is fine.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground"
+          ]
+        },
+        "id": "cpp-no-runner-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a21731-6277-775d-a41a-9eaea5ba5655"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving the screens unchanged is appropriate: neither the runner nor the tracer supports C++, and the checks may remain checks. A findError on a worked answer is permitted, not required.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen change calls for a new brief, so there is no missing writer instruction.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1137,
+          "outputTokens": 220,
+          "reasoningTokens": 26
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "C++ doesn't run in the code runner or the code tracer, so neither is planned. Checks may stay checks; a findError on a worked answer is fine.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground"
+          ]
+        },
+        "id": "cpp-no-runner-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a21731-6277-775d-a41a-9eaea5ba5655"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The empty change list correctly leaves the DOM lesson intact. Neither codeRunner nor codeTracer provides the browser page needed to select and change DOM elements.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen change was warranted, so no new brief was needed or introduced.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1144,
+          "outputTokens": 201,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Selecting and changing DOM elements needs a browser page the code runner doesn't have, so no codeRunner or codeTracer runs DOM code. Leaving the lesson as it is is right.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "dom-no-runner-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1c5ed-9d64-7bba-acf8-69be1f7b0541"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The empty change list correctly preserves every screen. Selecting and changing DOM elements requires a browser page, so neither codeRunner nor codeTracer is suitable for this practice.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No replacement brief was warranted because no screen should change. The result introduces no unsupported DOM exercise.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1144,
+          "outputTokens": 178,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Selecting and changing DOM elements needs a browser page the code runner doesn't have, so no codeRunner or codeTracer runs DOM code. Leaving the lesson as it is is right.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer"
+          ]
+        },
+        "id": "dom-no-runner-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1c5ed-9d64-7bba-acf8-69be1f7b0541"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The empty change list correctly leaves every screen unchanged: this lesson explains the right to public information rather than teaching a skill that requires graded production.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen needs a replacement, so no new writer brief is required or missing.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1128,
+          "outputTokens": 171,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "A law lesson about the right to public information is about ideas, not doing: no screen changes.",
+        "expected": {
+          "changes": false
+        },
+        "id": "law-no-activity-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc05-f4d5-7114-8b08-64bf5e85bb1d"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The empty change list correctly leaves every screen unchanged: this lesson explains a legal right rather than teaching a skill that requires a graded product.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No new brief is needed because no screen should change. The result introduces none.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1128,
+          "outputTokens": 170,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "A law lesson about the right to public information is about ideas, not doing: no screen changes.",
+        "expected": {
+          "changes": false
+        },
+        "id": "law-no-activity-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bc05-f4d5-7114-8b08-64bf5e85bb1d"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving every screen unchanged is correct. The learner judges logical equivalence; neither a code template nor an equivalent/not-equivalent sort would grade a produced artifact.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen warranted a change, so no new writer brief was needed or introduced.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1145,
+          "outputTokens": 174,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Logical equivalences are judged, not produced in a template: no code templates, and no sort into equivalent or not equivalent (that's true-or-false judgments). Leaving it as it is is right.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground",
+            "categorize"
+          ]
+        },
+        "id": "de-morgan-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bbfe-6d8b-7c0f-be18-e38392977600"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving every screen unchanged is correct: the learner judges logical equivalence rather than producing code, and an equivalent/not-equivalent sort would only repackage a true-or-false judgment.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen needs a replacement, so no new writer brief is needed or missing.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1145,
+          "outputTokens": 179,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Logical equivalences are judged, not produced in a template: no code templates, and no sort into equivalent or not equivalent (that's true-or-false judgments). Leaving it as it is is right.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground",
+            "categorize"
+          ]
+        },
+        "id": "de-morgan-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1bbfe-6d8b-7c0f-be18-e38392977600"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The checks ask whether a supplied value satisfies an equation, not for the learner to produce a solution. Leaving them unchanged preserves the appropriate template and introduces no code.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen needs a template change, so no replacement brief is needed. The empty change list leaves the original checks intact.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1136,
+          "outputTokens": 204,
+          "reasoningTokens": 19
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The checks ask whether a given value solves an equation in context, which is verifying, not producing a solution, so they stay checks. Never code.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground",
+            "stepSolver",
+            "balance"
+          ]
+        },
+        "id": "math-solutions-in-context-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1a275-5f15-7b6e-b1a5-b53035943991"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The checks ask learners to verify a supplied value, not produce a solution. Leaving them unchanged preserves the right template and introduces no code.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "No screen needs a template change, so no replacement brief is needed.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1136,
+          "outputTokens": 198,
+          "reasoningTokens": 28
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The checks ask whether a given value solves an equation in context, which is verifying, not producing a solution, so they stay checks. Never code.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground",
+            "stepSolver",
+            "balance"
+          ]
+        },
+        "id": "math-solutions-in-context-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1a275-5f15-7b6e-b1a5-b53035943991"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "The lesson ID alone does not identify a screen where the learner produces a gradable running balance or other result. Leaving the screens unchanged follows the stated fallback without introducing code.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "With no supported screen change, no new brief is needed. The result does not invent transactions, amounts, or a task that earlier screens may not have taught.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1140,
+          "outputTokens": 267,
+          "reasoningTokens": 60
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Recording money in and out: no code. An activity only where the learner produces what a template grades (such as a running balance in a formulaModel); otherwise no change.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground"
+          ]
+        },
+        "id": "money-records-1",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a19de3-62bc-7224-a9aa-7fbc239e7398"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "No change is permitted when no qualifying activity is identified. A running balance is an example of work a template could grade, but the supplied lesson ID does not establish that any screen asks the learner to produce one. There is no supported omission or inappropriate template choice.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "With no supported screen change, no writer brief is required. The result introduces no invented transaction details or untaught task.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1140,
+          "outputTokens": 247,
+          "reasoningTokens": 67
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Recording money in and out: no code. An activity only where the learner produces what a template grades (such as a running balance in a formulaModel); otherwise no change.",
+        "expected": {
+          "forbiddenTemplates": [
+            "codeRunner",
+            "codeTracer",
+            "sqlPlayground"
+          ]
+        },
+        "id": "money-records-2",
+        "language": "pt",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a19de3-62bc-7224-a9aa-7fbc239e7398"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving the screens unchanged is appropriate on the supplied evidence. The learner produces a reverse complement by hand, not by writing code, and no check is identified whose task is itself ordering steps or matching pairs.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "With no supported screen change, no replacement brief is needed. The result preserves the lesson’s sequences and introduces no untaught task.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1158,
+          "outputTokens": 294,
+          "reasoningTokens": 99
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Reverse complements are a rule applied by hand in this lesson. A codeRunner only if the course has taught code, which it hasn't here; a processOrder or matchPairs only where the move is the check's own. Any change keeps the lesson's sequences.",
+        "expected": {},
+        "id": "dna-reverse-complement-1",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d374-c0d5-7498-a279-8959a2d9a965"
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "choice",
+          "reasoning": "Leaving the screens unchanged is appropriate. The skill is producing a reverse complement by hand, and the course has not taught code. Nothing supplied identifies a check whose task is itself ordering steps or matching pairs.",
+          "score": 10,
+          "label": "Right screens and templates",
+          "weight": 50
+        },
+        {
+          "categoryId": "briefs",
+          "reasoning": "With no supported screen change, no replacement brief is needed. The result preserves the lesson’s sequences and introduces no untaught task.",
+          "score": 10,
+          "label": "Briefs the writer can follow",
+          "weight": 50
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 1 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1158,
+          "outputTokens": 342,
+          "reasoningTokens": 135
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "Reverse complements are a rule applied by hand in this lesson. A codeRunner only if the course has taught code, which it hasn't here; a processOrder or matchPairs only where the move is the check's own. Any change keeps the lesson's sequences.",
+        "expected": {},
+        "id": "dna-reverse-complement-2",
+        "language": "en",
+        "origin": "production",
+        "userInput": {
+          "lessonId": "01a1d374-c0d5-7498-a279-8959a2d9a965"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-activity-plan"
+}

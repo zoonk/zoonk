@@ -97,7 +97,7 @@ function solutionIssues(fields: CodeRunnerFields) {
 export const codeRunnerTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript's console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
+    "Run and fix real code in the browser (JavaScript, or Python through Pyodide), like an off-by-one loop. The learner's program output must equal the expected output. `solution` is the starter code with the editable lines fixed; code runs it before publishing, and `expectedOutput` must be exactly what it prints. JavaScript runs on its own, with no web page (no document, window or DOM), and its console.log prints like Node on one line (arrays as [ 1, 2 ], objects as { a: 1 }); Python has its standard library but no input() and no network. Keep output the same on every run and every device: no randomness, clock, time zone or locale formatting. Fills: the language, starter code, editable lines, the solution, expected output and feedback keyed by the output of each likely mistake.",
   expected: (fields) => ({ kind: "output", output: normalizeProgramOutput(fields.expectedOutput) }),
   fields: codeRunnerFields,
   id: "codeRunner",
@@ -201,7 +201,7 @@ function tracerIssues(fields: CodeTracerFields) {
 export const codeTracerTemplate = defineActivityTemplate({
   checks: ["interaction"],
   description:
-    "Step through JavaScript or Python code line by line and predict what changes, like binary search narrowing a list. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
+    "Step through JavaScript or Python code line by line and predict what changes, like binary search narrowing a list. JavaScript runs with no web page, so no document, window or DOM. Each trace step is a line right after it runs, with the watched values it changed; a value not listed keeps its last one. Code runs the program before publishing and the trace must match that run: steps in the order the lines run (steps may be skipped), every shown value as it is at that moment, and a program that finishes. Write numbers as numbers, text without quotes and lists like [1, 2]. At each pause the correct option is the one equal to the traced value. Fills: the code, input values, variables to watch, the trace, and pause points with their prediction questions.",
   expected: (fields) => ({
     kind: "assignment",
     pairs: Object.fromEntries(

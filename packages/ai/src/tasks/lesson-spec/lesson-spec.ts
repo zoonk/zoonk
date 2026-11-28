@@ -16,8 +16,9 @@ import { getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { getVerbForm } from "../_utils/verb-form";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
+import activityRules from "./activities.prompt.md";
 import { LESSON_SCREEN_KINDS, type LessonSpec, getLessonSpecIssues } from "./lesson-spec-rules";
-import systemPrompt from "./lesson-spec.prompt.md";
+import specTemplate from "./lesson-spec.prompt.md";
 import { LESSON_VISUAL_KINDS } from "./lesson-visuals";
 import { normalizeLessonSpec } from "./normalize-lesson-spec";
 import quickLessonPrompt from "./quick-lesson.prompt.md";
@@ -28,6 +29,8 @@ import {
   getSecondTakeIssues,
 } from "./second-take-rules";
 import secondTakePrompt from "./second-take.prompt.md";
+
+const systemPrompt = specTemplate.replace("{{ACTIVITIES}}", () => activityRules.trimEnd());
 
 /**
  * A shared plan is read by many learners, so it takes the planner that keeps the visual a screen
