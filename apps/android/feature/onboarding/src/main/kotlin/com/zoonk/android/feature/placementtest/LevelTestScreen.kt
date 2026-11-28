@@ -62,6 +62,7 @@ import com.zoonk.android.ui.format.factsLine
 import com.zoonk.android.ui.format.languageName
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestOneOf1LevelsInner
+import com.zoonk.api.models.LanguageLevelTestOneOfResultRangesValue
 import com.zoonk.api.models.LanguageLevelTestOut
 import com.zoonk.api.models.LanguageLevelTestOutNext
 import com.zoonk.api.models.LanguageLevelTestResult
@@ -281,7 +282,7 @@ internal fun ColumnScope.LevelResult(
         title = stringResource(R.string.placementtest_your_level, languageName(targetLanguage, currentLocale())),
         lead =
             when {
-                lessons > 0 -> pluralStringResource(R.plurals.placementtest_lessons_you_know, lessons, lessons)
+                lessons > 0 -> null
                 READING in ranges && LISTENING !in ranges -> stringResource(R.string.placementtest_take_again_later)
                 else -> stringResource(R.string.placementtest_keeps_adjusting)
             },
@@ -292,21 +293,7 @@ internal fun ColumnScope.LevelResult(
         failed = failed,
         undo = undo,
     ) {
-        LevelRows(
-            RANGE_SKILLS.map { (key, skill) ->
-                val range = ranges[key]
-                val name =
-                    com.zoonk.android.feature.onboarding.setup
-                        .skillName(skill)
-                if (range == null) {
-                    LevelRow(name, stringResource(R.string.placementtest_not_tested), muted = true) { LevelRangeBar(-1, -1, it) }
-                } else {
-                    LevelRow(name, levelRange(range)) {
-                        LevelRangeBar(CEFR_LEVELS.indexOf(range.low.value), CEFR_LEVELS.indexOf(range.high.value), it)
-                    }
-                }
-            },
-        )
+        SkippedCaption(if (undo?.restoredLessons == null) lessons else 0) { LevelRows(levelRows(ranges)) }
         result.result
             ?.nextLesson
             ?.takeIf { undo?.restoredLessons == null }
@@ -323,6 +310,23 @@ internal fun ColumnScope.LevelResult(
         appLanguage?.let { InterfaceOffer(it) }
     }
 }
+
+/** Each tested skill's range on its bar, "Not tested yet" for one whose questions weren't finished. */
+@Composable
+private fun levelRows(ranges: Map<String, LanguageLevelTestOneOfResultRangesValue>): List<LevelRow> =
+    RANGE_SKILLS.map { (key, skill) ->
+        val range = ranges[key]
+        val name =
+            com.zoonk.android.feature.onboarding.setup
+                .skillName(skill)
+        if (range == null) {
+            LevelRow(name, stringResource(R.string.placementtest_not_tested), muted = true) { LevelRangeBar(-1, -1, it) }
+        } else {
+            LevelRow(name, levelRange(range)) {
+                LevelRangeBar(CEFR_LEVELS.indexOf(range.low.value), CEFR_LEVELS.indexOf(range.high.value), it)
+            }
+        }
+    }
 
 /** A level's test-out: its questions once written, then what it skipped. */
 @Composable

@@ -3,7 +3,6 @@
 {
   "placementtest_about": "809408a7cbe298b2c629478cac4564e5e56792cb8f123df8d792478348834ffb",
   "placementtest_choose_description": "4163b1c4efc75abff2df7c6b7f25b155a9c9e864aecefe7e76f16415c0cdfd5d",
-  "placementtest_course_skipped": "4d2b9ebbc893b6ec21e445a1c058aabfbcfb11b0907d1e3957aef6edc02a602b",
   "placementtest_done": "7fdbf5462432e9e4424b189dab5ec6a67c54a7e83b24d42daabc048aa32b9959",
   "placementtest_find_level": "0a06a728ade1ccb01015bc46969f10d962a5edc85b92311811697e7f92289b50",
   "placementtest_finish_later": "a4202289af4c87dece4e694941bf7f0197d893ba6069dafdce27b011fb400d9b",
@@ -13,7 +12,6 @@
   "placementtest_known_one": "863ff9a65e88e904636548aa4b3bab035602a714f8ab7d877cc5165f9020fd6e",
   "placementtest_known_other": "74380d7de78ed676b16e44b38e285410c6487b047d78fce386065139e7167db4",
   "placementtest_lessons_skipped": "c078e301a4cb3eadccd0b3dfd2959fea48d7adb2ba09660e6779e43bc46fa04d",
-  "placementtest_lessons_you_know": "9663da3e62fc0918533e4612f14b3df5d7501f8703a700ff66f92bbf374d0253",
   "placementtest_level_stays": "f6315abd45841dac827c5bf5cdc6f754ec677108c375ba8c85c0eaafa718e99b",
   "placementtest_level_title": "caa6020caf12ecaf66039b293586447fbc802b5ccdebfad5dc64426cf16170b2",
   "placementtest_listening_range": "8976ddb8fb34c3406bdd6cd3d6b71a94eb13edba6c505ce25c0a8fb562385c7f",
@@ -93,11 +91,6 @@
     </plurals>
     <string name="placementtest_finish_later">Terminar después</string>
     <string name="placementtest_start_lesson">Empezar lección</string>
-    <plurals name="placementtest_lessons_you_know">
-        <item quantity="one">Se saltó %d lección que ya conoces.</item>
-        <item quantity="many">Se saltaron %d lecciones que ya conoces.</item>
-        <item quantity="other">Se saltaron %d lecciones que ya conoces.</item>
-    </plurals>
     <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
     <string name="placementtest_take_again_later">Puedes volver a hacer la prueba más adelante desde tu plan.</string>
     <string name="placementtest_not_tested">Aún no se evaluó</string>
@@ -105,12 +98,6 @@
     <string name="placementtest_test">Prueba de nivel</string>
     <!-- Over the name of the chapter a course's placement test starts the learner in. -->
     <string name="placementtest_you_start_here">Empiezas aquí</string>
-    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
-    <plurals name="placementtest_course_skipped">
-        <item quantity="one">%1$d de %2$d lecciones saltadas</item>
-        <item quantity="many">%1$d de %2$d lecciones saltadas</item>
-        <item quantity="other">%1$d de %2$d lecciones saltadas</item>
-    </plurals>
     <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
     <string name="placementtest_take_test_again">Volver a hacer la prueba</string>
 </resources>

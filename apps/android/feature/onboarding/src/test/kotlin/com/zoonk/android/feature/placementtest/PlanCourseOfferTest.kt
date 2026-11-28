@@ -85,7 +85,8 @@ class PlanCourseOfferTest {
 
         rule.onNodeWithText("You start here").assertIsDisplayed()
         rule.onNodeWithText("Why prices move").assertIsDisplayed()
-        rule.onNodeWithContentDescription("4 of 9 lessons skipped").assertIsDisplayed()
+        rule.onNodeWithContentDescription("4 lessons skipped").assertIsDisplayed()
+        rule.onNodeWithContentDescription("4 of 9 lessons skipped").assertDoesNotExist()
         rule.onNodeWithText("News, results and expectations").assertIsDisplayed()
         rule.onNodeWithText("Undo").assertIsDisplayed()
         rule.onNodeWithText("Done").assertIsDisplayed()
@@ -150,7 +151,21 @@ class PlanCourseOfferTest {
         rule.onNodeWithText("You start here").assertIsDisplayed()
         rule.onNodeWithText("Phase 3").assertIsDisplayed()
         rule.onNodeWithText("Reading company news").assertDoesNotExist()
-        rule.onNodeWithText("4 lessons skipped").assertDoesNotExist()
+    }
+
+    @Test
+    fun aResultThatSkippedEveryLessonSaysSoOnceAsItsTitle() {
+        val allSkipped =
+            RESULT_WITHOUT_OFFER
+                .replace(
+                    "\"chapter\":\"Why prices move\"",
+                    "\"chapter\":null",
+                ).replace("\"start\":true", "\"start\":false")
+        show(allSkipped)
+
+        rule.onNodeWithText("4 lessons skipped").assertIsDisplayed()
+        rule.onNodeWithContentDescription("4 lessons skipped").assertDoesNotExist()
+        rule.onNodeWithText("You start here").assertDoesNotExist()
     }
 
     private fun planWith(row: String) = planOf().copy(placementTest = ApiJson.decodeFromString<PlanPlacementTest>(row))

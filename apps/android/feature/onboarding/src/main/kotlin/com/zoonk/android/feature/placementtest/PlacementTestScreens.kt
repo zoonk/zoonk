@@ -187,7 +187,7 @@ private fun OfferCardFace(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            KindMark(card.kind, Modifier.align(Alignment.Top))
+            KindMark(card.kind)
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(card.label, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
                 card.line?.let {
@@ -280,37 +280,25 @@ internal fun ColumnScope.PlacementResult(
     val place = (result.chapter ?: start?.let { phaseKindName(PlanPhase.Kind.LEARN, it + 1) }).takeUnless { undone }
     val course = result.course.takeUnless { undone }
     SetupContent {
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            place?.let { OnboardingSubject(stringResource(R.string.placementtest_you_start_here)) }
-            OnboardingHeading(
-                title = place ?: lessonsSkippedLine(if (undone) 0 else result.lessonsSkipped),
-                description =
-                    when {
-                        restored != null -> restoredLessonsLine(restored)
-                        result.heldUntilTomorrow && result.lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
-                        else -> null
-                    },
-                announceDescription = undone,
-            )
-        }
-        course?.let {
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                CourseLine(it)
-                if (result.lessonsSkipped > 0) {
-                    Facts(
-                        listOf(
-                            pluralStringResource(
-                                R.plurals.placementtest_course_skipped,
-                                result.lessonsSkipped,
-                                result.lessonsSkipped,
-                                it.lessons,
-                            ),
-                        ),
-                    )
-                }
+        // Where the learner starts, with its line and what was skipped, reads as one group; the next lesson is a step apart.
+        Column(verticalArrangement = Arrangement.spacedBy(PLACE_GAP)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                place?.let { OnboardingSubject(stringResource(R.string.placementtest_you_start_here)) }
+                OnboardingHeading(
+                    title = place ?: lessonsSkippedLine(if (undone) 0 else result.lessonsSkipped),
+                    description =
+                        when {
+                            restored != null -> restoredLessonsLine(restored)
+                            result.heldUntilTomorrow && result.lessonsSkipped == 0 -> stringResource(R.string.placementtest_retake_tomorrow)
+                            else -> null
+                        },
+                    announceDescription = undone,
+                )
             }
-            result.nextLesson?.let { title -> UpNext(title, result.nextMinutes) }
+            // With no start left to name, the title already says how many were skipped.
+            course?.let { SkippedCaption(if (place != null) result.lessonsSkipped else 0) { CourseLine(it) } }
         }
+        course?.let { result.nextLesson?.let { title -> UpNext(title, result.nextMinutes) } }
         onRetake?.let {
             LinkButton(
                 stringResource(R.string.placementtest_take_test_again),
@@ -321,6 +309,24 @@ internal fun ColumnScope.PlacementResult(
         TestActions(action, onAction, busy = busy || pressed == Pressed.Main, enabled = !busy && pressed == null, failed, undo)
     }
 }
+
+/**
+ * What a result drew ([picture]: the course's line, a language's level rows) with how many lessons the test skipped
+ * under it, which the picture can't say; nothing under it when none were.
+ */
+@Composable
+internal fun SkippedCaption(
+    lessons: Int,
+    picture: @Composable () -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        picture()
+        if (lessons > 0) Facts(listOf(lessonsSkippedLine(lessons)))
+    }
+}
+
+/** The gap between a result's place and its line; the next lesson sits the page's step further. */
+private val PLACE_GAP = 16.dp
 
 /** Main's `TestOutcome`: the end of a test, what it found under its heading, and the way on. */
 @Composable
