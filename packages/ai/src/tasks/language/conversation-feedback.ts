@@ -1,5 +1,6 @@
 import "server-only";
 import { type CefrLevel } from "@zoonk/utils/cefr";
+import { isSameLanguage } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatUntrustedInput } from "../../evaluate/untrusted-input";
@@ -12,6 +13,7 @@ import {
   getAddressFormPrompt,
 } from "../_utils/address-form";
 import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type ConversationTurn,
@@ -98,7 +100,10 @@ export async function writeConversationFeedback(params: WriteConversationFeedbac
 
   const systemPrompt = fillPromptLanguages({
     ...params,
-    template: `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`,
+    template: selectPromptVariants({
+      template: `${basePrompt}\n${getAddressFormPrompt(params.addressForm)}`,
+      variants: { bilingual: !isSameLanguage(params) },
+    }),
   });
 
   const userPrompt = buildUserPrompt(params);
