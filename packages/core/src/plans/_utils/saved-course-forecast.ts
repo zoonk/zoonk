@@ -1,7 +1,7 @@
 import { findFinishByCapacity } from "../planner/daily-need";
 import { addDays, fromIsoDate, getWeeklyEventWeekday, toIsoDate } from "../planner/plan-calendar";
 import { createLearnDays } from "../planner/plan-days";
-import { LEARN_KINDS } from "../planner/plan-item-rules";
+import { PHASE_WORK_KINDS } from "../planner/plan-item-rules";
 import { getCalendar, getPlanStart } from "../planner/plan-run-days";
 import { getLessonCapacity } from "../planner/schedule-units";
 import { getDatedFinish, getSavedCourseFinish } from "./course-finish";
@@ -18,7 +18,7 @@ function getMissedMinutes({
   layoutDay: string;
   today: string;
 }): number {
-  if (!LEARN_KINDS.has(item.kind) || !item.scheduledFor || item.status !== "todo") {
+  if (!PHASE_WORK_KINDS.has(item.kind) || !item.scheduledFor || item.status !== "todo") {
     return 0;
   }
 
@@ -93,7 +93,7 @@ export function readSavedCourseForecast({
 
   const movedPhases = phases.map((phase, index) => {
     const startDate =
-      phase.startDate && phase.startDate > day
+      phase.startDate && missed.total > 0
         ? move(phase.startDate, missed.total).date
         : phase.startDate;
 

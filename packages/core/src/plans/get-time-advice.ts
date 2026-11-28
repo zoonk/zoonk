@@ -10,7 +10,6 @@ import { type PlanContext } from "./_utils/plan-context";
 import { toShownShare } from "./_utils/plan-feasibility-view";
 import { buildPlanNumbersView } from "./_utils/plan-numbers-view";
 import { readPlanReadiness } from "./_utils/plan-readiness";
-import { readSavedFinish } from "./_utils/plan-summary";
 import { getTimePlanning, searchPlanTime, withStudyWeek } from "./_utils/plan-time-search";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
@@ -193,13 +192,7 @@ export async function getPlanTimeAdvice({
 
   const { feasibility } = computed;
 
-  const savedSchedule =
-    input.studyDays === undefined &&
-    input.weekendMinutes === undefined &&
-    input.aim === undefined &&
-    dailyMinutes === context.state.goal.dailyMinutes;
-
-  const finish = (savedSchedule && readSavedFinish(context)) || getCourseFinish(computed);
+  const finish = getCourseFinish(computed);
   const fullCourseEndDate = fullCourse ? getFullCourseFinishDate(computed) : null;
   const targetDate = context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null;
 

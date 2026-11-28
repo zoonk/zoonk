@@ -88,6 +88,36 @@ function measure(value: BuildPlanInput) {
 }
 
 describe("selected coverage of shared lessons", () => {
+  it.each([null, fromIsoDate("2020-09-29")])(
+    "counts an incomplete outline's short remainder for %s",
+    (targetDate) => {
+      const original = input();
+
+      const value = {
+        ...original,
+        goal: { ...original.goal, targetDate },
+        graph: {
+          ...original.graph,
+          skills: original.graph.skills
+            .slice(0, 1)
+            .map((skill) => ({ ...skill, lessons: 4, outlined: false })),
+        },
+      };
+
+      const built = buildPlan(value);
+      const summary = summarizeSelectedPlan({ built, examSubjects: null, input: value });
+      expect(summary.requirement.totalRaw).toBe(15);
+    },
+  );
+
+  it("cannot fit hours for language bands without situations", () => {
+    const original = input({ weekdayMinutes: [60, 60, 60, 60, 60, 60, 60] });
+    const result = measure({ ...original, graph: { ...original.graph, unwrittenLessons: 1500 } });
+    expect(result.coverage.fits).toBe(false);
+    expect(result.coverage.coreFits).toBe(false);
+    expect(result.coverage.coveredShare).toBeLessThan(1);
+  });
+
   it.each(SKILLS)("credits only the tested-out owner %s", (owner) => {
     const result = measure({ ...input(), items: [saved({ owner, status: "testedOut" })] });
 

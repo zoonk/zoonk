@@ -244,11 +244,6 @@ describe(getPlanTimeAdvice, () => {
       status: "ready",
     });
 
-    await expect(ask({})).resolves.toMatchObject({
-      advice: { endDate: end(long), finishReason: null, precision: "month" },
-      status: "ready",
-    });
-
     expect(long).toMatchObject({ advice: { finishReason: null, precision: "month" } });
   });
 

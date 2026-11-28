@@ -49,7 +49,7 @@ function linkRequirement({
   const chosen = withBaseChoices({ choices: getKeptBaseChoices(input), input });
 
   const standIns = getStandInLessons({
-    includeShortRemainder: input.goal.targetDate === null,
+    includeShortRemainder: true,
     lessons: chosen.lessons,
     skills: chosen.graph.skills,
   });

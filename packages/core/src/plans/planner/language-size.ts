@@ -147,7 +147,7 @@ function resize({
 }
 
 /** A graph written before every band had situations still owes its empty bands' hours. */
-function countUnwrittenLessons({
+function listUnwrittenBands({
   aim,
   bandOf,
   graph,
@@ -157,12 +157,11 @@ function countUnwrittenLessons({
   bandOf: (skill: PlanGraphSkill) => CourseLevel;
   graph: PlanGraph;
   start: number;
-}): number {
+}): CourseLevel[] {
   const written = new Set(graph.skills.map((skill) => bandOf(skill)));
 
-  return BAND_ORDER.filter((band) => !written.has(band)).reduce(
-    (sum, band) => sum + getLessonCount(getStudiedHours({ aim, band, start })),
-    0,
+  return BAND_ORDER.filter(
+    (band) => !written.has(band) && getStudiedHours({ aim, band, start }) > 0,
   );
 }
 
@@ -239,19 +238,31 @@ export function sizeLanguageGraph({
     graph: studied ? resize({ aim, bandOf, graph, leftOut, settledSkillIds, start }) : graph,
   });
 
-  const unwrittenLessons = studied ? countUnwrittenLessons({ aim, bandOf, graph, start }) : 0;
-  const owed = unwrittenLessons > 0 ? { ...sized, unwrittenLessons } : sized;
+  const missing = studied ? listUnwrittenBands({ aim, bandOf, graph, start }) : [];
 
-  if (leftOut.size === 0) {
-    return { graph: sized, planned: owed };
-  }
+  const unwrittenLessons = missing.reduce(
+    (sum, band) => sum + getLessonCount(getStudiedHours({ aim, band, start: start ?? 0 })),
+    0,
+  );
 
-  const skills = owed.skills.filter((skill) => !leftOut.has(skill.skillId));
+  const skills = sized.skills.filter((skill) => !leftOut.has(skill.skillId));
   const lastPhase = Math.max(-1, ...skills.map((skill) => skill.phase));
+  const phases = leftOut.size > 0 ? sized.phases.slice(0, lastPhase + 1) : sized.phases;
 
   return {
     graph: sized,
-    // Phases after the aim's last situation would show in the plan with nothing in them.
-    planned: { ...owed, phases: owed.phases.slice(0, lastPhase + 1), skills },
+    planned: {
+      ...sized,
+      ...(unwrittenLessons > 0 && { unwrittenLessons }),
+      phases: [
+        ...phases,
+        ...missing.map((band) => ({
+          later: true as const,
+          milestone: null,
+          name: CEFR_LEVELS.filter((level) => AIM_BANDS[level] === band).join("–"),
+        })),
+      ],
+      skills,
+    },
   };
 }

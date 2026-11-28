@@ -85,6 +85,7 @@ function summarizeLearnPhases({
     const first = start && last && last < start ? last : start;
 
     summarized.push({
+      ...(phase.later && { later: true }),
       ...(challengesLeftOut.has(index) && { challengeLeftOut: true }),
       endDate: toIsoOrNull(last),
       kind: "learn",

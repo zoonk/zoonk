@@ -38,6 +38,7 @@ export const DAYS_PER_WEEK = 7;
 const isoDateSchema = z.iso.date();
 
 const graphPhaseSchema = z.object({
+  later: z.literal(true).optional(),
   milestone: z.string().nullable().default(null),
   name: z.string(),
 });

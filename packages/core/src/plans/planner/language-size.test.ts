@@ -1,7 +1,11 @@
 import { type CourseLevel } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
+import { isPlanFinished } from "../_utils/plan-end";
+import { buildPlan } from "./build-plan";
 import { sizeLanguageGraph } from "./language-size";
-import { type PlanGraph } from "./plan-state";
+import { fromIsoDate } from "./plan-calendar";
+import { type PlanGraph, parsePlanSettings } from "./plan-state";
+import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 function graphOf(sizes: number[]): PlanGraph {
   return {
@@ -329,8 +333,51 @@ describe(sizeLanguageGraph, () => {
 
     expect(lessonsOf(planned)).toStrictEqual([475, 950, 1350, 1350]);
     expect(planned.unwrittenLessons).toBe(1500);
+    expect(planned.phases.at(-1)).toMatchObject({ later: true, name: "C1–C2" });
     expect(graph.unwrittenLessons).toBeUndefined();
   });
+
+  it.each([null, fromIsoDate("2027-03-01")])(
+    "keeps a missing advanced band owed through completion with deadline %s",
+    (targetDate) => {
+      const { planned } = sizeLanguageGraph({
+        bands: BANDS,
+        goal: languageGoal("B2"),
+        graph: graphOf([10, 20, 10, 10]),
+        state: aimed("C1"),
+      });
+
+      const input = {
+        goal: { dailyMinutes: 60, kind: "language" as const, targetDate },
+        graph: planned,
+        items: [],
+        lessons: [],
+        mockMinutes: 150,
+        mode: "forced" as const,
+        paceFactor: 1,
+        prerequisites: new Map(),
+        readiness: new Map(),
+        settings: parsePlanSettings({ weekdayMinutes: [60, 60, 60, 60, 60, 60, 60] }),
+        today: fromIsoDate("2026-11-28"),
+      };
+
+      const built = buildPlan(input);
+      expect(built.phases.at(-1)).toMatchObject({ endDate: null, later: true, name: "C1–C2" });
+      const summary = summarizeSelectedPlan({ built, examSubjects: null, input });
+
+      expect(summary.coverage?.fits ?? false).toBe(false);
+
+      expect(
+        isPlanFinished({
+          goalKind: "language",
+          items: built.items.map((item) => ({ ...item, status: "done" })),
+          phases: built.phases,
+          targetDate,
+          today: input.today,
+        }),
+      ).toBe(false);
+    },
+  );
 
   it("owes nothing when every band the aim reaches has situations", () => {
     expect(sizeAbove("C1").planned.unwrittenLessons).toBeUndefined();
