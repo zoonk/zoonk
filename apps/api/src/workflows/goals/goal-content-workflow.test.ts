@@ -1089,6 +1089,7 @@ describe(goalContentWorkflow, () => {
             {
               area: null,
               description: "Adjuvants.",
+              estimatedLessons: 2,
               examWeight: null,
               name: added,
               prerequisites: [],
