@@ -125,7 +125,7 @@ When the tip is about a set of forms that differ by their endings (a verb's endi
 
 # Dialogue
 
-When the lesson's situation is a conversation the learner takes part in (asking, ordering, greeting, explaining), the learner reads its start and picks what to say next. Otherwise `dialogue` is `null` (reading a sign, filling in a form).
+When the lesson's situation is a conversation the learner takes part in (asking, ordering, greeting, explaining), the learner reads its start and picks what to say next. Otherwise `dialogue` is `null` (reading a sign, filling in a form), and so is a lesson about hearing or saying sounds, whose written lines would show the word they test.
 
 - `scene`: where it happens and who the other person is, in a few words of `LEARNER_LANGUAGE` ("A pharmacy in Madrid").
 - `lines`: 2 to 5 lines of the conversation so far, in `TARGET_LANGUAGE` at `LEVEL`, using the lesson's words and sentences. `speaker` is `them` for the other person and `you` for the learner's earlier lines. The last line is theirs, and it's what the learner answers.
