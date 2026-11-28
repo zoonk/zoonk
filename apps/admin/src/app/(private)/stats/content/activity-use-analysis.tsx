@@ -93,14 +93,17 @@ export async function ActivityUseAnalysis({ statsPeriod }: { statsPeriod: StatsP
     comparisonLabel ? getActivityUse(previous.start, previous.end) : null,
   ]);
 
+  const compared = (before?.all.lessons ?? 0) > 0;
+
   return (
     <section className="flex flex-col gap-8 py-4">
       <ActivityUseTiles before={before?.all} now={now.all} />
 
       <div className="flex flex-col gap-4">
         <p className="text-muted-foreground max-w-2xl text-sm">
-          Lessons whose current screens were written in this period, by the subject of their course.
-          {comparisonLabel ? " Arrows compare with the period before." : ""}
+          Lessons whose current screens were written in this period, by the subject of their course,
+          with every language lesson under Languages.
+          {compared ? " Arrows compare with the period before." : ""}
         </p>
 
         <SubjectTable before={before} now={now} />
