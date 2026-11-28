@@ -39,6 +39,7 @@ describe(generateLanguageSentenceOrders, () => {
 
     expect(sameLanguage.systemPrompt).toBe("Orders in US English.\nOne language.\n");
     expect(sameLanguage.userPrompt).not.toContain("translation");
+    expect(sameLanguage.userPrompt).not.toContain("LEARNER_LANGUAGE");
 
     expect(bilingual.systemPrompt).toBe(
       "Orders in US English.\nTranslation orders in Português Brasileiro.\n",

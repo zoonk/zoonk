@@ -5,7 +5,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { fillPromptLanguages } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import basePrompt from "./language-sentence-orders.prompt.md";
 
@@ -49,6 +49,11 @@ function buildUserPrompt({
   params: LanguageSentenceOrdersParams;
   sameLanguage: boolean;
 }): string {
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.learnerLanguage,
+  });
+
   const sentences = params.sentences
     .map((item, index) =>
       sameLanguage
@@ -60,7 +65,12 @@ function buildUserPrompt({
     )
     .join("");
 
+  const learnerLanguage = sameLanguage
+    ? ""
+    : `\n    LEARNER_LANGUAGE: ${languages.userLanguageName}`;
+
   return `
+    TARGET_LANGUAGE: ${languages.targetLanguageName}${learnerLanguage}
     SENTENCES:${sentences}
   `;
 }
