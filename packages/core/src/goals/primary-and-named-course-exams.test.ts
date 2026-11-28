@@ -11,7 +11,6 @@ import { startCourseGoal } from "./start-course-goal";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** Exam A's graph stores the shared exam course as its own; exam B's graph only names it. */
 async function primaryAndNamedCourse() {
   const [shared, other] = await Promise.all([
     courseFixture({ format: "exam", isPublished: true, visibility: "public" }),
