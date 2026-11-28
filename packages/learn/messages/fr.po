@@ -6382,12 +6382,6 @@ msgctxt "H4wCrn"
 msgid "Use the app in {language}"
 msgstr "Utiliser l’app en {language}"
 
-#: src/language/level-test/level-test-results.tsx
-#: src/plan/use-system-change-sentence.ts
-msgctxt "qd8BIn"
-msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
-msgstr "{lessons, plural, one {# leçon que tu connais déjà a été sautée.} other {# leçons que tu connais déjà ont été sautées.}}"
-
 #. On a level test's result when listening wasn't tested, such as after the learner said they can't listen now.
 #: src/language/level-test/level-test-results.tsx
 msgctxt "8txltA"
@@ -11473,6 +11467,11 @@ msgstr "Tous les jours"
 msgctxt "aEYPJ2"
 msgid "{first} – {last}"
 msgstr "{first} – {last}"
+
+#: src/plan/use-system-change-sentence.ts
+msgctxt "qd8BIn"
+msgid "{lessons, plural, one {Skipped # lesson you already know.} other {Skipped # lessons you already know.}}"
+msgstr "{lessons, plural, one {# leçon que tu connais déjà a été sautée.} other {# leçons que tu connais déjà ont été sautées.}}"
 
 #: src/plan/use-system-change-sentence.ts
 msgctxt "3Qo-pr"
