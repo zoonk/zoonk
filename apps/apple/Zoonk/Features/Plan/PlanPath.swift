@@ -122,9 +122,12 @@ private struct PlanPhaseRow: View {
         route: context.goal.kind == .language
           ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)
       ) {
-        header(next: own.state == .current)
+        // The left-out row under it says what this phase's line would.
+        header(next: own.state == .current, foldsLeftOut: true)
       }
       .currentRow(own.state == .current)
+
+      leftOutRows
 
       if isOpen {
         events
@@ -278,9 +281,14 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
-  private func header(next: Bool, byPlace: Bool = false) -> some View {
+  private func header(next: Bool, byPlace: Bool = false, foldsLeftOut: Bool = false)
+    -> some View
+  {
     PlanPhaseLabel(
-      context: context, phase: phase, description: meta, next: next, byPlace: byPlace)
+      context: context, phase: phase,
+      description: foldsLeftOut && phase.outOfPlan == .topics(phase.leftOutTopics.count)
+        ? nil : meta,
+      next: next, byPlace: byPlace)
   }
 
   private var meta: Text? {

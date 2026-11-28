@@ -131,12 +131,14 @@ private fun PhaseItem(
             PhaseRow(
                 page.plan,
                 phase,
-                phaseMeta(page, phase, open),
+                // The left-out row under it says what this phase's line would.
+                phaseMeta(page, phase.copy(leftOut = emptyList()), open),
                 paused = page.isPaused,
                 onClick = { links.chapter(chapterId) },
                 highlighted = isNext,
                 nextChapter = own.takeIf { isNext },
             )
+            if (phase.leftOut.isNotEmpty()) LeftOutTopicsRow(phase.leftOut, indent = nested)
             if (open) {
                 phase.mocks.nextDate?.let { MockRow(page, it.toJavaLocalDate(), links, phase.mocks.nextPlanItemId) }
                 phase.checkpoint?.let { CheckpointRow(page, it, links, indent = nested, brief = brief) }

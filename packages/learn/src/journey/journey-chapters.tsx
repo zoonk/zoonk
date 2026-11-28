@@ -190,7 +190,7 @@ function useShowMoreLabel({ hidden, showAll }: { hidden: number; showAll: boolea
 }
 
 /** The topics the plan's date leaves out of a phase, folded under one row that names them. */
-function LeftOutRow({ names }: { names: readonly string[] }) {
+export function LeftOutTopicsRow({ names }: { names: readonly string[] }) {
   const label = useLeftOutTopicsLabel();
 
   return (
@@ -261,7 +261,7 @@ export function JourneyChapters({
 
       {leftOut && leftOut.length > 0 && (
         <li>
-          <LeftOutRow names={leftOut} />
+          <LeftOutTopicsRow names={leftOut} />
         </li>
       )}
 
