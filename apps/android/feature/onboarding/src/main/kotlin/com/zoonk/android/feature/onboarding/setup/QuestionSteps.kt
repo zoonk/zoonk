@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -112,6 +113,7 @@ internal fun ColumnScope.StepForm(
     continueLabel: String? = null,
     onSkip: (() -> Unit)? = null,
     skipLabel: String? = null,
+    @DrawableRes skipIcon: Int = R.drawable.ic_skip_next,
     notice: (@Composable () -> Unit)? = null,
     content: @Composable ColumnScope.(continueStep: () -> Unit) -> Unit = {},
 ) {
@@ -137,7 +139,7 @@ internal fun ColumnScope.StepForm(
                         onClick = { send(StepSender.Skip, onSkip) },
                         enabled = !pending,
                         focusableWhenDisabled = pending,
-                        leadingIcon = { ButtonIcon(R.drawable.ic_skip_next) },
+                        leadingIcon = { ButtonIcon(skipIcon) },
                     ) {
                         Text(skipLabel ?: stringResource(R.string.onboarding_skip))
                     }
@@ -551,11 +553,13 @@ internal fun ColumnScope.RoleStep(
 /**
  * An exam's notice day is offered first; "Another date" picks the learner's own. A date that passed
  * or is today ([problem]) starts the screen empty and says so; a month with no sitting offers the
- * closest ones. Days count in the goal's [timeZone], UTC without one, as core counts them.
+ * closest ones. Days count in the goal's [timeZone], UTC without one, as core counts them. A
+ * [booked] exam's day is the learner's own booking, so not having booked it yet is the other answer.
  */
 @Composable
 internal fun ColumnScope.DateStep(
     subject: String,
+    booked: Boolean,
     exam: OnboardingExamDays?,
     initialDate: LocalDate?,
     problem: OnboardingDateProblem?,
@@ -588,7 +592,6 @@ internal fun ColumnScope.DateStep(
     if (exam != null && examDay != null && !otherDate) {
         val locale = currentLocale()
         val second = exam.days.getOrNull(1)?.toJavaLocalDate()
-        val ready = stringResource(if (second == null) R.string.onboarding_exam_ready else R.string.onboarding_exam_ready_first_day)
         StepForm(
             title =
                 if (second == null) {
@@ -601,10 +604,11 @@ internal fun ColumnScope.DateStep(
                     )
                 },
             description =
-                listOfNotNull(passedNote, ready, exam.estimated.takeIf { it }?.let { stringResource(R.string.onboarding_exam_expected) })
+                listOfNotNull(passedNote, exam.estimated.takeIf { it }?.let { stringResource(R.string.onboarding_exam_expected) })
                     .joinSentences(),
             subject = subject,
             skipLabel = stringResource(R.string.onboarding_another_date),
+            skipIcon = R.drawable.ic_calendar_month,
             pending = pending,
             onContinue = { answer(examDay) },
             onSkip = { otherDate = true },
@@ -622,13 +626,14 @@ internal fun ColumnScope.DateStep(
             ?.takeIf { picked != null && YearMonth.from(picked) == YearMonth.from(it.month.toJavaLocalDate()) }
 
     StepForm(
-        title = stringResource(R.string.onboarding_date_title),
-        description = listOfNotNull(passedNote, stringResource(R.string.onboarding_date_description)).joinSentences(),
+        title = stringResource(if (booked) R.string.onboarding_date_title_booked else R.string.onboarding_date_title),
+        description = passedNote,
         subject = subject,
-        canContinue = picked == null || picked > today,
-        continueLabel = if (picked == null) stringResource(R.string.onboarding_date_continue_without) else null,
+        canContinue = picked != null && picked > today,
         pending = pending,
         onContinue = { answer(picked) },
+        onSkip = { answer(null) },
+        skipLabel = if (booked) stringResource(R.string.onboarding_date_not_booked) else null,
     ) {
         val shown = picked?.let { formatDate(it, currentLocale(), DateStyle.LongYear) }.orEmpty()
         val label = stringResource(R.string.onboarding_date_label)
@@ -762,13 +767,19 @@ internal fun ColumnScope.ExamChoiceStep(
         skipLabel = stringResource(R.string.onboarding_decide_later),
         pending = pending,
         onContinue = { answer(picks) },
-        onSkip = {
-            onAnswer(
-                OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
-                    OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.EXAM_CHOICE, choices = null),
-                ),
-            )
-        },
+        // A choice whose options are the whole exam leaves nothing to study until it's made.
+        onSkip =
+            if (choices.any { it.required }) {
+                null
+            } else {
+                {
+                    onAnswer(
+                        OnboardingAnswerInput.OnboardingAnswerInputOneOf7Value(
+                            OnboardingAnswerInputOneOf7(OnboardingAnswerInputOneOf7.Question.EXAM_CHOICE, choices = null),
+                        ),
+                    )
+                }
+            },
     ) {
         choices.forEach { choice ->
             val picked = picks[choice.group].orEmpty()

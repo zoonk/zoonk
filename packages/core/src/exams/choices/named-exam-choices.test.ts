@@ -1,7 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
 import reading from "./_test-utils/cgu-2026-structure.json";
-import { BIOLOGY, CHEMISTRY, EXANI_STRUCTURE, MODULES } from "./_test-utils/choice-blueprint";
+import {
+  BIOLOGY,
+  CHEMISTRY,
+  DISCIPLINE,
+  EXANI_STRUCTURE,
+  FE_STRUCTURE,
+  MECHANICAL,
+  MODULES,
+} from "./_test-utils/choice-blueprint";
 import { findNamedChoices } from "./named-exam-choices";
 
 const CGU = examStructureSchema.parse(reading);
@@ -123,6 +131,18 @@ describe(findNamedChoices, () => {
     ).toStrictEqual([]);
 
     expect(named({ ...details, answered: ["examChoice"] })).toStrictEqual([]);
+  });
+
+  it("takes the exam option the reading recorded, even after Decide later when the choice is the whole exam", () => {
+    expect(named({ examOption: "mechanical" }, FE_STRUCTURE)).toStrictEqual([
+      { group: DISCIPLINE, subjects: [MECHANICAL] },
+    ]);
+
+    expect(
+      named({ answered: ["examChoice"], examOption: "Mechanical" }, FE_STRUCTURE),
+    ).toStrictEqual([{ group: DISCIPLINE, subjects: [MECHANICAL] }]);
+
+    expect(named({ answered: ["examChoice"], examOption: "Inglês" }, ENEM)).toStrictEqual([]);
   });
 
   it("picks again when the saved option is no longer one the notice offers", () => {

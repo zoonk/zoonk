@@ -20,7 +20,11 @@ import {
 import { listExtractionPassages } from "@zoonk/core/library/exams/blueprint-passages";
 import { toMaterialContent } from "@zoonk/core/library/exams/material-topics";
 import { isPassageInDocument } from "@zoonk/core/library/exams/passage-check";
-import { findReadingProblems, toReadingCorrections } from "@zoonk/core/library/exams/reading-check";
+import {
+  findReadingProblems,
+  findWholeExamSubjects,
+  toReadingCorrections,
+} from "@zoonk/core/library/exams/reading-check";
 import { fetchDocument } from "@zoonk/core/library/sources/fetch";
 import { parseDocument } from "@zoonk/core/library/sources/parse-document";
 
@@ -189,12 +193,20 @@ export async function generateExtraction(
   input: ExtractionEvalInput & { model: string; reasoning?: Reasoning; useFallback?: boolean },
 ) {
   const documents = await Promise.all(input.documents.map((document) => loadDocument(document)));
+  const corrections = input.leftOut ?? [];
+  const first = await readChecked({ corrections, documents, input });
+  const whole = findWholeExamSubjects(first.kept);
+  const isCorrected = corrections.some((problem) => problem.kind === "wholeExamSubjects");
 
-  const { check, kept, problems, result } = await readChecked({
-    corrections: input.leftOut ?? [],
-    documents,
-    input,
-  });
+  // As the app does: subjects that each hold the whole exam get one more reading told about them.
+  const { check, kept, problems, result } =
+    whole && !isCorrected
+      ? await readChecked({
+          corrections: first.problems.length > 0 ? first.problems : [whole],
+          documents,
+          input,
+        })
+      : first;
 
   return {
     ...result,

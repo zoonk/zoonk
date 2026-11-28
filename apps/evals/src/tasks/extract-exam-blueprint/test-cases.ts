@@ -17,6 +17,50 @@ const UPSC_CSE_2026_NOTICE = {
   url: "https://www.upsc.gov.in/sites/default/files/Notif-CSP-2026-Engl-060226Rev.pdf",
 };
 
+/** The documents production's FE reading read, which it read as five compulsory subjects. */
+const FE_DOCUMENTS = [
+  {
+    title: "NCEES Examinee Guide (November 2026)",
+    url: "https://ncees.org/wp-content/uploads/2026/11/NCEESExamGuide_November-2026_3.pdf",
+  },
+  { title: "FE Exam | NCEES", url: "https://ncees.org/exams/fe-exam/" },
+  {
+    title: "FE Civil CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/2022/09/FE-Civil-CBT-specs-1.pdf",
+  },
+  {
+    title: "FE Mechanical CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Mechanical-CBT-specs.pdf",
+  },
+  {
+    title: "FE Electrical and Computer CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Electrical-and-Computer-CBT-specs.pdf",
+  },
+  {
+    title: "FE Chemical CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/FE-Che-CBT-specs.pdf",
+  },
+  {
+    title: "FE Other Disciplines CBT Exam Specifications",
+    url: "https://ncees.org/wp-content/uploads/2022/09/FE-Other-Disciplines-CBT-specs.pdf",
+  },
+];
+
+/** An invented notice whose two papers every candidate sits have the same count and plain names. */
+const TWO_PAPERS_NOTICE = `NATIONAL TECHNICAL CERTIFICATE IN ACCOUNTING – 2027 EXAMINATION REGULATIONS
+
+3 STRUCTURE OF THE EXAMINATION
+3.1 The examination consists of Paper 1 and Paper 2, taken on the same day with a one-hour break between them.
+3.2 Paper 1: 80 multiple-choice questions, 2 hours.
+3.3 Paper 2: 80 multiple-choice questions, 2 hours.
+3.4 A candidate's result is the total of the marks in both papers, out of 160.
+4 DATES
+4.1 The examination will be held on 14 June 2027.
+
+ANNEX A – SYLLABUS
+Paper 1: 1 Double-entry bookkeeping. 2 Bank reconciliations. 3 Financial statements.
+Paper 2: 1 Cost accounting. 2 Budgeting. 3 Variance analysis.`;
+
 /** An invented notice whose written test states its lines but no scale or grading rule. */
 const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO
 EDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO
@@ -30,6 +74,34 @@ EDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIV
 6.1 As provas serão aplicadas em 15 de março de 2027.`;
 
 export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
+  {
+    expected: {
+      facts: [
+        { kind: "choice", options: ["Chemical", "Civil", "Electrical and Computer", "Mechanical"] },
+        { kind: "questionCount", value: 110 },
+      ],
+    },
+    id: "fe-one-discipline",
+    language: "en",
+    origin: "production",
+    userInput: { documents: FE_DOCUMENTS, exam: "FE Exam" },
+  },
+  {
+    expected: {
+      facts: [
+        { kind: "subject", name: "Paper 1", questions: 80 },
+        { kind: "subject", name: "Paper 2", questions: 80 },
+        { kind: "noChoice" },
+        { kind: "questionCount", value: 160 },
+      ],
+    },
+    id: "two-equal-papers-not-a-choice",
+    language: "en",
+    userInput: {
+      documents: [{ text: TWO_PAPERS_NOTICE, title: "Examination regulations 2027" }],
+      exam: "National Technical Certificate in Accounting",
+    },
+  },
   {
     expected: {
       facts: [

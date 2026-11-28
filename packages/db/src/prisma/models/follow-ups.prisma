@@ -34,6 +34,7 @@ enum FollowUpKind {
   updateLessonsShowing       @map("update_lessons_showing")
   refreshPlanSuggestion      @map("refresh_plan_suggestion")
   catchUpMockReplan          @map("catch_up_mock_replan")
+  researchGoal               @map("research_goal")
 }
 
 /// Work owed after a learner's write; ended by the run that started it unless asked again since,

@@ -1,6 +1,28 @@
 import { getSkillArea } from "./graph-areas";
 import { type PlanGraph, type PlanGraphSkill, type PlanOptionSkill } from "./plan-state";
 
+export function getOptionSkillSubject({
+  graph,
+  skill,
+  subjectsByArea,
+}: {
+  graph: PlanGraph;
+  skill: PlanGraphSkill;
+  subjectsByArea?: ReadonlyMap<string, string>;
+}): string {
+  const area = getSkillArea({ graph, skill });
+  return skill.subject ?? subjectsByArea?.get(area) ?? area;
+}
+
+function matchesOption({
+  areas,
+  graph,
+  skill,
+  subjectsByArea,
+}: Parameters<typeof getOptionSkillSubject>[0] & { areas: ReadonlySet<string> }): boolean {
+  return areas.has(getOptionSkillSubject({ graph, skill, subjectsByArea }));
+}
+
 function toGraphSkill({ after: _after, ...skill }: PlanOptionSkill): PlanGraphSkill {
   return skill;
 }
@@ -39,12 +61,16 @@ export function joinOptionSkills(graph: PlanGraph): PlanGraph {
 export function setAsideOptionSkills({
   areas,
   graph,
+  subjectsByArea,
 }: {
   areas: ReadonlySet<string>;
   graph: PlanGraph;
+  subjectsByArea?: ReadonlyMap<string, string>;
 }): PlanGraph {
   const joined = joinOptionSkills(graph);
-  const isOut = (skill: PlanGraphSkill) => areas.has(getSkillArea({ graph: joined, skill }));
+
+  const isOut = (skill: PlanGraphSkill) =>
+    matchesOption({ areas, graph: joined, skill, subjectsByArea });
 
   const optionSkills = joined.skills.flatMap((skill, index) => {
     if (!isOut(skill)) {
@@ -64,16 +90,21 @@ export function addSharedOptionSkills({
   areas,
   graph,
   shared,
+  subjectsByArea,
 }: {
   areas: ReadonlySet<string>;
   graph: PlanGraph;
   shared: PlanGraph;
+  subjectsByArea?: ReadonlyMap<string, string>;
 }): PlanGraph {
   const joined = joinOptionSkills(graph);
   const phaseOf = new Map(joined.skills.map((skill) => [skill.skillId, skill.phase]));
 
   const added = shared.skills.flatMap((skill, index) => {
-    if (phaseOf.has(skill.skillId) || !areas.has(getSkillArea({ graph: shared, skill }))) {
+    if (
+      phaseOf.has(skill.skillId) ||
+      !matchesOption({ areas, graph: shared, skill, subjectsByArea })
+    ) {
       return [];
     }
 
