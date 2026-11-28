@@ -95,29 +95,38 @@ final class PlacementTestRenderTests: XCTestCase {
     result.nextLesson = .init(id: goalID, title: "There is, there are")
     try await readsWhatVoiceOverReads()
 
-    for screen in [
-      AnyView(
-        LanguageTestResultView(
-          result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
-          onboarding: true, onContinue: {}, onTestOut: {})),
-      AnyView(
-        PlacementTestResultView(
-          end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
+    for (screen, title, rows) in [
+      (
+        AnyView(
+          LanguageTestResultView(
+            result: result, targetLanguage: "en", testOutLevel: nil, pressed: nil, failed: false,
+            onboarding: true, onContinue: {}, onTestOut: {})),
+        "Your English level", ["Reading B1–B2", "Listening · Not tested yet", "Up next"]
+      ),
+      (
+        AnyView(
+          PlacementTestResultView(
+            end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
+        "Why prices move", ["4 of 9 lessons skipped", "Up next"]
+      ),
     ] {
       let window = try show(
         NavigationStack { screen }
           .environment(AppRouter())
           .zoonkStyles())
       try await waitForTestCondition("The result didn't show: \(spoken(in: window))") {
-        spoken(in: window).contains { $0.contains("B1–B2") || $0.contains("lessons skipped") }
+        spoken(in: window).contains(title)
       }
       try await waitForLayout(in: window)
       let words = spoken(in: window)
+      // The tree is walked more than once over; each row is read as often as the title is.
+      let passes = words.filter { $0 == title }.count
 
-      for said in ["B1–B2", "Not tested yet", "4 of 9 lessons skipped", "Up next"] {
-        let readings = words.filter { $0.contains(said) }
-        XCTAssertLessThanOrEqual(
-          readings.count, 1, "\(said) is read \(readings.count) times: \(words)")
+      for row in rows {
+        XCTAssertEqual(words.filter { $0 == row }.count, passes, "\(row): \(words)")
+      }
+      for part in ["B1–B2", "Not tested yet", "Reading", "Listening"] {
+        XCTAssertFalse(words.contains(part), "\(part) is read on its own: \(words)")
       }
       window.isHidden = true
     }
@@ -138,7 +147,9 @@ final class PlacementTestRenderTests: XCTestCase {
         .frame(width: 300)
         .dynamicTypeSize(.accessibility3)
         .zoonkStyles())
-      try await waitForLayout(in: window)
+      try await waitForTestCondition("The button didn't show: \(spoken(in: window))") {
+        spoken(in: window).contains("Responder mais perguntas")
+      }
       heights.append(
         accessibilityElements(in: window).first {
           $0.accessibilityLabel == "Responder mais perguntas"
