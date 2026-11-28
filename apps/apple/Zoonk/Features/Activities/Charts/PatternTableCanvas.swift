@@ -104,16 +104,17 @@ struct PatternTableCanvas: View {
     let newStem = PatternTableFields.commonStem(fields.rows.map(\.answer))
 
     ChartsCanvas {
-      Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 10) {
+      Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 0) {
         GridRow {
           Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
           header(fields.modelWord, meaning: fields.modelMeaning)
           header(fields.newWord, meaning: fields.newMeaning)
         }
-
-        Divider().gridCellUnsizedAxes(.horizontal)
+        .padding(.bottom, 8)
 
         ForEach(Array(fields.rows.enumerated()), id: \.offset) { index, row in
+          rowLine
+
           GridRow(alignment: .firstTextBaseline) {
             VStack(alignment: .leading, spacing: 0) {
               Text(verbatim: row.label).typeStyle(.note.weight(.medium))
@@ -133,11 +134,14 @@ struct PatternTableCanvas: View {
                 openBlank(index, row: row)
               }
             }
-            // The columns share the card's width, so the table and its divider fill the card.
+            // The columns share the card's width, so the table and its lines fill the card.
             .frame(maxWidth: .infinity, alignment: .leading)
           }
+          .padding(.vertical, 8)
         }
       }
+      .padding(12)
+      .background(.boxBackground, in: .rect(cornerRadius: Radius.xl, style: .continuous))
 
       if !isChecked, let active, fields.rows.indices.contains(active) {
         let row = fields.rows[active]
@@ -170,6 +174,13 @@ struct PatternTableCanvas: View {
     }
   }
 
+  /// Main's line between the table's rows, across the whole card.
+  private var rowLine: some View {
+    Divider()
+      .padding(.horizontal, -12)
+      .gridCellUnsizedAxes(.horizontal)
+  }
+
   private func header(_ word: String, meaning: String?) -> some View {
     VStack(alignment: .leading, spacing: 0) {
       Text(verbatim: word).typeStyle(.body.weight(.semibold))
@@ -198,18 +209,20 @@ struct PatternTableCanvas: View {
     return Button {
       active = index
     } label: {
-      HStack(spacing: 1) {
-        Text(verbatim: stem)
+      Group {
         if let chosen {
-          Text(verbatim: chosen).foregroundStyle(.vizAccent).typeWeight(
-            .bold, legibility: legibility)
+          form(stem + chosen, stem: stem)
         } else {
-          RoundedRectangle(cornerRadius: 2)
-            .fill(isActive ? Color.vizAccent.opacity(0.25) : .clear)
-            .overlay(alignment: .bottom) {
-              Rectangle().fill(isActive ? Color.vizAccent : Color.mutedForeground).frame(height: 2)
-            }
-            .frame(width: 36, height: 20)
+          HStack(spacing: 2) {
+            Text(verbatim: stem)
+            RoundedRectangle(cornerRadius: 2)
+              .fill(isActive ? Color.vizAccent.opacity(0.25) : .clear)
+              .overlay(alignment: .bottom) {
+                Rectangle().fill(isActive ? Color.vizAccent : Color.mutedForeground)
+                  .frame(height: 2)
+              }
+              .frame(width: 36, height: 20)
+          }
         }
       }
       // The ring and the 44-point target reach past the word, so the word keeps its column's edge
