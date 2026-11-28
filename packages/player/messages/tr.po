@@ -178,12 +178,12 @@ msgstr "Bu teli çalma"
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "-Redg6"
 msgid "Running {runtime} code needs a connection. Check yours and try again."
-msgstr ""
+msgstr "{runtime} kodunu çalıştırmak için bağlantı gerekiyor. Bağlantını kontrol edip tekrar dene."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "WH1ru4"
 msgid "Your code didn't run. Try again."
-msgstr ""
+msgstr "Kodun çalışmadı. Tekrar dene."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -193,17 +193,17 @@ msgstr "{runtime} yüklenemedi. Bağlantını kontrol edip tekrar dene."
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "evmUu7"
 msgid "Getting {runtime} ready…"
-msgstr ""
+msgstr "{runtime} için hazırlık yapıyoruz…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "xWwz6u"
 msgid "Compiling your code…"
-msgstr ""
+msgstr "Kodunu derliyoruz…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "yP7nBA"
 msgid "Running your code…"
-msgstr ""
+msgstr "Kodunu çalıştırıyoruz…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -741,7 +741,7 @@ msgstr "{language} dilinde {count, plural, other {# satırlık}} bir program. Sa
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "_4sBFi"
 msgid "Stopped because it took too long. Is there a loop that never ends?"
-msgstr ""
+msgstr "Çok uzun sürdüğü için durduruldu. Hiç bitmeyen bir döngü mü var?"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"

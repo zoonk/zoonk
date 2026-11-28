@@ -178,12 +178,12 @@ msgstr "이 줄은 연주하지 않음"
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "-Redg6"
 msgid "Running {runtime} code needs a connection. Check yours and try again."
-msgstr ""
+msgstr "{runtime} 코드를 실행하려면 인터넷 연결이 필요해요. 연결 상태를 확인하고 다시 시도해 보세요."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "WH1ru4"
 msgid "Your code didn't run. Try again."
-msgstr ""
+msgstr "코드가 실행되지 않았어요. 다시 시도해 보세요."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -193,17 +193,17 @@ msgstr "{runtime}을(를) 불러오지 못했어요. 인터넷 연결을 확인�
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "evmUu7"
 msgid "Getting {runtime} ready…"
-msgstr ""
+msgstr "{runtime}을(를) 준비하고 있어요…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "xWwz6u"
 msgid "Compiling your code…"
-msgstr ""
+msgstr "코드를 컴파일하고 있어요…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "yP7nBA"
 msgid "Running your code…"
-msgstr ""
+msgstr "코드를 실행하고 있어요…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -741,7 +741,7 @@ msgstr "{language} 프로그램은 {count, plural, other {#줄}}로 되어 있�
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "_4sBFi"
 msgid "Stopped because it took too long. Is there a loop that never ends?"
-msgstr ""
+msgstr "너무 오래 걸려서 실행이 중지됐어요. 끝나지 않는 반복문이 있나요?"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"

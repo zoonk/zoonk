@@ -178,12 +178,12 @@ msgstr "Diese Saite nicht spielen"
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "-Redg6"
 msgid "Running {runtime} code needs a connection. Check yours and try again."
-msgstr ""
+msgstr "Zum Ausführen von {runtime}-Code brauchst du eine Verbindung. Prüfe deine Verbindung und versuch es noch einmal."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "WH1ru4"
 msgid "Your code didn't run. Try again."
-msgstr ""
+msgstr "Dein Code wurde nicht ausgeführt. Versuch es noch einmal."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -193,17 +193,17 @@ msgstr "{runtime} konnte nicht geladen werden. Prüf deine Verbindung und versuc
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "evmUu7"
 msgid "Getting {runtime} ready…"
-msgstr ""
+msgstr "{runtime} wird vorbereitet…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "xWwz6u"
 msgid "Compiling your code…"
-msgstr ""
+msgstr "Dein Code wird kompiliert…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "yP7nBA"
 msgid "Running your code…"
-msgstr ""
+msgstr "Dein Code wird ausgeführt…"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -741,7 +741,7 @@ msgstr "Ein {language}-Programm mit {count, plural, one {# Zeile} other {# Zeile
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "_4sBFi"
 msgid "Stopped because it took too long. Is there a loop that never ends?"
-msgstr ""
+msgstr "Gestoppt, weil es zu lange gedauert hat. Gibt es eine Schleife, die nie endet?"
 
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "IY8DPN"
