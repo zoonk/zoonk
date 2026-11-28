@@ -49,10 +49,6 @@
     </plurals>
     <string name="placementtest_finish_later">Finish later</string>
     <string name="placementtest_start_lesson">Start lesson</string>
-    <plurals name="placementtest_lessons_you_know">
-        <item quantity="one">Skipped %d lesson you already know.</item>
-        <item quantity="other">Skipped %d lessons you already know.</item>
-    </plurals>
     <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
     <string name="placementtest_take_again_later">You can take the test again later, from your plan.</string>
     <string name="placementtest_not_tested">Not tested yet</string>
@@ -60,11 +56,6 @@
     <string name="placementtest_test">Test</string>
     <!-- Over the name of the chapter a course's placement test starts the learner in. -->
     <string name="placementtest_you_start_here">You start here</string>
-    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
-    <plurals name="placementtest_course_skipped">
-        <item quantity="one">%1$d of %2$d lessons skipped</item>
-        <item quantity="other">%1$d of %2$d lessons skipped</item>
-    </plurals>
     <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
     <string name="placementtest_take_test_again">Take the test again</string>
 </resources>

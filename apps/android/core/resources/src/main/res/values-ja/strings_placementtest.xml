@@ -3,7 +3,6 @@
 {
   "placementtest_about": "2537a58356f43ff269ad32e19a45cb447e49c13bcf622b8b36f1b69960c7b35e",
   "placementtest_choose_description": "326ac519773dedfcd53eb085a49c18a1d5f7e125d83f1fabfd6024b1ded9124e",
-  "placementtest_course_skipped": "4d8f1cb65b56a3badf844dc8af09d28bb6da7867ea253712b308f782fd2f76f4",
   "placementtest_done": "345e9b8bb499382a12c8b3339547b5134ab50681a1d8431b7f9647c319728ed4",
   "placementtest_find_level": "2b38fa85fe9905144365ea1b82b4e9defe0d4d697b42505bf5752c2cd0b9871b",
   "placementtest_finish_later": "aeb220280d117ad5f6fb6e19a94f5263cc4737a87401d3b8a39752d10677fbba",
@@ -13,7 +12,6 @@
   "placementtest_known_one": "1710971fcf95264ad77d7a2a9b106cc2389f9f36d884651382a2071b0ce3ac7f",
   "placementtest_known_other": "59ab3b474f38e6f0f9c30b403b3dadcd7948da8664c9d50bb74a59b741f5c073",
   "placementtest_lessons_skipped": "08c5ee7e856652695e34e8da537227a9e48ccf94917ca20cf83c359f8cd72494",
-  "placementtest_lessons_you_know": "d926acecc2e9e8ba589365659222bfe3f6b2395bffae76b2129caff25e4a1ec4",
   "placementtest_level_stays": "50e02b4c50590f0bae9d87349b5a26c238b8e880f05de771f2589f0fee5649a7",
   "placementtest_level_title": "7779b36e988024a3862ac8264dcff889e97e6018c67fb48aac694980a1abe23b",
   "placementtest_listening_range": "b3d49f32655878f9cadf0a0c912dcc9a80f868bc561df30b2781f6cb97770674",
@@ -89,9 +87,6 @@
     </plurals>
     <string name="placementtest_finish_later">あとで続ける</string>
     <string name="placementtest_start_lesson">レッスンを始める</string>
-    <plurals name="placementtest_lessons_you_know">
-        <item quantity="other">すでに知っている%dレッスンをスキップしました。</item>
-    </plurals>
     <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
     <string name="placementtest_take_again_later">学習計画から、後でテストをもう一度受けられます。</string>
     <string name="placementtest_not_tested">未受験</string>
@@ -99,10 +94,6 @@
     <string name="placementtest_test">レベル診断テスト</string>
     <!-- Over the name of the chapter a course's placement test starts the learner in. -->
     <string name="placementtest_you_start_here">ここからスタート</string>
-    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
-    <plurals name="placementtest_course_skipped">
-        <item quantity="other">全%2$dレッスンのうち%1$dレッスンをスキップ</item>
-    </plurals>
     <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
     <string name="placementtest_take_test_again">レベル診断テストを受け直す</string>
 </resources>

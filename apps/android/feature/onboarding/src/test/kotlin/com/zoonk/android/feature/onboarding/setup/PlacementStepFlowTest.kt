@@ -149,7 +149,7 @@ class PlacementStepFlowTest {
         assertEquals(listOf<Long?>(1), api.finishedAnswered)
         rule.onNodeWithText("You start here").assertIsDisplayed()
         rule.onNodeWithText("Why prices move").assertIsDisplayed()
-        rule.onNodeWithContentDescription("4 of 9 lessons skipped").assertIsDisplayed()
+        rule.onNodeWithContentDescription("4 lessons skipped").assertIsDisplayed()
         rule.onNodeWithText("News, results and expectations").assertIsDisplayed()
         rule.onNodeWithText("Undo").assertIsDisplayed()
         tap("Continue")

@@ -3,7 +3,6 @@
 {
   "placementtest_about": "a33def34a986cc523a5a18bd27a69e8075b3b3c92998075adaba2e1147a189c7",
   "placementtest_choose_description": "20d54ad0d6ebf608311e7fd3d3316f9cd90ce885bedded26fd514f8d995a2e24",
-  "placementtest_course_skipped": "02cb52ef40a5e57c72139fad8809750defb34ed72457c05bd2ec172b09727043",
   "placementtest_done": "b8c7e209251b4d4d15676213ebe0143a4e86ebf78d78bd6f43c2fe88e279ca97",
   "placementtest_find_level": "00a6d14e43cd380b3125a8ef9cc478c85be8b4fb4bb81944a43a56c50ebdb7ef",
   "placementtest_finish_later": "f7d0b542cd65478d3fc0b8103fd4a70beb7c9a2d1e0f56b31e0afff5166f1d48",
@@ -13,7 +12,6 @@
   "placementtest_known_one": "3d421501c2ff31a8f782fe27952ffe0484c272dbf7f0be61980181aa02b2bdcc",
   "placementtest_known_other": "a776ce044be84d9e85c247df574b8184c8ad839c6f1dbd4d36b649b98a892165",
   "placementtest_lessons_skipped": "37faf6fd5ef2a4052aa1045567a6136c8565e249b5a67064ca6ba4a1fcda04de",
-  "placementtest_lessons_you_know": "ed3ab863398d8eaa5a70c004a8aced330c14aec18109901f706a9bdc7b58131f",
   "placementtest_level_stays": "1b7f731c944e205bd2d38f4b7ac63e26afee8d321656091f238b39afa298b615",
   "placementtest_level_title": "cced61830ce132471ccd60df6c3836839a22b48288283e23c2a62478a42afcd4",
   "placementtest_listening_range": "e387ab2d8e77671783585a709edf4b59d81a9f97094f8e9ca3d0da605498afd8",
@@ -89,9 +87,6 @@
     </plurals>
     <string name="placementtest_finish_later">나중에 마무리하기</string>
     <string name="placementtest_start_lesson">레슨 시작하기</string>
-    <plurals name="placementtest_lessons_you_know">
-        <item quantity="other">이미 아는 레슨 %d개 건너뜀</item>
-    </plurals>
     <!-- On a level test's result when listening wasn't tested, such as after the learner said they can't listen now. -->
     <string name="placementtest_take_again_later">나중에 계획에서 레벨 테스트를 다시 볼 수 있어요.</string>
     <string name="placementtest_not_tested">아직 테스트 전</string>
@@ -99,10 +94,6 @@
     <string name="placementtest_test">레벨 테스트</string>
     <!-- Over the name of the chapter a course's placement test starts the learner in. -->
     <string name="placementtest_you_start_here">여기서 시작해요</string>
-    <!-- Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them. -->
-    <plurals name="placementtest_course_skipped">
-        <item quantity="other">전체 %2$d개 레슨 중 %1$d개 건너뜀</item>
-    </plurals>
     <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
     <string name="placementtest_take_test_again">레벨 테스트 다시 하기</string>
 </resources>
