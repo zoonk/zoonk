@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { fillPromptLanguages } from "../_utils/prompt-language";
+import { fillPromptLanguages, getLanguagePromptContext } from "../_utils/prompt-language";
 import { type LessonProblem, formatLessonProblems } from "../lesson-writer/format-lesson-plan";
 import fixPrompt from "./alphabet-lesson-fix.prompt.md";
 import promptTemplate from "./alphabet-lesson.prompt.md";
@@ -57,6 +57,18 @@ export type GenerateAlphabetLessonParams = {
   analytics?: AiGenerationContext;
 };
 
+function formatLanguages(params: { learnerLanguage: string; targetLanguage: string }): string {
+  const languages = getLanguagePromptContext({
+    targetLanguage: params.targetLanguage,
+    userLanguage: params.learnerLanguage,
+  });
+
+  return `
+    TARGET_LANGUAGE: ${languages.targetLanguageName}
+    LEARNER_LANGUAGE: ${languages.userLanguageName}
+  `;
+}
+
 async function runAlphabetLessonTask({
   params,
   template,
@@ -96,7 +108,7 @@ export async function generateAlphabetLesson(params: GenerateAlphabetLessonParam
     params,
     task: "alphabet-lesson",
     template: promptTemplate,
-    userPrompt: "Write the lesson.",
+    userPrompt: formatLanguages(params),
   });
 }
 
@@ -182,7 +194,8 @@ export type FixAlphabetLessonParams = GenerateAlphabetLessonParams & {
 export async function fixAlphabetLesson(params: FixAlphabetLessonParams) {
   const { lesson, problems } = params;
 
-  const userPrompt = `PUBLISHED_LESSON:
+  const userPrompt = `${formatLanguages(params)}
+PUBLISHED_LESSON:
 ${formatPublishedLesson(lesson)}
 
 PROBLEMS:
