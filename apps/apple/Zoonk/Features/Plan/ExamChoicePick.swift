@@ -115,6 +115,7 @@ struct ExamOptionToggles: View {
         Text(option.shortName ?? option.name)
           .foregroundStyle(canPick ? Color(.foreground) : .faint)
       }
+      .frame(minHeight: 44)
       .disabled(!canPick)
     }
   }
