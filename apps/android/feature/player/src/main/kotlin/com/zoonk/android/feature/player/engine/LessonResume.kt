@@ -158,12 +158,17 @@ internal fun LessonPlayerState.skipSkill(
     return next.copy(notice = LessonNotice.SkillSkipped, skillRestore = restore)
 }
 
+/** What was left out since for another reason, such as a dictation, stays out. */
 internal fun LessonPlayerState.restoreSkill(now: Long): LessonPlayerState {
     val restore = skillRestore
 
     if (restore == null || notice != LessonNotice.SkillSkipped || phase != LessonPhase.Playing) return this
 
-    return putBack(restore).copy(notice = null, queue = restore.queue, skillRestore = null).enterPosition(restore.position, now)
+    val back = putBack(restore)
+    val leftOut = (back.unavailableStepIds + back.skippedWritingStepIds).toSet()
+    val queue = restore.queue.filterIndexed { index, id -> index < restore.position || id !in leftOut }
+
+    return back.copy(notice = null, queue = queue, skillRestore = null).enterPosition(restore.position, now)
 }
 
 /** Left-out writing goes to the server as skipped; left-out speaking stays with the screens this device can't play. */
