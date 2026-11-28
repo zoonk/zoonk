@@ -109,6 +109,38 @@ final class PlacementTestPhaseTests: XCTestCase {
       .unavailable, "Another test's result isn't this one's")
   }
 
+  func testAPlanWithNoTestToStartOpensItsLastResultWithDone() {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
+    result.attemptId = "a1"
+    result.changeId = "c"
+    var revisited = PlacementTestEnd(read: result)
+    revisited.revisited = true
+
+    XCTAssertEqual(
+      phase(attempt: nil, .unavailable, result: result, canStart: false), .result(revisited))
+    XCTAssertEqual(
+      phase(attempt: nil, .asking, result: result, canStart: true), .offer,
+      "With a test to start, the plan offers it as before")
+    XCTAssertEqual(
+      phase(attempt: nil, .unavailable, canStart: false), .offer,
+      "Neither: the flow's nothing-to-test screen, though the row doesn't show")
+    XCTAssertEqual(revisited.changeId, "c", "Undo while the result still carries its change")
+  }
+
+  func testAFinishAnotherSaveAppliedShowsThatTestsResultFromThePlan() {
+    var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 3)
+    result.attemptId = "a1"
+    result.changeId = "c"
+
+    XCTAssertEqual(
+      phase(attempt: nil, .unavailable, result: result, asked: true, attemptID: "a1"),
+      .result(PlacementTestEnd(read: result)),
+      "A finish whose reply was lost ends on its result, with Undo")
+    XCTAssertEqual(
+      phase(attempt: nil, .unavailable, result: result, asked: true, attemptID: "a0"),
+      .unavailable, "Another test's result isn't this one's")
+  }
+
   func testAFinishShowsWhereTheLearnerStartsAndItsUndoOnlyWhenItGivesBackWhatItCounts() {
     var result = PlacementTestResult(finishedAt: .now, lessonsSkipped: 4)
     result.chapter = "Why prices move"
@@ -231,11 +263,11 @@ final class PlacementTestPhaseTests: XCTestCase {
   private func phase(
     attempt: PlacementAttempt?, _ status: Components.Schemas.PlacementStatus,
     next: PracticeQuestion? = nil, result: PlacementTestResult? = nil, onboarding: Bool = false,
-    asked: Bool = false
+    asked: Bool = false, attemptID: String? = nil, canStart: Bool = true
   ) -> PlacementTestPhase {
     PlacementTestPhase(
       attempt: attempt, result: result, status: status, next: next, labels: .trueFalse,
-      onboarding: onboarding, asked: asked)
+      onboarding: onboarding, asked: asked, attemptID: attemptID, canStart: canStart)
   }
 }
 

@@ -81,8 +81,13 @@ struct PlacementTestFlow: View {
   }
 
   /// `asked`: the learner started the test in this visit, so a test that couldn't open waits.
-  private func phase(for placement: GoalPlacement, asked: Bool = true) -> PlacementTestPhase {
-    PlacementTestPhase(placement, onboarding: isOnboarding, asked: asked)
+  /// `attemptID`: the test the learner was in, whose result shows once another save finished it.
+  private func phase(
+    for placement: GoalPlacement, asked: Bool = true, attemptID: String? = nil
+  ) -> PlacementTestPhase {
+    PlacementTestPhase(
+      placement, onboarding: isOnboarding, asked: asked, attemptID: attemptID,
+      canStart: isOnboarding || offer != nil)
   }
 
   private func openOnAppear() {
@@ -178,7 +183,9 @@ struct PlacementTestFlow: View {
 
   /// The result's way on: on the plan its next lesson when it's known, else back.
   private func goOn(from end: PlacementTestEnd) {
-    if !isOnboarding, undoRequest.outcome != true, let lesson = end.nextLesson, let onStartLesson {
+    if !isOnboarding, !end.revisited, undoRequest.outcome != true, let lesson = end.nextLesson,
+      let onStartLesson
+    {
       UsageAnalytics.track(.testLessonStarted(context, lessonID: lesson.id))
       onStartLesson(lesson.id)
     } else {
@@ -321,7 +328,9 @@ struct PlacementTestFlow: View {
       undoRequest.leave()
       reached = .result(PlacementTestEnd(finished: end, attemptId: attempt.id))
     case .stale:
-      reached = phase(for: try await store.placement(goalID: goalID))
+      // A finish whose reply was lost, or another device's, already applied this test: its
+      // result shows.
+      reached = phase(for: try await store.placement(goalID: goalID), attemptID: attempt.id)
     }
   }
 

@@ -290,6 +290,19 @@ final class PlacementTestRenderTests: XCTestCase {
     }
   }
 
+  func testAResultOpenedFromThePlanGoesBackWithDone() async throws {
+    var revisited = Self.startedPast
+    revisited.revisited = true
+
+    try await capture(
+      "placement-result-revisited", title: "Why prices move", detail: "Done",
+      absent: ["Start lesson"]
+    ) {
+      PlacementTestResultView(
+        end: revisited, onboarding: false, pressed: nil, failed: false, onDone: {})
+    }
+  }
+
   func testRetakeHeldUntilTomorrow() async throws {
     try await capture(
       "placement-retake-tomorrow", title: "What a stock is",

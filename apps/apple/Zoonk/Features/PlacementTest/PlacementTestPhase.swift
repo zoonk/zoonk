@@ -20,6 +20,9 @@ struct PlacementTestEnd: Equatable {
   var course: PlacementCourse?
   var nextLesson: PlacementTestResult.NextLesson?
   var attemptId: String?
+  /// The plan's last result, opened from its row when there's no test to start: Done goes back,
+  /// since its next lesson is where the plan stood then.
+  var revisited = false
 }
 
 /// What a course's test shows, from a read of it or from its finish. Main's `toPlacementTestPhase`.
@@ -53,26 +56,35 @@ enum PlacementTestPhase: Equatable {
     }
   }
 
-  /// An open test goes on at its next question. With nothing open, onboarding shows the result of
-  /// the test it ran; otherwise the test is offered, or waited for when the learner already
-  /// `asked` for it.
-  init(_ placement: GoalPlacement, onboarding: Bool, asked: Bool = false) {
+  /// An open test goes on at its next question. With nothing open, the result shows when it's the
+  /// test the learner was just in (`attemptID`), in onboarding, or on a plan that has no test to
+  /// start (`canStart` false), where it's the row's last result; otherwise the test is offered, or
+  /// waited for when the learner already `asked` for it.
+  init(
+    _ placement: GoalPlacement, onboarding: Bool, asked: Bool = false, attemptID: String? = nil,
+    canStart: Bool = true
+  ) {
     self.init(
       attempt: placement.activeTestAttempt, result: placement.savedTestResult,
       status: placement.status,
       next: placement.next.flatMap { try? PracticeJSON.recode($0, as: PracticeQuestion.self) },
       labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse,
-      onboarding: onboarding, asked: asked)
+      onboarding: onboarding, asked: asked, attemptID: attemptID, canStart: canStart)
   }
 
   init(
     attempt: PlacementAttempt?, result: PlacementTestResult?,
     status: Components.Schemas.PlacementStatus, next: PracticeQuestion?,
-    labels: PracticeTrueFalseLabels, onboarding: Bool, asked: Bool = false
+    labels: PracticeTrueFalseLabels, onboarding: Bool, asked: Bool = false,
+    attemptID: String? = nil, canStart: Bool = true
   ) {
     guard let attempt else {
-      if onboarding, let result, result.attemptId != nil {
+      if let result, let id = result.attemptId, onboarding || id == attemptID {
         self = .result(PlacementTestEnd(read: result))
+      } else if let result, !canStart, !asked {
+        var end = PlacementTestEnd(read: result)
+        end.revisited = true
+        self = .result(end)
       } else if asked {
         self = Self(unopened: status)
       } else {
@@ -99,8 +111,7 @@ enum PlacementTestPhase: Equatable {
 
   /// Where a read leaves a question whose answer core refused: nil while the test still asks it,
   /// so the answer just didn't save. Otherwise the test moved on without it, as when another device
-  /// stopped it: that test's result when it's the one this question was in, else wherever the read
-  /// stands.
+  /// stopped it, and the read decides, with this test's result when it's there.
   init?(
     refused asked: PlacementTestQuestion, attempt: PlacementAttempt?,
     result: PlacementTestResult?, status: Components.Schemas.PlacementStatus,
@@ -110,14 +121,9 @@ enum PlacementTestPhase: Equatable {
       return nil
     }
 
-    if attempt == nil, let result, result.attemptId == asked.attempt.id {
-      self = .result(PlacementTestEnd(read: result))
-      return
-    }
-
     self.init(
       attempt: attempt, result: result, status: status, next: next, labels: labels,
-      onboarding: onboarding, asked: true)
+      onboarding: onboarding, asked: true, attemptID: asked.attempt.id)
   }
 
   init?(refused asked: PlacementTestQuestion, _ placement: GoalPlacement, onboarding: Bool) {
