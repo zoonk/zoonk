@@ -13,12 +13,12 @@
   "placementtest_keeps_adjusting": "b69ccd0b562c8250e7eee415bbfd4abd930b562fbe1551cf09da52778502fa5a",
   "placementtest_known_one": "6f57dd777c3bc2b17c3144b5ef7d3f85bae12c624dae04c6cadb9e95e46b2272",
   "placementtest_known_other": "b8e5064dfd80e81571ec225fb8ec143ea9dfb7aee16f5142ffba56c8885bc0c1",
-  "placementtest_lessons_skipped": "0d45eb8d987c5455d4e07db8b0442f028b9e635bc290d025482b4ff2ade3aad2",
+  "placementtest_lessons_skipped": "4f5b3576073b0b4f6e176f89f740db49e367befd790b01eb84a76f81243b7ee0",
   "placementtest_lessons_you_know": "60cebd8d53808eb6132328a3ad4e166ddb103d87b761330d25d482e04a85ebb1",
   "placementtest_level_stays": "d97fae8760c83fd01b2bf14b5f4aa47a645def4252cafc830e315e2195aa5a03",
   "placementtest_level_title": "c8621c59232dbee24b23d820b8d89bc7c86f646cac5cd3ab39adedcf7031bed6",
   "placementtest_listening_range": "978694582ea6d214a46ebff65f968048791c00da7e48339e8b597f4c28feee93",
-  "placementtest_no_lessons_skipped": "a293521ffcccc09498a6ce27cfcf6dac665cfd1927a85c8628ddefdf7e3845b9",
+  "placementtest_no_lessons_skipped": "80b55144bfb1bedde3d2a324499a1f580fbd178c6305fd6fa7dc527a42dedfc9",
   "placementtest_not_now": "d44d07dc318f2a3c70d22343d50c8defbf6ac60606bbbd63e3331d14d3e9d4a8",
   "placementtest_not_tested": "cffe1fd8f7c31acd00d366bfb4eef3f5a36ed14f9aa1b9e3a9e19e89404114a8",
   "placementtest_offer_level": "362b6a3c1cdbcbb15e0e9676f02f0522b6eb1094917baa8717243ca42cc879bd",
@@ -50,11 +50,11 @@
     <string name="placementtest_find_level">Finde dein Level und überspringe, was du schon kennst</string>
     <string name="placementtest_in_progress">In Bearbeitung</string>
     <!-- A fact on the plan's test row, and the title after a test: how many lessons it took out of the plan. -->
-    <string name="placementtest_no_lessons_skipped">Keine Lektionen ausgelassen</string>
+    <string name="placementtest_no_lessons_skipped">Keine Lektionen übersprungen</string>
     <!-- The title after a placement test: how many lessons it took out of the plan. -->
     <plurals name="placementtest_lessons_skipped">
-        <item quantity="one">%d Lektion ausgelassen</item>
-        <item quantity="other">%d Lektionen ausgelassen</item>
+        <item quantity="one">%d Lektion übersprungen</item>
+        <item quantity="other">%d Lektionen übersprungen</item>
     </plurals>
     <!-- A CEFR level range the test found for reading, such as “B1–B2”. -->
     <string name="placementtest_reading_range">Lesen %1$s</string>
