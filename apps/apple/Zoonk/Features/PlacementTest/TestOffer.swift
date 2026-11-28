@@ -100,8 +100,8 @@ private struct TestOfferCardView: View {
     let shape = RoundedRectangle(cornerRadius: Radius.option, style: .continuous)
 
     HStack(spacing: 16) {
-      // The mark sits on the name's line, and the two are centered in the card as one.
-      HStack(alignment: .firstTextBaseline, spacing: 16) {
+      // The mark centers on the name and its line, as a list row's does (craft E5).
+      HStack(spacing: 16) {
         KindMark(kind: card.kind)
           .markColumn()
 
