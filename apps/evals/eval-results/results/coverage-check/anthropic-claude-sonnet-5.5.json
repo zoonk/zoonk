@@ -2960,6 +2960,1858 @@
           ]
         }
       }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "An-Nahl"
+          ]
+        },
+        "id": "en-quran-memorization-drops-one-surah-1",
+        "origin": "production",
+        "userInput": {
+          "courses": [
+            {
+              "key": "arabic",
+              "title": "Quranic Arabic"
+            },
+            {
+              "key": "quran",
+              "title": "Quran memorization"
+            }
+          ],
+          "goal": "Memorize the Quran",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [],
+          "skills": [
+            {
+              "description": "Recognize Arabic letters and sounds.",
+              "key": "recognize-arabic-letters-and-sounds",
+              "name": "Recognize Arabic letters and sounds"
+            },
+            {
+              "description": "Read vocalized Arabic text.",
+              "key": "read-vocalized-arabic-text",
+              "name": "Read vocalized Arabic text"
+            },
+            {
+              "description": "Read Quranic script and signs.",
+              "key": "read-quranic-script-and-signs",
+              "name": "Read Quranic script and signs"
+            },
+            {
+              "description": "Pronounce Quranic Arabic sounds.",
+              "key": "pronounce-quranic-arabic-sounds",
+              "name": "Pronounce Quranic Arabic sounds"
+            },
+            {
+              "description": "Apply basic tajwid rules.",
+              "key": "apply-basic-tajwid-rules",
+              "name": "Apply basic tajwid rules"
+            },
+            {
+              "description": "Memorize and check Quranic verses.",
+              "key": "memorize-and-check-quranic-verses",
+              "name": "Memorize and check Quranic verses"
+            },
+            {
+              "description": "Memorize Al-Fatihah.",
+              "key": "memorize-al-fatihah",
+              "name": "Memorize Al-Fatihah"
+            },
+            {
+              "description": "Memorize Surahs 112–114.",
+              "key": "memorize-surahs-112-114",
+              "name": "Memorize Surahs 112–114"
+            },
+            {
+              "description": "Memorize Surahs 110–111.",
+              "key": "memorize-surahs-110-111",
+              "name": "Memorize Surahs 110–111"
+            },
+            {
+              "description": "Memorize Surahs 107–109.",
+              "key": "memorize-surahs-107-109",
+              "name": "Memorize Surahs 107–109"
+            },
+            {
+              "description": "Memorize Surahs 104–106.",
+              "key": "memorize-surahs-104-106",
+              "name": "Memorize Surahs 104–106"
+            },
+            {
+              "description": "Memorize Surahs 102–103.",
+              "key": "memorize-surahs-102-103",
+              "name": "Memorize Surahs 102–103"
+            },
+            {
+              "description": "Stop and restart Quranic recitation.",
+              "key": "stop-and-restart-quranic-recitation",
+              "name": "Stop and restart Quranic recitation"
+            },
+            {
+              "description": "Retain and connect memorized passages.",
+              "key": "retain-and-connect-memorized-passages",
+              "name": "Retain and connect memorized passages"
+            },
+            {
+              "description": "Memorize Surahs 98–101.",
+              "key": "memorize-surahs-98-101",
+              "name": "Memorize Surahs 98–101"
+            },
+            {
+              "description": "Memorize Surahs 94–97.",
+              "key": "memorize-surahs-94-97",
+              "name": "Memorize Surahs 94–97"
+            },
+            {
+              "description": "Memorize Surahs 90–93.",
+              "key": "memorize-surahs-90-93",
+              "name": "Memorize Surahs 90–93"
+            },
+            {
+              "description": "Memorize Surahs 87–89.",
+              "key": "memorize-surahs-87-89",
+              "name": "Memorize Surahs 87–89"
+            },
+            {
+              "description": "Memorize Surahs 84–86.",
+              "key": "memorize-surahs-84-86",
+              "name": "Memorize Surahs 84–86"
+            },
+            {
+              "description": "Memorize Surahs 82–83.",
+              "key": "memorize-surahs-82-83",
+              "name": "Memorize Surahs 82–83"
+            },
+            {
+              "description": "Memorize Surahs 80–81.",
+              "key": "memorize-surahs-80-81",
+              "name": "Memorize Surahs 80–81"
+            },
+            {
+              "description": "Memorize Surahs 78–79.",
+              "key": "memorize-surahs-78-79",
+              "name": "Memorize Surahs 78–79"
+            },
+            {
+              "description": "Memorize Surahs 75–77.",
+              "key": "memorize-surahs-75-77",
+              "name": "Memorize Surahs 75–77"
+            },
+            {
+              "description": "Memorize Surahs 73–74.",
+              "key": "memorize-surahs-73-74",
+              "name": "Memorize Surahs 73–74"
+            },
+            {
+              "description": "Memorize Surahs 71–72.",
+              "key": "memorize-surahs-71-72",
+              "name": "Memorize Surahs 71–72"
+            },
+            {
+              "description": "Memorize Surahs 69–70.",
+              "key": "memorize-surahs-69-70",
+              "name": "Memorize Surahs 69–70"
+            },
+            {
+              "description": "Memorize Surahs 67–68.",
+              "key": "memorize-surahs-67-68",
+              "name": "Memorize Surahs 67–68"
+            },
+            {
+              "description": "Distinguish similar Quranic passages.",
+              "key": "distinguish-similar-quranic-passages",
+              "name": "Distinguish similar Quranic passages"
+            },
+            {
+              "description": "Memorize Surahs 64–66.",
+              "key": "memorize-surahs-64-66",
+              "name": "Memorize Surahs 64–66"
+            },
+            {
+              "description": "Memorize Surahs 61–63.",
+              "key": "memorize-surahs-61-63",
+              "name": "Memorize Surahs 61–63"
+            },
+            {
+              "description": "Memorize Surahs 59–60.",
+              "key": "memorize-surahs-59-60",
+              "name": "Memorize Surahs 59–60"
+            },
+            {
+              "description": "Memorize Al-Mujadilah.",
+              "key": "memorize-al-mujadilah",
+              "name": "Memorize Al-Mujadilah"
+            },
+            {
+              "description": "Memorize Al-Hadid.",
+              "key": "memorize-al-hadid",
+              "name": "Memorize Al-Hadid"
+            },
+            {
+              "description": "Memorize Al-Waqi'ah.",
+              "key": "memorize-al-waqiah",
+              "name": "Memorize Al-Waqi'ah"
+            },
+            {
+              "description": "Memorize Ar-Rahman.",
+              "key": "memorize-ar-rahman",
+              "name": "Memorize Ar-Rahman"
+            },
+            {
+              "description": "Memorize Al-Qamar.",
+              "key": "memorize-al-qamar",
+              "name": "Memorize Al-Qamar"
+            },
+            {
+              "description": "Memorize An-Najm.",
+              "key": "memorize-an-najm",
+              "name": "Memorize An-Najm"
+            },
+            {
+              "description": "Memorize At-Tur.",
+              "key": "memorize-at-tur",
+              "name": "Memorize At-Tur"
+            },
+            {
+              "description": "Memorize Adh-Dhariyat.",
+              "key": "memorize-adh-dhariyat",
+              "name": "Memorize Adh-Dhariyat"
+            },
+            {
+              "description": "Memorize Surahs 49–50.",
+              "key": "memorize-surahs-49-50",
+              "name": "Memorize Surahs 49–50"
+            },
+            {
+              "description": "Memorize Al-Fath.",
+              "key": "memorize-al-fath",
+              "name": "Memorize Al-Fath"
+            },
+            {
+              "description": "Memorize Surah Muhammad.",
+              "key": "memorize-surah-muhammad",
+              "name": "Memorize Surah Muhammad"
+            },
+            {
+              "description": "Memorize Al-Ahqaf.",
+              "key": "memorize-al-ahqaf",
+              "name": "Memorize Al-Ahqaf"
+            },
+            {
+              "description": "Memorize Al-Jathiyah.",
+              "key": "memorize-al-jathiyah",
+              "name": "Memorize Al-Jathiyah"
+            },
+            {
+              "description": "Memorize Ad-Dukhan.",
+              "key": "memorize-ad-dukhan",
+              "name": "Memorize Ad-Dukhan"
+            },
+            {
+              "description": "Memorize Az-Zukhruf.",
+              "key": "memorize-az-zukhruf",
+              "name": "Memorize Az-Zukhruf"
+            },
+            {
+              "description": "Memorize Ash-Shura.",
+              "key": "memorize-ash-shura",
+              "name": "Memorize Ash-Shura"
+            },
+            {
+              "description": "Memorize Fussilat.",
+              "key": "memorize-fussilat",
+              "name": "Memorize Fussilat"
+            },
+            {
+              "description": "Memorize Ghafir.",
+              "key": "memorize-ghafir",
+              "name": "Memorize Ghafir"
+            },
+            {
+              "description": "Memorize Az-Zumar.",
+              "key": "memorize-az-zumar",
+              "name": "Memorize Az-Zumar"
+            },
+            {
+              "description": "Memorize Surah Sad.",
+              "key": "memorize-surah-sad",
+              "name": "Memorize Surah Sad"
+            },
+            {
+              "description": "Memorize As-Saffat.",
+              "key": "memorize-as-saffat",
+              "name": "Memorize As-Saffat"
+            },
+            {
+              "description": "Memorize Ya-Sin.",
+              "key": "memorize-ya-sin",
+              "name": "Memorize Ya-Sin"
+            },
+            {
+              "description": "Memorize Fatir.",
+              "key": "memorize-fatir",
+              "name": "Memorize Fatir"
+            },
+            {
+              "description": "Memorize Saba.",
+              "key": "memorize-saba",
+              "name": "Memorize Saba"
+            },
+            {
+              "description": "Memorize Al-Ahzab.",
+              "key": "memorize-al-ahzab",
+              "name": "Memorize Al-Ahzab"
+            },
+            {
+              "description": "Memorize As-Sajdah.",
+              "key": "memorize-as-sajdah",
+              "name": "Memorize As-Sajdah"
+            },
+            {
+              "description": "Memorize Luqman.",
+              "key": "memorize-luqman",
+              "name": "Memorize Luqman"
+            },
+            {
+              "description": "Memorize Ar-Rum.",
+              "key": "memorize-ar-rum",
+              "name": "Memorize Ar-Rum"
+            },
+            {
+              "description": "Memorize Al-Ankabut.",
+              "key": "memorize-al-ankabut",
+              "name": "Memorize Al-Ankabut"
+            },
+            {
+              "description": "Memorize Al-Qasas.",
+              "key": "memorize-al-qasas",
+              "name": "Memorize Al-Qasas"
+            },
+            {
+              "description": "Memorize An-Naml.",
+              "key": "memorize-an-naml",
+              "name": "Memorize An-Naml"
+            },
+            {
+              "description": "Memorize Ash-Shu'ara.",
+              "key": "memorize-ash-shuara",
+              "name": "Memorize Ash-Shu'ara"
+            },
+            {
+              "description": "Memorize Al-Furqan.",
+              "key": "memorize-al-furqan",
+              "name": "Memorize Al-Furqan"
+            },
+            {
+              "description": "Memorize An-Nur.",
+              "key": "memorize-an-nur",
+              "name": "Memorize An-Nur"
+            },
+            {
+              "description": "Memorize Al-Mu'minun.",
+              "key": "memorize-al-muminun",
+              "name": "Memorize Al-Mu'minun"
+            },
+            {
+              "description": "Memorize Al-Hajj.",
+              "key": "memorize-al-hajj",
+              "name": "Memorize Al-Hajj"
+            },
+            {
+              "description": "Memorize Al-Anbiya.",
+              "key": "memorize-al-anbiya",
+              "name": "Memorize Al-Anbiya"
+            },
+            {
+              "description": "Memorize Ta-Ha.",
+              "key": "memorize-ta-ha",
+              "name": "Memorize Ta-Ha"
+            },
+            {
+              "description": "Memorize Maryam.",
+              "key": "memorize-maryam",
+              "name": "Memorize Maryam"
+            },
+            {
+              "description": "Memorize Al-Kahf.",
+              "key": "memorize-al-kahf",
+              "name": "Memorize Al-Kahf"
+            },
+            {
+              "description": "Memorize Al-Isra.",
+              "key": "memorize-al-isra",
+              "name": "Memorize Al-Isra"
+            },
+            {
+              "description": "Memorize Al-Hijr.",
+              "key": "memorize-al-hijr",
+              "name": "Memorize Al-Hijr"
+            },
+            {
+              "description": "Memorize Ibrahim.",
+              "key": "memorize-ibrahim",
+              "name": "Memorize Ibrahim"
+            },
+            {
+              "description": "Memorize Ar-Ra'd.",
+              "key": "memorize-ar-rad",
+              "name": "Memorize Ar-Ra'd"
+            },
+            {
+              "description": "Memorize Yusuf.",
+              "key": "memorize-yusuf",
+              "name": "Memorize Yusuf"
+            },
+            {
+              "description": "Memorize Hud.",
+              "key": "memorize-hud",
+              "name": "Memorize Hud"
+            },
+            {
+              "description": "Memorize Yunus.",
+              "key": "memorize-yunus",
+              "name": "Memorize Yunus"
+            },
+            {
+              "description": "Memorize At-Tawbah verses 1–66.",
+              "key": "memorize-at-tawbah-verses-1-66",
+              "name": "Memorize At-Tawbah verses 1–66"
+            },
+            {
+              "description": "Memorize At-Tawbah verses 67–129.",
+              "key": "memorize-at-tawbah-verses-67-129",
+              "name": "Memorize At-Tawbah verses 67–129"
+            },
+            {
+              "description": "Memorize Al-Anfal.",
+              "key": "memorize-al-anfal",
+              "name": "Memorize Al-Anfal"
+            },
+            {
+              "description": "Memorize Al-A'raf verses 1–105.",
+              "key": "memorize-al-araf-verses-1-105",
+              "name": "Memorize Al-A'raf verses 1–105"
+            },
+            {
+              "description": "Memorize Al-A'raf verses 106–206.",
+              "key": "memorize-al-araf-verses-106-206",
+              "name": "Memorize Al-A'raf verses 106–206"
+            },
+            {
+              "description": "Memorize Al-An'am verses 1–82.",
+              "key": "memorize-al-anam-verses-1-82",
+              "name": "Memorize Al-An'am verses 1–82"
+            },
+            {
+              "description": "Memorize Al-An'am verses 83–165.",
+              "key": "memorize-al-anam-verses-83-165",
+              "name": "Memorize Al-An'am verses 83–165"
+            },
+            {
+              "description": "Memorize Al-Ma'idah verses 1–60.",
+              "key": "memorize-al-maidah-verses-1-60",
+              "name": "Memorize Al-Ma'idah verses 1–60"
+            },
+            {
+              "description": "Memorize Al-Ma'idah verses 61–120.",
+              "key": "memorize-al-maidah-verses-61-120",
+              "name": "Memorize Al-Ma'idah verses 61–120"
+            },
+            {
+              "description": "Memorize An-Nisa verses 1–59.",
+              "key": "memorize-an-nisa-verses-1-59",
+              "name": "Memorize An-Nisa verses 1–59"
+            },
+            {
+              "description": "Memorize An-Nisa verses 60–117.",
+              "key": "memorize-an-nisa-verses-60-117",
+              "name": "Memorize An-Nisa verses 60–117"
+            },
+            {
+              "description": "Memorize An-Nisa verses 118–176.",
+              "key": "memorize-an-nisa-verses-118-176",
+              "name": "Memorize An-Nisa verses 118–176"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 1–70.",
+              "key": "memorize-ali-imran-verses-1-70",
+              "name": "Memorize Ali 'Imran verses 1–70"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 71–140.",
+              "key": "memorize-ali-imran-verses-71-140",
+              "name": "Memorize Ali 'Imran verses 71–140"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 141–200.",
+              "key": "memorize-ali-imran-verses-141-200",
+              "name": "Memorize Ali 'Imran verses 141–200"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 1–74.",
+              "key": "memorize-al-baqarah-verses-1-74",
+              "name": "Memorize Al-Baqarah verses 1–74"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 75–141.",
+              "key": "memorize-al-baqarah-verses-75-141",
+              "name": "Memorize Al-Baqarah verses 75–141"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 142–202.",
+              "key": "memorize-al-baqarah-verses-142-202",
+              "name": "Memorize Al-Baqarah verses 142–202"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 203–252.",
+              "key": "memorize-al-baqarah-verses-203-252",
+              "name": "Memorize Al-Baqarah verses 203–252"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 253–286.",
+              "key": "memorize-al-baqarah-verses-253-286",
+              "name": "Memorize Al-Baqarah verses 253–286"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Found 0 of 1 gaps with 0 false alarms. Missed: An-Nahl.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": [
+            "An-Nahl"
+          ]
+        },
+        "id": "en-quran-memorization-drops-one-surah-2",
+        "origin": "production",
+        "userInput": {
+          "courses": [
+            {
+              "key": "arabic",
+              "title": "Quranic Arabic"
+            },
+            {
+              "key": "quran",
+              "title": "Quran memorization"
+            }
+          ],
+          "goal": "Memorize the Quran",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [],
+          "skills": [
+            {
+              "description": "Recognize Arabic letters and sounds.",
+              "key": "recognize-arabic-letters-and-sounds",
+              "name": "Recognize Arabic letters and sounds"
+            },
+            {
+              "description": "Read vocalized Arabic text.",
+              "key": "read-vocalized-arabic-text",
+              "name": "Read vocalized Arabic text"
+            },
+            {
+              "description": "Read Quranic script and signs.",
+              "key": "read-quranic-script-and-signs",
+              "name": "Read Quranic script and signs"
+            },
+            {
+              "description": "Pronounce Quranic Arabic sounds.",
+              "key": "pronounce-quranic-arabic-sounds",
+              "name": "Pronounce Quranic Arabic sounds"
+            },
+            {
+              "description": "Apply basic tajwid rules.",
+              "key": "apply-basic-tajwid-rules",
+              "name": "Apply basic tajwid rules"
+            },
+            {
+              "description": "Memorize and check Quranic verses.",
+              "key": "memorize-and-check-quranic-verses",
+              "name": "Memorize and check Quranic verses"
+            },
+            {
+              "description": "Memorize Al-Fatihah.",
+              "key": "memorize-al-fatihah",
+              "name": "Memorize Al-Fatihah"
+            },
+            {
+              "description": "Memorize Surahs 112–114.",
+              "key": "memorize-surahs-112-114",
+              "name": "Memorize Surahs 112–114"
+            },
+            {
+              "description": "Memorize Surahs 110–111.",
+              "key": "memorize-surahs-110-111",
+              "name": "Memorize Surahs 110–111"
+            },
+            {
+              "description": "Memorize Surahs 107–109.",
+              "key": "memorize-surahs-107-109",
+              "name": "Memorize Surahs 107–109"
+            },
+            {
+              "description": "Memorize Surahs 104–106.",
+              "key": "memorize-surahs-104-106",
+              "name": "Memorize Surahs 104–106"
+            },
+            {
+              "description": "Memorize Surahs 102–103.",
+              "key": "memorize-surahs-102-103",
+              "name": "Memorize Surahs 102–103"
+            },
+            {
+              "description": "Stop and restart Quranic recitation.",
+              "key": "stop-and-restart-quranic-recitation",
+              "name": "Stop and restart Quranic recitation"
+            },
+            {
+              "description": "Retain and connect memorized passages.",
+              "key": "retain-and-connect-memorized-passages",
+              "name": "Retain and connect memorized passages"
+            },
+            {
+              "description": "Memorize Surahs 98–101.",
+              "key": "memorize-surahs-98-101",
+              "name": "Memorize Surahs 98–101"
+            },
+            {
+              "description": "Memorize Surahs 94–97.",
+              "key": "memorize-surahs-94-97",
+              "name": "Memorize Surahs 94–97"
+            },
+            {
+              "description": "Memorize Surahs 90–93.",
+              "key": "memorize-surahs-90-93",
+              "name": "Memorize Surahs 90–93"
+            },
+            {
+              "description": "Memorize Surahs 87–89.",
+              "key": "memorize-surahs-87-89",
+              "name": "Memorize Surahs 87–89"
+            },
+            {
+              "description": "Memorize Surahs 84–86.",
+              "key": "memorize-surahs-84-86",
+              "name": "Memorize Surahs 84–86"
+            },
+            {
+              "description": "Memorize Surahs 82–83.",
+              "key": "memorize-surahs-82-83",
+              "name": "Memorize Surahs 82–83"
+            },
+            {
+              "description": "Memorize Surahs 80–81.",
+              "key": "memorize-surahs-80-81",
+              "name": "Memorize Surahs 80–81"
+            },
+            {
+              "description": "Memorize Surahs 78–79.",
+              "key": "memorize-surahs-78-79",
+              "name": "Memorize Surahs 78–79"
+            },
+            {
+              "description": "Memorize Surahs 75–77.",
+              "key": "memorize-surahs-75-77",
+              "name": "Memorize Surahs 75–77"
+            },
+            {
+              "description": "Memorize Surahs 73–74.",
+              "key": "memorize-surahs-73-74",
+              "name": "Memorize Surahs 73–74"
+            },
+            {
+              "description": "Memorize Surahs 71–72.",
+              "key": "memorize-surahs-71-72",
+              "name": "Memorize Surahs 71–72"
+            },
+            {
+              "description": "Memorize Surahs 69–70.",
+              "key": "memorize-surahs-69-70",
+              "name": "Memorize Surahs 69–70"
+            },
+            {
+              "description": "Memorize Surahs 67–68.",
+              "key": "memorize-surahs-67-68",
+              "name": "Memorize Surahs 67–68"
+            },
+            {
+              "description": "Distinguish similar Quranic passages.",
+              "key": "distinguish-similar-quranic-passages",
+              "name": "Distinguish similar Quranic passages"
+            },
+            {
+              "description": "Memorize Surahs 64–66.",
+              "key": "memorize-surahs-64-66",
+              "name": "Memorize Surahs 64–66"
+            },
+            {
+              "description": "Memorize Surahs 61–63.",
+              "key": "memorize-surahs-61-63",
+              "name": "Memorize Surahs 61–63"
+            },
+            {
+              "description": "Memorize Surahs 59–60.",
+              "key": "memorize-surahs-59-60",
+              "name": "Memorize Surahs 59–60"
+            },
+            {
+              "description": "Memorize Al-Mujadilah.",
+              "key": "memorize-al-mujadilah",
+              "name": "Memorize Al-Mujadilah"
+            },
+            {
+              "description": "Memorize Al-Hadid.",
+              "key": "memorize-al-hadid",
+              "name": "Memorize Al-Hadid"
+            },
+            {
+              "description": "Memorize Al-Waqi'ah.",
+              "key": "memorize-al-waqiah",
+              "name": "Memorize Al-Waqi'ah"
+            },
+            {
+              "description": "Memorize Ar-Rahman.",
+              "key": "memorize-ar-rahman",
+              "name": "Memorize Ar-Rahman"
+            },
+            {
+              "description": "Memorize Al-Qamar.",
+              "key": "memorize-al-qamar",
+              "name": "Memorize Al-Qamar"
+            },
+            {
+              "description": "Memorize An-Najm.",
+              "key": "memorize-an-najm",
+              "name": "Memorize An-Najm"
+            },
+            {
+              "description": "Memorize At-Tur.",
+              "key": "memorize-at-tur",
+              "name": "Memorize At-Tur"
+            },
+            {
+              "description": "Memorize Adh-Dhariyat.",
+              "key": "memorize-adh-dhariyat",
+              "name": "Memorize Adh-Dhariyat"
+            },
+            {
+              "description": "Memorize Surahs 49–50.",
+              "key": "memorize-surahs-49-50",
+              "name": "Memorize Surahs 49–50"
+            },
+            {
+              "description": "Memorize Al-Fath.",
+              "key": "memorize-al-fath",
+              "name": "Memorize Al-Fath"
+            },
+            {
+              "description": "Memorize Surah Muhammad.",
+              "key": "memorize-surah-muhammad",
+              "name": "Memorize Surah Muhammad"
+            },
+            {
+              "description": "Memorize Al-Ahqaf.",
+              "key": "memorize-al-ahqaf",
+              "name": "Memorize Al-Ahqaf"
+            },
+            {
+              "description": "Memorize Al-Jathiyah.",
+              "key": "memorize-al-jathiyah",
+              "name": "Memorize Al-Jathiyah"
+            },
+            {
+              "description": "Memorize Ad-Dukhan.",
+              "key": "memorize-ad-dukhan",
+              "name": "Memorize Ad-Dukhan"
+            },
+            {
+              "description": "Memorize Az-Zukhruf.",
+              "key": "memorize-az-zukhruf",
+              "name": "Memorize Az-Zukhruf"
+            },
+            {
+              "description": "Memorize Ash-Shura.",
+              "key": "memorize-ash-shura",
+              "name": "Memorize Ash-Shura"
+            },
+            {
+              "description": "Memorize Fussilat.",
+              "key": "memorize-fussilat",
+              "name": "Memorize Fussilat"
+            },
+            {
+              "description": "Memorize Ghafir.",
+              "key": "memorize-ghafir",
+              "name": "Memorize Ghafir"
+            },
+            {
+              "description": "Memorize Az-Zumar.",
+              "key": "memorize-az-zumar",
+              "name": "Memorize Az-Zumar"
+            },
+            {
+              "description": "Memorize Surah Sad.",
+              "key": "memorize-surah-sad",
+              "name": "Memorize Surah Sad"
+            },
+            {
+              "description": "Memorize As-Saffat.",
+              "key": "memorize-as-saffat",
+              "name": "Memorize As-Saffat"
+            },
+            {
+              "description": "Memorize Ya-Sin.",
+              "key": "memorize-ya-sin",
+              "name": "Memorize Ya-Sin"
+            },
+            {
+              "description": "Memorize Fatir.",
+              "key": "memorize-fatir",
+              "name": "Memorize Fatir"
+            },
+            {
+              "description": "Memorize Saba.",
+              "key": "memorize-saba",
+              "name": "Memorize Saba"
+            },
+            {
+              "description": "Memorize Al-Ahzab.",
+              "key": "memorize-al-ahzab",
+              "name": "Memorize Al-Ahzab"
+            },
+            {
+              "description": "Memorize As-Sajdah.",
+              "key": "memorize-as-sajdah",
+              "name": "Memorize As-Sajdah"
+            },
+            {
+              "description": "Memorize Luqman.",
+              "key": "memorize-luqman",
+              "name": "Memorize Luqman"
+            },
+            {
+              "description": "Memorize Ar-Rum.",
+              "key": "memorize-ar-rum",
+              "name": "Memorize Ar-Rum"
+            },
+            {
+              "description": "Memorize Al-Ankabut.",
+              "key": "memorize-al-ankabut",
+              "name": "Memorize Al-Ankabut"
+            },
+            {
+              "description": "Memorize Al-Qasas.",
+              "key": "memorize-al-qasas",
+              "name": "Memorize Al-Qasas"
+            },
+            {
+              "description": "Memorize An-Naml.",
+              "key": "memorize-an-naml",
+              "name": "Memorize An-Naml"
+            },
+            {
+              "description": "Memorize Ash-Shu'ara.",
+              "key": "memorize-ash-shuara",
+              "name": "Memorize Ash-Shu'ara"
+            },
+            {
+              "description": "Memorize Al-Furqan.",
+              "key": "memorize-al-furqan",
+              "name": "Memorize Al-Furqan"
+            },
+            {
+              "description": "Memorize An-Nur.",
+              "key": "memorize-an-nur",
+              "name": "Memorize An-Nur"
+            },
+            {
+              "description": "Memorize Al-Mu'minun.",
+              "key": "memorize-al-muminun",
+              "name": "Memorize Al-Mu'minun"
+            },
+            {
+              "description": "Memorize Al-Hajj.",
+              "key": "memorize-al-hajj",
+              "name": "Memorize Al-Hajj"
+            },
+            {
+              "description": "Memorize Al-Anbiya.",
+              "key": "memorize-al-anbiya",
+              "name": "Memorize Al-Anbiya"
+            },
+            {
+              "description": "Memorize Ta-Ha.",
+              "key": "memorize-ta-ha",
+              "name": "Memorize Ta-Ha"
+            },
+            {
+              "description": "Memorize Maryam.",
+              "key": "memorize-maryam",
+              "name": "Memorize Maryam"
+            },
+            {
+              "description": "Memorize Al-Kahf.",
+              "key": "memorize-al-kahf",
+              "name": "Memorize Al-Kahf"
+            },
+            {
+              "description": "Memorize Al-Isra.",
+              "key": "memorize-al-isra",
+              "name": "Memorize Al-Isra"
+            },
+            {
+              "description": "Memorize Al-Hijr.",
+              "key": "memorize-al-hijr",
+              "name": "Memorize Al-Hijr"
+            },
+            {
+              "description": "Memorize Ibrahim.",
+              "key": "memorize-ibrahim",
+              "name": "Memorize Ibrahim"
+            },
+            {
+              "description": "Memorize Ar-Ra'd.",
+              "key": "memorize-ar-rad",
+              "name": "Memorize Ar-Ra'd"
+            },
+            {
+              "description": "Memorize Yusuf.",
+              "key": "memorize-yusuf",
+              "name": "Memorize Yusuf"
+            },
+            {
+              "description": "Memorize Hud.",
+              "key": "memorize-hud",
+              "name": "Memorize Hud"
+            },
+            {
+              "description": "Memorize Yunus.",
+              "key": "memorize-yunus",
+              "name": "Memorize Yunus"
+            },
+            {
+              "description": "Memorize At-Tawbah verses 1–66.",
+              "key": "memorize-at-tawbah-verses-1-66",
+              "name": "Memorize At-Tawbah verses 1–66"
+            },
+            {
+              "description": "Memorize At-Tawbah verses 67–129.",
+              "key": "memorize-at-tawbah-verses-67-129",
+              "name": "Memorize At-Tawbah verses 67–129"
+            },
+            {
+              "description": "Memorize Al-Anfal.",
+              "key": "memorize-al-anfal",
+              "name": "Memorize Al-Anfal"
+            },
+            {
+              "description": "Memorize Al-A'raf verses 1–105.",
+              "key": "memorize-al-araf-verses-1-105",
+              "name": "Memorize Al-A'raf verses 1–105"
+            },
+            {
+              "description": "Memorize Al-A'raf verses 106–206.",
+              "key": "memorize-al-araf-verses-106-206",
+              "name": "Memorize Al-A'raf verses 106–206"
+            },
+            {
+              "description": "Memorize Al-An'am verses 1–82.",
+              "key": "memorize-al-anam-verses-1-82",
+              "name": "Memorize Al-An'am verses 1–82"
+            },
+            {
+              "description": "Memorize Al-An'am verses 83–165.",
+              "key": "memorize-al-anam-verses-83-165",
+              "name": "Memorize Al-An'am verses 83–165"
+            },
+            {
+              "description": "Memorize Al-Ma'idah verses 1–60.",
+              "key": "memorize-al-maidah-verses-1-60",
+              "name": "Memorize Al-Ma'idah verses 1–60"
+            },
+            {
+              "description": "Memorize Al-Ma'idah verses 61–120.",
+              "key": "memorize-al-maidah-verses-61-120",
+              "name": "Memorize Al-Ma'idah verses 61–120"
+            },
+            {
+              "description": "Memorize An-Nisa verses 1–59.",
+              "key": "memorize-an-nisa-verses-1-59",
+              "name": "Memorize An-Nisa verses 1–59"
+            },
+            {
+              "description": "Memorize An-Nisa verses 60–117.",
+              "key": "memorize-an-nisa-verses-60-117",
+              "name": "Memorize An-Nisa verses 60–117"
+            },
+            {
+              "description": "Memorize An-Nisa verses 118–176.",
+              "key": "memorize-an-nisa-verses-118-176",
+              "name": "Memorize An-Nisa verses 118–176"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 1–70.",
+              "key": "memorize-ali-imran-verses-1-70",
+              "name": "Memorize Ali 'Imran verses 1–70"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 71–140.",
+              "key": "memorize-ali-imran-verses-71-140",
+              "name": "Memorize Ali 'Imran verses 71–140"
+            },
+            {
+              "description": "Memorize Ali 'Imran verses 141–200.",
+              "key": "memorize-ali-imran-verses-141-200",
+              "name": "Memorize Ali 'Imran verses 141–200"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 1–74.",
+              "key": "memorize-al-baqarah-verses-1-74",
+              "name": "Memorize Al-Baqarah verses 1–74"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 75–141.",
+              "key": "memorize-al-baqarah-verses-75-141",
+              "name": "Memorize Al-Baqarah verses 75–141"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 142–202.",
+              "key": "memorize-al-baqarah-verses-142-202",
+              "name": "Memorize Al-Baqarah verses 142–202"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 203–252.",
+              "key": "memorize-al-baqarah-verses-203-252",
+              "name": "Memorize Al-Baqarah verses 203–252"
+            },
+            {
+              "description": "Memorize Al-Baqarah verses 253–286.",
+              "key": "memorize-al-baqarah-verses-253-286",
+              "name": "Memorize Al-Baqarah verses 253–286"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": []
+        },
+        "id": "en-bible-books-covered-by-ranges-1",
+        "origin": "production",
+        "userInput": {
+          "courses": [
+            {
+              "key": "bible",
+              "title": "Biblical studies"
+            }
+          ],
+          "goal": "Master the ESV Bible",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [],
+          "skills": [
+            {
+              "description": "Read biblical narrative.",
+              "key": "read-biblical-narrative",
+              "name": "Read biblical narrative"
+            },
+            {
+              "description": "Navigate the ESV.",
+              "key": "navigate-the-esv",
+              "name": "Navigate the ESV"
+            },
+            {
+              "description": "Locate books within the biblical canon.",
+              "key": "locate-books-within-the-biblical-canon",
+              "name": "Locate books within the biblical canon"
+            },
+            {
+              "description": "Explain how the biblical canon formed.",
+              "key": "explain-how-the-biblical-canon-formed",
+              "name": "Explain how the biblical canon formed"
+            },
+            {
+              "description": "Locate the biblical world.",
+              "key": "locate-the-biblical-world",
+              "name": "Locate the biblical world"
+            },
+            {
+              "description": "Interpret passages in context.",
+              "key": "interpret-passages-in-context",
+              "name": "Interpret passages in context"
+            },
+            {
+              "description": "Recognize ESV translation choices.",
+              "key": "recognize-esv-translation-choices",
+              "name": "Recognize ESV translation choices"
+            },
+            {
+              "description": "Read biblical poetry.",
+              "key": "read-biblical-poetry",
+              "name": "Read biblical poetry"
+            },
+            {
+              "description": "Read biblical law.",
+              "key": "read-biblical-law",
+              "name": "Read biblical law"
+            },
+            {
+              "description": "Read biblical letters.",
+              "key": "read-biblical-letters",
+              "name": "Read biblical letters"
+            },
+            {
+              "description": "Read prophetic and apocalyptic language.",
+              "key": "read-prophetic-and-apocalyptic-language",
+              "name": "Read prophetic and apocalyptic language"
+            },
+            {
+              "description": "Interpret Genesis 1–11.",
+              "key": "interpret-genesis-1-11",
+              "name": "Interpret Genesis 1–11"
+            },
+            {
+              "description": "Trace the patriarchal narratives.",
+              "key": "trace-the-patriarchal-narratives",
+              "name": "Trace the patriarchal narratives"
+            },
+            {
+              "description": "Interpret the Exodus story.",
+              "key": "interpret-the-exodus-story",
+              "name": "Interpret the Exodus story"
+            },
+            {
+              "description": "Interpret worship and holiness in Leviticus.",
+              "key": "interpret-worship-and-holiness-in-leviticus",
+              "name": "Interpret worship and holiness in Leviticus"
+            },
+            {
+              "description": "Follow the wilderness journey.",
+              "key": "follow-the-wilderness-journey",
+              "name": "Follow the wilderness journey"
+            },
+            {
+              "description": "Interpret Deuteronomy’s covenant teaching.",
+              "key": "interpret-deuteronomys-covenant-teaching",
+              "name": "Interpret Deuteronomy’s covenant teaching"
+            },
+            {
+              "description": "Compare the Pentateuch’s legal collections.",
+              "key": "compare-the-pentateuchs-legal-collections",
+              "name": "Compare the Pentateuch’s legal collections"
+            },
+            {
+              "description": "Explain the New Testament setting.",
+              "key": "explain-the-new-testament-setting",
+              "name": "Explain the New Testament setting"
+            },
+            {
+              "description": "Interpret the Gospel of Mark.",
+              "key": "interpret-the-gospel-of-mark",
+              "name": "Interpret the Gospel of Mark"
+            },
+            {
+              "description": "Interpret the Gospel of Matthew.",
+              "key": "interpret-the-gospel-of-matthew",
+              "name": "Interpret the Gospel of Matthew"
+            },
+            {
+              "description": "Interpret the Gospel of Luke.",
+              "key": "interpret-the-gospel-of-luke",
+              "name": "Interpret the Gospel of Luke"
+            },
+            {
+              "description": "Interpret Jesus’ parables.",
+              "key": "interpret-jesus-parables",
+              "name": "Interpret Jesus’ parables"
+            },
+            {
+              "description": "Compare the Synoptic Gospels.",
+              "key": "compare-the-synoptic-gospels",
+              "name": "Compare the Synoptic Gospels"
+            },
+            {
+              "description": "Interpret the book of Joshua.",
+              "key": "interpret-the-book-of-joshua",
+              "name": "Interpret the book of Joshua"
+            },
+            {
+              "description": "Interpret Judges and Ruth.",
+              "key": "interpret-judges-and-ruth",
+              "name": "Interpret Judges and Ruth"
+            },
+            {
+              "description": "Interpret the books of Samuel.",
+              "key": "interpret-the-books-of-samuel",
+              "name": "Interpret the books of Samuel"
+            },
+            {
+              "description": "Interpret the books of Kings.",
+              "key": "interpret-the-books-of-kings",
+              "name": "Interpret the books of Kings"
+            },
+            {
+              "description": "Interpret the books of Chronicles.",
+              "key": "interpret-the-books-of-chronicles",
+              "name": "Interpret the books of Chronicles"
+            },
+            {
+              "description": "Interpret Ezra and Nehemiah.",
+              "key": "interpret-ezra-and-nehemiah",
+              "name": "Interpret Ezra and Nehemiah"
+            },
+            {
+              "description": "Interpret the book of Esther.",
+              "key": "interpret-the-book-of-esther",
+              "name": "Interpret the book of Esther"
+            },
+            {
+              "description": "Interpret the Psalms.",
+              "key": "interpret-the-psalms",
+              "name": "Interpret the Psalms"
+            },
+            {
+              "description": "Interpret the book of Proverbs.",
+              "key": "interpret-the-book-of-proverbs",
+              "name": "Interpret the book of Proverbs"
+            },
+            {
+              "description": "Interpret the book of Job.",
+              "key": "interpret-the-book-of-job",
+              "name": "Interpret the book of Job"
+            },
+            {
+              "description": "Interpret Ecclesiastes.",
+              "key": "interpret-ecclesiastes",
+              "name": "Interpret Ecclesiastes"
+            },
+            {
+              "description": "Interpret the Song of Solomon.",
+              "key": "interpret-the-song-of-solomon",
+              "name": "Interpret the Song of Solomon"
+            },
+            {
+              "description": "Interpret the Gospel of John.",
+              "key": "interpret-the-gospel-of-john",
+              "name": "Interpret the Gospel of John"
+            },
+            {
+              "description": "Interpret the book of Acts.",
+              "key": "interpret-the-book-of-acts",
+              "name": "Interpret the book of Acts"
+            },
+            {
+              "description": "Interpret the book of Isaiah.",
+              "key": "interpret-the-book-of-isaiah",
+              "name": "Interpret the book of Isaiah"
+            },
+            {
+              "description": "Interpret the book of Jeremiah.",
+              "key": "interpret-the-book-of-jeremiah",
+              "name": "Interpret the book of Jeremiah"
+            },
+            {
+              "description": "Interpret Lamentations.",
+              "key": "interpret-lamentations",
+              "name": "Interpret Lamentations"
+            },
+            {
+              "description": "Interpret the book of Ezekiel.",
+              "key": "interpret-the-book-of-ezekiel",
+              "name": "Interpret the book of Ezekiel"
+            },
+            {
+              "description": "Interpret the book of Daniel.",
+              "key": "interpret-the-book-of-daniel",
+              "name": "Interpret the book of Daniel"
+            },
+            {
+              "description": "Interpret Hosea through Micah.",
+              "key": "interpret-hosea-through-micah",
+              "name": "Interpret Hosea through Micah"
+            },
+            {
+              "description": "Interpret Nahum through Malachi.",
+              "key": "interpret-nahum-through-malachi",
+              "name": "Interpret Nahum through Malachi"
+            },
+            {
+              "description": "Interpret the letter to the Romans.",
+              "key": "interpret-the-letter-to-the-romans",
+              "name": "Interpret the letter to the Romans"
+            },
+            {
+              "description": "Interpret the Corinthian letters.",
+              "key": "interpret-the-corinthian-letters",
+              "name": "Interpret the Corinthian letters"
+            },
+            {
+              "description": "Interpret the letter to the Galatians.",
+              "key": "interpret-the-letter-to-the-galatians",
+              "name": "Interpret the letter to the Galatians"
+            },
+            {
+              "description": "Interpret Ephesians and Colossians.",
+              "key": "interpret-ephesians-and-colossians",
+              "name": "Interpret Ephesians and Colossians"
+            },
+            {
+              "description": "Interpret the letter to the Philippians.",
+              "key": "interpret-the-letter-to-the-philippians",
+              "name": "Interpret the letter to the Philippians"
+            },
+            {
+              "description": "Interpret the Thessalonian letters.",
+              "key": "interpret-the-thessalonian-letters",
+              "name": "Interpret the Thessalonian letters"
+            },
+            {
+              "description": "Interpret the Pastoral Epistles.",
+              "key": "interpret-the-pastoral-epistles",
+              "name": "Interpret the Pastoral Epistles"
+            },
+            {
+              "description": "Interpret the letter to Philemon.",
+              "key": "interpret-the-letter-to-philemon",
+              "name": "Interpret the letter to Philemon"
+            },
+            {
+              "description": "Interpret the letter to the Hebrews.",
+              "key": "interpret-the-letter-to-the-hebrews",
+              "name": "Interpret the letter to the Hebrews"
+            },
+            {
+              "description": "Interpret the letter of James.",
+              "key": "interpret-the-letter-of-james",
+              "name": "Interpret the letter of James"
+            },
+            {
+              "description": "Interpret Peter’s letters and Jude.",
+              "key": "interpret-peters-letters-and-jude",
+              "name": "Interpret Peter’s letters and Jude"
+            },
+            {
+              "description": "Interpret the letters of John.",
+              "key": "interpret-the-letters-of-john",
+              "name": "Interpret the letters of John"
+            },
+            {
+              "description": "Interpret the book of Revelation.",
+              "key": "interpret-the-book-of-revelation",
+              "name": "Interpret the book of Revelation"
+            },
+            {
+              "description": "Investigate biblical word meanings.",
+              "key": "investigate-biblical-word-meanings",
+              "name": "Investigate biblical word meanings"
+            },
+            {
+              "description": "Assess textual variants in the ESV.",
+              "key": "assess-textual-variants-in-the-esv",
+              "name": "Assess textual variants in the ESV"
+            },
+            {
+              "description": "Trace creation and renewal.",
+              "key": "trace-creation-and-renewal",
+              "name": "Trace creation and renewal"
+            },
+            {
+              "description": "Trace biblical covenants.",
+              "key": "trace-biblical-covenants",
+              "name": "Trace biblical covenants"
+            },
+            {
+              "description": "Trace kingdom and messianic themes.",
+              "key": "trace-kingdom-and-messianic-themes",
+              "name": "Trace kingdom and messianic themes"
+            },
+            {
+              "description": "Trace worship and divine presence.",
+              "key": "trace-worship-and-divine-presence",
+              "name": "Trace worship and divine presence"
+            },
+            {
+              "description": "Trace exile and deliverance.",
+              "key": "trace-exile-and-deliverance",
+              "name": "Trace exile and deliverance"
+            },
+            {
+              "description": "Trace portrayals of God and Christ.",
+              "key": "trace-portrayals-of-god-and-christ",
+              "name": "Trace portrayals of God and Christ"
+            },
+            {
+              "description": "Analyze New Testament use of Scripture.",
+              "key": "analyze-new-testament-use-of-scripture",
+              "name": "Analyze New Testament use of Scripture"
+            },
+            {
+              "description": "Compare interpretive traditions.",
+              "key": "compare-interpretive-traditions",
+              "name": "Compare interpretive traditions"
+            },
+            {
+              "description": "Evaluate applications of biblical texts.",
+              "key": "evaluate-applications-of-biblical-texts",
+              "name": "Evaluate applications of biblical texts"
+            },
+            {
+              "description": "Assess ethically difficult biblical passages.",
+              "key": "assess-ethically-difficult-biblical-passages",
+              "name": "Assess ethically difficult biblical passages"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "gaps": []
+        },
+        "id": "en-bible-books-covered-by-ranges-2",
+        "origin": "production",
+        "userInput": {
+          "courses": [
+            {
+              "key": "bible",
+              "title": "Biblical studies"
+            }
+          ],
+          "goal": "Master the ESV Bible",
+          "goalKind": "learn",
+          "language": "en",
+          "references": [],
+          "skills": [
+            {
+              "description": "Read biblical narrative.",
+              "key": "read-biblical-narrative",
+              "name": "Read biblical narrative"
+            },
+            {
+              "description": "Navigate the ESV.",
+              "key": "navigate-the-esv",
+              "name": "Navigate the ESV"
+            },
+            {
+              "description": "Locate books within the biblical canon.",
+              "key": "locate-books-within-the-biblical-canon",
+              "name": "Locate books within the biblical canon"
+            },
+            {
+              "description": "Explain how the biblical canon formed.",
+              "key": "explain-how-the-biblical-canon-formed",
+              "name": "Explain how the biblical canon formed"
+            },
+            {
+              "description": "Locate the biblical world.",
+              "key": "locate-the-biblical-world",
+              "name": "Locate the biblical world"
+            },
+            {
+              "description": "Interpret passages in context.",
+              "key": "interpret-passages-in-context",
+              "name": "Interpret passages in context"
+            },
+            {
+              "description": "Recognize ESV translation choices.",
+              "key": "recognize-esv-translation-choices",
+              "name": "Recognize ESV translation choices"
+            },
+            {
+              "description": "Read biblical poetry.",
+              "key": "read-biblical-poetry",
+              "name": "Read biblical poetry"
+            },
+            {
+              "description": "Read biblical law.",
+              "key": "read-biblical-law",
+              "name": "Read biblical law"
+            },
+            {
+              "description": "Read biblical letters.",
+              "key": "read-biblical-letters",
+              "name": "Read biblical letters"
+            },
+            {
+              "description": "Read prophetic and apocalyptic language.",
+              "key": "read-prophetic-and-apocalyptic-language",
+              "name": "Read prophetic and apocalyptic language"
+            },
+            {
+              "description": "Interpret Genesis 1–11.",
+              "key": "interpret-genesis-1-11",
+              "name": "Interpret Genesis 1–11"
+            },
+            {
+              "description": "Trace the patriarchal narratives.",
+              "key": "trace-the-patriarchal-narratives",
+              "name": "Trace the patriarchal narratives"
+            },
+            {
+              "description": "Interpret the Exodus story.",
+              "key": "interpret-the-exodus-story",
+              "name": "Interpret the Exodus story"
+            },
+            {
+              "description": "Interpret worship and holiness in Leviticus.",
+              "key": "interpret-worship-and-holiness-in-leviticus",
+              "name": "Interpret worship and holiness in Leviticus"
+            },
+            {
+              "description": "Follow the wilderness journey.",
+              "key": "follow-the-wilderness-journey",
+              "name": "Follow the wilderness journey"
+            },
+            {
+              "description": "Interpret Deuteronomy’s covenant teaching.",
+              "key": "interpret-deuteronomys-covenant-teaching",
+              "name": "Interpret Deuteronomy’s covenant teaching"
+            },
+            {
+              "description": "Compare the Pentateuch’s legal collections.",
+              "key": "compare-the-pentateuchs-legal-collections",
+              "name": "Compare the Pentateuch’s legal collections"
+            },
+            {
+              "description": "Explain the New Testament setting.",
+              "key": "explain-the-new-testament-setting",
+              "name": "Explain the New Testament setting"
+            },
+            {
+              "description": "Interpret the Gospel of Mark.",
+              "key": "interpret-the-gospel-of-mark",
+              "name": "Interpret the Gospel of Mark"
+            },
+            {
+              "description": "Interpret the Gospel of Matthew.",
+              "key": "interpret-the-gospel-of-matthew",
+              "name": "Interpret the Gospel of Matthew"
+            },
+            {
+              "description": "Interpret the Gospel of Luke.",
+              "key": "interpret-the-gospel-of-luke",
+              "name": "Interpret the Gospel of Luke"
+            },
+            {
+              "description": "Interpret Jesus’ parables.",
+              "key": "interpret-jesus-parables",
+              "name": "Interpret Jesus’ parables"
+            },
+            {
+              "description": "Compare the Synoptic Gospels.",
+              "key": "compare-the-synoptic-gospels",
+              "name": "Compare the Synoptic Gospels"
+            },
+            {
+              "description": "Interpret the book of Joshua.",
+              "key": "interpret-the-book-of-joshua",
+              "name": "Interpret the book of Joshua"
+            },
+            {
+              "description": "Interpret Judges and Ruth.",
+              "key": "interpret-judges-and-ruth",
+              "name": "Interpret Judges and Ruth"
+            },
+            {
+              "description": "Interpret the books of Samuel.",
+              "key": "interpret-the-books-of-samuel",
+              "name": "Interpret the books of Samuel"
+            },
+            {
+              "description": "Interpret the books of Kings.",
+              "key": "interpret-the-books-of-kings",
+              "name": "Interpret the books of Kings"
+            },
+            {
+              "description": "Interpret the books of Chronicles.",
+              "key": "interpret-the-books-of-chronicles",
+              "name": "Interpret the books of Chronicles"
+            },
+            {
+              "description": "Interpret Ezra and Nehemiah.",
+              "key": "interpret-ezra-and-nehemiah",
+              "name": "Interpret Ezra and Nehemiah"
+            },
+            {
+              "description": "Interpret the book of Esther.",
+              "key": "interpret-the-book-of-esther",
+              "name": "Interpret the book of Esther"
+            },
+            {
+              "description": "Interpret the Psalms.",
+              "key": "interpret-the-psalms",
+              "name": "Interpret the Psalms"
+            },
+            {
+              "description": "Interpret the book of Proverbs.",
+              "key": "interpret-the-book-of-proverbs",
+              "name": "Interpret the book of Proverbs"
+            },
+            {
+              "description": "Interpret the book of Job.",
+              "key": "interpret-the-book-of-job",
+              "name": "Interpret the book of Job"
+            },
+            {
+              "description": "Interpret Ecclesiastes.",
+              "key": "interpret-ecclesiastes",
+              "name": "Interpret Ecclesiastes"
+            },
+            {
+              "description": "Interpret the Song of Solomon.",
+              "key": "interpret-the-song-of-solomon",
+              "name": "Interpret the Song of Solomon"
+            },
+            {
+              "description": "Interpret the Gospel of John.",
+              "key": "interpret-the-gospel-of-john",
+              "name": "Interpret the Gospel of John"
+            },
+            {
+              "description": "Interpret the book of Acts.",
+              "key": "interpret-the-book-of-acts",
+              "name": "Interpret the book of Acts"
+            },
+            {
+              "description": "Interpret the book of Isaiah.",
+              "key": "interpret-the-book-of-isaiah",
+              "name": "Interpret the book of Isaiah"
+            },
+            {
+              "description": "Interpret the book of Jeremiah.",
+              "key": "interpret-the-book-of-jeremiah",
+              "name": "Interpret the book of Jeremiah"
+            },
+            {
+              "description": "Interpret Lamentations.",
+              "key": "interpret-lamentations",
+              "name": "Interpret Lamentations"
+            },
+            {
+              "description": "Interpret the book of Ezekiel.",
+              "key": "interpret-the-book-of-ezekiel",
+              "name": "Interpret the book of Ezekiel"
+            },
+            {
+              "description": "Interpret the book of Daniel.",
+              "key": "interpret-the-book-of-daniel",
+              "name": "Interpret the book of Daniel"
+            },
+            {
+              "description": "Interpret Hosea through Micah.",
+              "key": "interpret-hosea-through-micah",
+              "name": "Interpret Hosea through Micah"
+            },
+            {
+              "description": "Interpret Nahum through Malachi.",
+              "key": "interpret-nahum-through-malachi",
+              "name": "Interpret Nahum through Malachi"
+            },
+            {
+              "description": "Interpret the letter to the Romans.",
+              "key": "interpret-the-letter-to-the-romans",
+              "name": "Interpret the letter to the Romans"
+            },
+            {
+              "description": "Interpret the Corinthian letters.",
+              "key": "interpret-the-corinthian-letters",
+              "name": "Interpret the Corinthian letters"
+            },
+            {
+              "description": "Interpret the letter to the Galatians.",
+              "key": "interpret-the-letter-to-the-galatians",
+              "name": "Interpret the letter to the Galatians"
+            },
+            {
+              "description": "Interpret Ephesians and Colossians.",
+              "key": "interpret-ephesians-and-colossians",
+              "name": "Interpret Ephesians and Colossians"
+            },
+            {
+              "description": "Interpret the letter to the Philippians.",
+              "key": "interpret-the-letter-to-the-philippians",
+              "name": "Interpret the letter to the Philippians"
+            },
+            {
+              "description": "Interpret the Thessalonian letters.",
+              "key": "interpret-the-thessalonian-letters",
+              "name": "Interpret the Thessalonian letters"
+            },
+            {
+              "description": "Interpret the Pastoral Epistles.",
+              "key": "interpret-the-pastoral-epistles",
+              "name": "Interpret the Pastoral Epistles"
+            },
+            {
+              "description": "Interpret the letter to Philemon.",
+              "key": "interpret-the-letter-to-philemon",
+              "name": "Interpret the letter to Philemon"
+            },
+            {
+              "description": "Interpret the letter to the Hebrews.",
+              "key": "interpret-the-letter-to-the-hebrews",
+              "name": "Interpret the letter to the Hebrews"
+            },
+            {
+              "description": "Interpret the letter of James.",
+              "key": "interpret-the-letter-of-james",
+              "name": "Interpret the letter of James"
+            },
+            {
+              "description": "Interpret Peter’s letters and Jude.",
+              "key": "interpret-peters-letters-and-jude",
+              "name": "Interpret Peter’s letters and Jude"
+            },
+            {
+              "description": "Interpret the letters of John.",
+              "key": "interpret-the-letters-of-john",
+              "name": "Interpret the letters of John"
+            },
+            {
+              "description": "Interpret the book of Revelation.",
+              "key": "interpret-the-book-of-revelation",
+              "name": "Interpret the book of Revelation"
+            },
+            {
+              "description": "Investigate biblical word meanings.",
+              "key": "investigate-biblical-word-meanings",
+              "name": "Investigate biblical word meanings"
+            },
+            {
+              "description": "Assess textual variants in the ESV.",
+              "key": "assess-textual-variants-in-the-esv",
+              "name": "Assess textual variants in the ESV"
+            },
+            {
+              "description": "Trace creation and renewal.",
+              "key": "trace-creation-and-renewal",
+              "name": "Trace creation and renewal"
+            },
+            {
+              "description": "Trace biblical covenants.",
+              "key": "trace-biblical-covenants",
+              "name": "Trace biblical covenants"
+            },
+            {
+              "description": "Trace kingdom and messianic themes.",
+              "key": "trace-kingdom-and-messianic-themes",
+              "name": "Trace kingdom and messianic themes"
+            },
+            {
+              "description": "Trace worship and divine presence.",
+              "key": "trace-worship-and-divine-presence",
+              "name": "Trace worship and divine presence"
+            },
+            {
+              "description": "Trace exile and deliverance.",
+              "key": "trace-exile-and-deliverance",
+              "name": "Trace exile and deliverance"
+            },
+            {
+              "description": "Trace portrayals of God and Christ.",
+              "key": "trace-portrayals-of-god-and-christ",
+              "name": "Trace portrayals of God and Christ"
+            },
+            {
+              "description": "Analyze New Testament use of Scripture.",
+              "key": "analyze-new-testament-use-of-scripture",
+              "name": "Analyze New Testament use of Scripture"
+            },
+            {
+              "description": "Compare interpretive traditions.",
+              "key": "compare-interpretive-traditions",
+              "name": "Compare interpretive traditions"
+            },
+            {
+              "description": "Evaluate applications of biblical texts.",
+              "key": "evaluate-applications-of-biblical-texts",
+              "name": "Evaluate applications of biblical texts"
+            },
+            {
+              "description": "Assess ethically difficult biblical passages.",
+              "key": "assess-ethically-difficult-biblical-passages",
+              "name": "Assess ethically difficult biblical passages"
+            }
+          ]
+        }
+      }
     }
   ],
   "taskId": "coverage-check"
