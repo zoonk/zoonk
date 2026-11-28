@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
+import { useFormatMomentDate } from "@zoonk/learn/dates";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,15 +20,16 @@ import { useState, useTransition } from "react";
 import { type CancelPlusResult, cancelPlusAction } from "./cancel-plus-action";
 import { renderPlanDate } from "./plan-date";
 
-/** `paidUntil` is the formatted last day Plus is paid for; without it the dialog says it in words. */
+/** `paidUntil` is when the paid period ends; without it the dialog says it in words. */
 export function CancelPlusButton({
   endsNow = false,
   paidUntil,
 }: {
   endsNow?: boolean;
-  paidUntil?: string;
+  paidUntil?: Date;
 }) {
   const t = useExtracted();
+  const formatDate = useFormatMomentDate();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -67,7 +69,7 @@ export function CancelPlusButton({
             {!endsNow &&
               (paidUntil
                 ? t.rich("You have Plus until <mono>{date}</mono>.", {
-                    date: paidUntil,
+                    date: formatDate(paidUntil, "row", { year: "always" }),
                     mono: renderPlanDate,
                   })
                 : t("You keep Plus until the end of the period you already paid for."))}
