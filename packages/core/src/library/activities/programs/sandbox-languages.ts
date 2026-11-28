@@ -10,7 +10,6 @@ type SandboxToolchain = {
   smoke: { hello: string; invalid: string };
   files?: Record<string, string>;
   vcpus: 1 | 2;
-  revision: number;
 };
 
 const swiftArchive =
@@ -24,7 +23,7 @@ function apt(packages: string): string {
 }
 
 const nativeRun = ["./main"];
-const defaultResources = { revision: 1, vcpus: 1 } as const;
+const defaultResources = { vcpus: 1 } as const;
 
 export const SANDBOX_TOOLCHAINS: Record<SandboxLanguage, SandboxToolchain> = {
   cpp: {
@@ -162,10 +161,6 @@ export function compileSeconds(language: SandboxLanguage) {
 
 export function runBudgetMs(language: SandboxLanguage) {
   return (compileSeconds(language) + SANDBOX_RUN_SECONDS) * MS_PER_SECOND + SANDBOX_OVERHEAD_MS;
-}
-
-export function sandboxBaseName(language: SandboxLanguage) {
-  return `code-${language}-r${SANDBOX_TOOLCHAINS[language].revision}`;
 }
 
 export function sandboxCostMicros(language: SandboxLanguage) {

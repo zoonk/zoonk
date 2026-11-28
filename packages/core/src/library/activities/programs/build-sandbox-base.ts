@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { safeAsync } from "@zoonk/utils/error";
 import { executeSandboxProgram } from "./execute-sandbox-program";
 import { type SandboxLanguage } from "./program-languages";
+import { baseRecipe } from "./sandbox-bases";
 import {
   type ProgramSandbox,
   type SandboxOptions,
@@ -10,23 +11,6 @@ import {
   sandboxBase,
 } from "./sandbox-driver";
 import { SANDBOX_TOOLCHAINS, runBudgetMs } from "./sandbox-languages";
-import { SANDBOX_WRAPPER, SANDBOX_WRAPPER_PATH } from "./sandbox-wrapper";
-
-function installScript(language: SandboxLanguage) {
-  const { install } = SANDBOX_TOOLCHAINS[language];
-
-  return `
-. /etc/os-release
-test "$VERSION_ID" = '26.04'
-${install}
-id learner >/dev/null 2>&1 || useradd --create-home --user-group --shell /usr/sbin/nologin learner
-install -d -o root -g root -m 0711 /var/tmp/zoonk-code
-cat > '${SANDBOX_WRAPPER_PATH}' <<'ZOONK_WRAPPER'
-${SANDBOX_WRAPPER}
-ZOONK_WRAPPER
-chmod 0755 '${SANDBOX_WRAPPER_PATH}'
-`;
-}
 
 async function smokePrograms({
   language,
@@ -68,7 +52,7 @@ export async function buildSandboxBase({
   }
 
   try {
-    const sandbox = await base.install(installScript(language));
+    const sandbox = await base.install(baseRecipe(language));
     await smokePrograms({ language, sandbox });
     await base.seal();
   } catch (error) {

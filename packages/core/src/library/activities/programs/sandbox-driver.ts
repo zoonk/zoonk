@@ -2,7 +2,8 @@ import "server-only";
 import { Sandbox } from "@vercel/sandbox";
 import { safeAsync } from "@zoonk/utils/error";
 import { type SandboxLanguage } from "./program-languages";
-import { SANDBOX_FORK_MS, SANDBOX_TOOLCHAINS, sandboxBaseName } from "./sandbox-languages";
+import { sandboxBaseName } from "./sandbox-bases";
+import { SANDBOX_FORK_MS, SANDBOX_TOOLCHAINS } from "./sandbox-languages";
 
 type SandboxFile = { path: string; content: string };
 type Command = { cmd: string; args: string[]; sudo: boolean };
