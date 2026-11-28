@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -63,6 +64,20 @@ class VoiceRecorderTest {
         assertTrue(context.cacheDir.listFiles { file -> file.name.startsWith("voice-") }.isNullOrEmpty())
 
         recorder.clearStartFailure()
+        assertEquals(VoiceRecorder.Status.Idle, recorder.state.value)
+    }
+
+    @Test
+    fun aTakeLeftRunningEndsAtTheLimit() {
+        val recorder = VoiceRecorder(context, main, opener)
+        assertTrue(recorder.start {})
+        main.runCurrent()
+        assertTrue(recorder.state.value is VoiceRecorder.Status.Recording)
+
+        main.advanceTimeBy(VoiceRecorder.MAX_DURATION_MS - 1)
+        assertTrue(recorder.state.value is VoiceRecorder.Status.Recording)
+
+        main.advanceTimeBy(2)
         assertEquals(VoiceRecorder.Status.Idle, recorder.state.value)
     }
 

@@ -86,7 +86,7 @@ class VoiceRecorder(
         val focus: AudioFocusRequest,
         val onRecorded: (VoiceRecording) -> Unit,
         val micStartupMs: Long,
-        val meter: Job,
+        val watch: Job,
     )
 
     val hasPermission: Boolean
@@ -137,7 +137,7 @@ class VoiceRecorder(
             } finally {
                 val opened = recorder
                 if (opened != null && attempt == opening && isActive) {
-                    take = Take(opened, file, focus, onRecorded, startedAt - pressedAt, meter(opened))
+                    take = Take(opened, file, focus, onRecorded, startedAt - pressedAt, watch(opened))
                     status.value = Status.Recording(startedAt)
                 } else {
                     opened?.release()
@@ -181,8 +181,13 @@ class VoiceRecorder(
         }
     }
 
-    private fun meter(recorder: MediaRecorder): Job =
+    /** Meters the take and ends it at [MAX_DURATION_MS], so the recorder never stops itself under a live screen. */
+    private fun watch(recorder: MediaRecorder): Job =
         scope.launch {
+            launch {
+                delay(MAX_DURATION_MS)
+                stop()
+            }
             while (isActive) {
                 val amplitude = runCatching { recorder.maxAmplitude }.getOrNull() ?: return@launch
                 recentLevels.value = (recentLevels.value + loudness(amplitude)).takeLast(MAX_LEVELS)
@@ -200,13 +205,7 @@ class VoiceRecorder(
         setAudioSamplingRate(SAMPLE_RATE)
         setAudioChannels(1)
         setAudioEncodingBitRate(BIT_RATE)
-        setMaxDuration(MAX_DURATION_MS.toInt())
         setOutputFile(file.path)
-        setOnInfoListener { _, what, _ ->
-            if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
-                scope.launch { if (attempt == opening) stop() }
-            }
-        }
         setOnErrorListener { _, _, _ -> scope.launch { if (attempt == opening) cancel() } }
     }
 
@@ -214,7 +213,7 @@ class VoiceRecorder(
         val take = take ?: return
         this.take = null
         opening++
-        take.meter.cancel()
+        take.watch.cancel()
         val started = (status.value as? Status.Recording)?.startedAt ?: SystemClock.elapsedRealtime()
         val durationMs = (SystemClock.elapsedRealtime() - started).coerceAtMost(MAX_DURATION_MS)
         // A take stopped before any audio was written throws.
