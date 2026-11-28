@@ -37,6 +37,8 @@ async function createLearnGoal(userId: string, { onboarding = false } = {}) {
   return goal;
 }
 
+const MOST_QUESTIONS = 8;
+
 const atQuestion = (page: Page, number: number) => expect(testQuestion(page, number)).toBeVisible();
 
 async function answerRight(page: Page) {
@@ -58,14 +60,12 @@ async function answerRight(page: Page) {
 const skippedLessons = (goalId: string) =>
   prisma.planItem.count({ where: { plan: { goalId }, status: "testedOut" } });
 
-/** Answers every question right from the offer until the test ends at where the learner starts. */
 async function finishTest(page: Page, answer: (page: Page) => Promise<void> = answerRight) {
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   const result = page.getByText("You start here", { exact: true });
   const confirm = page.getByRole("button", { exact: true, name: "Confirm" });
 
-  // The test asks eight questions at most.
-  for (let asked = 0; asked < 8; asked += 1) {
+  for (let asked = 0; asked < MOST_QUESTIONS; asked += 1) {
     // oxlint-disable-next-line no-await-in-loop -- Questions come one at a time.
     await expect(confirm.or(result).first()).toBeVisible();
 
@@ -344,6 +344,30 @@ test.describe("Testing what you know from the plan", () => {
   });
 });
 
+test("an answer to a test another device stopped shows that test's result", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}) => {
+  await createLearnGoal(noProgressUser.id);
+
+  await page.goto("/placement-test");
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await atQuestion(page, 1);
+  await answerRight(page);
+  await atQuestion(page, 2);
+
+  const other = await page.context().newPage();
+  await other.goto("/placement-test");
+  await atQuestion(other, 2);
+  await stopTest(other);
+  await expect(other.getByText("You start here", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "I don't know yet" }).click();
+
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  await expect(page.getByText("That didn't go through. Your answers are kept.")).toBeHidden();
+});
+
 test("a test's skip appears on Plan and Today and can be undone from Today", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -404,7 +428,6 @@ test("the seeded course's test goes from onboarding's offer to where the learner
 
     await finishTest(page, answerSeededQuestion);
 
-    // The chapter the learner starts in is the title, over the course's line and the next lesson.
     await expect(page.getByRole("heading", { level: 1 }).filter({ visible: true })).not.toBeEmpty();
     await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
     await expect(page.getByText("Up next", { exact: true })).toBeVisible();

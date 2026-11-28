@@ -17,7 +17,6 @@ import {
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { z } from "zod";
 
-/** What a test's kinds of question hold: steps in their right order, pairs to make, or options to tick. */
 const seededKeySchema = z.object({
   options: z.array(z.object({ isCorrect: z.boolean(), text: z.string() })).optional(),
   pairs: z.array(z.object({ left: z.string(), right: z.string() })).optional(),
@@ -47,7 +46,6 @@ export const ANSWERED = [
   ...PROFILE_QUESTIONS,
 ];
 
-/** Where a test is, which only its header's segments say; `total` is any when omitted. */
 export function testQuestion(page: Page, number: number, total?: number): Locator {
   return page
     .getByRole("progressbar", {
@@ -56,7 +54,7 @@ export function testQuestion(page: Page, number: number, total?: number): Locato
     .filter({ visible: true });
 }
 
-/** The question on screen, by the place its header's segments say: gone once the test moves on. */
+/** The locator matches only this question's place, so it's hidden once the test moves on. */
 export async function questionOnScreen(page: Page): Promise<Locator> {
   const bar = page.getByRole("progressbar", { name: /^Question \d+ of \d+$/u });
   const label = await bar.filter({ visible: true }).getAttribute("aria-label");
@@ -68,12 +66,10 @@ export async function questionOnScreen(page: Page): Promise<Locator> {
   return page.getByRole("progressbar", { exact: true, name: label });
 }
 
-/** A test's ✕: it offers the two ways out once stopping gives a result, and only leaves before. */
 export function testLeave(page: Page): Locator {
   return page.getByRole("link", { exact: true, name: "Leave" }).filter({ visible: true });
 }
 
-/** Answers "I don't know yet" and waits until the test has moved on from the question. */
 export async function answerDontKnow(page: Page) {
   const asked = await questionOnScreen(page);
   await page.getByRole("button", { name: "I don't know yet" }).click();
@@ -85,14 +81,13 @@ export async function stopTest(page: Page) {
   await page.getByRole("button", { name: "Stop and use my answers" }).click();
 }
 
-/** Drags a question's steps into `steps`' order, each move starting from the order the last left. */
 export async function sortSteps(page: Page, steps: readonly string[]) {
   const list = page.getByRole("list", { name: "Steps, in your order" });
   const rows = list.getByRole("button");
   await expect(rows).toHaveCount(steps.length);
   await expect(rows.first()).toBeEnabled();
 
-  /* oxlint-disable no-await-in-loop */
+  /* oxlint-disable no-await-in-loop -- Each drag starts from the order the last one left. */
   for (const [target, step] of steps.entries()) {
     const destination = rows.nth(target);
 
@@ -105,7 +100,7 @@ export async function sortSteps(page: Page, steps: readonly string[]) {
   /* oxlint-enable no-await-in-loop */
 }
 
-/** The seed's question on screen, by its title and its first answer: titles repeat across topics. */
+/** Titles repeat across the seed's topics, so the first answer on screen tells the items apart. */
 async function findSeededItem(page: Page) {
   const heading = page.getByRole("heading", { level: 2 }).filter({ visible: true });
   const text = await heading.textContent();
@@ -116,21 +111,24 @@ async function findSeededItem(page: Page) {
     where: { content: { equals: title, path: ["question"] } },
   });
 
-  /* oxlint-disable no-await-in-loop */
-  for (const { content } of items) {
-    const key = seededKeySchema.parse(content);
-    const first = key.steps?.[0] ?? key.pairs?.[0]?.left ?? key.options?.[0]?.text ?? "";
+  const keys = items.map(({ content }) => seededKeySchema.parse(content));
 
-    if (await page.getByText(first, { exact: true }).first().isVisible()) {
-      return key;
-    }
+  const shown = await Promise.all(
+    keys.map((key) => {
+      const first = key.steps?.[0] ?? key.pairs?.[0]?.left ?? key.options?.[0]?.text ?? "";
+      return page.getByText(first, { exact: true }).first().isVisible();
+    }),
+  );
+
+  const key = keys[shown.indexOf(true)];
+
+  if (!key) {
+    throw new Error(`No seeded question on screen for "${title}"`);
   }
-  /* oxlint-enable no-await-in-loop */
 
-  throw new Error(`No seeded question on screen for "${title}"`);
+  return key;
 }
 
-/** Answers the seeded course's question on screen right, from the item's own key. */
 export async function answerSeededQuestion(page: Page) {
   const asked = await questionOnScreen(page);
   const key = await findSeededItem(page);
@@ -139,7 +137,7 @@ export async function answerSeededQuestion(page: Page) {
     await sortSteps(page, key.steps);
   }
 
-  /* oxlint-disable no-await-in-loop */
+  /* oxlint-disable no-await-in-loop -- A board takes one tap at a time. */
   for (const pair of key.pairs ?? []) {
     await page.getByRole("button", { exact: true, name: pair.left }).click();
     await page.getByRole("button", { exact: true, name: pair.right }).click();

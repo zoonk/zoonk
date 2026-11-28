@@ -107,6 +107,32 @@ describe(toPlacementTestPhase, () => {
     expect(toPlacementTestPhase({ outcome, surface: "onboarding" })).toStrictEqual(RESULT_PHASE);
   });
 
+  it("offers no start from the Plan when the course has no test to start", () => {
+    expect(
+      toPlacementTestPhase({
+        canStart: false,
+        outcome: { attempt: null, result: RESULT, status: "unavailable" },
+        surface: "plan",
+      }),
+    ).toStrictEqual({ kind: "unavailable" });
+  });
+
+  it("shows the result of the test the learner was in when a read finds it closed, on the Plan too", () => {
+    const outcome: PlacementOutcome = { attempt: null, result: RESULT, status: "unavailable" };
+
+    expect(
+      toPlacementTestPhase({ asked: true, attemptId: ATTEMPT_ID, outcome, surface: "plan" }),
+    ).toStrictEqual(RESULT_PHASE);
+  });
+
+  it("doesn't take an earlier test's result for the one the learner was in", () => {
+    const outcome: PlacementOutcome = { attempt: null, result: RESULT, status: "unavailable" };
+
+    expect(
+      toPlacementTestPhase({ asked: true, attemptId: CHANGE_ID, outcome, surface: "plan" }),
+    ).toStrictEqual({ kind: "unavailable" });
+  });
+
   it("shows onboarding a test's result read with nothing to ask", () => {
     const outcome: PlacementOutcome = { attempt: null, result: RESULT, status: "unavailable" };
 

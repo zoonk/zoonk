@@ -67,7 +67,7 @@ export function TaskFrame({
   children: React.ReactNode;
   /** Asked first, by the ✕ and by Esc, while leaving would lose something. */
   confirmExit?: TaskExitConfirmation | null;
-  /** The task's own ways out, opened first by the ✕ and by Esc (`TaskClose`'s `ask`). */
+  /** `TaskClose`'s `ask`. */
   exitAsk?: React.ReactNode;
   exitDialog?: typeof TaskExitDialog;
   /** Null while leaving would lose work, such as a call being saved. */
@@ -86,10 +86,7 @@ export function TaskFrame({
   footerNote?: React.ReactNode;
   headerEnd?: React.ReactNode;
   headerTitle?: React.ReactNode;
-  /**
-   * `value` is 0 to 100; `segments` draws one per question, in `groups` when the task has
-   * sections, and `bar` a bar of the task's own.
-   */
+  /** `value` is 0 to 100; `segments` draws one per question, and `bar` a bar of the task's own. */
   progress?:
     | { bar: React.ReactNode }
     | {

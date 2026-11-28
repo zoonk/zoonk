@@ -32,15 +32,11 @@ type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
 type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
 
-/** The clip's own length is stretched by the slower rate it plays at. */
 function toPlayedMs(clipMs: number): number {
   return clipMs / LISTENING_RATE;
 }
 
-/**
- * A listening question's message: play, a line that fills as it plays, and its length, which
- * counts down while it plays. `onHeard` says the message played to its end.
- */
+/** `onHeard` fires only when the message played to its end, never on a stop or a failed play. */
 export function ListeningMessage({
   language,
   onHeard,

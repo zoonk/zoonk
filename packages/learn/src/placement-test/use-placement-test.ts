@@ -24,8 +24,7 @@ export type PlacementTestHost =
   | {
       /** "First lesson": saves that the learner starts without a test; false when it didn't. */
       decline: () => Promise<boolean>;
-      /** The first lesson's name, where onboarding knows it. */
-      firstLesson: string | null;
+      firstLessonTitle: string | null;
       mode: "direct" | "offer" | "resume";
       surface: "onboarding";
     }
@@ -49,12 +48,14 @@ type OpenAttempt = { id: string };
 export function usePlacementTest({
   actions,
   analytics,
+  canStart,
   host,
   onLeave,
   run: build,
 }: {
   actions: PlacementTestActions;
   analytics: Pick<TestAnalytics, "markOpened" | "markStarted">;
+  canStart: boolean;
   host: PlacementTestHost;
   /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
   onLeave: (attemptId?: string) => Promise<boolean>;
@@ -81,7 +82,16 @@ export function usePlacementTest({
     }
 
     if (finished.status === "stale") {
-      setPhase(toPlacementTestPhase({ asked: true, outcome: await actions.get(), surface }));
+      setPhase(
+        toPlacementTestPhase({
+          asked: true,
+          attemptId: attempt.id,
+          canStart,
+          outcome: await actions.get(),
+          surface,
+        }),
+      );
+
       return true;
     }
 
@@ -90,8 +100,12 @@ export function usePlacementTest({
   };
 
   /** A test that's over closes in the same save; if that fails, its screen holds the retry. */
-  const show = async (outcome: PlacementOutcome, asked: boolean): Promise<boolean> => {
-    const next = toPlacementTestPhase({ asked, outcome, surface });
+  const show = async (
+    outcome: PlacementOutcome,
+    asked: boolean,
+    attemptId?: string,
+  ): Promise<boolean> => {
+    const next = toPlacementTestPhase({ asked, attemptId, canStart, outcome, surface });
 
     if (next.kind !== "over") {
       setPhase(next);
@@ -114,7 +128,7 @@ export function usePlacementTest({
   };
 
   const open = async (outcome: PlacementOutcome) => {
-    const next = toPlacementTestPhase({ outcome, surface });
+    const next = toPlacementTestPhase({ canStart, outcome, surface });
 
     if (next.kind !== "offer" || !direct) {
       await show(outcome, false).catch(() => setPhase(next));
@@ -165,7 +179,7 @@ export function usePlacementTest({
         return;
       }
 
-      setFailed(!(await show(outcome, true).catch(() => false)));
+      setFailed(!(await show(outcome, true, from.attempt.id).catch(() => false)));
     });
 
   return {
@@ -183,7 +197,6 @@ export function usePlacementTest({
       save("main", async () =>
         host.surface === "onboarding" && (await host.decline()) ? onLeave() : false,
       ),
-    /** Closes a test the learner came back to after its questions ran out. */
     onFinish: (attempt: OpenAttempt) => save("main", () => close(attempt)),
     onLeave: (button: Exclude<TestPressed, null>, attemptId?: string) =>
       save(button, () => onLeave(attemptId).catch(() => false)),

@@ -13,7 +13,7 @@ type OfferChoice = "firstLesson" | "focusTest";
 /** Onboarding offers the test beside a first lesson; the Plan offers the test alone. */
 export function FocusTestInvitation({
   failed,
-  firstLesson,
+  firstLessonTitle,
   host,
   next,
   onShown,
@@ -23,8 +23,7 @@ export function FocusTestInvitation({
   suggestsFocus,
 }: {
   failed: boolean;
-  /** Onboarding's first lesson by its name, where it's known. */
-  firstLesson: string | null;
+  firstLessonTitle: string | null;
   host: FocusTestHost;
   next: FocusTestOffer;
   onShown: () => void;
@@ -63,7 +62,7 @@ export function FocusTestInvitation({
 
   return (
     <TestOffer<OfferChoice>
-      cards={[test, texts.firstLesson(firstLesson)]}
+      cards={[test, texts.firstLesson(firstLessonTitle)]}
       description={line.offer(suggestsFocus)}
       failed={failed}
       initial="focusTest"

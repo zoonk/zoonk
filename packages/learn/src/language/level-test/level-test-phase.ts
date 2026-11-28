@@ -13,12 +13,36 @@ export type TestOutView = Extract<LanguageLevelTestOutResult, { status: "ready" 
 type TestOutQuestion = NonNullable<TestOutView["next"]>;
 type TestOutTapQuestion = TestOutQuestion & { format: PlacementQuestion["format"] };
 
-/** The test's questions in the sections it asks them in: reading, listening, then both skills' check. */
 export function toLevelTestGroups(total: number): number[] {
   const reading = Math.min(LEVEL_TEST_BLOCK_SIZE, total);
   const listening = Math.min(LEVEL_TEST_BLOCK_SIZE, total - reading);
+  const check = total - reading - listening;
 
-  return [reading, listening, total - reading - listening].filter((size) => size > 0);
+  return [reading, listening, check].filter((size) => size > 0);
+}
+
+export type ListeningOut = "cantListen" | "notUnderstood" | "skip";
+
+/**
+ * What a listening question's second button does. "Can't listen now" ends listening for the whole
+ * test, so it's only for a learner who has a recording to play: while the server is still making
+ * it (`audioPending`, whether or not the client still checks for it) or its play failed, the
+ * button skips this one question.
+ */
+export function toListeningOut({
+  audioPending,
+  heard,
+  playFailed,
+}: {
+  audioPending: boolean;
+  heard: boolean;
+  playFailed: boolean;
+}): ListeningOut {
+  if (heard) {
+    return "notUnderstood";
+  }
+
+  return audioPending || playFailed ? "skip" : "cantListen";
 }
 
 /** What the test asks before it starts, from the server. */

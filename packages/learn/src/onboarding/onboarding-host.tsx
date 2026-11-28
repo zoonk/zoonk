@@ -7,7 +7,6 @@ export const FirstLessonReadContext = createContext<ReactNode>(null);
 type OnboardingHost =
   | { backHref: string; barEnd: ReactNode; kind: "page" }
   | { header: ReactNode; kind: "section"; titleClassName?: string }
-  /** A test once it's open: a full-screen task over the page it started from. */
   | { backHref: string; kind: "task" };
 
 const OnboardingHostContext = createContext<OnboardingHost | null>(null);
@@ -46,9 +45,8 @@ export function OnboardingEmbedded({
 }
 
 /**
- * A test's screens once it's open (its questions, the wait for them and its result): each is a
- * full-screen task, as a test-out is, and ✕ leaves to where the page's way back leads. Outside a
- * page it changes nothing.
+ * Draws a page's screens as a full-screen task whose ✕ leaves where the page's way back leads.
+ * Outside a page it changes nothing.
  */
 export function OnboardingTask({ children }: { children: ReactNode }) {
   const host = use(OnboardingHostContext);
@@ -72,21 +70,15 @@ export function useOnboardingSection(): boolean {
   return useOnboardingHost()?.kind === "section";
 }
 
-/** What a test's question puts in its task's header. */
 export type TestQuestionTop = {
-  /** Questions answered so far: the segments before the current one. */
   answered: number;
-  /** The sizes of the test's sections in order, such as a level test's reading, listening and check. */
   groups?: readonly number[];
   /** Ends the test with the answers given; absent while stopping gives no result. */
   onStop?: () => void;
-  /** Said in the ways out, to a learner the test thinks should stop. */
   stopHint?: string;
   /** A save is out, so stopping waits for it. */
   stopWaits?: boolean;
-  /** What the question tests: a chapter, a skill, a subject. */
   title: string;
-  /** The most questions the test asks: one segment each. */
   total: number;
 };
 

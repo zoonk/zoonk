@@ -9298,12 +9298,6 @@ msgctxt "8Zf--i"
 msgid "Stop and use my answers"
 msgstr "Parar e usar minhas respostas"
 
-#: src/onboarding/onboarding-task.tsx
-#: src/placement-test/use-test-facts.ts
-msgctxt "HUvYmi"
-msgid "Question {number, number} of {total, number}"
-msgstr "Pergunta {number, number} de {total, number}"
-
 #. Row with what the learner said they already know about their goal's subject, such as "I know a few things".
 #: src/onboarding/plan-receipt.tsx
 #: src/onboarding/understood/use-understood-rows.ts
@@ -10206,6 +10200,11 @@ msgstr "Você desfez isso hoje. Responda de novo amanhã para pular essas aulas.
 msgctxt "SGu5bG"
 msgid "You start here"
 msgstr "Você começa aqui"
+
+#: src/placement-test/use-test-facts.ts
+msgctxt "HUvYmi"
+msgid "Question {number, number} of {total, number}"
+msgstr "Pergunta {number, number} de {total, number}"
 
 #. The most questions a test asks. It can end sooner.
 #: src/placement-test/use-test-facts.ts

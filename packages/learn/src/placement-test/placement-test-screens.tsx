@@ -35,10 +35,6 @@ function toChapterState(chapter: Chapter) {
   return chapter.lessons > 0 && chapter.skipped >= chapter.lessons ? "done" : "ahead";
 }
 
-/**
- * The course as one line: its chapters in plan order, each as wide as its lessons. What the test
- * placed the learner past is filled, chapter by chapter, and a ring marks the chapter they start in.
- */
 function CourseLine({ course }: { course: Course }) {
   return (
     <MeterParts data-slot="course-line">
@@ -61,7 +57,6 @@ function CourseLine({ course }: { course: Course }) {
   );
 }
 
-/** How much of the course the test started the learner past, under its line. */
 function useCourseFact() {
   const t = useExtracted();
 
@@ -88,7 +83,6 @@ export function UpNextLesson({ title }: { title: string }) {
   );
 }
 
-/** The lesson the learner starts on, as the course's next row with how long it takes. */
 function StartLesson({ lesson }: { lesson: NonNullable<PlacementResultPhase["nextLesson"]> }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -154,11 +148,6 @@ function ResultLead({
   );
 }
 
-/**
- * Where the course's test starts the learner: the chapter's name as the title, the course's line
- * with what was skipped, and the lesson that's next. A result that exists before the plan does has
- * no line to draw and says only where they start.
- */
 export function PlacementResult({
   failed,
   onDone,

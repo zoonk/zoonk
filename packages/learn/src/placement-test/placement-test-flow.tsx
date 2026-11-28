@@ -12,7 +12,7 @@ import { PlacementDone, PlacementUnavailable } from "../onboarding/steps/placeme
 import { PlacementWaiting, useWaitLeave } from "../onboarding/steps/placement-waiting";
 import { StepLoadFailed, StepLoading } from "../onboarding/steps/step-parts";
 import { type PlacementTestActions } from "./placement-test-actions";
-import { CoursePlanOffer, CourseStartOffer, type CourseTestOffer } from "./placement-test-offers";
+import { CourseOffer, type CourseTestOffer } from "./placement-test-offers";
 import { type PlacementTestPhase } from "./placement-test-phase";
 import { PlacementResult } from "./placement-test-screens";
 import { type PlacementTestHost, usePlacementTest } from "./use-placement-test";
@@ -34,7 +34,6 @@ type Flow = {
   onboarding: boolean;
   readWarmUp: OnboardingActions["readWarmUp"];
   run: GenerationRun | null;
-  /** The goal's name, over a question whose chapter isn't known. */
   subject: string;
   test: ReturnType<typeof usePlacementTest>;
   waitLeave: ReturnType<typeof useWaitLeave>;
@@ -42,7 +41,6 @@ type Flow = {
 
 type OpenPhase = Exclude<PlacementTestPhase, { kind: "loadFailed" | "loading" | "offer" }>;
 
-/** The test once it's open: its questions, the wait for them and its result, each a task screen. */
 function PlacementOpenTest({
   actions,
   analytics,
@@ -145,7 +143,6 @@ export function PlacementTestFlow({
   actions: PlacementTestActions;
   goalId: string;
   host: PlacementTestHost;
-  /** What the test asks before it starts, from the server. */
   offer: CourseTestOffer;
   /** Leaves the test: onboarding goes on with setup, the Plan is read again. False when it didn't. */
   onLeave: (attemptId?: string) => Promise<boolean>;
@@ -157,9 +154,18 @@ export function PlacementTestFlow({
   subject: string;
 }) {
   const analytics = useTestAnalytics({ goalId, surface: host.surface, test: "course" });
-  const test = usePlacementTest({ actions, analytics, host, onLeave, run });
-  const { failed, phase, pressed } = test;
   const onboarding = host.surface === "onboarding";
+
+  const test = usePlacementTest({
+    actions,
+    analytics,
+    canStart: onboarding || offer !== null,
+    host,
+    onLeave,
+    run,
+  });
+
+  const { failed, phase, pressed } = test;
   const asked = phase.kind === "question" ? phase.attempt : null;
 
   useFirstQuestionShown({
@@ -177,27 +183,21 @@ export function PlacementTestFlow({
     case "loadFailed":
       return <StepLoadFailed onRetry={test.reopen} />;
     case "offer":
-      return host.surface === "onboarding" ? (
-        <CourseStartOffer
+      return (
+        <CourseOffer
           failed={failed}
-          firstLesson={host.firstLesson}
           offer={offer}
-          onFirstLesson={test.onDecline}
           onShown={analytics.offered}
           onStart={test.onStart}
           pressed={pressed}
-        />
-      ) : (
-        <CoursePlanOffer
-          failed={failed}
-          offer={offer}
-          onNotNow={() => {
-            analytics.notNow();
-            test.onLeave("other");
-          }}
-          onShown={analytics.offered}
-          onStart={test.onStart}
-          pressed={pressed}
+          {...(host.surface === "onboarding"
+            ? { firstLessonTitle: host.firstLessonTitle, onFirstLesson: test.onDecline }
+            : {
+                onNotNow: () => {
+                  analytics.notNow();
+                  test.onLeave("other");
+                },
+              })}
         />
       );
     case "waiting":

@@ -143,7 +143,6 @@ export type PlacementAnswer = PlacementAnswerInput["answer"];
 
 type LearnPlacementTest = Extract<NonNullable<PlanView["placementTest"]>, { kind: "learn" }>;
 
-/** A test taken from the plan, while it's open. */
 export type PlacementAttemptView = NonNullable<LearnPlacementTest["attempt"]>;
 
 export type PlacementResult = NonNullable<LearnPlacementTest["result"]>;
@@ -155,7 +154,6 @@ export type PlacementOutcome =
       /** An exam goal's placement is its Focus test; null for other goals. */
       focusTest: FocusTestView | null;
       next: PlacementQuestion | null;
-      /** The course test's result, once it ended. */
       result: PlacementResult | null;
       status: "ready";
       trueFalseLabels: TrueFalseLabels;

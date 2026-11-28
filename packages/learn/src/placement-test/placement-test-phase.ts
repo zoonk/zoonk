@@ -90,16 +90,17 @@ function toResultPhase({
   };
 }
 
-/** With no test open, one the learner asked for waits for the course's questions; otherwise it's offered. */
 function toUnopenedPhase({
   asked,
+  canStart,
   outcome,
 }: {
   asked: boolean;
+  canStart: boolean;
   outcome: Exclude<PlacementOutcome, { status: "failed" }>;
 }): PlacementTestPhase {
   if (!asked) {
-    return { kind: "offer" };
+    return canStart ? { kind: "offer" } : { kind: "unavailable" };
   }
 
   if (outcome.status === "notReady") {
@@ -112,16 +113,21 @@ function toUnopenedPhase({
 }
 
 /**
- * Where a read of the test leaves the learner: an open test goes on at its next question. With
- * nothing open, onboarding shows the result of the test it ran; otherwise the test is offered, or
- * waited for when the learner already `asked` for it.
+ * `asked`: the learner already chose the test, so it's waited for instead of offered again.
+ * `attemptId`: the test the learner was in. A read that finds it closed, such as after another
+ * device stopped it, shows its result on the Plan too, where a past result is otherwise not shown.
+ * `canStart`: false when the course has nothing a test could skip, so the Plan offers no start.
  */
 export function toPlacementTestPhase({
   asked = false,
+  attemptId,
+  canStart = true,
   outcome,
   surface,
 }: {
   asked?: boolean;
+  attemptId?: string;
+  canStart?: boolean;
   outcome: PlacementOutcome;
   surface: "onboarding" | "plan";
 }): PlacementTestPhase {
@@ -133,13 +139,13 @@ export function toPlacementTestPhase({
   const result = ("result" in outcome && outcome.result) || null;
 
   if (!attempt) {
-    return surface === "onboarding" && result
+    return result && (surface === "onboarding" || result.attemptId === attemptId)
       ? toResultPhase({
           changeId: result.changeId,
           heldUntilTomorrow: result.heldUntilTomorrow === true,
           result,
         })
-      : toUnopenedPhase({ asked, outcome });
+      : toUnopenedPhase({ asked, canStart, outcome });
   }
 
   if (outcome.status === "generationFailed") {
@@ -167,7 +173,6 @@ export function toPlacementTestPhase({
   };
 }
 
-/** Where a finish leaves the learner: at the test's result. */
 export function toFinishedPhase({
   attemptId,
   finished,

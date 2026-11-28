@@ -9,6 +9,7 @@ import { type ReactNode } from "react";
 import { useTaskExitAsk } from "../_components/task-close";
 import { TaskHeaderTitle, type TaskSegment } from "../_components/task-header";
 import { TASK_WRAPPING_ACTION_CLASS } from "../_components/task-layout";
+import { useTestFacts } from "../placement-test/use-test-facts";
 import { TaskFrame } from "../shell/task-frame";
 import { type TestQuestionTop, useOnboardingScreen } from "./onboarding-host";
 
@@ -84,7 +85,7 @@ export function OnboardingTaskScreen({
   className,
   ...props
 }: React.ComponentProps<"section"> & { backHref: string; bar?: ReactNode }) {
-  const t = useExtracted();
+  const facts = useTestFacts();
   const { bar: top, notice } = useOnboardingScreen();
   const { test } = top;
   const stop = test?.onStop;
@@ -104,10 +105,7 @@ export function OnboardingTaskScreen({
         progress={
           test && {
             groups: test.groups,
-            label: t("Question {number, number} of {total, number}", {
-              number: test.answered + 1,
-              total: test.total,
-            }),
+            label: facts.question({ number: test.answered + 1, total: test.total }),
             segments: toSegments(test),
             value: test.total > 0 ? (test.answered / test.total) * PERCENT : 0,
           }

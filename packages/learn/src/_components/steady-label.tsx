@@ -1,7 +1,6 @@
 /**
- * A button's label that changes with the screen's state and never changes the button's width: every
- * label it can show takes the same cell, so the button is as wide as the widest in any language and
- * what sits beside it never moves. `shown` is the index of the label to show.
+ * Every label takes the same grid cell and only `shown` is visible, so the button stays as wide as
+ * its widest label in any language and what sits beside it never moves.
  */
 export function SteadyLabel({ labels, shown }: { labels: readonly string[]; shown: number }) {
   return (

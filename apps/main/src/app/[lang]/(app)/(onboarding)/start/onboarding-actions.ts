@@ -195,7 +195,6 @@ export async function finishPlacementAction({
   return result.status === "ready" ? { focusTest: result.completion.focusTest } : null;
 }
 
-/** Closes the course test, or stops it midway, and applies where its answers start the learner. */
 export async function finishPlacementTestAction({
   goalId,
   ...input

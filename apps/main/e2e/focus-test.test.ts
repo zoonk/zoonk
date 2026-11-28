@@ -57,6 +57,7 @@ async function mapExamGoal({
         weight: null,
       })),
     },
+    placementPreparedAt: written ? new Date() : null,
   });
 
   await Promise.all([
@@ -69,12 +70,6 @@ async function mapExamGoal({
       ),
     ),
   ]);
-
-  // Marked written only once the questions are there, as the writer does: a wait that checks
-  // between the two would read a finished writer with nothing to ask.
-  if (written) {
-    await prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { id: plan.id } });
-  }
 }
 
 /**
@@ -308,8 +303,12 @@ test("a start that doesn't go through once the questions are written offers Try 
   await page.goto(`/start/${goal.id}`);
   await expect(page.getByRole("heading", { name: "Getting your test ready" })).toBeVisible();
 
-  const refused = await refuseStartAfterWait(page, goal.id);
-  await mapExamGoal({ examBlueprintId: goal.examBlueprintId, goalId: goal.id });
+  const refused = await refuseStartAfterWait({
+    goalId: goal.id,
+    page,
+    writeQuestions: () => mapExamGoal({ examBlueprintId: goal.examBlueprintId, goalId: goal.id }),
+  });
+
   await expect.poll(refused, { timeout: NEXT_CHECK_TIMEOUT_MS }).toBe(true);
 
   await expect(

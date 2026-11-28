@@ -112,7 +112,7 @@ export function LanguagePlanTestFlow({
     test.onTestOut(level, button);
   };
 
-  const audioPending = useLevelTestAudio({
+  const audioArriving = useLevelTestAudio({
     onRead: (view) => {
       if (phase.kind === "test") {
         test.onView(phase.attemptId)(view);
@@ -122,8 +122,9 @@ export function LanguagePlanTestFlow({
     test: phase.kind === "test" ? phase.test : null,
   });
 
-  /** The test once it's open: its questions, the wait for them and its result, each a task screen. */
-  const open = (shown: Exclude<LevelTestPhase, { kind: "loadFailed" | "loading" | "offer" }>) => {
+  const openScreen = (
+    shown: Exclude<LevelTestPhase, { kind: "loadFailed" | "loading" | "offer" }>,
+  ) => {
     switch (shown.kind) {
       case "waiting":
         return (
@@ -137,7 +138,7 @@ export function LanguagePlanTestFlow({
       case "test":
         return (
           <LevelTestQuestion
-            audioPending={audioPending}
+            audioArriving={audioArriving}
             failures={shown.failures}
             onAnswer={test.onAnswer(shown)}
             onClose={() =>
@@ -213,7 +214,7 @@ export function LanguagePlanTestFlow({
       return (
         <LevelTestOfferStep
           analytics={analytics}
-          firstLesson={host.surface === "onboarding" ? host.firstLesson : null}
+          firstLessonTitle={host.surface === "onboarding" ? host.firstLessonTitle : null}
           offer={phase.offer}
           onStartTestOut={(level) => startTestOut(level, "main")}
           onboarding={onboarding}
@@ -230,7 +231,7 @@ export function LanguagePlanTestFlow({
     case "testOut":
     case "testOutWaiting":
     case "testOutResult":
-      return <OnboardingTask>{open(phase)}</OnboardingTask>;
+      return <OnboardingTask>{openScreen(phase)}</OnboardingTask>;
     default:
       return phase satisfies never;
   }

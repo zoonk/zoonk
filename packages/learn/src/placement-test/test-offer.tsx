@@ -24,14 +24,10 @@ import { useShown } from "./use-test-analytics";
 /** The button a save started from, which shows it's busy while the other waits. */
 export type TestPressed = "main" | "other" | null;
 
-/** One way to start: a test with its size and time, or the first lesson by its name. */
 export type TestOfferCard<Value extends string> = {
   label: string;
-  /** One quiet line under the name: the most questions a test asks, a lesson's name. */
   line?: string | null;
-  /** A lesson's mark, or a test's in its kind's hue. */
   mark: "lesson" | "test";
-  /** How long it takes, as the card's readout. */
   minutes?: number | null;
   value: Value;
 };

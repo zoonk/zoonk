@@ -211,7 +211,6 @@ const SEGMENT_CLASS: Record<TaskSegment, string> = {
   wrong: "bg-destructive",
 };
 
-/** The segments in runs of `groups` sizes, in order; without sizes, one run. */
 function groupSegments<Item>(items: readonly Item[], groups: readonly number[] | undefined) {
   const sizes = groups && groups.length > 0 ? groups : [items.length];
 
@@ -225,9 +224,8 @@ function groupSegments<Item>(items: readonly Item[], groups: readonly number[] |
 }
 
 /**
- * One segment a screen or a question. `done` is answered with no verdict, for a test that never
- * says right or wrong. `groups` are the sizes of the task's sections in order (a level test's
- * reading, listening and check), drawn with a wider gap between them.
+ * `done` is answered with no verdict, for a test that never says right or wrong. `groups` are the
+ * sizes of the task's sections in order, drawn with a wider gap between them.
  */
 export function TaskHeaderSegments({
   groups,
