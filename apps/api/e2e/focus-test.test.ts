@@ -8,6 +8,7 @@ import {
   placementCompletionResponseSchema,
   placementResponseSchema,
 } from "../src/lib/openapi/schemas/learner";
+import { planResponseSchema } from "../src/lib/openapi/schemas/plans";
 import { createGuest } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
@@ -92,6 +93,16 @@ test("Focus test API saves a guest's answers, resumes, and continues without a u
   expect(completion.focusTest).toMatchObject({ checkpoint: { lessonsSkipped: 0 }, sitting: null });
   expect(completion.finish).toMatchObject({ answered: 1, end: "stopped", unknowns: 1 });
   expect(completion).not.toHaveProperty("celebration");
+
+  const plan = await readBody({
+    response: await api.get(`/v1/goals/${goal.id}/plan`),
+    schema: planResponseSchema,
+  });
+
+  expect(plan).toMatchObject({
+    focusTest: { sitting: null, state: "checked" },
+    placementTest: null,
+  });
 
   const continued = await readBody({
     response: await api.post(`${path}/sittings`, { data: {} }),

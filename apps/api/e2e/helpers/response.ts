@@ -14,5 +14,10 @@ export async function readBody<Body>({
   status?: number;
 }): Promise<Body> {
   expect(response.status(), await response.text()).toBe(status);
-  return schema.parse(await response.json());
+  const body: unknown = await response.json();
+  const parsed = schema.parse(body);
+
+  expect.soft({ body: parsed }, response.url()).toMatchObject({ body });
+
+  return parsed;
 }

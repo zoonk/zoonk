@@ -3,7 +3,7 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { type loadPlacementWithSummary } from "./load-placement-state";
 import { savePlacementAttempt } from "./placement-attempt";
 import { type PlacementRecord } from "./placement-attempt-record";
-import { readPlacementCourse, readPlacementNextLesson } from "./placement-result";
+import { readPlacementCourse } from "./placement-result";
 
 export async function storeFinishedResult({
   attempt,
@@ -53,22 +53,18 @@ export async function storeFinishedResult({
     return;
   }
 
-  const nextLesson = await readPlacementNextLesson(goalId, tx);
-  const course = await readPlacementCourse(goalId, new Set(testedOutPlanItemIds), tx);
+  const { chapter, course, nextLesson } = await readPlacementCourse(
+    goalId,
+    new Set(testedOutPlanItemIds),
+    tx,
+  );
 
   await savePlacementAttempt({
     goal: current,
     record: {
       attempt: null,
       finishedParts: [...record.finishedParts, receipt],
-      result: {
-        ...held,
-        ...result,
-        chapter: nextLesson?.chapter ?? null,
-        course,
-        lessonsSkipped,
-        nextLesson,
-      },
+      result: { ...held, ...result, chapter, course, lessonsSkipped, nextLesson },
     },
     tx,
   });

@@ -1,10 +1,12 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
+import { nextPlanLessonQuery } from "../../../plans/_utils/next-plan-lesson";
 import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
 import { readTestOutChange } from "../../../plans/_utils/read-test-out-change";
 import { countLessons } from "../../../plans/_utils/stand-in-lessons";
 import { placementPartReceipt } from "../../../plans/_utils/test-out-receipt";
 import { isWorkFinished } from "../../../plans/_utils/work-progress";
+import { parsePlanPhases } from "../../../plans/planner/plan-state";
 import { type PlacementRecord } from "./placement-attempt-record";
 
 export function readPlacementChange({
@@ -29,40 +31,38 @@ export function readPlacementChange({
   });
 }
 
-export async function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
+const phaseOrder = [{ phase: "asc" }, { position: "asc" }, { id: "asc" }] as const;
+
+async function readCourseLesson(
+  where: { id: string } | ReturnType<typeof nextPlanLessonQuery>["where"],
+  tx: TransactionClient,
+) {
   const item = await tx.planItem.findFirst({
-    orderBy: [{ position: "asc" }, { id: "asc" }],
+    orderBy: [...phaseOrder],
     select: {
-      chapterId: true,
+      chapter: { select: { title: true } },
       lesson: {
         select: {
           estimatedMinutes: true,
-          homeChapter: { select: { id: true, title: true } },
+          homeChapter: { select: { title: true } },
           id: true,
           title: true,
         },
       },
     },
-    where: { kind: "lesson", plan: { goalId }, status: "todo" },
+    where,
   });
 
-  const lesson = item?.lesson ?? null;
-
-  if (!lesson) {
+  if (!item?.lesson) {
     return null;
   }
 
-  const chapter =
-    item?.chapterId && item.chapterId !== lesson.homeChapter?.id
-      ? await tx.chapter.findUnique({ select: { title: true }, where: { id: item.chapterId } })
-      : lesson.homeChapter;
+  const { homeChapter, ...lesson } = item.lesson;
+  return { ...lesson, chapter: item.chapter?.title ?? homeChapter?.title ?? null };
+}
 
-  return {
-    chapter: chapter?.title ?? lesson.homeChapter?.title ?? null,
-    estimatedMinutes: lesson.estimatedMinutes,
-    id: lesson.id,
-    title: lesson.title,
-  };
+export function readPlacementNextLesson(goalId: string, tx: TransactionClient) {
+  return readCourseLesson(nextPlanLessonQuery(goalId).where, tx);
 }
 
 export async function readPlacementCourse(
@@ -70,34 +70,42 @@ export async function readPlacementCourse(
   startedPastItems: ReadonlySet<string>,
   tx: TransactionClient,
 ) {
-  const rows = await tx.planItem.findMany({
-    orderBy: [{ position: "asc" }, { id: "asc" }],
+  const plan = await tx.plan.findUnique({
     select: {
-      chapterId: true,
-      id: true,
-      kind: true,
-      lesson: { select: { homeChapterId: true } },
-      lessonId: true,
-      lessons: true,
-      position: true,
-      skillId: true,
-      status: true,
+      items: {
+        orderBy: [...phaseOrder],
+        select: {
+          chapterId: true,
+          id: true,
+          kind: true,
+          lessonId: true,
+          lessons: true,
+          phase: true,
+          skillId: true,
+          status: true,
+        },
+        where: { kind: "lesson" },
+      },
+      phases: true,
     },
-    where: { kind: "lesson", plan: { goalId } },
+    where: { goalId },
   });
 
-  if (rows.length === 0) {
-    return null;
+  if (!plan?.items.length) {
+    return { chapter: null, course: null, nextLesson: null };
   }
 
-  const next = rows.find((row) => row.status === "todo");
+  const phases = parsePlanPhases(plan.phases);
 
-  const chapters = [
-    ...Map.groupBy(
-      rows,
-      (row) => row.chapterId ?? row.lesson?.homeChapterId ?? row.skillId,
-    ).values(),
-  ].map((group) => {
+  if (phases.length === 0) {
+    return { chapter: null, course: null, nextLesson: null };
+  }
+
+  const groups = Map.groupBy(plan.items, (item) => item.phase);
+  const next = plan.items.find((item) => item.status === "todo");
+
+  const chapters = phases.map((_, index) => {
+    const group = groups.get(index) ?? [];
     const finished = group.filter((row) => isWorkFinished(row.status));
 
     const skipped = countLessons(
@@ -108,11 +116,15 @@ export async function readPlacementCourse(
       done: countLessons(finished) - skipped,
       lessons: countLessons(group),
       skipped,
-      start: next !== undefined && group.includes(next),
+      start: index === next?.phase,
     };
   });
 
-  return { chapters, lessons: chapters.reduce((total, chapter) => total + chapter.lessons, 0) };
+  return {
+    chapter: next ? phases[next.phase]?.name || null : null,
+    course: { chapters, lessons: chapters.reduce((sum, phase) => sum + phase.lessons, 0) },
+    nextLesson: next?.lessonId ? await readCourseLesson({ id: next.id }, tx) : null,
+  };
 }
 
 export async function readPlacementResult({
@@ -185,16 +197,19 @@ async function readCourseResult(
   });
 
   const payload = parsePlanChangePayload(change?.payload);
-  const course = await readPlacementCourse(goalId, new Set(payload.planItemIds), db);
-  const nextLesson = course ? await readPlacementNextLesson(goalId, db) : null;
 
-  const lessonsSkipped =
-    course?.chapters.reduce((total, chapter) => total + chapter.skipped, 0) ?? 0;
+  const { chapter, course, nextLesson } = await readPlacementCourse(
+    goalId,
+    new Set(payload.planItemIds),
+    db,
+  );
+
+  const lessonsSkipped = course?.chapters.reduce((total, phase) => total + phase.skipped, 0) ?? 0;
 
   return {
     attemptId: result.attemptId,
     changeId: change?.id ?? null,
-    chapter: nextLesson?.chapter ?? result.chapter,
+    chapter: course ? chapter : result.chapter,
     course,
     finish: result.finish,
     finishedAt: result.finishedAt,
