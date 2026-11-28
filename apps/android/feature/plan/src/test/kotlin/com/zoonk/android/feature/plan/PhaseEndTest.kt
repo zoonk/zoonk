@@ -53,13 +53,13 @@ class PhaseEndTest {
     }
 
     @Test
-    fun theCurrentPhaseKeepsItsDayEvenWhenItsEndIsFar() {
+    fun aFarEstimatedEndOfTheCurrentPhaseIsSaidByItsMonth() {
         val plan =
             learnPlan().withCurrent {
                 it.copy(endDate = LocalDate(2026, 12, 20), checkpoint = it.checkpoint?.copy(date = LocalDate(2026, 12, 20)))
             }
 
-        assertEquals("~Dec 20", ends(page(plan))["Data structures"])
+        assertEquals("~Dec", ends(page(plan))["Data structures"])
     }
 
     @Test

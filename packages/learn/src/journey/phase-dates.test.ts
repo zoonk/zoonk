@@ -188,11 +188,17 @@ describe(getPhaseEnd, () => {
     expect(end).toStrictEqual({ estimate: false, isoDate: "2026-11-20", precision: "day" });
   });
 
-  it("says a far phase under way by its day, even while its challenge keeps it an estimate", () => {
+  it("says a far estimated end of the phase under way by its month, as one ahead", () => {
     const checkpoint = { ...CHALLENGE, date: "2027-03-01" };
     const current = phase(0, { checkpoint, endDate: "2027-02-20", state: "current" });
     const end = getPhaseEnd({ phase: current, plan: plan([current]) });
-    expect(end).toStrictEqual({ estimate: true, isoDate: "2027-03-01", precision: "day" });
+    expect(end).toStrictEqual({ estimate: true, isoDate: "2027-03-01", precision: "month" });
+  });
+
+  it("keeps the day of a far end of the phase under way that isn't an estimate", () => {
+    const current = phase(0, { endDate: "2027-08-14", state: "current" });
+    const end = getPhaseEnd({ phase: current, plan: plan([current]) });
+    expect(end).toStrictEqual({ estimate: false, isoDate: "2027-08-14", precision: "day" });
   });
 
   it("keeps a challenge on its phase's last day at that day", () => {
@@ -293,7 +299,7 @@ describe(getChallengeDate, () => {
     expect(end).toStrictEqual({ later: true });
   });
 
-  it("dates a challenge on the last day of the phase under way by that day, as the phase", () => {
+  it("dates a far challenge on the last day of the phase under way by its month, as the phase", () => {
     const current = phase(0, {
       checkpoint: { ...CHALLENGE, date: "2027-02-27", precision: "month" },
       endDate: "2027-02-27",
@@ -302,7 +308,7 @@ describe(getChallengeDate, () => {
     });
 
     const shaped = plan([current, phase(1)]);
-    const phaseEnd = { estimate: true, isoDate: "2027-02-27", precision: "day" };
+    const phaseEnd = { estimate: true, isoDate: "2027-02-27", precision: "month" };
 
     expect(getPhaseEnd({ phase: current, plan: shaped })).toStrictEqual(phaseEnd);
     expect(getChallengeDate({ phase: current, plan: shaped })).toStrictEqual(phaseEnd);

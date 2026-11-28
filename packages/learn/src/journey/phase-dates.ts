@@ -105,10 +105,7 @@ function getPhaseEndPrecision({
     !plan.schedule.targetDate && lastDay === plan.estimate.endDate ? plan.estimate.precision : null;
 
   return (
-    finishPrecision ??
-    (phase.state === "upcoming" || phase.precision === "year"
-      ? getEstimatePrecision({ isoDate: lastDay, plan, precision: phase.precision })
-      : "day")
+    finishPrecision ?? getEstimatePrecision({ isoDate: lastDay, plan, precision: phase.precision })
   );
 }
 

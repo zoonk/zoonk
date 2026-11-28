@@ -378,9 +378,8 @@ extension GoalPlan {
     end == nil && schedule.targetDate == nil && estimate.forecast == .beyond
   }
 
-  /// Main's `getPhaseEndPrecision`: a phase ending where a plan without a date finishes is dated as
-  /// the finish is; one ahead by how near it is; the one under way keeps its day unless core dates
-  /// it by its year.
+  /// Main's `getPhaseEndPrecision`: an estimated end where a plan without a date finishes is dated
+  /// as the finish is, and any other by how near it is, whether the phase is ahead or under way.
   func phaseGrain(_ isoDate: String, phase: PlanPhase, estimate isEstimate: Bool = true)
     -> DateGrain
   {
@@ -392,8 +391,7 @@ extension GoalPlan {
       return finishGrain(isoDate)
     }
 
-    return phase.state == .upcoming || phase.precision == .year
-      ? estimateGrain(isoDate, precision: phase.precision) : .day
+    return estimateGrain(isoDate, precision: phase.precision)
   }
 
   /// The finish is dated as core forecasts it, by how near it is when an older plan doesn't say.

@@ -153,19 +153,17 @@ fun Plan.phaseEnd(phase: PlanPhase): PhaseEnd? {
 
 /**
  * Main's `getPhaseEndPrecision`: a phase's estimated [day] ending where a plan without a date finishes is said as the
- * finish is; one ahead by how near it is; the one under way keeps its day unless core dates it by its year.
+ * finish is, and any other by how near it is, whether the phase is ahead or under way.
  */
 private fun Plan.phaseEstimate(
     phase: PlanPhase,
     day: LocalDate,
-): PlanEnd {
-    val year = phase.precision == PlanFinishPrecision.YEAR
-    return when {
-        schedule.targetDate == null && estimate.precision != null && day == estimate.endDate?.toJavaLocalDate() -> finishEnd(day)
-        phase.state == PlanPhase.State.UPCOMING || year -> estimateEnd(day, year)
-        else -> PlanEnd(day, estimate = true, month = false)
+): PlanEnd =
+    if (schedule.targetDate == null && estimate.precision != null && day == estimate.endDate?.toJavaLocalDate()) {
+        finishEnd(day)
+    } else {
+        estimateEnd(day, year = phase.precision == PlanFinishPrecision.YEAR)
     }
-}
 
 /** When a phase's challenge still ahead comes: "Later" while the phase's work has no place yet, else its day, said as the phase's end is. */
 fun Plan.challengeDay(phase: PlanPhase): PhaseEnd? {

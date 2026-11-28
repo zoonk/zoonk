@@ -109,12 +109,18 @@ final class PhaseEndTests: XCTestCase {
     XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-01-20", estimate: false))
   }
 
-  func testAFarPhaseUnderWayIsSaidByItsDayWhileItsChallengeKeepsItAnEstimate() throws {
+  func testAFarEstimatedEndOfThePhaseUnderWayIsSaidByItsMonthLikeOneAhead() throws {
     let plan = try plan(phases: [
       phase(0, kind: "learn", state: "current", end: "2027-04-20", challenge: "2027-05-01")
     ])
 
-    XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-05-01", estimate: true))
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-05-01", estimate: true, grain: .month))
+  }
+
+  func testAFarEndOfThePhaseUnderWayThatIsntAnEstimateKeepsItsDay() throws {
+    let plan = try plan(phases: [phase(0, kind: "learn", state: "current", end: "2027-08-14")])
+
+    XCTAssertEqual(plan.phaseEnd(plan.phases[0]), end("2027-08-14", estimate: false))
   }
 
   func testAChallengeOnItsPhasesLastDayKeepsThatDay() throws {
@@ -206,15 +212,15 @@ final class PhaseEndTests: XCTestCase {
     XCTAssert(near.roadmapFinish(isExam: false)! == ("2027-02-10", true, .month))
   }
 
-  func testThePhaseUnderWayKeepsItsDayUnlessItEndsWhereThePlanFinishes() throws {
+  func testThePhaseUnderWayIsSaidByHowNearItIsUnlessItEndsWhereThePlanFinishes() throws {
     let phases = [
-      phase(0, kind: "learn", state: "current", end: "2027-02-22", challenge: "2027-02-23")
+      phase(0, kind: "learn", state: "current", end: "2027-02-12", challenge: "2027-02-13")
     ]
     let own = try goalPlanFixture(phases: phases, estimateEnd: "2027-06-01", precision: "month")
     let finishing = try goalPlanFixture(
-      phases: phases, estimateEnd: "2027-02-23", precision: "month")
+      phases: phases, estimateEnd: "2027-02-13", precision: "month")
 
-    XCTAssertEqual(own.phaseEnd(own.phases[0])?.shown, "~Feb 23")
+    XCTAssertEqual(own.phaseEnd(own.phases[0])?.shown, "~Feb 13")
     XCTAssertEqual(finishing.phaseEnd(finishing.phases[0])?.shown, "~Feb")
   }
 
