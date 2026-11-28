@@ -238,6 +238,7 @@ export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const plan = await planFixture({
     goalId,
     graph: {
+      phases: PHASES.map(({ name }) => ({ milestone: null, name })),
       skills: plannedSkills(skills.map((skill, index) => ({ ...skill, phase: phaseOf[index] }))),
     },
     phases: PHASES.map(({ name, summary }) => ({ name, summary })),
