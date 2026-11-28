@@ -15,6 +15,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -1125,7 +1128,8 @@ class PlanScreenshots {
                 }
             }
         show(exam = original.copy(plan = original.plan.copy(phases = phases)))
-        compose.onNodeWithText("2 topics not in your plan").performClick()
+        val omittedTopics = hasText("2 topics not in your plan") and SemanticsMatcher.keyIsDefined(SemanticsActions.Expand)
+        compose.onNode(omittedTopics).performClick()
         compose.onNodeWithText("Cleaning messy data").assertExists()
         write("path-left-out-open-phone", compose.onRoot().captureRender().asAndroidBitmap())
     }

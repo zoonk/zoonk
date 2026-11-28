@@ -168,7 +168,6 @@ class GoalContentScreenshots {
             mapOf(
                 "subject-exam" to listOf("1 chapter done, 1 you already know", "1. Mechanics"),
                 "chapter" to listOf("Chapter summary"),
-                "reveal-module-partly-left-out" to listOf("Working with data", "2 topics not in your plan"),
             )
 
         val MISSING_CHAPTER =
@@ -365,8 +364,6 @@ class GoalContentScreenshots {
                 },
                 "plan-section-module-partly-left-out" to
                     { PlanSyllabusSection(modulesWithTopicsLeftOut(), {}, Modifier.padding(vertical = 16.dp)) },
-                "reveal-module-partly-left-out" to
-                    { RevealStructure(plan(), modulesWithTopicsLeftOut(), Modifier.padding(16.dp)) },
                 "subject-written-levels" to { WrittenSubject(::gradedByLevel) },
                 "subject-written-needs-choice" to { WrittenSubject(::waitingForAChoice) },
                 "subject-module" to { Subject("basics") },
