@@ -39,6 +39,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.LanguageLevelTestResult
 import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf10Value
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -312,6 +313,20 @@ class LevelTestStepFlowTest {
         rule.onNodeWithText("The voice message is on its way…").assertDoesNotExist()
         rule.onNodeWithContentDescription("Play the message").assertIsEnabled()
         rule.onNodeWithText("Can't listen now").assertIsDisplayed()
+    }
+
+    @Test
+    fun aRecordingStillOnItsWayAfterTheReadsGiveUpIsStillSkippedOneQuestionAtATime() {
+        api.levelTest = levelTestOf(next = listeningQuestion(audioPending = true), answered = 1, attemptId = ATTEMPT)
+        show(speech = speech())
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+
+        api.levelTestGate = CompletableDeferred<Unit>().apply { completeExceptionally(ApiException(ApiError.Network)) }
+        repeat(4) { rule.mainClock.advanceTimeBy(POLL_MS) }
+
+        rule.onNodeWithText("Skip this question").assertIsDisplayed()
+        rule.onNodeWithText("Can't listen now").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Play the message").assertIsEnabled()
     }
 
     @Test

@@ -28,7 +28,6 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FocusTest
 import com.zoonk.api.models.FocusTestFocus
 import com.zoonk.api.models.Placement
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.CompletableDeferred
@@ -111,7 +110,6 @@ class FocusTestViewModelTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
-                        length: PlacementLength?,
                     ): Placement {
                         starts++
                         return answer.await()

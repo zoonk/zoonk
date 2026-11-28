@@ -19,7 +19,6 @@ import com.zoonk.android.feature.questions.tap
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAttempt
-import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.launch
 
 /**
@@ -142,7 +141,7 @@ internal class PlacementTestViewModel(
     }
 
     private suspend fun open(): Boolean =
-        when (val started = store.startPlacementSitting(goalId, PlacementLength.QUICK)) {
+        when (val started = store.startPlacementSitting(goalId)) {
             is WriteOutcome.Done -> {
                 show(null)
                 accepted = true
@@ -161,7 +160,8 @@ internal class PlacementTestViewModel(
 
     /**
      * Closing the test applies what it skipped; another device that closed it first, or answered past a stop's
-     * [answered], wins, and the read says where the test is.
+     * [answered], wins, and the read says where the test is. A close that saved but whose reply was lost shows the
+     * result the read now has for this attempt.
      */
     private suspend fun close(
         attempt: PlacementAttempt,
@@ -175,9 +175,13 @@ internal class PlacementTestViewModel(
         if (finished == WriteOutcome.Obsolete) return true
         val placements = store.placements[goalId]
         if (!placements.refreshed()) return false
-        val now =
-            placements.state.value.value
-                ?.attempt
+        val read = placements.state.value.value
+        val saved = read?.result?.takeIf { read.attempt == null && it.attemptId == attempt.id }
+        if (saved != null) {
+            show(ClosedTest(attempt.id, saved.phase()))
+            return true
+        }
+        val now = read?.attempt
         return now == null || now.id != attempt.id || (answered != null && now.answered != answered)
     }
 

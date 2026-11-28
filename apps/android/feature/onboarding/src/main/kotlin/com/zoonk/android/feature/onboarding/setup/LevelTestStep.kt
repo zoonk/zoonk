@@ -154,7 +154,7 @@ internal fun ColumnScope.LevelTestSteps(
                 if (it.question.isListening) R.string.onboarding_language_test_listening else R.string.onboarding_language_test_reading,
             )
         }
-    LaunchedEffect(question?.number, question?.canStop, title) {
+    LaunchedEffect(question?.number, question?.canStop, title, vm.isSaving) {
         onSitting(
             if (question != null && title != null) {
                 asking(
@@ -163,7 +163,7 @@ internal fun ColumnScope.LevelTestSteps(
                     question.number - 1L,
                     question.total.toLong(),
                     groups = levelTestGroups(question.total),
-                    stop = TestStop(onStop = vm::stop).takeIf { question.canStop },
+                    stop = TestStop(enabled = !vm.isSaving, onStop = vm::stop).takeIf { question.canStop },
                 )
             } else {
                 Sitting()
@@ -280,7 +280,8 @@ private fun ColumnScope.LevelTestWaiting(
 /**
  * Reading questions show their passage; listening ones play it as a voice message. Until the message has played to its
  * end once, the bar's way around it ends the test's listening; after, it's the miss. While the message can't play, its
- * question is skipped instead, which doesn't count toward a level.
+ * question is skipped instead, which doesn't count toward a level. [audioPending] says the reads are still asking for
+ * the recording, which holds the play button; once they stop, a tap can ask for the message itself.
  */
 @Composable
 private fun ColumnScope.TestQuestion(
@@ -294,8 +295,10 @@ private fun ColumnScope.TestQuestion(
     val question = shown.question
     val listening = question.isListening
     val audio = LocalSetupSpeech.current?.let { rememberSpokenAudio(it, targetLanguage) }
-    val noAudio = listening && (audioPending || audio?.state is SpeechState.Failed)
     var heard by rememberSaveable { mutableStateOf(false) }
+    // Until the recording is confirmed delivered, the way around it skips only this question, even once the polls stop;
+    // a message heard to its end makes it the miss either way.
+    val noAudio = listening && !heard && (question.audioPending || audio?.state is SpeechState.Failed)
     val cantListen = stringResource(R.string.onboarding_language_test_cant_listen)
     val notUnderstood = stringResource(R.string.onboarding_language_test_did_not_understand)
     val skip = stringResource(R.string.onboarding_language_test_skip_question)
@@ -319,8 +322,8 @@ private fun ColumnScope.TestQuestion(
                 SecondAction(
                     label =
                         when {
-                            noAudio -> skip
                             heard -> notUnderstood
+                            noAudio -> skip
                             else -> cantListen
                         },
                     labels = listOf(cantListen, notUnderstood, skip),

@@ -344,10 +344,20 @@ private fun ColumnScope.TestOutFlow(
             attemptId = attemptId.toString(),
         )
     val title = test?.let { stringResource(R.string.placementtest_test_out, it.level.value) }
-    LaunchedEffect(next?.itemId, test?.total, title) {
+    LaunchedEffect(next?.itemId, test?.total, title, vm.busy) {
         onSitting(
             if (title != null && next != null && test.total > 0) {
-                asking(context, title, test.answered, test.total, stop = TestStop(onStop = vm::stopTestOut).takeIf { test.answered > 0 })
+                asking(
+                    context,
+                    title,
+                    test.answered,
+                    test.total,
+                    stop =
+                        TestStop(enabled = !vm.busy, onStop = vm::stopTestOut).takeIf {
+                            test.answered >
+                                0
+                        },
+                )
             } else {
                 Sitting()
             },

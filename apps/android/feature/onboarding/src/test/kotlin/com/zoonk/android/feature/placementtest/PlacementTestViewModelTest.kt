@@ -19,7 +19,6 @@ import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -104,7 +103,7 @@ class PlacementTestViewModelTest {
             api.sitting = { placement(OPEN) }
             vm.start()
             runCurrent()
-            assertEquals(listOf<PlacementLength?>(PlacementLength.QUICK, PlacementLength.QUICK), api.sittingLengths)
+            assertEquals(2, api.sittingsStarted)
             assertTrue(shown(vm, store) is PlacementTestPhase.Question)
         }
 
@@ -173,10 +172,9 @@ class PlacementTestViewModelTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
-                        length: PlacementLength?,
                     ): Placement {
                         answer.await()
-                        return fake.startPlacementSitting(session, goalId, length)
+                        return fake.startPlacementSitting(session, goalId)
                     }
                 }
             val (vm, store) = viewModel(api)
@@ -258,6 +256,42 @@ class PlacementTestViewModelTest {
                 result.course,
             )
             assertFalse(vm.failed)
+        }
+
+    @Test
+    fun aCloseThatSavedButWhoseReplyWasLostStillShowsTheResultFromThePlan() =
+        runTest {
+            val fake =
+                FakeOnboardingApi().apply {
+                    placement = placement(attempt = null)
+                    sitting = { placement(OPEN) }
+                    answered = { placement(OPEN, next = null, status = "done") }
+                }
+            val api =
+                object : OnboardingApi by fake {
+                    override suspend fun finishPlacement(
+                        session: AuthenticatedSession,
+                        goalId: String,
+                        fromScratch: Boolean,
+                        attemptId: UUID?,
+                        answered: Long?,
+                    ): PlacementCompletion {
+                        fake.placement = placement(attempt = null, next = null, status = "unavailable", result = RESULT)
+                        throw ApiException(ApiError.Network)
+                    }
+                }
+            val (vm, store) = viewModel(api)
+            store.placements[GOAL_ID].load()
+            vm.start()
+            val question = shown(vm, store) as PlacementTestPhase.Question
+
+            vm.answer(question, Answer.Order(listOf(0, 1, 2, 3)), durationMs = 2_000)
+            runCurrent()
+
+            assertFalse(vm.failed)
+            val result = vm.phase(store.placements[GOAL_ID].state.value) as PlacementTestPhase.Result
+            assertEquals("Why prices move", result.chapter)
+            assertEquals(CHANGE, result.changeId)
         }
 
     @Test

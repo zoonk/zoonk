@@ -35,7 +35,6 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
 import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
@@ -471,15 +470,12 @@ class FakeOnboardingApi : OnboardingApi {
 
     var sitting: () -> Placement = { placement }
     var sittingsStarted = 0
-    val sittingLengths = mutableListOf<PlacementLength?>()
 
     override suspend fun startPlacementSitting(
         session: AuthenticatedSession,
         goalId: String,
-        length: PlacementLength?,
     ): Placement {
         sittingsStarted++
-        sittingLengths += length
         writeFailure?.let { throw it }
         placement = sitting()
         return placement

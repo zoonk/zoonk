@@ -25,7 +25,6 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletion
-import com.zoonk.api.models.PlacementLength
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -68,11 +67,10 @@ class FocusTestOutcomesTest {
                     override suspend fun startPlacementSitting(
                         session: AuthenticatedSession,
                         goalId: String,
-                        length: PlacementLength?,
                     ): Placement {
                         gate.await()
                         if (fails) throw ApiException(ApiError.Network)
-                        return fake.startPlacementSitting(session, goalId, length)
+                        return fake.startPlacementSitting(session, goalId)
                     }
 
                     override suspend fun answerPlacement(

@@ -54,9 +54,13 @@ internal data class Asking(
     val stop: TestStop? = null,
 )
 
-/** "Stop and use my answers" behind ✕, with [hint] over the ways out when stopping is worth suggesting. */
+/**
+ * "Stop and use my answers" behind ✕, with [hint] over the ways out when stopping is worth suggesting. While an answer
+ * saves ([enabled] false) it waits for it, so the sheet never offers a stop the save would swallow.
+ */
 internal class TestStop(
     val hint: String? = null,
+    val enabled: Boolean = true,
     val onStop: () -> Unit,
 )
 
@@ -171,6 +175,7 @@ internal fun TestWaysOut(
                     stop.onStop()
                 },
                 modifier = Modifier.fillMaxWidth(),
+                enabled = stop.enabled,
             ) {
                 Text(stringResource(R.string.onboarding_placement_stop))
             }

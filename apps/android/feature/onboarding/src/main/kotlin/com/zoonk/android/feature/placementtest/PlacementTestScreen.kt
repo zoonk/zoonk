@@ -195,7 +195,7 @@ internal fun ColumnScope.PlacementTestFlow(
     val question = shown as? PlacementTestPhase.Question
     val title = (question?.attempt?.chapter?.takeIf { it.isNotBlank() } ?: subject).labelCase()
     val open = shown !in OUTSIDE_THE_TEST
-    LaunchedEffect(question?.attempt?.answered, question?.attempt?.id, open) {
+    LaunchedEffect(question?.attempt?.answered, question?.attempt?.id, open, vm.busy) {
         onSitting(
             when {
                 question != null -> {
@@ -204,7 +204,7 @@ internal fun ColumnScope.PlacementTestFlow(
                         title,
                         question.attempt.answered,
                         question.attempt.questions,
-                        stop = TestStop { vm.stop(question) }.takeIf { question.number > 1 },
+                        stop = TestStop(enabled = !vm.busy) { vm.stop(question) }.takeIf { question.number > 1 },
                     )
                 }
 
@@ -235,7 +235,7 @@ internal fun ColumnScope.PlacementTestFlow(
                 PlanCourseOffer(goalId, plans, test, vm, onNotNow = {
                     tracker.track(AnalyticsEvent.TestSkipped(test))
                     navigator.closeTask()
-                })
+                }, onDone = navigator::closeTask)
             } else {
                 StepLoading()
             }
@@ -350,7 +350,10 @@ internal fun courseTest(
     attemptId = attempt?.id?.toString(),
 )
 
-/** The plan's offer for a course: the test's card alone, with "Not now". */
+/**
+ * The plan's offer for a course: the test's card alone, with "Not now". With no offer the server can't open a test (one
+ * was taken and too little is left ahead to check again), so there's no Start: it says the first days place the learner.
+ */
 @Composable
 private fun ColumnScope.PlanCourseOffer(
     goalId: UUID,
@@ -358,13 +361,24 @@ private fun ColumnScope.PlanCourseOffer(
     test: TestContext,
     vm: PlacementTestViewModel,
     onNotNow: () -> Unit,
+    onDone: () -> Unit,
 ) {
-    val plan by plans.plan[goalId].collectShown()
+    val resource = plans.plan[goalId]
+    val plan by resource.collectShown()
+    val scope = rememberCoroutineScope()
     if (plan.isPending) {
         StepLoading()
         return
     }
+    if (plan is LoadState.Failed) {
+        SetupContent { LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) }
+        return
+    }
     val offer = (plan.value?.plan?.placementTest as? PlanPlacementTest.PlanPlacementTestOneOfValue)?.value?.offer
+    if (offer == null) {
+        PlacementUnavailable(pending = false, failed = false, onContinue = onDone, action = stringResource(R.string.placementtest_done))
+        return
+    }
     TestOffer(
         title = stringResource(R.string.placementtest_start_title),
         sentence = stringResource(R.string.placementtest_choose_description),
@@ -373,15 +387,15 @@ private fun ColumnScope.PlanCourseOffer(
                 testCard(
                     TestRow.Quick,
                     stringResource(R.string.placementtest_test),
-                    offer?.questions?.toInt(),
-                    offer?.estimatedMinutes?.toInt(),
+                    offer.questions.toInt(),
+                    offer.estimatedMinutes.toInt(),
                 ),
             ),
         initial = TestRow.Quick,
         pressed = vm.pressed,
         failed = vm.failed,
         onChoose = { vm.start() },
-        test = test.copy(questions = offer?.questions),
+        test = test.copy(questions = offer.questions),
         onNotNow = onNotNow,
     )
 }
