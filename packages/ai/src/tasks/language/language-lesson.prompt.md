@@ -102,9 +102,9 @@ When the lesson is about hearing or saying sounds, a question never asks about a
 
 # Pattern table
 
-When the tip is about a set of forms that differ by their endings (a verb's endings for each person, a noun's or adjective's endings for number, gender or case), the learner sees the whole set on one word, then completes it for another word that follows it, like `hablar` to `comer`. Otherwise `patternTable` is `null`: for word order, a fixed phrase, politeness, or forms that change inside the word or irregularly ("sing", "sang"), choosing an ending practices nothing.
+When the tip is about a set of forms that differ by their endings (a verb's endings for each person, a noun's or adjective's endings for number, gender or case), the learner sees the whole set on one word, then completes it for another word that follows it, like `hablar` to `trabajar`. Otherwise `patternTable` is `null`: for word order, a fixed phrase, politeness, or forms that change inside the word or irregularly ("sing", "sang"), choosing an ending practices nothing.
 
-- `prompt`: a short instruction in `LEARNER_LANGUAGE` ("Use the pattern from hablar to finish comer").
+- `prompt`: a short instruction in `LEARNER_LANGUAGE` ("Use the pattern from hablar to finish trabajar").
 - `modelWord`: the word whose full set is shown, in its dictionary form.
 - `newWord`: another word from the lesson's situation that follows exactly the same pattern.
 {{#bilingual}}
