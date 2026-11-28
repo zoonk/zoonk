@@ -166,8 +166,9 @@ export function TaskHeaderTitle({
   }
 
   return (
-    <div className="flex min-w-0 shrink flex-col items-center text-center text-balance">
-      <h1 className={TASK_TITLE_CLASS}>{title}</h1>
+    // One line, so a long title never moves what's under the bar.
+    <div className="flex max-w-full min-w-0 flex-col items-center text-center">
+      <h1 className={cn(TASK_TITLE_CLASS, "max-w-full truncate")}>{title}</h1>
       {detail && (
         <p
           aria-live={announce ? "polite" : undefined}

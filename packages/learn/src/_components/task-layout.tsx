@@ -31,6 +31,10 @@ export function TaskBody({ className, ...props }: React.ComponentProps<"div">) {
 export const TASK_HEADER_BAR_CLASS =
   "flex w-full items-center gap-2 px-[16px] py-2 lg:px-frame xl:py-3";
 
+/** The title leaves each side the close button's room, so the two sides stay equal around it. */
+export const TASK_HEADER_MIDDLE_CLASS =
+  "flex min-w-0 max-w-[calc(100%-(--spacing(22)))] justify-center text-center";
+
 /**
  * A side keeps the bar's first 36 px line, so a taller middle (a clock) never moves the close
  * button, and every button centers on that line: a 44 px one hangs past it instead of growing it,
@@ -282,7 +286,7 @@ export function TaskSkeleton({
           <div className={TASK_HEADER_SIDE_CLASS.start}>
             <Skeleton className="-ml-3 size-11 rounded-lg lg:-ml-2.5 lg:size-10" />
           </div>
-          <div className="flex min-w-0 justify-center">{title}</div>
+          <div className={TASK_HEADER_MIDDLE_CLASS}>{title}</div>
           <div className={TASK_HEADER_SIDE_CLASS.end}>
             {menu && (
               <Skeleton
