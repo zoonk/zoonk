@@ -6,6 +6,7 @@ import { examChoicePickSchema } from "@zoonk/core/exams/choices/contract";
 import { countryCodeSchema } from "@zoonk/core/goals/country-contract";
 import { getStaffActor } from "@zoonk/core/staff/actor";
 import { repairExamGoal } from "@zoonk/core/staff/repair-exam-goal";
+import { logInfo } from "@zoonk/utils/logger";
 import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -20,6 +21,20 @@ const inputSchema = z.union([
 async function repairGoal(request: Request) {
   const input = await readBody(request, inputSchema);
   const actor = await getStaffActor(input.apply ? STAFF_REPAIR_SCOPE : undefined);
+
+  if (actor.status !== "ready") {
+    const identified = "userId" in actor ? actor : null;
+
+    logInfo(
+      JSON.stringify({
+        actorUserId: identified?.userId ?? null,
+        clientId: identified?.clientId ?? null,
+        event: "staff.exam-goal-repair",
+        goalId: input.goalId,
+        status: actor.status,
+      }),
+    );
+  }
 
   if (actor.status === "missingScope" && input.apply) {
     return createErrorResponse({

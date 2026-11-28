@@ -113,6 +113,22 @@ describe(repairExamGoal, () => {
     ).resolves.toMatchObject({ status: "done" });
   });
 
+  it("reports a repeated apply as unchanged and owes its work once", async () => {
+    const { goal } = await revealedExamGoal();
+
+    const apply = () =>
+      repairExamGoal({ actor, answer: { country: "CA" }, apply: true, goalId: goal.id });
+
+    const results = await Promise.all([apply(), apply(), apply()]);
+
+    expect(results.filter(({ status }) => status === "applied")).toHaveLength(1);
+    expect(results.filter(({ status }) => status === "unchanged")).toHaveLength(2);
+
+    await expect(
+      prisma.followUp.findMany({ select: { revision: true }, where: { key: goal.id } }),
+    ).resolves.toStrictEqual([{ revision: 0 }, { revision: 0 }]);
+  });
+
   it("rebuilds for a first country that matches the goal language's own country", async () => {
     const { goal } = await revealedExamGoal({ language: "en" });
 

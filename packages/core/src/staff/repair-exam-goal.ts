@@ -128,7 +128,15 @@ export async function repairExamGoal({
       : { status: planned.status };
   }
 
+  const audit = {
+    actorUserId: actor.userId,
+    clientId: actor.clientId,
+    goalId,
+    learnerId: goal.userId,
+  };
+
   if (!apply) {
+    logInfo(JSON.stringify({ ...audit, event: "staff.exam-goal-repair", status: "preview" }));
     return { after: planned.after, before, status: "preview" };
   }
 
@@ -138,21 +146,16 @@ export async function repairExamGoal({
     return { status: saved.status === "notFound" ? "notFound" : "invalid" };
   }
 
-  await settleGoalAnswer({ goal, goalIds: saved.goalIds, input: planned.input });
+  const changed = saved.goalIds.includes(goal.id);
+
+  if (changed) {
+    await settleGoalAnswer({ goal, goalIds: saved.goalIds, input: planned.input });
+  }
 
   const after = await readAnswers(goal.id);
+  const status = changed ? "applied" : "unchanged";
 
-  logInfo(
-    JSON.stringify({
-      actorUserId: actor.userId,
-      after,
-      before,
-      clientId: actor.clientId,
-      event: "staff.exam-goal-repair",
-      goalId,
-      learnerId: goal.userId,
-    }),
-  );
+  logInfo(JSON.stringify({ ...audit, after, before, event: "staff.exam-goal-repair", status }));
 
-  return { after, before, status: "applied" };
+  return { after, before, status };
 }
