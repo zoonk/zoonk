@@ -1,9 +1,11 @@
+import { listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { isSameNameWord, toNameWords } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getSubjectQuestions } from "../../library/exams/subject-questions";
 import { findSubjectSections } from "../mocks/exam-parts";
 import { listCountedSubjects } from "./choice-groups";
+import { listNamedParts, scopeToParts } from "./exam-part-scope";
 
 type Subject = ExamStructure["subjects"][number];
 type Mock = NonNullable<ExamStructure["mock"]>;
@@ -65,7 +67,7 @@ function namesPartly({ said, subject }: { said: string; subject: Subject }): boo
 }
 
 function namesExactly({ said, subject }: { said: string; subject: Subject }): boolean {
-  const groups = [subject.group, subject.choiceGroup].flatMap((name) =>
+  const groups = [...listSubjectGroups(subject), subject.choiceGroup].flatMap((name) =>
     name ? [toKey(name)] : [],
   );
 
@@ -245,7 +247,13 @@ export function scopeExamStructure({
     return structure;
   }
 
-  return keepExamSubjects(structure, addParts({ named, subjects: structure.subjects }));
+  const kept = addParts({ named, subjects: structure.subjects });
+  const parts = listNamedParts({ examSubjects, structure });
+
+  return (
+    (parts.length > 0 && scopeToParts({ kept, parts, structure })) ||
+    keepExamSubjects(structure, kept)
+  );
 }
 
 function keepExamSubjects(structure: ExamStructure, kept: ReadonlySet<string>): ExamStructure {

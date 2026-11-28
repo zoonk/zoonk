@@ -87,13 +87,13 @@ export function useMockOptionDetail() {
     }
 
     const subjects = severalDays && option.kind !== "area" ? option.areas : [];
-    const parts = option.covers ?? [...subjects, ...option.written];
+    const parts = option.covers ?? [...new Set([...subjects, ...option.written])];
 
     if (parts.length > 0) {
       return format.list(parts, { type: "conjunction" });
     }
 
-    return option.objectiveOnly ? t("No written part") : "";
+    return option.objectiveOnly && option.kind !== "area" ? t("No written part") : "";
   };
 }
 

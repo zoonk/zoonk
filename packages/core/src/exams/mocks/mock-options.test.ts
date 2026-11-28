@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { getMockFormatMix } from "./mock-format-mix";
 import { planOptionMock } from "./mock-option-plan";
-import { listMockOptions } from "./mock-options";
+import { getSubjectShares, listMockOptions } from "./mock-options";
 import { type MockCandidate, countPlannedQuestions } from "./mock-plan";
 import { getMockQuestionsShortfall } from "./mock-shortfall";
 
@@ -653,5 +654,74 @@ describe(getMockQuestionsShortfall, () => {
     expect(
       shortfall([...candidates("Matemática", 45), ...candidates("Ciências da Natureza", 45)]),
     ).toStrictEqual([]);
+  });
+});
+
+describe("a qualifying first phase that retests the written phase's subjects", () => {
+  it("splits the first phase's items among every area it asks, the written phase's included", () => {
+    const shares = getSubjectShares(cacdStructure());
+
+    expect(shares.map((share) => [share.name, share.group, share.questions])).toStrictEqual(
+      [...CACD_SHARED, "História Mundial"].map((name) => [name, "Primeira Fase", 30]),
+    );
+  });
+
+  it("asks no objective subject on a day that has only written tests", () => {
+    const structure = cacdStructure();
+    const goalAreas = structure.subjects.map((item) => item.name);
+
+    const days = listMockOptions({ goalAreas, structure }).filter(
+      (option) => option.kind === "full",
+    );
+
+    expect(days.find((option) => option.day === 1)?.areas).toStrictEqual([
+      ...CACD_SHARED,
+      "História Mundial",
+    ]);
+
+    expect(days.filter((option) => option.day === 2).map((option) => option.areas)).toStrictEqual([
+      [],
+    ]);
+  });
+
+  it("splits them the same when the written phase counts its tests", () => {
+    expect(getSubjectShares(cacdStructure({ secondQuestions: 8 }))).toStrictEqual(
+      getSubjectShares(cacdStructure()),
+    );
+  });
+});
+
+describe("a choice whose options a written test is also named after", () => {
+  it("keeps asking the options' stated questions", () => {
+    const citation = { passage: "…", sourceId: "notice" };
+    const option = { choiceGroup: "Language", group: "Objective", topics: [], weight: null };
+
+    const structure: ExamStructure = {
+      formats: [],
+      mock: {
+        adaptive: false,
+        citations: [],
+        order: null,
+        scoring: { description: "", method: "raw" },
+        sections: [
+          { day: null, kind: "objective", minutes: 60, name: "Objective", questions: 40 },
+          { day: null, kind: "written", minutes: 60, name: "Language", questions: null },
+        ],
+        timeLimitMinutes: null,
+        totalQuestions: 40,
+      },
+      rules: [],
+      subjects: [
+        { citation, group: "Objective", name: "Math", questions: 30, topics: [], weight: null },
+        { ...option, citation, name: "English", questions: 10 },
+        { ...option, citation, name: "French", questions: 10 },
+      ],
+    };
+
+    expect(getSubjectShares(structure).map((share) => share.name)).toStrictEqual([
+      "Math",
+      "English",
+      "French",
+    ]);
   });
 });

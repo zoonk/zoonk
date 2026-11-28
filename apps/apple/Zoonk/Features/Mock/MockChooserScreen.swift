@@ -431,13 +431,14 @@ private struct MockChooser: View {
     }
 
     let subjects = severalDays && option.kind != .area ? option.areas : []
-    let parts = option.covers ?? subjects + option.written
+    var seen = Set<String>()
+    let parts = option.covers ?? (subjects + option.written).filter { seen.insert($0).inserted }
 
     if !parts.isEmpty {
       return parts.formatted(.list(type: .and))
     }
 
-    return option.objectiveOnly
+    return option.objectiveOnly && option.kind != .area
       ? String(
         localized: "No written part", table: "Mock",
         comment: "A mock exam with only the exam's objective questions, without its essay")
