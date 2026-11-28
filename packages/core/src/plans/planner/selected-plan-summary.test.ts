@@ -426,7 +426,7 @@ describe(summarizeSelectedPlan, () => {
     expect(coverageOf(input)).toMatchObject({ coveredShare: null, fits: false });
   });
 
-  it("credits a finished lesson two skills share once to each, and once in the requirement", () => {
+  it("credits a shared finished lesson once and keeps the incomplete outline's remainder owed", () => {
     const input = learnInput({
       items: [existing({ id: "d1", lessonId: "shared", skillId: "s1", status: "done" })],
       lessons: [lesson("shared", ["s1", "s2"], 5), lesson("l2", ["s1"]), lesson("l3", ["s2"])],
@@ -442,10 +442,10 @@ describe(summarizeSelectedPlan, () => {
 
     expect(skills.find((entry) => entry.skillId === "s2")).toMatchObject({
       coveredRaw: 8,
-      requiredRaw: 8,
+      requiredRaw: 12,
     });
 
-    expect(summary.requirement).toStrictEqual({ doneRaw: 5, remainingRaw: 6, totalRaw: 11 });
+    expect(summary.requirement).toStrictEqual({ doneRaw: 5, remainingRaw: 10, totalRaw: 15 });
   });
 
   it("requires a base's core when the learner studies it essentially, and all of it in depth", () => {
@@ -541,6 +541,25 @@ describe(summarizeSelectedPlan, () => {
     expect(finish((capacity.at(-1) ?? 0) + 1)).toMatchObject({
       date: null,
       reason: "beyondHorizon",
+    });
+  });
+
+  it("forecasts no study days for unwritten work in a later phase without any study days", () => {
+    const input = learnInput({
+      goal: { dailyMinutes: 60, kind: "language", targetDate: null },
+      graph: {
+        phases: [{ later: true, milestone: null, name: "C1–C2" }],
+        skills: [],
+        unwrittenLessons: 1500,
+      },
+      lessons: [],
+      settings: parsePlanSettings({ weekdayMinutes: [0, 0, 0, 0, 0, 0, 0] }),
+    });
+
+    expect(summarize(input).forecast.finish).toStrictEqual({
+      date: null,
+      precision: null,
+      reason: "noStudyDays",
     });
   });
 

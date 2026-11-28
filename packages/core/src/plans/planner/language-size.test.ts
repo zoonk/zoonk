@@ -5,6 +5,7 @@ import { buildPlan } from "./build-plan";
 import { sizeLanguageGraph } from "./language-size";
 import { fromIsoDate } from "./plan-calendar";
 import { type PlanGraph, parsePlanSettings } from "./plan-state";
+import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 import { summarizeSelectedPlan } from "./selected-plan-summary";
 
 function graphOf(sizes: number[]): PlanGraph {
@@ -364,6 +365,15 @@ describe(sizeLanguageGraph, () => {
       const built = buildPlan(input);
       expect(built.phases.at(-1)).toMatchObject({ endDate: null, later: true, name: "C1–C2" });
       const summary = summarizeSelectedPlan({ built, examSubjects: null, input });
+
+      const remaining = (total(planned) + 1500) * DEFAULT_LESSON_MINUTES;
+
+      expect(summary.requirement.remainingRaw).toBe(remaining);
+
+      expect(summary.forecast.finish).toStrictEqual({
+        date: expect.any(String),
+        precision: "month",
+      });
 
       expect(summary.coverage?.fits ?? false).toBe(false);
 

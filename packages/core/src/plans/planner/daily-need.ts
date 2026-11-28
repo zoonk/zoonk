@@ -259,13 +259,8 @@ export function getScheduledFinish({
   input: BuildPlanInput;
   remaining: number;
 }): Finish {
-  if (input.goal.targetDate !== null) {
+  if (input.goal.targetDate !== null || built.phases.some((phase) => phase.later)) {
     return estimateFinish({ built, input, remaining });
-  }
-
-  if (built.phases.some((phase) => phase.later)) {
-    const reason = getStudyDayMinutes(getCalendar(input)) > 0 ? "beyondHorizon" : "noStudyDays";
-    return { date: null, precision: null, reason };
   }
 
   const placed = endDate
