@@ -35,8 +35,9 @@ Lesson activities
   staff lesson-activities <lessonId>...    For up to 5 published lessons written before lessons
                                            practised skills by doing them: pick the practice screens
                                            that become activities, write and check them, and print
-                                           each one's setPlan and setScreens fix in "fixes", ready
-                                           for staff fixes propose.
+                                           each lesson's outcome in "lessons" and a batch of setPlan
+                                           and setScreens fixes in "proposal", ready for staff fixes
+                                           propose (save it with jq .proposal).
 
 Content fixes (proposed here, approved by a staff person in Admin with a passkey)
   staff fixes propose [--check] <file.json>  Propose the fix or batch in the file, and print its review

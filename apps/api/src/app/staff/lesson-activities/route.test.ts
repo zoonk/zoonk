@@ -23,8 +23,8 @@ describe("staff lesson activities authority", () => {
     expect(response.status).toBe(200);
 
     await expect(response.json()).resolves.toStrictEqual({
-      fixes: [],
       lessons: [{ lessonId: lesson.id, reason: "Not written yet.", status: "skipped" }],
+      proposal: null,
     });
 
     await prisma.user.update({ data: { role: null }, where: { id: user.id } });

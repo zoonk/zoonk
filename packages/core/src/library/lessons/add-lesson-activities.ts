@@ -10,7 +10,7 @@ import {
   estimateLessonMinutes,
 } from "@zoonk/ai/tasks/lesson-spec/rules";
 import { checkLessonQuality } from "@zoonk/ai/tasks/quality/lesson-check";
-import { prisma } from "@zoonk/db";
+import { type StepKind, prisma } from "@zoonk/db";
 import { describeActivityTemplates, listPlannerTemplates } from "../activities/writer-templates";
 import { readSavedStepMarks } from "../marks/step-marks";
 import { toReviewProblems } from "../quality/lesson-review-problems";
@@ -60,6 +60,8 @@ async function findLesson(lessonId: string) {
     where: { id: lessonId },
   });
 }
+
+const QUESTION_KINDS: ReadonlySet<StepKind> = new Set(["check", "typedAnswer"]);
 
 type StoredLesson = NonNullable<Awaited<ReturnType<typeof findLesson>>>;
 type StoredStep = StoredLesson["steps"][number];
@@ -250,7 +252,11 @@ export async function draftLessonActivities({
     spec: inputs.spec,
   });
 
-  const { changes } = plan.data;
+  // A staff fix may have reordered the live screens since the plan was written: only a live question
+  // is replaced, never the explanation that took its place.
+  const changes = plan.data.changes.filter(({ index }) =>
+    QUESTION_KINDS.has(steps[index]?.kind ?? "summary"),
+  );
 
   if (changes.length === 0) {
     return skipped(lessonId, "No practice screen fits an activity: its skills aren't done in one.");
@@ -264,7 +270,7 @@ export async function draftLessonActivities({
     spec: plan.data.spec,
   });
 
-  const { activities, writerModel } = await writeCheckedActivities({
+  const activities = await writeCheckedActivities({
     analytics,
     context,
     indexes: changes.map(({ index }) => index),
@@ -284,6 +290,8 @@ export async function draftLessonActivities({
   if (valid.size === 0) {
     return skipped(lessonId, codeDropped.join(" "));
   }
+
+  const writerModel = activities.find(({ index }) => valid.has(index))?.model ?? "";
 
   const review = await reviewActivities({
     analytics,

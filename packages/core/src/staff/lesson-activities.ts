@@ -36,24 +36,37 @@ async function draftLesson(lessonId: string): Promise<LessonActivitiesDraft | Fa
   return data;
 }
 
+const BATCH_REASON =
+  "Lets learners do each lesson's skill in the activity built for it, as lessons written since activities became common do.";
+
+function toFix(lesson: Extract<LessonActivitiesDraft, { status: "drafted" }>) {
+  return {
+    changes: [
+      { id: lesson.lessonId, model: "Lesson", setPlan: lesson.setPlan },
+      { id: lesson.lessonId, model: "Lesson", setScreens: lesson.setScreens },
+    ],
+    reason: lesson.reason,
+  };
+}
+
+/** `proposal` is a batch `staff fixes propose` takes as it is; `lessons` says what each lesson got. */
 async function draftPage(lessonIds: readonly string[]) {
-  const lessons = await Promise.all([...new Set(lessonIds)].map((id) => draftLesson(id)));
+  const drafts = await Promise.all([...new Set(lessonIds)].map((id) => draftLesson(id)));
+  const fixes = drafts.flatMap((draft) => (draft.status === "drafted" ? [toFix(draft)] : []));
 
-  const fixes = lessons.flatMap((lesson) =>
-    lesson.status === "drafted"
-      ? [
-          {
-            changes: [
-              { id: lesson.lessonId, model: "Lesson", setPlan: lesson.setPlan },
-              { id: lesson.lessonId, model: "Lesson", setScreens: lesson.setScreens },
-            ],
-            reason: lesson.reason,
-          },
-        ]
-      : [],
-  );
+  const lessons = drafts.map((draft) => {
+    if (draft.status !== "drafted") {
+      return draft;
+    }
 
-  return { data: { fixes, lessons }, rows: lessons.length };
+    const { setPlan: _plan, setScreens: _screens, ...summary } = draft;
+    return summary;
+  });
+
+  return {
+    data: { lessons, proposal: fixes.length > 0 ? { fixes, reason: BATCH_REASON } : null },
+    rows: drafts.length,
+  };
 }
 
 /**

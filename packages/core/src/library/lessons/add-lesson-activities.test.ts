@@ -18,6 +18,7 @@ import {
   signInApprover,
   signInProposer,
 } from "../../staff/content-fixes/_test-utils/content-fix-steps";
+import { draftStaffLessonActivities } from "../../staff/lesson-activities";
 import { completeLessonContent } from "../generation/lesson-generation-state";
 import { temperatureSpec, writtenTemperatureLesson } from "../quality/_test-utils/written-lessons";
 import { draftLessonActivities } from "./add-lesson-activities";
@@ -222,6 +223,17 @@ describe(draftLessonActivities, () => {
     expect(reviewed?.spec.screens[PRACTICE]?.activityTemplate).toBe("codeRunner");
   });
 
+  it("never replaces a live screen that isn't a question", async () => {
+    const { lesson } = await publishLesson();
+    mockPlan([{ activityTemplate: "codeRunner", index: 1 }]);
+
+    await expect(draftLessonActivities({ lessonId: lesson.id })).resolves.toMatchObject({
+      status: "skipped",
+    });
+
+    expect(writeLessonActivities).not.toHaveBeenCalled();
+  });
+
   it("writes an activity again once when its program fails, with what failed", async () => {
     const { lesson } = await publishLesson();
     mockPlan();
@@ -273,30 +285,21 @@ describe(draftLessonActivities, () => {
     });
   });
 
-  it("drafts a fix the content-fix flow accepts and applies", async () => {
+  it("prints a batch the content-fix flow accepts as it is and applies", async () => {
     const { lesson, steps } = await publishLesson();
     mockPlan();
     mockWrite(runner());
     mockReview();
-
-    const draft = await draftLessonActivities({ lessonId: lesson.id });
-
-    if (draft.status !== "drafted") {
-      throw new Error("Expected a draft");
-    }
-
     await signInProposer();
 
-    // The draft reaches the proposal as JSON: the API's response, saved by the CLI to a file.
-    const proposal: unknown = await Response.json({
-      changes: [
-        { id: lesson.id, model: "Lesson", setPlan: draft.setPlan },
-        { id: lesson.id, model: "Lesson", setScreens: draft.setScreens },
-      ],
-      reason: draft.reason,
-    }).json();
+    const page = await draftStaffLessonActivities({ input: { lessonIds: [lesson.id] } });
 
-    const fix = await proposeFix(proposal);
+    if (page.status !== "ready" || !page.proposal) {
+      throw new Error(`Expected a proposal, got ${JSON.stringify(page)}`);
+    }
+
+    // The batch reaches the proposal as JSON: the API's response, saved by the CLI to a file.
+    const fix = await proposeFix(await Response.json(page.proposal).json());
 
     const { key } = await signInApprover();
 

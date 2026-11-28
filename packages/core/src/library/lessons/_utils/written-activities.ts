@@ -49,7 +49,8 @@ type CheckedActivity = Awaited<ReturnType<typeof checkWrittenActivities>>[number
 
 /**
  * Writes the activities, and once more those whose content or programs fail, with what failed.
- * Returns each planned screen with its stored content, or the problems that held it back.
+ * Returns each planned screen with its stored content, or the problems that held it back, and the
+ * model that wrote it, so a reviewer from another family reads it.
  */
 export async function writeCheckedActivities({
   context,
@@ -82,10 +83,11 @@ export async function writeCheckedActivities({
     written: first.data,
   });
 
+  const firstTry = checked.map((activity) => ({ ...activity, model: first.provenance.model }));
   const failed = checked.filter(({ problems }) => problems.length > 0);
 
   if (failed.length === 0) {
-    return { activities: checked, writerModel: first.provenance.model };
+    return firstTry;
   }
 
   const second = await write(
@@ -99,10 +101,8 @@ export async function writeCheckedActivities({
     written: second.data,
   });
 
-  return {
-    activities: checked.map(
-      (activity) => rechecked.find(({ index }) => index === activity.index) ?? activity,
-    ),
-    writerModel: first.provenance.model,
-  };
+  return firstTry.map((activity) => {
+    const again = rechecked.find(({ index }) => index === activity.index);
+    return again ? { ...again, model: second.provenance.model } : activity;
+  });
 }
