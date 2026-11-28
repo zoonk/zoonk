@@ -702,6 +702,30 @@ const rounded = (rounding: { mode: "down" | "nearest"; step: number; text: strin
     grading: { ...basis.grading, rounding: { citation, stage: "total", ...rounding } },
   });
 
+const mean = (weights: readonly number[]) => ({
+  ...basis,
+  grading: {
+    ...basis.grading,
+    combination: { citation, method: "mean" as const, step: null, text: "The mean" },
+    criteria: weights.map((weight, index) => ({
+      citation,
+      id: `criterion-${index}`,
+      points: 10,
+      text: "A criterion",
+      weight,
+    })),
+    language: null,
+    rounding: null,
+    zeroing: [],
+  },
+  lines: 30,
+  points: 10,
+});
+
+// The basis a weighted mean's drill was issued with before its weights were part of it.
+const ISSUED_MEAN_BASIS =
+  '[30,10,{"criteria":[10,10],"language":null,"rounding":null,"zeroing":[],"combination":{"method":"mean","step":null}}]';
+
 describe(getWritingTaskBasis, () => {
   it("keeps cosmetic changes out of the task compatibility key", () => {
     const revised = {
@@ -726,6 +750,25 @@ describe(getWritingTaskBasis, () => {
     expect(getWritingTaskBasis({ ...revised, points: 10 })).not.toBe(getWritingTaskBasis(basis));
 
     expect(isNumericWritingRubric(revised)).toBe(false);
+  });
+
+  it("tells apart a weighted mean's weights, which move its marks", () => {
+    expect(getWritingTaskBasis(mean([1, 3]))).not.toBe(getWritingTaskBasis(mean([1, 1])));
+    expect(getWritingTaskBasis(mean([1, 1]))).toBe(ISSUED_MEAN_BASIS);
+  });
+
+  it("keeps matching a basis stored in today's shape", () => {
+    const prompt = { ...mean([1, 1]), taskBasis: ISSUED_MEAN_BASIS };
+
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 1]) })).toBe(true);
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 3]) })).toBe(false);
+  });
+
+  it("reads an earlier drill's weights from the sheet it was issued with", () => {
+    const prompt = { ...mean([1, 3]), taskBasis: ISSUED_MEAN_BASIS };
+
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 3]) })).toBe(true);
+    expect(matchesWritingTaskBasis({ prompt, task: mean([1, 1]) })).toBe(false);
   });
 
   it("fingerprints the rounding rule by its numbers, not its wording", () => {

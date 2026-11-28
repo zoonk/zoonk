@@ -32,6 +32,21 @@ function readsAsNumbers(rounding: Basis["grading"]["rounding"]) {
 }
 
 /**
+ * A mean's weights for the criteria no award scale already states, as [points, weight]: absent
+ * while every one weighs 1, as an unweighted mean does.
+ */
+function meanWeights({ combination, criteria }: Basis["grading"]) {
+  const weights =
+    combination?.method === "mean"
+      ? criteria.flatMap(({ awards, points, weight }) => (awards ? [] : [[points, weight ?? 1]]))
+      : [];
+
+  return weights.some(([, weight]) => weight !== 1)
+    ? weights.toSorted(([a, x], [b, y]) => (a ?? -1) - (b ?? -1) || (x ?? 1) - (y ?? 1))
+    : null;
+}
+
+/**
  * The facts that change a mark. Fields a sheet states only when it has them are left out when
  * absent, so a sheet without them keeps the basis it was issued with.
  */
@@ -41,6 +56,8 @@ function getWritingGradingFacts(grading: Basis["grading"]) {
   const scales = criteria.flatMap(({ awards, id, weight }) =>
     awards ? [{ awards, id, weight }] : [],
   );
+
+  const weights = meanWeights(grading);
 
   return {
     criteria: criteria.map(({ points }) => points).toSorted((a, b) => (a ?? -1) - (b ?? -1)),
@@ -61,6 +78,7 @@ function getWritingGradingFacts(grading: Basis["grading"]) {
       })),
     }),
     ...(totalSuppressed && { totalSuppressed }),
+    ...(weights && { weights }),
   };
 }
 
@@ -184,6 +202,25 @@ function withGroupedZeroTriggers(saved: string | null): string | null {
   ]);
 }
 
+/**
+ * A basis stored before a mean's weights were part of it, with the weights of the sheet its
+ * prompt was issued with.
+ */
+function withIssuedWeights(saved: string | null, grading: Basis["grading"]): string | null {
+  const value = saved === null ? null : readTaskBasis(saved);
+  const weights = meanWeights(grading);
+
+  if (!weights || !Array.isArray(value)) {
+    return saved;
+  }
+
+  const [lines, points, facts] = value as unknown[];
+
+  return typeof facts === "object" && facts !== null && !("weights" in facts)
+    ? JSON.stringify([lines, points, { ...facts, weights }])
+    : saved;
+}
+
 export function matchesWritingTaskBasis({
   prompt,
   task,
@@ -204,7 +241,7 @@ export function matchesWritingTaskBasis({
     withoutStoredKind(prompt.taskBasis, rounding),
     legacyTaskBasis(prompt.taskBasis),
   ]
-    .map((saved) => withGroupedZeroTriggers(saved))
+    .map((saved) => withIssuedWeights(withGroupedZeroTriggers(saved), prompt.grading))
     .includes(taskBasis);
 }
 
