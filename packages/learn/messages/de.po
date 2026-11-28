@@ -13061,7 +13061,7 @@ msgstr "Aufnehmen"
 #: src/speech/record-cue.tsx
 msgctxt "NQsS5y"
 msgid "Speak now"
-msgstr ""
+msgstr "Sprich jetzt"
 
 #: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
@@ -13075,12 +13075,12 @@ msgstr "Wir bereiten alles vor…"
 #: src/speech/record-cue.tsx
 msgctxt "p9c99m"
 msgid "Say it after “Speak now”"
-msgstr ""
+msgstr "Sag es nach „Sprich jetzt“"
 
 #: src/speech/record-note.tsx
 msgctxt "pvPbx0"
 msgid "We may have missed the start. Say it again."
-msgstr ""
+msgstr "Der Anfang wurde vielleicht nicht aufgenommen. Sag es noch einmal."
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"

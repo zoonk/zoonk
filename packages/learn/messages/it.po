@@ -13061,7 +13061,7 @@ msgstr "Registra"
 #: src/speech/record-cue.tsx
 msgctxt "NQsS5y"
 msgid "Speak now"
-msgstr ""
+msgstr "Parla ora"
 
 #: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
@@ -13075,12 +13075,12 @@ msgstr "Stiamo preparando…"
 #: src/speech/record-cue.tsx
 msgctxt "p9c99m"
 msgid "Say it after “Speak now”"
-msgstr ""
+msgstr "Dillo dopo «Parla ora»"
 
 #: src/speech/record-note.tsx
 msgctxt "pvPbx0"
 msgid "We may have missed the start. Say it again."
-msgstr ""
+msgstr "Potremmo non aver registrato l’inizio. Ripetilo."
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"

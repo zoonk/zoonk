@@ -7,6 +7,7 @@
   "pronunciation_listen": "76ac75c032492fa7783783865e222450324c2d02fb6203521896c51b8b1980b8",
   "pronunciation_listen_slowly": "254bfbb9b2e6c5fbee2a5baf92e798ca2feddf6619186b38187dd1c5cbef6f73",
   "pronunciation_microphone_off": "150f4365cae63d4fdd09ff15cef841a0d3d953f6ef7f2dbe6ddc8f5b66b48b46",
+  "pronunciation_microphone_unavailable": "caa43abbaef00216f81c4874c4d1a2d37730e7b8486633b7958e193a8486346d",
   "pronunciation_no_words": "34696164ae65a1bda2253610b79f1d048e865ca40886c5f382efb6b18540c9b9",
   "pronunciation_nothing_said": "3b1992749193fa57ec2c4084365f6fbd2cfbbe2b6b4764ddc5d014996f8bb3fa",
   "pronunciation_options": "fc887e60c14f455ade6ddfeb18926e4d4510ccd7c9260246cbc688783d124cd1",
@@ -33,6 +34,7 @@
     <string name="pronunciation_options">Ekran seçeneklerini aç</string>
     <string name="pronunciation_skip">Atla</string>
     <string name="pronunciation_microphone_off">Kelimeyi söylemek için Ayarlar’dan Zoonk’a mikrofon izni ver. Şimdilik atlayabilirsin.</string>
+    <string name="pronunciation_microphone_unavailable">Mikrofon burada kullanılamıyor. Bu kelimeyi atlayabilirsin.</string>
     <string name="pronunciation_sounded_right">Doğru söyledin</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">“%1$s” duyduk</string>

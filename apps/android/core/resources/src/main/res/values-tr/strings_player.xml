@@ -101,6 +101,7 @@
   "player_lesson_ready": "037a345bbdd6e70ae8e9424b7b61d0faaf4fef9f3637e8d801b3217baed00e8e",
   "player_listen": "2c3a1e1d4744442bb0e25bb21d912496b7f443f7d9dd8d415bfb9b4554e32753",
   "player_microphone_is_blocked": "54d6475c830558a4e912fc07daf453612fbb75294e35e5a551669475887b6d85",
+  "player_microphone_unavailable": "b2253a5044f011a2d409b44329f8be06c849555174f0046ceff1c8a803959088",
   "player_next_lesson": "583121a7d9e9b9f39395ad7a06c87700ce3481b968ed7a23fd5b050ab4fb6554",
   "player_next_step_failed": "4ddec6a37ae918efcb2f45be3d5e408cebeec412b0bf2b9e8b24a133f752a720",
   "player_not_found_description": "2ef200e6d51d0748325fe27340f8ebea2ddb0e2743a63edd97e9e4a3728b7b6a",
@@ -351,6 +352,7 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sesli söyle</string>
     <string name="player_microphone_is_blocked">Mikrofon erişimi engellendi.</string>
+    <string name="player_microphone_unavailable">Mikrofonunu kullanamıyoruz, bu yüzden söyleyeceklerini yaz.</string>
     <string name="player_what_we_heard">Duyduklarımız</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (duyulmadı)</string>

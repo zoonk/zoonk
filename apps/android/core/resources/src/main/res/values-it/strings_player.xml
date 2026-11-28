@@ -101,6 +101,7 @@
   "player_lesson_ready": "ad050b38ce496c0c62c030dbf9f527d5cc5cc809d42db567200e808203a5f928",
   "player_listen": "d9dad9e7c623905d3013c143263066b9f6f0e26fd187df1695b182293095f454",
   "player_microphone_is_blocked": "48cb3a550626f38c2c2df59c3cd338cf6e90307ac79bdd8e06784b5965d038d0",
+  "player_microphone_unavailable": "643468b5597254ecf3d50e28b7e97f7ec6a48add8b63ce73e7208c891ce69897",
   "player_next_lesson": "6898b6896b43bea69e2c7208782df158a7062e36bb29cee631252c38c8a9be0f",
   "player_next_step_failed": "bf7ed9d3e6f84807950416c4becc571c2dbf90fe3254b2015619f6a2821ef224",
   "player_not_found_description": "b323dd1fe29350e05fd0a07a7e328cf7680a6d3b7a2da32db4fb14b69d65b51c",
@@ -354,6 +355,7 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Dillo invece a voce</string>
     <string name="player_microphone_is_blocked">Il microfono è bloccato.</string>
+    <string name="player_microphone_unavailable">Non riusciamo a usare il tuo microfono, quindi scrivi quello che diresti.</string>
     <string name="player_what_we_heard">Cosa abbiamo sentito</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (non rilevata)</string>

@@ -101,6 +101,7 @@
   "player_lesson_ready": "47e72635d6ae0169e2c8a38732c02976761eeeb99c49a07ad8b5f6dc52b83097",
   "player_listen": "07157dbc085270a7b63d641fd19cd41eaaaeed5d9fc5a7f8be169b65f63fa9bc",
   "player_microphone_is_blocked": "d285d91469688de0407a6e5896b06ea69958b2858ad3559b8e555b427f815df5",
+  "player_microphone_unavailable": "531b3588a65ad689f8506c85277fba681f7720ac5690062485fd18c78089e42e",
   "player_next_lesson": "11595f8f8fd088f7ab8ecc109101dae82551e7ed72225d8e35331f3b1f171226",
   "player_next_step_failed": "90105c9d7e343aefd8e2b116b65654edbaf1a21ae27e4ffebdee6b1e22cd6c21",
   "player_not_found_description": "f5a78dba3e1d80b5eb6789f033dbd8d66d06fa4bf448cb4fd18670a274c23a5a",
@@ -348,6 +349,7 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">声に出して答える</string>
     <string name="player_microphone_is_blocked">マイクの使用が許可されていません。</string>
+    <string name="player_microphone_unavailable">マイクが使えないため、話す内容を文字で入力してください。</string>
     <string name="player_what_we_heard">聞き取った内容</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s（聞き取れませんでした）</string>

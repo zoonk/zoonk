@@ -6,13 +6,15 @@
   "audio_did_not_play": "114379d12f7dd0d26f2899fce8a4dd9ad8aefa1f869dfc3b945c1055f49a5ada",
   "audio_getting_ready": "67f07e24b6fc6dba259570961ba82acb113da806e3f46b12cd7b29bfda2c5bc4",
   "audio_here_is_what_it_says": "3d023a62e9951d4ebad166624ee4b54fa9540da6aa1c0176818d37ce2958e750",
-  "audio_listening": "bca6f3ffe4f547398a94510432bd3dbac7d872908e217b2ee8e51e8d4edcd8bc",
+  "audio_microphone_getting_ready": "d07d88ebb9807bd127bd759a9f3237cbbf4260f4519739af130426795e4962d3",
   "audio_microphone_off_title": "31d9a5396e04209c3ec3aeb69813158053c536ebd83cd781396c89ba2232b016",
+  "audio_missed_start": "850f90593ce7640b70b9f25351f509ce951d799a4c029b3398437ca9d44233cb",
   "audio_no_speech": "edbb064c72e192a31655fe945e0accac9da3e0716a94f033c7ab40eede025e34",
   "audio_open_settings": "2455c82d9d0ca9677bc1ca41098608b541a8879899e9fc342c18624603680dbc",
   "audio_record": "0549bac6ef4a692f6a1fc52e2da296642de0781a85de07073bb93fbbcc505e5b",
   "audio_record_stop": "07337096018e9f5d206ed1221fe7ef8937003c09558c558793d3ecf810e3acdc",
-  "audio_say_it": "9f5f769759f1d992baf25c18052deff6a3d29cef2b37a12ac093ac154c9e267e",
+  "audio_say_after_cue": "c6887eafc05cbf92d95436b9522c74c1ed530adb2c1d1f7296db7f022d7502ed",
+  "audio_speak_now": "ac10b4b56078b31135d9b57237f187e15082e608f229a3366d522887746d01ca",
   "audio_stop": "22284f62dee2722b23680d45a15b6062cee7f832483e4172a6b30243fb52afed",
   "audio_try_again": "48117bede2a6ff6f0e24834f5e3775ac17ea38e969cd769a512df77bf6d77f4a",
   "audio_try_again_label": "678b9ed050de05dd19b0eb1f8d2e35f73d9e4066ee7ab59917baa89422fb228d"
@@ -27,15 +29,17 @@
     <string name="audio_here_is_what_it_says">%1$s Ecco cosa dice:</string>
     <string name="audio_try_again">Riprova</string>
     <string name="audio_record">Registra</string>
-    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. -->
     <string name="audio_record_stop">Interrompi</string>
-    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
-    <string name="audio_listening">Stiamo ascoltando… Tocca Interrompi per controllare.</string>
     <string name="audio_checking_slow">Stiamo ancora controllando. Ci stiamo mettendo più del solito.</string>
     <string name="audio_no_speech">Non abbiamo sentito nessuna parola. Riprova.</string>
     <string name="audio_check_failed">Questa volta non abbiamo potuto controllare la tua risposta. Riprova.</string>
-    <!-- “Record” is the label of the button that starts the recording. -->
-    <string name="audio_say_it">Tocca Registra e dillo ad alta voce</string>
+    <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
+    <string name="audio_say_after_cue">Dillo dopo «Parla ora»</string>
+    <string name="audio_microphone_getting_ready">Stiamo preparando…</string>
+    <!-- Shown the moment the microphone is on, telling the learner to start talking. -->
+    <string name="audio_speak_now">Parla ora</string>
+    <string name="audio_missed_start">Potremmo non aver registrato l’inizio. Ripetilo.</string>
     <string name="audio_microphone_off_title">Il microfono è disattivato</string>
     <string name="audio_open_settings">Apri Impostazioni</string>
 </resources>

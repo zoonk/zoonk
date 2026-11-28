@@ -13061,7 +13061,7 @@ msgstr "録音"
 #: src/speech/record-cue.tsx
 msgctxt "NQsS5y"
 msgid "Speak now"
-msgstr ""
+msgstr "今すぐ話してください"
 
 #: src/speech/record-cue.tsx
 #: src/today/today-block-row.tsx
@@ -13075,12 +13075,12 @@ msgstr "準備しています…"
 #: src/speech/record-cue.tsx
 msgctxt "p9c99m"
 msgid "Say it after “Speak now”"
-msgstr ""
+msgstr "「今すぐ話してください」のあとに話してください"
 
 #: src/speech/record-note.tsx
 msgctxt "pvPbx0"
 msgid "We may have missed the start. Say it again."
-msgstr ""
+msgstr "話し始めを認識できなかった可能性があります。もう一度話してください。"
 
 #: src/speech/speech-parts.tsx
 msgctxt "e__Yqd"

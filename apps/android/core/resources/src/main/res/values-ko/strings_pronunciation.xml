@@ -7,6 +7,7 @@
   "pronunciation_listen": "b92162f2d5e2ff9435ca627e1e4e72862ba80afa3dfb321dfb1b9876b7d1cdab",
   "pronunciation_listen_slowly": "905e07e7752d2569f01beeef3abc59404390f6d8aaac311a0449ad920fa43fec",
   "pronunciation_microphone_off": "c60b3bbfa95574ab8cea34a2d7e819abe731722aea9d10328d06b9b8ab1377b9",
+  "pronunciation_microphone_unavailable": "110516a33941965bc94017dbf4b59ca0ab69dc2f6ff088d6fb42b7d55e82f6af",
   "pronunciation_no_words": "d730ec4aa9237aaca2c05e279cb1b889a1cc044a15badc51c5258d4539531a9a",
   "pronunciation_nothing_said": "5437b96fa7f12d0cbeb759bb6424d321b64fde744852e0179297e0266f7addb1",
   "pronunciation_options": "ba81112a7962e0ad6c0c2c595dee2b9719609614013d51cb4539339eef4b722d",
@@ -33,6 +34,7 @@
     <string name="pronunciation_options">화면 옵션</string>
     <string name="pronunciation_skip">건너뛰기</string>
     <string name="pronunciation_microphone_off">단어를 소리 내어 말하려면 설정에서 Zoonk의 마이크 사용을 허용하세요. 지금은 건너뛰어도 돼요.</string>
+    <string name="pronunciation_microphone_unavailable">여기서는 마이크를 사용할 수 없어요. 이 단어는 건너뛰어도 돼요.</string>
     <string name="pronunciation_sounded_right">발음이 정확했어요</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
     <string name="pronunciation_heard">이렇게 들렸어요: “%1$s”</string>

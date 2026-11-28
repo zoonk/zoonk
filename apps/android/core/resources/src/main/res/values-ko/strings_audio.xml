@@ -6,13 +6,15 @@
   "audio_did_not_play": "b212106f729e6f53f96f467be8f436d73019227340af37fdd495d40ee8c0d9b8",
   "audio_getting_ready": "6a3cb635bc2c931d425df52230fac0f642a557532182b3fa61a3dc8c6556ccc6",
   "audio_here_is_what_it_says": "28b64a90050a314345a8c6bfeb9c3549ffb801cba0f54a4da588418d3e9f4363",
-  "audio_listening": "f624e50f1754294f8fdf909a84df0ddc628ab24af96d8ba7b9c3d355a012c4c6",
+  "audio_microphone_getting_ready": "83427f739e4417b9531f570521ad7f5d28626e73fc4c3a341dea4df967a6d428",
   "audio_microphone_off_title": "8bbbfa02fa1e291c64c1536ad2b82d940365a279e298e90354db96aaab291f39",
+  "audio_missed_start": "e03856193f20ca92e8b149647640ed0abc90d3f799ba147eede5d7e4fa89f26d",
   "audio_no_speech": "0bd0f847da0e1aaca98415ed733588e8598fe58fd1c5da2c4b34acbfdf0555dc",
   "audio_open_settings": "eea75fb9dbe49ddac9b9946d4e166e152c92eba47c6cccb7f2af796986284eb4",
   "audio_record": "214eb82843e16b3b63e71183c9bff02c1f74065e254ded9bf87eed3f187df17f",
   "audio_record_stop": "efc0ddcbb14e1301f15acf5957f1510ca00513920407c79480dcf9df84e1c89e",
-  "audio_say_it": "8c46ad9bbfd0227b7b509341c419b8f6cce46f6226e75c1d993c325f1d0737db",
+  "audio_say_after_cue": "b4ebc9305fbcd6301fcf750d98437db35fac455358538dd6781a48469b974024",
+  "audio_speak_now": "8e1f8ce7525794f552b6b8ff0b24831026b333df246a1d99e2a0a800f4cf27e6",
   "audio_stop": "d67e514aa54485349fb0493c4e742ce3b00cca0802bb2348ff6214e790233ae5",
   "audio_try_again": "0b419a9817a96e139104926a23074817aed1c19ff485be6c0f7d1cebb28b2b60",
   "audio_try_again_label": "8d421aa98cc257bb75f3fb0372f0611ab50e7f455423338bdaa50a185f8f18d7"
@@ -27,15 +29,17 @@
     <string name="audio_here_is_what_it_says">%1$s 음성 내용은 다음과 같아요:</string>
     <string name="audio_try_again">다시 시도</string>
     <string name="audio_record">녹음</string>
-    <!-- Button that stops recording the learner, a short label like a media player's Stop. A hint names it: "Tap Stop to check." -->
+    <!-- Button that stops recording the learner, a short label like a media player's Stop. -->
     <string name="audio_record_stop">중지</string>
-    <!-- Shown while recording the learner. "Stop" is the label of the button that stops recording, so use the same word as that button. -->
-    <string name="audio_listening">듣고 있어요… 확인하려면 중지를 누르세요.</string>
     <string name="audio_checking_slow">아직 확인하고 있어요. 평소보다 시간이 더 걸리고 있어요.</string>
     <string name="audio_no_speech">말소리가 들리지 않았어요. 다시 시도해 보세요.</string>
     <string name="audio_check_failed">이번에는 답을 확인하지 못했어요. 다시 시도해 보세요.</string>
-    <!-- “Record” is the label of the button that starts the recording. -->
-    <string name="audio_say_it">녹음 버튼을 누르고 소리 내어 말하세요</string>
+    <!-- Before recording. “Speak now” must match the cue shown when the microphone is on. -->
+    <string name="audio_say_after_cue">‘지금 말해 보세요’가 나오면 이어서 말해 보세요</string>
+    <string name="audio_microphone_getting_ready">준비하고 있어요…</string>
+    <!-- Shown the moment the microphone is on, telling the learner to start talking. -->
+    <string name="audio_speak_now">지금 말해 보세요</string>
+    <string name="audio_missed_start">처음 부분을 놓쳤을 수도 있어요. 다시 말해 보세요.</string>
     <string name="audio_microphone_off_title">마이크가 꺼져 있어요</string>
     <string name="audio_open_settings">설정 열기</string>
 </resources>
