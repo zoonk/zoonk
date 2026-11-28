@@ -53,9 +53,13 @@ const TWO_PAPERS_NOTICE = `NATIONAL TECHNICAL CERTIFICATE IN ACCOUNTING – 2027
 3.1 The examination consists of Paper 1 and Paper 2, taken on the same day with a one-hour break between them.
 3.2 Paper 1: 80 multiple-choice questions, 2 hours.
 3.3 Paper 2: 80 multiple-choice questions, 2 hours.
-3.4 Each paper covers the whole syllabus in Annex A. A candidate's result is the total of the marks in both papers, out of 160.
+3.4 A candidate's result is the total of the marks in both papers, out of 160.
 4 DATES
-4.1 The examination will be held on 14 June 2027.`;
+4.1 The examination will be held on 14 June 2027.
+
+ANNEX A – SYLLABUS
+Paper 1: 1 Double-entry bookkeeping. 2 Bank reconciliations. 3 Financial statements.
+Paper 2: 1 Cost accounting. 2 Budgeting. 3 Variance analysis.`;
 
 /** An invented notice whose written test states its lines but no scale or grading rule. */
 const NO_SCALE_NOTICE = `PREFEITURA MUNICIPAL DE VALE ALTO
