@@ -8,6 +8,7 @@ struct PronunciationWordView: View {
   /// So leaving the round stops the word's sound.
   let owner: AnyHashable
   var canListen = true
+  var cue: RecordCue? = nil
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -39,6 +40,8 @@ struct PronunciationWordView: View {
           .typeStyle(.note)
           .foregroundStyle(.mutedForeground)
       }
+
+      cue
     }
     .accessibilityElement(children: .contain)
   }

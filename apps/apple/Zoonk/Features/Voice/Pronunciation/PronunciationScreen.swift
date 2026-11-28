@@ -139,6 +139,8 @@ private struct PronunciationRoundView: View {
       }
     case .word(_, let state):
       if let word = round.current {
+        let canRecord = canRecord(state)
+
         QuestionSpread(
           readableWidth: PracticeLayout.readableWidth, spacing: 24, note: note(state)?.note,
           usesPracticeBar: true
@@ -149,13 +151,10 @@ private struct PronunciationRoundView: View {
 
           PronunciationWordView(
             word: word, language: reviews.language, owner: reviews.goalId,
-            canListen: !isTakeOn
+            canListen: !isTakeOn,
+            cue: canRecord ? RecordCue(recorder: recorder, isChecking: round.isPending) : nil
           )
           .id(word.id)
-
-          if case .ready = state, recorder.microphoneProblem == nil {
-            RecordCue(recorder: recorder, isChecking: round.isPending)
-          }
         } response: {
           wordStatus(state)
         } actions: {
@@ -168,7 +167,7 @@ private struct PronunciationRoundView: View {
           }
         }
         .taskOptions(
-          isShown: showsOptions(state),
+          isShown: canRecord,
           label: Text("Screen options", tableName: "Voice", comment: "The round's options menu")
         ) {
           skipButton(round)
@@ -186,7 +185,7 @@ private struct PronunciationRoundView: View {
     }
   }
 
-  private func showsOptions(_ state: PronunciationRound.WordState) -> Bool {
+  private func canRecord(_ state: PronunciationRound.WordState) -> Bool {
     if case .ready = state { return recorder.microphoneProblem == nil }
     return false
   }

@@ -82,7 +82,8 @@ fun SpeakCue(
             MaterialTheme.colorScheme.onSurface,
             visible = live,
             weight = FontWeight.Medium,
-        ) { if (live && !still) levels() else emptyList() }
+            still = still,
+        ) { if (live) levels() else emptyList() }
     }
 }
 
@@ -93,6 +94,7 @@ private fun CueTrack(
     trackColor: Color,
     visible: Boolean,
     weight: FontWeight? = null,
+    still: Boolean = false,
     levels: () -> List<Float>,
 ) {
     Row(
@@ -101,7 +103,7 @@ private fun CueTrack(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         CueLabel(label, labelColor, visible, weight)
-        Track(trackColor, levels)
+        Track(trackColor, still, levels)
     }
 }
 
@@ -119,20 +121,23 @@ private fun CueLabel(
 @Composable
 private fun RowScope.Track(
     color: Color,
+    still: Boolean,
     levels: () -> List<Float>,
 ) {
     Canvas(Modifier.weight(1f).height(TRACK_HEIGHT)) {
         val bar = BAR_WIDTH.toPx()
         val step = bar + BAR_GAP.toPx()
         val count = ((size.width + BAR_GAP.toPx()) / step).toInt()
-        val recent = levels().takeLast(count)
+        val samples = levels()
+        val recent = if (still) emptyList() else samples.takeLast(count)
+        val alpha = if (still && (samples.lastOrNull() ?: 0f) < SPEECH_LEVEL) 0.4f else 1f
         val quiet = count - recent.size
         for (slot in 0 until count) {
             val level = recent.getOrNull(slot - quiet) ?: 0f
             val height = (level * size.height).coerceAtLeast(bar)
             val start = slot * step
             val x = if (layoutDirection == LayoutDirection.Rtl) size.width - start - bar else start
-            drawRoundRect(color, Offset(x, (size.height - height) / 2), Size(bar, height), CornerRadius(bar / 2))
+            drawRoundRect(color, Offset(x, (size.height - height) / 2), Size(bar, height), CornerRadius(bar / 2), alpha = alpha)
         }
     }
 }
@@ -160,3 +165,6 @@ private val TRACK_HEIGHT = 24.dp
 private val BAR_WIDTH = 4.dp
 
 private val BAR_GAP = 4.dp
+
+// About -34 dBFS on the recorder's -45 to 0 dBFS peak scale, matching the web's nominal level.
+private const val SPEECH_LEVEL = 0.245f

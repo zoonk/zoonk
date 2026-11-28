@@ -485,8 +485,6 @@ private fun WordCard(
             )
         }
 
-        cue()
-
         failed?.takeIf { listens }?.let { (audio, rate) ->
             SpeechFailedNote(
                 language = language,
@@ -499,6 +497,8 @@ private fun WordCard(
         word.tip?.let {
             ItemLine(it, style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
         }
+
+        cue()
     }
 }
 

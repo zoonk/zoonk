@@ -5,6 +5,9 @@ struct RecordCue: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @ScaledMetric(relativeTo: .subheadline) private var height = 24.0
 
+  // A linear RMS of 0.02 is about -34 dBFS, or 0.32 on the recorder's -50 to 0 dBFS scale.
+  private static let speechLevel = 0.32
+
   enum Phase: Equatable {
     case before
     case gettingReady
@@ -49,6 +52,7 @@ struct RecordCue: View {
 
   var body: some View {
     let phase = phase
+    let liveLevels = phase == .live ? levels : []
 
     ZStack(alignment: .leading) {
       Text(
@@ -68,11 +72,13 @@ struct RecordCue: View {
       track(
         label: Text(
           "Speak now", tableName: "Voice",
-          comment: "Shown the moment the microphone is on: an instruction to start talking now, not a button."
+          comment:
+            "Shown the moment the microphone is on: an instruction to start talking now, not a button."
         )
         .fontWeight(.medium),
-        levels: phase == .live && !reduceMotion ? levels : [],
-        color: Color(.foreground)
+        levels: reduceMotion ? [] : liveLevels,
+        color: Color(.foreground),
+        trackOpacity: reduceMotion && (liveLevels.last ?? 0) < Self.speechLevel ? 0.4 : 1
       )
       .opacity(phase == .live ? 1 : 0)
     }
@@ -82,13 +88,16 @@ struct RecordCue: View {
     .sensoryFeedback(.impact(weight: .light), trigger: phase == .live) { _, isLive in isLive }
   }
 
-  private func track(label: some View, levels: [Double], color: Color) -> some View {
+  private func track(
+    label: some View, levels: [Double], color: Color, trackOpacity: Double = 1
+  ) -> some View {
     HStack(spacing: 12) {
       label
         .layoutPriority(1)
 
       LevelBars(levels: levels, color: color)
         .frame(height: height)
+        .opacity(trackOpacity)
     }
   }
 }
