@@ -92,12 +92,13 @@ describe("spoken answers", () => {
     expect(cue()).toBeNull();
   });
 
-  it("sends how long the microphone took to start, and asks again without it after a missed start", async () => {
+  it("sends how long the microphone took to start, and leaves it out of every later take after a missed start", async () => {
     allowMicrophone();
 
     const gradeSpokenAnswer = vi
       .fn<GradeSpokenAnswer>(() => hang())
-      .mockResolvedValueOnce({ status: "missedStart" });
+      .mockResolvedValueOnce({ status: "missedStart" })
+      .mockResolvedValueOnce({ status: "noSpeech" });
 
     openSpokenLesson({ gradeSpokenAnswer });
     await sayIt();
@@ -113,6 +114,10 @@ describe("spoken answers", () => {
     await expect.poll(() => gradeSpokenAnswer.mock.calls).toHaveLength(2);
     expect(gradeSpokenAnswer.mock.calls[1]?.[0]).not.toHaveProperty("micStartupMs");
     await expect.element(note).not.toBeInTheDocument();
+
+    await sayIt();
+    await expect.poll(() => gradeSpokenAnswer.mock.calls).toHaveLength(3);
+    expect(gradeSpokenAnswer.mock.calls[2]?.[0]).not.toHaveProperty("micStartupMs");
   });
 
   it("keeps the way back in place, turned off, while a recording is checked", async () => {

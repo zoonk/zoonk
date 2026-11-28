@@ -118,7 +118,7 @@ export function useStepGrading({
     [adapters, dispatch, ensureRun, keepGrade, resendUnsaved, state.helped, state.stepStartedAt],
   );
 
-  // After a missed start, always grade the next take for this step as heard.
+  // After a missed start, grade every later take on this step as heard.
   const missedStartRef = useRef<string | null>(null);
 
   const submitSpokenAnswer = useCallback(
@@ -144,7 +144,6 @@ export function useStepGrading({
       dispatch({ stepId, type: "checkStarted" });
       const { gradeSpokenAnswer } = adapters;
       const measured = micStartupMs !== undefined && missedStartRef.current !== stepId;
-      missedStartRef.current = null;
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.spoken, () =>
         keepGrade({

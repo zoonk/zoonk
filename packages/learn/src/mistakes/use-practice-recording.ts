@@ -54,7 +54,7 @@ export function usePracticeRecording({
     (RecordingInput & { attemptId: string; index: number; practiceDurationMs: number }) | null
   >(null);
 
-  // After a missed start, always grade the next take for this mistake as heard.
+  // After a missed start, grade every later take for this mistake as heard.
   const missedStartAt = useRef<number | null>(null);
 
   const sendRecording = async (input: NonNullable<typeof recording.current>) => {
@@ -104,7 +104,6 @@ export function usePracticeRecording({
     record: record
       ? ({ micStartupMs, ...input }: RecordingInput) => {
           const measured = micStartupMs !== undefined && missedStartAt.current !== index;
-          missedStartAt.current = null;
 
           const pending = {
             ...input,
