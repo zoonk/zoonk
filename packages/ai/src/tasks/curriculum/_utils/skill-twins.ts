@@ -9,7 +9,7 @@ import {
   removeCycles,
   sortSkillsTopologically,
 } from "./order-skill-graph";
-import { toNameWords } from "./skill-graph-checks";
+import { toNameWords } from "./skill-name-keys";
 
 /** So a word's plural or other ending reads the same ("analysis" and "analyses"). */
 const STEM_LENGTH = 5;

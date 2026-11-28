@@ -2,8 +2,8 @@ import { normalizeString } from "@zoonk/utils/string";
 import { toPlainLine } from "@zoonk/utils/text-repairs";
 import { type ExamOutline, placeInExam } from "../exam-outline";
 import { toExamWeight } from "./exam-weight";
-import { toSkillNameKey } from "./skill-graph-checks";
 import { toSkillLessons } from "./skill-lessons";
+import { toSkillNameKey } from "./skill-name-keys";
 
 export type CoverageReference = { title: string; text: string };
 

@@ -12,8 +12,8 @@ import {
 import { toExamWeight } from "./exam-weight";
 import { fitLessonBudget } from "./lesson-budget";
 import { orderSkillGraph } from "./order-skill-graph";
-import { toSkillIdentityKey, toSkillNameKey } from "./skill-graph-checks";
 import { toSkillLessons } from "./skill-lessons";
+import { toSkillIdentityKey, toSkillNameKey } from "./skill-name-keys";
 
 type RawSkillGraphSkill = {
   area: string;
