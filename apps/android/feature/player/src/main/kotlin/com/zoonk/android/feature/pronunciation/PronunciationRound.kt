@@ -108,6 +108,10 @@ class PronunciationRound(
                         VoiceIssue.NoSpeech
                     }
 
+                    GradeOutcome.MissedStart -> {
+                        VoiceIssue.MissedStart
+                    }
+
                     is GradeOutcome.Limited -> {
                         VoiceIssue.Limited(outcome.limit)
                     }

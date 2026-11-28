@@ -90,6 +90,9 @@ class VoiceAnswerModel(
     /** The learner refused the microphone on a screen that then answers another way, kept through a reclaimed process. */
     var blocked by handle.saveable { mutableStateOf(false) }
 
+    /** Once the server said a take missed its start, the screen's takes go without their startup time, so it says so once. */
+    private var missedStart = false
+
     internal fun record() {
         issue.clear()
         recorder.start(::check)
@@ -98,13 +101,28 @@ class VoiceAnswerModel(
     internal fun check(recording: VoiceRecording) {
         checking = true
         val started = visit.number
+        val sent = if (missedStart) recording.withoutMicStartup() else recording
         viewModelScope.launch {
             try {
-                when (val outcome = grade(recording)) {
-                    is GradeOutcome.Graded, GradeOutcome.Obsolete -> Unit
-                    GradeOutcome.NoSpeech -> issue.send(started, VoiceIssue.NoSpeech)
-                    is GradeOutcome.Limited -> issue.send(started, VoiceIssue.Limited(outcome.limit))
-                    GradeOutcome.Failed -> issue.send(started, VoiceIssue.Failed)
+                when (val outcome = grade(sent)) {
+                    is GradeOutcome.Graded, GradeOutcome.Obsolete -> {}
+
+                    GradeOutcome.NoSpeech -> {
+                        issue.send(started, VoiceIssue.NoSpeech)
+                    }
+
+                    GradeOutcome.MissedStart -> {
+                        missedStart = true
+                        issue.send(started, VoiceIssue.MissedStart)
+                    }
+
+                    is GradeOutcome.Limited -> {
+                        issue.send(started, VoiceIssue.Limited(outcome.limit))
+                    }
+
+                    GradeOutcome.Failed -> {
+                        issue.send(started, VoiceIssue.Failed)
+                    }
                 }
             } finally {
                 checking = false
@@ -119,6 +137,8 @@ class VoiceAnswerModel(
 
 sealed interface VoiceIssue {
     data object NoSpeech : VoiceIssue
+
+    data object MissedStart : VoiceIssue
 
     data object Failed : VoiceIssue
 

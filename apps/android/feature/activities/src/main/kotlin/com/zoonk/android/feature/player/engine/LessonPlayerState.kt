@@ -21,6 +21,8 @@ sealed interface CheckIssue {
     ) : CheckIssue
 
     data object NoSpeech : CheckIssue
+
+    data object MissedStart : CheckIssue
 }
 
 /** A saved answer: [answer] is null for a recording, whose words are in [result]. */

@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -58,7 +59,7 @@ class VoiceAnswerRecorderTest {
         }
 
         rule.onNodeWithText("Record").performClick()
-        rule.onNodeWithText("Tap Record and say it out loud").assertDoesNotExist()
+        rule.onNodeWithText(IDLE_CUE, useUnmergedTree = true).assertDoesNotExist()
         rule.onNodeWithText("Stop").assertDoesNotExist()
 
         rule.runOnIdle {
@@ -66,7 +67,7 @@ class VoiceAnswerRecorderTest {
             val request = shadowOf(rule.activity).lastRequestedPermission
             rule.activity.activityResultRegistry.dispatchResult(request.requestCode, true)
         }
-        rule.onNodeWithText("Stop").assertIsDisplayed()
+        rule.waitUntilExactlyOneExists(hasText("Stop"))
     }
 
     @Test
@@ -80,6 +81,7 @@ class VoiceAnswerRecorderTest {
         }
         val record = rule.onNodeWithText("Record").fetchSemanticsNode().id
         rule.onNodeWithText("Record").performClick()
+        rule.waitUntilExactlyOneExists(hasText("Stop"))
         // One button through both states, so TalkBack keeps its focus on it.
         assertEquals(record, rule.onNodeWithText("Stop").fetchSemanticsNode().id)
 
@@ -88,7 +90,7 @@ class VoiceAnswerRecorderTest {
         shown = true
 
         rule.onNodeWithText("Record").assertIsDisplayed()
-        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText(IDLE_CUE, useUnmergedTree = true).assertIsDisplayed()
     }
 
     /** The microphone turned off for good shows how to turn it on; back from Settings with it on, Record returns. */
@@ -118,10 +120,34 @@ class VoiceAnswerRecorderTest {
         fun refused(code: String) = MutationResult.Failed(ApiError.Unavailable, code, status = 429)
         assertEquals(GradeOutcome.Graded(1), MutationResult.Done(1).toGradeOutcome())
         assertEquals(GradeOutcome.NoSpeech, refused("NO_SPEECH").toGradeOutcome())
+        assertEquals(GradeOutcome.MissedStart, refused("MISSED_START").toGradeOutcome())
         val slowed = refused("SLOW_DOWN").toGradeOutcome() as GradeOutcome.Limited
         assertEquals(60, (slowed.limit as Limit.SlowDown).retryAfterSeconds)
         assertEquals(GradeOutcome.Failed, MutationResult.Failed(ApiError.Network).toGradeOutcome())
         assertEquals(GradeOutcome.Obsolete, MutationResult.Obsolete.toGradeOutcome())
+    }
+
+    /** After the server says a take missed its start, the screen's next takes are graded as heard, so it says it once. */
+    @Test
+    fun aTakeAfterAMissedStartGoesWithoutItsStartupTime() {
+        val sent = mutableListOf<Long?>()
+        lateinit var model: VoiceAnswerModel
+        rule.setContent {
+            ZoonkTheme {
+                model =
+                    voiceAnswerModel(KEY) { recording ->
+                        sent += recording.micStartupMs
+                        GradeOutcome.MissedStart
+                    }
+                Recorder(model, rememberAppNavigator())
+            }
+        }
+        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)) }
+        rule.onNodeWithText("We may have missed the start. Say it again.").assertIsDisplayed()
+        rule.runOnIdle { model.check(VoiceRecording(ByteArray(8), 1_200, micStartupMs = 900)) }
+        rule.waitForIdle()
+
+        assertEquals(listOf(900L, null), sent)
     }
 
     /** The recorder leaves (another screen over it, the step left) while its take is graded, its view model kept. */
@@ -167,11 +193,12 @@ class VoiceAnswerRecorderTest {
         rule.runOnIdle { navigator.back() }
 
         rule.onNodeWithText("Create a free account").assertDoesNotExist()
-        rule.onNodeWithText("Tap Record and say it out loud").assertIsDisplayed()
+        rule.onNodeWithText(IDLE_CUE, useUnmergedTree = true).assertIsDisplayed()
     }
 
     private companion object {
         const val KEY = "microphone"
+        const val IDLE_CUE = "Say it after “Speak now”"
     }
 }
 
@@ -186,6 +213,7 @@ internal fun Recorder(
         return
     }
     Column {
+        SpeakCue(model.recorder, model.checking)
         VoiceAnswerButton(model)
         VoiceAnswerLimit(model, navigator)
         recordNote(model)?.invoke()
