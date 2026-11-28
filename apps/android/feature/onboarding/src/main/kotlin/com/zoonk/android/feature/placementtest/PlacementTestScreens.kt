@@ -218,15 +218,15 @@ internal fun UpNext(
 }
 
 /**
- * Lessons a test started the learner past, on the course's line: the progress blue, as the language result's level
- * meters show what the learner reached.
+ * Lessons behind the learner on the course's line, started past or studied: the progress blue, as the language result's
+ * level meters show what the learner reached.
  */
 @Composable
 private fun passedFill(): Color = MaterialTheme.colorScheme.tertiary
 
 /**
  * The course as one line (main's `CourseLine`): its chapters in plan order, each as wide as its lessons, the lessons
- * started past filled and a ring on the chapter the learner starts in. With several areas the skipped chapters need not
+ * behind the learner (started past or already studied) filled and a ring on the chapter the learner starts in. With several areas the skipped chapters need not
  * be one run, and the start can sit before chapters with skipped lessons; each chapter draws its own share.
  */
 @Composable
@@ -234,7 +234,7 @@ private fun CourseLine(course: PlacementTestPhase.Course) {
     val passed = passedFill()
     MeterParts(
         course.chapters.map { chapter ->
-            val share = if (chapter.lessons > 0) chapter.skipped.toFloat() / chapter.lessons else 0f
+            val share = if (chapter.lessons > 0) (chapter.done + chapter.skipped).toFloat() / chapter.lessons else 0f
             MeterPart(
                 fill =
                     when {

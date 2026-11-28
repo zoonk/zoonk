@@ -250,7 +250,7 @@ class PlacementTestViewModelTest {
                         listOf(
                             PlacementTestPhase.Chapter(2, 2, start = false),
                             PlacementTestPhase.Chapter(3, 2, start = true),
-                            PlacementTestPhase.Chapter(4, 0, start = false),
+                            PlacementTestPhase.Chapter(4, 0, start = false, done = 1),
                         ),
                 ),
                 result.course,
@@ -462,8 +462,8 @@ class PlacementTestViewModelTest {
         const val RESULT =
             """{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-27T14:00:00Z","lessonsSkipped":4,
             "changeId":"5e6f7a8b-9c0d-4e1f-8a2b-3c4d5e6f7a8b","chapter":"Why prices move",
-            "course":{"lessons":9,"chapters":[{"lessons":2,"skipped":2,"start":false},{"lessons":3,"skipped":2,"start":true},
-            {"lessons":4,"skipped":0,"start":false}]},
+            "course":{"lessons":9,"chapters":[{"done":0,"lessons":2,"skipped":2,"start":false},{"done":0,"lessons":3,"skipped":2,"start":true},
+            {"done":1,"lessons":4,"skipped":0,"start":false}]},
             "nextLesson":{"id":"1a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","title":"News, results and expectations","estimatedMinutes":5,
             "chapter":"Why prices move"}}"""
 

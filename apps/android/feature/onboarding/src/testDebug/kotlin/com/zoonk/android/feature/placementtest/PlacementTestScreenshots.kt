@@ -233,9 +233,9 @@ class PlacementTestScreenshots(
                     lessons = 9,
                     chapters =
                         listOf(
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = true),
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = true),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
                         ),
                 )
             PlacementResult(
@@ -254,11 +254,11 @@ class PlacementTestScreenshots(
                     lessons = 14,
                     chapters =
                         listOf(
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 3, start = false),
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = true),
-                            PlacementResultCourseChaptersInner(lessons = 2, skipped = 2, start = false),
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 1, start = false),
-                            PlacementResultCourseChaptersInner(lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 3, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = true),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 2, skipped = 2, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 1, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
                         ),
                 )
             PlacementResult(
@@ -267,6 +267,45 @@ class PlacementTestScreenshots(
                 onAction = {},
                 undo = undo(),
             )
+        }
+
+    /**
+     * A learner who studied the first chapters before taking the test from the plan: those lessons fill the line too, so
+     * nothing reads as a gap before the start.
+     */
+    @Test
+    fun resultStudiedBeforeTheStart() =
+        shoot("course-result-studied-before-start", sitting = Sitting()) {
+            val course =
+                PlacementResultCourse(
+                    lessons = 12,
+                    chapters =
+                        listOf(
+                            PlacementResultCourseChaptersInner(done = 3, lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(done = 2, lessons = 3, skipped = 1, start = false),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 1, start = true),
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 0, start = false),
+                        ),
+                )
+            PlacementResult(result = placementResultOf(lessonsSkipped = 2, course = course).phase(), action = "Start lesson", onAction = {})
+        }
+
+    /** A saved result opened after more study: lessons studied past the start fill their chapters as well. */
+    @Test
+    fun resultStudiedAfterTheResult() =
+        shoot("course-result-studied-after", sitting = Sitting()) {
+            val course =
+                PlacementResultCourse(
+                    lessons = 12,
+                    chapters =
+                        listOf(
+                            PlacementResultCourseChaptersInner(done = 0, lessons = 3, skipped = 3, start = false),
+                            PlacementResultCourseChaptersInner(done = 2, lessons = 3, skipped = 0, start = true),
+                            PlacementResultCourseChaptersInner(done = 3, lessons = 3, skipped = 0, start = false),
+                            PlacementResultCourseChaptersInner(done = 1, lessons = 3, skipped = 0, start = false),
+                        ),
+                )
+            PlacementResult(result = placementResultOf(lessonsSkipped = 3, course = course).phase(), action = "Done", onAction = {})
         }
 
     /** A result from before the plan existed: where the learner starts, and the way on. */

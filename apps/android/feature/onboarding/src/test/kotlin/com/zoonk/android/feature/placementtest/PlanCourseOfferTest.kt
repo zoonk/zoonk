@@ -121,8 +121,8 @@ class PlanCourseOfferTest {
         const val RESULT =
             """{"attemptId":"0a1b2c3d-4e5f-4a6b-8c7d-8e9f0a1b2c3d","finishedAt":"2026-11-18T14:00:00Z","lessonsSkipped":4,
               "changeId":$CHANGE,"chapter":"Why prices move",
-              "course":{"lessons":9,"chapters":[{"lessons":2,"skipped":2,"start":false},{"lessons":2,"skipped":2,"start":false},
-              {"lessons":2,"skipped":0,"start":true},{"lessons":3,"skipped":0,"start":false}]},
+              "course":{"lessons":9,"chapters":[{"done":0,"lessons":2,"skipped":2,"start":false},{"done":0,"lessons":2,"skipped":2,"start":false},
+              {"done":0,"lessons":2,"skipped":0,"start":true},{"done":0,"lessons":3,"skipped":0,"start":false}]},
               "nextLesson":{"id":"6f7a8b9c-0d1e-4f2a-8b3c-4d5e6f7a8b9c","title":"News, results and expectations","estimatedMinutes":5,
               "chapter":"Why prices move"}}"""
 
