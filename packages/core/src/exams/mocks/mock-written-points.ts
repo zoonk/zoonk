@@ -1,14 +1,12 @@
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { namesMatch } from "../_utils/name-match";
 import {
-  scaleWritingRange,
-  scoreWrittenParts,
-  sumRanges,
-  writtenStanding,
-} from "../scoring/written-points";
+  type CalibratedWritingGrade,
+  calibratedWrittenStanding,
+} from "../scoring/calibrated-written-standing";
+import { scaleWritingRange, scoreWrittenParts, sumRanges } from "../scoring/written-points";
 import { type MockConditions, type MockResult } from "./mock-contract";
 import { type MockPoints } from "./mock-points-contract";
-import { type MockEssayView } from "./mock-view-contract";
 import { type MockEssayCandidate, getDayWrittenParts } from "./written-parts";
 
 export function snapshotMockWriting({
@@ -31,20 +29,40 @@ export function snapshotMockWriting({
       ...part,
       tasks: part.tasks.map((task) => ({
         ...task,
+        count: tasks.find(({ key }) => key === task.key)?.count,
         itemIds: essays.filter((essay) => essay.taskKey === task.key).map((essay) => essay.itemId),
       })),
     })),
   };
 }
 
+export function mockWrittenStanding({
+  grades,
+  part,
+}: {
+  grades: ReadonlyMap<string, CalibratedWritingGrade>;
+  part: NonNullable<MockConditions["writtenParts"]>[number];
+}) {
+  const itemIds = part.tasks.flatMap((task) => task.itemIds);
+
+  const complete =
+    part.tasks.every(({ count, itemIds: ids }) => count === ids.length) &&
+    new Set(itemIds).size === itemIds.length;
+
+  return calibratedWrittenStanding({
+    grades: complete ? itemIds.map((id) => grades.get(id) ?? null) : [],
+    part,
+  });
+}
+
 export function withMockWrittenPoints({
   conditions,
-  essays,
+  grades,
   numericBlankItems,
   result,
 }: {
   conditions: MockConditions;
-  essays: readonly MockEssayView[];
+  grades: ReadonlyMap<string, CalibratedWritingGrade>;
   numericBlankItems: ReadonlySet<string>;
   result: MockResult | null;
 }): MockResult | null {
@@ -52,21 +70,16 @@ export function withMockWrittenPoints({
     return result;
   }
 
-  const byItem = new Map(essays.map((essay) => [essay.itemId, essay]));
-
   const written = conditions.writtenParts.map((part) => {
-    const tasks = part.tasks.map(({ itemIds, ...task }) => {
+    const tasks = part.tasks.map(({ count: _count, itemIds, ...task }) => {
       const shares = sumRanges(
         itemIds.map((id) => {
           if (numericBlankItems.has(id)) {
             return { high: 0, low: 0 };
           }
 
-          const grade = byItem.get(id)?.grade;
-
-          return grade && "kind" in grade && grade.kind === "points"
-            ? scaleWritingRange(grade.total, 1 / grade.max)
-            : null;
+          const grade = grades.get(id);
+          return grade ? scaleWritingRange(grade.total, 1 / grade.max) : null;
         }),
       );
 
@@ -79,7 +92,7 @@ export function withMockWrittenPoints({
     });
 
     const range = sumRanges(tasks.map((task) => task.range));
-    return { ...part, range, standing: writtenStanding({ ...part, range }), tasks };
+    return { ...part, range, standing: mockWrittenStanding({ grades, part }), tasks };
   });
 
   const points: MockPoints = result.points ?? {
@@ -100,10 +113,7 @@ export function withMockWrittenPoints({
       ...points,
       unjudged: points.unjudged.filter(
         (minimum) =>
-          !written.some(
-            (part) =>
-              minimum.name !== null && namesMatch(part.name, minimum.name) && part.range !== null,
-          ),
+          !written.some((part) => minimum.name !== null && namesMatch(part.name, minimum.name)),
       ),
       written,
     },

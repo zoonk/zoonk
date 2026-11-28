@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "La tua risposta e quella corretta"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3253,11 +3252,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "Avanzato"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "Il tuo tema"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -5225,6 +5219,7 @@ msgstr "Affronta la tua prima sfida settimanale"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5242,21 +5237,6 @@ msgid "Not measured yet"
 msgstr "Non ancora misurato"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "Sopra la soglia minima di {minimum} punti"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "{points} punti sotto la soglia minima di {minimum}"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "Quasi alla soglia minima di {minimum} punti"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "{part} deve ottenere il {share} dei suoi punti, a prescindere dagli altri punteggi."
@@ -5267,9 +5247,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "{part} deve ottenere {minimum} punti, a prescindere dagli altri punteggi."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "Al di sotto della soglia minima per superare la prova"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "Probabilmente sotto la soglia minima per superare l’esame"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8518,6 +8498,11 @@ msgstr "Le prove oggettive richiedono in totale {unit, select, percent {il {mini
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
 msgstr "Il minimo per {name} è {unit, select, percent {il {minimum} dei punti disponibili} other {{value, plural, one {# punto} other {# punti}}}}, ma questa parte non è inclusa nella simulazione."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "Stima del punteggio non ancora disponibile"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14492,6 +14477,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "Il bando d’esame non specifica quanti punti vale ogni criterio."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "Valutazione per livello. Per questa risposta non è ancora disponibile una stima del punteggio."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "Criteri e punteggi dal bando d’esame."
@@ -14698,3 +14688,23 @@ msgstr "Elimina nomi, firme e segni che non fanno parte della risposta."
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "Elimina tutto ciò che può identificarti"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "Probabilmente sopra i {minimum} punti necessari"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "Probabilmente sotto i {minimum} punti necessari"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "Potrebbe essere sopra o sotto i {minimum} punti necessari"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "Non è ancora possibile dire se raggiunge i {minimum} punti necessari"

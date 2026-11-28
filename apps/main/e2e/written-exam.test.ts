@@ -36,7 +36,7 @@ test.describe("Written exam practice", () => {
       );
 
       await field.fill(DRAFT);
-      await expect(page.getByText("about 2 of 30 lines")).toBeVisible();
+      await expect(page.getByText("about 1 of 30 lines")).toBeVisible();
       await saved;
 
       await expect

@@ -91,7 +91,15 @@ async function writingRun(input: Input) {
 function mockPromptWriter() {
   vi.mocked(writeWritingPrompt).mockImplementation(async ({ input }) =>
     taskResult({
-      aspects: [{ criterionId: "reason", description: "Gives a reason", points: null }],
+      aspects: [
+        {
+          criterionId: "reason",
+          description: "Gives a reason",
+          kind: "definitePoint",
+          points: null,
+          steps: null,
+        },
+      ],
       assessedSkillIds: input.skills.map(({ id }) => id),
       context: null,
       criteria: [{ id: "reason", name: "Reasons", points: null }],

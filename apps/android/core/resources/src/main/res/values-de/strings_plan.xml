@@ -512,16 +512,17 @@
   "plan_why_phase_dates_later": "6812f1dc23b34cc3f7142eadeb26fbb475f833c8999fd9d50c3108b413c87991",
   "plan_why_phase_end_later": "c89d5afd200e585cb8daee1092de648d7d22123225860b90e55f99b0cd32f16f",
   "plan_why_phase_end_off_rest": "d1b7c316bc2e2b587f32107546bc4b3740b0d3759cf6f76dcab4a47915a1d7e4",
-  "plan_written_above_minimum": "3e8975e0634ea7eb1b75b3474a858a64168c0ccb6a1132f43ea2ffae6b651448",
+  "plan_written_above_minimum": "8dc43362ff7990413471cca377a62e63675e1ee0b7944e1fe847146ea4692fd2",
   "plan_written_asks_for": "85a37f4e1bf969e9abba1c9928c6ea151b9a63584fc28378fd225b1dad6f37e0",
   "plan_written_asks_for_share": "610a849744c9ffda2d5ecf2a625115b17c8d1e225b13b20a49bd2c5677277dc9",
-  "plan_written_below_minimum": "c053bdd75b3a2346a266118cf3ec2739d32551cd6f4c5dc36bf82a93d153e7f6",
-  "plan_written_close_to_minimum": "ca5457f84698b5fdfcc67cb9c8f53105d9c7090ab9d36af9f3776e6221d09a57",
+  "plan_written_below_minimum": "fe50e4e31b2394b112109cc6ef9fffa109767bef31c0b17a57f461b06b2357be",
+  "plan_written_cant_say": "a1018cf4bb6322187732f1977b41e1fdd9fa21e3ef7197c9b91baeb64a877278",
+  "plan_written_close_to_minimum": "bb4d0637f068a9415cf965618de97be1ccc4aa8b5595b596394b400e4532dd6b",
+  "plan_written_likely_below": "1696087eee53599c516c3308ab4f76d0051d0df2930de5b851329d48ae1f453c",
   "plan_written_not_measured": "b50490f4a08691adf36c66a4ab4d283a51a52bb55c68b5a744371c2e541db71c",
   "plan_written_not_measured_half": "815e4db0aedbbf608cee2ebd1a6faeef4fd467e39d299e74489456c9b8c4dd56",
   "plan_written_not_measured_share": "06ad2d63475c0adabc5a00b526c17bb52ef12d3d6ac2da7fc6dce043a0c93e55",
   "plan_written_objective": "ae4ce54b153d5337216fa665c770969c8b9b4ad6257a51d4d9e74f38b39152a9",
-  "plan_written_points_below": "251d6d3a1e2b17dac277b297c591cb801063eb73fde7597813f3702c1449ae97",
   "plan_you_are_here_suffix": "e684aeae685654ec93b7579a2c61dd59d8fd0d657e6f108c416fa0932fce3402",
   "plan_your_level": "8638f4b2cdfc8f8c7c9acaeb033f2a1c51db01a47e0f2f4c50bd4d5649bcf0df",
   "plan_your_pace": "84cf20d28a7d5542b675bf888be5f7a06cb229ec3c93fce19bcddc66831e0709",
@@ -1367,14 +1368,15 @@
     <string name="plan_call_not_in_plan">Das Gespräch ist nicht in deinem Plan</string>
     <string name="plan_outside_past_basics">Übersprungen · du kennst die Grundlagen schon</string>
     <string name="plan_outside_skipped_base">Übersprungen · deine Entscheidung</string>
-    <string name="plan_written_below_minimum">Unter dem Mindestwert zum Bestehen</string>
+    <string name="plan_written_below_minimum">Wahrscheinlich unter der Mindestpunktzahl zum Bestehen</string>
     <string name="plan_written_asks_for">Für %1$s brauchst du %2$s Punkte, unabhängig von deinen anderen Ergebnissen.</string>
     <string name="plan_written_asks_for_share">Für %1$s brauchst du %2$s der Punkte, unabhängig von deinen anderen Ergebnissen.</string>
     <string name="plan_written_not_measured">%1$s wurde noch nicht ermittelt.</string>
     <string name="plan_written_not_measured_half">%1$s macht die Hälfte deiner Gesamtpunktzahl aus und wurde noch nicht ermittelt.</string>
     <string name="plan_written_not_measured_share">%1$s macht %2$s deiner Gesamtpunktzahl aus und wurde noch nicht ermittelt.</string>
     <string name="plan_written_objective">Objektiver Test</string>
-    <string name="plan_written_above_minimum">Über den erforderlichen %1$s Punkten</string>
-    <string name="plan_written_points_below">Es fehlen %1$s Punkte bis zu den erforderlichen %2$s</string>
-    <string name="plan_written_close_to_minimum">Knapp an den erforderlichen %1$s Punkten</string>
+    <string name="plan_written_above_minimum">Wahrscheinlich mehr als die benötigten %1$s Punkte</string>
+    <string name="plan_written_likely_below">Wahrscheinlich unter den benötigten %1$s Punkten</string>
+    <string name="plan_written_close_to_minimum">Die Punktzahl könnte über oder unter den benötigten %1$s Punkten liegen</string>
+    <string name="plan_written_cant_say">Es lässt sich noch nicht sagen, ob die benötigten %1$s Punkte erreicht werden</string>
 </resources>

@@ -1,0 +1,271 @@
+{
+  "modelId": "anthropic/claude-haiku-5.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "[2.1 fields FAIL] [2.1 cited 50/50]",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[2.1 fields FAIL] [2.1 cited 50/50]",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[2.1 fields FAIL] [2.1 cited 50/50]",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": {
+            "scales": [
+              [
+                0,
+                40,
+                80,
+                120,
+                160,
+                200
+              ],
+              [
+                0,
+                40,
+                80,
+                120,
+                160,
+                200
+              ],
+              [
+                0,
+                40,
+                80,
+                120,
+                160,
+                200
+              ],
+              [
+                0,
+                40,
+                80,
+                120,
+                160,
+                200
+              ],
+              [
+                0,
+                40,
+                80,
+                120,
+                160,
+                200
+              ]
+            ],
+            "total": true,
+            "zeroKinds": [
+              "blank",
+              "offTopic",
+              "tooFewLines",
+              "wrongForm"
+            ]
+          }
+        },
+        "id": "enem-2026-redacao-pt-2",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
+            }
+          ],
+          "exam": "ENEM",
+          "tasks": [
+            {
+              "description": "Texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre tema proposto",
+              "id": "2.1",
+              "lines": 30,
+              "points": 1000,
+              "section": "1º dia"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "[1.1 fields FAIL] [1.1 cited 6/6] [1.2 fields FAIL] [1.2 cited 5/5]",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[1.1 fields FAIL] [1.1 cited 6/6] [1.2 fields FAIL] [1.2 cited 5/5]",
+          "kind": "minorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "[1.1 fields FAIL] [1.1 cited 6/6] [1.2 fields FAIL] [1.2 cited 5/5]",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "1.1": {
+            "criterionPoints": [
+              5
+            ],
+            "language": null,
+            "rounding": false,
+            "scales": [
+              null
+            ],
+            "total": true,
+            "zeroKinds": [
+              "blank",
+              "offTopic",
+              "wrongForm"
+            ],
+            "zeroing": true
+          },
+          "1.2": {
+            "criterionPoints": [
+              1.25
+            ],
+            "total": true
+          }
+        },
+        "id": "oab-47-peca-and-questions-pt-1",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital de abertura do 47º Exame de Ordem Unificado",
+              "url": "https://s.oab.org.br/arquivos/2026/05/3578986c-fb9e-42ed-b68b-9a5131c86c9a.pdf"
+            }
+          ],
+          "exam": "47º Exame de Ordem Unificado (OAB), 2ª fase: prova prático-profissional",
+          "tasks": [
+            {
+              "description": "Redação de peça profissional acerca de tema da área jurídica de opção do examinando e do seu correspondente direito processual",
+              "id": "1.1",
+              "lines": null,
+              "points": 5,
+              "section": "Prova prático-profissional"
+            },
+            {
+              "description": "Questões discursivas sob a forma de situações-problema relativas à área de opção do examinando e do seu correspondente direito processual",
+              "id": "1.2",
+              "lines": 30,
+              "points": 1.25,
+              "section": "Prova prático-profissional"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": {
+            "criterionPoints": [],
+            "language": null,
+            "total": false,
+            "zeroing": false
+          }
+        },
+        "id": "municipal-notice-no-marking-pt-1",
+        "userInput": {
+          "documents": [
+            {
+              "text": "PREFEITURA MUNICIPAL DE VALE ALTO\nEDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO\n\n5 DAS PROVAS\n5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.\n5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).\n5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.\n5.4 A prova discursiva será corrigida apenas para os candidatos classificados na prova objetiva até a 50ª posição.\n6 DO CRONOGRAMA\n6.1 As provas serão aplicadas em 15 de março de 2027.",
+              "title": "Edital nº 3/2026 – Prefeitura de Vale Alto"
+            }
+          ],
+          "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo",
+          "tasks": [
+            {
+              "description": "redação de um texto dissertativo sobre tema de atualidade relacionado à administração pública municipal",
+              "id": "2.1",
+              "lines": 30,
+              "points": null,
+              "section": "Provas objetiva e discursiva"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "[2.1 fields] [2.1 cited 0/0]",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "2.1": {
+            "criterionPoints": [],
+            "language": null,
+            "total": false,
+            "zeroing": false
+          }
+        },
+        "id": "municipal-notice-no-marking-pt-2",
+        "userInput": {
+          "documents": [
+            {
+              "text": "PREFEITURA MUNICIPAL DE VALE ALTO\nEDITAL Nº 3/2026 – CONCURSO PÚBLICO PARA O CARGO DE ASSISTENTE ADMINISTRATIVO\n\n5 DAS PROVAS\n5.1 O concurso será composto de prova objetiva e de prova discursiva, aplicadas no mesmo dia, com duração total de 4 horas.\n5.2 A prova objetiva terá 40 questões de múltipla escolha, com cinco alternativas cada, sobre Língua Portuguesa (15 questões), Noções de Informática (10 questões) e Conhecimentos Específicos (15 questões).\n5.3 A prova discursiva consistirá na redação de um texto dissertativo, com extensão máxima de 30 linhas, sobre tema de atualidade relacionado à administração pública municipal.\n5.4 A prova discursiva será corrigida apenas para os candidatos classificados na prova objetiva até a 50ª posição.\n6 DO CRONOGRAMA\n6.1 As provas serão aplicadas em 15 de março de 2027.",
+              "title": "Edital nº 3/2026 – Prefeitura de Vale Alto"
+            }
+          ],
+          "exam": "Concurso da Prefeitura de Vale Alto, Assistente Administrativo",
+          "tasks": [
+            {
+              "description": "redação de um texto dissertativo sobre tema de atualidade relacionado à administração pública municipal",
+              "id": "2.1",
+              "lines": 30,
+              "points": null,
+              "section": "Provas objetiva e discursiva"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "read-written-grading"
+}

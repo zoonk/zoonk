@@ -29,7 +29,6 @@ msgid "Your answer and the right one"
 msgstr "내 답과 정답"
 
 #: src/_components/answer-pair.tsx
-#: src/essay/essay-labels.tsx
 #: src/mock/mock-question.tsx
 #: src/onboarding/steps/question-steps.tsx
 #: src/questions/numeric-answer-field.tsx
@@ -3253,11 +3252,6 @@ msgctxt "3Rx6Qo"
 msgid "Advanced"
 msgstr "고급"
 
-#: src/essay/essay-labels.tsx
-msgctxt "EWD_9X"
-msgid "Your essay"
-msgstr "내 에세이"
-
 #: src/essay/essay-skip-button.tsx
 #: src/focus-test/focus-test-flow.tsx
 #: src/focus-test/focus-test-screens.tsx
@@ -5225,6 +5219,7 @@ msgstr "첫 주간 챌린지에 도전하기"
 
 #: src/journey/preparation/written-projection.tsx
 #: src/language/exam-speaking/exam-speaking-labels.ts
+#: src/mock/mock-result-points.tsx
 #: src/syllabus/subject-written-standing.tsx
 msgctxt "st8F-L"
 msgid "{range} of {max}"
@@ -5242,21 +5237,6 @@ msgid "Not measured yet"
 msgstr "아직 측정되지 않았어요"
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "uOG8dr"
-msgid "Above the {minimum} points needed"
-msgstr "필요한 최소 점수인 {minimum}점보다 높아요"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "qjfXcf"
-msgid "{points} points short of the {minimum} needed"
-msgstr "필요 점수 {minimum}점에 {points}점 모자라요"
-
-#: src/journey/preparation/written-projection.tsx
-msgctxt "vUZHcz"
-msgid "Close to the {minimum} points needed"
-msgstr "필요한 최소 점수 {minimum}점에 가까워요"
-
-#: src/journey/preparation/written-projection.tsx
 msgctxt "iPMJIn"
 msgid "{part} needs {share} of its points, whatever your other scores."
 msgstr "다른 점수와 관계없이 {part}에서 배점의 {share}를 받아야 해요."
@@ -5267,9 +5247,9 @@ msgid "{part} needs {minimum} points, whatever your other scores."
 msgstr "다른 점수와 관계없이 {part}에서 {minimum}점을 받아야 해요."
 
 #: src/journey/preparation/written-projection.tsx
-msgctxt "doYQpO"
-msgid "Below the minimum to pass"
-msgstr "합격 최소 점수 미달"
+msgctxt "IDmbkm"
+msgid "Likely below the minimum to pass"
+msgstr "합격선에 못 미칠 가능성이 높아요"
 
 #: src/journey/preparation/written-projection.tsx
 msgctxt "P8eo6O"
@@ -8518,6 +8498,11 @@ msgstr "객관식 시험의 합산 점수는 {unit, select, percent {총점의 {
 msgctxt "Z_itEC"
 msgid "{name} needs {unit, select, percent {{minimum} of its points} other {{value, plural, one {# point} other {# points}}}} and isn't in this mock exam."
 msgstr "{name}에서는 {unit, select, percent {총점의 {minimum}} other {{value, plural, other {#점}}}} 이상을 받아야 하지만, 이번 모의고사에는 포함되어 있지 않아요."
+
+#: src/mock/mock-result-points.tsx
+msgctxt "DLtMyQ"
+msgid "No points estimate yet"
+msgstr "아직 점수 예상치가 없어요"
 
 #: src/mock/mock-result-points.tsx
 msgctxt "JOdrmN"
@@ -14492,6 +14477,11 @@ msgid "The exam notice doesn't say how many points each criterion is worth."
 msgstr "시험 공고에 각 기준의 배점이 나와 있지 않아요."
 
 #: src/writing/writing-result.tsx
+msgctxt "pU5Oul"
+msgid "Graded by level. A points estimate isn't available for this answer yet."
+msgstr "등급으로 채점했어요. 이 답변의 점수 예상치는 아직 제공되지 않아요."
+
+#: src/writing/writing-result.tsx
 msgctxt "JrF1rx"
 msgid "Criteria and points from the exam notice."
 msgstr "시험 공고에 나온 채점 기준과 배점이에요."
@@ -14698,3 +14688,23 @@ msgstr "답안에 필요하지 않은 이름, 서명, 표시를 지우세요."
 msgctxt "DsBKHH"
 msgid "Leave out anything that identifies you"
 msgstr "나를 알아볼 수 있는 내용 빼기"
+
+#: src/writing/written-standing.tsx
+msgctxt "S2T3vo"
+msgid "Likely above the {minimum} points needed"
+msgstr "필요한 {minimum}점보다 높을 가능성이 높아요"
+
+#: src/writing/written-standing.tsx
+msgctxt "sUornn"
+msgid "Likely below the {minimum} points needed"
+msgstr "필요한 {minimum}점에 못 미칠 가능성이 높아요"
+
+#: src/writing/written-standing.tsx
+msgctxt "8vhDfM"
+msgid "Could be either side of the {minimum} points needed"
+msgstr "필요한 {minimum}점보다 높을 수도 낮을 수도 있어요"
+
+#: src/writing/written-standing.tsx
+msgctxt "bNTvU0"
+msgid "Can't say yet whether this reaches the {minimum} points needed"
+msgstr "필요한 {minimum}점에 도달할지 아직 알 수 없어요"

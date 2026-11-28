@@ -512,16 +512,17 @@
   "plan_why_phase_dates_later": "07646726d9e90a70a66fcd19c690373d51c8084b4c4b085227e4448631568583",
   "plan_why_phase_end_later": "df0c1d4f12aba1dd996558b57aedf356eaba11307dfe3968b7b3c13f12c1a91d",
   "plan_why_phase_end_off_rest": "69171f1519fc44ee7ff626478458b4b36f6191b6ac46fb0821d7edeaf9ffc68a",
-  "plan_written_above_minimum": "813f11781afd62ba81911fa5276c12b6b569f9d9e17630ef25ce7b4aaa512aa4",
+  "plan_written_above_minimum": "ef9b437dbca4b2769806d4763d94d01dbb6f029fb40bc71a77e826c9f11d3423",
   "plan_written_asks_for": "a779d30fae23f8d3d471b3fe3e308c0863cb43d25fe53ba4ae8d34540c6f9e5c",
   "plan_written_asks_for_share": "ce0c5d4ddbd078911b184836f2c72510a21021b8fbc88452f110309c5b0cb5e0",
-  "plan_written_below_minimum": "38ef76c0026202edce282ed9200b69f70d0e3eca491cbe8d4b43703ccead108e",
-  "plan_written_close_to_minimum": "1a1ee1382daa36a635dea4acf83762d9d95a8e20404702090c2b370e45ed03f0",
+  "plan_written_below_minimum": "cfc71cb02f32bd111857ad0a10fde79e69f6f6f9aaa1a33f157da160fb0c2f7d",
+  "plan_written_cant_say": "4bfdb3d608b79d73cd297adc6dd063fc92625aee5f2d427d3aad9cf5db05675b",
+  "plan_written_close_to_minimum": "e31ec2c0ec01ceb6208a0a79b78bec17cc0bb0885ef496c74418732136ab2484",
+  "plan_written_likely_below": "f906ade288e70916e87d8a9464ec2b533ae411e9181409ef8da4a9e82143d7e8",
   "plan_written_not_measured": "1667a4b14ba98589e0ceb7c3b918a1d5ebc398268fe2d6b9a5f2b37e877a0fcb",
   "plan_written_not_measured_half": "e022db8564c41ec765f1180ba1865f3f22f3669dedc1711cb5744fdf90c8ccbd",
   "plan_written_not_measured_share": "84529546663f05c4b4dcd2fbbab1a87da8a75855a8f11aeb9b4b96ad93620cbf",
   "plan_written_objective": "cb8d0ad0774990dfa6c307920387d7fe28af84bf0ed80277797132fad5016e98",
-  "plan_written_points_below": "c90ff7da2291dc77eec875f564fef03c0b2846476868c398eb2b6ffa95c7dc75",
   "plan_you_are_here_suffix": "3ec98884f05171ebdb77ada2cd8676c8ef47815b28b4c352a40f04c6e1cd4858",
   "plan_your_level": "51f8ff7fe2edd7b6e9756769ec8d4c95384c02532a61e7bb4c1531c5559d11b4",
   "plan_your_pace": "843956c3ff7d44be2327332d61e1229f9fb2578f7c176e71f27ee64e6e5e4f76",
@@ -1434,14 +1435,15 @@
     <string name="plan_call_not_in_plan">La conversazione non rientra nel tuo piano</string>
     <string name="plan_outside_past_basics">Saltato · conosci già le basi</string>
     <string name="plan_outside_skipped_base">Saltato · per tua scelta</string>
-    <string name="plan_written_below_minimum">Al di sotto della soglia minima per superare la prova</string>
+    <string name="plan_written_below_minimum">Probabilmente sotto la soglia minima per superare l’esame</string>
     <string name="plan_written_asks_for">%1$s deve ottenere %2$s punti, a prescindere dagli altri punteggi.</string>
     <string name="plan_written_asks_for_share">%1$s deve ottenere il %2$s dei suoi punti, a prescindere dagli altri punteggi.</string>
     <string name="plan_written_not_measured">%1$s è ancora da valutare.</string>
     <string name="plan_written_not_measured_half">%1$s, che vale metà del punteggio finale, è ancora da valutare.</string>
     <string name="plan_written_not_measured_share">%1$s, che vale il %2$s del punteggio finale, è ancora da valutare.</string>
     <string name="plan_written_objective">Test oggettivo</string>
-    <string name="plan_written_above_minimum">Sopra la soglia minima di %1$s punti</string>
-    <string name="plan_written_points_below">%1$s punti sotto la soglia minima di %2$s</string>
-    <string name="plan_written_close_to_minimum">Quasi alla soglia minima di %1$s punti</string>
+    <string name="plan_written_above_minimum">Probabilmente sopra i %1$s punti necessari</string>
+    <string name="plan_written_likely_below">Probabilmente sotto i %1$s punti necessari</string>
+    <string name="plan_written_close_to_minimum">Potrebbe essere sopra o sotto i %1$s punti necessari</string>
+    <string name="plan_written_cant_say">Non è ancora possibile dire se raggiunge i %1$s punti necessari</string>
 </resources>

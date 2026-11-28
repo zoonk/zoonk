@@ -2,8 +2,9 @@ import { uuidSchema } from "@zoonk/utils/uuid-schema";
 import { z } from "zod";
 import { pointsMinimumSchema } from "../../library/exams/blueprint-contract";
 import { writingZeroKindSchema, writtenGradingSchema } from "../../library/exams/written-grading";
+import { getWritingRowDecimals } from "./_utils/writing-decimals";
 import { withSavedNextStep } from "./_utils/writing-next-step";
-import { WRITING_MAX_CHARACTERS_PER_LINE } from "./writing-lines";
+import { WRITING_CHARACTERS_PER_LINE, WRITING_MAX_CHARACTERS_PER_LINE } from "./writing-lines";
 
 export const MAX_ESSAY_CHARACTERS = 48_000;
 
@@ -27,35 +28,65 @@ export const writingTaskSchema = z
   .object({ lines, points, ...writingTaskPosition })
   .meta({ id: "WritingTask", override: { additionalProperties: false } });
 
-export const writingPromptSchema = z
-  .object({
-    charactersPerLine: z.int().positive(),
-    criteria: z.array(z.object({ id: z.string(), name: z.string(), points })),
-    keySource: z.enum(["notice", "publishedStandard", "practiceKey"]),
-    lines,
+const writingBasisSchema = z.object({
+  criteria: z.array(z.object({ id: z.string(), name: z.string(), points })),
+  keySource: z.enum(["notice", "publishedStandard", "practiceKey"]),
+  lines,
+  minimumWords: z.int().nonnegative(),
+  partMinimum: z
+    .object({ max: z.number().positive().nullable(), minimum: pointsMinimumSchema })
+    .optional()
+    .describe("The written test’s overall minimum and maximum recorded when the prompt was issued"),
+  points,
+  taskKey,
+  title: z.string().min(1),
+  unit: writingUnitSchema,
+});
+
+export const writingPromptSchema = writingBasisSchema
+  .extend({
+    charactersPerLine: z
+      .int()
+      .positive()
+      .describe("Characters a line in a typical hand, as the estimated line count uses"),
     maxCharactersPerLine: z
       .int()
       .positive()
-      .default(WRITING_MAX_CHARACTERS_PER_LINE)
       .describe(
         "The densest handwriting a board read in full; text past `lines` even at this width is not graded",
       ),
-    minimumWords: z.int().nonnegative(),
-    partMinimum: z
-      .object({ max: z.number().positive().nullable(), minimum: pointsMinimumSchema })
-      .optional()
-      .describe(
-        "The written test’s overall minimum and maximum recorded when the prompt was issued",
-      ),
-    points,
-    taskKey,
-    title: z.string().min(1),
-    unit: writingUnitSchema,
   })
   .meta({ id: "WritingPrompt" });
 
-export const writtenItemSchema = writingPromptSchema.omit({ maxCharactersPerLine: true }).extend({
-  aspects: z.array(z.object({ criterionId: z.string(), description: z.string(), points })),
+/** The widths are measured on real handwriting, so a saved task reads at today's, never its own. */
+export function readWritingPrompt(value: unknown): z.infer<typeof writingPromptSchema> {
+  return {
+    ...writingBasisSchema.parse(value),
+    charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+    maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+  };
+}
+
+const keyedWritingRowKind = z.enum(["definitePoint", "judgedScale"]);
+export const writingRowKind = z.enum(["boardScale", ...keyedWritingRowKind.options]);
+export type WritingRowKind = z.infer<typeof writingRowKind>;
+
+const aspectAwardSchema = z.object({ points: z.number().nonnegative(), text: z.string().min(1) });
+
+const aspectSchema = z.object({
+  awards: z
+    .array(aspectAwardSchema)
+    .min(2)
+    .optional()
+    .describe("Its steps of credit, lowest first; absent when it is earned whole or not at all"),
+  criterionId: z.string(),
+  description: z.string(),
+  kind: keyedWritingRowKind.optional(),
+  points,
+});
+
+export const writtenItemSchema = writingBasisSchema.extend({
+  aspects: z.array(aspectSchema),
   assessedSkillIds: z.array(uuidSchema()).min(1),
   /** The learner's options it was written for; only learners with the same options get it. */
   chosenSubjects: z.array(z.string()).optional(),
@@ -232,7 +263,17 @@ export const writingResultSchema = z
 export const writtenAnswerSchema = z.object({
   conditions: writingConditionsSchema,
   examBlueprintId: uuidSchema().nullable(),
-  grade: writingResultSchema.transform(withSavedNextStep),
+  grade: writingResultSchema.transform(withSavedNextStep).transform((grade): WritingResult => {
+    if (grade.kind !== "points") {
+      return grade;
+    }
+
+    return {
+      ...grade,
+      rows: grade.rows.map((row) => ({ ...row, decimals: getWritingRowDecimals(row) })),
+    };
+  }),
+  grader: z.object({ model: z.string(), promptVersion: z.string() }).optional(),
   itemId: uuidSchema(),
   mockPrompt: z
     .object({ area: z.string().nullable(), context: z.string().nullable(), question: z.string() })
@@ -240,7 +281,10 @@ export const writtenAnswerSchema = z.object({
   text: z.string(),
   writing: writtenItemSchema
     .omit({ aspects: true, chosenSubjects: true, subject: true })
-    .extend({ part: z.string().min(1).nullable() }),
+    .extend({
+      part: z.string().min(1).nullable(),
+      rowKinds: z.array(writingRowKind).min(1).optional(),
+    }),
   writingTask: writingTaskSchema.optional(),
 });
 

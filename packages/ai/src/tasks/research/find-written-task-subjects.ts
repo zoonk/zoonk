@@ -7,6 +7,7 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../pr
 import { type BlueprintExtraction } from "./extract-exam-blueprint";
 import taskPrompt from "./find-written-task-subjects.prompt.md";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
+import { listWrittenTasks, updateWrittenTasks } from "./written-task-ids";
 
 /**
  * Its own read, since the blueprint reading's schema is at the most states Gemini serves (a new
@@ -28,18 +29,6 @@ export type WrittenTaskSubjects = {
 };
 
 type Section = NonNullable<BlueprintExtraction["mock"]>["sections"][number];
-
-function listWrittenTasks(extraction: BlueprintExtraction) {
-  return (extraction.mock?.sections ?? []).flatMap((section, sectionIndex) =>
-    section.kind === "written"
-      ? section.tasks.map((task, taskIndex) => ({
-          id: `${sectionIndex + 1}.${taskIndex + 1}`,
-          section,
-          task,
-        }))
-      : [],
-  );
-}
 
 /** The written tests are their own subjects too; a task is never on its own test. */
 function listSubjectNames({
@@ -188,34 +177,26 @@ export function applyWrittenTaskSubjects({
   extraction: BlueprintExtraction;
   found: readonly WrittenTaskSubjects[];
 }): BlueprintExtraction {
-  if (found.length === 0 || !extraction.mock) {
+  if (found.length === 0) {
     return extraction;
   }
 
-  const ids = new Map(listWrittenTasks(extraction).map(({ id, task }) => [task, id]));
+  return updateWrittenTasks({
+    extraction,
+    update: (task, id) => {
+      const own = found.filter((link) => link.task === id);
+      const subjects = [...new Set(own.flatMap((link) => link.subjects))];
 
-  return {
-    ...extraction,
-    mock: {
-      ...extraction.mock,
-      sections: extraction.mock.sections.map((section) => ({
-        ...section,
-        tasks: section.tasks.map((task) => {
-          const own = found.filter((link) => link.task === ids.get(task));
-          const subjects = [...new Set(own.flatMap((link) => link.subjects))];
-
-          return subjects.length === 0
-            ? task
-            : {
-                ...task,
-                passages: [
-                  ...task.passages,
-                  ...own.map(({ document, passage }) => ({ document, passage })),
-                ],
-                subjects,
-              };
-        }),
-      })),
+      return subjects.length === 0
+        ? task
+        : {
+            ...task,
+            passages: [
+              ...task.passages,
+              ...own.map(({ document, passage }) => ({ document, passage })),
+            ],
+            subjects,
+          };
     },
-  };
+  });
 }

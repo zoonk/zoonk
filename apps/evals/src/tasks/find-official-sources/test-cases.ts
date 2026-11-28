@@ -15,6 +15,8 @@ const EXAMS: Exam[] = [
     expected: {
       noticeHints: ["2026", "64"],
       officialDomains: ["inep.gov.br", "gov.br", "in.gov.br"],
+      /** Inep's guide to how the redação is marked, which the notice only names. */
+      sectionHints: ["cartilha"],
     },
     id: "enem-2026",
     language: "pt",

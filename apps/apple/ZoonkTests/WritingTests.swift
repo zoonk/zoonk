@@ -298,6 +298,14 @@ final class WritingResultDecodingTests: XCTestCase {
     XCTAssertEqual(WritingLabels.partPoints(6.125), "6.13")
   }
 
+  func testOneGradeReadsAsOneNumberRoundedLikeItsParts() {
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 48.01, low: 48.01), decimals: 0, headline: true), "48")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 78.01, low: 78.01), of: 100, decimals: 0, headline: true),
+      "78 of 100")
+  }
+
   func testAHeadlineRangeRoundsOutwardSoItNeverClaimsMoreThanItsParts() {
     XCTAssertEqual(
       WritingLabels.roundedOutward(.init(high: 17.41, low: 12.06), decimals: 1),
@@ -321,12 +329,28 @@ final class WritingResultDecodingTests: XCTestCase {
       "A scale the server sends no decimals for is whole points")
   }
 
-  func testAZeroReadsZeroAndADeductionNeverReadsMinusZero() {
-    XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0 of 9.5")
-    XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0")
+  func testAZeroKeepsItsScalesDecimalsAndADeductionNeverReadsMinusZero() {
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 0, low: 0), of: 9.5, decimals: 1), "0.0 of 9.5",
+      "A zero mark keeps its scale's decimals, as web and Android write it")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0.04, low: 0), decimals: 1), "0.0")
+    XCTAssertEqual(WritingLabels.range(.init(high: 0, low: 0), of: 30, decimals: 0), "0 of 30")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 14.67, low: 14.67), of: 22, decimals: 1), "14.7 of 22",
+      "A whole maximum never pads to its mark's decimals")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 1.5, low: 1.5), of: 1.5, decimals: 1), "1.5 of 1.5")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 18.1, low: 16.6), of: 30, decimals: 0, headline: true),
+      "16–19 of 30")
+    XCTAssertEqual(
+      WritingLabels.range(.init(high: 48.01, low: 48.01), of: 70, decimals: 0), "48 of 70")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.3)), "−0.3 to −0.6")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0.6)), "−0.6")
-    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0 to −0.6")
+    XCTAssertEqual(WritingLabels.deduction(.init(high: 0.6, low: 0)), "0.0 to −0.6")
+    XCTAssertEqual(
+      WritingLabels.deduction(.init(high: 0.35, low: 0.02)), "0.0 to −0.4",
+      "A deduction from none keeps its decimal, as web and Android write it")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 0.04, low: 0)), "0")
     XCTAssertEqual(WritingLabels.deduction(.init(high: 2, low: 1)), "−1.0 to −2.0")
   }
@@ -338,9 +362,6 @@ final class WritingResultDecodingTests: XCTestCase {
     )
 
     XCTAssertEqual(part.minimumPoints, 20)
-    XCTAssertEqual(
-      WritingLabels.range(.init(high: 20 - 10, low: 20 - 15), decimals: 0), "5–10",
-      "5–10 points short of the 20 needed, never 35–40 of 50")
   }
 
   func testAWholeAnswerIsNamedByItsLineLimitOnlyWhenNoOtherTaskSharesIt() {
@@ -801,7 +822,7 @@ final class WritingDraftTests: XCTestCase {
     """
     {"blockId":"\(blockId)","context":null,"drafts":\(drafts),"draft":\(draft),\
     "gradesLeft":6,"pacing":{"minutes":70,"source":"estimated"},"question":"Write it.",\
-    "rubric":"points","sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
+    "sessionId":"01a1fac7-1f46-7548-a88d-e54152b01cad","status":"active",\
     "writing":{"charactersPerLine":55,"criteria":[{"id":"c1","name":"Content","points":null}],\
     "keySource":"practiceKey","lines":30,"maxCharactersPerLine":160,"minimumWords":30,\
     "points":30,"taskKey":"short","title":"Internal and external control","unit":"answer"}}

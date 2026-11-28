@@ -5,7 +5,10 @@ import {
   writingResultSchema,
   writingStartSchema,
 } from "@zoonk/core/exams/essays/writing-contract";
-import { WRITING_MAX_CHARACTERS_PER_LINE } from "@zoonk/core/exams/essays/writing-lines";
+import {
+  WRITING_CHARACTERS_PER_LINE,
+  WRITING_MAX_CHARACTERS_PER_LINE,
+} from "@zoonk/core/exams/essays/writing-lines";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
@@ -86,7 +89,6 @@ async function createEssayBlock(userId: string) {
   });
 
   const prompt = {
-    charactersPerLine: 60,
     criteria: [CRITERION],
     keySource: "practiceKey",
     lines: TASK.lines,
@@ -107,7 +109,7 @@ async function createEssayBlock(userId: string) {
       ...prompt,
       aspects: [],
       assessedSkillIds: [skill.id],
-      grading: { criteria: [], kind: "levels", language: null, rounding: null, zeroing: [] },
+      grading: { criteria: [], language: null, rounding: null, zeroing: [] },
     },
   };
 
@@ -219,10 +221,13 @@ test.describe("Essays API", () => {
         gradesLeft: DAILY_EXTRA_WRITES - 1,
         pacing: { minutes: MINUTES, source: "practice" },
         question: essay.question,
-        rubric: "levels",
         sessionId,
         status: "active",
-        writing: { ...prompt, maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE },
+        writing: {
+          ...prompt,
+          charactersPerLine: WRITING_CHARACTERS_PER_LINE,
+          maxCharactersPerLine: WRITING_MAX_CHARACTERS_PER_LINE,
+        },
         writingTask: WRITING_TASK,
       });
 

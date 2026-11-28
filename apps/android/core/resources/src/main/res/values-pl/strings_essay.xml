@@ -31,6 +31,7 @@
   "essay_grade_answer": "c7ddc518c56a740f54b1d49bd205943e0b89335093303d4bbf3c88cf5475f85f",
   "essay_grade_rewrite": "eb9b0b2e65394ef0218fb6f18d05ee04fb9807918e6a2f3c078a8f9528601671",
   "essay_graded_by_level": "bb5a0503bf964204c483032547a4ec727339158416b1a427c442f7bff95a48b0",
+  "essay_graded_by_level_why": "82673711f7c173e584c8d5bae183a283a9ddf4fa7e33bd67cce8b1d585929c7e",
   "essay_graded_earlier_version": "46a3e69136d1109c02fa1b0a3050401dc3cdd0d8317aada96f8924e73fce56ac",
   "essay_grading": "dcbc92835818bd6e3c5389dfe19fe417089f1ee507e65613268fc890a41332b2",
   "essay_grading_criteria": "51dfdd28a20e28e59d5dfcfd7f7ebd99655d3b30a7d07f5a12508ccbf90bd8b8",
@@ -322,6 +323,7 @@
     <string name="essay_no_points_in_notice">Oficjalne ogłoszenie nie podaje, ile punktów jest warte każde kryterium.</string>
     <string name="essay_criteria_from_notice">Kryteria i punktacja z oficjalnego ogłoszenia.</string>
     <string name="essay_criteria_from_notice_practice_key">Kryteria i punktacja z oficjalnego ogłoszenia. Klucz odpowiedzi przygotowaliśmy do ćwiczeń.</string>
+    <string name="essay_graded_by_level_why">Oceniono według poziomów. Szacunkowa liczba punktów za tę odpowiedź nie jest jeszcze dostępna.</string>
     <string name="essay_see_comments">Zobacz komentarze</string>
     <string name="essay_comments">Komentarze</string>
     <string name="essay_your_text">Twój tekst</string>

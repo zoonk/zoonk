@@ -219,115 +219,6 @@
     {
       "steps": [
         {
-          "conclusion": "Facts kept 9/15 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "majorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 9/15 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "minorErrors",
-          "score": 8.719999999999999
-        },
-        {
-          "conclusion": "Facts kept 9/15 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"grading\":\"enem\",\"kind\":\"writtenTask\",\"lines\":null,\"points\":1000,\"zeroing\":true}",
-          "kind": "potentialImprovements",
-          "score": 8.719999999999999
-        }
-      ],
-      "testCase": {
-        "expected": {
-          "facts": [
-            {
-              "kind": "questionCount",
-              "value": 180
-            },
-            {
-              "date": "2026-11-08",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-11-15",
-              "dateKind": "exam",
-              "kind": "date"
-            },
-            {
-              "date": "2026-06-05",
-              "dateKind": "registrationEnd",
-              "kind": "date"
-            },
-            {
-              "kind": "subject",
-              "name": "Linguagens",
-              "questions": 45
-            },
-            {
-              "kind": "subject",
-              "name": "Matemática",
-              "questions": 45
-            },
-            {
-              "kind": "choice",
-              "options": [
-                "Inglês",
-                "Espanhol"
-              ],
-              "partOf": "Linguagens"
-            },
-            {
-              "format": "multipleChoice",
-              "kind": "format"
-            },
-            {
-              "format": "essay",
-              "kind": "format"
-            },
-            {
-              "kind": "scoring",
-              "method": "itemResponseTheory"
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 330
-            },
-            {
-              "kind": "timeLimit",
-              "minutes": 300
-            },
-            {
-              "kind": "testedLanguage",
-              "language": null
-            },
-            {
-              "kind": "sharedClock"
-            },
-            {
-              "count": 1,
-              "grading": "enem",
-              "kind": "writtenTask",
-              "lines": null,
-              "points": 1000,
-              "zeroing": true
-            }
-          ]
-        },
-        "id": "enem-2026-1",
-        "language": "pt",
-        "userInput": {
-          "documents": [
-            {
-              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
-              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
-            }
-          ],
-          "exam": "ENEM"
-        }
-      },
-      "score": 8.719999999999999
-    },
-    {
-      "steps": [
-        {
           "conclusion": "Facts kept 3/3 (read 3). passages found 4/4. problems left 0",
           "kind": "majorErrors",
           "score": 10
@@ -730,6 +621,173 @@
           ],
           "exam": "Chemistry quiz on gas laws",
           "material": true
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Facts kept 9/17 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "majorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "minorErrors",
+          "score": 8.494117647058824
+        },
+        {
+          "conclusion": "Facts kept 9/17 (read 9). passages found 24/24. missing: {\"kind\":\"questionCount\",\"value\":180}; {\"kind\":\"subject\",\"name\":\"Linguagens\",\"questions\":45}; {\"kind\":\"subject\",\"name\":\"Matemática\",\"questions\":45}; {\"kind\":\"choice\",\"options\":[\"Inglês\",\"Espanhol\"],\"partOf\":\"Linguagens\"}; {\"kind\":\"sharedClock\"}; {\"count\":1,\"kind\":\"writtenTask\",\"lines\":30,\"points\":1000,\"total\":true}; {\"kind\":\"writtenTask\",\"points\":1000,\"scales\":[[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200],[0,40,80,120,160,200]]}; {\"kind\":\"writtenTask\",\"points\":1000,\"zeroKinds\":[\"blank\",\"offTopic\",\"tooFewLines\",\"wrongForm\"]}",
+          "kind": "potentialImprovements",
+          "score": 8.494117647058824
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "facts": [
+            {
+              "kind": "questionCount",
+              "value": 180
+            },
+            {
+              "date": "2026-11-08",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-11-15",
+              "dateKind": "exam",
+              "kind": "date"
+            },
+            {
+              "date": "2026-06-05",
+              "dateKind": "registrationEnd",
+              "kind": "date"
+            },
+            {
+              "kind": "subject",
+              "name": "Linguagens",
+              "questions": 45
+            },
+            {
+              "kind": "subject",
+              "name": "Matemática",
+              "questions": 45
+            },
+            {
+              "kind": "choice",
+              "options": [
+                "Inglês",
+                "Espanhol"
+              ],
+              "partOf": "Linguagens"
+            },
+            {
+              "format": "multipleChoice",
+              "kind": "format"
+            },
+            {
+              "format": "essay",
+              "kind": "format"
+            },
+            {
+              "kind": "scoring",
+              "method": "itemResponseTheory"
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 330
+            },
+            {
+              "kind": "timeLimit",
+              "minutes": 300
+            },
+            {
+              "kind": "testedLanguage",
+              "language": null
+            },
+            {
+              "kind": "sharedClock"
+            },
+            {
+              "count": 1,
+              "kind": "writtenTask",
+              "lines": 30,
+              "points": 1000,
+              "total": true
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "scales": [
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ],
+                [
+                  0,
+                  40,
+                  80,
+                  120,
+                  160,
+                  200
+                ]
+              ]
+            },
+            {
+              "kind": "writtenTask",
+              "points": 1000,
+              "zeroKinds": [
+                "blank",
+                "offTopic",
+                "tooFewLines",
+                "wrongForm"
+              ]
+            }
+          ]
+        },
+        "id": "enem-2026-1",
+        "language": "pt",
+        "userInput": {
+          "documents": [
+            {
+              "title": "Edital Inep nº 64, de 21 de maio de 2026 (Enem 2026)",
+              "url": "http://www.abmes.org.br/arquivos/legislacoes/Edital-inep-064-2026-05-21.pdf"
+            },
+            {
+              "title": "A redação no Enem 2025: cartilha do participante",
+              "url": "https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf"
+            }
+          ],
+          "exam": "ENEM"
         }
       }
     }

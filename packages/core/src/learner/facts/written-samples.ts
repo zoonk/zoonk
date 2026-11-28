@@ -4,7 +4,8 @@ import { cacheTag } from "next/cache";
 import { z } from "zod";
 import { getLearnerModelCacheTag } from "../../cache/tags";
 import { writingRangeSchema, writtenAnswerSchema } from "../../exams/essays/writing-contract";
-import { isNumericWritingRubric } from "../../exams/essays/writing-rubric-policy";
+import { getCalibratedWritingGrade } from "../../exams/scoring/calibrated-written-standing";
+import { writingZeroKindSchema } from "../../library/exams/written-grading";
 
 const samplePrompt = writtenAnswerSchema.shape.writing.pick({
   assessedSkillIds: true,
@@ -13,6 +14,7 @@ const samplePrompt = writtenAnswerSchema.shape.writing.pick({
   lines: true,
   part: true,
   points: true,
+  rowKinds: true,
   taskBasis: true,
   taskKey: true,
   title: true,
@@ -42,6 +44,7 @@ const sampleGrade = z.discriminatedUnion("kind", [
       }),
     ),
     total: writingRangeSchema,
+    zeroKind: writingZeroKindSchema.nullish(),
   }),
 ]);
 
@@ -50,6 +53,7 @@ type SampleRow = {
   conditions: unknown;
   durationMs: number;
   grade: unknown;
+  grader: unknown;
   id: string;
   itemId: string;
   localDate: Date;
@@ -85,6 +89,7 @@ export async function loadWrittenSamples({
     SELECT a.id, a.answer ->> 'itemId' AS "itemId", a.answered_at AS "answeredAt", a.local_date AS "localDate",
            a.duration_ms AS "durationMs", a.mock_exam_id AS "mockExamId",
            a.study_session_id AS "studySessionId", a.answer -> 'conditions' AS conditions,
+           a.answer -> 'grader' AS grader,
            jsonb_build_object(
              'kind', a.answer #> '{grade,kind}',
              'criteria', COALESCE((
@@ -95,7 +100,8 @@ export async function loadWrittenSamples({
              'content', a.answer #> '{grade,content}',
              'max', a.answer #> '{grade,max}',
              'rows', a.answer #> '{grade,rows}',
-             'total', a.answer #> '{grade,total}'
+             'total', a.answer #> '{grade,total}',
+             'zeroKind', a.answer #> '{grade,zeroKind}'
            ) AS grade,
            (a.answer -> 'writing') - ARRAY[
              'charactersPerLine', 'keySource', 'minimumWords', 'partMinimum'
@@ -117,9 +123,10 @@ export async function loadWrittenSamples({
     ORDER BY a.answered_at DESC, a.id DESC
   `);
 
-  return attempts.flatMap(({ conditions, grade, prompt, ...attempt }) => {
+  return attempts.flatMap(({ conditions, grade, grader, prompt, ...attempt }) => {
     const savedConditions = writtenAnswerSchema.shape.conditions.safeParse(conditions).data;
     const savedGrade = sampleGrade.safeParse(grade).data;
+    const savedGrader = writtenAnswerSchema.shape.grader.safeParse(grader).data;
     const savedPrompt = samplePrompt.safeParse(prompt).data;
     const origin = attempt.mockExamId ? "mock" : "block";
 
@@ -127,8 +134,17 @@ export async function loadWrittenSamples({
       ? [
           {
             ...attempt,
-            answer: { conditions: savedConditions, grade: savedGrade },
-            numericEligible: isNumericWritingRubric(savedPrompt),
+            answer: {
+              conditions: savedConditions,
+              grade: savedGrade,
+              ...(savedGrader && { grader: savedGrader }),
+            },
+            numericEligible:
+              getCalibratedWritingGrade({
+                basis: savedPrompt,
+                grade: savedGrade,
+                observed: savedGrader,
+              }) !== null,
             prompt: savedPrompt,
           },
         ]

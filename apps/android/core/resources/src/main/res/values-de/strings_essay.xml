@@ -31,6 +31,7 @@
   "essay_grade_answer": "70525e095f2182eb9b956e7370f4f54b891558c5f055d594928fb6d05ef6f1e1",
   "essay_grade_rewrite": "9e65465beef68476df285c57c8ece23a5d3eb7845648f4916d5c59661e448725",
   "essay_graded_by_level": "486c7496c7a723174b942e59061e34a7591c019b6d8797f1c3ba23c28c78c9bd",
+  "essay_graded_by_level_why": "5f05520169f9f52d2c3e23acb4279d063216cbbb3eb22baa7674b58a1a3aa12a",
   "essay_graded_earlier_version": "1f883c2b4c581d41e3cc0cf767eeba09240fc1ec7a28cb9082c96e0344b46e5f",
   "essay_grading": "f725ff98db7b5f5e387501c44431c428aded4b5b6f80fdf2b521d5018b7fc7f9",
   "essay_grading_criteria": "45429a4ff80b0f0b9ad9a180f91ba3d08d4d04ca275108145d219bc96fc7e629",
@@ -302,6 +303,7 @@
     <string name="essay_no_points_in_notice">In der Prüfungsbeschreibung steht nicht, wie viele Punkte die einzelnen Kriterien wert sind.</string>
     <string name="essay_criteria_from_notice">Kriterien und Punkte aus der Prüfungsbeschreibung.</string>
     <string name="essay_criteria_from_notice_practice_key">Kriterien und Punkte aus der Prüfungsbeschreibung. Den Lösungsschlüssel haben wir zum Üben erstellt.</string>
+    <string name="essay_graded_by_level_why">Nach Level bewertet. Für diese Antwort gibt es noch keine Punktschätzung.</string>
     <string name="essay_see_comments">Kommentare ansehen</string>
     <string name="essay_comments">Kommentare</string>
     <string name="essay_your_text">Dein Text</string>

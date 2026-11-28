@@ -248,6 +248,7 @@ private struct LanguageUnitContent: View {
           }
         }
         .presentationDetents([.medium, .large])
+        .zoonkSheet()
       }
     }
     .onDisappear {
