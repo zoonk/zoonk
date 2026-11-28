@@ -461,15 +461,17 @@ struct PlanSuggestionSection: View {
         title: Text.examChoiceQuestion(group: choice.group, take: choice.take),
         description: Text.examChoiceDescription(take: choice.take)
       ) {
-        ExamOptionToggles(
-          options: choice.options, take: choice.take,
-          picked: Binding(
-            get: { draft(choice) },
-            set: { names in
-              store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
-                $0.choiceDrafts[choice.group] = names
-              }
-            }))
+        DividedRows {
+          ExamOptionChecks(
+            options: choice.options, take: choice.take,
+            picked: Binding(
+              get: { draft(choice) },
+              set: { names in
+                store.setSuggestionState(store.suggestionKey(goalId: context.goal.id)) {
+                  $0.choiceDrafts[choice.group] = names
+                }
+              }))
+        }
       } actions: {
         Button {
           choose(draft(choice), in: choice, item: item)

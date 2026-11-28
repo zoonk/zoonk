@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
+import { CACD_SHARED, cacdStructure } from "../../library/exams/_test-utils/cacd-structure";
 import { type ExamStructure, examStructureSchema } from "../../library/exams/blueprint-contract";
+import { listPlanShares } from "../../library/exams/subject-shares";
+import { getSubjectShares } from "../mocks/mock-options";
 import {
   COMMON_TEST_STRUCTURE,
   ENGLISH_JA,
@@ -199,5 +202,37 @@ describe(scopeExamStructure, () => {
 
   it("keeps the options of a choice the learner names as a whole", () => {
     expect(names(scope(["外国語"]))).toStrictEqual([ENGLISH_JA, GERMAN_JA]);
+  });
+});
+
+describe("a learner who prepares an exam's first phase", () => {
+  const cacd = examStructureSchema.parse(cacdStructure());
+  const firstPhase = scope(["Primeira Fase"], cacd);
+
+  it("keeps every area the phase asks, with its own sittings and scoring", () => {
+    expect(names(firstPhase)).toStrictEqual([...CACD_SHARED, "História Mundial"]);
+
+    expect(firstPhase.mock).toMatchObject({
+      scoring: { parts: [{ name: "Primeira Fase", qualifying: true }] },
+      sections: [
+        { name: "Prova objetiva da Primeira Fase — primeiro período" },
+        { name: "Prova objetiva da Primeira Fase — segundo período" },
+      ],
+      timeLimitMinutes: 420,
+      totalQuestions: 240,
+    });
+
+    expect(firstPhase.mock?.scoring).not.toHaveProperty("finalShares");
+  });
+
+  it("weighs every area of the phase by its place in it", () => {
+    const shares = listPlanShares(firstPhase);
+    expect(new Set(shares).size).toBe(1);
+  });
+
+  it("splits the phase's items among all its areas", () => {
+    expect(getSubjectShares(firstPhase).map((share) => share.questions)).toStrictEqual(
+      Array.from({ length: 8 }, () => 30),
+    );
   });
 });

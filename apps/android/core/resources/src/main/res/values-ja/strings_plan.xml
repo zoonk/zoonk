@@ -243,6 +243,7 @@
   "plan_estimated_score": "41e09ef965330d4d179bd902b8b980b051904fe3bd7990dc691097721347cef6",
   "plan_every_day": "b902c43428c856c4ffd4dbde80b5be1a9bf462864418a649c6862b89588464ff",
   "plan_everything": "020e3d2b1215025c0f75a09789731213b3f5aac74890df408257f4795ffccbf6",
+  "plan_exam_choice_not_set": "dd62ab2072aa927f72305fa5c29615c8137ad867b11f8f055402023298458851",
   "plan_exam_choice_question": "5e92a161dc0b636007d121e9da390d2c31b776156156e809c5ac83fbc6bbd323",
   "plan_exam_choice_question_several": "f3d2e851620c6fa034804d7d57a21a63a7885c1e90a23cde85403f6e2c066f77",
   "plan_exam_date": "a0a39f1220465490a59bb9abcf23f3f4d0497a51b4250ed1919d38d807d29a6f",
@@ -269,9 +270,8 @@
   "plan_finished_title": "a96e518b1a8a05ed02607507912b5afd17acbf2c4516acff30604fd87d41469b",
   "plan_fit_time_left": "1139cfdd080e84ea8b46b0fafd113f9c366369aa28b64e73cb3821d1a52b5742",
   "plan_focus_already_in": "42242ae705f751c581988901a1944baa95806c644d4c57a80c60b75cb345011a",
-  "plan_focus_cant_move": "a9544db3c5effe689e1af26fe15306a3fb796bf14676695912dc7d41659ac4cb",
+  "plan_focus_cant_move": "6c153d4b4fc623f70bb649258138018ef6a4089275ef00a789cdded4377f8b71",
   "plan_focus_includes": "a60559d327d3df15792509da558a8dc6b8ac82294bbcd5d87f3129308470b676",
-  "plan_focus_on_these": "22753ae4c32d027921be34fa915b568ceb6f056237a8189eed1bcf91f5d69e10",
   "plan_focus_only": "a3e24dedb6733b940d541b36a852121ffbf73c39d34eee7d212fa2baa4b15c87",
   "plan_fridays": "294546d6d834ed2f45b9e3ad4e0adc201b1fd34147ab5469d7adc3231a999c01",
   "plan_full_course": "8c9b172a4bdff7bb62395347fa9d5d5be3131c67add484ff5c8f71556725992c",
@@ -507,7 +507,7 @@
   "plan_what_you_practice": "9c8504139742c75c4ba140e37eff772d6c8943821cf112a558149953cb712ada",
   "plan_when_to_practice_writing": "7b7b26a8355bbbbe1265bec2a2ecf4a120981b390732beba8570a5d535382560",
   "plan_where_to_focus": "5e9d24cdd46a2406bab1d5cbb6a3ecce915d9546d612436e54ed843dc4730c19",
-  "plan_where_to_focus_description": "489e8fda4a5f279dae4e03e10bfd167cb9ae79f6b8d6c596b7fcb3c9428fa758",
+  "plan_where_to_focus_description": "9b41a9ef8db664637d583982dbef661bd1e126d2bc455b871d2e076fd02b4799",
   "plan_why_phase_dates_later": "f5e6cd1db4db695ecb4b800eaa7d4014ed5be3de57afe058855da70e2c629fbb",
   "plan_why_phase_end_later": "b6970dbfb4af2db631cdf7dd2166ce5044c671a274528c2b28ee7d538a3d42d0",
   "plan_why_phase_end_off_rest": "b25cbff6e1716acd22aec0c36c03fa6c53f17c2b71501d072bb901d9d49da962",
@@ -955,6 +955,7 @@
     <string name="plan_exam_choice_question">%1$sはどの科目を受験しますか？</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s：どれを受験しますか？</string>
+    <string name="plan_exam_choice_not_set">未設定</string>
     <string name="plan_prerequisites">前提知識</string>
     <string name="plan_prerequisites_description">トピックの土台となる内容です。学習量を選べます。</string>
     <plurals name="plan_bases_mixed">
@@ -1090,14 +1091,12 @@
     <string name="plan_choose_focus">重点的に学ぶ科目を選ぶ</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">重点的に学ぶ科目</string>
-    <string name="plan_where_to_focus_description">選んだ科目を優先して、より深く学びます。</string>
+    <string name="plan_where_to_focus_description">選んだ科目に、より多くの学習時間を使います。</string>
     <string name="plan_choose_focus_yourself">または自分で科目を選ぶ</string>
     <string name="plan_focus_includes">%1$sを含みます</string>
     <string name="plan_focus_only">%1$sのみ</string>
     <string name="plan_focus_already_in">変更はありません。%1$sのレッスンはすべて、すでに学習計画に入っています。</string>
-    <string name="plan_focus_cant_move">変更はありませんでした。%1$sは、前提知識を学び終えてすぐに始める計画になっています。今の学習時間では、これ以上レッスンを入れられません。1日の学習時間を増やすと、もっと入れられます。</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">この科目を重点的に学ぶ</string>
+    <string name="plan_focus_cant_move">変更はありません。%1$sをもっと学習計画に入れるには、毎日の学習時間を増やしてください。</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">重点科目を解除する</string>
     <string name="plan_couldnt_check_changes">変更内容を確認できませんでした。</string>

@@ -234,6 +234,12 @@ describe("the opening guess's action bar", () => {
     await expect.element(barButton("See answer")).toBeVisible();
 
     await page.getByRole("radio", { name: "No" }).click();
+    await expect.element(page.getByRole("radio", { name: "No" })).toBeChecked();
+
+    await expect
+      .element(page.getByRole("radio", { name: "No" }))
+      .not.toMatchTextContent(/Your guess/u);
+
     await barButton("See answer").click();
 
     await expect.element(page.getByRole("status").filter({ hasText: "Good guess!" })).toBeVisible();

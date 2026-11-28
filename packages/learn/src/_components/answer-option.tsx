@@ -2,12 +2,13 @@
 
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
-import { ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
+import { SCREEN_ENTER, ignoreHeldEnter } from "@zoonk/ui/hooks/keyboard";
 import { cn, mergeRefs } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { SpokenMath } from "../rich-text/spoken-math";
+import { PickMark, getPickMark } from "./answer-pick-mark";
 import {
   ANSWER_HELD_TONE,
   ANSWER_OPTION_CLASS,
@@ -96,8 +97,8 @@ export function AnswerOptionGroup({
 
 /**
  * The word an option shows. The right option says "Correct" when the learner missed it. A pick
- * needs no word of its own: its color and the verdict say it. Only a guess, which counts as
- * neither right nor wrong, says so, from the pick on, in the words its verdict keeps.
+ * needs no word of its own: its mark, its color and the verdict say it. Only a guess, which counts
+ * as neither right nor wrong, says so once it's checked; before, its mark shows the pick.
  */
 export function useAnswerTag({
   guessed,
@@ -110,18 +111,13 @@ export function useAnswerTag({
 }): React.ReactNode {
   const t = useExtracted();
 
-  if (result === "guess" || (picked && guessed)) {
-    const yourGuess = t({
-      description: "Tags the learner's pick when it counts as neither right nor wrong.",
-      message: "Your guess",
-    });
-
-    return result ? (
-      <AnswerTag className={ANSWER_TAG_TONE[result]}>{yourGuess}</AnswerTag>
-    ) : (
-      // Unspoken: the radio is checked.
-      <AnswerTag aria-hidden="true" className="text-foreground">
-        {yourGuess}
+  if (result === "guess" || (result && picked && guessed)) {
+    return (
+      <AnswerTag className={ANSWER_TAG_TONE[result]}>
+        {t({
+          description: "Tags the learner's pick when it counts as neither right nor wrong.",
+          message: "Your guess",
+        })}
       </AnswerTag>
     );
   }
@@ -146,9 +142,10 @@ const RESULT_MARK: Record<AnswerOptionResult, React.ReactNode> = {
 };
 
 /**
- * A number is the row's key, so a touch screen gives up its room (craft E1, B2). A picked row's key
- * turns ink, the row's mark as a radio's dot is. Once checked the key does nothing, so its room
- * shows the verdict's mark and the answer stays put; a locked row without one hides its key.
+ * A number is the row's key, so a touch screen gives up its room (craft E1, B2). On a row without a
+ * pick mark, the picked row's key turns ink, as a radio's dot does. Once checked the key does
+ * nothing, so its room shows the verdict's mark and the answer stays put; a locked row without one
+ * hides its key. A verdict's mark stands bare, so it never reads as a ticked checkbox.
  */
 export function OptionMarker({
   isLocked = false,
@@ -156,14 +153,17 @@ export function OptionMarker({
   marker,
   picked,
   result = null,
+  showsPick = true,
 }: {
   isLocked?: boolean;
   layout: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
   result?: AnswerOptionResult | null;
+  showsPick?: boolean;
 }) {
   const isKey = typeof marker === "number";
+  const verdict = isKey ? result && RESULT_MARK[result] : marker;
 
   return (
     <LineMarker
@@ -174,16 +174,44 @@ export function OptionMarker({
         layout === "stacked" && "absolute top-3 left-3 z-10",
       )}
     >
-      <Kbd
-        className={cn(
-          "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1! [&_svg]:size-3",
-          picked && "bg-selected text-selected-foreground ring-0",
-        )}
-      >
-        {isKey && result ? RESULT_MARK[result] : marker}
-      </Kbd>
+      {verdict ? (
+        <span className="flex size-5 items-center justify-center [&_svg]:size-4">{verdict}</span>
+      ) : (
+        <Kbd
+          className={cn(
+            "[&_svg]:size-3",
+            showsPick &&
+              "in-data-held:bg-selected in-data-held:text-selected-foreground in-data-[held=unchecked]:bg-foreground/4! in-data-[held=unchecked]:text-muted-foreground! in-data-held:ring-0 in-data-[held=unchecked]:ring-1!",
+            showsPick && picked && "bg-selected text-selected-foreground ring-0",
+          )}
+        >
+          {marker}
+        </Kbd>
+      )}
     </LineMarker>
   );
+}
+
+function answerToneClass({
+  picked,
+  result,
+}: {
+  picked: boolean;
+  result: AnswerOptionResult | null;
+}): string | undefined {
+  if (result === "guess") {
+    return ANSWER_TONE.guess;
+  }
+
+  if (result === "right") {
+    return cn(ANSWER_TONE.right, "enabled:hover:bg-success/9");
+  }
+
+  if (result === "wrong") {
+    return cn(ANSWER_TONE.wrong, "enabled:hover:bg-destructive/9");
+  }
+
+  return picked ? cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint") : undefined;
 }
 
 export function AnswerOption({
@@ -212,6 +240,7 @@ export function AnswerOption({
 
   const answerTag = useAnswerTag({ guessed, picked, result });
   const shownTag = tag === undefined ? answerTag : tag;
+  const mark = getPickMark({ hasAction: Boolean(props.onClick), picks, role: props.role });
 
   return (
     <button
@@ -221,12 +250,8 @@ export function AnswerOption({
         "focus-visible:outline-ring/50 enabled:hover:bg-muted/60 press outline-none select-none [--press-scale:0.99] focus-visible:outline-3 focus-visible:outline-solid disabled:cursor-default",
         ANSWER_TONE.idle,
         ANSWER_HELD_TONE,
-        layout === "row" && "flex-wrap",
-        layout === "stacked" && "flex-col items-stretch p-2",
-        picked && !result && cn(ANSWER_TONE.picked, "enabled:hover:bg-selected-tint"),
-        result === "guess" && ANSWER_TONE.guess,
-        result === "right" && cn(ANSWER_TONE.right, "enabled:hover:bg-success/9"),
-        result === "wrong" && cn(ANSWER_TONE.wrong, "enabled:hover:bg-destructive/9"),
+        layout === "row" ? "flex-wrap" : "flex-col items-stretch p-2",
+        answerToneClass({ picked, result }),
         className,
       )}
       data-result={result ?? undefined}
@@ -236,6 +261,7 @@ export function AnswerOption({
         onKeyDown?.(event);
       }}
       role={picks ? "radio" : undefined}
+      {...(mark === "check" ? SCREEN_ENTER : {})}
       // A press made before the page hydrates marks it held, drawn as picked.
       suppressHydrationWarning
       type={picks ? "button" : "submit"}
@@ -247,11 +273,14 @@ export function AnswerOption({
         marker={marker}
         picked={picked && !result}
         result={result}
+        showsPick={!mark}
       />
 
       <TagBesideOrUnder layout={layout} tag={shownTag}>
         <SpokenMath>{children}</SpokenMath>
       </TagBesideOrUnder>
+
+      {mark && <PickMark kind={mark} layout={layout} picked={picked} />}
     </button>
   );
 }

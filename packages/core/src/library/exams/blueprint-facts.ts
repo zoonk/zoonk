@@ -89,20 +89,26 @@ function subjectFacts({ documents, extraction, found, material }: FactSource): F
       passages,
     });
 
-    const group = subject.group
-      ? toFacts({
-          claims: [
-            {
-              id: `${id}.group`,
-              statement: describeGroup({ group: subject.group, name, subject: subject.name }),
-            },
-          ],
-          documents,
-          passages: toPartPassages({ found, name: subject.group, own: passages }),
-        })
-      : [];
+    const groups = [
+      ...(subject.group ? [{ group: subject.group, id: `${id}.group` }] : []),
+      ...(subject.otherGroups ?? []).map((group, other) => ({
+        group,
+        id: `${id}.otherGroups.${other}`,
+      })),
+    ].flatMap((group) =>
+      toFacts({
+        claims: [
+          {
+            id: group.id,
+            statement: describeGroup({ group: group.group, name, subject: subject.name }),
+          },
+        ],
+        documents,
+        passages: toPartPassages({ found, name: group.group, own: passages }),
+      }),
+    );
 
-    return [...claims, ...group];
+    return [...claims, ...groups];
   });
 }
 

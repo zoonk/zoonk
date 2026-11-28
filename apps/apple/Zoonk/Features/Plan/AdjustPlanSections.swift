@@ -94,8 +94,9 @@ private struct PlanExamChoiceSection: View {
       // Main's quiet line over the options, not a second header line.
       ExamPickLimit(take: choice.take)
         .listRowSeparator(.hidden)
+        .layoutSectionText()
 
-      ExamOptionToggles(
+      ExamOptionChecks(
         options: choice.options, take: choice.take,
         picked: Binding(get: { picked }, set: { draft = $0 }))
 
@@ -112,7 +113,6 @@ private struct PlanExamChoiceSection: View {
     } header: {
       SectionTitle(Text.examChoiceQuestion(group: choice.group, take: choice.take))
     }
-    .tint(.success)
     .onChange(of: choice.subjects) { draft = nil }
   }
 }
@@ -150,60 +150,111 @@ private struct PlanFocusSection: View {
             }
             .disclosureChevron()
           }
+          .buttonStyle(CardRowStyle())
+          .cardRowInList()
 
+          // Main's 20pt under the Focus test and 12pt over the first subject's card.
           Text(
             "Or choose them yourself", tableName: "Plan",
             comment: "Above the subjects to focus on, under the Focus test that suggests them"
           )
           .typeStyle(.note.weight(.medium))
           .foregroundStyle(.mutedForeground)
-          .listRowSeparator(.hidden, edges: .bottom)
+          .listRowInsets(.top, 16)
+          .listRowInsets(.bottom, 8)
+          .listRowSeparator(.hidden)
+          .layoutSectionText()
         }
 
-        ForEach(choices) { area in
-          Toggle(
-            area.name,
-            isOn: Binding(
-              get: { selection.contains(area.name) },
-              set: { on in
-                var next = selection
-                if on { next.insert(area.name) } else { next.remove(area.name) }
-                picked = next
-              })
-          )
-          .tint(.success)
-        }
-
-        Button {
-          editor.run { await focus(on: selection, choices: choices) }
-        } label: {
-          if selection.isEmpty, !focused.isEmpty {
-            Text(
-              "Remove focus", tableName: "Plan",
-              comment: "Saves no subject to focus on, so the plan has no focus")
-          } else {
-            Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
-          }
-        }
-        .disabled(selection == focused)
+        picks(choices, focused: focused, selection: selection)
       } header: {
-        SectionTitle(
-          Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
+        title
       } footer: {
-        SectionFooter {
-          Text(
-            "The subjects you pick get more of your time.", tableName: "Plan",
-            comment: "What focusing on subjects does")
-        }
+        footer
       }
     }
   }
 
-  private func focus(on selection: Set<String>, choices: [GoalPlan.Area]) async {
+  private var title: some View {
+    SectionTitle(
+      Text("Where to focus", tableName: "Plan", comment: "Section of the subjects to focus on"))
+  }
+
+  private var footer: some View {
+    SectionFooter {
+      Text(
+        "The subjects you pick get more of your time.", tableName: "Plan",
+        comment: "What focusing on subjects does")
+    }
+  }
+
+  @ViewBuilder
+  private func picks(_ choices: [GoalPlan.Area], focused: Set<String>, selection: Set<String>)
+    -> some View
+  {
+    ForEach(choices) { area in
+      let isPicked = selection.contains(area.name)
+
+      ChoiceRow(picks: .several, isPicked: isPicked, isCard: true) {
+        var next = selection
+        if isPicked { next.remove(area.name) } else { next.insert(area.name) }
+        picked = next
+        editor.forgetUnchanged()
+      } words: {
+        areaWords(area, isPicked: isPicked)
+      }
+    }
+
     let areas = choices.map(\.name).filter { selection.contains($0) }
 
-    await editor.change([.focusAreas(areas)])
-    picked = nil
+    Button {
+      editor.run { await focus(on: areas) }
+    } label: {
+      if selection.isEmpty, !focused.isEmpty {
+        Text(
+          "Remove focus", tableName: "Plan",
+          comment: "Saves no subject to focus on, so the plan has no focus")
+      } else {
+        Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
+      }
+    }
+    .disabled(selection == focused || editor.changedNothing([.focusAreas(areas)]))
+  }
+
+  /// What the area holds, and once it's picked, the part of it the learner named.
+  private func areaWords(_ area: GoalPlan.Area, isPicked: Bool) -> ChoiceWords {
+    let parts = plan.areas.filter { !$0.skipped && $0.partOf == area.name }.map(\.name)
+
+    return ChoiceWords(
+      title: Text(verbatim: area.name),
+      detail: parts.isEmpty
+        ? nil : Text("Includes \(parts.formatted(.list(type: .and)))", tableName: "Plan"),
+      note: isPicked ? area.focusPart.map { Text("Only \($0)", tableName: "Plan") } : nil)
+  }
+
+  /// A pick that changed nothing stays, with main's words for why at the editor's foot.
+  private func focus(on areas: [String]) async {
+    let saved = await editor.change(
+      [.focusAreas(areas)],
+      unchanged: areas.isEmpty ? nil : { Self.unchangedSentence($0, areas: areas) })
+
+    if saved {
+      picked = nil
+    }
+  }
+
+  private static func unchangedSentence(_ reason: UnchangedReason, areas: [String]) -> String {
+    let names = areas.formatted(.list(type: .and))
+
+    return switch reason {
+    case .alreadyIn:
+      String(
+        localized: "Nothing changed. All \(names) lessons are already in your plan.", table: "Plan")
+    case .cantMove:
+      String(
+        localized: "Nothing changed. To fit more of \(names), study longer each day.", table: "Plan"
+      )
+    }
   }
 }
 
@@ -215,24 +266,17 @@ private struct PlanActivitiesSection: View {
     let skipped = Set(plan.steering.skippedActivities)
 
     Section {
-      ForEach(Self.activities, id: \.self) { activity in
-        Toggle(
-          isOn: Binding(
-            get: { !skipped.contains(activity) },
-            set: { on in
-              // A plan practices at least one activity.
-              guard on || skipped.count < Self.activities.count - 1 else {
-                return
-              }
+      FlowLayout(spacing: 8) {
+        ForEach(planActivities, id: \.self) { activity in
+          let isOn = !skipped.contains(activity)
 
-              editor.run {
-                await editor.change([
-                  on ? .restoreActivities([activity]) : .skipActivities([activity])
-                ])
-              }
-            })
-        ) {
-          Text(planActivityName(activity))
+          ToggleChip(Text(planActivityName(activity)), isOn: isOn) {
+            editor.run {
+              await editor.change([
+                isOn ? .skipActivities([activity]) : .restoreActivities([activity])
+              ])
+            }
+          }
         }
       }
     } header: {
@@ -241,10 +285,7 @@ private struct PlanActivitiesSection: View {
           "What you practice", tableName: "Plan", comment: "Section of a language plan's activities"
         ))
     }
-    .tint(.success)
   }
-
-  private static let activities = planActivities
 }
 
 private struct PlanWrittenPracticeSection: View {
@@ -397,10 +438,26 @@ private struct PlanToolsSection: View {
   }
 }
 
+/// What a tool's Save sends, as main's sheet: nothing until the learner picks, and a setup lesson
+/// only with the device they picked.
+struct ToolAnswer: Equatable {
+  let choice: ToolChoice
+  let system: String?
+
+  init?(choice: ToolChoice?, system: String?) {
+    guard let choice, choice != .setup || system != nil else {
+      return nil
+    }
+
+    self.choice = choice
+    self.system = choice == .setup ? system : nil
+  }
+}
+
 private struct PlanToolChoiceSheet: View {
   @Environment(\.dismiss) private var dismiss
-  @State private var choice: ToolChoice
-  @State private var system: String
+  @State private var choice: ToolChoice?
+  @State private var system: String?
   @State private var isWriting = false
   @State private var saving = VisitRequest<Bool>()
 
@@ -414,8 +471,8 @@ private struct PlanToolChoiceSheet: View {
     self.editor = editor
     self.goal = goal
     self.tool = tool
-    _choice = State(initialValue: tool.choice.flatMap(ToolChoice.init(rawValue:)) ?? .have)
-    _system = State(initialValue: tool.system ?? "macos")
+    _choice = State(initialValue: tool.choice.flatMap(ToolChoice.init(rawValue:)))
+    _system = State(initialValue: tool.system)
   }
 
   var body: some View {
@@ -455,9 +512,13 @@ private struct PlanToolChoiceSheet: View {
 
         ToolbarItem(placement: .confirmationAction) {
           BusyButton(isBusy: editor.isSaving, role: .confirm, icon: .check) {
+            guard let answer else {
+              return
+            }
+
             saving.run {
               // Saved even when the sheet closed first; then there's nothing left to close.
-              let saved = await save()
+              let saved = await save(answer)
               guard !Task.isCancelled else { return nil }
               if saved { dismiss() }
               return !saved
@@ -465,6 +526,7 @@ private struct PlanToolChoiceSheet: View {
           } label: {
             Text("Save", tableName: "Plan", comment: "Saves the tool choice")
           }
+          .disabled(answer == nil)
         }
       }
     }
@@ -472,64 +534,58 @@ private struct PlanToolChoiceSheet: View {
     .onDisappear { saving.leave() }
   }
 
+  private var answer: ToolAnswer? {
+    ToolAnswer(choice: choice, system: system)
+  }
+
   @ViewBuilder
   private var choices: some View {
     Section {
-      Picker(selection: $choice) {
-        option(
-          Text("I have it", tableName: "Plan"),
-          Text("You'll practice on your own device.", tableName: "Plan")
-        ).tag(ToolChoice.have)
-        option(
-          Text("I'll set it up", tableName: "Plan"),
-          Text("A short lesson shows how, right before you need it.", tableName: "Plan")
-        ).tag(ToolChoice.setup)
-        option(
-          Text("I won't use it", tableName: "Plan"),
-          Text("You'll practice with examples instead.", tableName: "Plan")
-        ).tag(ToolChoice.none)
-      } label: {
-        Text(tool.name)
-      }
-      .pickerStyle(.inline)
+      option(
+        .have, Text("I have it", tableName: "Plan"),
+        Text("You'll practice on your own device.", tableName: "Plan"))
+      option(
+        .setup, Text("I'll set it up", tableName: "Plan"),
+        Text("A short lesson shows how, right before you need it.", tableName: "Plan"))
+      option(
+        .none, Text("I won't use it", tableName: "Plan"),
+        Text("You'll practice with examples instead.", tableName: "Plan"))
     }
 
     if choice == .setup {
       Section {
-        Picker(selection: $system) {
+        FlowLayout(spacing: 8) {
           ForEach(["windows", "macos", "linux", "chromebook", "phone"], id: \.self) { system in
-            Text(planSystemName(system)).tag(system)
+            ToggleChip(Text(planSystemName(system)), isOn: self.system == system) {
+              self.system = system
+            }
           }
-        } label: {
-          Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for")
         }
+      } header: {
+        SectionTitle(
+          Text("Your device", tableName: "Plan", comment: "The device a setup lesson is for"))
       }
     }
   }
 
-  private func option(_ title: Text, _ detail: Text) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      title
-      detail
-        .typeStyle(.note)
-        .foregroundStyle(.mutedForeground)
+  private func option(_ value: ToolChoice, _ title: Text, _ detail: Text) -> some View {
+    ChoiceRow(title, detail: detail, isPicked: choice == value) {
+      choice = value
     }
   }
 
   /// False when it didn't save: the sheet stays with the learner's choice for Save to try again.
-  private func save() async -> Bool {
+  private func save(_ answer: ToolAnswer) async -> Bool {
     let goalId = goal.id
     let tools = [tool.name]
-    let choice = choice
-    let system = choice == .setup ? system : nil
     let names = tool.name
 
     let sentence =
-      switch choice {
+      switch answer.choice {
       case .setup:
         String(
           localized:
-            "A lesson to set up \(names) on \(planSystemName(system ?? "")) comes before you need it.",
+            "A lesson to set up \(names) on \(planSystemName(answer.system ?? "")) comes before you need it.",
           table: "Plan", comment: "Says a setup lesson comes first")
       case .have:
         String(
@@ -541,7 +597,7 @@ private struct PlanToolChoiceSheet: View {
 
     await editor.apply(sentence: sentence) { api, token in
       try await api.chooseTools(
-        token: token, goalId: goalId, tools: tools, choice: choice, system: system
+        token: token, goalId: goalId, tools: tools, choice: answer.choice, system: answer.system
       ) {
         isWriting = true
       }

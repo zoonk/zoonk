@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { type captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { createWavAudio } from "./_test-utils/wav-fixture";
 import { type generateSpeechWithProvider } from "./speech-provider";
 import { voiceListeningPart, voiceListeningScript } from "./voice-listening-script";
 
-const { generateSpeechWithProviderMock } = vi.hoisted(() => ({
+const { captureAiGenerationMock, generateSpeechWithProviderMock } = vi.hoisted(() => ({
+  captureAiGenerationMock: vi.fn<typeof captureAiGeneration>(),
   generateSpeechWithProviderMock: vi.fn<typeof generateSpeechWithProvider>(),
 }));
 
@@ -11,6 +13,10 @@ vi.mock("server-only", () => ({}));
 
 vi.mock("./speech-provider", () => ({
   generateSpeechWithProvider: generateSpeechWithProviderMock,
+}));
+
+vi.mock("../../provenance/ai-generation-sink", () => ({
+  captureAiGeneration: captureAiGenerationMock,
 }));
 
 const FLASH = "google/gemini-3.8-flash-tts";
@@ -90,6 +96,11 @@ describe(voiceListeningScript, () => {
       [FLASH_LITE, "Puck"],
       [FLASH, "Puck"],
     ]);
+
+    // The silent line was still paid for.
+    expect(
+      captureAiGenerationMock.mock.calls.map(([generation]) => generation.provenance.model),
+    ).toStrictEqual([FLASH_LITE, FLASH_LITE, FLASH]);
   });
 
   it("voices a language Flash Lite doesn't speak on Flash alone", async () => {

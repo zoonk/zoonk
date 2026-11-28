@@ -37,6 +37,7 @@ function subject(name: string, group: string, passage: string) {
     group,
     matrix: [],
     name,
+    otherGroups: [],
     partOf: null,
     passages: cite(passage),
     questions: null,

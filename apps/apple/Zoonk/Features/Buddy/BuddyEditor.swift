@@ -176,10 +176,8 @@ private struct BuddyCard: View {
       .padding(12)
       .padding(.top, 4)
       .overlay(alignment: .topTrailing) {
-        Image(systemName: isPicked ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(Color(.foreground).opacity(isPicked ? 1 : 0.5))
+        ChoiceMark(kind: .one, isPicked: isPicked)
           .padding(12)
-          .accessibilityHidden(true)
       }
       .answerSurface(isPicked ? .picked : .idle, cornerRadius: Radius.xl)
     }

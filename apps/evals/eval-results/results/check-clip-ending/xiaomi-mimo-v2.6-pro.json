@@ -1,0 +1,1250 @@
+{
+  "modelId": "xiaomi/mimo-v2.6-pro",
+  "results": [
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"vivo in ca\" and called it speech; the clip says \"vivo in ca\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"vivo in ca\" and called it speech; the clip says \"vivo in ca\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"vivo in ca\" and called it speech; the clip says \"vivo in ca\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "vivo in ca"
+        },
+        "id": "it-vivo-in-speech-1",
+        "userInput": {
+          "clipId": "it-vivo-in-speech",
+          "language": "it",
+          "text": "vivo in"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"abito a cam\" and called it speech; the clip says \"abito a ca\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"abito a cam\" and called it speech; the clip says \"abito a ca\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"abito a cam\" and called it speech; the clip says \"abito a ca\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "abito a ca"
+        },
+        "id": "it-abito-a-speech-1",
+        "userInput": {
+          "clipId": "it-abito-a-speech",
+          "language": "it",
+          "text": "abito a"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"lavoro a qui\" and called it speech; the clip says \"lavoro a qui\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"lavoro a qui\" and called it speech; the clip says \"lavoro a qui\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"lavoro a qui\" and called it speech; the clip says \"lavoro a qui\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "lavoro a qui"
+        },
+        "id": "it-lavoro-a-speech-1",
+        "userInput": {
+          "clipId": "it-lavoro-a-speech",
+          "language": "it",
+          "text": "lavoro a"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"studio a scuola\" and called it speech; the clip says \"studio a scuola\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio a scuola\" and called it speech; the clip says \"studio a scuola\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio a scuola\" and called it speech; the clip says \"studio a scuola\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "studio a scuola"
+        },
+        "id": "it-studio-a-speech-1",
+        "userInput": {
+          "clipId": "it-studio-a-speech",
+          "language": "it",
+          "text": "studio a"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Your message to playback\" and called it speech; the clip says \"your message to playback\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Your message to playback\" and called it speech; the clip says \"your message to playback\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Your message to playback\" and called it speech; the clip says \"your message to playback\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "your message to playback"
+        },
+        "id": "en-your-message-to-speech-1",
+        "userInput": {
+          "clipId": "en-your-message-to-speech",
+          "language": "en",
+          "text": "your message to"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"What [chuckle]\" and called it sound; the clip says \"what [chuckle]\" (sound).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"What [chuckle]\" and called it sound; the clip says \"what [chuckle]\" (sound).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"What [chuckle]\" and called it sound; the clip says \"what [chuckle]\" (sound).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "sound",
+          "heard": "what [chuckle]"
+        },
+        "id": "en-what-sound-1",
+        "userInput": {
+          "clipId": "en-what-sound",
+          "language": "en",
+          "text": "what"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Vivo in Na\" and called it speech; the clip says \"vivo in na\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vivo in Na\" and called it speech; the clip says \"vivo in na\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vivo in Na\" and called it speech; the clip says \"vivo in na\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "vivo in na"
+        },
+        "id": "it-vivo-in-speech-2-1",
+        "userInput": {
+          "clipId": "it-vivo-in-speech-2",
+          "language": "it",
+          "text": "vivo in"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Abito a Firenze\" and called it speech; the clip says \"abito a Firenze\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Abito a Firenze\" and called it speech; the clip says \"abito a Firenze\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Abito a Firenze\" and called it speech; the clip says \"abito a Firenze\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "abito a Firenze"
+        },
+        "id": "it-abito-a-speech-2-1",
+        "userInput": {
+          "clipId": "it-abito-a-speech-2",
+          "language": "it",
+          "text": "abito a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Lavoro a casa\" and called it speech; the clip says \"lavoro a ca\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Lavoro a casa\" and called it speech; the clip says \"lavoro a ca\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Lavoro a casa\" and called it speech; the clip says \"lavoro a ca\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "lavoro a ca"
+        },
+        "id": "it-lavoro-a-speech-2-1",
+        "userInput": {
+          "clipId": "it-lavoro-a-speech-2",
+          "language": "it",
+          "text": "lavoro a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Studio a calid\" and called it speech; the clip says \"studio a cal\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Studio a calid\" and called it speech; the clip says \"studio a cal\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Studio a calid\" and called it speech; the clip says \"studio a cal\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "studio a cal"
+        },
+        "id": "it-studio-a-speech-2-1",
+        "userInput": {
+          "clipId": "it-studio-a-speech-2",
+          "language": "it",
+          "text": "studio a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "added",
+        "predicted": "added"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Ich wohne in Berlin\" and called it speech; the clip says \"ich wohne in Berlin\" (speech).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Ich wohne in Berlin\" and called it speech; the clip says \"ich wohne in Berlin\" (speech).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Ich wohne in Berlin\" and called it speech; the clip says \"ich wohne in Berlin\" (speech).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "speech",
+          "heard": "ich wohne in Berlin"
+        },
+        "id": "de-ich-wohne-in-speech-1",
+        "userInput": {
+          "clipId": "de-ich-wohne-in-speech",
+          "language": "de",
+          "text": "ich wohne in"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Vi-vo in\" and called it none; the clip says \"vivo in\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vi-vo in\" and called it none; the clip says \"vivo in\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vi-vo in\" and called it none; the clip says \"vivo in\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "vivo in"
+        },
+        "id": "it-vivo-in-clean-1",
+        "userInput": {
+          "clipId": "it-vivo-in-clean",
+          "language": "it",
+          "text": "vivo in"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"abito a\" and called it none; the clip says \"abito a\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"abito a\" and called it none; the clip says \"abito a\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"abito a\" and called it none; the clip says \"abito a\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "abito a"
+        },
+        "id": "it-abito-a-clean-1",
+        "userInput": {
+          "clipId": "it-abito-a-clean",
+          "language": "it",
+          "text": "abito a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Lavoro a\" and called it none; the clip says \"lavoro a\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Lavoro a\" and called it none; the clip says \"lavoro a\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Lavoro a\" and called it none; the clip says \"lavoro a\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "lavoro a"
+        },
+        "id": "it-lavoro-a-clean-1",
+        "userInput": {
+          "clipId": "it-lavoro-a-clean",
+          "language": "it",
+          "text": "lavoro a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"studio a\" and called it none; the clip says \"studio a\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio a\" and called it none; the clip says \"studio a\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio a\" and called it none; the clip says \"studio a\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "studio a"
+        },
+        "id": "it-studio-a-clean-1",
+        "userInput": {
+          "clipId": "it-studio-a-clean",
+          "language": "it",
+          "text": "studio a"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"your message to\" and called it none; the clip says \"your message to\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"your message to\" and called it none; the clip says \"your message to\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"your message to\" and called it none; the clip says \"your message to\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "your message to"
+        },
+        "id": "en-your-message-to-clean-1",
+        "userInput": {
+          "clipId": "en-your-message-to-clean",
+          "language": "en",
+          "text": "your message to"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"What\" and called it none; the clip says \"what\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"What\" and called it none; the clip says \"what\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"What\" and called it none; the clip says \"what\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "what"
+        },
+        "id": "en-what-clean-1",
+        "userInput": {
+          "clipId": "en-what-clean",
+          "language": "en",
+          "text": "what"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"studio in\" and called it none; the clip says \"studio in\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio in\" and called it none; the clip says \"studio in\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"studio in\" and called it none; the clip says \"studio in\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "studio in"
+        },
+        "id": "it-studio-in-clean-1",
+        "userInput": {
+          "clipId": "it-studio-in-clean",
+          "language": "it",
+          "text": "studio in"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"viaggio in\" and called it none; the clip says \"viaggio in\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"viaggio in\" and called it none; the clip says \"viaggio in\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"viaggio in\" and called it none; the clip says \"viaggio in\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "viaggio in"
+        },
+        "id": "it-viaggio-in-clean-1",
+        "userInput": {
+          "clipId": "it-viaggio-in-clean",
+          "language": "it",
+          "text": "viaggio in"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Vado a\" and called it none; the clip says \"vado a\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vado a\" and called it none; the clip says \"vado a\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vado a\" and called it none; the clip says \"vado a\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "vado a"
+        },
+        "id": "it-vado-a-clean-1",
+        "userInput": {
+          "clipId": "it-vado-a-clean",
+          "language": "it",
+          "text": "vado a"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Ai\" and called it none; the clip says \"ai\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Ai\" and called it none; the clip says \"ai\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Ai\" and called it none; the clip says \"ai\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "ai"
+        },
+        "id": "it-ai-clean-1",
+        "userInput": {
+          "clipId": "it-ai-clean",
+          "language": "it",
+          "text": "ai"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Who's interested in\" and called it none; the clip says \"Who's interested in\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Who's interested in\" and called it none; the clip says \"Who's interested in\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Who's interested in\" and called it none; the clip says \"Who's interested in\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "Who's interested in"
+        },
+        "id": "en-whos-interested-in-clean-1",
+        "userInput": {
+          "clipId": "en-whos-interested-in-clean",
+          "language": "en",
+          "text": "Who's interested in"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"your message about\" and called it none; the clip says \"your message about\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"your message about\" and called it none; the clip says \"your message about\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"your message about\" and called it none; the clip says \"your message about\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "your message about"
+        },
+        "id": "en-your-message-about-clean-1",
+        "userInput": {
+          "clipId": "en-your-message-about-clean",
+          "language": "en",
+          "text": "your message about"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"in your email to Emma\" and called it none; the clip says \"in your email to Emma\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"in your email to Emma\" and called it none; the clip says \"in your email to Emma\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"in your email to Emma\" and called it none; the clip says \"in your email to Emma\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "in your email to Emma"
+        },
+        "id": "en-in-your-email-to-emma-clean-1",
+        "userInput": {
+          "clipId": "en-in-your-email-to-emma-clean",
+          "language": "en",
+          "text": "in your email to Emma"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"i\" and called it none; the clip says \"i\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"i\" and called it none; the clip says \"i\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"i\" and called it none; the clip says \"i\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "i"
+        },
+        "id": "pl-i-clean-1",
+        "userInput": {
+          "clipId": "pl-i-clean",
+          "language": "pl",
+          "text": "i"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"我是\" and called it none; the clip says \"我是\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"我是\" and called it none; the clip says \"我是\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"我是\" and called it none; the clip says \"我是\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "我是"
+        },
+        "id": "zh-wo-shi-clean-1",
+        "userInput": {
+          "clipId": "zh-wo-shi-clean",
+          "language": "zh",
+          "text": "我是"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"在几楼\" and called it none; the clip says \"在几楼\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"在几楼\" and called it none; the clip says \"在几楼\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"在几楼\" and called it none; the clip says \"在几楼\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "在几楼"
+        },
+        "id": "zh-zai-ji-lou-clean-1",
+        "userInput": {
+          "clipId": "zh-zai-ji-lou-clean",
+          "language": "zh",
+          "text": "在几楼"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Na widzenia\" and called it none; the clip says \"Do widzenia\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Na widzenia\" and called it none; the clip says \"Do widzenia\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Na widzenia\" and called it none; the clip says \"Do widzenia\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "Do widzenia"
+        },
+        "id": "pl-na-widzenia-misread-1",
+        "userInput": {
+          "clipId": "pl-na-widzenia-misread",
+          "language": "pl",
+          "text": "Na widzenia"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Recule\" and called it none; the clip says \"requil\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Recule\" and called it none; the clip says \"requil\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Recule\" and called it none; the clip says \"requil\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "requil"
+        },
+        "id": "fr-recule-misread-1",
+        "userInput": {
+          "clipId": "fr-recule-misread",
+          "language": "fr",
+          "text": "Recule"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"How much is the rent, and what does it include?\" and called it none; the clip says \"How much is the rent, and what does it include?\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"How much is the rent, and what does it include?\" and called it none; the clip says \"How much is the rent, and what does it include?\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"How much is the rent, and what does it include?\" and called it none; the clip says \"How much is the rent, and what does it include?\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "How much is the rent, and what does it include?"
+        },
+        "id": "en-rent-sentence-clean-1",
+        "userInput": {
+          "clipId": "en-rent-sentence-clean",
+          "language": "en",
+          "text": "How much is the rent, and what does it include?"
+        },
+        "origin": "production"
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Moro em\" and called it none; the clip says \"moro em\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Moro em\" and called it none; the clip says \"moro em\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Moro em\" and called it none; the clip says \"moro em\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "moro em"
+        },
+        "id": "pt-moro-em-clean-1",
+        "userInput": {
+          "clipId": "pt-moro-em-clean",
+          "language": "pt",
+          "text": "moro em"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Vivo en\" and called it none; the clip says \"vivo en\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vivo en\" and called it none; the clip says \"vivo en\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Vivo en\" and called it none; the clip says \"vivo en\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "vivo en"
+        },
+        "id": "es-vivo-en-clean-1",
+        "userInput": {
+          "clipId": "es-vivo-en-clean",
+          "language": "es",
+          "text": "vivo en"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"Je vais à\" and called it none; the clip says \"je vais à\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Je vais à\" and called it none; the clip says \"je vais à\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"Je vais à\" and called it none; the clip says \"je vais à\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "je vais à"
+        },
+        "id": "fr-je-vais-a-clean-1",
+        "userInput": {
+          "clipId": "fr-je-vais-a-clean",
+          "language": "fr",
+          "text": "je vais à"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"я живу в\" and called it none; the clip says \"я живу в\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"я живу в\" and called it none; the clip says \"я живу в\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"я живу в\" and called it none; the clip says \"я живу в\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "я живу в"
+        },
+        "id": "ru-ya-zhivu-v-clean-1",
+        "userInput": {
+          "clipId": "ru-ya-zhivu-v-clean",
+          "language": "ru",
+          "text": "я живу в"
+        }
+      }
+    },
+    {
+      "classification": {
+        "expected": "clean",
+        "predicted": "clean"
+      },
+      "steps": [
+        {
+          "conclusion": "Heard \"駅まで\" and called it none; the clip says \"駅まで\" (none).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"駅まで\" and called it none; the clip says \"駅まで\" (none).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Heard \"駅まで\" and called it none; the clip says \"駅まで\" (none).",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expected": {
+          "added": "none",
+          "heard": "駅まで"
+        },
+        "id": "ja-eki-made-clean-1",
+        "userInput": {
+          "clipId": "ja-eki-made-clean",
+          "language": "ja",
+          "text": "駅まで"
+        }
+      }
+    }
+  ],
+  "taskId": "check-clip-ending"
+}

@@ -12,7 +12,9 @@ struct LessonOption: Identifiable {
 
 /// Main's `PlayerChoiceSceneOptions`: number keys pick them on a hardware keyboard, and once
 /// checked only the right option and a wrong pick stay, unless it was a guess or every option says
-/// something after the check (`keepsEveryOption`).
+/// something after the check (`keepsEveryOption`). A picture option keeps its key, its verdict once
+/// checked, and its mark in its picture's top corners, each on the page's color so it reads over any
+/// picture.
 struct LessonOptionList: View {
   @Environment(\.lessonScreenHeight) private var screenHeight
 
@@ -27,6 +29,9 @@ struct LessonOptionList: View {
   var picturesPending = false
   let select: (String) -> Void
 
+  /// Past this text size a corner mark would cover too much of its picture.
+  private static let cornerMarkSize = DynamicTypeSize.xxLarge
+
   private var isPictureGrid: Bool {
     options.contains { $0.pictureAlt != nil }
   }
@@ -40,7 +45,7 @@ struct LessonOptionList: View {
 
   var body: some View {
     if isPictureGrid {
-      LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 12)], spacing: 12) {
         pictureButtons
       }
     } else {
@@ -64,8 +69,36 @@ struct LessonOptionList: View {
         select(option.id)
       } label: {
         pictureLabel(option)
+          .overlay(alignment: .topLeading) {
+            if HardwareKeyboard.shared.isConnected {
+              Group {
+                if let result = result(option) {
+                  VerdictMark(result: result)
+                    .foregroundStyle(Color(.foreground))
+                    .frame(minHeight: 20)
+                    .padding(2)
+                    .background(.boxBackground, in: .circle)
+                } else {
+                  KeyMarker(number: marker)
+                    .background(
+                      .boxBackground, in: .rect(cornerRadius: Radius.sm, style: .continuous)
+                    )
+                    .opacity(isLocked || isChecked ? 0 : 1)
+                }
+              }
+              .padding(4)
+              .dynamicTypeSize(...Self.cornerMarkSize)
+            }
+          }
+          .overlay(alignment: .topTrailing) {
+            ChoiceMark(kind: .one, isPicked: option.id == selectedId)
+              .padding(4)
+              .background(.boxBackground, in: .circle)
+              .padding(4)
+              .dynamicTypeSize(...Self.cornerMarkSize)
+          }
       }
-      .buttonStyle(LessonOptionStyle(mark: mark(option)))
+      .buttonStyle(LessonOptionStyle(mark: mark(option), holdsPicture: true))
       .disabled(isLocked || isChecked)
       .modifier(PickKey(index: marker - 1))
       .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
@@ -79,12 +112,18 @@ struct LessonOptionList: View {
       if let picture = option.picture {
         LessonPictureView(
           image: picture, alt: option.pictureAlt, isPending: false, asks: true,
-          drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio)
-      } else {
-        LessonPicturePlaceholder(alt: option.pictureAlt, isDrawing: picturesPending)
+          drawnAspectRatio: LessonPicturePlaceholder.optionAspectRatio,
+          cornerRadius: LessonOptionStyle.pictureRadius)
+      } else if picturesPending {
+        LessonPicturePlaceholder(alt: option.pictureAlt)
           .pictureFrame(
             aspectRatio: LessonPicturePlaceholder.optionAspectRatio,
-            maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight))
+            maxHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight),
+            cornerRadius: LessonOptionStyle.pictureRadius)
+      } else {
+        MissingPictureDescription(
+          alt: option.pictureAlt,
+          minHeight: LessonPictureFrame.question.maxHeight(screen: screenHeight))
       }
 
       // Its name would give the answer away, so it shows once the answer is checked, as on main.
@@ -149,6 +188,35 @@ struct LessonOptionList: View {
   }
 }
 
+/// Main's description of an option picture that never came: its words in ink on a quiet fill,
+/// with room above and below them that keeps them clear of the corner key and pick mark. It's as
+/// square as the picture would be, up to the picture's height, and grows with its words.
+private struct MissingPictureDescription: View {
+  let alt: String?
+  let minHeight: CGFloat
+
+  var body: some View {
+    ZStack {
+      Color.clear
+        .aspectRatio(LessonPicturePlaceholder.optionAspectRatio, contentMode: .fit)
+        .frame(maxHeight: minHeight)
+
+      if let alt {
+        Text(alt)
+          .typeStyle(.body)
+          .foregroundStyle(Color(.foreground))
+          .multilineTextAlignment(.center)
+          .padding(.horizontal, 8)
+          .padding(.vertical, 32)
+      }
+    }
+    .frame(maxWidth: .infinity)
+    .background(
+      Color.muted.opacity(0.5),
+      in: .rect(cornerRadius: LessonOptionStyle.pictureRadius, style: .continuous))
+  }
+}
+
 /// Before the check VoiceOver hears what a picture option shows, not its name.
 private struct PictureOptionLabel: ViewModifier {
   let option: LessonOption
@@ -180,6 +248,10 @@ struct LessonOptionStyle: ButtonStyle {
   }
 
   let mark: Mark
+  /// Main's picture card: 8pt round its picture, whose corners nest in the card's.
+  var holdsPicture = false
+
+  static let pictureRadius = Radius.sm
 
   func makeBody(configuration: Configuration) -> some View {
     configuration.label
@@ -187,9 +259,11 @@ struct LessonOptionStyle: ButtonStyle {
       .foregroundStyle(foreground)
       .multilineTextAlignment(.leading)
       .frame(maxWidth: .infinity, alignment: .leading)
-      .padding(.horizontal, 14)
-      .padding(.vertical, 12)
-      .answerSurface(tone, isPressed: configuration.isPressed)
+      .padding(.horizontal, holdsPicture ? 8 : 14)
+      .padding(.vertical, holdsPicture ? 8 : 12)
+      .answerSurface(
+        tone, cornerRadius: holdsPicture ? Radius.xl : Radius.option,
+        isPressed: configuration.isPressed)
   }
 
   private var foreground: Color {

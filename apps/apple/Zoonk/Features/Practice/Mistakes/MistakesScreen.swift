@@ -307,15 +307,14 @@ private struct MistakeEntryView: View {
       AccessibilityStack {
         Group {
           if let cause = causeLabel {
-            Chip(Text(cause), systemImage: causeIcon)
+            Chip(Text(cause), systemImage: causeIcon, filled: true)
           }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
 
         Text(entryDate)
-          .monospacedDigit()
+          .typeStyle(.data)
       }
-      .typeStyle(.meta.weight(.medium))
       .foregroundStyle(.mutedForeground)
 
       if let set = try? snapshot.set.map({ try PracticeJSON.recode($0.value1) as PracticeItemSet })

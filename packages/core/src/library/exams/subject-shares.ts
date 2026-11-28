@@ -1,3 +1,4 @@
+import { isInPart, listSubjectGroups } from "@zoonk/utils/exam-groups";
 import { getSubjectShareFallback } from "../../exams/_utils/subject-share-fallback";
 import { listCountedSubjects } from "../../exams/choices/choice-groups";
 import { type ExamStructure, type ScoredPart } from "./blueprint-contract";
@@ -11,6 +12,10 @@ const PERCENT = 100;
 
 type ShareGroup = { parts: readonly string[]; share: number; term: boolean };
 
+/**
+ * The qualifying test that asks the subject, when no test that counts does: one named after it, or
+ * the one that asks it when every test that asks it is qualifying.
+ */
 function findQualifyingPart({
   structure,
   subject,
@@ -19,11 +24,12 @@ function findQualifyingPart({
   subject: Subject;
 }): ScoredPart | null {
   const parts = structure.mock?.scoring.parts ?? [];
+  const qualifying = (name: string) => parts.find((part) => part.qualifying && part.name === name);
+  const groups = listSubjectGroups(subject).map((name) => qualifying(name));
+  const [first] = groups;
 
   return (
-    parts.find(
-      (part) => part.qualifying && (part.name === subject.name || part.name === subject.group),
-    ) ?? null
+    qualifying(subject.name) ?? (first && groups.every((part) => part !== undefined) ? first : null)
   );
 }
 
@@ -165,9 +171,49 @@ export function listSubjectShares(structure: ExamStructure): (number | null)[] {
 }
 
 /**
+ * The share of a qualifying test that also asks subjects that count: what passing it needs of it
+ * alone, since studying those subjects already prepares for the rest of it. Its points over the
+ * test's, or an even place among the test's subjects when either is unknown.
+ */
+function getPlaceInRetest({
+  own,
+  part,
+  structure,
+}: {
+  own: number | null;
+  part: ScoredPart;
+  structure: ExamStructure;
+}): number | null {
+  const max = getPartMaxPoints({ marking: structure.mock?.scoring.marking ?? [], part });
+
+  if (own !== null && max) {
+    return own / max;
+  }
+
+  const members = structure.subjects.filter((subject) => isInPart({ part: part.name, subject }));
+  const places = listCountedSubjects({ choiceGroups: structure.choiceGroups, subjects: members });
+
+  return places.length > 0 ? 1 / places.length : null;
+}
+
+function retestsCountedSubjects({
+  part,
+  structure,
+}: {
+  part: ScoredPart;
+  structure: ExamStructure;
+}) {
+  return structure.subjects.some(
+    (subject) =>
+      isInPart({ part: part.name, subject }) && !isQualifyingSubject({ structure, subject }),
+  );
+}
+
+/**
  * Each subject's planning priority: its share of the final score, except that a qualifying test,
  * which can still eliminate the learner, weighs its minimum's share of the points share it would
- * have if it counted, and the shares that count scale to the rest.
+ * have if it counted, and the shares that count scale to the rest. A qualifying test that also
+ * asks subjects that count weighs only its own subjects, by their place in it.
  */
 export function listPlanShares(structure: ExamStructure): (number | null)[] {
   const shares = listSubjectShares(structure);
@@ -183,9 +229,16 @@ export function listPlanShares(structure: ExamStructure): (number | null)[] {
   const passing = parts.map((part, index) => {
     const own = points[index] ?? null;
 
-    return part && own !== null && total > 0
-      ? (getPassShare({ part, structure }) * own) / total
-      : null;
+    if (!part) {
+      return null;
+    }
+
+    if (retestsCountedSubjects({ part, structure })) {
+      const place = getPlaceInRetest({ own, part, structure });
+      return place === null ? null : getPassShare({ part, structure }) * place;
+    }
+
+    return own !== null && total > 0 ? (getPassShare({ part, structure }) * own) / total : null;
   });
 
   const reserved = structure.subjects.reduce(

@@ -3,12 +3,16 @@
 export type ShapeRule = { className: string; name: string; use: string };
 
 export const RADII: readonly ShapeRule[] = [
-  { className: "rounded-xs", name: "Cell", use: "Progress cells, a calendar's days, small marks." },
+  {
+    className: "rounded-xs",
+    name: "Cell",
+    use: "Progress cells, a calendar's days, small marks, a checkbox.",
+  },
   { className: "rounded-meter", name: "Meter", use: "Meters and their parts." },
   {
     className: "rounded-sm",
     name: "Inner",
-    use: "Chips and what sits inside a control: a keycap, a checkbox, a goal mark, a link's focus ring.",
+    use: "Chips and what sits inside a control: a keycap, a goal mark, a link's focus ring.",
   },
   { className: "rounded-md", name: "Small button", use: "Buttons of 30px and under, tabs." },
   { className: "rounded-lg", name: "Button", use: "Buttons, inputs and a highlighted row." },
