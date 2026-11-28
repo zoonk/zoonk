@@ -20,6 +20,6 @@ model CodeRun {
   finishedAt  DateTime?    @map("finished_at")
 
   @@unique([userId, requestId])
-  @@index([userId, finishedAt])
+  @@index([userId, startedAt])
   @@map("code_runs")
 }
