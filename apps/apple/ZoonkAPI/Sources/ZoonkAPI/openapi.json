@@ -91878,6 +91878,7 @@
           },
           "chapter": {
             "nullable": true,
+            "description": "Name of the Plan phase where the course starts.",
             "type": "string"
           },
           "course": {
@@ -91915,7 +91916,8 @@
                     "start"
                   ],
                   "additionalProperties": false
-                }
+                },
+                "description": "One entry per Plan phase in Plan order, including phases with no lessons."
               },
               "lessons": {
                 "type": "integer",

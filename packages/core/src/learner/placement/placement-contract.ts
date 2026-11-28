@@ -52,17 +52,25 @@ export const placementResultSchema = z
   .object({
     attemptId: uuidSchema(),
     changeId: uuidSchema().nullable().optional(),
-    chapter: z.string().nullable(),
+    chapter: z
+      .string()
+      .nullable()
+      .meta({ description: "Name of the Plan phase where the course starts." }),
     course: z
       .object({
-        chapters: z.array(
-          z.object({
-            done: z.int().nonnegative(),
-            lessons: z.int().nonnegative(),
-            skipped: z.int().nonnegative(),
-            start: z.boolean(),
+        chapters: z
+          .array(
+            z.object({
+              done: z.int().nonnegative(),
+              lessons: z.int().nonnegative(),
+              skipped: z.int().nonnegative(),
+              start: z.boolean(),
+            }),
+          )
+          .meta({
+            description:
+              "One entry per Plan phase in Plan order, including phases with no lessons.",
           }),
-        ),
         lessons: z.int().nonnegative(),
       })
       .nullable(),
