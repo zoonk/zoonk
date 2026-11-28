@@ -24,6 +24,7 @@ export type RawUnderstoodGoal = {
   examSubjects: string[] | null;
   examTarget: UnderstoodExamTarget | null;
   examYear: number | null;
+  followUps: string[];
   institution: string | null;
   kind: UnderstoodGoalKind;
   level: string | null;
@@ -43,7 +44,6 @@ export type RawUnderstoodGoal = {
 
 export type RawGoalUnderstanding = {
   dailyMinutes: number | null;
-  followUps: string[];
   goals: RawUnderstoodGoal[];
   instrument: string | null;
   question: string | null;

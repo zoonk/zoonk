@@ -92,9 +92,10 @@ export async function decideGoalScopeStep({
     };
   }
 
-  // Lessons from the learner's own material cite it, and only a class decides what its own test
-  // covers, so neither is shared.
-  if (inputs.hasMaterial || inputs.classTest) {
+  // Lessons from the learner's own material cite it, a shared graph never reads the learner's
+  // answers to follow-up questions, and only a class decides what its own test covers, so none of
+  // them is shared.
+  if (inputs.hasMaterial || inputs.classTest || inputs.asksFollowUps) {
     return toPrivateScope(goal);
   }
 

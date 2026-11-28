@@ -21,6 +21,7 @@ function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal 
     examSubjects: null,
     examTarget: null,
     examYear: null,
+    followUps: [],
     institution: null,
     kind: "learn",
     level: null,
@@ -43,7 +44,6 @@ function rawGoal(overrides: Partial<RawUnderstoodGoal> = {}): RawUnderstoodGoal 
 function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstanding {
   return {
     dailyMinutes: null,
-    followUps: [],
     goals: [rawGoal()],
     instrument: null,
     question: null,
@@ -53,6 +53,14 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
     studyTimeNote: null,
     ...overrides,
   };
+}
+
+function readGoals(goals: RawUnderstoodGoal[]) {
+  return normalizeGoalUnderstanding({
+    dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+    raw: raw({ goals }),
+    today: TODAY,
+  });
 }
 
 function readWithIntent(
@@ -110,6 +118,28 @@ describe(normalizeGoalUnderstanding, () => {
         { examSubjects: undefined },
         { examSubjects: undefined },
       ],
+    });
+  });
+
+  it("asks only what the main goal needs, since onboarding asks while setting that goal up", () => {
+    const finals = rawGoal({
+      followUps: ["  Which subjects do your finals cover?  "],
+      kind: "exam",
+      subject: "finals",
+      title: "Get ready for my finals",
+    });
+
+    expect(readGoals([rawGoal(), finals])).toMatchObject({ followUps: [] });
+
+    expect(readGoals([finals, rawGoal()])).toMatchObject({
+      followUps: ["Which subjects do your finals cover?"],
+    });
+
+    expect(
+      readGoals([rawGoal({ followUps: ["Lost with its goal"], title: " " }), finals]),
+    ).toMatchObject({
+      followUps: ["Which subjects do your finals cover?"],
+      goals: [expect.objectContaining({ title: "Get ready for my finals" })],
     });
   });
 

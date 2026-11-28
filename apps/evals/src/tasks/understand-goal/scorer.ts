@@ -50,6 +50,8 @@ type ExpectedGoal = {
 
 export type UnderstandGoalExpected = {
   dailyMinutes?: number;
+  /** A follow-up question it must ask, or null when the words leave nothing to ask. */
+  followUp?: RegExp | null;
   goals?: ExpectedGoal[];
   hasStudyTime?: boolean;
   route: "explain" | "goals" | "instrument" | "unclear" | "unsafe";
@@ -270,6 +272,23 @@ function checkTitle(goal: Record<string, unknown>): string[] {
   ];
 }
 
+function checkFollowUp({ expected, output }: { expected: UnderstandGoalExpected; output: Output }) {
+  const questions = Array.isArray(output.followUps)
+    ? output.followUps.filter((item): item is string => typeof item === "string")
+    : [];
+
+  if (expected.followUp === undefined) {
+    return true;
+  }
+
+  if (expected.followUp === null) {
+    return questions.length === 0;
+  }
+
+  const pattern = expected.followUp;
+  return questions.some((question) => pattern.test(question));
+}
+
 function checkSchedule({ expected, output }: { expected: UnderstandGoalExpected; output: Output }) {
   const days = Array.isArray(output.studyDays) ? output.studyDays : [];
 
@@ -285,6 +304,7 @@ function checkSchedule({ expected, output }: { expected: UnderstandGoalExpected;
           expected.studyDays.every((day) => days.includes(day))),
       `days ${JSON.stringify(days)}`,
     ],
+    [checkFollowUp({ expected, output }), `follow-ups ${show(output.followUps)}`],
   ];
 
   return checks.filter(([ok]) => !ok).map(([, problem]) => problem);
