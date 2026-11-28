@@ -57,9 +57,6 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.LearnerSummaryWaitingGoal
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toJavaLocalDate
-import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 /**
@@ -433,7 +430,7 @@ private fun GoalLine(goal: LearnerSummaryGoal) {
 
             else -> {
                 val daily = stringResource(R.string.goal_switcher_daily, formatMinutes(goal.dailyMinutes.toInt(), locale))
-                val days = goal.targetDate?.let { ChronoUnit.DAYS.between(LocalDate.now(), it.toJavaLocalDate()).toInt() }
+                val days = goal.daysLeft?.toInt()
                 listOfNotNull(daily, goalCountdown(days, goal.targetDateEstimated)?.text).factsLine()
             }
         }

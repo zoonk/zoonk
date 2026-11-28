@@ -6,7 +6,10 @@ export const POPUP_SELECTOR =
 
 export const SCREEN_ENTER_ATTRIBUTE = "data-screen-enter";
 
-/** A radio isn't one: Enter on a picked answer submits it, as a radio does in a form. Nor is a button with its own key, such as audio's P. */
+/**
+ * A radio isn't one: Enter on a picked answer submits it, as a radio does in a form. Nor is a
+ * checkbox or button that hands Enter to the screen, such as an answer's checkbox or audio's P.
+ */
 const PRESSABLE_SELECTOR = [
   "a[href]",
   `button:not([role='radio'], [${SCREEN_ENTER_ATTRIBUTE}])`,
@@ -17,7 +20,7 @@ const PRESSABLE_SELECTOR = [
   "input[type='reset']",
   "input[type='submit']",
   "[role='button']",
-  "[role='checkbox']",
+  `[role='checkbox']:not([${SCREEN_ENTER_ATTRIBUTE}])`,
   "[role='link']",
   "[role^='menuitem']",
   "[role='option']",

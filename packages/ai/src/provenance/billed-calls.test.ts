@@ -83,8 +83,8 @@ function watchLoggedRuns() {
   return {
     logged,
     runs: () =>
-      logged.map(({ properties, provenance }) => ({
-        failed: properties?.$ai_is_error === true,
+      logged.map(({ failed, provenance }) => ({
+        failed: failed === true,
         inputTokens: provenance.usage.inputTokens,
       })),
   };

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
 import { type PromptTrainingInput, runUnderPromptTrainingRule } from "../data-protection";
 import { type AiGenerationContext } from "./ai-generation-event";
-import { type AiGeneration, captureAiGeneration } from "./ai-generation-sink";
+import { captureAiGeneration } from "./ai-generation-sink";
 import { collectRunCalls } from "./billed-calls";
 import {
   type FinishedGeneration,
@@ -28,8 +28,6 @@ export type TaskRunDetails = {
   runId: string;
 };
 
-const FAILED_RUN = { $ai_is_error: true } as const;
-
 export function startTaskRun({
   analytics,
   promptVersion,
@@ -43,7 +41,7 @@ export function startTaskRun({
   return {
     async finish(
       build: (details: TaskRunDetails) => TaskProvenance,
-      properties?: AiGeneration["properties"],
+      failed?: true,
     ): Promise<TaskProvenance> {
       const provenance = build({
         generatedAt: new Date().toISOString(),
@@ -52,7 +50,7 @@ export function startTaskRun({
         runId,
       });
 
-      await captureAiGeneration({ context: analytics, properties, provenance, task });
+      await captureAiGeneration({ context: analytics, failed, provenance, task });
 
       return provenance;
     },
@@ -64,8 +62,8 @@ export function startTaskRun({
 function startTaskGeneration(input: TaskGenerationInput) {
   const run = startTaskRun(input);
 
-  const finish = (generation: FinishedGeneration, properties?: AiGeneration["properties"]) =>
-    run.finish((details) => buildTaskProvenance({ ...details, generation }), properties);
+  const finish = (generation: FinishedGeneration, failed?: true) =>
+    run.finish((details) => buildTaskProvenance({ ...details, generation }), failed);
 
   return {
     /** A failed run has no answer to read its calls from, so it logs the ones the provider billed. */
@@ -76,7 +74,7 @@ function startTaskGeneration(input: TaskGenerationInput) {
         const finalStep = billed.at(-1);
 
         if (finalStep) {
-          await finish({ finalStep, steps: billed }, FAILED_RUN);
+          await finish({ finalStep, steps: billed }, true);
         }
 
         throw error;

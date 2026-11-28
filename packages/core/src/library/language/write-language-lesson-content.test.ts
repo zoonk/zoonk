@@ -515,7 +515,7 @@ describe(writeLanguageLessonDraft, () => {
     expect(sentence.romanization).toBe("hau mach iz da rent");
   });
 
-  it("voices each word its word banks show once, so every target-language tile plays it", async () => {
+  it("voices each word a reading tile shows once, and leaves fill-in-the-blank tiles silent", async () => {
     const organization = await aiOrganizationFixture();
     const key = `ka${crypto.randomUUID()}`;
     const draft = uniqueDraft(key);
@@ -544,6 +544,7 @@ describe(writeLanguageLessonDraft, () => {
       .mock.calls.map(([call]) => call.text.toLowerCase());
 
     expect(voiced).not.toContain(key);
+    expect(voiced).not.toContain("be");
 
     const caseVariants = await prisma.word.findMany({
       where: { targetLanguage: "en", word: { equals: key, mode: "insensitive" } },
@@ -578,9 +579,8 @@ describe(writeLanguageLessonDraft, () => {
         .toSorted(),
     ).toStrictEqual(["are", "be", "is"]);
 
-    expect(
-      [...readingTiles, ...tilesOf("fillBlank")].filter((tile) => !tile.audioUrl),
-    ).toStrictEqual([]);
+    expect(readingTiles.filter((tile) => !tile.audioUrl)).toStrictEqual([]);
+    expect(tilesOf("fillBlank").filter((tile) => tile.audioUrl)).toStrictEqual([]);
 
     expect(readingTiles.find((tile) => tile.word === key)?.audioUrl).toBe(sentenceWord.audioUrl);
 
@@ -743,6 +743,60 @@ describe(writeLanguageLessonDraft, () => {
     );
 
     expect(tiles.map((option) => option.audioUrl)).toStrictEqual([voiced.audioUrl]);
+  });
+
+  it("voices a word bank tile from the older of two spellings saved at the same moment", async () => {
+    const organization = await aiOrganizationFixture();
+    const key = crypto.randomUUID();
+    const draft = uniqueDraft(key);
+    const tile = `hello-${key}`;
+    const savedAt = new Date();
+    const [olderId, newerId] = [crypto.randomUUID(), crypto.randomUUID()].toSorted();
+
+    await wordFixture({
+      audioUrl: "https://blob.test/hello-capitalized.mp3",
+      createdAt: savedAt,
+      id: newerId,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: `Hello-${key}`,
+    });
+
+    const older = await wordFixture({
+      audioUrl: "https://blob.test/hello.mp3",
+      createdAt: savedAt,
+      id: olderId,
+      organizationId: organization.id,
+      targetLanguage: "en",
+      word: tile,
+    });
+
+    const { lesson, workflowRunId } = await claimLanguageLesson({ language: "pt" });
+    const [firstSentence, ...otherSentences] = draft.sentences;
+
+    mockDraft({
+      ...draft,
+      sentences: [
+        { ...firstSentence!, sentence: `${tile} ${firstSentence!.sentence}` },
+        ...otherSentences,
+      ],
+    });
+
+    mockAudio();
+
+    await writeAndPublishLanguageLesson({ lessonId: lesson.id, workflowRunId });
+
+    mockSession(crypto.randomUUID());
+    const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = played?.status === "ready" ? played.lesson.steps : [];
+
+    const tiles = steps.flatMap((step) =>
+      "exercise" in step && step.kind === "reading"
+        ? step.exercise.wordBankOptions.filter((option) => option.word === tile)
+        : [],
+    );
+
+    expect(tiles.map((option) => option.audioUrl)).toStrictEqual([older.audioUrl]);
   });
 
   it("doesn't teach words the unit's earlier lessons taught", async () => {

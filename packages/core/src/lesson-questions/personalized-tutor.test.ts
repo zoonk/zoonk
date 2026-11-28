@@ -6,6 +6,7 @@ import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { memoryFactFixture } from "@zoonk/testing/fixtures/memory";
 import { describe, expect, it, vi } from "vitest";
+import { buddyTarget } from "./_test-utils/buddy-target";
 import { createLessonQuestionFixture } from "./_test-utils/create-question";
 import { claimLessonQuestionAnswer } from "./answer-lifecycle";
 import { createLessonQuestion } from "./create-lesson-question";
@@ -50,7 +51,7 @@ async function questionWithNeeds(task: "goal" | "lesson") {
 
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "What comes next?", requestId: randomUUID() },
-    target: { conversationId: null, goalId: goal.id, kind: "plan" },
+    target: buddyTarget(goal.id),
   });
 
   if (created.status !== "created") {

@@ -1,5 +1,6 @@
 /** Both providers return 24 kHz, 16-bit mono WAV. */
 const WAV_BYTES_PER_SECOND = 48_000;
+const WAV_HEADER_BYTES = 44;
 const WAV_HEADER_ALLOWANCE_BYTES = 1024;
 
 /** Even a one-letter clip may take this long, with the pauses a voice leaves around it. */
@@ -34,4 +35,9 @@ export function assertExpectedAudioSize({
   throw new Error(
     `${model} returned oversized audio: ${audio.byteLength} bytes. Expected at most ${maxBytes} bytes.`,
   );
+}
+
+/** Read from its size, so a clip that won't decode is still priced. */
+export function getWavSeconds(audio: Uint8Array): number {
+  return Math.max(0, audio.byteLength - WAV_HEADER_BYTES) / WAV_BYTES_PER_SECOND;
 }

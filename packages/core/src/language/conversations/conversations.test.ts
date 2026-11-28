@@ -206,6 +206,17 @@ describe("language conversations", () => {
     await Promise.all([
       prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } }),
       learningProfileFixture({ addressForm: "feminine", userId: user.id }),
+      prisma.conversationScenario.create({
+        data: {
+          chapterId: renting.id,
+          content: RENTING_SCENARIO,
+          level: "A2",
+          model: "test",
+          promptVersion: "test",
+          runId: "test",
+          targetRegion: "GB",
+        },
+      }),
     ]);
 
     const { conversationId } = await connectPractice(renting.id);
@@ -262,6 +273,7 @@ describe("language conversations", () => {
       writing: {
         kind: "unitScenario",
         level: "A2",
+        targetRegion: "",
         unit: expect.objectContaining({ id: renting.id, title: renting.title }),
         userId: user.id,
       },
@@ -281,6 +293,42 @@ describe("language conversations", () => {
 
     await expect(startLanguageConversation(input)).resolves.toMatchObject({ status: "ready" });
     expect(generateConversationScenario).toHaveBeenCalledOnce();
+  });
+
+  it("sets the call in the goal's country when lessons teach another, and shares the language's own call otherwise", async () => {
+    const { goal, renting, user } = await languageGoalFixture();
+    mockSession(user.id);
+
+    vi.mocked(generateConversationScenario).mockResolvedValue({
+      data: { ...RENTING_SCENARIO, title: "Call a landlord in London" },
+      provenance: PROVENANCE,
+      systemPrompt: "",
+      usage: undefined as never,
+      userPrompt: "",
+    });
+
+    await prisma.goal.update({ data: { targetRegion: "US" }, where: { id: goal.id } });
+    const shared = await getLanguageConversation(await startPractice(renting.id));
+
+    await prisma.goal.update({ data: { targetRegion: "GB" }, where: { id: goal.id } });
+    const input = { chapterId: renting.id, kind: "practice", minutes: 2 } as const;
+    const asked = await startLanguageConversation(input);
+
+    expect(asked).toMatchObject({ status: "preparing", writing: { targetRegion: "GB" } });
+
+    if (asked.status !== "preparing") {
+      throw new Error("Expected the British call to need writing");
+    }
+
+    await writeTestCall(asked.writing);
+    const british = await getLanguageConversation(await startPractice(renting.id));
+
+    expect(generateConversationScenario).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ targetLanguage: "en", targetRegion: "GB" }),
+    );
+
+    expect(shared).toMatchObject({ conversation: { title: RENTING_SCENARIO.title } });
+    expect(british).toMatchObject({ conversation: { title: "Call a landlord in London" } });
   });
 
   it("keeps another learner's call hidden", async () => {

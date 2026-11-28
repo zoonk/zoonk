@@ -31,6 +31,7 @@ import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.feature.plan.ADJUST_CHOICES
 import com.zoonk.android.feature.plan.PlanChoiceLines
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.today
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
@@ -311,12 +312,11 @@ private fun ColumnScope.RevealBody(
     onUseNoticeDay: (LocalDate) -> Unit,
     onCreateAccount: () -> Unit,
 ) {
-    val today = studyDay?.localDate?.toJavaLocalDate() ?: LocalDate.now()
     // Main's `RevealPlan`: what the learner chose, to check before starting: the time a day and where the plan ends,
     // an exam's options, and the lines that only show when the plan needs something from them.
     val choices: @Composable () -> Unit = {
         Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            RevealReadouts(plan, goal, today)
+            RevealReadouts(plan, goal, plan.today)
             PlanChoiceLines(plan.examChoices, onChange = onChangeChoice)
             NoticeDayLine(plan, enabled = !starting, onUse = onUseNoticeDay)
             if (plan.notice == Plan.Notice.USUAL) {

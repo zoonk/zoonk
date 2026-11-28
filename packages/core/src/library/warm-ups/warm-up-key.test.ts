@@ -25,6 +25,14 @@ describe(getWarmUpKey, () => {
     );
   });
 
+  it("never hands a C++ deck to a C or C# goal", () => {
+    const keys = ["Learn C programming", "Learn C++ programming", "Learn C# programming"].map(
+      (generalGoal) => getWarmUpKey({ ...shared, generalGoal, kind: "learn" }),
+    );
+
+    expect(new Set(keys).size).toBe(3);
+  });
+
   it("does not name private, unexplained or empty subjects", () => {
     expect(getWarmUpKey({ ...shared, kind: "learn", ownerId: "learner" })).toBeNull();
     expect(getWarmUpKey({ ...shared, generalGoal: null, kind: "learn" })).toBeNull();

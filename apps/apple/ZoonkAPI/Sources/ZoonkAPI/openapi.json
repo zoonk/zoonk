@@ -11557,287 +11557,6 @@
         }
       }
     },
-    "/goals/{goalId}/plan/questions": {
-      "get": {
-        "description": "The current learner's private questions about the earliest conversation for one of the learner's goals.",
-        "operationId": "getPlanQuestionThread",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Get the current learner's question thread about the earliest conversation for one of the learner's goals",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          },
-          {
-            "in": "query",
-            "name": "contextKind",
-            "schema": {
-              "description": "Filter by context kind; use lesson for the completion conversation",
-              "type": "string",
-              "enum": [
-                "lesson",
-                "step",
-                "answer",
-                "item",
-                "chapter",
-                "plan",
-                "mock",
-                "subject"
-              ]
-            },
-            "description": "Filter by context kind; use lesson for the completion conversation"
-          },
-          {
-            "in": "query",
-            "name": "cursor",
-            "schema": {
-              "description": "Opaque cursor returned in nextCursor",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "description": "Opaque cursor returned in nextCursor"
-          },
-          {
-            "in": "query",
-            "name": "mistakeId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            }
-          },
-          {
-            "in": "query",
-            "name": "stepId",
-            "schema": {
-              "description": "Return questions and answer explanations for this step only; pagination uses the same filter",
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "description": "Return questions and answer explanations for this step only; pagination uses the same filter"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Up to 50 questions ordered chronologically within the page; omitting the cursor returns the newest page, or null before the first question",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "nullable": true,
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/LessonQuestionThread"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Asks the tutor about the earliest conversation for one of the learner's goals. `context` is `{ kind: \"plan\" }`: the buddy answers doubts about what the learner studies for the goal and questions about their plan (\"Why am I studying this today?\"), seeing the plan's status, current phase, today's items with the reason each one is there, what comes next, how the learner shaped the plan, their latest open mistakes and the outline of the course the plan is built from. When the learner asks to change the plan (\"1 hour a day\", \"no studying on Saturdays\", \"the exam moved\"), the answer proposes the change: the question's `planChange` holds it with its effect, waiting for `POST /v1/goals/{goalId}/plan/changes/{changeId}` (applied or declined); nothing changes before that. Only the latest proposal of the conversation waits: an earlier one still unanswered is declined. While the plan is still being written, the buddy answers doubts and says the plan is not ready for changes yet. The question counts against the learner's tutor allowance when it's asked, and its answer doesn't count again; a question the allowance refuses isn't saved (403 asks a guest to sign up, 402 a free learner to subscribe, 429 to slow down or come back after the limit resets, with `SIGN_UP_REQUIRED`, `SLOW_DOWN` or `USAGE_LIMIT_REACHED` and details), so the learner can send it again once the allowance is back. A first question about a lesson screen that someone already asked there doesn't count. Answer it with `POST /v1/questions/{questionId}/answers`.",
-        "operationId": "createPlanQuestion",
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "summary": "Ask a question about the earliest conversation for one of the learner's goals",
-        "tags": [
-          "Plans"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateLessonQuestionRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Durable pending question, with the day's missions it completed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreatedLessonQuestion"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "402": {
-            "description": "Subscription required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Request forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "The tutor allowance asks the learner to slow down or come back after the limit resets",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/goals/{goalId}/subjects/{subjectKey}/questions": {
       "get": {
         "description": "The current learner's private questions about a subject of one of the learner's goals (a subject of the exam's notice, or a module).",
@@ -52723,7 +52442,7 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991,
-            "description": "When the summary changes without a write: the next local or UTC midnight (when the allowance starts over), the end of a day carried over from the night before, the subscription's next change or the session's end"
+            "description": "When the summary changes without a write: the active goal's next local midnight, a midnight that changes a goal's days left, the UTC allowance reset, the end of a day carried over from the night before, the subscription's next change or the session's end"
           },
           "places": {
             "type": "object",
@@ -53069,6 +52788,13 @@
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
           },
+          "daysLeft": {
+            "nullable": true,
+            "description": "Calendar days until the target date in the goal's time zone. Zero on the date, null once past or without a date.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
           "displayName": {
             "type": "string"
           },
@@ -53163,6 +52889,7 @@
           "courseId",
           "courseLevel",
           "dailyMinutes",
+          "daysLeft",
           "displayName",
           "id",
           "isActive",
@@ -76709,7 +76436,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77108,7 +76836,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77499,7 +77228,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -77854,7 +77584,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78236,7 +77967,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78644,7 +78376,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -78999,7 +78732,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -79354,7 +79088,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81262,7 +80997,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -81661,7 +81397,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82052,7 +81789,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82407,7 +82145,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -82789,7 +82528,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83197,7 +82937,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83552,7 +83293,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -83907,7 +83649,8 @@
                             "word"
                           ],
                           "additionalProperties": false
-                        }
+                        },
+                        "description": "A fill-in-the-blank's tiles. Their audioUrl is always null: the wrong options are near-misses a voice can say as the answer."
                       },
                       "id": {
                         "type": "string",
@@ -105381,7 +105124,7 @@
                           "items": {
                             "type": "string"
                           },
-                          "description": "The tests or blocks it adds, as a subject's `group` or `name` writes them"
+                          "description": "The tests or blocks it adds, as a subject's `group`, `otherGroups` or `name` writes them"
                         },
                         "share": {
                           "type": "number",
@@ -105439,7 +105182,7 @@
                         },
                         "part": {
                           "nullable": true,
-                          "description": "The test or block it scores, as a subject's `group` or `name` writes it; null for the whole exam",
+                          "description": "The test or block it scores, as a subject's `group`, `otherGroups` or `name` writes it; null for the whole exam",
                           "type": "string"
                         },
                         "points": {
@@ -105558,7 +105301,7 @@
                         },
                         "name": {
                           "type": "string",
-                          "description": "The test or block, as a subject's `group` or `name` writes it"
+                          "description": "The test or block, as a subject's `group`, `otherGroups` or `name` writes it"
                         },
                         "qualifying": {
                           "type": "boolean",
@@ -106610,6 +106353,14 @@
                 },
                 "name": {
                   "type": "string"
+                },
+                "otherGroups": {
+                  "minItems": 1,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
                 },
                 "partOf": {
                   "nullable": true,

@@ -12,11 +12,6 @@ import {
  * region's proxy included. A sink loads its code on its first event, so startup stays light.
  */
 export function registerServerSinks(): void {
-  registerAiGenerationSink("posthog", async (generation) => {
-    const { sendAiGenerationAnalytics } = await import("./analytics/ai-generations");
-    await sendAiGenerationAnalytics(generation);
-  });
-
   registerAiGenerationSink("ai-calls", async (generation) => {
     const { logAiCall } = await import("./ai-calls/ai-call-log");
     logAiCall(generation);

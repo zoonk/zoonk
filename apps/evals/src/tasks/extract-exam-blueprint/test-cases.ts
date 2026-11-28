@@ -272,6 +272,11 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
         },
         { group: "P1", kind: "group", subject: "Estado, Democracia, Direitos e Ciência Política" },
         { group: "P2", kind: "group", subject: "Fundamentos de Auditoria Governamental" },
+        {
+          groups: ["P2"],
+          kind: "subjectGroups",
+          subject: "Fundamentos de Auditoria Governamental",
+        },
       ],
     },
     id: "cgu-2026-auditor-specialties",
@@ -664,6 +669,13 @@ export const TEST_CASES: TestCase<ExtractionExpected, ExtractionEvalInput>[] = [
       facts: [
         { kind: "subject", name: "Língua Inglesa" },
         { kind: "choice", options: ["Espanhola", "Francesa"] },
+        {
+          groups: ["Primeira Fase", "Segunda Fase"],
+          kind: "subjectGroups",
+          subject: "História do Brasil",
+        },
+        { groups: ["Primeira Fase"], kind: "subjectGroups", subject: "História Mundial" },
+        { groups: ["Segunda Fase"], kind: "subjectGroups", subject: "Língua Espanhola" },
       ],
     },
     id: "cacd-2025",

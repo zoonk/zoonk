@@ -85,7 +85,6 @@ import com.zoonk.api.models.PlanPlacementTest
 import com.zoonk.api.models.PreparationComponentsMocks
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toKotlinLocalDate
-import java.time.LocalDate
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -477,7 +476,7 @@ private fun PlanWeek(page: PlanPageState) {
             }
         }
         val names = weekdayNames(locale)
-        val weekDate = days.firstOrNull { it.study.isToday }?.date ?: LocalDate.now().toKotlinLocalDate()
+        val weekDate = page.today.toKotlinLocalDate()
         WeekDaysRow {
             days.forEach { day ->
                 val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek

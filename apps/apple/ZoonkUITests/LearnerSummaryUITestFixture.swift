@@ -17,6 +17,7 @@ let learnerSummaryUITestJSON = """
         "contentCountry": null,
         "countryDependent": false,
         "dailyMinutes": 30,
+        "daysLeft": null,
         "examCountry": null,
         "examplesCountry": null,
         "id": "0b6c4c1e-7a39-4c6e-9f43-2f8f1f0c5a11",

@@ -1,4 +1,5 @@
 import { SectionPage } from "@/components/learn/section-page";
+import { LearnerClock } from "@/components/learner/learner-clock";
 import { LearnerSummarySeed } from "@/components/learner/learner-summary-seed";
 import { getMenu } from "@/lib/menu";
 import { type Metadata } from "next";
@@ -17,7 +18,7 @@ export default async function StatsLayout({ children }: LayoutProps<"/[lang]">) 
         measure="list"
         nav={<StatsNav />}
       >
-        {children}
+        <LearnerClock>{children}</LearnerClock>
       </SectionPage>
       <LearnerSummarySeed />
     </>

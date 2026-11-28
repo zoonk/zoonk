@@ -2,6 +2,8 @@ import { prisma } from "@zoonk/db";
 
 export async function wordFixture(attrs: {
   organizationId: string;
+  id?: string;
+  createdAt?: Date;
   word?: string;
   targetLanguage?: string;
   romanization?: string | null;
@@ -10,6 +12,8 @@ export async function wordFixture(attrs: {
   return prisma.word.create({
     data: {
       audioUrl: attrs.audioUrl ?? null,
+      createdAt: attrs.createdAt,
+      id: attrs.id,
       organizationId: attrs.organizationId,
       romanization: attrs.romanization ?? null,
       targetLanguage: attrs.targetLanguage ?? "es",

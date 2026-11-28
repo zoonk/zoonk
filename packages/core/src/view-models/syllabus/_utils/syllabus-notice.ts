@@ -3,6 +3,7 @@ import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { getWrittenTasks } from "../../../exams/_utils/written-tasks";
 import { type ExamPicks, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamPicks } from "../../../exams/choices/load-exam-choices";
+import { getGroupLabel } from "../../../library/exams/group-label";
 import { getPassMarks } from "../../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint";
 import {
@@ -58,7 +59,7 @@ export async function loadNotice(
 
   const subjects: NoticeSubject[] = structure.subjects.map((subject, index) => ({
     frequencySource: getTopicFrequencySource({ structure, subject }),
-    group: subject.group ?? null,
+    group: getGroupLabel({ structure, subject }),
     matrix: subject.matrix ?? [],
     name: subject.name,
     partOf: subject.partOf ?? null,

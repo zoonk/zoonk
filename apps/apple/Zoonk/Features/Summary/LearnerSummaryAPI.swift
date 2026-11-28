@@ -10,8 +10,8 @@ struct LearnerSummary: Equatable, Sendable {
   var homeCountry: String? = nil
   let identity: LearnerIdentity
   let level: LearnerLevel?
-  /// When the summary changes without a write: the next midnight, the subscription's next change or
-  /// the session's end.
+  /// When the summary changes without a write: the next midnight (the active goal's, or one that
+  /// changes a goal's days left), the subscription's next change or the session's end.
   let nextChangeAt: Date
   let places: LearnerPlaces
   let readAt: Date
@@ -33,6 +33,9 @@ struct LearnerGoal: Equatable, Identifiable, Sendable {
   /// The level of the goal's next lesson in that course, where its page opens the outline.
   var courseLevel: CourseLevel? = nil
   let dailyMinutes: Int
+  /// Days until `targetDate` in the goal's zone, as core counts them: 0 on the day, nil once it
+  /// passed or without a date.
+  var daysLeft: Int? = nil
   let id: String
   /// Questions are left before its plan is set, so continuing it opens its setup instead of Today.
   var isSettingUp = false
@@ -243,6 +246,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
         startCourseIDs: goal.startCourseIds,
         courseLevel: goal.courseLevel.flatMap { CourseLevel(rawValue: $0.rawValue) },
         dailyMinutes: goal.dailyMinutes,
+        daysLeft: goal.daysLeft,
         id: goal.id,
         isSettingUp: goal.isSettingUp,
         kind: LearnerGoal.Kind(rawValue: goal.kind.rawValue) ?? .learn,

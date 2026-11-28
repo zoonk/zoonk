@@ -1,11 +1,9 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
 import { MS_PER_SECOND } from "@zoonk/utils/date";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice, getBaseLanguage } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
-import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { combineTaskProvenance } from "../../provenance/combine-task-provenance";
 import { type TaskProvenance } from "../../provenance/task-provenance";
 import { type ServiceTier } from "../../provider-options";
@@ -16,10 +14,9 @@ import {
   getListeningVoiceInstructions,
   getListeningVoicePromptVersion,
 } from "./listening-voice-prompt";
+import { generateRecordedSpeech } from "./recorded-speech";
 import { assertExpectedAudioSize, getMaxSeconds } from "./speech-limits";
 import { type SpeechModelName, getSpeakingModels, speechModels } from "./speech-models";
-import { buildSpeechProvenance } from "./speech-provenance";
-import { generateSpeechWithProvider } from "./speech-provider";
 
 const TASK = "listening-audio";
 
@@ -84,35 +81,21 @@ async function voicePartWithModels({
   }
 
   const { accent, text, voice } = part;
-  const instructions = getListeningVoiceInstructions({ accent, language });
-  const startedAt = performance.now();
 
-  const { audio, providerMetadata } = await generateSpeechWithProvider({
-    instructions,
+  const { audio, provenance } = await generateRecordedSpeech({
+    analytics,
+    instructions: getListeningVoiceInstructions({ accent, language }),
     language,
     model,
-    serviceTier,
+    promptVersion: getListeningVoicePromptVersion(),
+    requestedModel,
+    ...(serviceTier ? { serviceTier } : {}),
+    task: TASK,
     text,
     voice,
   });
 
-  const decoded = decodePart({ audio, model, text });
-
-  const provenance = buildSpeechProvenance({
-    instructions,
-    latencyMs: Math.round(performance.now() - startedAt),
-    promptVersion: getListeningVoicePromptVersion(),
-    requestedModel,
-    runId: randomUUID(),
-    text,
-    voiced: {
-      durationSeconds: decoded.samplesDecoded / decoded.sampleRate,
-      model,
-      providerMetadata,
-    },
-  });
-
-  await captureAiGeneration({ context: analytics, provenance, task: TASK });
+  decodePart({ audio, model, text });
   return { audio, model, provenance };
 }
 

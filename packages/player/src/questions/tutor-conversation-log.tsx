@@ -2,11 +2,11 @@
 
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { useLiveLimit } from "@zoonk/learn/help-limit";
+import { useLearnerClock } from "@zoonk/learn/learner-clock";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { OpenPageHere } from "@zoonk/ui/components/open-page-here";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
-import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { useLayoutEffect, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import {
@@ -115,7 +115,7 @@ function ConversationTurns({
 }: Pick<ConversationLogProps, "identity" | "renderPlanChange" | "renderToolOffer">) {
   const controller = useLessonQuestionController();
   const { state } = controller;
-  const now = useMountTime();
+  const { now } = useLearnerClock();
   const last = state.questions.at(-1);
   const latestId = state.creating ? SENDING_TURN_ID : (last?.id ?? null);
 

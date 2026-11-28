@@ -66,10 +66,12 @@ export function getLanguagePromptContext(params: {
 export function fillPromptLanguages({
   learnerLanguage,
   targetLanguage,
+  targetRegion,
   template,
 }: {
   learnerLanguage: string;
   targetLanguage?: string;
+  targetRegion?: string | null;
   template: string;
 }): string {
   const learnerLanguageName = getPromptLanguageName({ language: learnerLanguage });
@@ -81,6 +83,7 @@ export function fillPromptLanguages({
 
   const targetLanguageName = getPromptLanguageName({
     language: targetLanguage,
+    region: targetRegion,
     userLanguage: learnerLanguage,
   });
 

@@ -485,6 +485,7 @@
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: which ones will you take?</string>
+    <string name="plan_exam_choice_not_set">Not set</string>
     <string name="plan_prerequisites">Prerequisites</string>
     <string name="plan_prerequisites_description">What your topics build on. Choose how much to study.</string>
     <plurals name="plan_bases_mixed">
@@ -627,14 +628,12 @@
     <string name="plan_choose_focus">Choose where to focus</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Where to focus</string>
-    <string name="plan_where_to_focus_description">The subjects you pick come first and get more depth.</string>
+    <string name="plan_where_to_focus_description">The subjects you pick get more of your time.</string>
     <string name="plan_choose_focus_yourself">Or choose them yourself</string>
     <string name="plan_focus_includes">Includes %1$s</string>
     <string name="plan_focus_only">Only %1$s</string>
     <string name="plan_focus_already_in">Nothing changed. All %1$s lessons are already in your plan.</string>
-    <string name="plan_focus_cant_move">Nothing changed: %1$s already start as early as what they build on allows, and your time has no room for more of them. More time a day brings more in.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">Focus on these</string>
+    <string name="plan_focus_cant_move">Nothing changed. To fit more of %1$s, study longer each day.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">Remove focus</string>
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>

@@ -5,7 +5,7 @@ import { type TaskProvenance } from "./task-provenance";
 
 export type AiGeneration = {
   context?: AiGenerationContext;
-  properties?: Readonly<Record<string, boolean | number | string>>;
+  failed?: true;
   provenance: TaskProvenance;
   /** Matches the task's eval id. */
   task: string;

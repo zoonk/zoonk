@@ -243,6 +243,7 @@
   "plan_estimated_score": "277d72459e85d2a1150feb3c32e851e46fc94cdb4e2834d801d11ae08feae49d",
   "plan_every_day": "884871734e12a40320ad81f42481bde981c746fd0906ecfb1a6541470bbbb8c2",
   "plan_everything": "b2fc82a21f2dba978d723814cc517f38796edac30cb941c9bb6b095ca65e1dca",
+  "plan_exam_choice_not_set": "83174b7ce9e553a974f04511cb68e211f3fb06bb8e08323f0e7acac3e772a4a5",
   "plan_exam_choice_question": "8f39718d8501399865a3f1fc05e258758f87606d03dca05379d270f151ad4834",
   "plan_exam_choice_question_several": "4ca7f1ca4eb35a0feafbcf7a1df80159f02cd083e77145f8c8476cad5d62a514",
   "plan_exam_date": "af134b505098e9b769b7b9cbd7821f28aba1207d248ba0a0465c5114588b575f",
@@ -269,9 +270,8 @@
   "plan_finished_title": "d0c4c82c3950fbc224f0fd8df4779cc49938f32668e7a170fe65e252832f0b3d",
   "plan_fit_time_left": "f2c8a2484b132fa833eebcd03e53e9967ec5200f94571b729203c742c9c50d28",
   "plan_focus_already_in": "bf2c0aefbc875b9f0a32799fc4b9ffa933788278db70e1978eeba6b7036e8651",
-  "plan_focus_cant_move": "c2779c733220f95dd7e8937285d4ed71ca7a343519d67003cfe743aa569d5b5e",
+  "plan_focus_cant_move": "6194fc4cdcdfd451e59a6cfc0fbb6bb8fd2032e2eb93bf864163decbdb34d884",
   "plan_focus_includes": "bf38051401a7c4863ac74d0d6822cdcfe9973983393148f3662099b2567dcd34",
-  "plan_focus_on_these": "7af0cb8c24c3760d1ad746f1620fa6d6d16aeb1374f6a4e12a758994b10000eb",
   "plan_focus_only": "1d8c7a7745d0fbd6fa933eb9befb8d4dac8145e583cd61140ec1623971a30f1c",
   "plan_fridays": "7df04b7bf8541cfaa289ac541beaa2f6e7e6e2f69dbb2fbdbe9f74904a969b07",
   "plan_full_course": "c7b0949576fbcb2f03b77df21b910de64e1495f07db5a7e087e7c460e0ae91db",
@@ -507,7 +507,7 @@
   "plan_what_you_practice": "7139e33e6bd6d9cd5a19939561aab77a1cd2acd5590c5031674e9c5a9204da5c",
   "plan_when_to_practice_writing": "8da241fc47025167c41f540ca9c166b69e6fe5f636dff200dbedd92645f6c6c1",
   "plan_where_to_focus": "14fbb868ede6f1bd70d58d99a066611b3fb248100ed074d07f9a23352528dfc6",
-  "plan_where_to_focus_description": "a51ef39b656c2aeb4c66864aa2f386cbfb68f3944040a33a697c645fcb9fb6a1",
+  "plan_where_to_focus_description": "0a9b58af62171faaf20fb143b3f581a1eb342a1222a11964a79132f08e778b99",
   "plan_why_phase_dates_later": "44d8a132f48802d0e8ab329557f5ff7e24bdd2a6710e2056338c55b83ada5786",
   "plan_why_phase_end_later": "e22885723edf30c9d059cf0e289cbb8c0ee383d9f4fbb71b2ff1ebacfee1c9fc",
   "plan_why_phase_end_off_rest": "36219ac56f8711ab56c358156175a943895c529c4b76e379b1fc794f3fdceff5",
@@ -1002,6 +1002,7 @@
     <string name="plan_exam_choice_question">%1$s: hangisine gireceksin?</string>
     <!-- %1$s is a group of the exam's subjects of which each candidate takes several, such as the modules of a course. -->
     <string name="plan_exam_choice_question_several">%1$s: Hangilerini seçeceksin?</string>
+    <string name="plan_exam_choice_not_set">Belirtilmedi</string>
     <string name="plan_prerequisites">Ön bilgiler</string>
     <string name="plan_prerequisites_description">Konularının temel aldığı şeyler. Ne kadar çalışacağını seç.</string>
     <plurals name="plan_bases_mixed">
@@ -1143,14 +1144,12 @@
     <string name="plan_choose_focus">Neye odaklanacağını seç</string>
     <!-- Title of the sheet where the learner picks the subjects that come first and get more depth. -->
     <string name="plan_where_to_focus">Odaklanılacak konular</string>
-    <string name="plan_where_to_focus_description">Seçtiğin branşlar öne alınır ve daha ayrıntılı işlenir.</string>
+    <string name="plan_where_to_focus_description">Seçtiğin branşlara daha fazla zaman ayrılır.</string>
     <string name="plan_choose_focus_yourself">Ya da kendin seç</string>
     <string name="plan_focus_includes">%1$s dahil</string>
     <string name="plan_focus_only">Yalnızca %1$s</string>
     <string name="plan_focus_already_in">Değişiklik yok. %1$s için tüm dersler zaten planında.</string>
-    <string name="plan_focus_cant_move">Değişiklik olmadı: %1$s için dersler, önce öğrenmen gereken konuların ardından mümkün olan en erken zamanda başlıyor ve çalışma sürene daha fazlası sığmıyor. Günlük çalışma süreni artırırsan daha fazla ders eklenir.</string>
-    <!-- Button that saves the subjects the learner picked to come first and get more depth. -->
-    <string name="plan_focus_on_these">Bunlara odaklan</string>
+    <string name="plan_focus_cant_move">Değişiklik yok. %1$s için daha fazla ders sığdırmak üzere her gün daha uzun çalış.</string>
     <!-- The focus sheet's button with no subject ticked: the plan stops giving any subject more time. -->
     <string name="plan_remove_focus">Odağı kaldır</string>
     <string name="plan_couldnt_check_changes">Nelerin değişeceğini kontrol edemedik.</string>

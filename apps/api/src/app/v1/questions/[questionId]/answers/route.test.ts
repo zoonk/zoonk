@@ -650,7 +650,7 @@ describe("lesson question answer route", () => {
       {
         cautions: [],
         changes: "Saturday: rest day, nothing planned",
-        effect: PROPOSED_CHANGE.effect,
+        effect: { endDateAfter: "2026-12-01", endDateBefore: "2026-11-20" },
         leftOut: [],
         officialExamDate: null,
         status: "proposed",

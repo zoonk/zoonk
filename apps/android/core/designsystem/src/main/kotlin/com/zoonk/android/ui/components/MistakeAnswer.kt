@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -10,7 +11,7 @@ import com.zoonk.android.R
 
 /**
  * What the learner answered, or the right answer, after the fact: the [AnswerOption]'s result look,
- * locked (main's `AnswerPair`), around [content], the answer as its item shows it.
+ * locked and keyed by its ✗ or ✓ (main's `AnswerPair`), around [content], the answer as its item shows it.
  */
 @Composable
 fun MistakeAnswer(
@@ -28,6 +29,7 @@ fun MistakeAnswer(
         onClick = {},
         modifier = if (right) modifier else modifier.semantics { stateDescription = yours },
         role = null,
+        glyph = painterResource(if (right) R.drawable.ic_check else R.drawable.ic_close),
     ) { content() }
 }
 
