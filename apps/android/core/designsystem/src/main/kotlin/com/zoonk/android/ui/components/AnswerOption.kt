@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.RadioButton
@@ -246,7 +247,10 @@ private fun AnswerResult.glyph(): Int =
         AnswerResult.Wrong -> R.drawable.ic_close
     }
 
-/** The number key that picks an option or a card, in ink once [picked]; a [glyph] takes the digit's place. */
+/**
+ * The number key that picks an option or a card, in ink once [picked]. A [glyph], such as a verdict's mark, takes the
+ * digit's room bare, in the words' color, so beside a checkbox it never reads as a ticked one.
+ */
 @Composable
 fun OptionKey(
     number: Int,
@@ -256,13 +260,21 @@ fun OptionKey(
 ) {
     // A picked option's key turns ink: the option's mark, as a radio's dot is.
     val ink = MaterialTheme.colorScheme.onSurface
+    val keyShape = RoundedCornerShape(ZoonkRadius.sm)
     Box(
         modifier =
             modifier
                 .clearAndSetSemantics {}
                 .defaultMinSize(minWidth = 20.dp, minHeight = 20.dp)
-                .background(if (picked) ink else ink.copy(alpha = 0.04f), RoundedCornerShape(ZoonkRadius.sm))
-                .border(1.dp, if (picked) Color.Transparent else ink.copy(alpha = 0.12f), RoundedCornerShape(ZoonkRadius.sm)),
+                .then(
+                    if (glyph != null) {
+                        Modifier
+                    } else {
+                        Modifier
+                            .background(if (picked) ink else ink.copy(alpha = 0.04f), keyShape)
+                            .border(1.dp, if (picked) Color.Transparent else ink.copy(alpha = 0.12f), keyShape)
+                    },
+                ),
         contentAlignment = Alignment.Center,
     ) {
         // A glyph keeps the digit's size and baseline, so its key lines up with the option's words. The digits are
@@ -283,14 +295,7 @@ fun OptionKey(
             textAlign = TextAlign.Center,
             style = MaterialTheme.zoonkType.key,
         )
-        glyph?.let {
-            Icon(
-                it,
-                contentDescription = null,
-                modifier = Modifier.size(14.dp),
-                tint = if (picked) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
+        glyph?.let { Icon(it, contentDescription = null, modifier = Modifier.size(16.dp), tint = LocalContentColor.current) }
     }
 }
 
