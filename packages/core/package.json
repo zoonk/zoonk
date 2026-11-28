@@ -316,6 +316,7 @@
     "./library/courses/levels": "./src/library/courses/course-levels.ts",
     "./library/courses/icon": "./src/library/courses/course-icon.ts",
     "./library/curriculum/add-coverage-skills": "./src/library/curriculum/add-coverage-skills.ts",
+    "./library/curriculum/add-member-skills": "./src/library/curriculum/add-member-skills.ts",
     "./library/curriculum/course-outline-state": "./src/library/curriculum/course-outline-state.ts",
     "./library/curriculum/course-start-graph": "./src/library/curriculum/course-start-graph.ts",
     "./library/curriculum/early-outline-chapter": "./src/library/curriculum/early-outline-chapter.ts",

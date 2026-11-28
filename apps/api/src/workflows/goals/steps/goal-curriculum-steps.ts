@@ -1,8 +1,10 @@
 import { type ServiceTier, chooseServiceTier } from "@zoonk/ai/provider-options";
 import { checkCoverage } from "@zoonk/ai/tasks/curriculum/coverage-check";
+import { checkMemberCoverage } from "@zoonk/ai/tasks/curriculum/member-coverage";
 import { type generateSkillGraph } from "@zoonk/ai/tasks/curriculum/skill-graph";
 import { classifyGoalSpecificity } from "@zoonk/ai/tasks/identity/goal-specificity";
 import { applyGraphCoverage } from "@zoonk/core/library/curriculum/add-coverage-skills";
+import { addMemberSkills } from "@zoonk/core/library/curriculum/add-member-skills";
 import { beginGoalCurriculum } from "@zoonk/core/library/curriculum/begin-goal-curriculum";
 import { getStartedCourseScope } from "@zoonk/core/library/curriculum/course-start-graph";
 import {
@@ -152,6 +154,36 @@ export async function checkGraphCoverageStep({
   });
 
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
+}
+
+/** Adds a skill for each member of the complete list the goal names that the graph leaves out. */
+export async function checkGraphMembersStep({
+  analytics,
+  graph,
+  inputs,
+  scope,
+  workflowRunId,
+}: RunScope & {
+  graph: GoalSkillGraph;
+  inputs: Pick<
+    GoalCurriculumInputs,
+    "examIdentity" | "goal" | "graphPrompt" | "hasMaterial" | "sharedContext" | "startedCourse"
+  >;
+  scope: CurriculumScope;
+}): Promise<GoalSkillGraph> {
+  "use step";
+
+  const prompt = toScopedGraphPrompt({ inputs, scope });
+
+  const { data } = await checkMemberCoverage({
+    analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
+    goal: prompt.goal,
+    language: prompt.language,
+    serviceTier: chooseServiceTier({ wait: "learner" }),
+    skills: graph.skills.map(({ key, name }) => ({ key, name })),
+  });
+
+  return addMemberSkills({ coverage: data, graph });
 }
 
 export async function pruneNoticeGraphStep(input: Parameters<typeof pruneGoalNoticeGraph>[0]) {

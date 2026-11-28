@@ -40,10 +40,10 @@ export type MemberCoverageParams = {
   analytics?: AiGenerationContext;
 };
 
-export type SetMember = { number: number; name: string; skills: string[] };
+type SetMember = { number: number; name: string; skills: string[] };
 
 /** A member no skill teaches, with the skill that would teach it. */
-export type UncoveredMember = { number: number; member: string; name: string; description: string };
+type UncoveredMember = { number: number; member: string; name: string; description: string };
 
 export type MemberCoverage = {
   /** The complete list the goal names; null when the goal isn't to learn every member of one. */
