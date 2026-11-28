@@ -120,6 +120,7 @@ private struct SubjectContent: View {
     PaneSplit(primaryShare: 0.55) {
       ZoonkList {
         header
+        notice
         coversSection
         chaptersSection
         leftOutSection
@@ -135,6 +136,7 @@ private struct SubjectContent: View {
       ZoonkList {
         header
         numbers(titled: false)
+        notice
         coversSection
         chaptersSection
         leftOutSection
@@ -313,9 +315,16 @@ private struct SubjectContent: View {
           .listRowSeparator(.hidden)
       }
 
-      if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init)
-        ?? (subject.leftOutTopics.isEmpty ? nil : .partTime)
-      {
+    }
+  }
+
+  /// Main's `NotPlannedCallout`, under the subject's numbers as main's aside has it.
+  @ViewBuilder
+  private var notice: some View {
+    if let reason = subject.notPlannedReason.flatMap(SubjectNotPlannedNotice.Reason.init)
+      ?? (subject.leftOutTopics.isEmpty ? nil : .partTime)
+    {
+      Section {
         SubjectNotPlannedNotice(
           goalId: goal.id, reason: reason, areas: subject.areas, module: goal.kind != .exam,
           restoring: restoring
