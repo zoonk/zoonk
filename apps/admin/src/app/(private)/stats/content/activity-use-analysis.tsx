@@ -246,7 +246,9 @@ function ShareCell({ change, share }: { change?: StatChange; share: Share }) {
     <TableCell>
       <span className="flex min-w-36 flex-col gap-1.5">
         <span className="flex items-baseline gap-2">
-          <span className="font-mono">{formatShare(share.percent)}</span>
+          <span className="text-foreground text-compact font-mono">
+            {formatShare(share.percent)}
+          </span>
           {change ? (
             <span className="text-xs">
               <StatChangeAmount change={change} />
