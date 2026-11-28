@@ -9,7 +9,11 @@
   "tags": ["-lintignore"],
   "workspaces": {
     ".": {
-      "entry": ["scripts/worktree/claude-create.mts", "scripts/verify/scenarios/seed.mts"],
+      "entry": [
+        "scripts/agents/guard-command.mts",
+        "scripts/worktree/claude-create.mts",
+        "scripts/verify/scenarios/seed.mts"
+      ],
       "project": ["scripts/**/*.mts"]
     },
     "apps/android": {

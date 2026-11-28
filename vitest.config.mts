@@ -15,6 +15,7 @@ export default defineConfig({
     include: [
       "apps/apple/scripts/*.test.mts",
       "apps/evals/src/**/*.test.ts",
+      "scripts/agents/*.test.mts",
       "scripts/deploy/*.test.mts",
       "scripts/dev/*.test.mts",
       "scripts/e2e/*.test.mts",

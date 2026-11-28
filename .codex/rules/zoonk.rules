@@ -1,0 +1,26 @@
+# Commands the repository's instructions forbid, so a Codex session can't run them by accident.
+prefix_rule(
+    pattern = ["git", "add", ["-A", "--all", "."]],
+    decision = "forbidden",
+    justification = "Stage only this change's own paths with `git add <path>`.",
+)
+prefix_rule(
+    pattern = ["git", "stash"],
+    decision = "forbidden",
+    justification = "The stash is shared by every worktree on this machine. Use a WIP commit on your branch.",
+)
+prefix_rule(
+    pattern = ["git", "commit", ["--amend", "-a", "-am", "--no-verify"]],
+    decision = "forbidden",
+    justification = "Add a new commit of this change's staged paths, and fix what the hooks report.",
+)
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease", "--no-verify"]],
+    decision = "forbidden",
+    justification = "Push new commits; never rewrite or skip checks on a shared branch.",
+)
+prefix_rule(
+    pattern = ["gh", "pr", "merge"],
+    decision = "forbidden",
+    justification = "The user reviews and merges every pull request. Mark it ready and hand it back.",
+)
