@@ -29,6 +29,9 @@ struct LessonPlayerState: Equatable, Sendable {
     /// "I can't talk now" left out the spoken screens nobody can listen to instead; "Turn back on"
     /// puts them back.
     case speakingSkipped
+
+    /// Every notice but "fix it yourself", which follows the answer it's about.
+    var showsOverScreen: Bool { self != .selfCorrect }
   }
 
   struct Completion: Equatable, Sendable {

@@ -53,6 +53,7 @@ struct LessonStepView: View {
       answer: state.answers[step.id],
       result: state.results[step.id],
       isLocked: state.phase != .playing,
+      opensKeyboard: state.notice?.showsOverScreen != true,
       waitsForPicture: step.isRequiredPictureDrawing(openedAt: store.openedAt),
       select: { store.select($0) },
       resolveSpoken: { store.resolveSpoken($0, stepId: step.id) },
@@ -115,6 +116,9 @@ struct LessonStepContext {
   let answer: LessonAnswer?
   let result: LessonStepResult?
   let isLocked: Bool
+  /// A written answer's field takes focus as its screen opens, unless a notice shows over the
+  /// screen: the rising keyboard would scroll it away before the learner reads it.
+  var opensKeyboard = true
   /// Picks wait while the numbered picture the question is about is still being drawn, as on main.
   let waitsForPicture: Bool
   let select: @MainActor (LessonAnswer?) -> Void
@@ -393,7 +397,7 @@ private struct TypedAnswerStepView: View {
         isFocused: $isFocused,
         check: context.check
       ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
-      .onAppear { isFocused = !context.isLocked }
+      .onAppear { isFocused = !context.isLocked && context.opensKeyboard }
     }
   }
 }
