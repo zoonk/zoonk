@@ -5,7 +5,7 @@ import {
 import { normalizeString } from "@zoonk/utils/string";
 import { type BlueprintContent, type BlueprintTopicGroup } from "./blueprint-contract";
 import { type ExtractionDocument } from "./blueprint-passages";
-import { findNamesInDocument, isPassageInDocument } from "./passage-check";
+import { findQuotedEntries } from "./passage-check";
 
 type Subject = BlueprintContent["structure"]["subjects"][number];
 type Range = { max: number; min: number };
@@ -54,27 +54,37 @@ function toStatedRange({ passage, range }: { passage: string; range: Range | nul
   return isStated ? range : null;
 }
 
+/**
+ * The finding's numbers from its heading's own entry where the page holds its passage, so a number
+ * beside another heading ("Geometry 20%") can't become this heading's.
+ */
 function toCheckedShare({
   documents,
   finding,
+  headings,
 }: {
   documents: readonly ExtractionDocument[];
   finding: DomainShareFinding;
+  headings: readonly string[];
 }): CheckedShare | null {
   const document = documents[finding.document - 1];
   const { passage } = finding;
 
-  const isQuoted =
-    document?.text &&
-    isPassageInDocument({ passage, text: document.text }) &&
-    findNamesInDocument({ names: [finding.heading], text: passage }).size > 0;
-
-  if (!isQuoted) {
+  if (!document?.text) {
     return null;
   }
 
-  const percent = toStatedRange({ passage, range: finding.percent });
-  const questions = toStatedRange({ passage, range: finding.questions });
+  const heading = normalizeString(finding.heading);
+
+  const entries = findQuotedEntries({ names: headings, passage, text: document.text }).filter(
+    ({ name }) => normalizeString(name) === heading,
+  );
+
+  const statedIn = (range: Range | null) =>
+    entries.map(({ entry }) => toStatedRange({ passage: entry, range })).find(Boolean) ?? null;
+
+  const percent = statedIn(finding.percent);
+  const questions = statedIn(finding.questions);
 
   return percent || questions
     ? {
@@ -144,38 +154,34 @@ function toWeight({ scale, share }: { scale: Scale; share: CheckedShare }): numb
   return range ? midpoint(range) : 0;
 }
 
+type SubjectFindings = {
+  documents: readonly ExtractionDocument[];
+  findings: readonly DomainShareFinding[];
+  subject: Subject;
+};
+
 function findShare({
-  checked,
+  documents,
+  findings,
   group,
-  subjectNumber,
-}: {
-  checked: readonly { share: CheckedShare; finding: DomainShareFinding }[];
-  group: BlueprintTopicGroup;
-  subjectNumber: number;
-}): CheckedShare | null {
+  subject,
+}: SubjectFindings & { group: BlueprintTopicGroup }): CheckedShare | null {
   const name = normalizeString(group.name);
+  const headings = (subject.topicGroups ?? []).map((item) => item.name);
 
   return (
-    checked.find(
-      ({ finding }) =>
-        finding.subject === subjectNumber && normalizeString(finding.heading) === name,
-    )?.share ?? null
+    findings
+      .filter((finding) => normalizeString(finding.heading) === name)
+      .map((finding) => toCheckedShare({ documents, finding, headings }))
+      .find(Boolean) ?? null
   );
 }
 
-function withShares({
-  checked,
-  subject,
-  subjectNumber,
-}: {
-  checked: readonly { share: CheckedShare; finding: DomainShareFinding }[];
-  subject: Subject;
-  subjectNumber: number;
-}): Subject {
+function withShares({ documents, findings, subject }: SubjectFindings): Subject {
   const groups = subject.topicGroups ?? [];
 
   const found = groups.flatMap((group) => {
-    const share = findShare({ checked, group, subjectNumber });
+    const share = findShare({ documents, findings, group, subject });
     return share ? [{ group, share }] : [];
   });
 
@@ -220,11 +226,6 @@ export function applyDomainShares({
   documents: readonly ExtractionDocument[];
   findings: readonly DomainShareFinding[];
 }): BlueprintContent {
-  const checked = findings.flatMap((finding) => {
-    const share = toCheckedShare({ documents, finding });
-    return share ? [{ finding, share }] : [];
-  });
-
   const numbered = content.structure.subjects.filter((subject) => hasHeadings(subject));
 
   return {
@@ -233,7 +234,8 @@ export function applyDomainShares({
       ...content.structure,
       subjects: content.structure.subjects.map((subject) => {
         const subjectNumber = numbered.indexOf(subject) + 1;
-        return subjectNumber > 0 ? withShares({ checked, subject, subjectNumber }) : subject;
+        const own = findings.filter((finding) => finding.subject === subjectNumber);
+        return subjectNumber > 0 ? withShares({ documents, findings: own, subject }) : subject;
       }),
     },
   };

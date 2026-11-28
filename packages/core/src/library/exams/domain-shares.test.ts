@@ -101,6 +101,18 @@ function countFindings({
   }));
 }
 
+function finding(heading: string, percent: number, passage: string): DomainShareFinding {
+  return {
+    basis: "questions",
+    document: 1,
+    heading,
+    passage,
+    percent: { max: percent, min: percent },
+    questions: null,
+    subject: 1,
+  };
+}
+
 function shares(read: BlueprintContent) {
   return read.structure.subjects.map((item) =>
     (item.topicGroups ?? []).map((group) => group.share),
@@ -172,6 +184,42 @@ describe(applyDomainShares, () => {
     expect(
       apply([algebra, advanced, data, geometry && { ...geometry, heading: "Algebra" }]),
     ).toStrictEqual(NO_SHARES);
+  });
+
+  it("takes a heading's number only from beside that heading in the document", () => {
+    const text = "Algebra 80% of questions. Geometry 20% of questions.";
+
+    const apply = (findings: DomainShareFinding[]) =>
+      shares(
+        applyDomainShares({
+          content: content([subject("Math", ["Algebra", "Geometry"])]),
+          documents: [{ sourceId: "spec", text }],
+          findings,
+        }),
+      );
+
+    expect(
+      apply([finding("Algebra", 80, text), finding("Geometry", 20, "Geometry 20% of questions")]),
+    ).toStrictEqual([[0.8, 0.2]]);
+
+    expect(
+      apply([finding("Algebra", 20, "Algebra 20%"), finding("Geometry", 80, "Geometry 80%")]),
+    ).toStrictEqual([[undefined, undefined]]);
+
+    expect(apply([finding("Algebra", 20, text), finding("Geometry", 80, text)])).toStrictEqual([
+      [undefined, undefined],
+    ]);
+
+    expect(
+      apply([
+        finding("Algebra", 20, "Algebra … 20% of questions"),
+        finding("Geometry", 80, "Geometry … 80%"),
+      ]),
+    ).toStrictEqual([[undefined, undefined]]);
+
+    expect(
+      apply([finding("Algebra", 80, "Algebra … 80%"), finding("Geometry", 20, "Geometry … 20%")]),
+    ).toStrictEqual([[0.8, 0.2]]);
   });
 
   it("leaves a subject without shares when its percentages are far from the whole", () => {
