@@ -24,6 +24,7 @@ import {
   toLanguageGoal,
   toScopedGraphPrompt,
 } from "@zoonk/core/library/curriculum/shared-graph-prompt";
+import { type MemberCheckRequest } from "@zoonk/core/plans/member-check";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 
 type GraphProvenance = Awaited<ReturnType<typeof generateSkillGraph>>["provenance"];
@@ -42,7 +43,7 @@ export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurric
   return loadGoalCurriculumInputs(goalId);
 }
 
-function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
+export function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
   return {
     country: goal.contentCountry,
     generalGoal: null,
@@ -156,29 +157,42 @@ export async function checkGraphCoverageStep({
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
 }
 
-/** Adds a skill for each member of the complete list the goal names that the graph leaves out. */
-export async function checkGraphMembersStep({
-  analytics,
-  graph,
-  inputs,
-  scope,
-  workflowRunId,
-}: RunScope & {
-  graph: GoalSkillGraph;
+export type MemberCheckInputs = RunScope & {
   inputs: Pick<
     GoalCurriculumInputs,
     "examIdentity" | "goal" | "graphPrompt" | "hasMaterial" | "sharedContext" | "startedCourse"
   >;
   scope: CurriculumScope;
-}): Promise<GoalSkillGraph> {
-  "use step";
+};
 
+/**
+ * The member check reads the goal the way its graph was written, so a shared one never sees the
+ * learner's words.
+ */
+export function toMemberCheckRequest({
+  analytics,
+  inputs,
+  scope,
+  workflowRunId,
+}: MemberCheckInputs): MemberCheckRequest {
   const prompt = toScopedGraphPrompt({ inputs, scope });
 
-  const { data } = await checkMemberCoverage({
+  return {
     analytics: toContentAnalytics({ analytics, scope, workflowRunId }),
     goal: prompt.goal,
     language: prompt.language,
+  };
+}
+
+/** Adds a skill for each member of the complete list the goal names that the graph leaves out. */
+export async function checkGraphMembersStep({
+  graph,
+  ...input
+}: MemberCheckInputs & { graph: GoalSkillGraph }): Promise<GoalSkillGraph> {
+  "use step";
+
+  const { data } = await checkMemberCoverage({
+    ...toMemberCheckRequest(input),
     serviceTier: chooseServiceTier({ wait: "learner" }),
     skills: graph.skills.map(({ key, name }) => ({ key, name })),
   });

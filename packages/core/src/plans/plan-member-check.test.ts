@@ -12,6 +12,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import {
+  type ClaimedMemberCheck,
   MEMBER_CHECK_SOURCE,
   checkPlanMembers,
   claimMemberCheck,
@@ -80,22 +81,50 @@ function listMissingSecond(name: string): Coverage {
   };
 }
 
-async function runCheck(planId: string) {
+const SHARED = { contentScope: "shared" } as const;
+
+const SCOPE = {
+  generalGoal: "Learn the steps",
+  language: "en",
+  ownerId: null,
+  targetLanguage: null,
+};
+
+async function claim(planId: string) {
   const claimed = await claimMemberCheck(planId);
 
   if (!claimed) {
     throw new Error("Expected the check to be claimed");
   }
 
-  const check = await checkPlanMembers(claimed);
-  const skills = await toMemberSkills({ check, claimed });
-  await offerMemberSkills({ check, claimed, skills });
+  return claimed;
+}
+
+async function findMembers(claimed: ClaimedMemberCheck) {
+  const check = await checkPlanMembers({
+    claimed,
+    request: { analytics: SHARED, goal: SCOPE.generalGoal, language: SCOPE.language },
+  });
+
+  const skills = await toMemberSkills({ analytics: SHARED, check, claimed, scope: SCOPE });
 
   return { check, claimed, skills };
 }
 
+async function runCheck(planId: string) {
+  const found = await findMembers(await claim(planId));
+  await offerMemberSkills(found);
+  return found;
+}
+
+function countOffers(planId: string) {
+  return prisma.planChange.count({
+    where: { payload: { equals: MEMBER_CHECK_SOURCE, path: ["source"] }, planId },
+  });
+}
+
 describe(listPlansOwingMemberCheck, () => {
-  it("lists active learn plans with a graph whose check is still owed", async () => {
+  it("lists signed-up learners' active learn plans with a graph whose check is still owed", async () => {
     const owed = await plannedGoal();
     const checked = await plannedGoal();
     const exam = await plannedGoal({ kind: "exam" });
@@ -103,6 +132,8 @@ describe(listPlansOwingMemberCheck, () => {
     const material = await plannedGoal();
     const learner = await userFixture();
     const empty = await unplannedGoalFixture({ userId: learner.id });
+    const guest = await plannedGoal();
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.user.id } });
 
     await prisma.plan.update({ data: { membersCheckedAt: NOW }, where: { id: checked.plan.id } });
     const notes = await sourceFixture({ extractedText: "Page 1", title: "Notes" });
@@ -112,7 +143,7 @@ describe(listPlansOwingMemberCheck, () => {
 
     expect(listed).toContain(owed.plan.id);
 
-    for (const left of [checked, exam, paused, material, empty]) {
+    for (const left of [checked, exam, paused, material, empty, guest]) {
       expect(listed).not.toContain(left.plan.id);
     }
   });
@@ -135,6 +166,24 @@ describe(claimMemberCheck, () => {
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       membersCheckedAt: expect.any(Date),
     });
+  });
+
+  it("claims nothing for a goal that stopped owing the check after the sweep listed it", async () => {
+    const archived = await plannedGoal();
+    const guest = await plannedGoal();
+
+    await prisma.goal.update({ data: { status: "archived" }, where: { id: archived.goal.id } });
+    await prisma.user.update({ data: { isAnonymous: true }, where: { id: guest.user.id } });
+
+    await expect(claimMemberCheck(archived.plan.id)).resolves.toBeNull();
+    await expect(claimMemberCheck(guest.plan.id)).resolves.toBeNull();
+
+    await expect(
+      prisma.plan.findMany({
+        select: { membersCheckedAt: true },
+        where: { id: { in: [archived.plan.id, guest.plan.id] } },
+      }),
+    ).resolves.toStrictEqual([{ membersCheckedAt: null }, { membersCheckedAt: null }]);
   });
 });
 
@@ -159,7 +208,7 @@ describe(offerMemberSkills, () => {
     const second = library.skills[1];
 
     expect(vi.mocked(checkMemberCoverage).mock.lastCall?.[0]).toMatchObject({
-      analytics: { contentScope: "personal" },
+      goal: SCOPE.generalGoal,
       serviceTier: "flex",
       skills: library.skills.map((skill, index) => ({ key: `s${index + 1}`, name: skill.name })),
     });
@@ -197,6 +246,39 @@ describe(offerMemberSkills, () => {
     expect(skills).toStrictEqual([
       expect.objectContaining({ beforeSkillId: library.skills[2]?.id, lessons: 4, name }),
     ]);
+  });
+
+  it("makes one offer per claimed check, even when the offer runs again after a decline", async () => {
+    const { plan } = await plannedGoal();
+    mockCoverage(listMissingSecond(`Do the second step ${uniqueWord()}`));
+
+    const found = await runCheck(plan.id);
+
+    await prisma.planChange.updateMany({
+      data: { status: "declined" },
+      where: { planId: plan.id, status: "proposed" },
+    });
+
+    await offerMemberSkills(found);
+
+    await expect(countOffers(plan.id)).resolves.toBe(1);
+
+    await expect(
+      prisma.planChange.count({ where: { planId: plan.id, status: "proposed" } }),
+    ).resolves.toBe(0);
+  });
+
+  it("offers nothing when the plan's graph was rebuilt after the check read it", async () => {
+    const { goal, plan } = await plannedGoal();
+    mockCoverage(listMissingSecond(`Do the second step ${uniqueWord()}`));
+
+    const found = await findMembers(await claim(plan.id));
+    const rebuilt = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 3 }] });
+    await createGoalPlan({ goalId: goal.id, graph: rebuilt.graph, membersCheckedAt: null });
+
+    await offerMemberSkills(found);
+
+    await expect(countOffers(plan.id)).resolves.toBe(0);
   });
 
   it("offers nothing and keeps the plan marked when every member is taught", async () => {

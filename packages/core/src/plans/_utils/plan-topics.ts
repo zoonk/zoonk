@@ -65,9 +65,7 @@ function findAnchorSkillIds({
   });
 }
 
-export async function loadTopicScope(
-  goal: Pick<PlanContext["goal"], "language" | "primaryCourseId" | "targetLanguage">,
-): Promise<CurriculumScope> {
+async function loadTopicScope(goal: PlanContext["goal"]): Promise<CurriculumScope> {
   const course = goal.primaryCourseId
     ? await prisma.course.findUnique({
         select: { language: true, targetLanguage: true },

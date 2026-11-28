@@ -4,11 +4,14 @@ import {
   type MemberCoverage,
   checkMemberCoverage,
 } from "@zoonk/ai/tasks/curriculum/member-coverage";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { type CourseLevel, prisma, sql } from "@zoonk/db";
 import { type LibraryProvenance, toProvenanceData } from "../library/_utils/library-rows";
+import {
+  type CurriculumAnalytics,
+  type CurriculumScope,
+} from "../library/curriculum/curriculum-scope";
 import { type MemberPlacement, placeUncoveredOf } from "../library/curriculum/place-list-members";
 import { resolveScopeSkills } from "../library/curriculum/resolve-lesson-skills";
-import { loadTopicScope } from "./_utils/plan-topics";
 import { type AddedSkill } from "./plan-contract";
 import { type PlanGraph, planGraphSchema } from "./planner/plan-state";
 import { proposePlanChange } from "./propose-plan-change";
@@ -23,32 +26,49 @@ export const MEMBER_CHECK_SOURCE = "memberCheck";
 type GraphSkill = PlanGraph["skills"][number];
 
 export type ClaimedMemberCheck = {
+  /** When the check was claimed; an offer from this claim or after it is never made twice. */
+  checkedAt: Date;
   goalId: string;
-  goal: string;
-  language: string;
-  userId: string;
+  /** The plan's skills are the learner's own, so the members it adds stay theirs too. */
+  ownSkills: boolean;
+  planId: string;
   skills: GraphSkill[];
+  userId: string;
 };
 
 export type PlanMemberCheck = { coverage: MemberCoverage; provenance: LibraryProvenance };
 
+/** What the member check reads, written the way the checked graph was. */
+export type MemberCheckRequest = {
+  analytics: NonNullable<CurriculumAnalytics>;
+  goal: string;
+  language: string;
+};
+
 /**
- * Internal bridge for the daily sweep: active learn plans whose graph still owes its member check,
- * leaving out goals built from the learner's own material.
+ * A plan still owes its check while it's unmarked and the check could add to it: a signed-up
+ * learner's active learn goal, with a graph, not built from material they uploaded.
  */
+const OWES_MEMBER_CHECK = sql`
+  plan.members_checked_at IS NULL
+  AND goal.kind = 'learn'
+  AND goal.status = 'active'
+  AND NOT learner.is_anonymous
+  AND jsonb_array_length(COALESCE(plan.graph -> 'skills', '[]'::jsonb)) > 0
+  AND NOT EXISTS (
+    SELECT 1 FROM goal_sources source
+    WHERE source.goal_id = goal.id AND source.origin = 'upload'
+  )
+`;
+
+/** Internal bridge for the daily sweep: the plans whose graph still owes its member check. */
 export async function listPlansOwingMemberCheck(): Promise<string[]> {
   const plans = await prisma.$queryRaw<{ id: string }[]>`
     SELECT plan.id
     FROM plans plan
     JOIN goals goal ON goal.id = plan.goal_id
-    WHERE plan.members_checked_at IS NULL
-      AND goal.kind = 'learn'
-      AND goal.status = 'active'
-      AND jsonb_array_length(COALESCE(plan.graph -> 'skills', '[]'::jsonb)) > 0
-      AND NOT EXISTS (
-        SELECT 1 FROM goal_sources source
-        WHERE source.goal_id = goal.id AND source.origin = 'upload'
-      )
+    JOIN users learner ON learner.id = goal.user_id
+    WHERE ${OWES_MEMBER_CHECK}
     ORDER BY plan.id DESC
     LIMIT ${OWED_PLANS_PER_SWEEP}
   `;
@@ -56,35 +76,52 @@ export async function listPlansOwingMemberCheck(): Promise<string[]> {
   return plans.map((plan) => plan.id);
 }
 
+async function hasOwnSkills({ skills, userId }: { skills: readonly GraphSkill[]; userId: string }) {
+  const owned = await prisma.skill.count({
+    where: { id: { in: skills.map((skill) => skill.skillId) }, ownerId: userId },
+  });
+
+  return owned > 0;
+}
+
 /**
  * Internal workflow bridge: marks the plan's graph checked before anything is spent, so a second
  * run, a retry after an offer or a dismissed offer never pays for the check again. Null when another
- * run or a new build already marked it.
+ * run or a new build already marked it, or the plan no longer owes it.
  */
 export async function claimMemberCheck(planId: string): Promise<ClaimedMemberCheck | null> {
-  const { count } = await prisma.plan.updateMany({
-    data: { membersCheckedAt: new Date() },
-    where: { id: planId, membersCheckedAt: null },
-  });
+  const checkedAt = new Date();
 
-  if (count === 0) {
+  const claimed = await prisma.$queryRaw<{ id: string }[]>`
+    UPDATE plans plan
+    SET members_checked_at = ${checkedAt}
+    FROM goals goal
+    JOIN users learner ON learner.id = goal.user_id
+    WHERE plan.id = ${planId}::uuid
+      AND goal.id = plan.goal_id
+      AND ${OWES_MEMBER_CHECK}
+    RETURNING plan.id
+  `;
+
+  if (claimed.length === 0) {
     return null;
   }
 
   const plan = await prisma.plan.findUniqueOrThrow({
-    select: {
-      goal: { select: { id: true, language: true, prompt: true, userId: true } },
-      graph: true,
-    },
+    select: { goal: { select: { id: true, userId: true } }, graph: true },
     where: { id: planId },
   });
 
+  const { skills } = planGraphSchema.parse(plan.graph);
+  const { userId } = plan.goal;
+
   return {
-    goal: plan.goal.prompt,
+    checkedAt,
     goalId: plan.goal.id,
-    language: plan.goal.language,
-    skills: planGraphSchema.parse(plan.graph).skills,
-    userId: plan.goal.userId,
+    ownSkills: await hasOwnSkills({ skills, userId }),
+    planId,
+    skills,
+    userId,
   };
 }
 
@@ -92,13 +129,17 @@ export async function claimMemberCheck(planId: string): Promise<ClaimedMemberChe
  * Internal workflow bridge for one step: the goal's list, with each member's skills as the graph's
  * skill ids. Short keys keep the model from copying long ids into every member's row.
  */
-export async function checkPlanMembers(claimed: ClaimedMemberCheck): Promise<PlanMemberCheck> {
+export async function checkPlanMembers({
+  claimed,
+  request,
+}: {
+  claimed: ClaimedMemberCheck;
+  request: MemberCheckRequest;
+}): Promise<PlanMemberCheck> {
   const idsByKey = new Map(claimed.skills.map((skill, index) => [`s${index + 1}`, skill.skillId]));
 
   const { data, provenance } = await checkMemberCoverage({
-    analytics: { contentScope: "personal", distinctId: claimed.userId, goalId: claimed.goalId },
-    goal: claimed.goal,
-    language: claimed.language,
+    ...request,
     serviceTier: chooseServiceTier({ wait: "later" }),
     skills: claimed.skills.map((skill, index) => ({ key: `s${index + 1}`, name: skill.name })),
   });
@@ -150,15 +191,19 @@ async function loadLevels(skillIds: readonly string[]): Promise<Map<string, Cour
 }
 
 /**
- * Internal workflow bridge for one step: the Library skill for each uncovered member, in the goal's
- * scope, placed beside its neighbors in the plan.
+ * Internal workflow bridge for one step: the Library skill for each uncovered member, in the scope
+ * the goal's skills live in, placed beside its neighbors in the plan.
  */
 export async function toMemberSkills({
+  analytics,
   check,
   claimed,
+  scope,
 }: {
+  analytics: NonNullable<CurriculumAnalytics>;
   check: PlanMemberCheck;
   claimed: ClaimedMemberCheck;
+  scope: CurriculumScope;
 }): Promise<AddedSkill[]> {
   const placed = placeMembers({ check, claimed });
 
@@ -166,18 +211,10 @@ export async function toMemberSkills({
     return [];
   }
 
-  const goal = await prisma.goal.findUniqueOrThrow({
-    select: { language: true, primaryCourseId: true, targetLanguage: true },
-    where: { id: claimed.goalId },
-  });
-
-  const [scope, levels] = await Promise.all([
-    loadTopicScope(goal),
-    loadLevels(placed.map((member) => member.neighborSkill.skillId)),
-  ]);
+  const levels = await loadLevels(placed.map((member) => member.neighborSkill.skillId));
 
   const skillIds = await resolveScopeSkills({
-    analytics: { contentScope: "shared", distinctId: claimed.userId, goalId: claimed.goalId },
+    analytics,
     provenance: check.provenance,
     scope,
     serviceTier: chooseServiceTier({ wait: "later" }),
@@ -207,6 +244,31 @@ export async function toMemberSkills({
   });
 }
 
+/**
+ * An offer is made once per claim, and only to the graph the check read: a rebuild since then runs
+ * its own check, and its new skills would leave the offer's anchors pointing nowhere.
+ */
+async function isOfferDue(claimed: ClaimedMemberCheck): Promise<boolean> {
+  const [plan, offered] = await Promise.all([
+    prisma.plan.findUnique({ select: { graph: true }, where: { id: claimed.planId } }),
+    prisma.planChange.count({
+      where: {
+        createdAt: { gte: claimed.checkedAt },
+        payload: { equals: MEMBER_CHECK_SOURCE, path: ["source"] },
+        planId: claimed.planId,
+      },
+    }),
+  ]);
+
+  const current = plan ? planGraphSchema.parse(plan.graph).skills : [];
+
+  return (
+    offered === 0 &&
+    current.length === claimed.skills.length &&
+    current.every((skill, index) => skill.skillId === claimed.skills[index]?.skillId)
+  );
+}
+
 /** Internal workflow bridge: asks the learner to add the members their plan leaves out. */
 export async function offerMemberSkills({
   check,
@@ -217,7 +279,7 @@ export async function offerMemberSkills({
   claimed: ClaimedMemberCheck;
   skills: AddedSkill[];
 }): Promise<void> {
-  if (skills.length === 0) {
+  if (skills.length === 0 || !(await isOfferDue(claimed))) {
     return;
   }
 
