@@ -668,7 +668,8 @@ describe("a qualifying first phase that retests the written phase's subjects", (
 
   it("asks no objective subject on a day that has only written tests", () => {
     const structure = cacdStructure();
-    const goalAreas = structure.subjects.map((subject) => subject.name);
+    const goalAreas = structure.subjects.map((item) => item.name);
+
     const days = listMockOptions({ goalAreas, structure }).filter(
       (option) => option.kind === "full",
     );
