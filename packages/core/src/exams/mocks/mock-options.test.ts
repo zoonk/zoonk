@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
+import { CGU_WRITTEN_GRADING } from "./_test-utils/cgu-written";
 import { getMockFormatMix } from "./mock-format-mix";
 import { planOptionMock } from "./mock-option-plan";
 import { listMockOptions } from "./mock-options";
@@ -413,6 +414,58 @@ describe("an exam with listening and speaking papers", () => {
 
     const [unvoiced] = listMockOptions({ goalAreas, structure: ielts });
     expect(unvoiced?.covers).toStrictEqual(["Reading", "Writing"]);
+  });
+
+  it("counts an objective-only mock's questions from the whole notice, its recordings' questions left out", () => {
+    const writtenApart: ExamStructure = {
+      ...ielts,
+      mock: ielts.mock && {
+        ...ielts.mock,
+        sections: [
+          {
+            day: null,
+            kind: "listening",
+            minutes: 30,
+            name: "Listening",
+            questions: 10,
+            session: "Morning",
+            tasks: [],
+          },
+          {
+            day: null,
+            kind: "objective",
+            minutes: 60,
+            name: "Reading",
+            questions: null,
+            session: "Morning",
+            tasks: [],
+          },
+          {
+            day: null,
+            kind: "written",
+            minutes: 60,
+            name: "Writing",
+            questions: null,
+            session: "Afternoon",
+            tasks: [
+              {
+                count: 1,
+                description: "An essay",
+                grading: CGU_WRITTEN_GRADING,
+                key: "essay",
+                lines: 30,
+                points: 100,
+              },
+            ],
+          },
+        ],
+        totalQuestions: 30,
+      },
+    };
+
+    const options = listMockOptions({ goalAreas, structure: writtenApart });
+
+    expect(options.find((option) => option.kind === "objective")?.questions).toBe(20);
   });
 
   it("names none when the mock sits every paper but the written ones", () => {
