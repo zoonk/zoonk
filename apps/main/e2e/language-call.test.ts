@@ -370,7 +370,7 @@ test.describe("Language practice in the plan", () => {
   test("onboarding's level test says where the learner is and ends on reading alone when they can't listen", async ({
     noProgressUser,
     userWithoutProgress: page,
-  }) => {
+  }, testInfo) => {
     const [goal] = await Promise.all([
       onboardingGoal({
         details: { reason: "Trabalho" },
@@ -461,6 +461,10 @@ test.describe("Language practice in the plan", () => {
     await expect(
       page.getByRole("listitem").filter({ hasText: /^ListeningNot tested yet$/u }),
     ).toBeVisible();
+
+    // This goal's plan has no lesson yet, so the result names none.
+    await expect(page.getByText("Up next", { exact: true })).toBeHidden();
+    await page.screenshot({ path: testInfo.outputPath("level-result-no-next-lesson.png") });
 
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 

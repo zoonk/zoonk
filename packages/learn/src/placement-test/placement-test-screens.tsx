@@ -17,6 +17,7 @@ import { TaskMeta } from "../_components/task-meta";
 import { useFormatDuration } from "../_utils/time-format";
 import { OnboardingDescription } from "../onboarding/onboarding-frame";
 import { TestOutcome } from "../onboarding/test-outcome";
+import { usePhaseName } from "../plan/use-phase-name";
 import { useSkippedLessonsSentences } from "../plan/use-skipped-lessons-sentences";
 import { type ResultUndo, useResultUndo } from "../questions/undo-button";
 import { DaySegment } from "../today/day-segments";
@@ -123,6 +124,22 @@ function ResultLead({
   );
 }
 
+/** The stop the learner starts in, named as the Plan names it, also when it has no saved name. */
+function useStartStopName() {
+  const phaseName = usePhaseName();
+
+  return ({ chapter, course }: Pick<PlacementResultPhase, "chapter" | "course">) => {
+    const index = course?.chapters.findIndex((stop) => stop.start) ?? -1;
+
+    if (chapter || index === -1) {
+      return chapter;
+    }
+
+    // A course test runs only on a learn goal, whose stops are all of that kind.
+    return phaseName({ index, kind: "learn", name: "", short: null });
+  };
+}
+
 export function PlacementResult({
   failed,
   onDone,
@@ -150,12 +167,13 @@ export function PlacementResult({
   const sentences = useSkippedLessonsSentences();
   const skippedFact = useSkippedFact();
   const { button, pending: undoing, undone } = useResultUndo(undo);
-  const { chapter, course, lessonsSkipped } = result;
+  const stopName = useStartStopName();
+  const { course, lessonsSkipped } = result;
   const nextLesson = undone ? null : result.nextLesson;
   const action = useResultAction({ nextLesson: result.saved ? null : nextLesson, onboarding });
   const { lessonId } = action;
   // Undone, the start is back at the course's first lesson, which this result doesn't name.
-  const place = undone ? null : chapter;
+  const place = undone ? null : stopName(result);
 
   return (
     <TestOutcome

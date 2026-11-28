@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
+import { z } from "zod";
 import { type Page, expect, test } from "./fixtures";
 import { holdActionAnswer } from "./held-action";
 import { asPersona } from "./learn-personas";
@@ -80,6 +81,32 @@ async function finishTest(page: Page, answer: (page: Page) => Promise<void> = an
   }
 
   await expect(result).toBeVisible();
+}
+
+/** The result's line: one segment a stop, under the name of the stop the learner starts in. */
+async function readResultStops(page: Page) {
+  const title = page.getByRole("heading", { level: 1 }).filter({ visible: true });
+  const line = page.locator('[data-slot="course-line"] > [data-slot="meter-part"]');
+  await expect(line.first()).toBeVisible();
+  return { count: await line.count(), name: await title.innerText() };
+}
+
+/** The Plan draws the same stops as the result: as many, and the result's start is its current one. */
+async function expectPlanStops(page: Page, stops: { count: number; name: string }) {
+  await page.goto("/plan");
+
+  // From two stops the Plan draws them as its band of phases; one stop is only on its path.
+  const path =
+    stops.count > 1
+      ? page.getByRole("region", { name: "Phases" }).getByRole("list")
+      : page.getByRole("list", { name: "Your path" });
+
+  const planStops = path.locator(':scope > li:not([data-state="finish"])');
+  await expect(planStops).toHaveCount(stops.count);
+
+  await expect(planStops.filter({ hasText: ", you are here" })).toContainText(stops.name, {
+    useInnerText: true,
+  });
 }
 
 test.describe("Testing what you know from the plan", () => {
@@ -392,11 +419,13 @@ test("the Plan's row opens the last test's result, and a new test can be taken f
   await expect(page.getByText("You start here", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Done" })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeHidden();
+  const stops = await readResultStops(page);
   await page.getByRole("button", { exact: true, name: "Take the test again" }).click();
 
   await expect(page.getByRole("heading", { name: "Skip what you already know" })).toBeVisible();
   await page.getByRole("button", { exact: true, name: "Start" }).click();
   await atQuestion(page, 1);
+  await expectPlanStops(page, stops);
 });
 
 test("the Plan's row opens the last test's result when no test is left to start", async ({
@@ -418,9 +447,52 @@ test("the Plan's row opens the last test's result when no test is left to start"
   await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Take the test again" })).toBeHidden();
   expect(await skippedLessons(goal.id)).toBe(skipped);
+  const stops = await readResultStops(page);
 
   await page.getByRole("button", { exact: true, name: "Done" }).click();
   await expect(page).toHaveURL(/\/plan$/u);
+  await expectPlanStops(page, stops);
+});
+
+/** Older plans saved their stops without names, in the plan and in its graph. */
+function withoutNames(stops: unknown) {
+  return z
+    .array(z.looseObject({}))
+    .parse(stops)
+    .map((stop) => ({ ...stop, name: "" }));
+}
+
+test("a stop with no saved name is titled as the Plan names it", async ({
+  noProgressUser,
+  userWithoutProgress: page,
+}, testInfo) => {
+  const goal = await createLearnGoal(noProgressUser.id);
+
+  await page.goto("/placement-test");
+  await page.getByRole("button", { exact: true, name: "Start" }).click();
+  await atQuestion(page, 1);
+  await answerRight(page);
+  await stopTest(page);
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+  const graph = z.looseObject({ phases: z.array(z.looseObject({})) }).parse(plan.graph);
+
+  await prisma.plan.update({
+    data: {
+      graph: { ...graph, phases: withoutNames(graph.phases) },
+      phases: withoutNames(plan.phases),
+    },
+    where: { id: plan.id },
+  });
+
+  await page.reload();
+  await expect(page.getByText("You start here", { exact: true })).toBeVisible();
+  const stops = await readResultStops(page);
+  expect(stops.name).toMatch(/^Phase \d+$/u);
+  await page.screenshot({ path: testInfo.outputPath("unnamed-stop-result.png") });
+
+  await expectPlanStops(page, stops);
 });
 
 test("a test's skip appears on Plan and Today and can be undone from Today", async ({
@@ -491,8 +563,11 @@ test("the seeded course's test goes from onboarding's offer to where the learner
     expect(await skippedLessons(user.goalId)).toBeGreaterThan(0);
     await page.screenshot({ path: testInfo.outputPath("seeded-course-result.png") });
 
+    const stops = await readResultStops(page);
+
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(page.getByRole("button", { name: "Adjust plan" })).toBeVisible();
+    await expectPlanStops(page, stops);
   });
 });
 
