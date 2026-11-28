@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "52af6c9aebe51c3d323bfdd49018716791cffcd47e57c1c5d2e31a716e168975",
   "placementtest_start_title": "410d5a77c37111f26ad35e5853f08d0ae13fabb8c3f9dcf215fc057c81511ff3",
   "placementtest_take_again_later": "3651c302f87b90e0a040ef86e6732b183718421fc6ea7b6f6e771fd7f942c926",
+  "placementtest_take_test_again": "542b2fcc79688a0a8d0cdf6738ef1f549cbb640b949e30054bbfeff0fc3973cc",
   "placementtest_test": "83cd27c3bbecf3a2f5978ab78d2dacad1c54317b01625a319bd7d1ea95edff30",
   "placementtest_test_out": "9b1fca8f8662f2f9fcbf4bf8b9d497b2caff51425f037a37280050225cb9a3f4",
   "placementtest_test_out_description": "5d9072489ba4a4c16dccce8f2db3cab81e2c8dac81e778c2644c63f173280122",
@@ -110,4 +111,6 @@
         <item quantity="many">%1$d sur %2$d leçons sautées</item>
         <item quantity="other">%1$d sur %2$d leçons sautées</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">Refaire le test</string>
 </resources>

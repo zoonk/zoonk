@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "27601afaf2b94bf5de3f2a4d569927ce0f13417cc11b0285b264a55e85da8e03",
   "placementtest_start_title": "80f0d546e2586db0e7b7f04ea7d2ebf2ac77c05adb0c2b95285b4863bbcd593a",
   "placementtest_take_again_later": "601cebb0243b33865aa067937dabb99cc6ee249c50d22047e6395efa4463ebed",
+  "placementtest_take_test_again": "aca9742393fc84460113d24b4145d70b02f5c444d200e18a877d4c66dc757b40",
   "placementtest_test": "ea0911b18251371ebe888c63854683e09e1d8011aa68b997f3ee8f673e6c0616",
   "placementtest_test_out": "af198f4465b7e60ae4aa7db1fb2710ceb491cdd461822592d511725ab837aba3",
   "placementtest_test_out_description": "225152815c136c9b23b953ad394ff6cd45ae93bf20b0965a977e72192e8da4bc",
@@ -102,4 +103,6 @@
     <plurals name="placementtest_course_skipped">
         <item quantity="other">전체 %2$d개 레슨 중 %1$d개 건너뜀</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">레벨 테스트 다시 하기</string>
 </resources>

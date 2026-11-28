@@ -30,6 +30,7 @@
   "placementtest_start_lesson": "c74079037eefd27e344dd9d4bef94919659abe757456c8b5ed5186b0433ce791",
   "placementtest_start_title": "43cbd2e118e3c9bc7c58adde415a1325bb05e46b6ccfa7f064c73f07d3a7893b",
   "placementtest_take_again_later": "d6f8101ce6933d9124731b8886012b6aa78aa840d2da23fff320132b454be732",
+  "placementtest_take_test_again": "3cef0e5d0e01e6f91fcae54ac02e8ce99eda4b0f9e644b107c278015ec9aa75c",
   "placementtest_test": "f5a0950dfe65d32abe433ddeef9ab65c1f4b5eac230aa2cd0d43f8240a4cb57a",
   "placementtest_test_out": "5938c797a204e1ba2dc716cc78c83fad14e1f35ffedfe5e0ba37218126cd4b46",
   "placementtest_test_out_description": "4f0a2a17138bfb535b1209daa37106cb561b3b8193ae8e76fdfa2c1023da2b6f",
@@ -102,4 +103,6 @@
     <plurals name="placementtest_course_skipped">
         <item quantity="other">全%2$dレッスンのうち%1$dレッスンをスキップ</item>
     </plurals>
+    <!-- A quiet action on the result of a placement test opened again from the plan: it offers a new test. -->
+    <string name="placementtest_take_test_again">レベル診断テストを受け直す</string>
 </resources>
