@@ -126,13 +126,13 @@ export function PronunciationWord({
 
       <WordListenButtons disabled={recording} language={language} word={word} />
 
-      {cue}
-
       {word.tip && (
         <p className="text-muted-foreground text-compact leading-snug">
           <ItemLine text={word.tip} />
         </p>
       )}
+
+      {cue}
     </section>
   );
 }

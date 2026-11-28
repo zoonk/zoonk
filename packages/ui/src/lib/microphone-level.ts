@@ -1,3 +1,6 @@
+/** Linear RMS of the browser's echo-cancelled microphone that a voice passes. */
+export const SPEECH_LEVEL = 0.02;
+
 export type MicrophoneLevel = {
   /** Linear RMS of the newest samples: 0 is silence, 1 full scale. */
   read: () => number;

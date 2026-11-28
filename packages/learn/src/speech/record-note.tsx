@@ -39,7 +39,9 @@ export function useRecordNote({
   }
 
   if (problem === "missedStart") {
-    return <p>{t("We may have missed the start. Say it again.")}</p>;
+    return (
+      <p className="text-muted-foreground">{t("We may have missed the start. Say it again.")}</p>
+    );
   }
 
   if (problem === "signUpRequired") {

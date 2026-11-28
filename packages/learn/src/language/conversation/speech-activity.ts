@@ -4,10 +4,8 @@
  * talking over them. It hears sound, not words, so a noisy room counts as speaking.
  */
 
-import { listenToLevel } from "@zoonk/ui/lib/microphone-level";
+import { SPEECH_LEVEL, listenToLevel } from "@zoonk/ui/lib/microphone-level";
 
-/** Linear RMS of the browser's echo-cancelled microphone that a voice passes. */
-const SPEECH_LEVEL = 0.02;
 const SAMPLE_MS = 100;
 /** A voice dips between words; below the level this long and the learner stopped. */
 const HANGOVER_MS = 1000;

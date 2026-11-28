@@ -1,4 +1,5 @@
 import { useMeasuredWidth } from "@zoonk/ui/hooks/measured-width";
+import { SPEECH_LEVEL } from "@zoonk/ui/lib/microphone-level";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef } from "react";
@@ -37,22 +38,33 @@ function useLevelBars({
   const sample = useEffectEvent(readLevel);
 
   useEffect(() => {
-    const bars = ref.current?.children;
+    const track = ref.current;
 
-    if (!live || !bars || globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!live || !track) {
       return;
     }
 
+    const bars = track.children;
+    const still = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const levels = Array.from<number>({ length: count }).fill(0);
 
+    // With reduced motion the bars hold still and only darken while a voice is heard.
     const timer = globalThis.setInterval(() => {
+      const level = sample();
+
+      if (still) {
+        track.style.opacity = level >= SPEECH_LEVEL ? "1" : "0.4";
+        return;
+      }
+
       levels.shift();
-      levels.push(sample());
-      levels.forEach((level, index) => drawBar(bars[index], level));
+      levels.push(level);
+      levels.forEach((value, index) => drawBar(bars[index], value));
     }, SAMPLE_MS);
 
     return () => {
       globalThis.clearInterval(timer);
+      track.style.opacity = "";
       [...bars].forEach((bar) => drawBar(bar, 0));
     };
   }, [count, live]);
