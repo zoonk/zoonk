@@ -43,6 +43,18 @@ describe(hasMissedStart, () => {
       startup: 700,
       statuses: ["missed", "correct", "different"],
     },
+    {
+      expected: true,
+      name: "as many opening words as a slow start can hide",
+      startup: 1450,
+      statuses: ["missed", "missed", "missed", "missed", "correct"],
+    },
+    {
+      expected: false,
+      name: "more opening words than the start can hide",
+      startup: 450,
+      statuses: ["missed", "missed", "missed", "missed", "correct"],
+    },
     { expected: false, name: "a single word", startup: 700, statuses: ["missed"] },
     { expected: false, name: "a correct take", startup: 700, statuses: ["correct", "correct"] },
     { expected: false, name: "no mic timing", statuses: ["missed", "correct"] },

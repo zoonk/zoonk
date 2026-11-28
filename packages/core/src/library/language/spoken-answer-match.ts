@@ -22,6 +22,8 @@ export type SpokenAnswerMatch = {
 const MAX_WORDS_TO_EXPLAIN = 2;
 // Keep the threshold below the 450 ms startup observed when Safari with AirPods clipped the opening.
 const MISSED_START_MIN_MIC_STARTUP_MS = 400;
+// A quick word like "a" takes about this long to say, which bounds how many words a late start can hide.
+const SHORTEST_WORD_MS = 200;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
 
@@ -219,5 +221,10 @@ export function hasMissedStart({
   }
 
   const firstCorrect = words.findIndex((word) => word.status === "correct");
-  return firstCorrect > 0 && words.slice(firstCorrect).every((word) => word.status === "correct");
+
+  return (
+    firstCorrect > 0 &&
+    firstCorrect <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
+    words.slice(firstCorrect).every((word) => word.status === "correct")
+  );
 }
