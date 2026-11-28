@@ -279,8 +279,9 @@ private fun endConsequence(
     goalDate: GoalDateMove?,
 ): Consequence? {
     if (goalDate != null) return null
-    val (before, after) = shownEndMove(effect) ?: return null
-    return Consequence("end", stringResource(R.string.plan_effect_plan_ends, longDate(after), longDate(before)), whole = true)
+    val (before, after) = shownEndMove(effect, LocalDate.now()) ?: return null
+    val words = if (after.precision == EndPrecision.Day) R.string.plan_effect_plan_ends else R.string.plan_effect_plan_ends_around
+    return Consequence("end", stringResource(words, endDateText(after), endDateText(before)), whole = true)
 }
 
 @Composable
@@ -411,9 +412,8 @@ private fun dateRows(
             )
         rows += moved("goalDate", label, rowDate(it.after), it.before?.let { before -> rowDate(before) })
     }
-    shownEndMove(effect)?.let { (before, after) ->
-        rows +=
-            moved("end", stringResource(R.string.plan_effect_row_plan_ends), rowDate(after), rowDate(before))
+    shownEndMove(effect, LocalDate.now())?.let { (before, after) ->
+        rows += moved("end", stringResource(R.string.plan_effect_row_plan_ends), endDateText(after), endDateText(before))
     }
     effect.phaseEnds.orEmpty().forEach {
         rows += moved("phase:${it.name}", stringResource(R.string.plan_effect_row_ends, it.name), rowDate(it.after), rowDate(it.before))

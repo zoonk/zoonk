@@ -87,6 +87,93 @@ class PlanFinishScreenshots {
         write("plan-finish-phase-sheet", compose.onRoot().captureRender().asAndroidBitmap())
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h1200dp-xxhdpi")
+    fun changeNotices() = notices("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1200dp-night-xxhdpi")
+    fun changeNoticesDark() = notices("phone-dark", dark = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun changeNoticesAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        notices("phone-font200")
+    }
+
+    /** The end of the plan moving: by its day when both ends are near, by month, and by year once far off. */
+    private fun notices(
+        name: String,
+        dark: Boolean = false,
+    ) {
+        val today = java.time.LocalDate.now()
+        val moves =
+            listOf(
+                Triple(today.plusDays(20), today.plusDays(30), "month" to "month"),
+                Triple(today.plusMonths(4), today.plusMonths(7), "month" to "month"),
+                Triple(today.plusMonths(14), today.plusYears(5), "month" to "year"),
+            )
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark) {
+                Surface {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                        moves.forEach { (before, after, precisions) ->
+                            val fields =
+                                """"endDateBefore":"$before","endDateAfter":"$after",""" +
+                                    """"endPrecisionBefore":"${precisions.first}","endPrecisionAfter":"${precisions.second}""""
+                            PlanEffectDiff(
+                                ApiJson.decodeFromString(
+                                    com.zoonk.api.models.PlanEffect
+                                        .serializer(),
+                                    effect(fields),
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        write("plan-change-ends-$name", compose.onRoot().captureRender().asAndroidBitmap())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-xxhdpi")
+    fun examAfterTheExam() = capture("phone", pages = listOf("exam-month" to examPage(year = false), "exam-year" to examPage(year = true)))
+
+    @Test
+    @Config(qualifiers = "w411dp-h1900dp-night-xxhdpi")
+    fun examAfterTheExamDark() =
+        capture("phone-dark", dark = true, pages = listOf("exam-month" to examPage(year = false), "exam-year" to examPage(year = true)))
+
+    /** An exam on Jan 31, 2027 whose plan keeps going after it, to a month or, at a few minutes a day, a year. */
+    private fun examPage(year: Boolean): PlanPageState {
+        val base = learnPlan()
+        val end = if (year) LocalDate(2030, 3, 15) else LocalDate(2027, 5, 20)
+        val after =
+            base.phases.last().copy(
+                index = base.phases.size.toLong(),
+                name = "After the exam",
+                kind = PlanPhase.Kind.AFTER_EXAM,
+                milestone = null,
+                startDate = LocalDate(2027, 2, 1),
+                endDate = end,
+            )
+        val plan =
+            base.copy(
+                phases = base.phases + after,
+                schedule = base.schedule.copy(targetDate = LocalDate(2027, 1, 31), fullCourse = true),
+                estimate =
+                    base.estimate.copy(
+                        endDate = end,
+                        fullCourseEndDate = end,
+                        precision = if (year) PlanFinishPrecision.YEAR else PlanFinishPrecision.MONTH,
+                    ),
+            )
+        return page(plan, kind = "exam", title = "ENEM")
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
