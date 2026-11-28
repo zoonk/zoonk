@@ -3,7 +3,10 @@ import { type CodeCheckResult, scoreWithCodeChecks } from "@/lib/code-checked-sc
 import { generateScore } from "@/lib/score";
 import { type TaskCodeChecks, type TaskScorer, getJudgeExpectations } from "@/lib/types";
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/language/language-lesson";
-import { definitionNamesWord } from "@zoonk/ai/tasks/language/language-lesson-rules";
+import {
+  definitionNamesWord,
+  writesNumberInDigits,
+} from "@zoonk/ai/tasks/language/language-lesson-rules";
 import { cleanWrittenLanguageLesson } from "@zoonk/core/library/language/write-lesson-content";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { LANGUAGE_LESSON_SCORE_CATEGORIES } from "./score-categories";
@@ -33,6 +36,35 @@ function checkDefinitions(lesson: LanguageLessonContent): CodeCheckResult {
   };
 }
 
+/** Production sends these to the lesson's fix pass, so they count against practice design. */
+function checkNumbers(lesson: LanguageLessonContent): CodeCheckResult {
+  const flagged = lesson.sentences.filter(
+    (sentence) =>
+      writesNumberInDigits(sentence.sentence) || writesNumberInDigits(sentence.translation),
+  );
+
+  return {
+    criteria: ["practiceDesign"],
+    judgedOutput: JSON.stringify(lesson),
+    passed: lesson.sentences.length - flagged.length,
+    problems: flagged.map(
+      (sentence) =>
+        `"${sentence.sentence}" writes a number in digits, so the learner picks its tile by sight.`,
+    ),
+    total: lesson.sentences.length,
+  };
+}
+
+function combineChecks(first: CodeCheckResult, second: CodeCheckResult): CodeCheckResult {
+  return {
+    criteria: [...(first.criteria ?? []), ...(second.criteria ?? [])],
+    judgedOutput: first.judgedOutput,
+    passed: first.passed + second.passed,
+    problems: [...first.problems, ...second.problems],
+    total: first.total + second.total,
+  };
+}
+
 export const checkLanguageLessonOutput: TaskCodeChecks = ({ output, testCase }) => {
   const input = testCase.userInput as LanguageLessonInput;
   const lesson = parseLesson(output);
@@ -58,9 +90,11 @@ export const checkLanguageLessonOutput: TaskCodeChecks = ({ output, testCase }) 
     return { blockingProblems: problems, judgedOutput: output, passed: 0, problems, total: 1 };
   }
 
+  const numbers = checkNumbers(lesson);
+
   const checks = isSameLanguage(input)
-    ? checkDefinitions(lesson)
-    : { judgedOutput: output, passed: 1, problems: [], total: 1 };
+    ? combineChecks(checkDefinitions(lesson), numbers)
+    : { ...numbers, judgedOutput: output };
 
   return {
     ...checks,
