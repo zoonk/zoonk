@@ -1,85 +1,96 @@
 import { describe, expect, it } from "vitest";
-import {
-  type SpokenWordResult,
-  hasMissedStart,
-  matchSpokenAnswer,
-  pickWordsToExplain,
-} from "./spoken-answer-match";
+import { hasMissedStart, matchSpokenAnswer, pickWordsToExplain } from "./spoken-answer-match";
 
 describe(hasMissedStart, () => {
+  const RENT = "How much is the rent?";
+  const MADRID = "Lucía vive en Madrid";
+
   it.each<{
     expected: boolean;
+    heard: string;
+    language?: string;
     name: string;
+    sentence?: string;
     startup?: number;
-    statuses: SpokenWordResult["status"][];
   }>([
+    { expected: true, heard: "much is the rent", name: "a missed opening word", startup: 400 },
     {
       expected: true,
-      name: "a missed opening word",
-      startup: 400,
-      statuses: ["missed", "correct"],
-    },
-    {
-      expected: true,
+      heard: "Who much is the rent",
       name: "a different opening word",
       startup: 700,
-      statuses: ["different", "correct", "correct"],
     },
-    {
-      expected: true,
-      name: "several opening words",
-      startup: 700,
-      statuses: ["missed", "different", "correct"],
-    },
+    { expected: true, heard: "is the rent", name: "several opening words", startup: 700 },
     {
       expected: false,
+      heard: "How much was the rent",
       name: "a wrong word in the middle",
       startup: 700,
-      statuses: ["correct", "different", "correct"],
     },
-    {
-      expected: false,
-      name: "errors after the opening",
-      startup: 700,
-      statuses: ["missed", "correct", "different"],
-    },
+    { expected: false, heard: "much is the bed", name: "errors after the opening", startup: 700 },
     {
       expected: true,
+      heard: "rent",
       name: "as many opening words as a slow start can hide",
       startup: 1450,
-      statuses: ["missed", "missed", "missed", "missed", "correct"],
     },
     {
       expected: false,
+      heard: "rent",
       name: "more opening words than the start can hide",
       startup: 450,
-      statuses: ["missed", "missed", "missed", "missed", "correct"],
     },
     {
       expected: true,
+      heard: "Turín",
+      language: "es",
       name: "a short sentence said before the start",
+      sentence: MADRID,
       startup: 1000,
-      statuses: ["different", "missed", "missed", "missed"],
     },
     {
       expected: true,
+      heard: "",
+      language: "es",
       name: "a silent take after a slow start",
+      sentence: MADRID,
       startup: 1000,
-      statuses: ["missed", "missed", "missed"],
     },
     {
       expected: false,
+      heard: "",
+      language: "es",
       name: "a sentence longer than the start can hide",
+      sentence: MADRID,
       startup: 450,
-      statuses: ["different", "missed", "missed"],
     },
-    { expected: false, name: "a correct take", startup: 700, statuses: ["correct", "correct"] },
-    { expected: false, name: "no mic timing", statuses: ["missed", "correct"] },
-    { expected: false, name: "a faster mic start", startup: 399, statuses: ["missed", "correct"] },
-  ])("returns $expected for $name", ({ expected, startup, statuses }) => {
-    const words = statuses.map((status) => ({ heard: null, status, text: "" }));
-    expect(hasMissedStart({ micStartupMs: startup, words })).toBe(expected);
-  });
+    {
+      expected: false,
+      heard: "请问，最近的图书馆在哪里？",
+      language: "zh",
+      name: "a wrong word in the middle of an unspaced sentence",
+      sentence: "请问，最近的地铁站在哪里？",
+      startup: 700,
+    },
+    {
+      expected: true,
+      heard: "最近的地铁站在哪里？",
+      language: "zh",
+      name: "a lost opening of an unspaced sentence",
+      sentence: "请问，最近的地铁站在哪里？",
+      startup: 700,
+    },
+    { expected: false, heard: RENT, name: "a correct take", startup: 700 },
+    { expected: false, heard: "much is the rent", name: "no mic timing" },
+    { expected: false, heard: "much is the rent", name: "a faster mic start", startup: 399 },
+  ])(
+    "returns $expected for $name",
+    ({ expected, heard, language = "en", sentence = RENT, startup }) => {
+      expect(hasMissedStart({ expected: sentence, heard, language, micStartupMs: startup })).toBe(
+        expected,
+      );
+    },
+  );
 });
 
 describe(matchSpokenAnswer, () => {

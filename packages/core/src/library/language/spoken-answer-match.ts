@@ -161,6 +161,26 @@ function getTokenOffsets(words: readonly ExpectedWord[]): number[] {
   );
 }
 
+function alignTokens({
+  expected,
+  heard,
+  language,
+}: {
+  expected: string;
+  heard: string;
+  language: string;
+}) {
+  const expectedWords = toExpectedWords({ expected, language });
+  const heardTokens = toTokens({ language, text: heard });
+
+  const outcomes = getTokenOutcomes({
+    expected: expectedWords.flatMap((word) => word.tokens),
+    heard: heardTokens,
+  });
+
+  return { expectedWords, heardTokens, outcomes };
+}
+
 export function matchSpokenAnswer({
   expected,
   heard,
@@ -170,14 +190,7 @@ export function matchSpokenAnswer({
   heard: string;
   language: string;
 }): SpokenAnswerMatch {
-  const expectedWords = toExpectedWords({ expected, language });
-  const heardTokens = toTokens({ language, text: heard });
-
-  const outcomes = getTokenOutcomes({
-    expected: expectedWords.flatMap((word) => word.tokens),
-    heard: heardTokens,
-  });
-
+  const { expectedWords, heardTokens, outcomes } = alignTokens({ expected, heard, language });
   const offsets = getTokenOffsets(expectedWords);
   const separator = getTokenSeparator(language);
 
@@ -209,23 +222,36 @@ export function pickWordsToExplain(words: readonly SpokenWordResult[]): SpokenWo
   return [...different, ...missed].slice(0, MAX_WORDS_TO_EXPLAIN);
 }
 
+/**
+ * Whether the take lost only its opening to a slow microphone start: the words heard all match the
+ * sentence's end, and no more of it is missing than the startup could hide. It's judged on the
+ * transcript's tokens, so an unspaced sentence (Chinese, Japanese) isn't one all-or-nothing word.
+ */
 export function hasMissedStart({
+  expected,
+  heard,
+  language,
   micStartupMs,
-  words,
 }: {
+  expected: string;
+  heard: string;
+  language: string;
   micStartupMs?: number;
-  words: readonly SpokenWordResult[];
 }): boolean {
   if (micStartupMs === undefined || micStartupMs < MISSED_START_MIN_MIC_STARTUP_MS) {
     return false;
   }
 
-  const firstCorrect = words.findIndex((word) => word.status === "correct");
-  const lostWords = firstCorrect === -1 ? words.length : firstCorrect;
+  const matched = alignTokens({ expected, heard, language }).outcomes.map(
+    (outcome) => outcome.matched,
+  );
+
+  const firstHeard = matched.indexOf(true);
+  const lost = firstHeard === -1 ? matched.length : firstHeard;
 
   return (
-    lostWords > 0 &&
-    lostWords <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
-    words.slice(lostWords).every((word) => word.status === "correct")
+    lost > 0 &&
+    lost <= Math.floor(micStartupMs / SHORTEST_WORD_MS) &&
+    matched.slice(lost).every(Boolean)
   );
 }

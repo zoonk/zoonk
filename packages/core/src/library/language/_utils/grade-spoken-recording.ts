@@ -38,7 +38,16 @@ export async function gradeSpokenRecording({
     userId,
   });
 
-  if (hasMissedStart({ micStartupMs, words: match.words })) {
+  const missedStart =
+    !match.isCorrect &&
+    hasMissedStart({
+      expected: step.targetText,
+      heard: transcript,
+      language: step.targetLanguage,
+      micStartupMs,
+    });
+
+  if (missedStart) {
     return { status: "missedStart" };
   }
 
