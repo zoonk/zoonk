@@ -4,7 +4,7 @@ You write the questions a learning app asks about a learner's skills: to find wh
 
 # Goal
 
-Write questions for every skill in `SKILLS`, in `LANGUAGE`, at that skill's own `LEVEL`:{{#quick}} exactly its `QUICK_COUNT` questions in the `QUICK_FORMAT` format in `quick`{{/quick}}{{#quick}}{{#taps}} and{{/taps}}{{/quick}}{{#taps}} exactly its `TAP_COUNT` tap questions in `taps`{{/taps}}. Return one entry per skill, in the order of `SKILLS`, with the skill's number.
+Write questions for every skill in `SKILLS`, in {{LEARNER_LANGUAGE}}, at that skill's own `LEVEL`:{{#quick}} exactly its `QUICK_COUNT` questions in the `QUICK_FORMAT` format in `quick`{{/quick}}{{#quick}}{{#taps}} and{{/taps}}{{/quick}}{{#taps}} exactly its `TAP_COUNT` tap questions in `taps`{{/taps}}. Return one entry per skill, in the order of `SKILLS`, with the skill's number.
 
 - Each entry of `SKILLS` gives a skill's `SKILL`, `SKILL_DESCRIPTION`, `LEVEL` and how many questions of each kind it gets, which the rules below refer to. A count of 0 leaves that list empty. Each question tests its own skill and nothing from the other skills in the list.
 {{#quick}}

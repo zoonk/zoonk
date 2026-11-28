@@ -3,7 +3,7 @@ import { withItemRules } from "./item-rules";
 
 vi.mock("./item-rules.prompt.md", () => ({
   default:
-    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n{{#practice}}\n- Fit `LEVEL`.\n{{/practice}}\n{{#mock}}\n- Like the exam.\n{{/mock}}\n- In `LANGUAGE`{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn `LANGUAGE`{{LANGUAGE_GOAL_CHECK}}.\n",
+    "# Good\n\n- Concrete.{{FIELD_RULE}}\n{{#usedSituations}}\n- Not a used situation.\n{{/usedSituations}}\n{{#practice}}\n- Fit `LEVEL`.\n{{/practice}}\n{{#mock}}\n- Like the exam.\n{{/mock}}\n- In {{LEARNER_LANGUAGE}}{{LANGUAGE_GOAL_EXCEPTION}}.\n\n{{LANGUAGE_GOALS}}\n\n# Text\n\n- Tables.\n{{PICTURES}}\n- No em dashes.\n\n# Formats\n\n{{FORMATS}}\n\n# Final check\n\nIn {{LEARNER_LANGUAGE}}{{LANGUAGE_GOAL_CHECK}}.\n",
 }));
 
 vi.mock("./item-rules/field.prompt.md", () => ({ default: "Set in `FIELD`.\n" }));
@@ -51,10 +51,10 @@ describe(withItemRules, () => {
     ).toBe(
       [
         "# Role",
-        "# Good\n\n- Concrete. Set in `FIELD`.\n- Fit `LEVEL`.\n- In `LANGUAGE`.\n",
+        "# Good\n\n- Concrete. Set in `FIELD`.\n- Fit `LEVEL`.\n- In {{LEARNER_LANGUAGE}}.\n",
         "# Text\n\n- Tables.\n- Charts.\n- Plots.\n- Pictures.\n- No em dashes.\n",
         "# Formats\n\n## multipleChoice\n\n- Options, one correct.\n",
-        "# Final check\n\nIn `LANGUAGE`.\n",
+        "# Final check\n\nIn {{LEARNER_LANGUAGE}}.\n",
       ].join("\n"),
     );
   });
@@ -66,7 +66,7 @@ describe(withItemRules, () => {
       languageGoal: false,
     });
 
-    expect(prompt).toContain("- Concrete.\n- Fit `LEVEL`.\n- In `LANGUAGE`.\n\n# Text");
+    expect(prompt).toContain("- Concrete.\n- Fit `LEVEL`.\n- In {{LEARNER_LANGUAGE}}.\n\n# Text");
     expect(prompt).toContain("- Tables.\n- No em dashes.");
     expect(prompt).toContain("# Formats\n\n## essay\n\n- Rubric.\n\n# Final check");
 
@@ -74,14 +74,14 @@ describe(withItemRules, () => {
       /Options|Statement|One clear ask|Key points|Pairs|Steps|Math|Pictures|FIELD/u,
     );
 
-    expect(prompt).not.toContain("{{");
+    expect(prompt).not.toMatch(/\{\{(?!LEARNER_LANGUAGE\}\})/u);
   });
 
   it("tells a writer to avoid the skill's used situations only when it has some", () => {
     const scope = { field: false, formats: ["trueFalse"], languageGoal: false } as const;
 
     expect(withItemRules("# Role", { ...scope, usedSituations: true })).toContain(
-      "- Concrete.\n- Not a used situation.\n- Fit `LEVEL`.\n- In `LANGUAGE`.",
+      "- Concrete.\n- Not a used situation.\n- Fit `LEVEL`.\n- In {{LEARNER_LANGUAGE}}.",
     );
 
     expect(withItemRules("# Role", scope)).not.toContain("used situation");
@@ -106,7 +106,7 @@ describe(withItemRules, () => {
     });
 
     expect(prompt).toContain(
-      '- In `LANGUAGE`, except the language practiced in a language goal (see "Language goals").',
+      '- In {{LEARNER_LANGUAGE}}, except the language practiced in a language goal (see "Language goals").',
     );
 
     expect(prompt).toContain("\n\n# Language goals\n\nPractice it.\n\n# Text");
@@ -116,7 +116,7 @@ describe(withItemRules, () => {
     );
 
     expect(prompt).toContain(
-      "In `LANGUAGE` (in a language goal, the practiced language is in {{TARGET_LANGUAGE}}).",
+      "In {{LEARNER_LANGUAGE}} (in a language goal, the practiced language is in {{TARGET_LANGUAGE}}).",
     );
   });
 
@@ -150,7 +150,7 @@ describe(withItemRules, () => {
 
     expect(quick).toContain("- Options, one correct.\n");
     expect(quick).toContain("- Math.\n");
-    expect(quick).not.toMatch(/SELECT|ENTRY|\{\{/u);
+    expect(quick).not.toMatch(/SELECT|ENTRY|\{\{(?!LEARNER_LANGUAGE\}\})/u);
 
     const exam = withItemRules("# Role", {
       field: false,
@@ -184,7 +184,7 @@ describe(withItemRules, () => {
       mock: true,
     });
 
-    expect(prompt).toContain("- Concrete.\n- Like the exam.\n- In `LANGUAGE`.");
+    expect(prompt).toContain("- Concrete.\n- Like the exam.\n- In {{LEARNER_LANGUAGE}}.");
     expect(prompt).not.toContain("LEVEL");
   });
 });

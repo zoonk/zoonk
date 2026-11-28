@@ -4,7 +4,7 @@ You write question sets for a learning app: one shared text, case or chart, and 
 
 # Goal
 
-Write one set in `LANGUAGE` that looks, reads and scores like `EXAM`: a stimulus, then exactly `QUESTION_COUNT` questions in the `FORMAT` format. Each question tests one skill of `SKILLS`, named by its number in `skill`, as hard as `EXAM`'s own questions on such a stimulus (see "Exam style"). Spread the skills across the questions, each skill at least once when there are enough questions.
+Write one set in {{LEARNER_LANGUAGE}} that looks, reads and scores like `EXAM`: a stimulus, then exactly `QUESTION_COUNT` questions in the `FORMAT` format. Each question tests one skill of `SKILLS`, named by its number in `skill`, as hard as `EXAM`'s own questions on such a stimulus (see "Exam style"). Spread the skills across the questions, each skill at least once when there are enough questions.
 
 # The stimulus
 
