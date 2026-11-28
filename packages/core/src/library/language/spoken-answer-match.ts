@@ -20,7 +20,7 @@ export type SpokenAnswerMatch = {
 };
 
 const MAX_WORDS_TO_EXPLAIN = 2;
-// The shortest observed mic startup that clipped the opening on Safari with AirPods was 400 ms.
+// Just under the 450 ms a take on Safari with AirPods took to start when it lost its first word, so quick starts never qualify.
 const MISSED_START_MIN_MIC_STARTUP_MS = 400;
 const LONE_LETTER = /^\p{L}\p{M}*$/u;
 const DIGIT_GROUP = /^\p{Nd}+$/u;
