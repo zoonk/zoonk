@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages, getPromptLanguageName } from "../_utils/prompt-language";
 import { selectPromptVariants } from "../_utils/prompt-variants";
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 import { lessonVisualSchema } from "../visuals/visual-schema";
@@ -155,12 +155,16 @@ export async function writeItemSet(params: WriteItemSetParams) {
     variants: { usedTitles: Boolean(params.usedTitles?.length) },
   });
 
-  const systemPrompt = withItemRules(setPrompt, {
-    field: false,
-    formats: [format],
-    languageGoal: Boolean(params.targetLanguage),
-    pictures: false,
-    usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
+  const systemPrompt = fillPromptLanguages({
+    learnerLanguage: params.language,
+    targetLanguage: params.targetLanguage ?? undefined,
+    template: withItemRules(setPrompt, {
+      field: false,
+      formats: [format],
+      languageGoal: Boolean(params.targetLanguage),
+      pictures: false,
+      usedSituations: params.skills.some((skill) => skill.usedSituations?.length),
+    }),
   });
 
   const userPrompt = buildUserPrompt(params);

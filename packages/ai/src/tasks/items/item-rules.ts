@@ -42,7 +42,8 @@ const FORMAT_RULES: readonly { formats: readonly ItemFormat[]; rules: string }[]
 const LANGUAGE_GOAL_EXCEPTION =
   ', except the language practiced in a language goal (see "Language goals")';
 
-const LANGUAGE_GOAL_CHECK = " (in a language goal, the practiced language is in `TARGET_LANGUAGE`)";
+const LANGUAGE_GOAL_CHECK =
+  " (in a language goal, the practiced language is in {{TARGET_LANGUAGE}})";
 
 export function withPlotRule(template: string): string {
   return template.replace("{{PLOT}}\n", () => `${plotRule.trim()}\n`);
