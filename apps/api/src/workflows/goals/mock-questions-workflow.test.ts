@@ -52,6 +52,18 @@ function paper(
   } satisfies MockQuestionWrites;
 }
 
+const QUESTIONS = {
+  format: {
+    key: "choice",
+    sections: [],
+    share: 1,
+    style: null,
+    writer: { choice: null, kind: "quick" },
+  },
+  questionsPerSkill: 2,
+  skillIds: ["skill"],
+} satisfies MockQuestionWrites["writes"][number];
+
 const GOAL_ID = "goal";
 const DAY_1 = JSON.stringify(["full", 1, null]);
 const DAY_2 = JSON.stringify(["full", 2, null]);
@@ -356,4 +368,26 @@ describe(mockSupplyWorkflow, () => {
       ]);
     });
   });
+
+  it.each([
+    { left: 2, reported: true },
+    { left: 1, reported: false },
+  ])(
+    "reports a paper still missing $left of 2 questions after writing them: $reported",
+    async ({ left, reported }) => {
+      const short = paper(SCHEDULED, { writes: [QUESTIONS] });
+      const after = paper(SCHEDULED, { writes: [{ ...QUESTIONS, questionsPerSkill: left }] });
+      vi.mocked(listExamSupplyGoalsStep).mockResolvedValueOnce([GOAL_ID]);
+      vi.mocked(writeMockQuestions).mockResolvedValue({ failed: 0, written: 1 });
+      plan([short], [after]);
+
+      await mockSupplyWorkflow({ examBlueprintId: null, goalId: GOAL_ID, later: true });
+
+      expect(vi.mocked(captureException).mock.calls.map(([error]) => String(error))).toStrictEqual(
+        reported
+          ? [`Error: Mock paper ${SCHEDULED} is as short after its questions were written`]
+          : [],
+      );
+    },
+  );
 });

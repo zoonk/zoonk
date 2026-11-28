@@ -93,6 +93,39 @@ async function preparePaperSets({
   }
 }
 
+async function writePaperQuestions({
+  goalId,
+  progress,
+  supply,
+  workflowRunId,
+}: {
+  goalId: string;
+  progress: PaperProgress;
+  supply: MockQuestionWrites;
+  workflowRunId: string;
+}) {
+  const [questions] = await progress.step("writeMockQuestions", () =>
+    Promise.all([
+      writeMockQuestions({ ...supply, goalId, workflowRunId }),
+      writeMockWritingPrompts(supply.writing),
+    ]),
+  );
+
+  const { recordings } = supply;
+
+  if (recordings) {
+    await progress.step("recordMockListening", () =>
+      prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
+    );
+  }
+
+  return questions;
+}
+
+function countQuestions({ writes }: MockQuestionWrites) {
+  return writes.reduce((sum, write) => sum + write.questionsPerSkill * write.skillIds.length, 0);
+}
+
 async function writePaper({
   input,
   progress,
@@ -104,25 +137,12 @@ async function writePaper({
   supply: MockQuestionWrites;
   workflowRunId: string;
 }) {
-  const { goalId } = input;
+  const questions = await safeAsync(() =>
+    writePaperQuestions({ goalId: input.goalId, progress, supply, workflowRunId }),
+  );
 
-  try {
-    await progress.step("writeMockQuestions", () =>
-      Promise.all([
-        writeMockQuestions({ ...supply, goalId, workflowRunId }),
-        writeMockWritingPrompts(supply.writing),
-      ]),
-    );
-
-    const { recordings } = supply;
-
-    if (recordings) {
-      await progress.step("recordMockListening", () =>
-        prepareMockRecordings({ goalId, later: supply.later, recordings, workflowRunId }),
-      );
-    }
-  } catch (error) {
-    await reportMockSupplyFailureStep({ error, workflowRunId });
+  if (questions.error) {
+    await reportMockSupplyFailureStep({ error: questions.error, workflowRunId });
   }
 
   const { data, error } = await safeAsync(() =>
@@ -131,6 +151,17 @@ async function writePaper({
 
   if (error) {
     await reportMockSupplyFailureStep({ error, workflowRunId });
+  }
+
+  const [left] = data?.papers ?? [];
+  const asked = countQuestions(supply);
+
+  // Writing that doesn't shorten a paper would be paid for again on every later pass.
+  if (questions.data?.written && left && asked > 0 && countQuestions(left) >= asked) {
+    await reportMockSupplyFailureStep({
+      error: new Error(`Mock paper ${supply.key} is as short after its questions were written`),
+      workflowRunId,
+    });
   }
 
   await progress.end(data?.papers.length === 0 ? "written" : "short");
