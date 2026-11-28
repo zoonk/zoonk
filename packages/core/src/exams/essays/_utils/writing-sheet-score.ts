@@ -91,7 +91,7 @@ function keyedRange({
     : null;
 }
 
-function verifiedLimits({
+export function verifiedLimits({
   eligible,
   evidence,
   sheet,
@@ -106,6 +106,19 @@ function verifiedLimits({
     const rule = sheet.limits?.[limit];
     return rule && lookup.locate(quote) ? [rule] : [];
   });
+}
+
+/** The points each verified limit on a criterion leaves it, beside its own maximum. */
+export function criterionCeilings({
+  id,
+  limits,
+  max,
+}: {
+  id: string;
+  limits: readonly { criteria: readonly string[]; max: number }[];
+  max: number;
+}): number[] {
+  return [max, ...limits.filter(({ criteria }) => criteria.includes(id)).map((limit) => limit.max)];
 }
 
 function capRange(range: WritingRange, caps: readonly number[]): WritingRange {
@@ -173,10 +186,7 @@ export function scoreWritingSheet({
       return [];
     }
 
-    const ceilings = [
-      max,
-      ...limits.filter(({ criteria }) => criteria.includes(criterion.id)).map((limit) => limit.max),
-    ];
+    const ceilings = criterionCeilings({ id: criterion.id, limits, max });
 
     const rounded = roundWritingRange({
       range: capRange(zero || !earned ? { high: 0, low: 0 } : earned, ceilings),

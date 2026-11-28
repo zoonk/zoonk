@@ -141,6 +141,30 @@ describe("a banded essay with counted elements and caps", () => {
     expect(capped.kind === "points" && capped.rows.at(-1)).toMatchObject({ earned: 80, max: 200 });
   });
 
+  it("leaves a capped criterion below its maximum open for the next step", () => {
+    const shown = [
+      ...elements.filter(({ part }) => part !== "effect"),
+      { part: "effect", quote: "para ampliar o acesso", row: 4 },
+      { part: "detail", quote: "em cidades pequenas", row: 4 },
+    ];
+
+    const evidence = { awards: bands, elements: shown };
+    const full = mark({ basis, evidence, text: ESSAY });
+
+    const capped = mark({
+      basis,
+      evidence: { ...evidence, limits: [{ limit: 0, quote: "deve abrir salas" }] },
+      text: ESSAY,
+    });
+
+    expect(full.kind === "points" && full.rows.at(-1)).toMatchObject({ earned: 200, max: 200 });
+    expect(full.criteria.at(-1)?.level).toBe("complete");
+
+    expect(capped.kind === "points" && capped.rows.at(-1)).toMatchObject({ earned: 80, max: 200 });
+    expect(capped.criteria.at(-1)?.level).toBe("partial");
+    expect(capped.nextStep?.criterionId).toBe(basis.criteria.at(-1)?.id);
+  });
+
   it("keeps a band whose passage the grader miscopied, since the band judges the whole answer", () => {
     const [, ...rest] = bands;
 

@@ -7,7 +7,12 @@ import { type RowMark, markWritingRows } from "./writing-marks";
 import { selectNextStep, writingRuleNextStep } from "./writing-next-step";
 import { createWritingQuoteLookup } from "./writing-quotes";
 import { isComputableSheet, topAwardPoints } from "./writing-sheet";
-import { roundWritingRange, scoreWritingSheet } from "./writing-sheet-score";
+import {
+  criterionCeilings,
+  roundWritingRange,
+  scoreWritingSheet,
+  verifiedLimits,
+} from "./writing-sheet-score";
 import { verifiedWritingZero } from "./writing-zero";
 
 type Basis = z.infer<typeof writtenItemSchema>;
@@ -56,15 +61,38 @@ function aspectStanding(marks: readonly RowMark[]) {
   );
 }
 
-function criterionLevel(id: string, marks: readonly RowMark[]): Level {
+/**
+ * How fully a criterion is met, after any verified limit on it: a criterion capped below its
+ * maximum is never complete, so the next step can point at the points the cap took.
+ */
+function criterionLevel({
+  grading,
+  id,
+  limits,
+  marks,
+}: {
+  grading: Basis["grading"];
+  id: string;
+  limits: ReturnType<typeof verifiedLimits>;
+  marks: readonly RowMark[];
+}): Level {
   const own = marks.filter(({ row }) => row.criterionId === id);
   const scale = own.find(({ row }) => row.kind !== "aspect");
 
-  return toLevel(
-    scale
-      ? { earned: scale.verified ?? scale.reported, max: scale.row.awards.length - 1 }
-      : aspectStanding(own),
-  );
+  const standing = scale
+    ? { earned: scale.verified ?? scale.reported, max: scale.row.awards.length - 1 }
+    : aspectStanding(own);
+
+  const criterion = grading.criteria.find((rule) => rule.id === id);
+  const max = criterion && (criterion.points ?? topAwardPoints(criterion.awards ?? []));
+
+  if (!max) {
+    return toLevel(standing);
+  }
+
+  const share = Math.min(...criterionCeilings({ id, limits, max })) / max;
+
+  return toLevel({ earned: Math.min(standing.earned, standing.max * share), max: standing.max });
 }
 
 export function buildWritingFeedback({
@@ -83,6 +111,7 @@ export function buildWritingFeedback({
   const byId = new Map(evidence.criteria.map((criterion) => [criterion.id, criterion]));
   const lookup = createWritingQuoteLookup(eligible);
   const marks = markWritingRows({ basis, eligible, evidence });
+  const limits = verifiedLimits({ eligible, evidence, sheet: basis.grading });
 
   const passage = (quote: string | null) => {
     const span = lookup.locateUnique(quote);
@@ -95,7 +124,7 @@ export function buildWritingFeedback({
     return {
       comment: assessed?.comment ?? "",
       id,
-      level: criterionLevel(id, marks),
+      level: criterionLevel({ grading: basis.grading, id, limits, marks }),
       name,
       quote: passage(assessed?.quote ?? null),
     };
