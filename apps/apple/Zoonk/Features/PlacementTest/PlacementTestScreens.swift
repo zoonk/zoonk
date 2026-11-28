@@ -83,7 +83,7 @@ struct PlacementCourseLine: View {
 
       // A result that skipped nothing says so by its line alone.
       if lessonsSkipped > 0 {
-        Text(PlacementTestCopy.lessonsSkipped(lessonsSkipped, of: course.lessons))
+        Text(verbatim: PlacementTestCopy.lessonsSkipped(lessonsSkipped))
           .typeStyle(.data)
           .foregroundStyle(.mutedForeground)
       }

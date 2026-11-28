@@ -37,7 +37,8 @@ enum PlacementTestCopy {
     "Not now", table: "Onboarding",
     comment: "Leaves the test taken from the plan, or a lesson's offer to check the level, for now")
 
-  /// "40 lessons skipped", the title after a test or a part of it.
+  /// "40 lessons skipped": the title after a test or a part of it, or the caption under a course's
+  /// line on its result.
   static func lessonsSkipped(_ count: Int) -> String {
     count == 0
       ? String(
@@ -53,15 +54,6 @@ enum PlacementTestCopy {
   static let youStartHere = LocalizedStringResource(
     "You start here", table: "Onboarding",
     comment: "Over the name of the chapter a course's placement test starts the learner in.")
-
-  /// "4 of 9 lessons skipped", under the course's line on a test's result.
-  static func lessonsSkipped(_ count: Int, of total: Int) -> LocalizedStringResource {
-    LocalizedStringResource(
-      "\(count) of \(total) lessons skipped", table: "Onboarding", locale: .appLanguage,
-      comment:
-        "Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them."
-    )
-  }
 
   /// The plan's last course result, when a new test can start.
   static let takeTestAgain = LocalizedStringResource(

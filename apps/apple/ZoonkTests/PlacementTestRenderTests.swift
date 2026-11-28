@@ -107,7 +107,7 @@ final class PlacementTestRenderTests: XCTestCase {
         AnyView(
           PlacementTestResultView(
             end: Self.startedPast, onboarding: true, pressed: nil, failed: false, onDone: {})),
-        "Why prices move", ["4 of 9 lessons skipped", "Up next"]
+        "Why prices move", ["4 lessons skipped", "Up next"]
       ),
     ] {
       let window = try show(
@@ -278,7 +278,8 @@ final class PlacementTestRenderTests: XCTestCase {
     let undo = PlacementResultUndo(
       goalId: goalID, changeId: goalID, lessons: 4, request: request, plans: store, disabled: false)
     try await capture(
-      "placement-result", title: "Why prices move", detail: "4 of 9 lessons skipped"
+      "placement-result", title: "Why prices move", detail: "4 lessons skipped",
+      absent: ["of 9"]
     ) {
       PlacementTestResultView(
         end: Self.startedPast, onboarding: false, pressed: nil,
@@ -422,8 +423,7 @@ final class PlacementTestRenderTests: XCTestCase {
     unnamed.chapter = nil
 
     try await capture(
-      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here",
-      absent: ["4 lessons skipped"]
+      "placement-result-unnamed-stop", title: "Phase 3", detail: "You start here"
     ) {
       PlacementTestResultView(
         end: unnamed, onboarding: false, pressed: nil, failed: false, onDone: {})
@@ -579,7 +579,7 @@ final class PlacementTestRenderTests: XCTestCase {
 
     try await capture(
       "placement-undo", title: "No lessons skipped", detail: "The lessons are back in your plan.",
-      absent: ["You start here", "Why prices move", "of 9 lessons skipped"]
+      absent: ["You start here", "Why prices move", "4 lessons skipped"]
     ) {
       PlacementTestResultView(
         end: Self.startedPast, onboarding: false, pressed: nil,
