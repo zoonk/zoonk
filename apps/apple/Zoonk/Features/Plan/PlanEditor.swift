@@ -10,8 +10,9 @@ final class PlanEditor {
     case saved(sentence: String)
     case invalid
     case undone
-    /// What the change's own words say about why nothing changed, when they say it.
-    case unchanged(sentence: String?)
+    /// What the change's own words say about why nothing changed, when they say it, and the edits
+    /// it asked for, which change nothing until another change does.
+    case unchanged(sentence: String?, edits: [PlanEdit])
   }
 
   private(set) var latest: Latest?
@@ -52,8 +53,25 @@ final class PlanEditor {
     let operations = edits.compactMap { try? PracticeJSON.recode($0, as: PlanChangeOperation.self) }
     let sentence = sentence ?? PlanChangeWords.statements(operations, dateKind: dateKind)
 
-    return await apply(sentence: sentence, unchanged: unchanged) { api, token in
+    return await apply(sentence: sentence, edits: edits, unchanged: unchanged) { api, token in
       try await api.change(token: token, goalId: goalId, edits: edits)
+    }
+  }
+
+  /// Whether the latest change asked for `edits` and left the plan as it was: asking again changes
+  /// nothing, while a change since, such as more time a day, may make room.
+  func changedNothing(_ edits: [PlanEdit]) -> Bool {
+    guard case .unchanged(_, let unchangedEdits) = latest else {
+      return false
+    }
+
+    return unchangedEdits == edits
+  }
+
+  /// Once the learner asks for something else, why their last ask changed nothing no longer holds.
+  func forgetUnchanged() {
+    if case .unchanged = latest {
+      latest = nil
     }
   }
 
@@ -73,7 +91,7 @@ final class PlanEditor {
 
   @discardableResult
   func apply(
-    sentence: String, unchanged: ((UnchangedReason) -> String)? = nil,
+    sentence: String, edits: [PlanEdit] = [], unchanged: ((UnchangedReason) -> String)? = nil,
     _ request: @escaping (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> Bool {
     guard !isSaving else {
@@ -94,7 +112,7 @@ final class PlanEditor {
     case .done(.invalid):
       latest = .invalid
     case .done(.unchanged(let reason)):
-      latest = .unchanged(sentence: reason.flatMap { unchanged?($0) })
+      latest = .unchanged(sentence: reason.flatMap { unchanged?($0) }, edits: edits)
     case .done(.undone):
       latest = .undone
       return true

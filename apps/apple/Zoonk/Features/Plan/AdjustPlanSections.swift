@@ -122,8 +122,6 @@ private struct PlanFocusSection: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
   @State private var picked: Set<String>?
-  /// A pick the plan already had room for or couldn't fit more of: Save waits for another.
-  @State private var unchanged: Set<String>?
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -207,14 +205,16 @@ private struct PlanFocusSection: View {
         var next = selection
         if isPicked { next.remove(area.name) } else { next.insert(area.name) }
         picked = next
-        unchanged = nil
+        editor.forgetUnchanged()
       } words: {
         areaWords(area, isPicked: isPicked)
       }
     }
 
+    let areas = choices.map(\.name).filter { selection.contains($0) }
+
     Button {
-      editor.run { await focus(on: selection, choices: choices) }
+      editor.run { await focus(on: areas) }
     } label: {
       if selection.isEmpty, !focused.isEmpty {
         Text(
@@ -224,7 +224,7 @@ private struct PlanFocusSection: View {
         Text("Save", tableName: "Plan", comment: "Saves the subjects to focus on")
       }
     }
-    .disabled(selection == focused || selection == unchanged)
+    .disabled(selection == focused || editor.changedNothing([.focusAreas(areas)]))
   }
 
   /// What the area holds, and once it's picked, the part of it the learner named.
@@ -239,16 +239,13 @@ private struct PlanFocusSection: View {
   }
 
   /// A pick that changed nothing stays, with main's words for why at the editor's foot.
-  private func focus(on selection: Set<String>, choices: [GoalPlan.Area]) async {
-    let areas = choices.map(\.name).filter { selection.contains($0) }
+  private func focus(on areas: [String]) async {
     let saved = await editor.change(
       [.focusAreas(areas)],
       unchanged: areas.isEmpty ? nil : { Self.unchangedSentence($0, areas: areas) })
 
     if saved {
       picked = nil
-    } else if !editor.failed, case .unchanged = editor.latest {
-      unchanged = selection
     }
   }
 
