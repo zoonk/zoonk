@@ -287,7 +287,8 @@ async function saveRefreshedPlan({
 
   const change = getEstimateChange({ computed, context });
 
-  const unchanged = !change && isPlanUnchanged({ computed, context });
+  const rebuildsLayout = mode === "forced" && computed.inputsKey !== context.plan.inputsKey;
+  const unchanged = !change && !rebuildsLayout && isPlanUnchanged({ computed, context });
 
   const retained = unchanged ? await prepareRetainedPlanWrite({ computed, context }) : null;
 
