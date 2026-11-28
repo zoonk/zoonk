@@ -10152,12 +10152,6 @@ msgctxt "xu6eM8"
 msgid "Test"
 msgstr "Teste"
 
-#. Under a picture of a course, after a placement test: how many of the course's lessons the test skipped, out of all of them.
-#: src/placement-test/placement-test-screens.tsx
-msgctxt "yjiD94"
-msgid "{skipped, plural, one {# of {lessons, number} lessons skipped} other {# of {lessons, number} lessons skipped}}"
-msgstr "{skipped, plural, other {# de {lessons, number} aulas puladas}}"
-
 #: src/placement-test/placement-test-screens.tsx
 msgctxt "eBoUdl"
 msgid "Start lesson"

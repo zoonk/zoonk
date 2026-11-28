@@ -123,7 +123,7 @@ test.describe("Testing what you know from the plan", () => {
     await expect(page.getByText(/^Up to \d+ questions$/u)).toBeVisible();
 
     await finishTest(page);
-    await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
+    await expect(page.getByText(/^\d+ lessons? skipped$/u)).toBeVisible();
     expect(await skippedLessons(goal.id)).toBeGreaterThan(0);
     await page.screenshot({ path: testInfo.outputPath("placement-result.png") });
 
@@ -443,7 +443,7 @@ test("the Plan's row opens the last test's result when no test is left to start"
   await page.getByRole("link", { name: /Test what you know.*\d+ lessons? skipped/u }).click();
 
   await expect(page.getByText("You start here", { exact: true })).toBeVisible();
-  await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
+  await expect(page.getByText(/^\d+ lessons? skipped$/u)).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Take the test again" })).toBeHidden();
   expect(await skippedLessons(goal.id)).toBe(skipped);
@@ -557,7 +557,7 @@ test("the seeded course's test goes from onboarding's offer to where the learner
     await finishTest(page, answerSeededQuestion);
 
     await expect(page.getByRole("heading", { level: 1 }).filter({ visible: true })).not.toBeEmpty();
-    await expect(page.getByText(/^\d+ of \d+ lessons skipped$/u)).toBeVisible();
+    await expect(page.getByText(/^\d+ lessons? skipped$/u)).toBeVisible();
     await expect(page.getByText("Up next", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { exact: true, name: "Undo" })).toBeVisible();
     expect(await skippedLessons(user.goalId)).toBeGreaterThan(0);
