@@ -11,8 +11,8 @@ internal data class RevealFacts(
     /** Days to the goal's date; null without one. */
     val days: Int?,
     val daysEstimated: Boolean,
-    /** Without a date: when the plan ends at this pace. */
-    val forecast: PlanForecast?,
+    /** The schedule picker already showed the estimate for a finish beyond the horizon. */
+    val forecast: PlanForecast.On?,
 )
 
 internal fun Plan.revealFacts(today: LocalDate): RevealFacts =
@@ -25,5 +25,5 @@ internal fun Plan.revealFacts(today: LocalDate): RevealFacts =
                     .coerceAtLeast(0)
             },
         daysEstimated = schedule.targetDateEstimated,
-        forecast = forecast,
+        forecast = forecast as? PlanForecast.On,
     )

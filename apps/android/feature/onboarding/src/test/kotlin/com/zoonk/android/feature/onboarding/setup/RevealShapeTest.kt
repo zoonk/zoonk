@@ -3,6 +3,7 @@ package com.zoonk.android.feature.onboarding.setup
 import com.zoonk.android.feature.onboarding.planOf
 import com.zoonk.android.feature.plan.PlanForecast
 import com.zoonk.api.models.PlanFinishPrecision
+import com.zoonk.api.models.PlanFinishReason
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -26,5 +27,13 @@ class RevealShapeTest {
 
         assertEquals(PlanForecast.On(today.plusDays(900), year = true), facts.forecast)
         assertNull(facts.days)
+    }
+
+    @Test
+    fun aFinishBeyondTheHorizonDoesNotGetARevealReadout() {
+        val plan = planOf(targetDate = null)
+        val beyond = plan.copy(estimate = plan.estimate.copy(finishReason = PlanFinishReason.BEYOND_HORIZON))
+
+        assertNull(beyond.revealFacts(today).forecast)
     }
 }
