@@ -5,6 +5,7 @@ import {
   buildSentenceWordOptions,
   buildWordBankOptions,
   listTargetBankWords,
+  listVoicedBankWords,
 } from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-lesson-data";
 import { type DistractorWord } from "./translation-options";
@@ -448,6 +449,27 @@ describe(listTargetBankWords, () => {
     ]);
   });
 
+  it("voices only reading tiles, never fill-in-the-blank options, which are wrong forms on purpose", () => {
+    const words = listVoicedBankWords({
+      sentences: new Map([["read", { distractors: ["Na"], sentence: "Do widzenia, pani Anno." }]]),
+      steps: [
+        { content: {}, kind: "reading", sentenceId: "read" },
+        {
+          content: {
+            answers: ["Do widzenia"],
+            distractors: ["Na widzenia", "Do widzieć"],
+            feedback: "“Do widzenia” is the polite goodbye.",
+            template: "[BLANK], pani Anno",
+          },
+          kind: "fillBlank",
+          sentenceId: null,
+        },
+      ],
+    });
+
+    expect(words).toStrictEqual(["Do", "widzenia", "pani", "Anno", "Na"]);
+  });
+
   it("lists German bank words in the case their tiles show", () => {
     const words = listTargetBankWords({
       sentences: new Map([
@@ -496,7 +518,7 @@ describe(listTargetBankWords, () => {
 });
 
 describe(buildFillBlankOptions, () => {
-  it("gives each tile its word's audio, and the step's own romanization first", () => {
+  it("plays no clip on any tile, since a voice can say a wrong form as the right one, and keeps romanization with the step's own first", () => {
     const step: SerializedStep = {
       ...makeStep("reading", makeSentence()),
       content: {
@@ -532,18 +554,8 @@ describe(buildFillBlankOptions, () => {
 
     expect(anyOrder(options)).toStrictEqual(
       anyOrder([
-        {
-          audioUrl: "/audio/taberu.mp3",
-          romanization: "tabemasu",
-          translation: null,
-          word: "食べます",
-        },
-        {
-          audioUrl: "/audio/nomu.mp3",
-          romanization: "nomimasu",
-          translation: null,
-          word: "飲みます",
-        },
+        { audioUrl: null, romanization: "tabemasu", translation: null, word: "食べます" },
+        { audioUrl: null, romanization: "nomimasu", translation: null, word: "飲みます" },
       ]),
     );
   });

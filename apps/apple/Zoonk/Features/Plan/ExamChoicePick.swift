@@ -61,6 +61,20 @@ extension Text {
         comment:
           "Asks which option of an exam's choice, like its foreign language, the learner takes")
   }
+
+  static func examChoiceDescription(take: Int) -> Text {
+    take > 1
+      ? Text(
+        "Pick up to \(take) so your plan includes them.", tableName: "Plan",
+        comment:
+          "Under a question asking which options of an exam the learner will take, such as two of its subject modules. Until they pick, their plan has none of the options. {take} is how many they can pick, always 2 or more."
+      )
+      : Text(
+        "Pick one so your plan includes it.", tableName: "Plan",
+        comment:
+          "Under a question asking which option of an exam the learner will take, such as its foreign language. Until they pick, their plan has none of the options."
+      )
+  }
 }
 
 struct ExamPickLimit: View {
@@ -100,12 +114,8 @@ struct ExamOptionToggles: View {
       ) {
         Text(option.shortName ?? option.name)
           .foregroundStyle(canPick ? Color(.foreground) : .faint)
-
-        if let shortName = option.shortName, shortName != option.name {
-          Text(option.name)
-            .foregroundStyle(canPick ? .mutedForeground : .faint)
-        }
       }
+      .frame(minHeight: 44)
       .disabled(!canPick)
     }
   }
