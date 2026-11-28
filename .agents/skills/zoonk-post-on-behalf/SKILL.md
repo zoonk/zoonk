@@ -1,10 +1,6 @@
 ---
 name: zoonk-post-on-behalf
 description: Use before anything an agent writes goes out under the user's account (issues, comments, discussions, pull requests in other repositories), except the task's own PR here and its replies.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.3.0"
 ---
 
 # Posting on behalf of the user

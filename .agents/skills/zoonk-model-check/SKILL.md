@@ -1,10 +1,6 @@
 ---
 name: zoonk-model-check
 description: Use when a new AI model comes out, a price or a prompt changes, or someone asks whether a Zoonk AI task should switch models.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.1.0"
 ---
 
 # Model check

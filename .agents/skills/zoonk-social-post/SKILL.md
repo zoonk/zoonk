@@ -1,10 +1,6 @@
 ---
 name: zoonk-social-post
 description: Use when asked for a Zoonk social media post (X, LinkedIn, Instagram), a launch thread, a carousel, post copy or post images, or to review or update one.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.1.0"
 ---
 
 # Social posts

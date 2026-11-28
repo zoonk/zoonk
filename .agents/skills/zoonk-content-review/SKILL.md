@@ -1,10 +1,6 @@
 ---
 name: zoonk-content-review
 description: Use for the weekly content review, or when asked to audit the plans, courses, lessons or exams Zoonk generated in production over a period.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.2.0"
 ---
 
 # Review production content

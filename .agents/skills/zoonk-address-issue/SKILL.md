@@ -1,10 +1,6 @@
 ---
 name: zoonk-address-issue
 description: Use when asked to address, fix, work on, look into, triage or verify a zoonk/zoonk GitHub issue, such as when given its link or number, together with the issues related to it.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.0.0"
 ---
 
 # Addressing an issue

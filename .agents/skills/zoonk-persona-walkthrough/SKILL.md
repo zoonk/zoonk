@@ -1,10 +1,6 @@
 ---
 name: zoonk-persona-walkthrough
 description: Use before calling a change a learner can see or feel done, to walk the running product as realistic learner personas, bad days included.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.3.0"
 ---
 
 # Persona walkthrough

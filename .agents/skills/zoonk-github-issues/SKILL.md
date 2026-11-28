@@ -1,10 +1,6 @@
 ---
 name: zoonk-github-issues
 description: Use when filing or updating a Zoonk GitHub issue (its type, priority, labels or links), including a find from another task or a security hole.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.9.0"
 ---
 
 # GitHub issues

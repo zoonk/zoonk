@@ -1,10 +1,6 @@
 ---
 name: zoonk-motion
 description: Use when adding, reviewing or removing an animation, a transition or a celebration in a Zoonk interface.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.0.0"
 ---
 
 # Zoonk motion

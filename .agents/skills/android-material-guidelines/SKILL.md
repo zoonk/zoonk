@@ -1,10 +1,6 @@
 ---
 name: android-material-guidelines
 description: Use when designing, reviewing or building Android UI or features (Jetpack Compose, Material 3, adaptive layouts, Wear OS, TV, cars, XR, widgets), or porting a web or iOS feature to Android.
-license: MIT
-metadata:
-  author: zoonk
-  version: "3.3.0"
 ---
 
 # Android Material Guidelines

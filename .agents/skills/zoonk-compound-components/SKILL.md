@@ -1,10 +1,6 @@
 ---
 name: zoonk-compound-components
 description: Use when creating or refactoring a reusable Zoonk React UI component, such as one in packages/ui.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.1.0"
 ---
 
 # Compound components

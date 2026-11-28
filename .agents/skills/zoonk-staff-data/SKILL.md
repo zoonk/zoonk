@@ -1,10 +1,6 @@
 ---
 name: zoonk-staff-data
 description: Use when investigating a production bug, a learner's report or an error, answering a question about Zoonk's production data, or correcting a wrong lesson, title or answer key.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.7.0"
 ---
 
 # Reading production data

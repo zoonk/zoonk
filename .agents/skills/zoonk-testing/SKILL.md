@@ -1,10 +1,6 @@
 ---
 name: zoonk-testing
 description: Use when designing, adding or debugging a Zoonk test of any kind (E2E, lesson player, database, pure function, Apple or Android), or deciding whether a change needs one.
-license: MIT
-metadata:
-  author: zoonk
-  version: "3.0.0"
 ---
 
 # Zoonk testing

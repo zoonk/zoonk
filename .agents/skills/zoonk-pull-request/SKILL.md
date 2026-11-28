@@ -1,10 +1,6 @@
 ---
 name: zoonk-pull-request
 description: Use when finishing a Zoonk task with its pull request, after pushing to an open PR, or when handling its CI checks and review comments.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.1.0"
 ---
 
 # Pull requests

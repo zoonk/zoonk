@@ -1,10 +1,6 @@
 ---
 name: zoonk-blog-post
 description: Use when asked to write, rewrite or review a post for the Zoonk blog (apps/blog), such as a release or launch post.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.2.0"
 ---
 
 # Blog posts

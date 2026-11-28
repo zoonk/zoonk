@@ -1,10 +1,6 @@
 ---
 name: zoonk-bug-report
 description: Use when someone, technical or not and in any language, asks you to report a bug or a problem they hit in Zoonk.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.2.0"
 ---
 
 # Reporting a Zoonk bug

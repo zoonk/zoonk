@@ -1,10 +1,6 @@
 ---
 name: zoonk-update-dependencies
 description: Use when asked to update or refresh the project's dependencies, including the native apps' and GitHub Actions.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.1.0"
 ---
 
 # Update Zoonk dependencies

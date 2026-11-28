@@ -1,10 +1,6 @@
 ---
 name: zoonk-commit
 description: Use when writing a Zoonk commit message, or a pull request's title and description and the before-and-after numbers, screenshots and videos it shows.
-license: MIT
-metadata:
-  author: zoonk
-  version: "4.0.0"
 ---
 
 # Commit and PR wording

@@ -1,10 +1,6 @@
 ---
 name: zoonk-design
 description: Use when designing, building or reviewing a Zoonk screen on the web, iOS or Android, marketing pages included, or judging how one looks, reads or moves.
-license: MIT
-metadata:
-  author: zoonk
-  version: "7.1.0"
 ---
 
 # Zoonk design

@@ -1,10 +1,6 @@
 ---
 name: zoonk-issue-planning
 description: Use only when the user explicitly asks to break work into GitHub issues, epics or dependencies.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.1.0"
 ---
 
 # Issue planning

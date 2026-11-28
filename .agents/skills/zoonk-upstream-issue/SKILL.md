@@ -1,10 +1,6 @@
 ---
 name: zoonk-upstream-issue
 description: Use when a bug turns out to be in a dependency (a library, framework or SDK), or the user asks you to report one upstream.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.2.0"
 ---
 
 # Upstream issue with a minimal reproduction

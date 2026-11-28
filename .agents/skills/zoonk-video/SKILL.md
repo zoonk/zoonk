@@ -1,10 +1,6 @@
 ---
 name: zoonk-video
 description: Use when asked for a Zoonk product, launch, feature, promo or social video, a silent demo clip or a social post image, or to update one.
-license: MIT
-metadata:
-  author: zoonk
-  version: "2.0.0"
 ---
 
 # Zoonk videos

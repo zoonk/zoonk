@@ -1,10 +1,6 @@
 ---
 name: zoonk-feature-request
 description: Use when someone, technical or not and in any language, asks you to request, suggest or propose a feature, an idea or a change to Zoonk.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.1.0"
 ---
 
 # Requesting a Zoonk feature

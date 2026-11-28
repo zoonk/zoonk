@@ -1,10 +1,6 @@
 ---
 name: zoonk-release
 description: Use when the user asks to publish a Zoonk production release or a hotfix release.
-license: MIT
-metadata:
-  author: zoonk
-  version: "1.1.0"
 ---
 
 # Releases

@@ -1,10 +1,6 @@
 ---
 name: apple-human-interface-guidelines
 description: Use when designing, reviewing or building UI or features for an Apple platform (iOS, iPadOS, macOS, visionOS, tvOS, watchOS; SwiftUI, UIKit, AppKit), or porting a web feature to one.
-license: MIT
-metadata:
-  author: zoonk
-  version: "3.2.0"
 ---
 
 # Apple Human Interface Guidelines
