@@ -134,7 +134,6 @@ struct PatternTableCanvas: View {
                 openBlank(index, row: row)
               }
             }
-            // The columns share the card's width, so the table and its lines fill the card.
             .frame(maxWidth: .infinity, alignment: .leading)
           }
           .padding(.vertical, 8)
@@ -174,11 +173,11 @@ struct PatternTableCanvas: View {
     }
   }
 
-  /// Main's line between the table's rows, across the whole card.
+  /// Main's line between the table's rows, across the whole card. It takes the width it's offered,
+  /// so the table fills the card as main's `w-full` table does.
   private var rowLine: some View {
     Divider()
       .padding(.horizontal, -12)
-      .gridCellUnsizedAxes(.horizontal)
   }
 
   private func header(_ word: String, meaning: String?) -> some View {
@@ -250,21 +249,33 @@ struct PatternTableCanvas: View {
     let stem = fields.stem(row)
     let isRight = chosen != nil && chosen == expected
 
-    return VStack(alignment: .leading, spacing: 2) {
-      Text(verbatim: stem + (chosen ?? "…"))
-        .foregroundStyle(isRight ? Color.successText : .destructiveText)
-        .strikethrough(!isRight && chosen != nil)
+    let picked = stem + (chosen ?? "…")
+    var line = Self.stemmed(stem, ending: chosen ?? "…")
+    line.foregroundColor = isRight ? .successText : .destructiveText
+    line.strikethroughStyle = !isRight && chosen != nil ? .single : nil
+    var label = picked
 
-      if !isRight, let expected {
-        Text(verbatim: stem + expected)
-          .foregroundStyle(.successText)
-          .accessibilityLabel(
-            Text(
-              "Right answer: \(stem + expected)", tableName: "ActivitiesCharts",
-              comment: "The right form after a miss, for VoiceOver"))
-      }
+    // One line that wraps inside its column, as main's pair does, so Check moves no column.
+    if !isRight, let expected {
+      var right = AttributedString(" ") + Self.stemmed(stem, ending: expected)
+      right.foregroundColor = .successText
+      line += right
+      label +=
+        ", "
+        + String(
+          localized: "Right answer: \(stem + expected)", table: "ActivitiesCharts",
+          comment: "The right form after a miss, for VoiceOver")
     }
-    .typeWeight(.medium)
+
+    return Text(line, strong: .semibold, legibility: legibility)
+      .accessibilityLabel(Text(verbatim: label))
+  }
+
+  /// A form with its ending strong, as main's `<b>` draws it.
+  private static func stemmed(_ stem: String, ending: String) -> AttributedString {
+    var strong = AttributedString(ending)
+    strong.inlinePresentationIntent = .stronglyEmphasized
+    return AttributedString(stem) + strong
   }
 
   private func choose(_ ending: String) {
