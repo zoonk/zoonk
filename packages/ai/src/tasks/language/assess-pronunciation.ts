@@ -4,7 +4,8 @@ import { z } from "zod";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getPromptLanguageName } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
+import { selectPromptVariants } from "../_utils/prompt-variants";
 import regionalFormsPrompt from "../_utils/regional-forms.prompt.md";
 import {
   type PronouncedWord,
@@ -13,7 +14,7 @@ import {
 } from "./_utils/pronunciation-words";
 import taskPrompt from "./assess-pronunciation.prompt.md";
 
-const systemPrompt = `${taskPrompt}\n${regionalFormsPrompt}`;
+const promptTemplate = `${taskPrompt}\n${regionalFormsPrompt}`;
 
 /**
  * No fallback: other providers' audio models on AI Gateway take only MP3 or WAV, not the WebM and
@@ -62,30 +63,41 @@ export type AssessPronunciationParams = {
   analytics?: AiGenerationContext;
 };
 
+/** Without a known learner language, no rule names it, so only the sentence's language is filled. */
+function buildSystemPrompt({
+  language,
+  learnerLanguage,
+}: {
+  language: string;
+  learnerLanguage?: string;
+}): string {
+  const template = selectPromptVariants({
+    template: promptTemplate,
+    variants: { learnerLanguage: Boolean(learnerLanguage) },
+  });
+
+  return fillPromptLanguages({
+    learnerLanguage: learnerLanguage ?? language,
+    targetLanguage: language,
+    template,
+  });
+}
+
 function buildUserPrompt({
   expectedWords,
   expectedText,
-  language,
-  learnerLanguage,
   romanization,
   transcriberHeard,
 }: {
   expectedWords: readonly string[];
   expectedText: string;
-  language: string;
-  learnerLanguage?: string;
   romanization?: string | null;
   transcriberHeard?: string;
 }): string {
-  const learnerLine = learnerLanguage
-    ? `LEARNER_LANGUAGE: ${getPromptLanguageName({ language: learnerLanguage })}\n`
-    : "";
-
   const reading = romanization ? `\nEXPECTED_PRONUNCIATION: ${romanization}` : "";
   const transcriber = transcriberHeard ? `\nTRANSCRIBER_HEARD: ${transcriberHeard}` : "";
 
-  return `LANGUAGE: ${getPromptLanguageName({ language })}
-${learnerLine}EXPECTED_SENTENCE: ${expectedText}${reading}${transcriber}
+  return `EXPECTED_SENTENCE: ${expectedText}${reading}${transcriber}
 WORDS:
 ${expectedWords.map((word, index) => `${index + 1}. ${word}`).join("\n")}`;
 }
@@ -108,11 +120,11 @@ export async function assessPronunciation({
 }: AssessPronunciationParams) {
   const expectedWords = splitExpectedWords(expectedText);
 
+  const systemPrompt = buildSystemPrompt({ language, learnerLanguage });
+
   const userPrompt = buildUserPrompt({
     expectedText,
     expectedWords,
-    language,
-    learnerLanguage,
     romanization,
     transcriberHeard,
   });
