@@ -137,12 +137,18 @@ describe("recorder ownership", () => {
     await expect.poll(() => cue()).toBe("Speak now");
   });
 
-  it("sends the time from the press to the recorder going live", async () => {
+  it("sends the time from the press to the recorder going live, audio setup included", async () => {
     const mic = microphone();
     vi.spyOn(navigator.mediaDevices, "getUserMedia").mockResolvedValue(mic.stream);
     const view = openRecorder();
     TestRecorder.holdStart = true;
     const now = vi.spyOn(performance, "now").mockReturnValue(1000);
+
+    vi.spyOn(AudioContext.prototype, "resume").mockImplementation(() => {
+      now.mockReturnValue(1075);
+      return Promise.resolve();
+    });
+
     await page.getByRole("button", { exact: true, name: "Record" }).click();
     await expect.poll(() => TestRecorder.instances.length).toBe(1);
     now.mockReturnValue(1430);

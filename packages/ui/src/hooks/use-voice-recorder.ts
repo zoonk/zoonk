@@ -261,8 +261,9 @@ export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recor
       return "unavailable";
     }
 
+    const pressedAt = performance.now();
     // Safari on iOS requires audio context creation during the tap.
-    const take: Take = { context: openContext(), pressedAt: performance.now() };
+    const take: Take = { context: openContext(), pressedAt };
     takeRef.current = take;
     setStatus("acquiring");
     const result = await open(take);
