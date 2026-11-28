@@ -339,26 +339,62 @@ struct KeyMarker: View {
   }
 }
 
-/// Main's verdict mark, in a key's room or before an answer shown after the fact: bare and in the
-/// words' color, so it never reads as a ticked checkbox. VoiceOver hears the verdict from the row
-/// and its feedback.
+/// Main's verdict mark, in a key's room or before an answer shown after the fact: lucide's check,
+/// cross or dash at main's size and weight, bare and in the words' color, so it never reads as a
+/// ticked checkbox. VoiceOver hears the verdict from the row and its feedback.
 struct VerdictMark: View {
   let result: AnswerOptionResult
 
+  @Environment(\.typeStyle) private var lineStyle
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.legibilityWeight) private var legibility
+
+  /// Main's 16px icon in its 20px room, growing with the words.
+  @ScaledMetric(relativeTo: .subheadline) private var size = 16.0
+  @ScaledMetric(relativeTo: .subheadline) private var room = 20.0
+
   var body: some View {
-    Image(systemName: symbol)
-      .fontWeight(.semibold)
-      .imageScale(.small)
-      .frame(minWidth: 20)
+    let capHeight = lineStyle.uiFont(dynamicTypeSize, legibility: legibility).capHeight
+
+    VerdictGlyph(result: result)
+      .stroke(style: StrokeStyle(lineWidth: size / 12, lineCap: .round, lineJoin: .round))
+      .frame(width: size, height: size)
+      .frame(width: room)
+      // Beside text, it centers on the first line's capitals, as the choice mark does.
+      .alignmentGuide(.firstTextBaseline) { $0[VerticalAlignment.center] + capHeight / 2 }
       .accessibilityHidden(true)
   }
+}
 
-  private var symbol: String {
-    switch result {
-    case .guess: "minus"
-    case .right: "checkmark"
-    case .wrong: "xmark"
+/// Lucide's check, x and minus, drawn in its 24-unit grid.
+private struct VerdictGlyph: Shape {
+  let result: AnswerOptionResult
+
+  func path(in rect: CGRect) -> Path {
+    let unit = rect.width / 24
+
+    func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint {
+      CGPoint(x: rect.minX + x * unit, y: rect.minY + y * unit)
     }
+
+    var path = Path()
+
+    switch result {
+    case .right:
+      path.move(to: point(20, 6))
+      path.addLine(to: point(9, 17))
+      path.addLine(to: point(4, 12))
+    case .wrong:
+      path.move(to: point(18, 6))
+      path.addLine(to: point(6, 18))
+      path.move(to: point(6, 6))
+      path.addLine(to: point(18, 18))
+    case .guess:
+      path.move(to: point(5, 12))
+      path.addLine(to: point(19, 12))
+    }
+
+    return path
   }
 }
 
