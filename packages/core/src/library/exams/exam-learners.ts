@@ -1,6 +1,5 @@
 import "server-only";
 import {
-  type ExamBlueprint,
   type Goal,
   type GoalKind,
   type Plan,
@@ -26,6 +25,7 @@ import { linkGoalSources } from "../sources/link-goal-sources";
 import { followSourceRedirects } from "../sources/own-sources";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 import { readTestedLanguage } from "./blueprint-language";
+import { isOtherCountryExam } from "./exam-country";
 
 export function countActiveExamGoals(examBlueprintId: string): Promise<number> {
   return prisma.goal.count({ where: { examBlueprintId, status: "active" } });
@@ -130,25 +130,6 @@ async function saveNamedChoices(
 
   await tx.plan.update({ data: { settings: applied.state.settings }, where: { id: plan.id } });
   return true;
-}
-
-const INTERNATIONAL = "ZZ";
-
-/** Exams run by different countries can share a name and teach different syllabuses. */
-function isOtherCountryExam({
-  blueprint,
-  goal,
-}: {
-  blueprint: Pick<ExamBlueprint, "country" | "ownerId">;
-  goal: Pick<Goal, "contentCountry" | "kind">;
-}): boolean {
-  return (
-    goal.kind === "exam" &&
-    goal.contentCountry !== null &&
-    blueprint.ownerId === null &&
-    blueprint.country !== INTERNATIONAL &&
-    blueprint.country !== goal.contentCountry
-  );
 }
 
 /**
