@@ -1,5 +1,6 @@
 import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { basename, dirname, join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
+import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
 import { type Capture } from "../verify/alignment-capture.mts";
 import { readCaptures } from "../verify/alignment-validate.mts";
@@ -14,33 +15,48 @@ import {
 } from "./media.mts";
 import { sha256File, sha256Text } from "./provenance.mts";
 
-/** What `writeRender` records beside the capture: the picture and the build the test ran from. */
+const APPLE_BUILD = z
+  .object({ changesDigest: z.string(), commit: z.string().min(1), dirty: z.boolean() })
+  .refine((build) => build.dirty || build.changesDigest === "");
+
+const ANDROID_BUILD = z.object({ commit: z.string().min(1), uncommitted: z.string().min(1) });
+
 const PICTURE = z.object({
-  build: z.object({ commit: z.string(), uncommitted: z.string() }),
-  file: z.string(),
+  build: z.unknown(),
+  file: z.string().refine((file) => file === basename(file) && file.endsWith(".png")),
   sha256: z.string(),
 });
 
-type Render = { capture: Capture; picture: z.infer<typeof PICTURE>; source: string };
+type Render = {
+  capture: Capture;
+  picture: {
+    build: z.infer<typeof APPLE_BUILD> | z.infer<typeof ANDROID_BUILD>;
+    file: string;
+    sha256: string;
+  };
+  source: string;
+};
 
-/** A render's layout file: its capture, and the picture it measured, whose bytes must match. */
 async function readRender(path: string): Promise<Render> {
   const parsed: unknown = JSON.parse(await readFile(path, "utf8"));
   const { picture: record, ...rest } = z.looseObject({ picture: z.unknown() }).parse(parsed);
-  const picture = PICTURE.safeParse(record).data;
+  const read = readCaptures(rest);
+  const [capture] = read.kind === "captures" && read.single ? read.file.captures : [];
 
-  if (!picture) {
-    throw new Error(
-      `${path} has no picture record: render it with -Pzoonk.shots, which writes one beside each picture.`,
-    );
+  if (!capture || capture.platform === "web") {
+    const problems = read.kind === "invalid" ? `:\n${read.problems}` : "";
+    throw new Error(`${path} isn't a native capture the evaluator reads${problems}`);
   }
 
-  const read = readCaptures(rest);
-  const [capture] = read.kind === "captures" ? read.file.captures : [];
+  const picture = PICTURE.parse(record);
+  const apple = capture.platform === "apple";
+  const stamp = apple ? APPLE_BUILD : ANDROID_BUILD;
+  const build = stamp.safeParse(picture.build).data;
 
-  if (!capture || capture.platform !== "android") {
-    const problems = read.kind === "invalid" ? `:\n${read.problems}` : "";
-    throw new Error(`${path} isn't an Android capture the evaluator reads${problems}`);
+  if (!build || (apple && !isDeepStrictEqual(build, APPLE_BUILD.safeParse(rest.build).data))) {
+    throw new Error(
+      `${path} has a missing, invalid or conflicting ${capture.platform} build stamp.`,
+    );
   }
 
   const source = join(dirname(path), picture.file);
@@ -49,7 +65,7 @@ async function readRender(path: string): Promise<Render> {
     throw new Error(`${source} isn't the picture ${path} measured: render it again.`);
   }
 
-  return { capture, picture, source };
+  return { capture, picture: { ...picture, build }, source };
 }
 
 function itemOf({ capture, picture }: Render, side: Side): CaptureItem {
@@ -61,7 +77,7 @@ function itemOf({ capture, picture }: Render, side: Side): CaptureItem {
     kind: "shot",
     locale,
     name: basename(picture.file, ".png"),
-    platform: "android",
+    platform: capture.platform,
     pointer: pointer === "touch" ? "coarse" : "fine",
     scale: capture.scale,
     ...(capture.scenario && capture.scenario !== "not declared"
@@ -77,7 +93,7 @@ function itemOf({ capture, picture }: Render, side: Side): CaptureItem {
 }
 
 /**
- * Puts Android renders (each picture's `<name>.json` from `writeRender`) into a capture folder as
+ * Puts measured native renders into a capture folder as
  * `pr:media check` reads it: the picture, its item in `capture.json` and its capture in
  * `alignment.json`. A picture adopted again replaces its earlier record, keeping its read as a
  * capture does.
@@ -85,13 +101,23 @@ function itemOf({ capture, picture }: Render, side: Side): CaptureItem {
 export async function adoptRenders({
   renders,
   side,
-  to,
+  to: destination,
 }: {
   renders: string[];
   side: Side;
-  to: string;
-}): Promise<CaptureItem[]> {
+  to?: string;
+}) {
   const read = await Promise.all(renders.map(async (path) => readRender(path)));
+  const platform = read[0]?.capture.platform;
+
+  if (!platform || read.some(({ capture }) => capture.platform !== platform)) {
+    throw new Error("Adopt one platform's renders at a time.");
+  }
+
+  const to = resolve(
+    destination ?? join(import.meta.dirname, "../../tmp/pr-media", platform, side),
+  );
+
   const files = new Set(read.map(({ picture }) => picture.file));
 
   if (files.size < read.length) {
@@ -136,5 +162,5 @@ export async function adoptRenders({
     `${JSON.stringify({ captures: [...kept, ...added] }, null, 2)}\n`,
   );
 
-  return items;
+  return { items, platform, to };
 }

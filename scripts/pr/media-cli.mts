@@ -260,11 +260,10 @@ async function adopt({ positionals: [sideName, ...renders], values }: Arguments)
     fail("Name a side, before or after, then the renders' <name>.json files.");
   }
 
-  const to = resolve(values.to ?? join(CAPTURE, "android", side));
-  const items = await adoptRenders({ renders, side, to });
+  const { items, platform, to } = await adoptRenders({ renders, side, to: values.to });
 
   console.log(
-    `${items.length} Android ${side} pictures in ${displayPath(join(to, MANIFEST))}, their layout in alignment.json.`,
+    `${items.length} ${platform} ${side} pictures in ${displayPath(join(to, MANIFEST))}, their layout in alignment.json.`,
   );
 
   return true;
