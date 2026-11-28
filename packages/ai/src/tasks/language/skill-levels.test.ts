@@ -48,6 +48,7 @@ describe(classifySkillLevels, () => {
     ]);
 
     expect(systemPrompt).toBe("Place skills in US English.");
+    expect(userPrompt).toContain("TARGET_LANGUAGE: US English");
     expect(userPrompt).toContain("2. B1 or B2 | Meetings: Follow a meeting");
   });
 });

@@ -84,11 +84,11 @@ export async function classifySkillLevels(params: SkillLevelsParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  const systemPrompt = promptTemplate.replaceAll("{{TARGET_LANGUAGE}}", () =>
-    getPromptLanguageName({ language: params.targetLanguage }),
-  );
+  const targetLanguageName = getPromptLanguageName({ language: params.targetLanguage });
+  const systemPrompt = promptTemplate.replaceAll("{{TARGET_LANGUAGE}}", () => targetLanguageName);
 
-  const userPrompt = `SKILLS:
+  const userPrompt = `TARGET_LANGUAGE: ${targetLanguageName}
+SKILLS:
 ${formatSkills(params.skills)}
 `;
 
