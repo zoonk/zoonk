@@ -318,4 +318,21 @@ describe(sizeLanguageGraph, () => {
 
     expect(idsOf(planned)).toStrictEqual(["s1", "s2", "s5"]);
   });
+
+  it("still owes the hours of a band the aim reaches that has no situations yet", () => {
+    const { graph, planned } = sizeLanguageGraph({
+      bands: new Map([...BANDS].filter(([, band]) => band !== "advanced")),
+      goal: languageGoal("none"),
+      graph: graphOf([10, 20, 10, 10]),
+      state: aimed("C1"),
+    });
+
+    expect(lessonsOf(planned)).toStrictEqual([475, 950, 1350, 1350]);
+    expect(planned.unwrittenLessons).toBe(1500);
+    expect(graph.unwrittenLessons).toBeUndefined();
+  });
+
+  it("owes nothing when every band the aim reaches has situations", () => {
+    expect(sizeAbove("C1").planned.unwrittenLessons).toBeUndefined();
+  });
 });

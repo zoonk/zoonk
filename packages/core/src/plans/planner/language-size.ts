@@ -1,8 +1,9 @@
 import { type CourseLevel, type GoalKind } from "@zoonk/db";
 import { apportion } from "@zoonk/utils/apportion";
-import { CEFR_LEVELS, type CefrLevel, parseCefrScore } from "@zoonk/utils/cefr";
+import { CEFR_LEVELS, parseCefrScore } from "@zoonk/utils/cefr";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getCefrHours, getStartHours } from "../../language/aims/language-aims";
+import { AIM_BANDS } from "../../language/aims/language-bands";
 import { getBandRank } from "../../learner/placement/placement-graph";
 import { getLearningShare } from "./plan-phases";
 import {
@@ -14,16 +15,6 @@ import {
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 
 const MINUTES_PER_HOUR = 60;
-
-/** A language graph files A1 and A2 situations as beginner, B1 and B2 intermediate, C1 and C2 advanced. */
-const AIM_BANDS: Readonly<Record<CefrLevel, CourseLevel>> = {
-  A1: "beginner",
-  A2: "beginner",
-  B1: "intermediate",
-  B2: "intermediate",
-  C1: "advanced",
-  C2: "advanced",
-};
 
 function getLessonCount(hours: number): number {
   const lessonShare = getLearningShare({ phaseKind: "learn", practiceBias: "balanced" });
@@ -155,6 +146,26 @@ function resize({
   };
 }
 
+/** A graph written before every band had situations still owes its empty bands' hours. */
+function countUnwrittenLessons({
+  aim,
+  bandOf,
+  graph,
+  start,
+}: {
+  aim: number;
+  bandOf: (skill: PlanGraphSkill) => CourseLevel;
+  graph: PlanGraph;
+  start: number;
+}): number {
+  const written = new Set(graph.skills.map((skill) => bandOf(skill)));
+
+  return BAND_ORDER.filter((band) => !written.has(band)).reduce(
+    (sum, band) => sum + getLessonCount(getStudiedHours({ aim, band, start })),
+    0,
+  );
+}
+
 function markPastLevel({ covered, graph }: { covered: ReadonlySet<string>; graph: PlanGraph }) {
   return {
     ...graph,
@@ -221,24 +232,26 @@ export function sizeLanguageGraph({
 
   const leftOut = new Set([...aboveAim, ...covered]);
 
+  const studied = start !== null && aim > start;
+
   const sized = markPastLevel({
     covered,
-    graph:
-      start !== null && aim > start
-        ? resize({ aim, bandOf, graph, leftOut, settledSkillIds, start })
-        : graph,
+    graph: studied ? resize({ aim, bandOf, graph, leftOut, settledSkillIds, start }) : graph,
   });
 
+  const unwrittenLessons = studied ? countUnwrittenLessons({ aim, bandOf, graph, start }) : 0;
+  const owed = unwrittenLessons > 0 ? { ...sized, unwrittenLessons } : sized;
+
   if (leftOut.size === 0) {
-    return { graph: sized, planned: sized };
+    return { graph: sized, planned: owed };
   }
 
-  const skills = sized.skills.filter((skill) => !leftOut.has(skill.skillId));
+  const skills = owed.skills.filter((skill) => !leftOut.has(skill.skillId));
   const lastPhase = Math.max(-1, ...skills.map((skill) => skill.phase));
 
   return {
     graph: sized,
     // Phases after the aim's last situation would show in the plan with nothing in them.
-    planned: { ...sized, phases: sized.phases.slice(0, lastPhase + 1), skills },
+    planned: { ...owed, phases: owed.phases.slice(0, lastPhase + 1), skills },
   };
 }

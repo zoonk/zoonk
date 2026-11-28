@@ -154,16 +154,19 @@ export function getWrittenCoverage({ built, input }: { built: BuiltPlan; input: 
 
 export function sumRequirement({
   built,
+  input,
   requirement,
   settled,
 }: {
   built: BuiltPlan;
+  input: Pick<BuildPlanInput, "graph" | "paceFactor">;
   requirement: ReadonlyMap<string, SkillRequirement>;
   settled: ReadonlySet<string>;
 }): SelectedSummary["requirement"] {
   const studied = [...requirement].filter(([skillId]) => !settled.has(skillId));
   const lessons = new Map(studied.flatMap(([, skill]) => [...skill.lessons]));
-  const standIns = studied.reduce((sum, [, skill]) => sum + skill.standIn, 0);
+  const unwritten = (input.graph.unwrittenLessons ?? 0) * DEFAULT_LESSON_MINUTES * input.paceFactor;
+  const standIns = studied.reduce((sum, [, skill]) => sum + skill.standIn, unwritten);
 
   const completed = new Set(
     built.items.flatMap((item) => (item.lessonId && isCompleted(item) ? [item.lessonId] : [])),

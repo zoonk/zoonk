@@ -249,6 +249,17 @@ describe(summarizeSelectedPlan, () => {
     expect(summary.sourceSkillIds).toStrictEqual(["s1", "s2"]);
   });
 
+  it("counts the lessons of a band with no situations yet in what's left to study", () => {
+    const input = learnInput({ goal: { dailyMinutes: 3, kind: "learn", targetDate: null } });
+    const owed = { ...input, graph: { ...input.graph, unwrittenLessons: 10 }, paceFactor: 2 };
+
+    expect(summarize(owed).requirement).toStrictEqual({
+      doneRaw: 0,
+      remainingRaw: 24 + 10 * DEFAULT_LESSON_MINUTES * 2,
+      totalRaw: 24 + 10 * DEFAULT_LESSON_MINUTES * 2,
+    });
+  });
+
   it("says the whole requirement fits when every lesson is laid before the date", () => {
     const summary = summarize(learnInput());
 

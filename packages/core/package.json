@@ -201,6 +201,7 @@
     "./language/exam-speaking/paper": "./src/language/exam-speaking/get-speaking-paper.ts",
     "./language/exam-speaking/write": "./src/language/exam-speaking/write-exam-speaking.ts",
     "./language/aims": "./src/language/aims/language-aims.ts",
+    "./language/aims/bands": "./src/language/aims/language-bands.ts",
     "./language/aims/schemas": "./src/language/aims/language-aim-schemas.ts",
     "./language/level-test/answer": "./src/language/level-test/answer-language-level-test.ts",
     "./language/level-test/check-answers": "./src/language/level-test/check-level-test-answers.ts",

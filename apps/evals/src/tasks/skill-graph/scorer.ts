@@ -6,6 +6,7 @@ import {
   type SkillGraphProblem,
   findSkillGraphProblems,
 } from "@zoonk/ai/tasks/curriculum/skill-graph-checks";
+import { findMissingLanguageBands } from "@zoonk/core/language/aims/bands";
 import { normalizeString } from "@zoonk/utils/string";
 import { type SkillGraphCase, type SkillGraphExpected } from "./library-cases";
 import { SKILL_GRAPH_SCORE_CATEGORIES } from "./score-categories";
@@ -26,6 +27,7 @@ const CHECKS: readonly GraphCheck[] = [
   "textbookChain",
   "offNoticeFirst",
   "nearDuplicate",
+  "pastCourseLevel",
   "repeatedPhaseName",
   "uncoveredTopic",
   "writing",
@@ -36,6 +38,7 @@ const CHECK_CRITERIA: Record<GraphCheck, string> = {
   deepChain: "orderAndPrerequisites",
   nearDuplicate: "noFiller",
   offNoticeFirst: "goalFit",
+  pastCourseLevel: "goalFit",
   repeatedPhaseName: "noFiller",
   textbookChain: "orderAndPrerequisites",
   uncoveredTopic: "coverage",
@@ -167,6 +170,27 @@ function checkFirstSkill({
   ];
 }
 
+function checkLanguageBands({
+  graph,
+  input,
+}: {
+  graph: SkillGraphOutput;
+  input: SkillGraphCase;
+}): ExpectedCheck[] {
+  if (input.goalKind !== "language") {
+    return [];
+  }
+
+  const missing = findMissingLanguageBands(graph.skills);
+
+  return [
+    {
+      criterion: "coverage",
+      problem: missing.length > 0 ? `No situation in the ${missing.join(", ")} band.` : null,
+    },
+  ];
+}
+
 function checkExpected({
   expected,
   graph,
@@ -179,6 +203,7 @@ function checkExpected({
   const checks = [
     ...(expected ? [...checkReuse({ expected, graph }), ...checkCourses({ expected, graph })] : []),
     ...checkFirstSkill({ graph, input }),
+    ...checkLanguageBands({ graph, input }),
   ];
 
   return { failures: checks.filter(({ problem }) => problem !== null), total: checks.length };
@@ -197,6 +222,7 @@ function checkGraph({
 
   const problems = [
     ...findSkillGraphProblems({
+      courseLevel: input.goalKind === "learn" ? input.courseLevel : undefined,
       exam: input.goalKind === "exam",
       phases: graph.phases,
       skills: graph.skills,

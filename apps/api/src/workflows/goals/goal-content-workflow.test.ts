@@ -113,6 +113,19 @@ function isolatedGraph(): SkillGraph {
   };
 }
 
+/** A language graph learners aiming for any level share has situations in every band. */
+function inEveryBand(graph: SkillGraph): SkillGraph {
+  const bands = ["beginner", "intermediate", "advanced"] as const;
+
+  return {
+    ...graph,
+    skills: graph.skills.map((skill, index) => ({
+      ...skill,
+      level: bands[index % bands.length] ?? skill.level,
+    })),
+  };
+}
+
 const outline = recordedOutput<CourseOutline>("course-outline");
 
 const recordedOutline = {
@@ -495,7 +508,11 @@ describe(goalContentWorkflow, () => {
 
     const { data: frame, ...frameResult } = taskResult({ courses: [], phases: [], sections: [] });
     vi.mocked(generateSkillGraphFrame).mockResolvedValue({ ...frameResult, output: frame });
-    vi.mocked(generateWholeSkillGraph).mockResolvedValue(graphResult(graph));
+
+    vi.mocked(generateWholeSkillGraph).mockImplementation(async (params) =>
+      graphResult(params.goalKind === "language" ? inEveryBand(graph) : graph),
+    );
+
     vi.mocked(generateCourseOutline).mockResolvedValue(taskResult(recordedOutline));
 
     vi.mocked(streamCourseOutline).mockImplementation(
@@ -1988,8 +2005,8 @@ describe(goalContentWorkflow, () => {
     const answers = italianAnswers();
 
     vi.mocked(generateWholeSkillGraph)
-      .mockResolvedValueOnce(graphResult(isolatedGraph()))
-      .mockResolvedValueOnce(graphResult(isolatedGraph()));
+      .mockResolvedValueOnce(graphResult(inEveryBand(isolatedGraph())))
+      .mockResolvedValueOnce(graphResult(inEveryBand(isolatedGraph())));
 
     const learners = await Promise.all([newGoal(answers), newGoal(answers)]);
     await Promise.all(learners.map(({ goal }) => goalContentWorkflow({ goalId: goal.id })));
@@ -2457,6 +2474,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -2467,6 +2485,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "The chains an antibody is made of and where it binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: twin,
               prerequisites: [],
@@ -2743,6 +2762,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -2901,6 +2921,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -2967,6 +2988,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],
@@ -3133,6 +3155,7 @@ describe(goalContentWorkflow, () => {
             {
               area: "Immunology",
               description: "Heavy and light chains, and the part that binds the antigen.",
+              estimatedLessons: 5,
               examWeight: 5,
               name: missed,
               prerequisites: [],

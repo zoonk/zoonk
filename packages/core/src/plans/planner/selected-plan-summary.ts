@@ -125,7 +125,7 @@ export function summarizeSelectedPlan({
   const deadline = getCoverageDeadline({ built, input });
   const requirementBySkill = readRequirement({ built, input });
   const settled = listSettled(input);
-  const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
+  const requirement = sumRequirement({ built, input, requirement: requirementBySkill, settled });
 
   return {
     bases: summarizeBases(input),

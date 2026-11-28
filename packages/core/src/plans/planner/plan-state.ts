@@ -76,6 +76,11 @@ export const planGraphSchema = z.object({
   optionSkills: z.array(optionSkillSchema).optional(),
   phases: z.array(graphPhaseSchema).default([]),
   skills: z.array(graphSkillSchema).default([]),
+  /**
+   * A language plan's lessons for bands its aim reaches that have no situations yet: counted in
+   * the forecast, never placed. Only the planned graph has it, never the saved one.
+   */
+  unwrittenLessons: z.int().min(1).optional(),
 });
 
 const lightWeekSchema = z.object({ endDate: isoDateSchema, startDate: isoDateSchema });
