@@ -85,24 +85,23 @@ async function runStage({
   return { exitCode, stderr, stdout };
 }
 
-function stopOf({
-  errorOutput,
-  output,
-  exitCode,
-}: {
-  errorOutput: string;
-  output: string;
-  exitCode: number;
-}): Exclude<CodeRunResult["stop"], "unavailable"> {
-  if (output.length + errorOutput.length > MAX_PROGRAM_OUTPUT_LENGTH) {
+type Stop = Exclude<CodeRunResult["stop"], "unavailable">;
+
+/** Only a program's own run can flood the output; a compiler's diagnostics are capped and shown. */
+function stopOf({ compile, run }: { compile: Stage | null; run: Stage | null }): Stop {
+  if (!run) {
+    return compile?.exitCode === SIGNAL_KILLED ? "timeout" : "error";
+  }
+
+  if (run.stdout.length + run.stderr.length > MAX_PROGRAM_OUTPUT_LENGTH) {
     return "tooMuchOutput";
   }
 
-  if (exitCode === SIGNAL_KILLED) {
+  if (run.exitCode === SIGNAL_KILLED) {
     return "timeout";
   }
 
-  return exitCode === 0 ? "done" : "error";
+  return run.exitCode === 0 ? "done" : "error";
 }
 
 function resultOf({
@@ -119,11 +118,7 @@ function resultOf({
   const output = run?.stdout ?? "";
   const errors = (compile?.stdout ?? "") + (compile?.stderr ?? "") + (run?.stderr ?? "");
 
-  const stop = stopOf({
-    errorOutput: errors,
-    exitCode: run?.exitCode ?? compile?.exitCode ?? 0,
-    output,
-  });
+  const stop = stopOf({ compile, run });
 
   const cappedOutput = output.slice(0, MAX_PROGRAM_OUTPUT_LENGTH).toWellFormed();
 
@@ -187,14 +182,7 @@ export async function executeSandboxProgram({
         })
       : null;
 
-    if (
-      compile &&
-      stopOf({
-        errorOutput: compile.stdout + compile.stderr,
-        exitCode: compile.exitCode,
-        output: "",
-      }) !== "done"
-    ) {
+    if (compile && compile.exitCode !== 0) {
       return resultOf({ compile, language, run: null, runId });
     }
 

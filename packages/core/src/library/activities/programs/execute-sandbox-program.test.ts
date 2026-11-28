@@ -45,6 +45,32 @@ describe("sandbox program commands", () => {
     ]);
   });
 
+  it("reports a long compile error as an error on its line, with capped diagnostics", async () => {
+    const note = "note:   candidate expects 2 arguments, 1 provided\n".repeat(400);
+
+    const sandbox = scriptedSandbox({
+      compile: {
+        exitCode: 1,
+        stderr: `main.cpp: In function 'int main()':\nmain.cpp:5:13: error: no match for 'operator<<'\n${note}`,
+      },
+    });
+
+    const result = await executeSandboxProgram({
+      code: "broken",
+      language: "cpp",
+      runId: randomUUID(),
+      sandbox,
+    });
+
+    expect(result).toMatchObject({
+      error: { line: 5, message: "no match for 'operator<<'" },
+      output: "",
+      stop: "error",
+    });
+
+    expect(result.errorOutput).toHaveLength(MAX_PROGRAM_OUTPUT_LENGTH);
+  });
+
   it("keeps output printed before a timeout within the cap", async () => {
     const sandbox = scriptedSandbox({
       run: { exitCode: 137, stderr: "warning", stdout: "before\n" },
