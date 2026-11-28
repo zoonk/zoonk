@@ -42,7 +42,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityCanvas
@@ -50,6 +53,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.LineMarker
 import com.zoonk.android.feature.activities.jsonSaver
+import com.zoonk.android.feature.questions.itemLine
 import com.zoonk.android.ui.code.CodeFrame
 import com.zoonk.android.ui.code.CodeLine
 import com.zoonk.android.ui.code.CodeLineText
@@ -59,7 +63,8 @@ import com.zoonk.android.ui.code.rememberSpokenCode
 import com.zoonk.android.ui.components.fadingHorizontalScroll
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
-import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.richtext.RichTextLine
+import com.zoonk.android.ui.richtext.SpokenText
 import com.zoonk.android.ui.theme.GeistMono
 import com.zoonk.android.ui.theme.ZoonkRadius
 import com.zoonk.android.ui.theme.zoonkType
@@ -441,13 +446,15 @@ private fun NotQuite(mistake: String) {
         LineMarker(
             style,
         ) { Icon(painterResource(R.drawable.ic_cancel), null, Modifier.size(16.dp), tint = MaterialTheme.colorScheme.error) }
-        Column {
-            Text(
-                stringResource(R.string.activities_code_not_quite),
-                color = MaterialTheme.colorScheme.error,
-                style = style.copy(fontWeight = FontWeight.SemiBold),
-            )
-            RichText(mistake, style = style)
-        }
+        // Main's `NotQuiteLead`: the lead starts the feedback's own line.
+        val lead = stringResource(R.string.activities_code_not_quite)
+        val why = itemLine(mistake)
+        val line =
+            buildAnnotatedString {
+                withStyle(SpanStyle(color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.SemiBold)) { append(lead) }
+                append(" ")
+                append(why.text)
+            }
+        RichTextLine(SpokenText(line, why.spoken?.let { "$lead $it" }), Modifier, style)
     }
 }
