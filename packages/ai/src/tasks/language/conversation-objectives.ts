@@ -5,7 +5,7 @@ import { formatUntrustedInput } from "../../evaluate/untrusted-input";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { runTaskGeneration } from "../../provenance/run-task-generation";
 import { type Reasoning, buildProviderOptions } from "../../provider-options";
-import { getLanguagePromptContext } from "../_utils/prompt-language";
+import { fillPromptLanguages } from "../_utils/prompt-language";
 import {
   type ConversationTurn,
   formatConversationTranscript,
@@ -56,12 +56,6 @@ function buildSchema(labels: [string, ...string[]]) {
 export type CheckConversationObjectivesSchema = z.infer<ReturnType<typeof buildSchema>>;
 
 function buildUserPrompt(params: CheckConversationObjectivesParams): string {
-  const languages = getLanguagePromptContext({
-    targetLanguage: params.targetLanguage,
-    targetRegion: params.targetRegion,
-    userLanguage: params.learnerLanguage,
-  });
-
   const objectives = params.objectives
     .map((objective) => `- "${objective.label}": ${objective.description}`)
     .join("\n");
@@ -72,7 +66,6 @@ function buildUserPrompt(params: CheckConversationObjectivesParams): string {
   });
 
   return `
-    TARGET_LANGUAGE: ${languages.targetLanguageName}
     SITUATION: ${params.situation}
     CHARACTER_NOTES: ${params.characterNotes}
     OBJECTIVES:
@@ -100,7 +93,11 @@ export async function checkConversationObjectives(params: CheckConversationObjec
     throw new Error("A check needs at least one open objective.");
   }
 
-  const systemPrompt = params.exam ? testSystemPrompt : basePrompt;
+  const systemPrompt = fillPromptLanguages({
+    ...params,
+    template: params.exam ? testSystemPrompt : basePrompt,
+  });
+
   const userPrompt = buildUserPrompt(params);
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
 
