@@ -54,9 +54,11 @@ fun CoroutineScope.invalidateAtNextChange(
         .collectLatest { nextChangeAt ->
             nextChangeAt ?: return@collectLatest
             while (now() < nextChangeAt) {
-                withTimeoutOrNull((nextChangeAt - now()).milliseconds) {
-                    isForeground.dropWhile { it }.firstOrNull { it } ?: awaitCancellation()
-                }
+                val returned =
+                    withTimeoutOrNull((nextChangeAt - now()).milliseconds) {
+                        isForeground.dropWhile { it }.firstOrNull { it } ?: awaitCancellation()
+                    }
+                returned ?: break
             }
             resource.invalidate()
         }
