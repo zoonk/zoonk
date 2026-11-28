@@ -139,8 +139,69 @@ describe(highlightCode, () => {
     expect(coloredLine("Total: 3 // done", "output")).toStrictEqual([]);
   });
 
+  it("colors every language the code runner runs on a server", () => {
+    expect(coloredLine('Console.WriteLine($"Hi {name}"); // C#', "csharp")).toStrictEqual([
+      ["builtin", "Console"],
+      ["string", '$"Hi {name}"'],
+      ["comment", "// C#"],
+    ]);
+
+    expect(coloredLine("func main() { fmt.Println(`raw`) }", "go")).toStrictEqual([
+      ["keyword", "func"],
+      ["builtin", "fmt"],
+      ["string", "`raw`"],
+    ]);
+
+    expect(coloredLine('let mut n: i32 = 2; println!("{n}");', "rust")).toStrictEqual([
+      ["keyword", "let"],
+      ["keyword", "mut"],
+      ["builtin", "i32"],
+      ["number", "2"],
+      ["builtin", "println"],
+      ["string", '"{n}"'],
+    ]);
+
+    expect(coloredLine(String.raw`let total: Int = 3; print("\(total)")`, "swift")).toStrictEqual([
+      ["keyword", "let"],
+      ["builtin", "Int"],
+      ["number", "3"],
+      ["builtin", "print"],
+      ["string", String.raw`"\(total)"`],
+    ]);
+
+    expect(coloredLine("fun main() { val c = 'x'; println(c) }", "kotlin")).toStrictEqual([
+      ["keyword", "fun"],
+      ["keyword", "val"],
+      ["string", "'x'"],
+      ["builtin", "println"],
+    ]);
+
+    expect(coloredLine("<?php echo strlen($name); # PHP", "php")).toStrictEqual([
+      ["keyword", "<?php"],
+      ["keyword", "echo"],
+      ["builtin", "strlen"],
+      ["comment", "# PHP"],
+    ]);
+
+    expect(coloredLine('def greet = puts "hi" # Ruby', "ruby")).toStrictEqual([
+      ["keyword", "def"],
+      ["builtin", "puts"],
+      ["string", '"hi"'],
+      ["comment", "# Ruby"],
+    ]);
+  });
+
+  it("takes a Rust lifetime for a name, not a string to the line's end", () => {
+    expect(coloredLine("fn first<'a>(s: &'a str) -> char { 'x' }", "rust")).toStrictEqual([
+      ["keyword", "fn"],
+      ["builtin", "str"],
+      ["builtin", "char"],
+      ["string", "'x'"],
+    ]);
+  });
+
   it("colors only strings, numbers and comments in a language it doesn't know", () => {
-    expect(coloredLine('fn main() { let s = "oi"; } // 2 items', "rust")).toStrictEqual([
+    expect(coloredLine('fn main() { let s = "oi"; } // 2 items', "zig")).toStrictEqual([
       ["string", '"oi"'],
       ["comment", "// 2 items"],
     ]);
