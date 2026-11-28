@@ -302,8 +302,10 @@ export function SubjectScreen({
         )}
 
         <SubjectChapters
+          adjustHref={hrefs.adjust}
           chapterHref={hrefs.chapter}
           chapters={subject.chapters}
+          leftOut={subject.leftOut}
           mindMapsHref={hrefs.mindMaps?.(subject.key) ?? null}
         />
 

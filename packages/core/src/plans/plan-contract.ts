@@ -262,6 +262,8 @@ const addSkillsOperationSchema = z.object({
       courseId: z.string().optional(),
       lessons: z.int().min(1),
       name: z.string(),
+      /** The graph phase it joins, when it isn't the one of the skill it goes before. */
+      phase: z.int().min(0).optional(),
       skillId: z.string(),
     }),
   ),

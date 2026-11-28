@@ -121,7 +121,6 @@ fun SubscriptionScreen(
     navigator: AppNavigator,
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    val scope = rememberCoroutineScope()
 
     SubscriptionPage(onBack = { navigator.back() }) {
         when (val state = session) {
@@ -138,7 +137,7 @@ fun SubscriptionScreen(
             }
 
             SessionState.Unavailable -> {
-                LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } })
+                LoadFailedMessage(onRetry = app::retrySessionRestore)
             }
         }
     }

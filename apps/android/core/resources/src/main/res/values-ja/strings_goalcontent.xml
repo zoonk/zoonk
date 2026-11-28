@@ -24,6 +24,7 @@
   "goalcontent_from_material": "d8a7bb9519036180ff33f1bdca301d314bc948193fc1c41aae5258251104e3b2",
   "goalcontent_known": "3bd6b979255fa780814b072d6428a5fb1bf83a7ef8a15f2a2be0c9c4c304273d",
   "goalcontent_known_before": "08dc3af16e0411c5236fd517895aa19e470c8025a9427f66f0c9777208baaf24",
+  "goalcontent_left_out_why": "11f5b4867a4e8dc015fb3cc41cea542f888d2b32151c00db6f399d31a7cc141e",
   "goalcontent_lesson_count": "84240755decb4275b829fc856e9a38d961846b54ad999ee668d9fdffec74db73",
   "goalcontent_lessons_done": "97e305cbdfd1b3dee120361e7c88f125b0b299cc48ce2050257960a54aedfe8d",
   "goalcontent_lessons_known_skipped": "adee60c684c5dac19e879ef0092db1760ce4e3c531fd547ff986299a657a5612",
@@ -202,6 +203,8 @@
     <!-- Titles the list of what a subject or module contains, on its page while it's out of the learner's plan, so they can decide whether to add it back. Their plan doesn't teach it, so the title names its contents without promising they'll learn them. -->
     <string name="goalcontent_covers">扱う内容</string>
     <string name="goalcontent_adjust_plan">学習計画を調整する</string>
+    <!-- Under the folded list of a module's or a subject's topics that the learner's plan leaves out: they don't fit in the study time before the date the learner set. Followed by a button to change the plan. -->
+    <string name="goalcontent_left_out_why">設定した日までの学習計画に入りきりません。</string>
     <string name="goalcontent_add_back">学習計画に戻す</string>
     <string name="goalcontent_save_failed">保存できませんでした。もう一度お試しください。</string>
     <plurals name="goalcontent_chapters_done">

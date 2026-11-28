@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.LeftOutTopicsLine
 import com.zoonk.android.feature.plan.optionalStudyLabel
 import com.zoonk.android.ui.components.ListDivider
 import com.zoonk.android.ui.components.ListRow
@@ -171,6 +172,7 @@ private fun SubjectRow(
             if (alsoIn != null) {
                 Text(alsoIn, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
             }
+            LeftOutTopicsLine(subject.leftOut.size)
         }
     }
     val progress: @Composable (Modifier) -> Unit = { progressModifier ->

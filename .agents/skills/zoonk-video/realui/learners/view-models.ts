@@ -199,6 +199,7 @@ function phase(learner: SampleLearner, index: number): PlanPhaseView {
   if (!input) throw new Error(`no phase ${index}`);
   return {
     challengeLeftOut: false,
+    leftOut: [],
     chapterCount: 0,
     chapters: [],
     // Every planned phase ends with its challenge (core's buildCheckpoint), which makes its end date "~".
@@ -326,6 +327,7 @@ function subject(input: SampleLearner["subjects"][number], index: number): Sylla
     areas: [input.name],
     chapters: [],
     covers: [],
+    leftOut: [],
     displayWeight: null,
     group: null,
     imageUrl: null,
