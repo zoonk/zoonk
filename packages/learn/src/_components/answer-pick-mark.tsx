@@ -39,7 +39,7 @@ export function PickMark({
         className={cn(
           "dark:bg-input/30 text-selected-foreground flex size-4 items-center justify-center border",
           CHOICE_MARK_LINE_CLASS,
-          kind === "radio" ? "rounded-full" : "rounded-sm",
+          kind === "radio" ? "rounded-full" : "rounded-xs",
           "in-data-held:border-selected in-data-held:bg-selected in-data-[held=unchecked]:border-foreground/50! in-data-[held=unchecked]:bg-transparent!",
           picked && "border-selected bg-selected dark:bg-selected",
         )}
