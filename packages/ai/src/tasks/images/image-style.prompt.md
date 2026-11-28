@@ -10,7 +10,7 @@ Draw one educational illustration for a learning app. It explains one idea at a 
 - Metal, glass, wood and light are flat fills too: no reflections, shine, glow or texture.
 - Text appears only where the Text section below lists it. The scene names objects so you know what to draw; never write those names in the image, and never add callouts, pills or leader lines for anything that isn't a listed label.
 - Background: plain white. Nothing else in the background: no scenery, frames, borders, cards, shadows at the edges or patterns.
-- Colors: only the palette below. Two to four soft colors for most shapes and the accent on the single most important element.
+- Colors: only the palette below. Two to four soft colors for most shapes and the accent on the single most important element. The one exception is colors a legend explains: draw them as the scene names them.
 - A whole with its parts (an organ, a cycle, a map, a machine) is one clear drawing with each listed part easy to tell apart, and nothing the scene doesn't list.
 - A legend appears only when the Text section lists its rows: a small box with one swatch per listed row, each swatch exactly the color of the areas or marks it stands for, with its row's text written plainly beside it.
 - An artwork the scene names (a painting, a sculpture, a building) is drawn as a simplified version of that work in its own colors and technique, so it can be recognized and compared. Everything around it keeps this style.

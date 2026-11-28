@@ -1685,486 +1685,6 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "B points unambiguously to the large pale central region, so the picture supports the question without revealing the answer. The missing nucleus and lone chloroplast make the required cell depiction incomplete.",
-          "score": 7,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The single cell and three arrows keep attention on one identification task, with no unrelated objects. The simplification goes too far by dropping the required nucleus, which belongs inside the focal cell rather than as a separate supporting object.",
-          "score": 8,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "The only labels are A, B and C, mapped respectively to the thick outline, pale central region and green oval. No structure name gives away the answer.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and each target places its letter next to an arrow identified by the feature it points to.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1483,
-          "outputTokens": 436,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The diagram omits the required nucleus. The learner can still identify B as the vacuole, but the cell is missing one of the four structures the scene must show.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "Only one small green oval is specified, whereas the scene calls for multiple chloroplasts. C correctly points to one oval.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw an unlabeled nucleus beside the large central vacuole and a few small green ovals around it. Keep the existing three arrows, with C pointing to just one oval.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "question-cell-diagram-pt-1",
-        "userInput": {
-          "context": "Biologia › Célula › Organelas da célula vegetal",
-          "language": "pt",
-          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
-          "screenText": "Na figura, qual letra indica o vacúolo?",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "B points to the large, pale central region, so the learner can identify the vacuole from its appearance without a giveaway label. The missing nucleus and single chloroplast fall short of the required cell anatomy.",
-          "score": 7,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The cell is the sole focal object, with no unrelated details. One chloroplast would be enough for C's arrow, but the incomplete set of required internal parts keeps this from fully depicting the whole requested cell.",
-          "score": 8,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "A, B and C are the only labels, and each maps to the requested feature. No structure name reveals the answer.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive text is in English. Each target places its letter at an arrow end and identifies that arrow by the feature it points to.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1460,
-          "outputTokens": 431,
-          "reasoningTokens": 16
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The diagram omits the required nucleus. The vacuole question is still answerable, but the plant cell is incomplete.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The diagram specifies only one small green oval, while the expectation calls for multiple chloroplasts.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Place an unlabeled nucleus and several small green ovals around the large central region. Keep C pointing to just one oval and leave A and B unchanged.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "question-cell-diagram-pt-2",
-        "userInput": {
-          "context": "Biologia › Célula › Organelas da célula vegetal",
-          "language": "pt",
-          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
-          "screenText": "Na figura, qual letra indica o vacúolo?",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The thick wall, large pale central region and small green oval give learners concrete visual cues, and B makes the vacuole identifiable at a glance. The missing nucleus and single chloroplast leave the required plant-cell depiction incomplete.",
-          "score": 7,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "One cell and three arrows keep attention on the identification question without unrelated objects. The cell is simplified slightly too far: the nucleus and additional chloroplasts belong within the focal object and need not add clutter.",
-          "score": 8,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "A, B and C are the only labels. They match the requested arrows exactly and allow the learner to answer without a structure name giving the answer away.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each target places its letter next to a specific arrow and identifies that arrow by the feature it points to.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1485,
-          "outputTokens": 446,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "The nucleus is missing. B correctly points to the large pale central region, so the question is answerable, but the diagram omits one of the required structures.",
-          "kind": "majorErrors",
-          "score": 6
-        },
-        {
-          "conclusion": "The diagram specifies only one green oval, while the expectation calls for multiple small green chloroplasts. C correctly points to one.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Draw an unlabeled nucleus beside the central vacuole and a few small green ovals around it. Keep C pointing to just one oval and retain A, B and C as the only labels.",
-          "kind": "potentialImprovements",
-          "score": 8
-        }
-      ],
-      "testCase": {
-        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "question-cell-diagram-pt-3",
-        "userInput": {
-          "context": "Biologia › Célula › Organelas da célula vegetal",
-          "language": "pt",
-          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
-          "screenText": "Na figura, qual letra indica o vacúolo?",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The colored regions in a side view make the four positions readable at a glance. The front-to-back row implied by the relation is the only misleading spatial cue.",
-          "score": 8,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "One brain contains exactly the four named lobes, with no supporting objects or unrelated anatomy.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Each region has its correct two-word English name. All four labels serve to identify parts, and none acts as a caption.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and every target explicitly places its label next to the corresponding lobe.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1509,
-          "outputTokens": 395,
-          "reasoningTokens": 19
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The relation says the lobes sit “side by side … from front to back,” which suggests a row. The focal object and label targets correctly place the parietal lobe on top and the temporal lobe on the lower side.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Replace the row description with “The four lobes are adjoining regions of the same brain,” leaving their positions to the label targets.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "brain-lobes-en-1",
-        "userInput": {
-          "context": "Human biology › The nervous system › The lobes of the brain",
-          "language": "en",
-          "request": "The brain from the side with its four lobes labeled",
-          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The color-separated side view makes all four locations readable at a glance. Only the relation field is less precise: it suggests a sequence rather than conveying the upper and lower-side positions.",
-          "score": 8,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The brain is the sole focal object. Color distinguishes the four named parts without adding structures or supporting objects.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Each named lobe has its exact, correctly spelled two-word English label. All four labels serve identification, and none acts as a caption.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and every target places its label next to the corresponding lobe at a specified location.",
-          "score": 10,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1508,
-          "outputTokens": 419,
-          "reasoningTokens": 17
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The relation field suggests a front-to-back sequence, although the parietal and temporal lobes are distinguished in this view by their upper and lower-side positions. The focal object and label targets give the correct positions.",
-          "kind": "minorErrors",
-          "score": 9
-        },
-        {
-          "conclusion": "Use the relation field to clarify the side view: “The parietal lobe is above the temporal lobe, with the frontal lobe at the front and the occipital lobe at the back.”",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "brain-lobes-en-2",
-        "userInput": {
-          "context": "Human biology › The nervous system › The lobes of the brain",
-          "language": "en",
-          "request": "The brain from the side with its four lobes labeled",
-          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
-          "reasoning": "The side view places the frontal lobe at the front, the parietal lobe on top, the temporal lobe on the lower side, and the occipital lobe at the back, matching the screen text.",
-          "score": 10,
-          "label": "Teaches the idea",
-          "weight": 35
-        },
-        {
-          "categoryId": "simplicity",
-          "reasoning": "The brain is the sole focal object, divided into exactly the four named parts with no supporting objects or extra anatomy called out.",
-          "score": 10,
-          "label": "One idea, simply",
-          "weight": 25
-        },
-        {
-          "categoryId": "labels",
-          "reasoning": "Each named lobe has one necessary, correctly spelled two-word English label. None is a caption or redundant label.",
-          "score": 10,
-          "label": "Labels",
-          "weight": 25
-        },
-        {
-          "categoryId": "fields",
-          "reasoning": "The descriptive fields are in English and each target identifies its lobe unambiguously. The only mismatch is that the targets specify on-lobe rather than next-to-lobe placement.",
-          "score": 8,
-          "label": "English fields and placement",
-          "weight": 15
-        },
-        {
-          "categoryId": "codeChecks",
-          "label": "Code checks",
-          "reasoning": "All 2 parts passed the code checks.",
-          "score": 10,
-          "weight": 30
-        }
-      ],
-      "judge": {
-        "modelId": "openai/gpt-6.2-astra",
-        "usage": {
-          "cacheReadTokens": 0,
-          "cacheWriteTokens": 0,
-          "inputTokens": 1460,
-          "outputTokens": 387,
-          "reasoningTokens": 0
-        }
-      },
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "All four labels target the correct lobes, but they are placed on the lobes rather than next to them as requested.",
-          "kind": "minorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Change each target from “on” to “next to,” retaining its location cue so the label remains clearly associated with the correct lobe.",
-          "kind": "potentialImprovements",
-          "score": 9
-        }
-      ],
-      "testCase": {
-        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
-        "expected": {
-          "labels": "some"
-        },
-        "id": "brain-lobes-en-3",
-        "userInput": {
-          "context": "Human biology › The nervous system › The lobes of the brain",
-          "language": "en",
-          "request": "The brain from the side with its four lobes labeled",
-          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
-          "textAllowed": true
-        }
-      }
-    },
-    {
-      "categoryScores": [
-        {
-          "categoryId": "teaches",
           "reasoning": "Painting 1 uses symmetrically arranged figures and soft, even light. Painting 2 uses a strong diagonal and intense light against deep shadow. These visible cues let the learner identify the Baroque painting without a written answer.",
           "score": 10,
           "label": "Teaches the idea",
@@ -4370,28 +3890,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Each highlighted state matches a legend swatch placed beside its exact percentage range. A learner can read an interval from any of the four colors without mistaking it for an exact value.",
-          "score": 10,
+          "reasoning": "The thick wall and large pale central region make B identifiable as the vacuole at a glance. The missing nucleus and single chloroplast leave out required visual context, though neither makes the answer ambiguous.",
+          "score": 7,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The map is the sole focal object, and the legend is its only supporting object. Both serve the same color-to-range lookup.",
+          "reasoning": "One cell is the sole focal object, and all three arrows serve the same identification question. There are no unrelated objects or competing ideas.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "All four range labels match the screen exactly, and TO and GO are correct. MT and MS are missing, leaving two of the four requested state labels absent.",
-          "score": 8,
+          "reasoning": "A, B and C are the only labels and match the requested targets. No structure name or caption gives away the answer.",
+          "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "The descriptive fields are in English. Every supplied label has a precise target: beside its particular swatch or on its named state.",
+          "reasoning": "All descriptive text is in English, and each target places its letter next to the arrow for a specific cell feature.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -4409,9 +3929,249 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1783,
-          "outputTokens": 410,
-          "reasoningTokens": 39
+          "inputTokens": 1483,
+          "outputTokens": 411,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The required nucleus is missing. B still points to the large central vacuole, so the question is answerable, but the cell diagram is incomplete.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The diagram specifies only one green oval. That gives C the correct target, but the expectation calls for multiple small green chloroplasts.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add an unlabeled nucleus and a few small green chloroplasts around the central vacuole. Keep C pointing to just one chloroplast, with no additional arrows or text.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "question-cell-diagram-pt-1",
+        "userInput": {
+          "context": "Biologia › Célula › Organelas da célula vegetal",
+          "language": "pt",
+          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
+          "screenText": "Na figura, qual letra indica o vacúolo?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "B points unambiguously to the large, pale central region, and the thick wall and green oval provide distinct alternatives. The missing nucleus and lone chloroplast make the scene less complete than required.",
+          "score": 6,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The single-cell layout focuses on one identification question without distractions. It cuts a required part—the nucleus—rather than showing the whole cell with its requested parts.",
+          "score": 8,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "A, B and C are the only labels and match the requested targets exactly. No caption or structure name reveals the answer.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English. Each target places its letter at the outer end of a specific arrow, clearly separating the letter's position from the arrow's destination.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1495,
+          "outputTokens": 415,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The diagram omits the required nucleus. The A/B/C mapping still makes the question answerable, but the plant cell is incomplete.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Only one green oval is drawn, although the expectation calls for multiple small green chloroplasts. C correctly points to one.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Draw an unlabeled nucleus beside the large central region and add another small green oval. Keep the existing three arrows so the added parts do not give away the answer.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "question-cell-diagram-pt-2",
+        "userInput": {
+          "context": "Biologia › Célula › Organelas da célula vegetal",
+          "language": "pt",
+          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
+          "screenText": "Na figura, qual letra indica o vacúolo?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The thick boundary and large pale central region make B identifiable as the answer without naming it. However, the required nucleus is absent, and only one chloroplast is drawn.",
+          "score": 6,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One cell is the sole focal object, and each arrow serves the identification question. The missing parts can be restored within that cell without adding a second focus; their absence is a completeness issue, not clutter.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "A, B and C are the only labels, and each marks the requested target. No structure name gives away the answer.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and each target places its letter next to the arrow pointing to the intended feature.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1486,
+          "outputTokens": 408,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The diagram omits the required nucleus. B still clearly marks the vacuole, but the plant cell is incomplete.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Only one green oval is specified, while the expectation calls for multiple small green chloroplasts. The single oval does give C a clear target.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Add a rounded nucleus beside the central vacuole and a second small green oval. Leave both additions unlabeled and keep the three existing arrows unchanged.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "A plant cell diagram for a question: the cell wall, a large central vacuole, small green chloroplasts and the nucleus are all drawn, with arrows marked only A, B and C. No label names a structure (no 'vacúolo', 'núcleo' or 'cloroplasto'), since the question asks which letter marks the vacuole.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "question-cell-diagram-pt-3",
+        "userInput": {
+          "context": "Biologia › Célula › Organelas da célula vegetal",
+          "language": "pt",
+          "request": "Esquema de célula vegetal com três setas: A no contorno externo espesso, B na grande região clara central, C num pequeno oval verde. Sem nomes de estruturas.",
+          "screenText": "Na figura, qual letra indica o vacúolo?",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side view shows all four lobes, and their targets match the positions described on the screen.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The brain is the sole focal object. Its four named regions convey one idea without adding other structures or supporting objects.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Each named lobe has its own correctly spelled, two-word English label. The names are needed to identify the regions and do not act as captions.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and every target gives a clear location. The placement mismatch is specific: each target says “on” its region, while this task requests “next to.”",
+          "score": 8,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1468,
+          "outputTokens": 400,
+          "reasoningTokens": 32
         }
       },
       "steps": [
@@ -4421,14 +4181,254 @@
           "score": 10
         },
         {
-          "conclusion": "The request calls for four visible state abbreviations, but only TO and GO appear. Add MT on Mato Grosso and MS on Mato Grosso do Sul so learners can identify the two green states without relying on their shapes.",
+          "conclusion": "All four labels identify the correct regions, but their targets put the text on the lobes rather than next to them as requested.",
           "kind": "minorErrors",
           "score": 8
+        },
+        {
+          "conclusion": "Keep the front, top, lower-side and back location cues, but specify that each label sits beside its corresponding region.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "brain-lobes-en-1",
+        "userInput": {
+          "context": "Human biology › The nervous system › The lobes of the brain",
+          "language": "en",
+          "request": "The brain from the side with its four lobes labeled",
+          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The side view and four named regions convey the intended anatomy. “Lower lobe” is consistent with the temporal lobe's position in this view, though less informative than the screen's ear-level cue.",
+          "score": 9,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One brain shows the whole and its four requested parts, with no supporting objects or unrelated anatomy requested.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Each named lobe has its correct two-word English label. All four labels identify parts the learner needs to distinguish; none is a caption or redundant label.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptive fields are in English, and every target gives a location. Although on-object placement satisfies the general placement rule, all four targets miss the task-specific request for adjacent labels.",
+          "score": 8,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1447,
+          "outputTokens": 427,
+          "reasoningTokens": 25
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "All four labels are placed on their lobes rather than next to them as requested. The names and lobe assignments are correct.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Specify the temporal label's target as the lower side of the brain at ear level. This is more precise than “lower lobe” and uses the screen's location cue without adding an ear to the scene.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "brain-lobes-en-2",
+        "userInput": {
+          "context": "Human biology › The nervous system › The lobes of the brain",
+          "language": "en",
+          "request": "The brain from the side with its four lobes labeled",
+          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "The left-facing side view distinguishes the four lobes by color and correctly places the frontal lobe at the front, parietal on top, temporal on the lower side, and occipital at the back.",
+          "score": 10,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "The brain is the sole object. Its four regions show the named parts together without introducing unrelated anatomy.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "Each named lobe has one correctly spelled, two-word English label. All four labels identify regions rather than captioning the scene.",
+          "score": 10,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "All descriptive fields are in English, and each label target explicitly places it next to the correct brain region.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1482,
+          "outputTokens": 276,
+          "reasoningTokens": 0
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
         },
         {
           "conclusion": "None",
           "kind": "potentialImprovements",
           "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "The whole brain seen from the side with the four lobes the screen names, each labeled in English next to its lobe (frontal, parietal, temporal, occipital). Nothing the screen doesn't name.",
+        "expected": {
+          "labels": "some"
+        },
+        "id": "brain-lobes-en-3",
+        "userInput": {
+          "context": "Human biology › The nervous system › The lobes of the brain",
+          "language": "en",
+          "request": "The brain from the side with its four lobes labeled",
+          "screenText": "Your brain has four lobes: the frontal lobe behind your forehead, the parietal lobe on top, the temporal lobe by your ears and the occipital lobe at the back.",
+          "textAllowed": true
+        }
+      }
+    },
+    {
+      "categoryScores": [
+        {
+          "categoryId": "teaches",
+          "reasoning": "Each highlighted state has the correct color, and each matching swatch has a readable interval rather than a single value. This teaches the main idea, though the missing UF abbreviations make the examples harder to identify at a glance.",
+          "score": 8,
+          "label": "Teaches the idea",
+          "weight": 35
+        },
+        {
+          "categoryId": "simplicity",
+          "reasoning": "One map and one small legend focus attention on a single task: matching a state’s color to a range. The gray UFs provide the requested geographic context without introducing another topic.",
+          "score": 10,
+          "label": "One idea, simply",
+          "weight": 25
+        },
+        {
+          "categoryId": "labels",
+          "reasoning": "The four legend labels are short, useful and numerically correct. They do not reproduce the exact range notation, and none of the four requested state abbreviations appears.",
+          "score": 7,
+          "label": "Labels",
+          "weight": 25
+        },
+        {
+          "categoryId": "fields",
+          "reasoning": "The descriptive fields are in English, and every supplied label target specifies placement beside its particular colored swatch.",
+          "score": 10,
+          "label": "English fields and placement",
+          "weight": 15
+        },
+        {
+          "categoryId": "codeChecks",
+          "label": "Code checks",
+          "reasoning": "All 2 parts passed the code checks.",
+          "score": 10,
+          "weight": 30
+        }
+      ],
+      "judge": {
+        "modelId": "openai/gpt-6.2-astra",
+        "usage": {
+          "cacheReadTokens": 0,
+          "cacheWriteTokens": 0,
+          "inputTokens": 1744,
+          "outputTokens": 510,
+          "reasoningTokens": 46
+        }
+      },
+      "steps": [
+        {
+          "conclusion": "The map omits the requested TO, GO, MT and MS labels. The legend explains each color, but a learner who does not recognize the state outlines cannot tell which UF each color represents.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "All four percentage intervals have the correct endpoints, but the labels use “a” instead of the screen’s en dash. The focal-object description also misspells Goiás as “Goias.”",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Place each UF abbreviation inside its corresponding state and copy the range labels verbatim: 0%–24%, 25%–49%, 50%–74% and 75%–100%. No additional caption is needed.",
+          "kind": "potentialImprovements",
+          "score": 8
         }
       ],
       "testCase": {
@@ -4451,28 +4451,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Each state has the requested color, and all four swatches show their exact percentage ranges. The color-to-interval lesson is clear at a glance, though two state identities are not readable from the map alone.",
+          "reasoning": "Each highlighted state matches a swatch labeled with an interval rather than a single percentage, so the central idea is clear. The missing abbreviations make the state-to-range associations less readable at a glance.",
           "score": 8,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "One Brazil map and one adjacent legend convey a single idea. The gray states provide geographic context without introducing another theme.",
+          "reasoning": "One map and one adjacent legend show the color-to-range relationship without unrelated objects or competing ideas.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "All four range labels match the screen exactly, and MT and MS are useful, concise identifiers. Only two of the four requested state abbreviations appear: TO and GO are absent.",
+          "reasoning": "The four swatch labels are necessary, concise and numerically correct. However, the requested UF labels are absent, and the interval notation differs from the screen.",
           "score": 7,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "The descriptive fields are in English. Every supplied label has a precise target beside its matching swatch or inside its named state.",
+          "reasoning": "The descriptive fields are in English, and every supplied label target identifies a precise placement beside its corresponding colored swatch.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -4490,24 +4490,24 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1779,
-          "outputTokens": 475,
-          "reasoningTokens": 81
+          "inputTokens": 1723,
+          "outputTokens": 519,
+          "reasoningTokens": 73
         }
       },
       "steps": [
         {
-          "conclusion": "Only MT and MS are labeled on the map. TO and GO are missing, so learners can read the pale yellow and yellow ranges but cannot identify those two states by their requested abbreviations.",
+          "conclusion": "The map specifies the correct state colors but omits the requested on-map abbreviations TO, GO, MT and MS. Learners can read the ranges from the legend, but must recognize the state shapes to identify which UF each range applies to.",
           "kind": "majorErrors",
           "score": 7
         },
         {
-          "conclusion": "None",
+          "conclusion": "All four legend labels have the correct endpoints, but they use “a” instead of the screen’s en dash. For example, “0% a 24%” conveys the correct interval but does not reproduce “0%–24%” exactly.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "Add “TO” inside pale yellow Tocantins and “GO” inside yellow Goiás. The legend needs no change.",
+          "conclusion": "Place each abbreviation inside its corresponding colored state and copy the four range labels verbatim from the screen. No caption or additional object is needed.",
           "kind": "potentialImprovements",
           "score": 8
         }
@@ -4532,28 +4532,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Each highlighted state has the specified color, and the matching legend swatch gives an interval rather than a single value. This directly illustrates the screen’s central distinction.",
+          "reasoning": "Each highlighted state matches a legend swatch, and each swatch gives the exact interval rather than a single value. A learner can read the percentage range directly from the state's color.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "One map and one adjacent legend suffice to teach how to read a color range. The gray states provide geographic context without introducing another idea.",
+          "reasoning": "The map is the sole focal object. Its small legend is the only supporting object and is essential to interpreting the colors.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "All four range labels match the screen exactly and are necessary to interpret the swatches. The label set is incomplete because it omits the four requested state abbreviations.",
+          "reasoning": "All four percentage labels match the screen exactly and are necessary to read the legend. The missing labels are the requested state identifiers: TO on Tocantins, GO on Goiás, MT on Mato Grosso and MS on Mato Grosso do Sul.",
           "score": 8,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English, and each percentage label has an unambiguous placement beside its corresponding colored swatch.",
+          "reasoning": "The descriptive fields are in English, and each percentage label has a precise target beside its corresponding colored swatch.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -4571,9 +4571,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1718,
-          "outputTokens": 498,
-          "reasoningTokens": 103
+          "inputTokens": 1726,
+          "outputTokens": 466,
+          "reasoningTokens": 92
         }
       },
       "steps": [
@@ -4583,14 +4583,14 @@
           "score": 10
         },
         {
-          "conclusion": "The map omits the explicitly requested abbreviations TO, GO, MT and MS. The color-to-range lesson still works, but a learner cannot identify the highlighted states by name without recognizing their shapes or locations.",
+          "conclusion": "The map omits the requested visible abbreviations TO, GO, MT and MS. The state names in the map description specify which shapes to color but do not place text on them.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "Place each requested abbreviation inside its corresponding state. Keep the percentage ranges beside the legend swatches so the map identifies the states and the legend explains their colors.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 10
         }
       ],
       "testCase": {
@@ -4613,28 +4613,28 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Learners can match blue RJ and green ES to the legend swatches. The legend gives the correct ranges without naming either state, preserving the question.",
+          "reasoning": "Learners can match blue RJ and green ES to the corresponding percentage ranges. The legend gives the color key without naming either state, preserving the question.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "One map and one supporting legend suffice. The gray state outlines provide geographic context without adding unrelated labels or a second idea.",
+          "reasoning": "The Brazil map is the sole focal object, with one supporting legend. Gray boundaries and fills provide geographic context without introducing another topic.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "RJ and ES identify the two named states, and both swatches have concise labels with the correct endpoints. The only mismatch is the range notation: “a” replaces the screen’s en dash.",
-          "score": 8,
+          "reasoning": "RJ and ES identify the two states the question names. The swatch labels use the exact ranges 60%–79% and 40%–59%, with no redundant captions.",
+          "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "The descriptive fields are in English. Each target specifies placement directly on the relevant state or beside the corresponding legend swatch.",
+          "reasoning": "All descriptive fields are in English. Each target places its label on the appropriate state or beside the matching color swatch.",
           "score": 10,
           "label": "English fields and placement",
           "weight": 15
@@ -4652,9 +4652,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1617,
-          "outputTokens": 383,
-          "reasoningTokens": 0
+          "inputTokens": 1610,
+          "outputTokens": 328,
+          "reasoningTokens": 43
         }
       },
       "steps": [
@@ -4664,14 +4664,14 @@
           "score": 10
         },
         {
-          "conclusion": "The legend uses “60% a 79%” and “40% a 59%” rather than the requested “60%–79%” and “40%–59%.” The endpoints and meanings are correct.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 9
+          "score": 10
         },
         {
-          "conclusion": "Copy the range labels from the screen verbatim, retaining the en dashes.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 10
         }
       ],
       "testCase": {
@@ -4694,29 +4694,29 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "RJ is blue and ES is green. The legend pairs those colors with 60%–79% and 40%–59%, respectively, without naming either state. Learners must read the legend to answer.",
+          "reasoning": "Blue RJ and green ES can each be matched to the corresponding percentage swatch. The legend gives the color key without naming either state, leaving the learner to answer the question.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The Brazil map is the sole focal object. Gray states provide geographic context without competing with RJ and ES, and the legend is the only supporting object.",
+          "reasoning": "One map and one two-swatch legend focus attention on a single task. The remaining areas are gray and unlabeled.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "RJ and ES identify the two states the question names. The two swatch labels reproduce the exact percentage ranges; no caption or redundant label gives away the answer.",
+          "reasoning": "RJ and ES identify the two queried regions, and the swatch labels reproduce 60%–79% and 40%–59% exactly. All four labels are necessary; none acts as a caption.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each state abbreviation is placed on its state, and each percentage range is placed beside its matching swatch.",
-          "score": 10,
+          "reasoning": "The non-label descriptions are in English, and every target specifies placement on a state or beside a swatch. Restoring the accent in “Espírito Santo” would polish the description without changing placement.",
+          "score": 9,
           "label": "English fields and placement",
           "weight": 15
         },
@@ -4733,9 +4733,9 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1608,
-          "outputTokens": 299,
-          "reasoningTokens": 0
+          "inputTokens": 1617,
+          "outputTokens": 479,
+          "reasoningTokens": 85
         }
       },
       "steps": [
@@ -4745,14 +4745,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The English descriptions omit the accent in “Espírito Santo.” The visible label “ES” is correct.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "None",
+          "conclusion": "Describe the map as divided into federative units rather than states so the renderer includes the Federal District among the gray areas.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -4775,29 +4775,29 @@
       "categoryScores": [
         {
           "categoryId": "teaches",
-          "reasoning": "Learners can match blue RJ to 60%–79% and green ES to 40%–59% by reading the swatches. The legend does not name either state, so it preserves the question.",
+          "reasoning": "RJ is blue and ES is green. The legend pairs blue with 60%–79% and green with 40%–59% without naming either state, so learners must read the map to answer.",
           "score": 10,
           "label": "Teaches the idea",
           "weight": 35
         },
         {
           "categoryId": "simplicity",
-          "reasoning": "The map is the sole focal object. Gray fills keep the other states in geographic context without competing with RJ and ES, and the legend is the only supporting object.",
+          "reasoning": "The map is the sole focal object. Gray fills keep the other states in the background, and the legend is the only supporting object.",
           "score": 10,
           "label": "One idea, simply",
           "weight": 25
         },
         {
           "categoryId": "labels",
-          "reasoning": "RJ and ES identify the two states the question names. The swatch labels reproduce the exact percentage ranges, with no redundant captions.",
+          "reasoning": "RJ and ES identify the two states the question names. The two swatch labels match the screen’s percentage ranges exactly, with no redundant captions.",
           "score": 10,
           "label": "Labels",
           "weight": 25
         },
         {
           "categoryId": "fields",
-          "reasoning": "All descriptive fields are in English. Each target specifies placement: abbreviations go on their states and ranges go beside their matching swatches.",
-          "score": 10,
+          "reasoning": "All descriptive fields are in English, and each target places its label on a specific state or beside a specific swatch. The missing accent in the proper name does not obscure placement.",
+          "score": 9,
           "label": "English fields and placement",
           "weight": 15
         },
@@ -4814,8 +4814,8 @@
         "usage": {
           "cacheReadTokens": 0,
           "cacheWriteTokens": 0,
-          "inputTokens": 1625,
-          "outputTokens": 295,
+          "inputTokens": 1613,
+          "outputTokens": 367,
           "reasoningTokens": 0
         }
       },
@@ -4826,9 +4826,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "“Espírito Santo” is missing its accent in the map description and label target. The visible “ES” label is correct.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
           "conclusion": "None",

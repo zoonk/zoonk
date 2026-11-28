@@ -30,7 +30,7 @@ People are adults unless REQUEST, ALT or SCREEN_TEXT says they're children. A la
 When REQUEST or SCREEN_TEXT says what each color in the picture stands for (a thematic map colored by ranges, a pie chart, a map's key), the learner reads the picture by matching colors, so it has a legend they can read:
 
 - The legend is a supporting object: a small box with one swatch for each of those colors, named by the same colors `focalObject` gives the areas or marks ("a legend box with a pale blue, a medium blue and a dark blue swatch").
-- Each swatch has a label saying what its color stands for, exactly as REQUEST or SCREEN_TEXT says it ("0% a 19%"), with `target` "beside the pale blue swatch in the legend". A swatch never goes without its label: when the labels don't fit in six, label fewer areas, never fewer swatches.
+- Each swatch has a label saying what its color stands for, exactly as REQUEST or SCREEN_TEXT says it ("0% a 19%"), with `target` "beside the pale blue swatch in the legend". A swatch never goes without its label: when the labels don't fit in six, drop first the area labels the screen's words don't need, keeping the ones its question or SCREEN_TEXT names, and never a swatch's.
 - When neither says what the colors stand for, or `TEXT_ALLOWED` is `no`, draw no legend.
 
 # A picture a question is about
